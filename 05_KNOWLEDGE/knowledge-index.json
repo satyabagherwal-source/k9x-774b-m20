@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T14:32:40.901Z",
+  "last_updated": "2026-10-31T14:39:35.763Z",
   "total_verified_learnings": 1184,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4316,8 +4316,8 @@
       "slug": "bahdotsh-wrkflw",
       "platform": "github",
       "source_url": "https://github.com/bahdotsh/wrkflw",
-      "source_version": "59cf48c6",
-      "content_hash": "208e3afe876b454101aab0dd30cf6252abde007d442714c833654e88dc6a5cf8",
+      "source_version": "153b8ee0",
+      "content_hash": "ea89c41345b18d151ee4b00e0fbda8e84071dc2b65f27b20d0f27e5f0bf4b032",
       "dossier_path": "07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
       "promoted_rules": [
@@ -4330,6 +4330,11 @@
           "number": 5830,
           "title": "executor): harden custom shell script path handling (#133)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6225,
+          "title": "runtime): add a Kubernetes runtime backend (#142)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4337,7 +4342,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T18:39:34.535Z",
+      "verified_at": "2026-10-31T14:39:25.733Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13668,8 +13673,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "50ae5918",
-      "content_hash": "0dbc7d12fd6234784a2c0c1cfc33ff208ef0203a5ba25a78f05dd0e7fc7191c8",
+      "source_version": "86db624f",
+      "content_hash": "53e9ed5184fd4e33037fdac27f03569d84614572ef524c244f239e97de7bce41",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -13827,6 +13832,11 @@
           "number": 5928,
           "title": "transport): add the QUIC upgrade state machine as pure logic (#6058)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6226,
+          "title": "ci: build Linux x86_64 release for baseline x86-64 (#6061)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13834,7 +13844,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T22:50:03.444Z",
+      "verified_at": "2026-10-31T14:39:35.744Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26814,7 +26824,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/gpt-oss-120b",
       "source_version": "hf-openai-gpt-oss-120b",
-      "content_hash": "a07dcc6a624de71c7b73d9426e533f8b92c34840f8393d7519f9319700225a7e",
+      "content_hash": "d4302148471f46a54e84cd7263747c2589fa2cc3ec4c05bdc31e96bd69b01eeb",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md",
       "promoted_rules": [
@@ -26852,7 +26862,7 @@
         "learn-huggingface-hf-openai-gpt-oss-120b-mv4ayjzd",
         "learn-huggingface-hf-openai-gpt-oss-120b-mv4oc8h1"
       ],
-      "verified_at": "2026-10-28T14:15:29.604Z",
+      "verified_at": "2026-10-31T14:39:24.367Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162555,6 +162565,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T14:32:40.883Z"
+    },
+    "rule-6225": {
+      "learning_id": "rule-6225",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6225,
+      "title": "runtime): add a Kubernetes runtime backend (#142)",
+      "source_url": "https://github.com/bahdotsh/wrkflw",
+      "source_version": "153b8ee0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T14:39:25.733Z"
+    },
+    "rule-6226": {
+      "learning_id": "rule-6226",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6226,
+      "title": "ci: build Linux x86_64 release for baseline x86-64 (#6061)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "86db624f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T14:39:35.744Z"
     }
   },
   "aliases": {

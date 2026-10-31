@@ -915,8 +915,8 @@
     "sourceUrl": "https://huggingface.co/openai/gpt-oss-120b",
     "sourceVersion": "hf-openai-gpt-oss-120b",
     "license": "Open-Source",
-    "contentHash": "a07dcc6a624de71c7b73d9426e533f8b92c34840f8393d7519f9319700225a7e",
-    "lastHarvestedAt": "2026-10-28T14:15:29.707Z",
+    "contentHash": "d4302148471f46a54e84cd7263747c2589fa2cc3ec4c05bdc31e96bd69b01eeb",
+    "lastHarvestedAt": "2026-10-31T14:39:24.479Z",
     "learningId": "learn-huggingface-openai-gpt-oss-120b"
   },
   "hf-zai-org-glm-5.2": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "50ae5918",
+    "sourceVersion": "86db624f",
     "license": "NOASSERTION",
-    "contentHash": "0dbc7d12fd6234784a2c0c1cfc33ff208ef0203a5ba25a78f05dd0e7fc7191c8",
-    "lastHarvestedAt": "2026-10-30T22:50:03.547Z",
+    "contentHash": "53e9ed5184fd4e33037fdac27f03569d84614572ef524c244f239e97de7bce41",
+    "lastHarvestedAt": "2026-10-31T14:39:35.845Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -7413,10 +7413,10 @@
     "repository": "bahdotsh/wrkflw",
     "platform": "github",
     "sourceUrl": "https://github.com/bahdotsh/wrkflw",
-    "sourceVersion": "59cf48c6",
+    "sourceVersion": "153b8ee0",
     "license": "MIT",
-    "contentHash": "208e3afe876b454101aab0dd30cf6252abde007d442714c833654e88dc6a5cf8",
-    "lastHarvestedAt": "2026-10-30T18:39:34.638Z",
+    "contentHash": "ea89c41345b18d151ee4b00e0fbda8e84071dc2b65f27b20d0f27e5f0bf4b032",
+    "lastHarvestedAt": "2026-10-31T14:39:25.836Z",
     "learningId": "learn-github-bahdotsh-wrkflw"
   },
   "jordanbaird-ice": {

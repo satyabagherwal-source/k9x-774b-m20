@@ -6614,3 +6614,6 @@ Every entry in this ledger must capture:
 | `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `69c6653a` | Multi-dimensional audit evidence | 2026-10-31T14:25:55.545Z |
 | `learn-github-necolas-react-native-web` | `https://github.com/necolas/react-native-web` | `646103a4` | Multi-dimensional audit evidence | 2026-10-31T14:32:36.393Z |
 | `learn-huggingface-tongyi-mai-z-image-turbo` | `https://huggingface.co/Tongyi-MAI/Z-Image-Turbo` | `hf-tongyi-` | Multi-dimensional audit evidence | 2026-10-31T14:32:40.979Z |
+| `learn-huggingface-openai-gpt-oss-120b` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-31T14:39:24.479Z |
+| `learn-github-bahdotsh-wrkflw` | `https://github.com/bahdotsh/wrkflw` | `153b8ee0` | Multi-dimensional audit evidence | 2026-10-31T14:39:25.836Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `86db624f` | Multi-dimensional audit evidence | 2026-10-31T14:39:35.845Z |

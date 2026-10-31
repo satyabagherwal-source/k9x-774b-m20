@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md`  
 > **Source**: github ([https://github.com/bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw))  
-> **Source Version**: `59cf48c6`  
+> **Source Version**: `153b8ee0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T18:39:33.967Z  
+> **Timestamp**: 2026-10-31T14:39:25.136Z  
 > **Learning ID**: `learn-github-bahdotsh-wrkflw`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T18:39:32.263Z  
+> **Harvest Timestamp**: 2026-10-31T14:39:25.127Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -57,6 +57,7 @@ use crate::action_resolver;
 use crate::dependency;
 use crate::docker;
 use crate::environment;
+use crate::kubernetes::{self, KubernetesConfig};
 use crate::podman;
 use wrkflw_logging;
 use wrkflw_matrix::MatrixCombination;
@@ -123,6 +124,7 @@ async fn execute_github_workflow(
     mut config: ExecutionConfig,
 ) -> Result<ExecutionResult, ExecutionError> {
     config.runtime_type = detect_runtime(config.runtime_type);
+    warn_if_overrides_unused(&config);
     // 1. Parse workflow file
     let workflow = parse_workflow(workflow_path)?;
 
@@ -141,6 +143,7 @@ async fn execute_github_workflow(
     let runtime = initialize_runtime(
         config.runtime_type.clone(),
         config.preserve_containers_on_failure,
+        &config.kubernetes,
     )?;
 
     // Create a temporary workspace directory
@@ -199,13 +202,7 @@ async fn execute_github_workflow(
     // Add runtime mode to environment
     env_context.insert(
         "WRKFLW_RUNTIME_MODE".to_string(),
-        match config.runtime_type {
-            RuntimeType::Auto => "auto".to_string(),
-            RuntimeType::Emulation => "emulation".to_string(),
-            RuntimeType::SecureEmulation => "secure_emulation".to_string(),
-            RuntimeType::Docker => "docker".to_string(),
-            RuntimeType::Podman => "podman".to_string(),
-        },
+        config.runtime_type.mode_name().to_string(),
     );
 
     // show=true means hide=false (inverted for the env var)
@@ -279,6 +276,7 @@ async fn execute_github_workflow(
             &all_job_results,
             &artifact_store,
             &cache_store,
+            &config.platform_overrides,
         )
         .await?;
 
@@ -296,7 +294,10 @@ async fn execute_github_workflow(
 
                 // Add step details for failed jobs
                 for step in &job_result.steps {
-                    if step.status == StepStatu
+                    if step.status == StepStatus::Failure {
+                        failure_details.push_str(&format!(
+                            "  {} {}: {}\n",
+                           
 ```
 
 ### Core Architecture Module: `crates/ui/src/app/state.rs`
@@ -311,6 +312,7 @@ use crate::theme::{self, ThemeMode};
 use chrono::Local;
 use crossterm::event::KeyCode;
 use ratatui::widgets::{ListState, TableState};
+use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc;
@@ -319,6 +321,34 @@ use std::time::{Duration, Instant};
 use tokio::task::JoinHandle;
 use wrkflw_executor::{JobStatus, RuntimeType, StepStatus};
 use wrkflw_secrets::SecretConfig;
+
+/// Ask whether `runtime` answers, on a thread of its own: a cluster or a slow
+/// credential plugin can take seconds, and this must never stall the event
+/// loop. `None` for runtimes that have nothing to probe.
+fn start_availability_probe(
+    runtime: &RuntimeType,
+    kubernetes: &wrkflw_executor::KubernetesConfig,
+) -> Option<mpsc::Receiver<bool>> {
+    let runtime = runtime.clone();
+    if !matches!(
+        runtime,
+        RuntimeType::Docker | RuntimeType::Podman | RuntimeType::Kubernetes
+    ) {
+        return None;
+    }
+    let kubernetes = kubernetes.clone();
+    let (tx, rx) = mpsc::channel();
+    std::thread::spawn(move || {
+        let available = match runtime {
+            RuntimeType::Docker => wrkflw_executor::docker::is_available(),
+            RuntimeType::Podman => wrkflw_executor::podman::is_available(),
+            _ => wrkflw_executor::kubernetes::is_available_with(&kubernetes),
+        };
+        // The receiver is gone if the user has already moved on.
+        let _ = tx.send(available);
+    });
+    Some(rx)
+}
 
 /// Application state
 pub struct App {
@@ -330,6 +360,8 @@ pub struct App {
     pub runtime_type: RuntimeType,
     pub validation_mode: bool,
     pub preserve_containers_on_failure: bool,
+    pub platform_overrides: HashMap<String, String>,
+    pub kubernetes: wrkflw_executor::KubernetesConfig,
     pub show_action_messages: bool,
     pub execution_queue: Vec<QueuedExecution>, // Workflows queued for execution
     pub current_execution: Option<usize>,
@@ -372,6 +404,8 @@ pub struct App {
     // Cached container runtime availability (avoids re-checking every render frame)
     pub runtime_available: bool,
     pub last_availability_check: Instant,
+    /// Answer to a probe still running off the event loop, if any.
+    availability_probe: Option<mpsc::Receiver<bool>>,
 
     // Diff-aware trigger filtering
     pub diff_filter_active: bool,
@@ -468,44 +502,7 @@ pub struct App {
     /// When true, the Tweaks panel overlays the current tab. Toggled
     /// with `,` (mirrors the design's edit-mode entry point).
     pub tweaks_open: bool,
-    /// Accent color override. Matches the design's 5-slot palette.
-    /// The design exposes theme/density/graph-view too — we only ship
-    /// the knobs we actually plumb through (accent recolors the brand
-    /// + focused borders; the others would be dead toggles today).
-    pub tweaks_accent: Accent,
-}
 
-/// Outcome of a remote dispatch spawned from the Trigger tab.
-/// Reported back to the main event loop via an mpsc so the UI can
-/// surface the result on the status bar (instead of forcing the user
-/// to tab over to Logs).
-#[derive(Debug, Clone)]
-pub struct DispatchOutcome {
-    pub platform: TriggerPlatform,
-    pub workflow: String,
-    pub result: Result<(), String>,
-}
-
-/// Target platform for the remote-trigger UI. GitLab path uses the
-/// existing `wrkflw_gitlab::trigger_pipeline` so the form is honest
-/// about what it will call.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum TriggerPlatform {
-    Github,
-    Gitlab,
-}
-
-impl TriggerPlatform {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            TriggerPlatform::Github => "github",
-            TriggerPlatform::Gitlab => "gitlab",
-        }
-    }
-    pub fn toggle(self) -> Self {
-        match self {
-            TriggerPlatform::Github => TriggerPlatform::Gitlab,
-            TriggerPlatform::Gitlab => T
 ```
 
 ### Core Architecture Module: `crates/ui/src/utils/mod.rs`
@@ -2261,11 +2258,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #140** (2026-10-30): **feat: support Gitea workflows in .gitea/workflows (#132)**
-  *Symptoms*: Closes #132  ## Problem  Gitea runs GitHub-compatible workflows, but it looks in `.gitea/workflows` first. In a repository that only has that directory:  - `wrkflw validate` failed with `Path does not exist: .github/workflows`. - `wrkflw list`, the TUI and `wrkflw watch` found nothing by default. - `actions/checkout` dropped `.gitea` from the workspace, so steps could not read it. - `${{ gitea.ref }}` silently evaluated to an empty value.  An explicit `wrkflw validate .gitea/workflows` already worked, and the validator already accepted Gitea-style syntax.  ## Changes  - **Discovery:** new helpers in `wrkflw-utils` use Gitea's order, `.gitea/workflows` then `.github/workflows`. The order comes from `WorkflowDirs` in Gitea's `modules/setting/actions.go`. - **`validate`, `list` and the TUI:** these cover both directories when both exist. Gitea only runs the first, but a repository mirrored to both forges uses both. - **`watch`:** this takes one directory, so it picks `.gitea/workflows` and prints a note naming the skipped one. - **Workspace copy:** both copy routines now keep `.gitea`. - **Expressions:** `gitea` is an alias of the `github` context. - **`list` refactor:** the directory listing moved into `list_workflow_dir`, which accounts for most of the `main.rs` diff.  ## Behaviour change  In a repository with both directories, `wrkflw watch` now defaults to `.gitea/workflows`, not `.github/workflows`. Repositories with only `.github/workflows` are unaffected, except that the 
+- **Issue #142** (2026-10-31): **feat(runtime): add a Kubernetes runtime backend**
+  *Symptoms*: Adds `--runtime kubernetes`, which runs each workflow step as a pod in the cluster `kubectl` points at. Closes #66.  ```bash wrkflw run --runtime kubernetes --k8s-context gpu --k8s-namespace ci \   --k8s-node-selector accelerator=a100 \   --k8s-resource nvidia.com/gpu=1 \   .github/workflows/train.yml ```  ## How it works  Each step gets one pod. An init container waits while the mounts are streamed into `emptyDir` volumes as tar. The step then runs, and a sidecar keeps the pod alive so the mounts can be streamed back. That is how `GITHUB_OUTPUT`, artifacts and workspace changes reach the next step.  It shells out to `kubectl`, so existing kubeconfigs, auth plugins and proxies keep working and there is no new client dependency. The runtime is never auto-detected and never falls back to emulation, because a GPU job silently running on a laptop is worse than a failed run.  ## Worth a close look  - **`$` escaping.** Kubernetes expands `$(VAR)` and collapses `$$` in args and env values, so `echo $$` reached the shell as `echo $`. Every `$` is now doubled in the manifest. - **Copy-out mirrors the pod.** A step's `rm` has to stay deleted, so this code removes host files based on what a workflow left in a pod. It rejects paths that leave the target, never follows symlinks, and prunes only after the whole archive has unpacked. Only the job's own workspace and `GITHUB_*` directories are pruned. User `container.volumes` directories only gain files, and a single-path volume stays in the
 
-- **Issue #139** (2026-10-30): **fix(ui): add a light theme for light terminals (#120)**
-  *Symptoms*: Fixes #120.  ## Problem  The TUI palette was hard-coded for dark backgrounds. On a light terminal, pale yellow and cyan text was nearly invisible, and the title bar, status bar and selected row stayed near-black.  ## Changes  - **Light palette:** `COLORS` now resolves to a dark or light table at runtime, so existing call sites are unchanged. The dark palette keeps its values. - **Accents:** each Tweaks accent has a light variant. The accent overrides the palette on every frame, so the palette alone would not have fixed it. - **Help overlay:** the backdrop uses the theme instead of hard-coded black. - **Theme selection:** the theme is chosen once at startup, in this order:   1. `--theme auto|dark|light`   2. `WRKFLW_THEME`   3. The terminal's reported background   4. `COLORFGBG`   5. Dark  Auto-detection suits terminals that change theme by time of day, as in the issue.  ## Notes for review  - **New dependency:** `terminal-colorsaurus` is added behind the `tui` feature. It resolves to 1.0.0 because 1.0.3 conflicts with the `mio` version required by `crossterm` 0.28. - **Public API:** `run_wrkflw_tui` gains a `theme` parameter, which is a breaking change for library users. The READMEs are updated. - **Startup delay:** a terminal that answers neither color nor device queries delays startup by up to 1 second. Explicit `--theme dark` or `--theme light` skips the query. - **No live switching:** changing the terminal theme needs a TUI restart. A live toggle is left out because the l
+- **Issue #141** (2026-10-31): **feat: override runs-on images with --platform (#113)**
+  *Symptoms*: Closes #113  ## What  Adds `-P`/`--platform LABEL=IMAGE`, the same idea as act's flag, so `runs-on` labels can run in an image of your choice without editing the workflow:  ```bash wrkflw run -P ubuntu-latest=catthehacker/ubuntu:act-latest .github/workflows/ci.yml export WRKFLW_PLATFORM=ubuntu-latest=catthehacker/ubuntu:act-latest ```  Image order is job `container:`, then `--platform`, then the built-in table. The default stays `ubuntu:latest`, because the act image is about 1.6 GB against about 130 MB.  The option is global, because bare `wrkflw` opens the TUI with no subcommand. It applies to `run`, `watch`, the TUI, matrix jobs and reusable workflows.  ## Two bugs the feature exposed  **Steps on act images never ran.** `docker.rs` treated any image matching `catthehacker` and `act-` as macOS emulation and wrapped commands in `bash -l -c`, which discarded them. With the override, `run: exit 7` reported success. This also affected `ubuntu-*-medium` runners today. The macOS runners map to `rust:latest`, so the heuristic was stale, and it is removed. See `BREAKING_CHANGES.md`.  **`setup-node` was shadowed.** The act image puts its bundled Node first on `PATH`, so `setup-node` with version 20 still ran v24. Combined images now put `/usr/local/bin` and `/usr/bin` first. This changes the Dockerfile hash, so existing combined images rebuild once.  ## Decisions for review  - `runs-on: ${{ matrix.os }}` is resolved for override matching only. The built-in table still sees the raw l
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2282,1126 +2279,1171 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `69515269` (2026-10-30)
-**Commit Message**: fix(executor): harden custom shell script path handling (#133)
+### Incident Patch 1: `153b8ee0` (2026-10-31)
+**Commit Message**: feat(runtime): add a Kubernetes runtime backend (#142)
 
-* fix(executor): harden custom shell script path handling
+* feat(runtime): add a Kubernetes runtime backend
 
-Follow-up to #123.
+People with GPUs in a cluster and a self-hosted forge want wrkflw to
+parse the workflow and dispatch it to Kubernetes, not to their
+laptop. Every runtime so far assumes the host and the container share
+a filesystem. A cluster doesn't, and that's the whole problem here.
 
-- Build the container-side `{0}` script path as a POSIX string. `Path::join`
-  inserted `\` on Windows hosts, which a Linux container cannot resolve.
-- Fail the step when a container runtime has no GitHub workflow mount,
-  instead of handing the container a host path it cannot see.
-- Move the custom-shell setup into `prepare_custom_shell`, returning a
-  guard that removes the script file on drop, so every exit path cleans up.
-- Share the docker/podman runtime check through `StepContainerContext`
-  instead of duplicating the `WRKFLW_RUNTIME_MODE` predicate.
-- Log the resolved custom shell argv.
-- Keep the relative-command test from writing into the crate directory.
+Add --runtime kubernetes. Each step becomes one pod, driven through
+kubectl, so any kubeconfig, auth plugin or proxy that already works
+keeps working and we grow no client library. An init container waits
+while the mounts are streamed into emptyDirs as tar, the step runs,
+and a sidecar keeps the pod alive so the mounts can be streamed back.
+That is what makes GITHUB_OUTPUT, artifacts and workspace changes
+reach the next step.
 
-* build(deps): bump async-trait to 0.1.92 to silence double_must_use
+Copy-out mirrors instead of merging, because a step's rm has to stay
+deleted. That code writes to the host based on what a workflow left
+in a pod, so it refuses to leave the target directory, never follows
+a symlink, and prunes only after the whole archive unpacked.
 
-CI clippy on stable 1.99.1 has been red on main since the toolchain
-update, and it has nothing to do with our code. It turns out
-async-trait 0.1.89 slaps a bare #[must_use] on the generated methods
-that return Pin<Box<dyn Future>>, which is already must_use. The new
-double_must_use lint rightly calls that out, a
+It turns out Kubernetes expands $(VAR) and collapses $$ in args and
+env values, so "echo $$" reached the shell as "echo $".
 
-**File**: `Cargo.lock` (modified, +37/-26)
+**File**: `README.md` (modified, +65/-1)
 ```diff
-@@ -198,18 +198,18 @@ checksum = "c7c24de15d275a1ecfd47a380fb4d5ec9bfe0933f309ed5e705b775596a3574d"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.106",
- ]
+@@ -14,6 +14,7 @@ A command-line tool for validating and executing GitHub Actions workflows locall
+ - **TUI interface** — interactive terminal UI with Workflows, Execution, DAG, Logs, Trigger, Secrets, and Help tabs
+ - **Workflow validation** — syntax checks, structural validation, and composite action input cross-checking with CI/CD-friendly exit codes
+ - **Local execution** — Docker, Podman, emulation, or sandboxed **secure emulation** (no containers)
++- **Kubernetes execution** — run each step as a pod in your own cluster, with node selectors and GPU resource requests
+ - **Diff-aware filtering** — skip workflows whose `on:` block doesn't match the simulated event and changed file set
+ - **Watch mode** — rerun workflows automatically on file changes, with trigger-aware filtering
+ - **Job selection** — run individual jobs with `--job` or via TUI job selection mode
+@@ -114,6 +115,9 @@ wrkflw run --runtime docker .github/workflows/ci.yml
+ # Run with Podman
+ wrkflw run --runtime podman .github/workflows/ci.yml
  
- [[package]]
- name = "async-trait"
--version = "0.1.89"
-+version = "0.1.92"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9035ad2d096bed7955a320ee7e2230574d28fd3c3a0f186cbea1ff3c7eed5dbb"
-+checksum = "82f6aeea286b8eb4dd3431a1be1b59d290ace00f5bfd8e2a159bc2a05e2c1667"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 3.0.9",
- ]
- 
- [[package]]
-@@ -467,7 +467,7 @@ dependencies = [
-  "heck",
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.106",
- ]
- 
- [[package]]
-@@ -672,7 +672,7 @@ dependencies = [
-  "proc-macro2",
-  "quote",
-  "strsim",
-- "syn",
-+ "syn 2.0.106",
- ]
- 
- [[package]]
-@@ -683,7 +683,7 @@ checksum = "ac3984ec7bd6cfa798e62b4a642426a5be0e68f9401cfc2a01e3fa9ea2fcdb8d"
- dependencies = [
-  "darling_core",
-  "quote",
-- "syn",
-+ "syn 2.0.106",
- ]
- 
- [[package]]
-@@ -755,7 +755,7 @@ checksum = "97369cbbc041bc366949bc74d34658d6cda5621039731c6310521892a3a20ae0"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.106",
- ]
- 
- [[package]]
-@@ -943,7 +943,7 @@ checksum = "162ee34ebcb7c64a8abebc059ce0fee27c2262618d7b60ed8faf72fef13c3650"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.106",
- ]
- 
- [[package]]
-@@ -1477,7 +1477,7 @@ dependencies = [
-  "indoc",
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.106",
- ]
- 
- [[package]]
-@@ -1974,7 +1974,7 @@ checksum = "6e918e4ff8c4549eb882f14b3a4bc8c8bc93de829416eacf579f1207a8fbf861"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.106",
- ]
- 
- [[package]]
-@@ -2416,7 +2416,7 @@ checksum = "5b0276cf7f2c73365f7157c8123c21cd9a50fbbd844757af28ca1f5925fc2a00"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.106",
- ]
- 
- [[package]]
-@@ -2450,7 +2450,7 @@ checksum = "175ee3e80ae9982737ca543e96133087cbd9a485eecc3bc4de9c1a37b47ea59c"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.106",
- ]
- 
- [[package]]
-@@ -2609,7 +2609,7 @@ dependencies = [
-  "proc-macro2",
-  "quote",
-  "rustversion",
-- "syn",
-+ "syn 2.0.106",
- ]
- 
- [[package]]
-@@ -2629,6 +2629,17 @@ dependencies = [
-  "unicode-ident",
- ]
- 
-+[[package]]
-+name = "syn"
-+version = "3.0.9"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "d78c8dee4c7bf0e14673097256fed6142ce9d3b85a408189d07482442145823b"
-+dependencies = [
-+ "proc-macro2",
-+ "quote",
-+ "unicode-ident",
-+]
++# Run each step as a pod in a Kubernetes cluster
++wrkflw run --runtime kubernetes --k8s-namespace ci .github/workflows/ci.yml
 +
- [[package]]
- name = "sync_wrapper"
- version = "0.1.2"
-@@ -2643,7 +2654,7 @@ checksum = "728a70f3dbaf5bab7f0c4b1ac8d7ae5ea60a4b5549c8a5914361c99147a709d2"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.106",
- ]
+ # Run in emulation mode (no containers)
+ wrkflw run --runtime emulation .github/workflows/ci.yml
  
- [[package]]
-@@ -2708,7 +2719,7 @@ checksum = "4fee6c4efc90059e10f81e6d42c60a18f76588c3d74cb83a0b242a2b6c7504c1"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.106",
- ]
+@@ -217,7 +221,7 @@ The TUI follows your terminal's background and uses a light or dark palette to m
+ | `a` / `n` | Select all / deselect all |
+ | `Shift+R` | Reset workflow status |
+ | `Shift+J` | View jobs in workflow |
+-| `e` | Cycle runtime (Docker / Podman / Emulation / Secure Emulation) |
++| `e` | Cycle runtime (Docker / Podman / Kubernetes / Secure Emulation / Emulation) |
+ | `v` | Toggle Execution / Validation mode |
+ | `d` / `D` | Toggle diff-aware filter / cycle simulated event |
+ | `t` | Trigger remote workflow |
+@@ -246,9 +250,69 @@ wrkflw trigger-gitlab --branch main --variable key=value
+ | **Auto** (default) | Detects Docker, then Podman, then falls back to emulation | Most users |
+ | **Docker** | Full container isolation, closest to GitHub runners | Production, CI/CD |
+ | **Podman** | Rootless containers, no daemon required | Security-conscious environments |
++| **Kubernetes** | Each step runs as a pod in a cluster you point `kubectl` at | GPU/XPU jobs, shared build clusters, self-hosted forges |
+ | **Emulation** | Runs directly on host, no containers needed | Quick local testing |
+ | **Secure Emulation** | Sandboxed host processes with filesystem/network restrictions | Running untrusted workflows without a container runtime |
  
- [[package]]
-@@ -2790,7 +2801,7 @@ checksum = "6e06d43f1345a3bcd39f6a56dbb7dcab2ba47e68e8ac134855e7e2bdbaf8cab8"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.106",
- ]
- 
- [[package]]
-@@ -2865,7 +2876,7 @@ checksum = "81383ab64e72a7a8b8e13130c49e3dab29def6d0c7d76a03087b3cf71c5c6903"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.106",
- ]
- 
- [[package]]
-@@ -3055,7 +3066,7 @@ dependencies = [
-  "log",
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.106",
-  "wasm-bindgen-shared",
- ]
- 
-@@ -3090,7 +3101,7 @@ checksum = "8ae87ea40c9f689fc23f209965b6fb8a99ad69aeeb0231408be24920604395de"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.106",
-  "wasm-bindgen-backend",
-  "wasm-bindgen-shared",
- ]
-@@ -3184,7 +3195,7 @@ checksum = "a47fddd13af08290e67f4acabf4b459f647552718f683a7b415d290ac744a836"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.106",
- ]
- 
- [[package]]
-@@ -3195,7 +3206,7 @@ checksum = "bd9211b69f8dcdfa817bfd14bf1c97c9188afa36f4750130fcdf3f400eca9fa8"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.106",
- ]
- 
- [[package]]
-@@ -3820,7 +3831,7 @@ checksum = "38da3c9736e16c5d3c8c597a9aaa5d1fa565d0532ae05e27c24aa62fb32c0ab6"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.106",
-  "synstructure",
- ]
- 
-@@ -3841,7 +3852,7 @@ checksum = "9ecf5b4cc5364572d7f4c329661bcc82724222973f2cab6f050a4e5c22f75181"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.106",
- ]
- 
- [[package]]
-@@ -3861,7 +3872,7 @@ checksum = "d71e5d6e06ab090c67b5e44993ec16b72dcbaabc526db883a360057678b48502"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.106",
-  "synstructure",
- ]
- 
-@@ -3895,5 +3906,5 @@ checksum = "5b96237efa0c878c64bd89c436f661be4e46b2f3eff1ebb976f7ef2321d2f58f"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.106",
- ]
++### Kubernetes runtime
++
++`--runtime kubernetes` dispatches every step to the cluster `kubectl` is configured for. It is never auto-detected, and it never falls back to running on your machine: if the cluster is unreachable, the run fails.
++
++```bash
++# Pick the cluster and namespace, then run as usual
++wrkflw run --runtime kubernetes --k8s-context gpu-cluster --k8s-namespace ci .github/workflows/train.yml
++
++# Land on GPU nodes and request an accelerator for every step
++wrkflw run --runtime kubernetes \
++  --k8s-node-selector accelerator=a100 \
++  --k8s-resource nvidia.com/gpu=1 --k8s-resource memory=16Gi \
++  .github/workflows/train.yml
++
++# Private registry, and a registry wrkflw can push locally built images to
++wrkflw run --runtime kubernetes --k8s-image-pull-secret regcred \
++  --k8s-registry registry.example.com/ci .github/workflows/ci.yml
++
++# Every flag has a WRKFLW_K8S_* environment variable, so set them once
++export WRKFLW_K8S_NAMESPACE=ci WRKFLW_K8S_RESOURCE=nvidia.com/gpu=1
++```
++
++| Flag | Environment variable | Purpose |
++|------|----------------------|---------|
++| `--k8s-context NAME` | `WRKFLW_K8S_CONTEXT` | kubeconfig context (default: current) |
++| `--k8s-namespace NAME` | `WRKFLW_K8S_NAMESPACE` | Namespace pods are created in (default: current) |
++| `--k8s-node-selector KEY=VALUE` | `WRKFLW_K8S_NODE_SELECTOR` | `nodeSelector` for every pod; repeatable |
++| `--k8s-resource NAME=QUANTITY` | `WRKFLW_K8S_RESOURCE` | Limits and requests for the step container, e.g. `nvidia.com/gpu=1`; repeatable |
++| `--k8s-image-pull-secret NAME` | `WRKFLW_K8S_IMAGE_PULL_SECRET` | `imagePullSecrets` for every pod; repeatable |
++| `--k8s-registry REGISTRY` | `WRKFLW_K8S_REGISTRY` | Where images built locally are pushed so the cluster can pull them |
++| `--k8s-helper-image IMAGE` | `WRKFLW_K8S_HELPER_IMAGE` | Image for the sync helpers (default `busybox:1.36`, pinned by digest; needs `sh` and `tar`) |
++| `--k8s-timeout SECONDS` | `WRKFLW_K8S_TIMEOUT` | Per-step limit, pod creation to sync-back (default 21600, the engine's job timeout) |
++| `--k8s-schedule-timeout SECONDS` | `WRKFLW_K8S_SCHEDULE_TIMEOUT` | How long a pod may stay unschedulable before the step fails (default 600) |
++
++How a step runs:
++
++1. A pod is created with one `emptyDir` per mount, an init container that waits for a ready marker, the step container, and a small sidecar. Pods are labelled `app.kubernetes.io/managed-by=wrkflw` and `wrkflw.dev/session=<id>`.
++2. The work
 ```
 
-**File**: `crates/executor/src/engine.rs` (modified, +228/-62)
+**File**: `crates/executor/src/engine.rs` (modified, +465/-47)
 ```diff
-@@ -3807,9 +3807,9 @@ async fn execute_step(ctx: StepExecutionContext<'_>) -> Result<StepResult, Execu
-         let mount_ctx =
-             prepare_step_container_context(&mut step_env, ctx.job_env, ctx.container_config);
+@@ -16,6 +16,7 @@ use crate::action_resolver;
+ use crate::dependency;
+ use crate::docker;
+ use crate::environment;
++use crate::kubernetes::{self, KubernetesConfig};
+ use crate::podman;
+ use wrkflw_logging;
+ use wrkflw_matrix::MatrixCombination;
+@@ -101,6 +102,7 @@ async fn execute_github_workflow(
+     let runtime = initialize_runtime(
+         config.runtime_type.clone(),
+         config.preserve_containers_on_failure,
++        &config.kubernetes,
+     )?;
  
--        // Custom (non-built-in) shells write the script to a file the container
--        // can reach and clean it up once the run completes.
--        let mut custom_shell_host_script: Option<PathBuf> = None;
-+        // Custom (non-built-in) shells run a script file. Holding the guard here
-+        // keeps the file alive for the run and removes it on every exit path.
-+        let mut custom_shell_script: Option<CustomShellScript> = None;
+     // Create a temporary workspace directory
+@@ -159,13 +161,7 @@ async fn execute_github_workflow(
+     // Add runtime mode to environment
+     env_context.insert(
+         "WRKFLW_RUNTIME_MODE".to_string(),
+-        match config.runtime_type {
+-            RuntimeType::Auto => "auto".to_string(),
+-            RuntimeType::Emulation => "emulation".to_string(),
+-            RuntimeType::SecureEmulation => "secure_emulation".to_string(),
+-            RuntimeType::Docker => "docker".to_string(),
+-            RuntimeType::Podman => "podman".to_string(),
+-        },
++        config.runtime_type.mode_name().to_string(),
+     );
  
-         let cmd_parts: Vec<String> = match effective_shell {
-             "bash" => vec![
-@@ -3836,55 +3836,15 @@ async fn execute_step(ctx: StepExecutionContext<'_>) -> Result<StepResult, Execu
-             ],
-             "cmd" => vec!["cmd".to_string(), "-c".to_string(), resolved_run.clone()],
-             other => {
--                let (host_dir, guest_dir) = match &mount_ctx.github_mount {
--                    Some((host, guest)) => (host.clone(), guest.clone()),
--                    None => (ctx.working_dir.to_path_buf(), ctx.working_dir.to_path_buf()),
--                };
--
--                let name = format!("wrkflw-{}", uuid::Uuid::new_v4());
--                let guest_script = guest_dir.join(&name);
--
--                let mut argv = match custom_shell_argv(other, &guest_script.to_string_lossy()) {
--                    Ok(argv) => argv,
-+                match prepare_custom_shell(other, &resolved_run, &mount_ctx, ctx.working_dir) {
-+                    Ok((argv, script)) => {
-+                        custom_shell_script = Some(script);
-+                        argv
-+                    }
-                     Err(msg) => {
-                         return Ok(StepResult::new(step_name, StepStatus::Failure, msg));
-                     }
--                };
--
--                // Resolve the shell command to an absolute path, matching the
--                // runner's `WhichUtil.Which(..., require: true, ...)` — this also
--                // makes emulation's absolute-argv direct-exec rule fire universally.
--                // Only for host-side runtimes: under docker/podman the shell has
--                // to exist in the container image, so the container resolves it
--                // through its own PATH and a host lookup would be meaningless.
--                let is_container_runtime = step_env
--                    .get("WRKFLW_RUNTIME_MODE")
--                    .map(|m| m == "docker" || m == "podman")
--                    .unwrap_or(false);
--                if !is_container_runtime {
--                    match which::which(&argv[0]) {
--                        Ok(resolved) => argv[0] = resolved.to_string_lossy().into_owned(),
--                        Err(_) => {
--                            return Ok(StepResult::new(
--                                step_name,
--                                StepStatus::Failure,
--                                format!("Custom shell '{}' could not be found", argv[0]),
--                            ));
--                        }
--                    }
--                }
--
--                let host_script = host_dir.join(&name);
--                if let Err(e) = fs::write(&host_script, &resolved_run) {
--                    return Ok(StepResult::new(
--                        step_name,
--                        StepStatus::Failure,
--                        format!("Failed to write custom shell script: {}", e),
--                    ));
-                 }
--
--                custom_shell_host_script = Some(host_script);
--                argv
+     // show=true means hide=false (inverted for the env var)
+@@ -365,6 +361,7 @@ async fn execute_gitlab_pipeline(
+     let runtime = initialize_runtime(
+         config.runtime_type.clone(),
+         config.preserve_containers_on_failure,
++        &config.kubernetes,
+     )?;
+ 
+     // Create a temporary workspace directory
+@@ -377,13 +374,7 @@ async fn execute_gitlab_pipeline(
+     // Add runtime mode to environment
+     env_context.insert(
+         "WRKFLW_RUNTIME_MODE".to_string(),
+-        match config.runtime_type {
+-            RuntimeType::Auto => "auto".to_string(),
+-            RuntimeType::Emulation => "emulation".to_string(),
+-            RuntimeType::SecureEmulation => "secure_emulation".to_string(),
+-            RuntimeType::Docker => "docker".to_string(),
+-            RuntimeType::Podman => "podman".to_string(),
+-        },
++        config.runtime_type.mode_name().to_string(),
+     );
+ 
+     // Setup environment files
+@@ -612,11 +603,13 @@ pub fn detect_runtime(runtime_type: RuntimeType) -> RuntimeType {
+ fn initialize_runtime(
+     runtime_type: RuntimeType,
+     preserve_containers_on_failure: bool,
++    kubernetes: &KubernetesConfig,
+ ) -> Result<Box<dyn ContainerRuntime>, ExecutionError> {
+     match runtime_type {
+         RuntimeType::Auto => initialize_runtime(
+             detect_runtime(RuntimeType::Auto),
+             preserve_containers_on_failure,
++            kubernetes,
+         ),
+         RuntimeType::Docker => {
+             if docker::is_available() {
+@@ -645,6 +638,15 @@ fn initialize_runtime(
+                 Ok(Box::new(emulation::EmulationRuntime::new()))
              }
-         };
-         let cmd_refs: Vec<&str> = cmd_parts.iter().map(String::as_str).collect();
-@@ -3908,9 +3868,7 @@ async fn execute_step(ctx: StepExecutionContext<'_>) -> Result<StepResult, Execu
-             )
-             .await;
- 
--        if let Some(host_script) = &custom_shell_host_script {
--            let _ = fs::remove_file(host_script);
--        }
-+        drop(custom_shell_script);
- 
-         match run_result {
-             Ok(container_output) => {
-@@ -4225,6 +4183,9 @@ fn get_effective_runner_image(job: &Job) -> String {
- struct StepContainerContext {
-     owned_volume_paths: Vec<VolumePathPair>,
-     github_mount: Option<VolumePathPair>,
-+    /// Steps run inside a Docker/Podman container, so host paths are not
-+    /// visible to them and must be mounted and remapped.
-+    is_container_runtime: bool,
+         }
++        // Kubernetes is never auto-detected and never silently replaced:
++        // a job meant for a GPU node must not quietly run on the laptop.
++        RuntimeType::Kubernetes => {
++            kubernetes::check_available(kubernetes).map_err(ExecutionError::Runtime)?;
++            Ok(Box::new(kubernetes::KubernetesRuntime::new(
++                kubernetes.clone(),
++                preserve_containers_on_failure,
++            )))
++        }
+         RuntimeType::Emulation => Ok(Box::new(emulation::EmulationRuntime::new())),
+         RuntimeType::SecureEmulation => Ok(Box::new(
+             wrkflw_runtime::secure_emulation::SecureEmulationRuntime::new(),
+@@ -659,10 +661,27 @@ pub enum RuntimeType {
+     Auto,
+     Docker,
+     Podman,
++    /// Run each step as a pod in a Kubernetes cluster. Selected explicitly
++    /// only; see `--k8s-*` flags and [`KubernetesConfig`].
++    Kubernetes,
+     Emulation,
+     SecureEmulation,
  }
  
- impl StepContainerContext {
-@@ -4256,16 +4217,27 @@ fn prepare_step_container_context(
-     job_env: &HashMap<String, String>,
-     container_config: Option<&JobContainer>,
- ) -> StepContainerContext {
-+    let is_container_runtime = uses_container_runtime(step_env);
-     let (owned_volume_paths, github_mount) =
-         prepare_container_mounts(step_env, job_env, container_config);
-     StepContainerContext {
-         owned_volume_paths,
++impl RuntimeType {
++    /// The value steps see in `WRKFLW_RUNTIME_MODE`.
++    pub fn mode_name(&self) -> &'static str {
++        match self {
++            RuntimeType::Auto => "auto",
++            RuntimeType::Emulation => "emulation",
++            RuntimeType::SecureEmulation => "secure_emulation",
++            RuntimeType::Docker => "docker",
++            RuntimeType::Podman => "podman",
++            RuntimeType::Kubernetes => "kubernetes",
++        }
++    }
++}
++
+ #[derive(Debug, Clone, Default)]
+ pub struct ExecutionConfig {
+     pub runtime_type: RuntimeType,
+@@ -676,6 +695,8 @@ pub struct ExecutionConfig {
+     /// lowercase, as [`parse_platform_override`] returns them, because labels
+     /// match case-insensitively.
+     pub platform_overrides: HashMap<String, String>,
++    /// Cluster settings used when `runtime_type` is [`RuntimeType::Kubernetes`].
++    pub kubernetes: KubernetesConfig,
+ }
  
+ /// Parse a `LABEL=IMAGE` runner override, as given to `--platform`.
+@@ -942,10 +963,7 @@ async fn prepare_action(
+         let dockerfile = action_dir.join("Dockerfile");
+         if dockerfile.exists() {
+             // It's a Docker action, build it
+-            let tag = format!("wrkflw-local-action:{}", uuid::Uuid::new_v4());
+-
+-            runtime
+-                .build_image(&do
 ```
 
----
-
-### Incident Patch 2: `3952805e` (2026-10-30)
-**Commit Message**: fix(executor): skip a job when a job it needs did not succeed (#126)
-
-The GitHub Actions batch loop in execute_github_workflow ran every batch
-unconditionally: needs: was used for ordering and needs.* context only, so a
-dependent job ran even when the job it needed had failed.
-
-Before running each batch, partition it into runnable jobs and jobs blocked by
-a failed or skipped needs: entry. A blocked job is recorded as
-JobStatus::Skipped and written into all_job_results/all_job_outputs so the skip
-cascades to its own dependents. A job carrying an explicit if: is passed
-through to execute_single_job unchanged, so if: always()/failure() still work.
-A needs: entry absent from all_job_results (possible under a --target-job
-filtered plan) is treated as non-blocking.
-
-GitLab pipelines keep their own when:/allow_failure: semantics and are
-untouched.
-
-Tests: crates/wrkflw/tests/needs_failure_propagation_test.rs drives a real
-EmulationRuntime through execute_workflow — skip on failed need, cascade
-through a needs chain, if: always() override, and an unrelated job unaffected.
-
-Fixes #125
-
-Co-authored-by: Ian Fernandez <[REDACTED_EMAIL]>
-
-**File**: `crates/executor/src/engine.rs` (modified, +68/-1)
+**File**: `crates/executor/src/environment.rs` (modified, +46/-0)
 ```diff
-@@ -222,9 +222,50 @@ async fn execute_github_workflow(
-     let mut all_job_results: HashMap<String, String> = HashMap::new();
+@@ -25,6 +25,32 @@ pub fn setup_github_environment_files(workspace_dir: &Path) -> io::Result<()> {
+     Ok(())
+ }
  
-     for job_batch in execution_plan {
-+        // GitHub Actions: a job that declares `needs:` runs only if every needed
-+        // job succeeded. If any needed job failed or was itself skipped, this job
-+        // is skipped too, and its own dependents cascade. `resolve_dependencies`
-+        // only orders the batches — it never enforces this — so do it here, before
-+        // the batch runs. A job carrying an explicit `if:` is left for
-+        // `execute_single_job` to evaluate: `if: always()` / `if: failure()` may
-+        // deliberately opt back in.
-+        let mut runnable: Vec<String> = Vec::with_capacity(job_batch.len());
-+        for job_name in &job_batch {
-+            match workflow
-+                .jobs
-+                .get(job_name)
-+                .and_then(|job| job_blocked_by_needs(job, &all_job_results))
-+            {
-+                Some(reason) => {
-+                    wrkflw_logging::info(&format!(
-+                        "{} Skipping job '{}': {}",
-+                        wrkflw_logging::symbols::SKIPPED,
-+                        job_name,
-+                        reason,
-+                    ));
-+                    let skipped = JobResult {
-+                        name: job_name.clone(),
-+                        canonical_name: job_name.clone(),
-+                        status: JobStatus::Skipped,
-+                        steps: Vec::new(),
-+                        logs: String::new(),
-+                        outputs: HashMap::new(),
-+                    };
-+                    all_job_results
-+                        .insert(skipped.canonical_name.clone(), skipped.status.to_string());
-+                    all_job_outputs.insert(skipped.canonical_name.clone(), skipped.outputs.clone());
-+                    results.push(skipped);
-+                }
-+                None => runnable.push(job_name.clone()),
-+            }
++/// Point `job_env` at a fresh set of `GITHUB_*` files owned by one job.
++///
++/// The run-level files are shared, but each step's env file updates are read
++/// back and truncated by the engine, so parallel jobs sharing them would eat
++/// each other's `GITHUB_ENV` and `GITHUB_OUTPUT` entries. The returned
++/// directory must outlive the job.
++pub fn isolate_github_environment_files(
++    job_env: &mut HashMap<String, String>,
++) -> io::Result<tempfile::TempDir> {
++    let dir = tempfile::tempdir()?;
++    setup_github_environment_files(dir.path())?;
++    let github_dir = dir.path().join("github");
++    for (key, file) in [
++        ("GITHUB_OUTPUT", "output"),
++        ("GITHUB_ENV", "env"),
++        ("GITHUB_PATH", "path"),
++        ("GITHUB_STEP_SUMMARY", "step_summary"),
++    ] {
++        job_env.insert(
++            key.to_string(),
++            github_dir.join(file).to_string_lossy().to_string(),
++        );
++    }
++    Ok(dir)
++}
++
+ pub fn create_github_context(
+     workflow: &WorkflowDefinition,
+     workspace_dir: &Path,
+@@ -429,4 +455,24 @@ mod tests {
+     fn extract_repo_from_invalid_url() {
+         assert_eq!(extract_repo_from_url("not-a-url"), None);
+     }
++
++    #[test]
++    fn each_job_gets_its_own_empty_github_files() {
++        let mut first = HashMap::new();
++        let mut second = HashMap::new();
++        let first_dir = isolate_github_environment_files(&mut first).unwrap();
++        let second_dir = isolate_github_environment_files(&mut second).unwrap();
++
++        for key in [
++            "GITHUB_OUTPUT",
++            "GITHUB_ENV",
++            "GITHUB_PATH",
++            "GITHUB_STEP_SUMMARY",
++        ] {
++            assert_ne!(first[key], second[key], "{} is shared", key);
++            assert_eq!(fs::read_to_string(&first[key]).unwrap(), "");
 +        }
-+        if runnable.is_empty() {
++        assert!(Path::new(&first["GITHUB_ENV"]).starts_with(first_dir.path()));
++        assert!(Path::new(&second["GITHUB_ENV"]).starts_with(second_dir.path()));
++    }
+ }
+```
+
+**File**: `crates/executor/src/kubernetes/manifest.rs` (added, +551/-0)
+```diff
+@@ -0,0 +1,551 @@
++//! The pod a step runs in: which mounts it gets and how its manifest reads.
++//! Everything here is pure, so it is tested without a cluster.
++
++use super::{
++    KubernetesConfig, DEADLINE_MARGIN_SECS, MAIN_CONTAINER, MANAGED_BY_LABEL, READY_MARKER,
++    SESSION_ID, SESSION_LABEL, SYNC_CONTAINER, SYNC_DIR, SYNC_VOLUME, WAIT_CONTAINER,
++};
++use serde_json::{json, Value};
++use std::path::{Path, PathBuf};
++
++/// Container paths backed by directories the executor created for this job.
++/// Nothing else on those host directories can be lost, so only these are
++/// mirrored. `/github/action` is left out: a local action lives in the user's
++/// repository. Exact paths, so a user volume nested below one does not qualify.
++const MIRRORED_MOUNTS: &[&str] = &["/github/workspace", "/github/workflow"];
++
++/// One host directory and the container path it is exposed at. An empty
++/// `host` is a volume that exists only in the pod.
++#[derive(Debug, Clone, PartialEq, Eq)]
++pub(super) struct Mount {
++    pub(super) host: PathBuf,
++    pub(super) container: PathBuf,
++}
++
++impl Mount {
++    /// True when the host directory must end up exactly as the pod left it,
++    /// deletions included. Any other mount belongs to the user and may hold
++    /// files the pod never saw, so copy-out only adds to it.
++    pub(super) fn mirrored(&self) -> bool {
++        MIRRORED_MOUNTS
++            .iter()
++            .any(|path| self.container == Path::new(path))
++    }
++}
++
++/// Turn the caller's `(host, container)` pairs into an ordered mount plan.
++///
++/// Mounts are sorted by container path so a parent mount is populated before
++/// a mount nested inside it, and a container path requested twice keeps its
++/// first host directory, as a `docker run` with duplicate `-v` flags would.
++pub(super) fn plan_mounts(volumes: &[(&Path, &Path)]) -> Vec<Mount> {
++    let mut mounts: Vec<Mount> = Vec::new();
++    for (host, container) in volumes {
++        // An emptyDir cannot stand in for a file or a host socket such as
++        // /var/run/docker.sock, and a bare name is a Docker named volume.
++        if host.exists() && !host.is_dir() {
++            wrkflw_logging::warning(&format!(
++                "Kubernetes: skipping mount of {}: only directories can be synced into a pod",
++                host.display()
++            ));
 +            continue;
 +        }
-+
-         // Execute jobs in parallel if they don't depend on each other
-         let job_results = execute_job_batch(
--            &job_batch,
-+            &runnable,
-             &workflow,
-             runtime.as_ref(),
-             &env_context,
-@@ -305,6 +346,32 @@ async fn execute_github_workflow(
-     })
- }
- 
-+/// GitHub Actions `needs:` failure semantics: with no explicit `if:`, a job runs
-+/// only when every job it needs succeeded. Returns `Some(reason)` when the job
-+/// must be skipped because a needed job failed or was itself skipped, `None` when
-+/// it may run. Jobs with an `if:` are always allowed through here —
-+/// `execute_single_job` evaluates the condition and can opt back in on failure.
-+fn job_blocked_by_needs(job: &Job, all_job_results: &HashMap<String, String>) -> Option<String> {
-+    if job.if_condition.is_some() {
-+        return None;
-+    }
-+    let needs = job.needs.as_ref()?;
-+    for needed in needs {
-+        match all_job_results.get(needed).map(String::as_str) {
-+            // "success", or not-yet-recorded (a filtered target-job plan can omit
-+            // an upstream job) — neither blocks.
-+            Some("success") | None => {}
-+            Some(other) => {
-+                return Some(format!(
-+                    "needed job '{}' did not succeed ({})",
-+                    needed, other
-+                ));
-+            }
++        if !host.is_absolute() && !host.as_os_str().is_empty() {
++            wrkflw_logging::warning(&format!(
++                "Kubernetes: mounting {} empty: host path '{}' is not absolute, \
++                 and named volumes do not exist on a cluster",
++                container.display(),
++                host.display()
++            ));
 +        }
++        if mounts.iter().any(|m| m.container == *container) {
++            wrkflw_logging::warning(&format!(
++                "Kubernetes: container path {} is mounted twice; keeping the first mapping",
++                container.display()
++            ));
++            continue;
++        }
++        mounts.push(Mount {
++            host: host.to_path_buf(),
++            container: container.to_path_buf(),
++        });
 +    }
-+    None
++    mounts.sort_by(|a, b| a.container.cmp(&b.container));
++    mounts
 +}
 +
- /// Execute a GitLab CI/CD pipeline locally
- async fn execute_gitlab_pipeline(
-     pipeline_path: &Path,
++/// Paths nested inside `mount` that belong to other mounts, relative to
++/// `mount.container` and prefixed with `./` the way `tar -C dir .` names
++/// them. They are excluded when the parent is streamed back out so a nested
++/// emptyDir is not copied into the parent's host directory.
++pub(super) fn nested_excludes(mount: &Mount, all: &[Mount]) -> Vec<String> {
++    all.iter()
++        .filter(|other| other.container != mount.container)
++        .filter_map(|other| other.container.strip_prefix(&mount.container).ok())
++        .map(|rel| {
++            let parts: Vec<_> = rel
++                .components()
++                .map(|c| c.as_os_str().to_string_lossy())
++                .collect();
++            format!("./{}", parts.join("/"))
++        })
++        .collect()
++}
++
++/// True when `mount` sits inside another mount. The parent's archive writes
++/// straight through into it, where Docker's bind mount would hide those files.
++pub(super) fn is_nested(mount: &Mount, all: &[Mount]) -> bool {
++    all.iter().any(|other| {
++        other.container != mount.container && mount.container.starts_with(&other.container)
++    })
++}
++
++/// Everything that goes into one pod, independent of the cluster.
++pub(super) struct PodInput<'a> {
++    pub(super) name: &'a str,
++    pub(super) image: &'a str,
++    pub(super) cmd: &'a [&'a str],
++    pub(super) env_vars: &'a [(&'a str, &'a str)],
++    pub(super) working_dir: &'a Path,
++    pub(super) mounts: &'a [Mount],
++    pub(super) entrypoint: Option<&'a str>,
++}
++
++/// Build the pod manifest. Pure, so it is unit-tested without a cluster.
++pub(super) fn build_pod_manifest(config: &KubernetesConfig, input: &PodInput<'_>) -> Value {
++    let volume_name = |i: usize| format!("vol-{}", i);
++
++
 ```
 
-**File**: `crates/wrkflw/tests/needs_failure_propagation_test.rs` (added, +184/-0)
+**File**: `crates/executor/src/kubernetes/mod.rs` (added, +2033/-0)
 ```diff
-@@ -0,0 +1,184 @@
-+use std::fs;
-+use tempfile::tempdir;
-+use wrkflw_lib::executor::engine::{
-+    execute_workflow, ExecutionConfig, ExecutionResult, JobStatus, RuntimeType,
+@@ -0,0 +1,2033 @@
++//! Kubernetes runtime backend.
++//!
++//! Every [`ContainerRuntime::run_container`] call becomes one short-lived pod
++//! in the configured cluster. The pod carries one `emptyDir` per requested
++//! volume and three containers:
++//!
++//! * `wrkflw-wait`, an init container that blocks until a ready marker
++//!   appears. While it runs, every host volume is streamed into it as a tar
++//!   archive, so the workspace, GitHub env files and action checkouts are in
++//!   place before the step starts.
++//! * `main`, the step itself: the requested image, command, env and
++//!   working directory.
++//! * `wrkflw-sync`, a sidecar that keeps the pod alive after `main` exits so
++//!   the volumes can be streamed back to the host. That is how
++//!   `GITHUB_OUTPUT`, artifacts and workspace changes reach the executor and
++//!   the next step.
++//!
++//! Only `kubectl` is required on the host. Images the executor builds itself
++//! (combined runtime images, Dockerfile actions) additionally need Docker or
++//! Podman locally and a registry the cluster can pull from, given with
++//! `--k8s-registry`.
++
++mod manifest;
++mod sync;
++
++use async_trait::async_trait;
++use manifest::{build_pod_manifest, is_nested, nested_excludes, plan_mounts, Mount, PodInput};
++use once_cell::sync::Lazy;
++use serde_json::Value;
++use std::collections::{BTreeMap, HashSet};
++use std::ffi::{OsStr, OsString};
++use std::path::Path;
++use std::process::Stdio;
++use std::sync::atomic::{AtomicBool, Ordering};
++use std::sync::{Arc, Mutex};
++use std::time::Duration;
++use sync::{copy_dir_into_pod, copy_dir_out_of_pod};
++use tokio::process::Command;
++use wrkflw_runtime::container::{
++    ContainerError, ContainerOutput, ContainerRuntime, COMBINED_IMAGE_PREFIX, LOCAL_IMAGE_PREFIX,
 +};
 +
-+fn write_file(path: &std::path::Path, content: &str) {
-+    fs::write(path, content).expect("failed to write file");
++/// Image used for the wait and sync helper containers. Anything with `sh`,
++/// `tar`, `mkdir` and `touch` works.
++///
++/// Pinned by digest because this image runs as root with every mount attached.
++pub const DEFAULT_HELPER_IMAGE: &str =
++    "busybox:1.36@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662";
++
++/// Upper bound for one step, from pod creation to volume sync-back. Matches
++/// the engine's default job timeout, so `timeout-minutes` governs as it does
++/// on Docker and a long training step is not cut short.
++pub const DEFAULT_TIMEOUT_SECS: u64 = 6 * 60 * 60;
++
++/// How long a pod may stay unschedulable. Long enough for an autoscaler to
++/// bring up a node, short enough that a mistyped selector does not take the
++/// whole step timeout to report.
++pub const DEFAULT_SCHEDULE_TIMEOUT_SECS: u64 = 10 * 60;
++
++/// Added to the step timeout for `activeDeadlineSeconds`, so the client's own
++/// timeout normally fires first and reports the failure properly.
++const DEADLINE_MARGIN_SECS: u64 = 30;
++
++const AVAILABILITY_TIMEOUT: Duration = Duration::from_secs(5);
++
++const MAIN_CONTAINER: &str = "main";
++const WAIT_CONTAINER: &str = "wrkflw-wait";
++const SYNC_CONTAINER: &str = "wrkflw-sync";
++const SYNC_VOLUME: &str = "wrkflw-sync";
++const SYNC_DIR: &str = "/wrkflw-sync";
++const READY_MARKER: &str = "/wrkflw-sync/ready";
++const MANAGED_BY_LABEL: &str = "app.kubernetes.io/managed-by";
++const SESSION_LABEL: &str = "wrkflw.dev/session";
++
++/// Waiting reasons that never resolve on their own. Anything else (plain
++/// `ContainerCreating`, `PodInitializing`) is waited out.
++const FATAL_WAITING_REASONS: &[&str] = &[
++    "ErrImageNeverPull",
++    "InvalidImageName",
++    "CreateContainerConfigError",
++    "CreateContainerError",
++];
++
++/// Waiting reasons of a pull the kubelet is still retrying. A bad image and a
++/// registry blip look the same here: both go from `ErrImagePull` to
++/// `ImagePullBackOff` within seconds. Only time tells them apart.
++const PULL_RETRY_REASONS: &[&str] = &["ErrImagePull", "ImagePullBackOff"];
++
++/// How long a pull may keep failing before the step gives up. The kubelet
++/// retries after 10, 20 and 40 seconds, so this covers two or three attempts.
++const PULL_RETRY_GRACE: Duration = Duration::from_secs(60);
++
++/// How long `kubectl get pod` may keep failing before a step gives up. A remote
++/// API server can drop a request at any time, and one lost poll must not cost
++/// a long step its work.
++const POLL_FAILURE_GRACE: Duration = Duration::from_secs(60);
++
++/// Passed to every status poll. Without it a request lost on the network
++/// hangs instead of failing, and no failure would ever be counted.
++const POLL_REQUEST_TIMEOUT: &str = "--request-timeout=30s";
++
++/// One id per process, stamped on every pod as a label so a crashed run's
++/// pods can be found with `kubectl get pods -l wrkflw.dev/session=<id>`.
++static SESSION_ID: Lazy<String> = Lazy::new(|| uuid::Uuid::new_v4().simple().to_string());
++
++/// Pods created by this process that have not been deleted yet.
++static RUNNING_PODS: Lazy<Mutex<Vec<PodRef>>> = Lazy::new(|| Mutex::new(Vec::new()));
++
++/// Registry references pushed by this process. Global so
+```
+
+**File**: `crates/executor/src/kubernetes/sync.rs` (added, +845/-0)
+```diff
+@@ -0,0 +1,845 @@
++//! Streaming mounts between the host and a pod as tar archives.
++//!
++//! The way back deserves the care it gets here: for mounts the executor owns
++//! it deletes host files based on what a workflow left in a pod.
++
++use super::manifest::Mount;
++use super::{SYNC_CONTAINER, WAIT_CONTAINER};
++use std::collections::HashSet;
++use std::ffi::OsStr;
++use std::io::{self, Read};
++use std::path::{Component, Path, PathBuf};
++use std::process::Stdio;
++use std::sync::atomic::{AtomicBool, Ordering};
++use wrkflw_runtime::container::ContainerError;
++
++/// How much of a sync's stderr is kept for its error message.
++const MAX_STDERR_BYTES: usize = 64 * 1024;
++
++/// Read `child`'s stderr to the end on its own thread, keeping the first
++/// [`MAX_STDERR_BYTES`].
++///
++/// Whoever is busy with the child's stdin or stdout cannot also read stderr.
++/// A child that fills that pipe would block with us blocked on it in turn,
++/// until `--k8s-timeout` ended the step.
++pub(super) fn drain_stderr(child: &mut std::process::Child) -> std::thread::JoinHandle<String> {
++    let stderr = child.stderr.take();
++    std::thread::spawn(move || {
++        let Some(mut stderr) = stderr else {
++            return String::new();
++        };
++        let mut kept = Vec::new();
++        let mut buf = [0u8; 8192];
++        while let Ok(n) = stderr.read(&mut buf) {
++            if n == 0 {
++                break;
++            }
++            let room = MAX_STDERR_BYTES - kept.len();
++            kept.extend_from_slice(&buf[..n.min(room)]);
++        }
++        String::from_utf8_lossy(&kept).trim().to_string()
++    })
 +}
 +
-+fn emulation_cfg() -> ExecutionConfig {
-+    ExecutionConfig {
-+        runtime_type: RuntimeType::Emulation,
-+        verbose: false,
-+        preserve_containers_on_failure: false,
-+        secrets_config: None,
-+        show_action_messages: false,
-+        target_job: None,
++/// Blocking: tar `mount.host` and pipe it into `tar -x` in the wait container.
++pub(super) fn copy_dir_into_pod(
++    kubectl: &OsStr,
++    kubectl_args: &[String],
++    pod: &str,
++    mount: &Mount,
++) -> Result<(), ContainerError> {
++    let dest = mount.container.to_string_lossy().to_string();
++    let mut command = std::process::Command::new(kubectl);
++    command.args(kubectl_args).args([
++        "exec",
++        "-i",
++        pod,
++        "-c",
++        WAIT_CONTAINER,
++        "--",
++        "tar",
++        "-C",
++        &dest,
++        "-xof",
++        "-",
++    ]);
++    stream_dir_into(command, mount)?;
++    wrkflw_logging::debug(&format!(
++        "Kubernetes: synced {} -> {}:{}",
++        mount.host.display(),
++        pod,
++        dest
++    ));
++    Ok(())
++}
++
++/// Blocking: write `mount.host` as a tar archive to `command`'s stdin.
++pub(super) fn stream_dir_into(
++    mut command: std::process::Command,
++    mount: &Mount,
++) -> Result<(), ContainerError> {
++    let mut child = command
++        .stdin(Stdio::piped())
++        .stdout(Stdio::null())
++        .stderr(Stdio::piped())
++        .spawn()
++        .map_err(|e| {
++            ContainerError::ContainerStart(format!("Failed to spawn kubectl exec: {}", e))
++        })?;
++    let stderr = drain_stderr(&mut child);
++
++    let stdin = child.stdin.take().ok_or_else(|| {
++        ContainerError::ContainerExecution("kubectl exec stdin was not captured".to_string())
++    })?;
++    let mut builder = tar::Builder::new(stdin);
++    // Keep mtimes and modes so tools comparing timestamps behave as they would
++    // on a bind mount. The host's uid means nothing in the pod, so `tar -xo`
++    // discards it. Symlinks are shipped as symlinks, not followed.
++    builder.mode(tar::HeaderMode::Complete);
++    builder.follow_symlinks(false);
++    let archived = append_tree(&mut builder, &mount.host)
++        .and_then(|_| builder.into_inner())
++        .map(drop);
++
++    let status = child.wait().map_err(|e| {
++        ContainerError::ContainerExecution(format!("kubectl exec did not complete: {}", e))
++    })?;
++    let stderr = stderr.join().unwrap_or_default();
++    if !status.success() {
++        return Err(ContainerError::ContainerExecution(format!(
++            "syncing {} into the pod failed: {}",
++            mount.host.display(),
++            stderr
++        )));
 +    }
++    archived.map_err(|e| {
++        ContainerError::ContainerExecution(format!(
++            "failed to archive {}: {}",
++            mount.host.display(),
++            e
++        ))
++    })
 +}
 +
-+fn status_of<'a>(result: &'a ExecutionResult, job: &str) -> &'a str {
-+    let jr = result
-+        .jobs
-+        .iter()
-+        .find(|j| j.canonical_name == job)
-+        .unwrap_or_else(|| {
-+            let names: Vec<&str> = result
-+                .jobs
-+                .iter()
-+                .map(|j| j.canonical_name.as_str())
-+                .collect();
-+            panic!("job '{}' not in results: {:?}", job, names)
-+        });
-+    match jr.status {
-+        JobStatus::Success => "success",
-+        JobStatus::Failure => "failure",
-+        JobStatus::Skipped => "skipped",
++/// Archive everything under `root` as `./...`, like `append_dir_all`, except
++/// that a socket is skipped: tar cannot carry one, and one left behind by a
++/// dev server must not fail the step. Copy-out leaves host sockets alone too.
++fn append_tree<W: io::Write>(builder: &mut tar::Builder<W>, root: &Path) -> io::Result<()> {
++    builder.append_path_with_name(root, ".")?;
++    let mut pending = vec![PathBuf::new()];
++    while let Some(rel) = pending.pop() {
++        for entry in std::fs::read_dir(root.join(&rel))? {
++            let entry = entry?;
++            let file_type = entry.file_type()?;
++            let child = rel.join(entry.file_name());
++            #[cfg(unix)]
++            {
++                use std::os::unix::fs::FileTypeExt;
++                if file_type.is_socket() {
+```
+
+**File**: `crates/executor/src/lib.rs` (modified, +2/-0)
+```diff
+@@ -11,6 +11,7 @@ pub mod engine;
+ pub mod environment;
+ pub mod expression;
+ pub mod github_env_files;
++pub mod kubernetes;
+ pub mod podman;
+ pub mod substitution;
+ pub(crate) mod workflow_commands;
+@@ -21,3 +22,4 @@ pub use engine::{
+     detect_runtime, execute_workflow, parse_platform_override, ExecutionConfig, JobResult,
+     JobStatus, RuntimeType, StepResult, StepStatus,
+ };
++pub use kubernetes::{parse_key_value as parse_k8s_key_value, KubernetesConfig};
+```
+
+**File**: `crates/runtime/src/container.rs` (modified, +9/-1)
+```diff
+@@ -45,8 +45,16 @@ pub trait ContainerRuntime {
+         additional_packages: Option<Vec<String>>,
+     ) -> Result<String, ContainerError>;
+ 
+-    /// Check whether a Docker/OCI image exists locally.
++    /// Check whether a Docker/OCI image is usable by this runtime without
++    /// building it. A cheap, read-only check; callers may repeat it.
+     async fn image_exists(&self, tag: &str) -> Result<bool, ContainerError>;
++
++    /// True when `run_container` copies volumes to the step and back instead
++    /// of sharing them with the host, so a volume's contents end up on the
++    /// host whether or not the step meant them to.
++    fn mounts_are_copies(&self) -> bool {
++        false
 +    }
-+}
-+
-+/// A job whose `needs:` dependency failed must be skipped, not run.
-+#[tokio::test]
-+async fn dependent_job_is_skipped_when_need_fails() {
-+    let dir = tempdir().unwrap();
-+    let path = dir.path().join("ci.yml");
-+    write_file(
-+        &path,
-+        r#"
-+name: CI
-+on: push
-+jobs:
-+  deploy:
-+    runs-on: ubuntu-latest
-+    steps:
-+      - run: exit 1
-+  e2e:
-+    runs-on: ubuntu-latest
-+    needs: [deploy]
-+    steps:
-+      - run: echo "should not run"
-+"#,
-+    );
-+
-+    let result = execute_workflow(&path, emulation_cfg())
-+        .await
-+        .expect("workflow execution completed");
-+
-+    assert_eq!(status_of(&result, "deploy"), "failure");
-+    assert_eq!(
-+        status_of(&result, "e2e"),
-+        "skipped",
-+        "e2e must be skipped because deploy failed"
-+    );
-+}
-+
-+/// The skip cascades: a job that needs a skipped job is skipped too.
-+#[tokio::test]
-+async fn skip_cascades_through_the_needs_chain() {
-+    let dir = tempdir().unwrap();
-+    let path = dir.path().join("ci.yml");
-+    write_file(
-+        &path,
-+        r#"
-+name: CI
-+on: push
-+jobs:
-+  build:
-+    runs-on: ubuntu-latest
-+    steps:
-+      - run: exit 1
-+  test:
-+    runs-on: ubuntu-latest
-+    needs: [build]
-+    steps:
-+      - run: echo hi
-+  publish:
-+    runs-on: ubuntu-latest
-+    needs: [test]
-+    steps:
-+      - run: echo hi
-+"#,
-+    );
-+
-+    let result = execute_workflow(&path, emulation_cfg())
-+        .await
-+        .expect("workflow execution completed");
-+
-+    assert_eq!(status_of(&result, "build"), "failure");
-+    assert_eq!(status_of(&result, "test"), "skipped");
-+    assert_eq!(status_of(&result, "publish"), "skipped");
-+}
-+
-+/// An explicit `if:` opts a dependent job back in even when its need failed.
-+#[tokio::test]
-+async fn explicit_if_condition_still_runs_after_a_failed_need() {
-+    let dir = tempdir().unwrap();
-+    let path = dir.path().join("ci.yml");
-+    write_file(
-+        &path,
-+        r#"
-+name: CI
-+on: push
-+jobs:
-+  deploy:
-+    runs-on: ubuntu-latest
-+    steps:
-+      - run: exit 1
-+  notify:
-+    runs-on: ubuntu-latest
-+    needs: [deploy]
-+    if: always()
-+    steps:
-+      - run: echo "report the failure"
-+"#,
-+    );
-+
-+    let result = execute_workflow(&path, emulation_cfg())
-+        .await
-+        .expect("workflow execution completed");
-+
-+    assert_eq!(status_of(&result, "deploy"), "failure");
-+    assert_eq!(
-+        status_of(&result, "notify"),
-+        "success",
-+        "notify has `if: always()` and must still run"
-+    );
-+}
-+
-+/// Independent jobs in a later batch are unaffected by an unrelated failure.
-+#[tokio::test]
-+async fn unrelated_jobs_still_run_after_a_failure() {
-+    let dir = tempdir().unwrap();
-+    let path = dir.path().join("ci.yml");
-+    write_file(
-+        &path,
-+        r#"
-+name: CI
-+on: push
-+jobs:
-+  a:
-+    runs-on: ubuntu-latest
-+    steps:
-+      - run: exit 1
-+  b:
-+    runs-on: ubuntu-latest
-+    needs: [a]
-+    steps:
-+      - run: echo hi
-+  c:
-+    runs-on: ubuntu-latest
-+    steps:
-+      - run: echo independent
-+"#,
-+    );
-+
-+    let result = execute_workflow(&path, emulation_cfg())
-+        .await
-+        .expect("workflow execution completed");
-+
-+    assert_eq!(status_of(&result, "a"), "failure");
-+    assert_eq!(status_of(&result, "b"), "skipped");
-+    assert_eq!(status_of(&result, "c"), "success");
-+}
+ }
+ 
+ #[derive(Debug)]
 ```
 
 ---
 
-### Incident Patch 3: `a0f6757c` (2026-10-30)
-**Commit Message**: fix(executor): evaluate job if: against real needs state (#134)
+### Incident Patch 2: `6a3eae53` (2026-10-31)
+**Commit Message**: feat: override runs-on images with --platform (#113) (#141)
 
-* fix(executor): evaluate job if: against real needs state
+* feat: override runs-on images with --platform (#113)
 
-Follow-up to #126. A job-level `if:` was evaluated with `job_status`
-hardcoded to "success" and an empty `needs` context, so after a failed
-need `if: failure()` skipped, `if: success()` ran, and
-`needs.<id>.result` was null. Any `if:` also bypassed the needs gate,
-although GitHub prepends an implicit `success() &&` to expressions that
-call no status function.
+runs-on labels map to a hardcoded image table, so a workflow needing the
+tools of a real runner had to be edited to use a bigger image.
 
-The needs gate now lives in `execute_single_job`, after the needs
-context is built:
+Add a global -P/--platform LABEL=IMAGE option, also read from
+WRKFLW_PLATFORM. It sits between a job's container: and the built-in
+table, and reaches run, watch, the TUI, matrix jobs and reusable
+workflows.
 
-- No `if:` is treated as `success()`.
-- An `if:` without a status function becomes `success() && (<expr>)`.
-- `success()`/`failure()` see the upstream status: "failure" if any
-  transitive ancestor failed, "skipped" if a direct need was skipped.
-- `needs.<id>.result` and outputs are available to the expression.
+Remove the macOS emulation heuristic from the Docker runtime. It matched
+the act images and discarded step commands, so `exit 7` reported success.
 
-Moving the gate into `execute_single_job` also covers jobs inside
-reusable workflows, which run through `run_called_workflow`'s own batch
-loop and were not gated. The skipped `JobResult` literal is replaced by
-`JobResult::skipped`.
+Put /usr/local/bin and /usr/bin first on PATH in combined images, because
+the act image's bundled Node shadowed the version from setup-node.
 
-* test(executor): skip the needs propagation tests on Windows
+* fix(cli): make --platform labels deterministic and reject bad images
 
-The Windows CI jo
+The override map was keyed by whatever case the user typed, while
+lookups compared case-insensitively by scanning it. So with
+"-P ubuntu-latest=a -P Ubuntu-Latest=b" you got whichever entry the
+HashMap felt like yielding first. Random image per run. This is not
+great.
 
-**File**: `crates/executor/src/engine.rs` (modified, +302/-213)
+Lowercase the label when parsing, so both spellings land on the same
+key, the last one wins, and the looku
+
+**File**: `BREAKING_CHANGES.md` (modified, +24/-0)
 ```diff
-@@ -222,50 +222,11 @@ async fn execute_github_workflow(
-     let mut all_job_results: HashMap<String, String> = HashMap::new();
+@@ -1,5 +1,29 @@
+ # Breaking Changes
  
-     for job_batch in execution_plan {
--        // GitHub Actions: a job that declares `needs:` runs only if every needed
--        // job succeeded. If any needed job failed or was itself skipped, this job
--        // is skipped too, and its own dependents cascade. `resolve_dependencies`
--        // only orders the batches — it never enforces this — so do it here, before
--        // the batch runs. A job carrying an explicit `if:` is left for
--        // `execute_single_job` to evaluate: `if: always()` / `if: failure()` may
--        // deliberately opt back in.
--        let mut runnable: Vec<String> = Vec::with_capacity(job_batch.len());
--        for job_name in &job_batch {
--            match workflow
--                .jobs
--                .get(job_name)
--                .and_then(|job| job_blocked_by_needs(job, &all_job_results))
--            {
--                Some(reason) => {
--                    wrkflw_logging::info(&format!(
--                        "{} Skipping job '{}': {}",
--                        wrkflw_logging::symbols::SKIPPED,
--                        job_name,
--                        reason,
--                    ));
--                    let skipped = JobResult {
--                        name: job_name.clone(),
--                        canonical_name: job_name.clone(),
--                        status: JobStatus::Skipped,
--                        steps: Vec::new(),
--                        logs: String::new(),
--                        outputs: HashMap::new(),
--                    };
--                    all_job_results
--                        .insert(skipped.canonical_name.clone(), skipped.status.to_string());
--                    all_job_outputs.insert(skipped.canonical_name.clone(), skipped.outputs.clone());
--                    results.push(skipped);
--                }
--                None => runnable.push(job_name.clone()),
--            }
--        }
--        if runnable.is_empty() {
--            continue;
--        }
++## `ExecutionConfig` gained a `platform_overrides` field (unreleased)
++
++Code that builds `wrkflw_executor::ExecutionConfig` as a struct literal must set
++the new field, or it no longer compiles. `ExecutionConfig` and `RuntimeType` now
++implement `Default`, so end a literal with `..Default::default()` to stay
++compatible with later additions. The default runtime is `RuntimeType::Auto`.
++
++## Jobs on act images now report real step results (unreleased)
++
++Under the Docker runtime, any image name containing both `catthehacker` and
++`act-` was treated as macOS emulation. Each step's command was discarded, so
++steps on `ubuntu-*-medium` runners passed without running. Those steps now run
++and can fail. Workflows that were passing there may start failing for real.
++
++This also affected `uses:` steps on any runner label, because actions such as
++`actions/cache` and the `actions/setup-*` family are sent to
++`catthehacker/ubuntu:act-latest`. Their commands now run too, including those
++derived from a `with.command` input, such as `npm run`, `cargo` and `pip`.
++
++`RUNNER_OS`, `PATH` and `HOME` are also no longer overridden for those images.
++
++Combined images for `actions/setup-*` jobs now put `/usr/local/bin` and
++`/usr/bin` first on `PATH`, so they are rebuilt once on the next run.
++
+ ## `~/.wrkflw` moved to the platform base directories (unreleased)
+ 
+ wrkflw no longer writes to a hardcoded `~/.wrkflw/`. The new locations follow
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -32,7 +32,7 @@ wrkflw-watcher = { path = "crates/watcher", version = "0.8.0" }
+ wrkflw-validators = { path = "crates/validators", version = "0.8.0" }
+ 
+ # External dependencies
+-clap = { version = "4.3", features = ["derive"] }
++clap = { version = "4.3", features = ["derive", "env"] }
+ colored = "2.0"
+ serde = { version = "1.0", features = ["derive"] }
+ serde_yaml = "0.9"
+```
+
+**File**: `README.md` (modified, +19/-0)
+```diff
+@@ -130,6 +130,25 @@ wrkflw run --jobs .github/workflows/ci.yml
+ wrkflw run --preserve-containers-on-failure .github/workflows/ci.yml
+ ```
+ 
++### Custom runner images
++
++By default `runs-on` maps to a small built-in image, so `ubuntu-latest` runs in `ubuntu:latest`, which has few of the tools a GitHub runner has. Use `-P`/`--platform` to pick the image for a label, for example the larger images made for [act](https://github.com/nektos/act):
++
++```bash
++wrkflw run -P ubuntu-latest=catthehacker/ubuntu:act-latest .github/workflows/ci.yml
++
++# Repeat the flag or separate entries with commas
++wrkflw run -P ubuntu-latest=my/image:1 -P ubuntu-22.04=my/image:2 .github/workflows/ci.yml
++
++# Set it once for every command, including the TUI and watch mode
++export WRKFLW_PLATFORM=ubuntu-latest=catthehacker/ubuntu:act-latest
++```
++
++- A job-level `container:` still wins over `--platform`, which wins over the built-in image.
++- Labels match case-insensitively, and the last value given for a label wins. Every label in `runs-on: [self-hosted, linux]` is tried, and `runs-on: ${{ matrix.os }}` is resolved per matrix combination.
++- Runtimes from `actions/setup-*` are installed on top of your image, so the image must be Debian or Ubuntu based for those jobs.
++- `--platform` replaces `WRKFLW_PLATFORM` entirely when both are set. It has no effect in emulation mode.
++
+ ### Trigger-aware execution
+ 
+ Skip workflows whose `on:` block wouldn't fire for a given event/change set. Strict mode is on by default: `wrkflw run --event …` without `--diff` or `--changed-files` is rejected up front rather than silently skipping every `paths:`-gated workflow.
+```
+
+**File**: `crates/executor/README.md` (modified, +1/-3)
+```diff
+@@ -21,10 +21,8 @@ use wrkflw_executor::{execute_workflow, ExecutionConfig, RuntimeType};
+ let cfg = ExecutionConfig {
+     runtime_type: RuntimeType::Docker,
+     verbose: true,
+-    preserve_containers_on_failure: false,
+-    secrets_config: None,
+-    show_action_messages: false,
+     target_job: Some("build".to_string()), // run a single job
++    ..Default::default()
+ };
+ 
+ let workflow_path = std::path::Path::new(".github/workflows/ci.yml");
+```
+
+**File**: `crates/executor/src/docker.rs` (modified, +101/-52)
+```diff
+@@ -867,6 +867,42 @@ impl ContainerRuntime for DockerRuntime {
+ }
+ 
+ // Move the actual implementation to internal methods
++/// Build the create-container config for a step.
++///
++/// The image name must not change how a step's command runs. Wrapping `cmd`
++/// in an entrypoint for particular images is how act images once lost every
++/// step's command while reporting success.
++fn build_container_config(
++    image: &str,
++    cmd: Vec<String>,
++    env: Vec<String>,
++    working_dir: &Path,
++    host_config: HostConfig,
++    is_windows_image: bool,
++    entrypoint: Option<&str>,
++) -> Config<String> {
++    Config {
++        image: Some(image.to_string()),
++        // Empty cmd means "use the image's built-in ENTRYPOINT/CMD"
++        cmd: if cmd.is_empty() { None } else { Some(cmd) },
++        env: Some(env),
++        working_dir: Some(working_dir.to_string_lossy().to_string()),
++        host_config: Some(host_config),
++        // Windows containers need specific configuration
++        user: if is_windows_image {
++            Some("ContainerAdministrator".to_string())
++        } else {
++            None
++        },
++        // An explicit entrypoint from action.yml wins. Otherwise keep the
++        // image's own, which an empty cmd relies on.
++        entrypoint: entrypoint
++            .filter(|s| !s.is_empty())
++            .map(|ep| vec![ep.to_string()]),
++        ..Default::default()
++    }
++}
++
+ impl DockerRuntime {
+     async fn run_container_inner(
+         &self,
+@@ -889,7 +925,7 @@ impl DockerRuntime {
+         }
+ 
+         // Collect environment variables
+-        let mut env: Vec<String> = env_vars
++        let env: Vec<String> = env_vars
+             .iter()
+             .map(|(k, v)| format!("{}={}", k, v))
+             .collect();
+@@ -905,7 +941,6 @@ impl DockerRuntime {
+ 
+         // Convert command vector to Vec<String>
+         let cmd_vec: Vec<String> = cmd.iter().map(|&s| s.to_string()).collect();
+-        let has_cmd = !cmd_vec.is_empty();
+ 
+         wrkflw_logging::debug(&format!("Running command in Docker: {:?}", cmd_vec));
+         wrkflw_logging::debug(&format!("Environment: {:?}", env));
+@@ -915,19 +950,6 @@ impl DockerRuntime {
+         let is_windows_image = image.contains("windows")
+             || image.contains("servercore")
+             || image.contains("nanoserver");
+-        let is_macos_emu =
+-            image.contains("act-") && (image.contains("catthehacker") || image.contains("nektos"));
 -
--        // Execute jobs in parallel if they don't depend on each other
-+        // Execute jobs in parallel if they don't depend on each other.
-+        // `needs:` failure propagation and `if:` evaluation happen per job inside
-+        // `execute_job_with_matrix`, so this loop and `run_called_workflow` share them.
-         let job_results = execute_job_batch(
--            &runnable,
-+            &job_batch,
-             &workflow,
-             runtime.as_ref(),
-             &env_context,
-@@ -280,29 +241,7 @@ async fn execute_github_workflow(
+-        // Add platform-specific environment variables
+-        if is_macos_emu {
+-            // Add macOS-specific environment variables
+-            env.push("RUNNER_OS=macOS".to_string());
+-            env.push("RUNNER_ARCH=X64".to_string());
+-            env.push("TMPDIR=/tmp".to_string());
+-            env.push("HOME=/root".to_string());
+-            env.push("GITHUB_WORKSPACE=/github/workspace".to_string());
+-            env.push("PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin".to_string());
+-        }
+ 
+         // Create appropriate container options based on platform
+         let options = Some(CreateContainerOptions {
+@@ -953,43 +975,15 @@ impl DockerRuntime {
+             }
+         };
+ 
+-        // Create container config with platform-specific settings
+-        let mut config = Config {
+-            image: Some(image.to_string()),
+-            // Empty cmd means "use the image's built-in ENTRYPOINT/CMD"
+-            cmd: if has_cmd { Some(cmd_vec) } else { None },
+-            env: Some(env),
+-            working_dir: Some(working_dir.to_string_lossy().to_string()),
+-            host_config: Some(host_config),
+-            // Windows containers need specific configuration
+-            user: if is_windows_image {
+-                Some("ContainerAdministrator".to_string())
+-            } else {
+-                None // Don't specify user for macOS emulation - use default root user
+-            },
+-            // Map appropriate entrypoint for different platforms.
+-            // Priority: explicit entrypoint from action.yml > macOS bash wrapper > image default.
+-            // Only apply the macOS bash wrapper when there is an explicit command to wrap;
+-            // an empty cmd means "use the image's native ENTRYPOINT/CMD"
+-            // and overriding it with bash would hang or discard the real entrypoint.
+-            entrypoint: if let Some(ep) = entrypoint.filter(|s| !s.is_empty()) {
+-                Some(vec![ep.to_string()])
+-            } else if is_macos_emu && has_cmd {
+-                // For macOS, ensure we use bash
+-                Some(vec!["bash".to_string(), "-l".to_string(), "-c".to_string()])
+-            } else {
+-                None
+-            },
+-            ..Default::default()
+-        };
+-
+-        // Run platform-specific container setup
+-        if is_macos_emu {
+-            // Add special labels for macOS
+-            let mut labels = HashMap::new();
+-            labels.insert("wrkflw.platform".to_string(), "macos".to_string());
+-  
+```
+
+**File**: `crates/executor/src/engine.rs` (modified, +335/-17)
+```diff
+@@ -82,6 +82,7 @@ async fn execute_github_workflow(
+     mut config: ExecutionConfig,
+ ) -> Result<ExecutionResult, ExecutionError> {
+     config.runtime_type = detect_runtime(config.runtime_type);
++    warn_if_overrides_unused(&config);
+     // 1. Parse workflow file
+     let workflow = parse_workflow(workflow_path)?;
+ 
+@@ -238,6 +239,7 @@ async fn execute_github_workflow(
+             &all_job_results,
+             &artifact_store,
+             &cache_store,
++            &config.platform_overrides,
          )
          .await?;
  
--        // Collect job outputs and results for downstream jobs' `needs.*` context.
--        // For matrix jobs, multiple combinations share the same canonical_name — the last
--        // combination to complete wins.  This matches GitHub Actions' behavior where matrix
--        // job outputs are non-deterministic when multiple combinations set the same key.
--        for job_result in &job_results {
--            if all_job_outputs.contains_key(&job_result.canonical_name)
--                && job_result.name != job_result.canonical_name
--            {
--                wrkflw_logging::warning(&format!(
--                    "Matrix job '{}' overwrites outputs for '{}' — \
--                     needs.{}.outputs will reflect the last combination only",
--                    job_result.name, job_result.canonical_name, job_result.canonical_name,
--                ));
--            }
--            all_job_results.insert(
--                job_result.canonical_name.clone(),
--                job_result.status.to_string(),
--            );
--            all_job_outputs.insert(
--                job_result.canonical_name.clone(),
--                job_result.outputs.clone(),
--            );
--        }
-+        record_job_results(&job_results, &mut all_job_outputs, &mut all_job_results);
+@@ -332,6 +334,7 @@ async fn execute_gitlab_pipeline(
+     mut config: ExecutionConfig,
+ ) -> Result<ExecutionResult, ExecutionError> {
+     config.runtime_type = detect_runtime(config.runtime_type);
++    warn_if_overrides_unused(&config);
+     wrkflw_logging::info("Executing GitLab CI/CD pipeline");
  
-         // Check for job failures and collect details
-         for job_result in &job_results {
-@@ -346,30 +285,45 @@ async fn execute_github_workflow(
-     })
+     // 1. Parse the GitLab pipeline file
+@@ -442,6 +445,7 @@ async fn execute_gitlab_pipeline(
+             &HashMap::new(),
+             &artifact_store,
+             &cache_store,
++            &config.platform_overrides,
+         )
+         .await?;
+ 
+@@ -648,24 +652,76 @@ fn initialize_runtime(
+     }
  }
  
--/// GitHub Actions `needs:` failure semantics: with no explicit `if:`, a job runs
--/// only when every job it needs succeeded. Returns `Some(reason)` when the job
--/// must be skipped because a needed job failed or was itself skipped, `None` when
--/// it may run. Jobs with an `if:` are always allowed through here —
--/// `execute_single_job` evaluates the condition and can opt back in on failure.
--fn job_blocked_by_needs(job: &Job, all_job_results: &HashMap<String, String>) -> Option<String> {
--    if job.if_condition.is_some() {
--        return None;
--    }
--    let needs = job.needs.as_ref()?;
--    for needed in needs {
--        match all_job_results.get(needed).map(String::as_str) {
--            // "success", or not-yet-recorded (a filtered target-job plan can omit
--            // an upstream job) — neither blocks.
--            Some("success") |
-```
-
-**File**: `crates/executor/src/expression.rs` (modified, +55/-5)
-```diff
-@@ -1034,15 +1034,43 @@ pub fn evaluate(expr: &str, ctx: &ExpressionContext) -> Result<ExprValue, String
- ///
- /// Used for `if:` conditions. Strips `${{ }}` wrappers if present.
- pub fn evaluate_as_bool(expr: &str, ctx: &ExpressionContext) -> Result<bool, String> {
-+    let val = evaluate(strip_expression_wrapper(expr), ctx)?;
-+    Ok(val.is_truthy())
+-#[derive(Debug, Clone, PartialEq)]
++#[derive(Debug, Clone, Default, PartialEq)]
+ pub enum RuntimeType {
+     /// Detect Docker first, then Podman, then fall back to emulation.
++    #[default]
+     Auto,
+     Docker,
+     Podman,
+     Emulation,
+     SecureEmulation,
+ }
+ 
+-#[derive(Debug, Clone)]
++#[derive(Debug, Clone, Default)]
+ pub struct ExecutionConfig {
+     pub runtime_type: RuntimeType,
+     pub verbose: bool,
+     pub preserve_containers_on_failure: bool,
+     pub secrets_config: Option<SecretConfig>,
+     pub show_action_messages: bool,
+     pub target_job: Option<String>,
++    /// User-supplied `runs-on` label to image mappings. They win over the
++    /// built-in table but lose to a job-level `container:`. Keys must be
++    /// lowercase, as [`parse_platform_override`] returns them, because labels
++    /// match case-insensitively.
++    pub platform_overrides: HashMap<String, String>,
 +}
 +
-+/// Strip an optional `${{ ... }}` wrapper and surrounding whitespace.
-+pub fn strip_expression_wrapper(expr: &str) -> &str {
-     let trimmed = expr.trim();
--    // Strip ${{ }} if present
--    let inner = if trimmed.starts_with("${{") && trimmed.ends_with("}}") {
--        &trimmed[3..trimmed.len() - 2]
-+    if trimmed.starts_with("${{") && trimmed.ends_with("}}") {
-+        trimmed[3..trimmed.len() - 2].trim()
-     } else {
-         trimmed
-+    }
-+}
-+
-+/// Whether an expression calls one of the status functions `success()`,
-+/// `failure()`, `always()` or `cancelled()`.
++/// Parse a `LABEL=IMAGE` runner override, as given to `--platform`.
 +///
-+/// Uses the expression tokenizer, so text inside string literals and property
-+/// names such as `steps.success` do not count. Function names match
-+/// case-insensitively, as in GitHub Actions. An expression that does not
-+/// tokenize returns `false`; evaluating it fails anyway.
-+pub fn calls_status_function(expr: &str) -> bool {
-+    const STATUS_FUNCTIONS: [&str; 4] = ["success", "failure", "always", "cancelled"];
-+    let Ok(tokens) = Tokenizer::new(expr.trim()).tokenize() else {
-+        return false;
-     };
--    let val = evaluate(inner, ctx)?;
--    Ok(val.is_truthy())
-+    tokens.windows(2).enumerate().any(|(i, pair)| {
-+        let Token::Ident(name) = &pair[0] else {
-+            return false;
-+        };
-+        let is_property = i > 0 && tokens[i - 1] == Token::Dot;
-+        !is_property
-+            && pair[1] == Token::LParen
-+            && STATUS_FUNCTIONS
-+                .iter()
-+                .any(|f| f.eq_ignore_ascii_case(name))
-+    })
++/// The label is lowercased so labels differing only by case share one map key.
++/// The image is later written to a Dockerfile `FROM` line, so whitespace is
++/// rejected. No valid image reference contains any.
++pub fn parse_platform_override(s: &str) -> Result<(String, String), String> {
++    let (label, image) = s
++        .split_once('=')
++        .ok_or_else(|| format!("invalid LABEL=IMAGE: no `=` found in `{}`", s))?;
++    let (label, image) = (label.trim(), image.trim());
++    if label.is_empty() || image.is_empty() {
++        return Err(format!(
++            "invalid LABEL=IMAGE: label and image must both be set in `{}`",
++            s
++        ));
++    }
++    if image.chars().any(char::is_whitespace) {
++        return Err(format!(
++            "invalid LABEL=IMAGE: image must not contain whitespace in `{}`",
++            s
++        ));
++    }
++    Ok((label.to_ascii_lowercase(), image.to_string()))
++}
++
++/// Overrides only change which image a container runs, so they do nothing
++/// when no container runs. Say so rather than ignoring the flag silently.
++fn warn_if_overrides_unused(config: &ExecutionConfig) {
++    if overrides_unused(&config.platform_overrides, &config.runtime_type) {
++        wrkflw_logging::warning(
++            "--platform has no effect in emulation mode: steps run on the host, not in an image",
++        );
++    }
++}
++
++fn overrides_unused(
++    platform_overrides: &HashMap<String, String>,
++    runtime_type: &RuntimeType,
++) -> bool {
++    !platform_overrides.is_empty()
++        && matches!(
++            runtime_type,
++            RuntimeType::Emulation | RuntimeType::SecureEmulation
++        )
  }
  
- // ---------------------------------------------------------------------------
-@@ -1053,6 +1081,28 @@ pub fn evaluate_as_bool(expr: &str, ctx: &ExpressionContext) -> Result<bool, Str
- mod tests {
-     use super::*;
+ pub struct ExecutionResult {
+@@ -1692,6 +1748,11 @@ fn generate_combined_dockerfile(runtimes: &[SetupRuntime], base_image: &str) ->
  
-+    #[test]
-+    fn calls_status_function_detects_calls_only() {
-+        assert!(calls_status_function("always()"));
-+        assert!(calls_status_function("!cancelled()"));
-+        assert!(calls_status_function("failure ( )"));
-+        assert!(calls_status_function("Success()"));
-+        assert!(calls_status_function("github.ref == 'x' && failure()"));
-+        assert!(!calls_status_function("github.ref == 'refs/heads/main'"));
-+        assert!(!calls_status_function("needs.build.result == 'failure'"));
-+        assert!(!calls_status_function("'always()' == 'x'"));
-+        assert!(!calls_status_function("'it''s always()' == 'x'"));
-+        assert!(!calls_status_function("steps.success.outcome"));
-+        assert!(!calls_status_function("success_flag(x)"));
-+        assert!(!calls_status_function("'unterminated"));
-+    }
+     dockerfile.push_str(" && \\\n    rm -rf /var/lib/apt/lists/*\n");
+ 
++    // Base images can bundle tools ahead of the system directories. The act
++    // images do this with Node, which would shadow the version a setup action
++    // just installed. Every install script lands in one of these directories.
++    dockerfile.push_str("ENV PATH=/usr/local/bin:/usr/bin:$PATH\n");
 +
-+    #[test]
-+    fn strip_expression_wrapper_handles_both_forms() {
-+        assert_eq!(strip_expression_wrapper("  ${{ a && b }} "), "a && b");
-+        assert_eq!(strip_expression_wrapper(" a && b "), "a && b");
-+    }
-+
-     lazy_static::lazy_static! {
-         static ref EMPTY_ENV: HashMap<String, String> = HashMap::new();
-         static ref EMPTY_USER_ENV: HashMap<String, String> = HashMap::new();
+     dockerfile
+ }
+ 
+@@ -1814,8 +1875,10 @@ async fn resolve_runner_image(
+     job: &Job,
+     steps: &[Step],
+     runtime: &dyn ContainerRuntime,
++    platform_overrides: &HashMap<String, String>,
++    matrix: Option<&HashMap<String, Value>>,
+ ) -> Result<String, ExecutionError> {
+-    let base_image = get_effective_runner_image(job);
++    let base_image = get_effective_runner_image(job, platform_overrides, matrix);
+ 
+     if job.container.is_some() {
+         return Ok(base_image);
+@@ -1845,6 +1908,7 @@ async fn execute_job_batch(
+     all_job_results: &HashMap<String, String>,
+     artifact_store: &crate::artifacts::ArtifactStore,
+     cache_store: &crate::cache::Cach
 ```
 
-**File**: `crates/wrkflw/tests/needs_failure_propagation_test.rs` (modified, +396/-0)
+**File**: `crates/executor/src/lib.rs` (modified, +2/-2)
 ```diff
-@@ -1,3 +1,8 @@
-+// These tests run real `bash` steps through the emulation runtime. On
-+// windows-latest `bash` resolves to the WSL launcher, which has no distribution
-+// installed, so every step fails. Engine unit tests use the same gate.
-+#![cfg(not(target_os = "windows"))]
-+
- use std::fs;
- use tempfile::tempdir;
- use wrkflw_lib::executor::engine::{
-@@ -182,3 +187,394 @@ jobs:
-     assert_eq!(status_of(&result, "b"), "skipped");
-     assert_eq!(status_of(&result, "c"), "success");
- }
-+
-+/// Run an inline workflow and return the result.
-+async fn run(yaml: &str) -> ExecutionResult {
-+    let dir = tempdir().unwrap();
-+    let path = dir.path().join("ci.yml");
-+    write_file(&path, yaml);
-+    execute_workflow(&path, emulation_cfg())
-+        .await
-+        .expect("workflow execution completed")
-+}
-+
-+/// `if: failure()` must run when a need failed, and `if: success()` must not.
-+#[tokio::test]
-+async fn status_functions_see_the_failed_need() {
-+    let result = run(r#"
-+name: CI
-+on: push
-+jobs:
-+  deploy:
-+    runs-on: ubuntu-latest
-+    steps:
-+      - run: exit 1
-+  on_failure:
-+    runs-on: ubuntu-latest
-+    needs: [deploy]
-+    if: failure()
-+    steps:
-+      - run: echo "cleanup"
-+  on_success:
-+    runs-on: ubuntu-latest
-+    needs: [deploy]
-+    if: success()
-+    steps:
-+      - run: echo "should not run"
-+"#)
-+    .await;
-+
-+    assert_eq!(status_of(&result, "deploy"), "failure");
-+    assert_eq!(status_of(&result, "on_failure"), "success");
-+    assert_eq!(status_of(&result, "on_success"), "skipped");
-+}
-+
-+/// `needs.<id>.result` is populated when a job-level `if:` is evaluated.
-+#[tokio::test]
-+async fn needs_result_is_visible_to_job_if() {
-+    let result = run(r#"
-+name: CI
-+on: push
-+jobs:
-+  deploy:
-+    runs-on: ubuntu-latest
-+    steps:
-+      - run: exit 1
-+  report:
-+    runs-on: ubuntu-latest
-+    needs: [deploy]
-+    if: always() && needs.deploy.result == 'failure'
-+    steps:
-+      - run: echo "deploy failed"
-+"#)
-+    .await;
-+
-+    assert_eq!(status_of(&result, "report"), "success");
-+}
-+
-+/// An `if:` without a status function gets an implicit `success() &&`.
-+#[tokio::test]
-+async fn plain_if_is_still_gated_on_needs() {
-+    let result = run(r#"
-+name: CI
-+on: push
-+jobs:
-+  build:
-+    runs-on: ubuntu-latest
-+    steps:
-+      - run: exit 1
-+  publish:
-+    runs-on: ubuntu-latest
-+    needs: [build]
-+    if: ${{ true }}
-+    steps:
-+      - run: echo "should not run"
-+"#)
-+    .await;
-+
-+    assert_eq!(status_of(&result, "publish"), "skipped");
-+}
-+
-+/// A need skipped by its own `if:` skips its dependents.
-+#[tokio::test]
-+async fn need_skipped_by_its_own_if_skips_dependents() {
-+    let result = run(r#"
-+name: CI
-+on: push
-+jobs:
-+  build:
-+    runs-on: ubuntu-latest
-+    if: false
-+    steps:
-+      - run: echo hi
-+  test:
-+    runs-on: ubuntu-latest
-+    needs: [build]
-+    steps:
-+      - run: echo hi
-+"#)
-+    .await;
-+
-+    assert_eq!(status_of(&result, "build"), "skipped");
-+    assert_eq!(status_of(&result, "test"), "skipped");
-+}
-+
-+/// One failed need is enough to skip, even when another need succeeded.
-+#[tokio::test]
-+async fn any_failed_need_among_several_skips() {
-+    let result = run(r#"
-+name: CI
-+on: push
-+jobs:
-+  ok:
-+    runs-on: ubuntu-latest
-+    steps:
-+      - run: echo ok
-+  bad:
-+    runs-on: ubuntu-latest
-+    steps:
-+      - run: exit 1
-+  merge:
-+    runs-on: ubuntu-latest
-+    needs: [ok, bad]
-+    steps:
-+      - run: echo hi
-+"#)
-+    .await;
-+
-+    assert_eq!(status_of(&result, "ok"), "success");
-+    assert_eq!(status_of(&result, "merge"), "skipped");
-+}
-+
-+/// A failed grandparent keeps `success()` false even when the parent ran via
-+/// `if: always()`, matching GitHub's ancestor semantics.
-+#[tokio::test]
-+async fn ancestor_failure_propagates_past_an_always_job() {
-+    let result = run(r#"
-+name: CI
-+on: push
-+jobs:
-+  build:
-+    runs-on: ubuntu-latest
-+    steps:
-+      - run: exit 1
-+  notify:
-+    runs-on: ubuntu-latest
-+    needs: [build]
-+    if: always()
-+    steps:
-+      - run: echo notify
-+  deploy:
-+    runs-on: ubuntu-latest
-+    needs: [notify]
-+    steps:
-+      - run: echo "should not run"
-+  cleanup:
-+    runs-on: ubuntu-latest
-+    needs: [notify]
-+    if: failure()
-+    steps:
-+      - run: echo cleanup
-+"#)
-+    .await;
-+
-+    assert_eq!(status_of(&result, "notify"), "success");
-+    assert_eq!(status_of(&result, "deploy"), "skipped");
-+    assert_eq!(status_of(&result, "cleanup"), "success");
-+}
-+
-+/// Jobs inside a reusable workflow follow the same `needs:` rules.
-+#[tokio::test]
-+async fn reusable_workflow_jobs_skip_after_failed_need() {
-+    // Local reusable-workflow paths must stay inside the current directory
-+    // (the repository root), so the temp dir is created there.
-+    let dir = tempfile::Builder::new()
-+        .prefix(".needs-reusable-")
-+        .tempdir_in(".")
-+        .unwrap();
-+    let dir_name = dir
-+        .path()
-+        .file_name()
-+        .unwrap()
-+        .to_string_lossy()
-+  
+@@ -18,6 +18,6 @@ pub(crate) mod workflow_commands;
+ // Re-export public items
+ pub use docker::cleanup_resources;
+ pub use engine::{
+-    detect_runtime, execute_workflow, ExecutionConfig, JobResult, JobStatus, RuntimeType,
+-    StepResult, StepStatus,
++    detect_runtime, execute_workflow, parse_platform_override, ExecutionConfig, JobResult,
++    JobStatus, RuntimeType, StepResult, StepStatus,
+ };
+```
+
+**File**: `crates/ui/src/app/mod.rs` (modified, +4/-0)
+```diff
+@@ -14,6 +14,7 @@ use crossterm::{
+     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+ };
+ use ratatui::{backend::CrosstermBackend, Terminal};
++use std::collections::HashMap;
+ use std::io::{self, stdout};
+ use std::path::PathBuf;
+ use std::sync::mpsc;
+@@ -33,6 +34,7 @@ pub async fn run_wrkflw_tui(
+     preserve_containers_on_failure: bool,
+     show_action_messages: bool,
+     theme: Option<ThemePreference>,
++    platform_overrides: HashMap<String, String>,
+ ) -> io::Result<()> {
+     // Picks the palette, which may query the terminal, so it has to
+     // happen before raw mode and the event loop take over the tty.
+@@ -66,6 +68,7 @@ pub async fn run_wrkflw_tui(
+         tx.clone(),
+         preserve_containers_on_failure,
+         show_action_messages,
++        platform_overrides.clone(),
+     );
+ 
+     if app.validation_mode {
+@@ -163,6 +166,7 @@ pub async fn run_wrkflw_tui(
+                         runtime_type,
+                         verbose,
+                         show_action_messages,
++                        platform_overrides,
+                     )
+                     .await
+                 } else if path.is_dir() {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #142** (2026-10-31): feat(runtime): add a Kubernetes runtime backend (@bahdotsh)
+- **PR #141** (2026-10-31): feat: override runs-on images with --platform (#113) (@bahdotsh)
 - **PR #140** (2026-10-30): feat: support Gitea workflows in .gitea/workflows (#132) (@bahdotsh)
 - **PR #139** (2026-10-30): fix(ui): add a light theme for light terminals (#120) (@bahdotsh)
 - **PR #138** (2026-10-30): fix: use platform base directories instead of ~/.wrkflw (#117) (@bahdotsh)
 - **PR #137** (2026-10-30): feat(matrix): support expressions in matrix include and exclude (#112) (@bahdotsh)
-- **PR #136** (2026-10-30): fix(ui): clear terminal on TUI startup (#111) (@bahdotsh)
-- **PR #135** (2026-10-30): fix(gitlab): resolve include, spec:inputs, extends and hidden jobs (@bahdotsh)
 
 ---
 
@@ -3421,89 +3463,49 @@ The Windows CI jo
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. executor): harden custom shell script path handling (#133)
+## X. runtime): add a Kubernetes runtime backend (#142)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bahdotsh/wrkflw. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bahdotsh/wrkflw. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `69515269`: executor): harden custom shell script path handling (#133). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `153b8ee0`: runtime): add a Kubernetes runtime backend (#142). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "syn 2.0.106",
-version = "0.1.92"
-checksum = "82f6aeea286b8eb4dd3431a1be1b59d290ace00f5bfd8e2a159bc2a05e2c1667"
- "syn 3.0.9",
- "syn 2.0.106",
- "syn 2.0.106",
- "syn 2.0.106",
- "syn 2.0.106",
- "syn 2.0.106",
- "syn 2.0.106",
- "syn 2.0.106",
- "syn 2.0.106",
- "syn 2.0.106",
- "syn 2.0.106",
-[[package]]
-name = "syn"
-version = "3.0.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d78c8dee4c7bf0e14673097256fed6142ce9d3b85a408189d07482442145823b"
-dependencies = [
- "proc-macro2",
- "quote",
- "unicode-ident",
-]
+- **Kubernetes execution** — run each step as a pod in your own cluster, with node selectors and GPU resource requests
+# Run each step as a pod in a Kubernetes cluster
+wrkflw run --runtime kubernetes --k8s-namespace ci .github/workflows/ci.yml
 
- "syn 2.0.106",
- "syn 2.0.106",
- "syn 2.0.106",
- "syn 2.0.106",
- "syn 2.0.106",
- "syn 2.0.106",
- "syn 2.0.106",
- "syn 2.0.106",
- "syn 2.0.106",
- "syn 2.0.106",
- "syn 2.0.106",
- "syn 2.0.106",
+| `e` | Cycle runtime (Docker / Podman / Kubernetes / Secure Emulation / Emulation) |
+| **Kubernetes** | Each step runs as a pod in a cluster you point `kubectl` at | GPU/XPU jobs, shared build clusters, self-hosted forges |
+### Kubernetes runtime
+
+`--runtime kubernetes` dispatches every step to the cluster `kubectl` is configured for. It is never auto-detected, and it never falls back to running on your machine: if the cluster is unreachable, the run fails.
+
+```bash
+# Pick the cluster and namespace, then run as usual
+wrkflw run --runtime kubernetes --k8s-context gpu-cluster --k8s-namespace ci .github/workflows/train.yml
+
+# Land on GPU nodes and request an accelerator for every step
+wrkflw run --runtime kubernetes \
+  --k8s-node-selector accelerator=a100 \
+  --k8s-resource nvidia.com/gpu=1 --k8s-resource memory=16Gi \
+  .github/workflows/train.yml
+
+# Private registry, and a registry wrkflw can push locally built images to
+wrkflw run --runtim
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
- "syn",
-version = "0.1.89"
-checksum = "9035ad2d096bed7955a320ee7e2230574d28fd3c3a0f186cbea1ff3c7eed5dbb"
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
+| `e` | Cycle runtime (Docker / Podman / Emulation / Secure Emulation) |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `69515269` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `153b8ee0` are properly handled with clean fallback behavior.

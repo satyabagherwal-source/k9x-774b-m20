@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `50ae5918`  
+> **Source Version**: `86db624f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T22:50:02.872Z  
+> **Timestamp**: 2026-10-31T14:39:35.141Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T22:50:01.206Z  
+> **Harvest Timestamp**: 2026-10-31T14:39:35.134Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1738,14 +1738,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #6061** (2026-10-31): **ci: build Linux x86_64 release for baseline x86-64**
+  *Symptoms*: ## Problem  The 0.2.152 Linux x86_64 binaries die with SIGILL on every CPU without AVX2. The reported case is a Dell Wyse 5070 (no AVX). `freenet --version` still works, but `freenet network` and `freenet update` crash on their first TLS handshake, before a log file is created.  Reproduced with the shipped binaries under `qemu-x86_64 -cpu <model>`, in `network` mode:  | CPU model | 0.2.151 | 0.2.152 | |---|---|---| | Nehalem, Denverton | starts | SIGILL | | SandyBridge (AVX, no AVX2) | starts | SIGILL | | Westmere, Snowridge | not run | SIGILL | | Haswell (AVX2) | not run | starts |  The first fault is `vmovd %eax,%xmm0` in `ring_core_0_17_14__OPENSSL_cpuid_setup`, ring's C CPU-detection routine, so runtime detection cannot protect against it.  ## Cause  `ubuntu-latest` moved to Ubuntu 26.04, and the job log shows its apt packages coming from the `amd64v3` variant. The 0.2.152 C objects (ring, zstd) were built by GCC 15.2 and contain AVX2 and BMI2 instructions. rustc's own target baseline is not affected by the runner.  0.2.151 ran on the same image but had a full cache hit, so its C objects came from an older GCC 13.3 build. 0.2.152 changed `Cargo.lock`, got a partial cache hit and rebuilt the C code.  That gcc's default `-march` is inferred from the binary and the package variant. I did not read it from the compiler directly.  ## Approach  - Pin the job to `ubuntu-24.04`, matching the existing pin on the aarch64 job. - Set `CFLAGS_*` and `CXXFLAGS_*` to `-march=x86-64 -mtun
+
 - **Issue #6058** (2026-10-30): **feat(transport): add the QUIC upgrade state machine as pure logic**
   *Symptoms*: ## Problem  Shadow mode (#5940) needs one place that decides, per peer connection, when to offer an upgrade, how to answer one, when a QUIC path counts as established, and how long to wait after a failure. Those rules have many cases, and the plan requires every one of them to be testable without a network. So this is the rules alone, with no I/O, wired in by e5a-5b. Dead code until then; with QUIC off nothing changes.  ## Approach  `quic/upgrade/machine.rs`: `UpgradeMachine::step(Inputs { now, sample, policy }, Event) -> Vec<Action>`. No clock and no I/O: time and the jitter sample are inputs, so every test is deterministic. The module doc holds the transition table.  - **Roles:** set only by `Event::Promoted`; the higher key is the server. A transport with no peer key is not eligible. - **Permits:** a permit lives inside the `Setup` and `Active` states, so leaving the state returns it on every path. - **Backoff:** 60 s doubling to 1 h, with jitter, and 1 h after an identity mismatch. `ExponentialBackoff` is reused; `TrackedBackoff` calls `Instant::now` internally, so it can't take time as an input. Only a path that lasted `STABLE_PATH` (10 min) clears the failure count, so a path that dies right after coming up escalates rather than retrying every 60 s. - **Uncharged retries:** a `Decline` of `Busy`, `NotReady` or `Backoff` and a full allow-set retry after 60 s (jittered) and leave the failure count, since they say nothing is wrong with the peer. `Disabled` and an unknown r
-
-- **Issue #6057** (2026-10-30): **feat(transport): add QUIC control frames, bounded sends and stream-slot reservation**
-  *Symptoms*: ## Problem  Shadow mode (#5940, e5a) needs three pieces before the upgrade state machine can be written:  - a control message to confirm a QUIC path is ready; - sends with a time limit that distinguish "not sent" from "may have arrived"; - stream slots that streamed messages cannot use up, so short and control messages still get through.  A shadow path must also refuse application data without charging the inbound budget it shares with UDP.  All of this is dead code until e5a-5b wires it in. Nothing changes while QUIC is off, and `QuicPathLimits::DEFAULT` still accepts data.  ## Approach  **`QuicControl { Ready, ReadyAck }`** (`quic/control.rs`), one per uni stream: ``` version u8 (1) | type u8 (0 Ready, 1 ReadyAck) | attempt u32 BE | caps u32 BE ``` - Exactly 10 bytes. - Version is checked first, so a later version is `UnknownVersion` at any length. - Unknown caps bits are cleared on decode, so a later release can add bits that old nodes ignore. - An unknown type or a wrong length, including trailing bytes, is refused without a panic and counted per path. Adding a field therefore needs a new version. This is stricter than `UpgradeControl`, where bincode tolerates trailing bytes. - The caps travel in `Ready` and `ReadyAck` themselves, so they cannot announce a new version for the first frame. `Ready` stays at version 1 until the sender knows by another route: the caps of the `Offer` it received (client side only), or a release floor on the peer's version. - `attempt` is not i
-  **Post-Mortem & Fix Analysis**:
-  > <!-- claude-rule-review --> ### Claude Rule Review: Failed to run  The Claude rule review step failed (likely an authentication or API issue). Check the [workflow logs](https://github.com/freenet/freenet-core/actions/runs/41099434866) for details.  --- *Advisory review against `.claude/rules/`. Critical patterns are enforced by the Rule Lint CI job.*
-  > ## ⚠️ Extended Benchmark Regressions Detected  Some extended benchmarks show performance regressions.  **Note**: Extended benchmarks include high-latency and packet-loss scenarios which have higher variance than standard CI benchmarks.  [View full results](https://github.com/freenet/freenet-core/actions/runs/41099436993)  [View full benchmark summary](https://github.com/freenet/freenet-core/actions/runs/41099436993)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1762,357 +1759,360 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `50ae5918` (2026-10-30)
-**Commit Message**: feat(transport): add the QUIC upgrade state machine as pure logic (#6058)
+### Incident Patch 1: `86db624f` (2026-10-31)
+**Commit Message**: ci: build Linux x86_64 release for baseline x86-64 (#6061)
 
-**File**: `.claude/rules/transport.md` (modified, +111/-2)
+**File**: `.github/workflows/ci.yml` (modified, +7/-1)
 ```diff
-@@ -638,7 +638,8 @@ SymmetricMessagePayload::Upgrade(UpgradeControl) is bincode index 7,
- appended after AckConnectionV2. UpgradeControl is Offer { attempt, caps },
- Accept { attempt } or Decline { attempt, reason }.
+@@ -248,6 +248,12 @@ jobs:
+       - name: Self-test release wait_for_binaries gh resilience
+         run: bash scripts/release_wait_for_binaries_test.sh
  
--Decode-only until step e5: nothing sends it. A node that receives one acks
-+Decode-only until step e5a-5b wires quic/upgrade/machine.rs in: nothing sends
-+it. A node that receives one acks
- it like a ShortMessage, counts it (upgrade_control_received in
- transport_snapshot) and ignores it. It never replies and never closes the
- connection.
-@@ -651,6 +652,16 @@ before any release sends the message. A reply to a received Offer needs no
- gate. The floor follows the wire-gated-floor rule in docs/RELEASING.md
- (QUIC_UPGRADE_SHIPPED_IN marker).
- 
-+An Offer also needs may_offer_upgrade(remote_version): the remote is at or
-+above QUIC_UPGRADE_NEGOTIATES_IN, the first release that answers one (a peer
-+below it decodes an Offer and ignores it). Parked at (0, 3, 0), above every
-+release, until e5a-5b sets it to the release that first ships the negotiation
-+and records it in QUIC_UPGRADE_NEGOTIATES_SHIPPED_IN.
++      # Regression gate for 0.2.152, whose C dependencies were built for
++      # x86-64-v3 and died with SIGILL on CPUs without AVX2. The check itself
++      # runs on the real binaries in cross-compile.yml; this tests the check.
++      - name: Self-test x86-64 baseline check
++        run: bash scripts/check-x86-64-baseline_test.sh
 +
-+Decline reasons (DeclineReason, wire values): 1 Disabled, 2 Backoff, 3 Busy,
-+4 NotReady (no peer key from a promotion yet, or an attempt in progress). Any
-+other value is a decline with no stated reason.
+       # Release-driver RESUME state. Two regressions, both of the shape where a
+       # resumed release is wrong in a way the operator cannot see: the v0.2.42
+       # FDEV_VERSION double-bump, and the CRATES_PUBLISHED flag being set on
+@@ -346,7 +352,7 @@ jobs:
+       # clean when they landed but were not actually in this list, so nothing
+       # held them to it. `-x` because the two test scripts `source` the canary.
+       - name: Lint install/uninstall scripts (shellcheck)
+-        run: shellcheck -x scripts/install.sh scripts/uninstall.sh scripts/test-install-sh.sh scripts/test-uninstall-sh.sh scripts/macos-url-scheme-e2e.sh scripts/auto-update-canary.sh scripts/auto-update-canary_test.sh scripts/auto-update-canary_lifecycle_test.sh scripts/release_wait_for_binaries_test.sh scripts/release_canary_wiring_test.sh scripts/rule_lint_shell_assertion_counter_test.sh scripts/release.sh scripts/pr-backlog-sweep.sh scripts/pr-backlog-sweep_test.sh scripts/release-rollback.sh scripts/release_rollback_test.sh scripts/resolve_release_mode.sh scripts/release_dry_run_test.sh nix/freenet-node.sh scripts/nix-node-wrapper_test.sh scripts/wan-bench-classify.sh scripts/wan-bench-classify_test.sh
++        run: shellcheck -x scripts/check-x86-64-baseline.sh scripts/check-x86-64-baseline_test.sh scripts/install.sh scripts/uninstall.sh scripts/test-install-sh.sh scripts/test-uninstall-sh.sh scripts/macos-url-scheme-e2e.sh scripts/auto-update-canary.sh scripts/auto-update-canary_test.sh scripts/auto-update-canary_lifecycle_test.sh scripts/release_wait_for_binaries_test.sh scripts/release_canary_wiring_test.sh scripts/rule_lint_shell_assertion_counter_test.sh scripts/release.sh scripts/pr-backlog-sweep.sh scripts/pr-backlog-sweep_test.sh scripts/release-rollback.sh scripts/release_rollback_test.sh scripts/resolve_release_mode.sh scripts/release_dry_run_test.sh nix/freenet-node.sh scripts/nix-node-wrapper_test.sh scripts/wan-bench-classify.sh scripts/wan-bench-classify_test.sh
+       # The PR-backlog sweep reports stalled PRs (see
+       # .github/workflows/pr-backlog-sweep.yml). Its self-test drives the ABORT
+       # paths -- failed query, empty listing the REST probe contradicts,
+```
+
+**File**: `.github/workflows/cross-compile.yml` (modified, +35/-1)
+```diff
+@@ -16,8 +16,16 @@ concurrency:
+ jobs:
+   build-x86_64-linux:
+     name: Build for x86_64-unknown-linux-musl
+-    runs-on: ubuntu-latest
++    # Pinned, not ubuntu-latest. On Ubuntu 26.04 the runner's apt packages are
++    # the amd64v3 variant, and that gcc builds C dependencies (ring, zstd) with
++    # AVX2 and BMI2. 0.2.152 shipped that way and died with SIGILL on every CPU
++    # without AVX2.
++    runs-on: ubuntu-24.04
+     timeout-minutes: 60
++    env:
++      # States the baseline directly so the next runner change cannot alter it.
++      CFLAGS_x86_64_unknown_linux_musl: -march=x86-64 -mtune=generic
++      CXXFLAGS_x86_64_unknown_linux_musl: -march=x86-64 -mtune=generic
+ 
+     steps:
+       - uses: actions/checkout@v7
+@@ -29,6 +37,10 @@ jobs:
+           targets: x86_64-unknown-linux-musl
+ 
+       - uses: Swatinem/rust-cache@v2
++        with:
++          # New prefix so no cache from the amd64v3 builds is restored. Cargo
++          # would reuse those C objects, as 0.2.151's cache reused older ones.
++          prefix-key: v1-x86-64-baseline
+ 
+       - name: Install musl toolchain
+         run: sudo apt-get update && sudo apt-get install -y musl-tools musl-dev
+@@ -48,6 +60,12 @@ jobs:
+           cargo build --release --target x86_64-unknown-linux-musl -p freenet
+           cargo build --release --target x86_64-unknown-linux-musl -p fdev
+ 
++      - name: Check sampled C code for instructions above baseline x86-64
++        run: |
++          bash scripts/check-x86-64-baseline.sh \
++            target/x86_64-unknown-linux-musl/release/freenet \
++            target/x86_64-unknown-linux-musl/release/fdev
 +
- Append only, at both levels: a new SymmetricMessagePayload variant goes
- after the last one, and existing variants keep their bytes
- (pre_upgrade_variants_keep_their_wire_bytes). A new UpgradeControl variant
-@@ -869,6 +880,101 @@ its accept loop (below), which hands on no attempt while the allow-set is
- empty. Upgrading a UDP session to QUIC comes later, so only tests open
- QUIC connections.
+       - name: Upload freenet binary
+         uses: actions/upload-artifact@v7
+         with:
+@@ -1004,6 +1022,22 @@ jobs:
+           gh release edit "$TAG_NAME" \
+             --repo ${{ github.repository }} \
+             --draft=false
++          # An older release can have been marked latest by hand to stop a bad
++          # build spreading (0.2.151 for 0.2.152). Nodes only see the release
++          # that /releases/latest points at, so the new one must take that over.
++          # This is a separate call and cannot fail the step: the release is
++          # already published here, and GitHub does not allow a draft to be
++          # latest. A recovery run on an older tag must not move the marker
++          # backwards, so it applies only to the highest version.
++          HIGHEST=$(gh release list --repo ${{ github.repository }} --limit 30 --exclude-drafts \
++            --json tagName,isPrerelease \
++            --jq '.[] | select(.isPrerelease | not) | .tagName' | sort -V | tail -1 || true)
++          if [ -z "$HIGHEST" ]; then
++            echo "::warning::could not list releases; if $TAG_NAME is the newest, run: gh release edit $TAG_NAME --latest"
++          elif [ "$HIGHEST" = "$TAG_NAME" ]; then
++            gh release edit "$TAG_NAME" --repo ${{ github.repository }} --latest \
++              || echo "::warning::could not mark $TAG_NAME as latest; run: gh release edit $TAG_NAME --latest"
++          fi
+           echo "✅ Release $TAG_NAME published with all binaries attached"
  
-+Upgrade state machine (`quic/upgrade/machine.rs`, #5940 step e5a-5a, not yet
-+wired in): UpgradeMachine::step(Inputs { now, sample, policy }, Event) returns
-+the Actions for the caller to carry out. It does no I/O and reads no clock:
-+now comes from the connection's TimeSource, sample is a GlobalRng draw in
-+0..1. The caller sends Event::Tick at UpgradeMachine::deadline(). The module
-+doc has the transition table.
-+  Roles: the higher key is the server and the only side that offers. A role
-+  comes only from Event::Promoted, so a transport holding no peer key, or one
-+  whose promotion sent no key, is not eligible (it answers an Offer with
-+  NotReady). Equal keys have no role and the machine is Off.
-+  Offer: after promotion plus 2 to 10 s, only if may_offer_upgrade, and only
-+  with a permit from QuicPolicy::admit. allow_peer runs before the Offer is
-+  sent, and the caller then reports Event::OfferSent, which is what records
-+  Outcome::Offered, so a refused allow_peer is not counted as an offer. A
-+  permit is held inside the Setup and Active states, so leaving them returns
-+  it. At the path limit the server does not offer and is not charged (retry
-+  after 60 s, jittered); a client answers Busy.
-+  Timeouts: Offer 10 s, connecting 10 s, waiting for the other side's control
-+  frame 10 s (two Ready/ReadyAck sends of 5 s each), Protocol{0x1} recheck 1 s.
-+  Established: the client on Ready, the server on ReadyAck. Ready carries the
-+  attempt id; a frame or report for any other attempt changes nothing.
-+  Backoff: 60 s doubling to 1 h, 1 h after an identity mismatch, all +/-20%
-+  (util::backoff::ExponentialBackoff; TrackedBackoff reads the clock, so it is
-+  not used here). A longer pending backoff is not shortened. Only a path that
-+  lasted STABLE_PATH (10 min) clears the failure count, also when the session
-+  or endpoint ends it, so a path that keeps dying soon after it comes up is
-+  retried less often.
-+  Session end: from Setup, Rechecking or an Active path younger than
-+  STABLE_PATH, SessionEnded takes a normal backoff, because the session of a
-+  restarted peer is replaced before its old QUIC connection reports anything.
-+  A failure that already charged left the machine in Idle, so it is not
-+  charged twice. An endpoint ending, or a SessionEnded with the endpoint read
-+  as Down, charges nothing.
-+  Uncharged: a Decline of Busy, NotReady or Backoff and a full allow-set retry
-+  after 60 s (jittered) and leave the failure count. So a peer that stays
-+  NotReady or in its own backoff is offered to once per 60 s while that lasts.
-+  Disabled and an unknown reason take the normal backoff.
-+  Across sessions: BackoffSeed { failures, retry_at } carries the count and the
-+  next attempt's time. UpgradeMachine::backoff_seed reads it, after stepping
-+  SessionEnded, and Event::Promoted takes it, since an inbound session has no
-+  key until promotion and its machine must exist before that to answer an
-+  early Offer. A later promotion's seed is ignored. retry_at is cut to
-+  SEED_WAIT_MAX (72 min, the longest delay with the most jitter) and the count
-+  is dropped once retry_at is more than BACKOFF_MAX in the past, since the
-+  seed may come off a clock with another epoch. A promotion's first o
+   # -----------------------------------------------------------------------
 ```
 
-**File**: `crates/core/src/tracing/telemetry.rs` (modified, +6/-0)
+**File**: `docs/RELEASING.md` (modified, +21/-0)
 ```diff
-@@ -3067,6 +3067,10 @@ fn event_kind_to_json(kind: &EventKind) -> serde_json::Value {
-                 "quic_close_sent_peer_not_acknowledging".into(),
-                 serde_json::json!(snapshot.quic_close_sent_peer_not_acknowledging),
-             );
-+            m.insert(
-+                "quic_close_sent_control_refused".into(),
-+                serde_json::json!(snapshot.quic_close_sent_control_refused),
-+            );
-             m.insert(
-                 "nat_fail_samples".into(),
-                 serde_json::json!(snapshot.nat_fail_samples),
-@@ -7773,6 +7777,7 @@ mod tests {
-             quic_close_sent_identity_mismatch: 4,
-             quic_close_sent_send_abort_limit: 5,
-             quic_close_sent_peer_not_acknowledging: 6,
-+            quic_close_sent_control_refused: 8,
-             quic_breaker_trips: 7,
-             quic_breaker_suppressed: true,
-             ..Default::default()
-@@ -7789,6 +7794,7 @@ mod tests {
-             ("quic_close_sent_identity_mismatch", 4),
-             ("quic_close_sent_send_abort_limit", 5),
-             ("quic_close_sent_peer_not_acknowledging", 6),
-+            ("quic_close_sent_control_refused", 8),
-             ("quic_breaker_trips", 7),
-         ] {
-             assert_eq!(json[key], expected, "event-log value for {key}");
+@@ -588,6 +588,27 @@ gh run rerun --failed <RUN_ID> --repo freenet/freenet-core
+ The re-run picks up where it left off — `wait_for_pr` will see the merged
+ state and proceed to `verify_publishable`.
+ 
++### `Check sampled C code for instructions above baseline x86-64` failed
++
++Do not publish that build. It fails in one of two ways, and
++`scripts/check-x86-64-baseline.sh` explains both in its header:
++
++- **`uses instructions above baseline`:** the C compiler built for a newer CPU
++  than we support, as happened in 0.2.152, whose binaries crashed on every CPU
++  without AVX2. Check the job's `runs-on`, its `CFLAGS_*` variables and the
++  compiler in the log.
++- **`no symbol matches`:** a dependency update renamed or removed a sampled
++  function, or the release profile now strips symbols. Replace the name in
++  `DEFAULT_SENTINELS`.
++
++To stop a bad build that has already been published from reaching more nodes,
++mark the previous release as latest with `gh release edit <tag> --latest`.
++Without `--force`, nodes and gateways only move to a strictly newer version, so
++this does not downgrade anyone. It does not change the Docker `latest` tag. The
++next release takes the marker back automatically. While a bad build is demoted
++this way, do not re-run its `attach-to-release` job: that marks the highest
++version latest again.
++
+ ### `verify_publishable` failed
+ 
+ This job only runs `cargo publish -p freenet --dry-run`, so a failure here is a
 ```
 
-**File**: `crates/core/src/transport/metrics.rs` (modified, +13/-0)
+**File**: `scripts/check-x86-64-baseline.sh` (added, +82/-0)
 ```diff
-@@ -368,6 +368,9 @@ labelled_counters! {
-         /// The peer kept sending but acknowledged none of this side's
-         /// packets for `quic::recycle::ACK_WATCH_WINDOW`.
-         PeerNotAcknowledging => "peer_not_acknowledging",
-+        /// A control frame this node cannot read arrived while the path was
-+        /// being set up (an unknown version or type).
-+        ControlRefused => "control_refused",
-     }
+@@ -0,0 +1,82 @@
++#!/usr/bin/env bash
++# Fail if a Linux x86_64 release binary contains C code built above baseline
++# x86-64.
++#
++# 0.2.152 shipped with ring's and zstd's C code built for x86-64-v3, because the
++# ubuntu-latest runner moved to Ubuntu 26.04, whose amd64v3 gcc emits AVX2 and
++# BMI2 by default. Every CPU without AVX2 died with SIGILL on the node's first
++# TLS handshake. `freenet --version` still worked on those CPUs, so running the
++# binary briefly does not detect this.
++#
++# Checking the whole binary would not work: ring's assembly and some Rust code
++# contain AVX behind runtime detection. The functions below are plain C with no
++# such detection, so a forbidden instruction in them means the C compiler's
++# baseline is wrong. This samples those functions: it does not see a crate that
++# sets its own -march, or a Rust-level target-cpu change.
++#
++# The binary must keep its symbols, so enabling `strip` in the release profile
++# fails this check. If a dependency update renames or removes a function, the
++# check also fails: replace it in DEFAULT_SENTINELS with another plain C function
++# found with `nm`.
++#
++# Usage: check-x86-64-baseline.sh BINARY...
++# BASELINE_SENTINELS overrides the function list (space-separated ERE patterns,
++# matched against the whole symbol name). Used by the test.
++set -euo pipefail
++
++DEFAULT_SENTINELS='ring_core_[0-9_]+__OPENSSL_cpuid_setup ring_core_[0-9_]+__x25519_ge_scalarmult_base HUF_readDTableX1_wksp'
++read -r -a sentinels <<<"${BASELINE_SENTINELS:-$DEFAULT_SENTINELS}"
++
++# Mnemonics an x86-64 baseline compiler never emits, from AVX and BMI down to
++# SSE3. tzcnt is left out on purpose: it encodes as `rep bsf`, which gcc emits at
++# baseline and which runs on every x86-64 CPU. pextrw, pinsrw and the pmin/pmax
++# forms left out of the list are SSE or SSE2, so they are baseline.
++AVX_BMI='v[a-z0-9]+|shlx|shrx|sarx|rorx|bzhi|bextr|andn|pext|pdep|mulx|blsr|blsi|blsmsk|lzcnt|adcx|adox|movbe'
++SSE3_SSSE3='lddqu|movddup|movshdup|movsldup|haddp[sd]|hsubp[sd]|addsubp[sd]|pshufb|palignr|phadd[a-z]*|phsub[a-z]*|pmaddubsw|pmulhrsw|psign[bwd]|pabs[bwd]'
++SSE4='popcnt|crc32[bwlq]?|pmulld|pmuldq|ptest|pblend[a-z]*|blendv?p[sd]|pmovsx[a-z]*|pmovzx[a-z]*|pmins[bd]|pminu[wd]|pmaxs[bd]|pmaxu[wd]|pextr[bdq]|pinsr[bdq]|round[sp][sd]|pcmpeqq|pcmpgtq|pcmp[ei]str[im]|packusdw|dpp[sd]|mpsadbw|phminposuw|insertps|extractps'
++FORBIDDEN="^(${AVX_BMI}|${SSE3_SSSE3}|${SSE4})\$"
++
++if [ "$#" -eq 0 ] || [ "${#sentinels[@]}" -eq 0 ]; then
++    echo "usage: $0 BINARY... (with a non-empty BASELINE_SENTINELS, if set)" >&2
++    exit 64
++fi
++
++failed=0
++for binary in "$@"; do
++    symbols="$(nm "$binary")"
++    for sentinel in "${sentinels[@]}"; do
++        # A missing symbol fails: otherwise a rename or a stripped binary would
++        # turn this check into one that always passes.
++        names="$(awk -v re="^(${sentinel})\$" '$3 ~ re { print $3 }' <<<"$symbols")"
++        if [ -z "$names" ]; then
++            echo "FAIL $binary: no symbol matches '$sentinel'. See the header of $0" >&2
++            failed=1
++            continue
++        fi
++        for name in $names; do
++            disassembly="$(objdump -d --no-show-raw-insn --disassemble="$name" "$binary")"
++            instructions="$(awk -F'\t' 'NF >= 2 { split($2, f, " "); print f[1] }' <<<"$disassembly")"
++            if [ -z "$instructions" ]; then
++                echo "FAIL $binary: no instructions disassembled for $name" >&2
++                failed=1
++                continue
++            fi
++            rc=0
++            matches="$(grep -E "$FORBIDDEN" <<<"$instructions")" || rc=$?
++            case "$rc" in
++                0)
++                    bad="$(sort -u <<<"$matches" | tr '\n' ' ')"
++                    echo "FAIL $binary: $name uses instructions above baseline x86-64: $bad" >&2
++                    failed=1
++                    ;;
++                1) echo "ok   $binary: $name" ;;
++                *)
++                    echo "FAIL $binary: grep failed (exit $rc) checking $name" >&2
++                    failed=1
++                    ;;
++            esac
++        done
++    done
++done
++
++exit "$failed"
+```
+
+**File**: `scripts/check-x86-64-baseline_test.sh` (added, +109/-0)
+```diff
+@@ -0,0 +1,109 @@
++#!/usr/bin/env bash
++# Tests for check-x86-64-baseline.sh, using small binaries built with known flags.
++set -uo pipefail
++
++if [ "$(uname -m)" != "x86_64" ]; then
++    echo "skipping: the fixtures need an x86_64 host"
++    exit 0
++fi
++
++here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
++check="$here/check-x86-64-baseline.sh"
++work="$(mktemp -d)"
++trap 'rm -rf "$work"' EXIT
++fails=0
++
++cat >"$work/fixture.c" <<'EOF'
++/* __builtin_popcount becomes popcnt at x86-64-v2 and above, and a libgcc call at
++   baseline. The shift becomes shlx at x86-64-v3. */
++__attribute__((noinline)) unsigned sentinel_fn(unsigned *a, unsigned n, unsigned s) {
++    unsigned total = 0;
++    for (unsigned i = 0; i < n; i++) total += (a[i] << s) + (unsigned)__builtin_popcount(a[i]);
++    return total;
++}
++int main(int argc, char **argv) { return (int)sentinel_fn((unsigned *)argv, 0, (unsigned)argc); }
++EOF
++
++gcc -O3 -march=x86-64 -o "$work/baseline" "$work/fixture.c"
++gcc -O3 -march=x86-64-v2 -o "$work/v2" "$work/fixture.c"
++gcc -O3 -march=x86-64-v3 -o "$work/v3" "$work/fixture.c"
++cp "$work/baseline" "$work/stripped" && strip "$work/stripped"
++
++# expect EXIT_CODE OUTPUT_SUBSTRING DESCRIPTION -- BINARY
++expect() {
++    local want="$1" needle="$2" desc="$3" got output
++    shift 3
++    output="$(BASELINE_SENTINELS='sentinel_fn' bash "$check" "$@" 2>&1)"
++    got=$?
++    if [ "$got" -ne "$want" ] || [[ "$output" != *"$needle"* ]]; then
++        echo "not ok - $desc (exit $got, wanted $want)"
++        echo "$output"
++        fails=1
++    else
++        echo "ok - $desc"
++    fi
++}
++
++expect 0 'ok   ' 'a baseline build passes' "$work/baseline"
++expect 1 'popcnt' 'an x86-64-v2 build fails' "$work/v2"
++expect 1 'above baseline' 'an x86-64-v3 build fails' "$work/v3"
++expect 1 'no symbol matches' 'a stripped binary fails rather than passing' "$work/stripped"
++expect 1 'above baseline' 'one bad binary among several fails' "$work/baseline" "$work/v3"
++
++# Build a binary whose sentinel_fn contains exactly one instruction. The function
++# is never called, so it does not matter whether this host can run it.
++build_with_instruction() {
++    printf '__attribute__((used, noinline)) void sentinel_fn(void) { __asm__("%s"); }\nint main(void) { return 0; }\n' "$1" >"$work/one.c"
++    gcc -O1 -o "$work/one" "$work/one.c"
++}
++
++# One instruction from each group in FORBIDDEN, so removing a group fails here.
++# shellcheck disable=SC2016  # $1 is an assembler immediate, not a shell variable.
++for insn in \
++    'vmovd %eax,%xmm0' 'shlx %eax,%ecx,%edx' 'bextr %eax,%ecx,%edx' 'andn %eax,%ecx,%edx' 'lzcnt %eax,%ecx' 'movbe (%rax),%ecx' \
++    'haddpd %xmm1,%xmm0' 'lddqu (%rax),%xmm0' \
++    'pshufb %xmm1,%xmm0' 'palignr $1,%xmm1,%xmm0' 'pabsw %xmm1,%xmm0' \
++    'pmulld %xmm1,%xmm0' 'ptest %xmm1,%xmm0' 'pmaxud %xmm1,%xmm0' 'pextrd $1,%xmm0,%eax' \
++    'crc32l %eax,%ecx' 'pcmpgtq %xmm1,%xmm0' 'popcnt %eax,%ecx'; do
++    build_with_instruction "$insn"
++    expect 1 'above baseline' "forbids: $insn" "$work/one"
++done
++
++# Baseline instructions with names close to forbidden ones must not be flagged.
++# shellcheck disable=SC2016  # $1 is an assembler immediate, not a shell variable.
++for insn in \
++    'pextrw $1,%xmm0,%eax' 'pinsrw $1,%eax,%xmm0' 'pminub %xmm1,%xmm0' 'pminsw %xmm1,%xmm0' \
++    'pmaxub %xmm1,%xmm0' 'pmaxsw %xmm1,%xmm0' 'pandn %xmm1,%xmm0' 'pshufd $1,%xmm1,%xmm0' \
++    'bswap %eax' 'tzcnt %eax,%ecx'; do
++    build_with_instruction "$insn"
++    expect 0 'ok   ' "allows: $insn" "$work/one"
++done
++
++output="$(bash "$check" 2>&1)"
++got=$?
++if [ "$got" -eq 64 ]; then
++    echo "ok - no arguments is a usage error"
++else
++    echo "not ok - no arguments exited $got: $output"
++    fails=1
++fi
++
++output="$(BASELINE_SENTINELS='   ' bash "$check" "$work/baseline" 2>&1)"
++got=$?
++if [ "$got" -eq 64 ]; then
++    echo "ok - a blank sentinel list is a usage error rather than a pass"
++else
++    echo "not ok - a blank sentinel list exited $got: $output"
++    fails=1
++fi
++
++output="$(bash "$check" "$work/baseline" 2>&1)"
++got=$?
++if [ "$got" -eq 1 ] && [[ "$output" == *"no symbol matches"* ]]; then
++    echo "ok - the default sentinels are required"
++else
++    echo "not ok - default sentinels missing from the fixture exited $got: $output"
++    fails=1
++fi
++
++exit "$fails"
+```
+
+**File**: `scripts/release.sh` (modified, +5/-0)
+```diff
+@@ -1498,6 +1498,11 @@ publish_draft_release() {
+ 
+     echo -n "  Publishing draft release... "
+     gh release edit "v$VERSION" --repo freenet/freenet-core --draft=false > /dev/null
++    # An older release may have been marked latest by hand to stop a bad build
++    # spreading. This path only publishes a new, higher version. A separate call,
++    # because the release is published by now and this must not undo that.
++    gh release edit "v$VERSION" --repo freenet/freenet-core --latest > /dev/null \
++        || echo "  warning: could not mark v$VERSION as latest; run: gh release edit v$VERSION --latest"
+     echo "✓"
  }
  
-@@ -2164,6 +2167,9 @@ impl TransportMetrics {
-             quic_close_sent_send_abort_limit: get64(
-                 &self.quic_close_sent[QuicCloseCode::SendAbortLimit as usize],
-             ),
-+            quic_close_sent_control_refused: get64(
-+                &self.quic_close_sent[QuicCloseCode::ControlRefused as usize],
-+            ),
-             quic_close_sent_peer_not_acknowledging: get64(
-                 &self.quic_close_sent[QuicCloseCode::PeerNotAcknowledging as usize],
-             ),
-@@ -2713,6 +2719,7 @@ pub struct TransportSnapshot {
-     pub quic_close_sent_identity_mismatch: u64,
-     pub quic_close_sent_send_abort_limit: u64,
-     pub quic_close_sent_peer_not_acknowledging: u64,
-+    pub quic_close_sent_control_refused: u64,
-     /// Per-attempt records of the FIRST 8 failed outbound NAT traversals in
-     /// the period (not a representative sample of a busy period);
-     /// `nat_fail_samples_dropped` counts the rest. Read with the same
-@@ -3044,6 +3051,7 @@ impl TransportSnapshot {
-             quic_close_sent_identity_mismatch,
-             quic_close_sent_send_abort_limit,
-             quic_close_sent_peer_not_acknowledging,
-+            quic_close_sent_control_refused,
-             nat_fail_samples,
-             nat_fail_samples_dropped,
-             inbound_stream_refused_invalid_length,
-@@ -3168,6 +3176,7 @@ impl TransportSnapshot {
-         self.quic_close_sent_identity_mismatch = quic_close_sent_identity_mismatch;
-         self.quic_close_sent_send_abort_limit = quic_close_sent_send_abort_limit;
-         self.quic_close_sent_peer_not_acknowledging = quic_close_sent_peer_not_acknowledging;
-+        self.quic_close_sent_control_refused = quic_close_sent_control_refused;
-         self.nat_fail_samples = nat_fail_samples;
-         self.nat_fail_samples_dropped = nat_fail_samples_dropped;
-         self.inbound_stream_refused_invalid_length = inbound_stream_refused_invalid_length;
-@@ -3343,6 +3352,7 @@ struct SnapshotExtras {
-     pub quic_close_sent_identity_mismatch: u64,
-     pub quic_close_sent_send_abort_limit: u64,
-     pub quic_close_sent_peer_not_acknowledging: u64,
-+    pub quic_close_sent_control_refused: u64,
-     /// Per-attempt records of the FIRST 8 failed outbound NAT traversals in
-     /// the period (not a representative sample of a busy period);
-     /// `nat_fail_samples_dropped` counts the rest. Read with the same
-@@ -3502,6 +3512,7 @@ impl SnapshotExtras {
-             || self.quic_close_sent_identity_mismatch != 0
-             || self.quic_close_sent_send_abort_limit != 0
-             || self.quic_close_sent_peer_not_acknowledging != 0
-+            || self.quic_close_sent_control_refused != 0
-             || !self.nat_fail_samples.is_empty()
-             || self.inbound_stream_refused_invalid_length != 0
-             || self.inbound_stream_refused_connection_bytes != 0
-@@ -4462,6 +4473,7 @@ mod tests {
-             QuicCloseCode::IdentityMismatch => snap.quic_close_sent_identity_mismatch,
-             QuicCloseCode::SendAbortLimit => snap.quic_close_sent_send_abort_limit,
-             QuicCloseCode::PeerNotAcknowledging => snap.quic_close_sent_peer_not_acknowledging,
-+            QuicCloseCode::ControlRefused => snap.quic_close_sent_control_refused,
-         }
-     }
- 
-@@ -5584,6 +5596,7 @@ mod tests {
-             "quic_close_sent_identity_mismatch",
-             "quic_close_sent_send_abort_limit",
-             "quic_close_sent_peer_not_acknowledging",
-+            "quic_close_sent_control_refused",
-             "nat_fail_samples",
-             "nat_fail_samples_dropped",
-             "inbound_stream_refused_invalid_length",
-```
-
-**File**: `crates/core/src/transport/quic/control.rs` (modified, +5/-2)
-```diff
-@@ -27,8 +27,11 @@
- //! - An unknown version, an unknown type, or a length other than
- //!   [`CONTROL_LEN`] is refused ([`ControlError`]), never a panic. The
- //!   receiving path counts each, only through `QuicPath::decode_control`
--//!   ([`QuicControl::decode`] counts nothing). The sender
--//!   learns nothing: its send reports `Sent`.
-+//!   ([`QuicControl::decode`] counts nothing). The sender's send reports
-+//!   `Sent`. During path setup, an unknown version or type also makes the
-+//!   receiver close the path with `close_code::CONTROL_REFUSED`, which the
-+//!   sender reads as a downgrade (`upgrade::machine`); otherwise the sender
-+//!   learns nothing.
- //! - A new type or field needs a new version. Bytes past the end are refused,
- //!   so a field cannot be appended silently. `UpgradeControl` is different:
- //!   bincode tolerates trailing bytes there, so a field appended to it would
-```
-
-**File**: `crates/core/src/transport/quic/error.rs` (modified, +15/-5)
-```diff
-@@ -54,14 +54,21 @@ pub(crate) mod close_code {
-     /// ack-eliciting packets for `recycle::ACK_WATCH_WINDOW`; fall back to
-     /// the UDP session.
-     pub(crate) const PEER_NOT_ACKNOWLEDGING: u32 = 0x04;
-+    /// A control frame this node cannot read (`ControlError::UnknownVersion`
-+    /// or `UnknownType`) arrived while the path was being set up, so the
-+    /// sender need not wait out its setup timeout; fall back to the UDP
-+    /// session. A node that does not know this code reads it as
-+    /// `QuicErrorKind::ConnectionLost`, which also falls back.
-+    pub(crate) const CONTROL_REFUSED: u32 = 0x05;
-     /// Every close code, for the range and duplicate checks. A source-scrape
-     /// test checks that each `const` in this module is listed.
--    pub(crate) const ALL: [u32; 5] = [
-+    pub(crate) const ALL: [u32; 6] = [
-         NODE_DROPPED_PEER,
-         DOWNGRADE,
-         IDENTITY_MISMATCH,
-         SEND_ABORT_LIMIT,
-         PEER_NOT_ACKNOWLEDGING,
-+        CONTROL_REFUSED,
-     ];
- }
- 
-@@ -76,7 +83,7 @@ const _: () = {
-     let reset = reset_code::ALL;
-     // No code is used twice, within or across the namespaces.
-     let all_len = close.len() + stop.len() + reset.len();
--    let mut all = [0u32; 5 + 9 + 2];
-+    let mut all = [0u32; 6 + 9 + 2];
-     assert!(all.len() == all_len, "update the combined length");
-     let mut n = 0;
-     let mut i = 0;
-@@ -138,6 +145,7 @@ impl QuicCloseCode {
-             Self::IdentityMismatch => close_code::IDENTITY_MISMATCH,
-             Self::SendAbortLimit => close_code::SEND_ABORT_LIMIT,
-             Self::PeerNotAcknowledging => close_code::PEER_NOT_ACKNOWLEDGING,
-+            Self::ControlRefused => close_code::CONTROL_REFUSED,
-         }
-     }
- 
-@@ -156,6 +164,7 @@ impl QuicCloseCode {
-             Self::IdentityMismatch => b"identity mismatch",
-             Self::SendAbortLimit => b"send abort limit",
-             Self::PeerNotAcknowledging => b"peer not acknowledging",
-+            Self::ControlRefused => b"control frame refused",
-         }
-     }
- }
-@@ -287,12 +296,13 @@ impl From<quinn::ConnectionError> for QuicErrorKind {
-             }
-             quinn::ConnectionError::ApplicationClosed(close) => {
-                 match QuicCloseCode::from_code(close.error_code.into_inner()) {
--                    // Both recycle codes ask the peer to fall back to UDP,
--                    // as a downgrade does.
-+                    // The recycle codes and a refused control frame ask the
-+                    // peer to fall back to UDP, as a downgrade does.
-                     Some(
-                         QuicCloseCode::Downgrade
-                         | QuicCloseCode::SendAbortLimit
--                        | QuicCloseCode::PeerNotAcknowledging,
-+                        | QuicCloseCode::PeerNotAcknowledging
-+                        | QuicCloseCode::ControlRefused,
-                     ) => Self::Refused {
-                         reason: QuicRefusal::Downgrade,
-                     },
-```
-
-**File**: `crates/core/src/transport/quic/error/tests.rs` (modified, +2/-1)
-```diff
-@@ -614,14 +614,15 @@ fn close_codes_have_fixed_distinct_wire_values() {
-         (QuicCloseCode::IdentityMismatch, 2),
-         (QuicCloseCode::SendAbortLimit, 3),
-         (QuicCloseCode::PeerNotAcknowledging, 4),
-+        (QuicCloseCode::ControlRefused, 5),
-     ];
-     assert_eq!(expected.len(), QuicCloseCode::COUNT);
-     for (code, wire) in expected {
-         assert_eq!(code.code(), wire, "{code:?}");
-         assert_eq!(QuicCloseCode::from_code(u64::from(wire)), Some(code));
-         assert!(!code.reason().is_empty());
-     }
--    for unknown in [5_u64, 0x0f, 0x11, 0x21, u64::from(u32::MAX)] {
-+    for unknown in [6_u64, 0x0f, 0x11, 0x21, u64::from(u32::MAX)] {
-         assert_eq!(QuicCloseCode::from_code(unknown), None, "{unknown:#x}");
-     }
- }
-```
-
-**File**: `crates/core/src/transport/quic/tests.rs` (modified, +4/-3)
-```diff
-@@ -2569,8 +2569,8 @@ fn the_cap_wakes_waiters_per_quic_datagram() {
- }
- 
- /// Each close code reaches the peer as that code, and the peer maps it to
--/// the kind its handling depends on: `Downgrade` (and the two recycle
--/// codes, which also ask the peer to fall back to UDP) and
-+/// the kind its handling depends on: `Downgrade` (and the recycle codes and
-+/// `ControlRefused`, which also ask the peer to fall back to UDP) and
- /// `IdentityMismatch` are refusals, `NodeDroppedPeer` (also what dropping a connection sends) is a
- /// lost connection. Either side can close. Each close is counted once, by
- /// code; a second close of an ended connection sends and counts nothing.
-@@ -2591,7 +2591,8 @@ fn close_codes_reach_the_peer() {
-             QuicCloseCode::NodeDroppedPeer => QuicErrorKind::ConnectionLost,
-             QuicCloseCode::Downgrade
-             | QuicCloseCode::SendAbortLimit
--            | QuicCloseCode::PeerNotAcknowledging => QuicErrorKind::Refused {
-+            | QuicCloseCode::PeerNotAcknowledging
-+            | QuicCloseCode::ControlRefused => QuicErrorKind::Refused {
-                 reason: QuicRefusal::Downgrade,
-             },
-             QuicCloseCode::IdentityMismatch => QuicErrorKind::Refused {
-```
-
-**File**: `crates/core/src/transport/quic/upgrade.rs` (modified, +5/-3)
-```diff
-@@ -1,7 +1,9 @@
- //! Upgrading a UDP transport session to a QUIC path (#5940, step e5a).
- //!
--//! Only the policy exists so far ([`policy`]). The negotiation, its state
--//! machine and the wiring into the peer connection come in later steps; until
--//! then nothing in the node reads the policy, and no session is upgraded.
-+//! The policy ([`policy`]) and the negotiation's state machine ([`machine`])
-+//! exist so far. The wiring into the peer connection comes in a later step;
-+//! until then nothing in the node reads either, and no session is upgraded.
- 
-+#[cfg_attr(not(test), allow(dead_code))]
-+pub(in crate::transport) mod machine;
- pub(crate) mod policy;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6061** (2026-10-31): ci: build Linux x86_64 release for baseline x86-64 (@sanity)
 - **PR #6058** (2026-10-30): feat(transport): add the QUIC upgrade state machine as pure logic (@sanity)
 - **PR #6057** (2026-10-30): feat(transport): add QUIC control frames, bounded sends and stream-slot reservation (@sanity)
 - **PR #6056** (2026-10-30): build: release 0.2.152 (@sanity)
 - **PR #6055** (2026-10-30): fix(conformance): queue verify-merge cases newest first and build them lazily (@sanity)
 - **PR #6054** (2026-10-30): fix: skip validate_state when an update leaves the state unchanged (@sanity)
-- **PR #6052** (2026-10-30): test: bind the fdev websocket test to an OS-assigned port (@sanity)
 
 ---
 
@@ -2132,47 +2132,34 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. transport): add the QUIC upgrade state machine as pure logic (#6058)
+## X. ci: build Linux x86_64 release for baseline x86-64 (#6061)
 
 **RULE**:
-When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `50ae5918`: transport): add the QUIC upgrade state machine as pure logic (#6058). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `86db624f`: ci: build Linux x86_64 release for baseline x86-64 (#6061). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Decode-only until step e5a-5b wires quic/upgrade/machine.rs in: nothing sends
-it. A node that receives one acks
-An Offer also needs may_offer_upgrade(remote_version): the remote is at or
-above QUIC_UPGRADE_NEGOTIATES_IN, the first release that answers one (a peer
-below it decodes an Offer and ignores it). Parked at (0, 3, 0), above every
-release, until e5a-5b sets it to the release that first ships the negotiation
-and records it in QUIC_UPGRADE_NEGOTIATES_SHIPPED_IN.
+      # Regression gate for 0.2.152, whose C dependencies were built for
+      # x86-64-v3 and died with SIGILL on CPUs without AVX2. The check itself
+      # runs on the real binaries in cross-compile.yml; this tests the check.
+      - name: Self-test x86-64 baseline check
+        run: bash scripts/check-x86-64-baseline_test.sh
 
-Decline reasons (DeclineReason, wire values): 1 Disabled, 2 Backoff, 3 Busy,
-4 NotReady (no peer key from a promotion yet, or an attempt in progress). Any
-other value is a decline with no stated reason.
-
-Upgrade state machine (`quic/upgrade/machine.rs`, #5940 step e5a-5a, not yet
-wired in): UpgradeMachine::step(Inputs { now, sample, policy }, Event) returns
-the Actions for the caller to carry out. It does no I/O and reads no clock:
-now comes from the connection's TimeSource, sample is a GlobalRng draw in
-0..1. The caller sends Event::Tick at UpgradeMachine::deadline(). The module
-doc has the transition table.
-  Roles: the higher key is the server and the only side that offers. A role
-  comes only from Event::Promoted,
+        run: shellcheck -x scripts/check-x86-64-baseline.sh scripts/check-x86-64-baseline_test.sh scripts/install.sh scripts/uninstall.sh scripts/test-install-sh.sh scripts/test-uninstall-sh.sh scripts/macos-url-scheme-e2e.sh scripts/auto-update-canary.sh scripts/auto-update-canary_test.sh scripts/auto-update-canary_lifecycle_test.sh scripts/release_wait_for_binaries_test.sh scripts/release_canary_wiring_test.sh scripts/rule_lint_shell_assertion_counter_test.sh scripts/release.sh scripts/pr-backlog-sweep.sh scripts/pr-backlog-sweep_test.sh scripts/release-rollback.sh scripts/release_rollback_test.sh scripts/resolve_release_mode.sh scripts/release_dry_run_test.sh nix/freenet-node.sh scripts/nix-node-wrapper_test.sh scripts/wan-bench-classify.sh scripts/wan-bench-classify_test.sh
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-Decode-only until step e5: nothing sends it. A node that receives one acks
+        run: shellcheck -x scripts/install.sh scripts/uninstall.sh scripts/test-install-sh.sh scripts/test-uninstall-sh.sh scripts/macos-url-scheme-e2e.sh scripts/auto-update-canary.sh scripts/auto-update-canary_test.sh scripts/auto-update-canary_lifecycle_test.sh scripts/release_wait_for_binaries_test.sh scripts/release_canary_wiring_test.sh scripts/rule_lint_shell_assertion_counter_test.sh scripts/release.sh scripts/pr-backlog-sweep.sh scripts/pr-backlog-sweep_test.sh scripts/release-rollback.sh scripts/release_rollback_test.sh scripts/resolve_release_mode.sh scripts/release_dry_run_test.sh nix/freenet-node.sh scripts/nix-node-wrapper_test.sh scripts/wan-bench-classify.sh scripts/wan-bench-classify_test.sh
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `50ae5918` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `86db624f` are properly handled with clean fallback behavior.

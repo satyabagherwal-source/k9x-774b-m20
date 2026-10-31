@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-AMFN",
-    "timestamp": "2026-10-30T04:34:56.915Z",
-    "repository": "rqlite/rqlite",
-    "learningId": "learn-github-rqlite-rqlite",
-    "contentHash": "1d474b37489814984b5396127a50dc3af10f2fa7bef78b9c17e4b189e1c0fb3e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-APOZ",
-    "timestamp": "2026-10-30T04:35:01.139Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "2231007cc11ac40e5d2aaebfffda9a27e1058ecf8defd66a8cb4651c6813ca06",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-JJC0",
-    "timestamp": "2026-10-30T04:41:52.800Z",
-    "repository": "apple/foundationdb",
-    "learningId": "learn-github-apple-foundationdb",
-    "contentHash": "4bcb0fafe291a9cf7f96db74f9019462bfddcd2d8eacbe9da820fc6eac94392d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-RQOP",
     "timestamp": "2026-10-30T04:48:15.577Z",
     "repository": "arangodb/arangodb",
@@ -7492,6 +7447,51 @@
     "contentHash": "60b50c194567eec1548e932db3c88b7ec271ef5321a33d156fb869a45f113521",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-BTBP",
+    "timestamp": "2026-10-31T14:39:24.469Z",
+    "repository": "openai/gpt-oss-120b",
+    "learningId": "learn-huggingface-openai-gpt-oss-120b",
+    "contentHash": "d4302148471f46a54e84cd7263747c2589fa2cc3ec4c05bdc31e96bd69b01eeb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-BUDK",
+    "timestamp": "2026-10-31T14:39:25.832Z",
+    "repository": "bahdotsh/wrkflw",
+    "learningId": "learn-github-bahdotsh-wrkflw",
+    "contentHash": "ea89c41345b18d151ee4b00e0fbda8e84071dc2b65f27b20d0f27e5f0bf4b032",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-C23L",
+    "timestamp": "2026-10-31T14:39:35.841Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "53e9ed5184fd4e33037fdac27f03569d84614572ef524c244f239e97de7bce41",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

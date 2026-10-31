@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T14:32:40.987Z",
+  "last_updated": "2026-10-31T14:39:35.854Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1190,14 +1190,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-gpt-oss-120b",
-      "content_hash": "a07dcc6a624de71c7b73d9426e533f8b92c34840f8393d7519f9319700225a7e",
-      "verified_at": "2026-10-28T14:15:29.719Z",
+      "content_hash": "d4302148471f46a54e84cd7263747c2589fa2cc3ec4c05bdc31e96bd69b01eeb",
+      "verified_at": "2026-10-31T14:39:24.488Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T14:15:29.719Z"
+      "last_updated": "2026-10-31T14:39:24.488Z"
     },
     "zai-org/GLM-5.2": {
       "repository": "zai-org/GLM-5.2",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "0dbc7d12fd6234784a2c0c1cfc33ff208ef0203a5ba25a78f05dd0e7fc7191c8",
-      "verified_at": "2026-10-30T22:50:03.556Z",
+      "content_hash": "53e9ed5184fd4e33037fdac27f03569d84614572ef524c244f239e97de7bce41",
+      "verified_at": "2026-10-31T14:39:35.853Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T22:50:03.556Z"
+      "last_updated": "2026-10-31T14:39:35.853Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -11166,14 +11166,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bahdotsh-wrkflw",
-      "content_hash": "208e3afe876b454101aab0dd30cf6252abde007d442714c833654e88dc6a5cf8",
-      "verified_at": "2026-10-30T18:39:34.647Z",
+      "content_hash": "ea89c41345b18d151ee4b00e0fbda8e84071dc2b65f27b20d0f27e5f0bf4b032",
+      "verified_at": "2026-10-31T14:39:25.844Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T18:39:34.647Z"
+      "last_updated": "2026-10-31T14:39:25.844Z"
     },
     "jordanbaird/Ice": {
       "repository": "jordanbaird/Ice",
