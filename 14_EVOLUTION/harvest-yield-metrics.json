@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T12:00:25.240Z",
-  "total_cycles_completed": 6530,
-  "total_learnings_persisted": 6530,
-  "total_rules_promoted": 6178,
+  "last_updated": "2026-10-31T12:09:01.033Z",
+  "total_cycles_completed": 6532,
+  "total_learnings_persisted": 6532,
+  "total_rules_promoted": 6179,
   "history": [
-    {
-      "timestamp": "2026-10-30T23:15:07.659Z",
-      "repository": "react/react-native",
-      "learningId": "learn-github-react-react-native",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T23:21:53.904Z",
-      "repository": "ducaale/xh",
-      "learningId": "learn-github-ducaale-xh",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T23:21:56.661Z",
       "repository": "nitrojs/nitro",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-31T12:00:25.240Z",
       "repository": "unsloth/Qwen3.8-27B-GGUF",
       "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T12:08:58.476Z",
+      "repository": "gkd-kit/gkd",
+      "learningId": "learn-github-gkd-kit-gkd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T12:09:01.033Z",
+      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

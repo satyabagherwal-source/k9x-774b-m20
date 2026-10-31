@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T12:00:25.141Z",
+  "last_updated": "2026-10-31T12:09:00.939Z",
   "total_verified_learnings": 1183,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14596,8 +14596,8 @@
       "slug": "gkd-kit-gkd",
       "platform": "github",
       "source_url": "https://github.com/gkd-kit/gkd",
-      "source_version": "fe6736fb",
-      "content_hash": "510366261de9bf3e852ae0b8f7f0366781ce4ad52080da45958d2a31f4311a47",
+      "source_version": "c45a1241",
+      "content_hash": "aaa4b5252a055a8bccfb357575165189f26d9e626471632b80623723fa709a20",
       "dossier_path": "07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
       "promoted_rules": [
@@ -14610,6 +14610,11 @@
           "number": 3293,
           "title": "add subscription download stages and update UI to reflect progress",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6186,
+          "title": "reorganize settings and provide UI hosts through composition",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14617,7 +14622,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T17:35:51.722Z",
+      "verified_at": "2026-10-31T12:08:58.369Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22132,7 +22137,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
       "source_version": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "content_hash": "306dd3e645f1d1c179068b17173522c117d339bcbcaea4f481428003d4001df0",
+      "content_hash": "117ed8402a3c311b578825640b9f0b627ed38d4e0525e0b0cb528c114847e89a",
       "dossier_path": "07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md",
       "promoted_rules": [
@@ -22200,7 +22205,7 @@
         "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4825ix",
         "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4lbpn7"
       ],
-      "verified_at": "2026-10-28T11:23:52.615Z",
+      "verified_at": "2026-10-31T12:09:00.917Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -161785,6 +161790,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T11:53:43.227Z"
+    },
+    "rule-6186": {
+      "learning_id": "rule-6186",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6186,
+      "title": "reorganize settings and provide UI hosts through composition",
+      "source_url": "https://github.com/gkd-kit/gkd",
+      "source_version": "c45a1241",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T12:08:58.369Z"
     }
   },
   "aliases": {

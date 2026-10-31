@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T12:00:36.473Z",
-    "lastVerified": "2026-10-31T12:00:36.473Z",
+    "lastChecked": "2026-10-31T12:09:03.563Z",
+    "lastVerified": "2026-10-31T12:09:03.563Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -247,8 +247,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T11:39:58.824Z",
-    "lastVerified": "2026-10-31T11:39:58.824Z",
+    "lastChecked": "2026-10-31T12:09:02.703Z",
+    "lastVerified": "2026-10-31T12:09:02.703Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1709,8 +1709,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T07:27:57.569Z",
-    "lastVerified": "2026-10-31T07:27:57.569Z",
+    "lastChecked": "2026-10-31T12:08:57.660Z",
+    "lastVerified": "2026-10-31T12:08:57.660Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -3210,12 +3210,12 @@
     "lastVerified": "2026-10-31T09:29:33.872Z"
   },
   "lioensky-vcptoolbox": {
-    "name": "lioensky/VCPToolBox",
+    "name": "VCPToolBox",
     "officialUrl": "https://github.com/lioensky/VCPToolBox",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-10-30T19:19:25.335Z",
-    "lastVerified": "2026-10-30T19:19:25.335Z",
+    "lastChecked": "2026-10-31T12:09:00.202Z",
+    "lastVerified": "2026-10-31T12:09:00.202Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-lioensky-vcptoolbox",
@@ -3224,7 +3224,8 @@
     "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2299d94b"
   },
   "gitoxidelabs-gitoxide": {
     "name": "GitoxideLabs/gitoxide",
@@ -3349,13 +3350,13 @@
     "officialUrl": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T11:23:41.889Z",
-    "lastVerified": "2026-10-28T11:23:41.889Z",
+    "lastChecked": "2026-10-31T12:08:50.662Z",
+    "lastVerified": "2026-10-31T12:08:50.662Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-    "contentHash": "306dd3e645f1d1c179068b17173522c117d339bcbcaea4f481428003d4001df0",
-    "promotedRulesCount": 3,
+    "contentHash": "117ed8402a3c311b578825640b9f0b627ed38d4e0525e0b0cb528c114847e89a",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -4308,9 +4309,9 @@
   "sealerio-sealer": {
     "name": "sealer",
     "officialUrl": "https://github.com/sealerio/sealer",
-    "lastChecked": "2026-10-30T20:15:11.348Z",
+    "lastChecked": "2026-10-31T12:08:55.153Z",
     "revisionIdentifier": "e426153a",
-    "lastVerified": "2026-10-30T20:15:11.348Z"
+    "lastVerified": "2026-10-31T12:08:55.153Z"
   },
   "helixdb-helix-db": {
     "name": "HelixDB/helix-db",
@@ -5955,11 +5956,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "gkd-kit-gkd": {
-    "name": "gkd",
+    "name": "gkd-kit/gkd",
     "officialUrl": "https://github.com/gkd-kit/gkd",
-    "lastChecked": "2026-10-28T16:45:15.994Z",
-    "revisionIdentifier": "fe6736fb",
-    "lastVerified": "2026-10-28T16:45:15.994Z"
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-10-31T12:08:56.595Z",
+    "lastVerified": "2026-10-31T12:08:56.595Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-gkd-kit-gkd",
+    "contentHash": "aaa4b5252a055a8bccfb357575165189f26d9e626471632b80623723fa709a20",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 22,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "snyk-driftctl": {
     "name": "driftctl",
@@ -6310,9 +6321,9 @@
   "vercel-labs-opensrc": {
     "name": "opensrc",
     "officialUrl": "https://github.com/vercel-labs/opensrc",
-    "lastChecked": "2026-10-30T14:33:18.623Z",
+    "lastChecked": "2026-10-31T12:08:47.640Z",
     "revisionIdentifier": "b51de608",
-    "lastVerified": "2026-10-30T14:33:18.623Z"
+    "lastVerified": "2026-10-31T12:08:47.640Z"
   },
   "hf-qwen-qwen3-8b": {
     "name": "Qwen/Qwen3-8B",

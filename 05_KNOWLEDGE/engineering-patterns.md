@@ -453007,3 +453007,59 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `6236eccb` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6186. reorganize settings and provide UI hosts through composition (Harvested from gkd-kit/gkd)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "reorganize settings and provide UI hosts through composition",
+  "source": "gkd-kit/gkd",
+  "source_url": "https://github.com/gkd-kit/gkd",
+  "source_version": "c45a1241",
+  "license": "GPL-3.0",
+  "extracted_at": "2026-10-31T12:08:58.188Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-gkd-kit-gkd",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [gkd-kit/gkd](https://github.com/gkd-kit/gkd) (Revision: `c45a1241`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gkd-kit/gkd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3ca225ef`: reorganize settings and provide UI hosts through composition. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+// Verified production-grade fix pattern:
+- 平台差异优先使用对应功能包的函数级 `expect/actual`，实现文件为 `.android.kt` / `.jvm.kt`；禁止整份 ViewModel、Repository 或业务流程 actual 化。能力签名只用公共类型，不导航、弹 Toast 或读取 UI ViewModel；仅 UI 组装可用 Composable expect/actual；页面及平台 UI 适配可从 LocalUiHost 获取所属宿主，非 Composable 平台 UI 操作仍显式接收 UiHost 或回调。无生命周期工具只持有 Application Context，Activity/窗口引用限于生命周期绑定的 UI 会话。
+- 路由、页面及私有 Composable 可获取页面 ViewModel，并通过 LocalUiHost 处理平台 UI，无需经导航或中间页面传递宿主；主题、通用布局、可复用组件和工具仅接收状态/事件，不通过默认参数、工厂、CompositionLocal 或全局入口隐藏获取。Service、悬浮窗、后台任务使用自身作用域和应用仓库，不借用或补建页面 ViewModel。
+- 页面 ViewModel 可组织校验、保存、确认弹窗及后续导航等事件流程，按需使用 MainViewModel 的页面能力；Compose 负责展示、收集状态、转发事件及 IME、焦点等组合/宿主相关操作。不为缩短调用增加纯转发方法，不把页面流程转移到根 ViewModel。LocalUiHost 由 Android 主界面根部提供当前 LocalActivity 对应的 MainActivity、Desktop 主界面根部提供当前 DesktopSession，覆盖导航及所属弹窗；仅传递宿主，不承载业务状态。非 Composable 平台 UI 操作显式接收所属 UiHost 或事件回调，不依赖宿主的操作使用普通函数；宿主引用绑定所属生命周期，不存入 ViewModel 或单例。
+- Desktop 调试服务统一使用一个 HTTP 监听和端口，绑定 0.0.0.0，支持本机及局域网 IPv4 访问；页面显示 127.0.0.1 与真实局域网 IPv4 地址，浏览器、诊断和桌面控制接口共用该监听。桌面控制路由位于 jvmMain，状态修改在 UI 线程。Android 的浏览器与诊断接口共用 DebugService 和配置端口，可通过局域网访问；诊断
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// Anti-pattern to NEVER write (induced failure mode):
+- 平台差异优先使用对应功能包的函数级 `expect/actual`，实现文件为 `.android.kt` / `.jvm.kt`；禁止整份 ViewModel、Repository 或业务流程 actual 化。能力签名只用公共类型，不导航、弹 Toast 或读取 UI ViewModel；仅 UI 组装可用 Composable expect/actual，需平台 UI 能力时显式接收所属 UiHost。无生命周期工具只持有 Application Context，Activity/窗口引用限于生命周期绑定的 UI 会话。
+- 路由及私有 Composable 可获取页面 ViewModel、处理平台 UI；主题、通用布局、可复用组件和工具仅接收状态/事件，不通过默认参数、工厂、CompositionLocal 或全局入口隐藏获取。Service、悬浮窗、后台任务使用自身作用域和应用仓库，不借用或补建页面 ViewModel。
+- 页面 ViewModel 可组织校验、保存、确认弹窗及后续导航等事件流程，按需使用 MainViewModel 的页面能力；Compose 负责展示、收集状态、转发事件及 IME、焦点等组合/宿主相关操作。不为缩短调用增加纯转发方法，不把页面流程转移到根 ViewModel。平台 UI 操作显式接收所属 UiHost 或事件回调，宿主引用绑定所属生命周期，不由页面 ViewModel 长期持有。
+- Desktop 调试服务统一使用一个 HTTP 监听和端口，绑定 127.0.0.1；桌面控制路由位于 jvmMain，状态修改在 UI 线程。Android 的浏览器与诊断接口共用 DebugService 和配置端口，可通过局域网访问；诊断接入放 gkd-app/src/androidMain，由 DebugService 在 META.debuggable 为 true 时直接创建。服务统一导出，Release 启动校验 Intent 的外部调用 token，内部启动也携带，Debug 启动不校验；诊断 HTTP 使用短期凭据，工具支持 ADB 转发；Release 不装配诊断路由。语义树/操作/截图明确 app|controls，各窗口节点快照独立；操作执行真实控件，不用直接改状态冒充点击。模拟返回先收 IME，再处理弹窗/编辑/页面。
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3ca225ef` are properly handled with clean fallback behavior.

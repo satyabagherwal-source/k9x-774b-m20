@@ -6553,3 +6553,5 @@
 | `CYCLE-20261031-EGH6` | `2026-10-31T11:53:30.090Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md` | Yes (`6ec1711e...`) |
 | `CYCLE-20261031-EQOU` | `2026-10-31T11:53:43.326Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6185` | Yes (`db230c46...`) |
 | `CYCLE-20261031-NCSO` | `2026-10-31T12:00:25.224Z` | `unsloth/Qwen3.8-27B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md` | Yes (`82179009...`) |
+| `CYCLE-20261031-YCTF` | `2026-10-31T12:08:58.467Z` | `gkd-kit/gkd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6186` | Yes (`aaa4b525...`) |
+| `CYCLE-20261031-YESC` | `2026-10-31T12:09:01.020Z` | `DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md` | Yes (`117ed840...`) |

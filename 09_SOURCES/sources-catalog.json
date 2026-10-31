@@ -645,8 +645,8 @@
     "sourceUrl": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
     "sourceVersion": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
     "license": "Open-Source",
-    "contentHash": "306dd3e645f1d1c179068b17173522c117d339bcbcaea4f481428003d4001df0",
-    "lastHarvestedAt": "2026-10-28T11:23:52.707Z",
+    "contentHash": "117ed8402a3c311b578825640b9f0b627ed38d4e0525e0b0cb528c114847e89a",
+    "lastHarvestedAt": "2026-10-31T12:09:01.027Z",
     "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf"
   },
   "hf-canberkkkkkk-ema-lightning": {
@@ -6243,10 +6243,10 @@
     "repository": "gkd-kit/gkd",
     "platform": "github",
     "sourceUrl": "https://github.com/gkd-kit/gkd",
-    "sourceVersion": "fe6736fb",
+    "sourceVersion": "c45a1241",
     "license": "GPL-3.0",
-    "contentHash": "510366261de9bf3e852ae0b8f7f0366781ce4ad52080da45958d2a31f4311a47",
-    "lastHarvestedAt": "2026-10-20T17:35:51.804Z",
+    "contentHash": "aaa4b5252a055a8bccfb357575165189f26d9e626471632b80623723fa709a20",
+    "lastHarvestedAt": "2026-10-31T12:08:58.471Z",
     "learningId": "learn-github-gkd-kit-gkd"
   },
   "envoyproxy-envoy": {
