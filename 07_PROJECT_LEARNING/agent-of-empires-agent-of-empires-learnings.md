@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source**: github ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
-> **Source Version**: `996a3a71`  
+> **Source Version**: `8bd72072`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T18:58:27.880Z  
+> **Timestamp**: 2026-10-31T14:45:47.136Z  
 > **Learning ID**: `learn-github-agent-of-empires-agent-of-empires`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T18:58:26.358Z  
+> **Harvest Timestamp**: 2026-10-31T14:45:47.129Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Manage multiple Claude Code, OpenCode agents from either TUI or Web for easy access on mobile. Also supports Mistral Vibe, Codex CLI, Gemini CLI, Pi.dev, Copilot CLI, Factory Droid Coding.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3396 stars
+- **Stars / Engagement**: 3398 stars
 
 ---
 
@@ -652,7 +652,9 @@ impl Session {
                     // The supervisor publishes the terminal here (#1100).
                     info!(target: "acp.protocol", "force-stop requested with no prompt in flight; best-effort cancel only");
                     self.stand_down_idle_completion();
-                    let _ = self.send_cancel().await;
+                    if let Err(error) = self.send_cancel().await {
+                        debug!(target: "acp.protocol", %error, "cancel notification failed");
+                    }
                 }
                 Some(ClientCmd::SetMode(mode_id)) => self.dispatch_mode(mode_id, false),
                 Some(ClientCmd::DeleteSession {
@@ -716,10 +718,7 @@ impl Session {
         // An adopted turn races the detached resume-idle task for its
         // terminal; state is reset either way.
         let adopted = shared.adopted_turn_active.swap(false, Ordering::Relaxed);
-        if adopted && !shared.terminal_claim.claim() {
-            return false;
-        }
-        // The limit arrives as agent text with no prompt error; 
+        if adopted && !shar
 ```
 
 ### Core Architecture Module: `src/acp/acp_client/lifecycle.rs`
@@ -2240,1162 +2239,690 @@ impl Transaction {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce52748a` (2026-10-29)
-**Commit Message**: fix(session): remove a purged worktree outside the store locks (#4496)
+### Incident Patch 1: `3b7b4b7f` (2026-10-30)
+**Commit Message**: fix(serve): turn off the Funnel a failed Tailscale start switched on (#5043)
 
-* fix(session): remove a purged worktree outside the store locks
+* fix(serve): turn off the Funnel a failed Tailscale start switched on
 
-The purge held every profile's save mutex and storage flock for the
-whole git worktree remove, so any TUI save (attaching, status changes)
-froze until it finished, which takes minutes for a large worktree
-under endpoint security. Under the locks the purge now only checks the
-worktree is unused and moves it aside to a private path; the removal
-runs after the locks are released. A worktree that cannot be moved, or
-a multi-repo workspace, is still removed in place.
+`aoe serve` with Tailscale runs `tailscale funnel --bg` and then reads the
+public URL. If that read failed, timed out, or the start was cancelled, the
+Funnel stayed on, pointing at a port nothing served.
 
-🤖 Generated with Claude Code
+The start now records whether :443 already carried our Funnel before it ran.
+If it didn't, a guard armed after `--bg` turns the Funnel back off with
+`tailscale funnel --https=443 off`: awaited (bounded) on the error and
+timeout paths, and from Drop only when the start future is cancelled. A
+Funnel the user already had on this port is never touched.
 
-* fix(session): hide a moved-aside worktree from adoption during its purge
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Lock the moved-aside checkout with a purge reason that worktree listings
-skip, remove it without unlocking, move it back when the removal fails,
-and resume an interrupted purge from the original path.
+* fix(serve): keep the Funnel reset armed until it finishes, and match our port exactly
 
-🤖 Generated with Claude Code
+Two gaps in the failed-start reset:
 
-* fix(session): keep an adopted or dirtied aside worktree on purge
+- `reset()` disarmed the guard before awaiting `funnel --https=443 off`. A
+  start cancelled during that await killed the command, and Drop then saw
+  nothing to do, so the Funnel stayed on. It now disarms after the await;
+  a second `off` from Drop is harmless.
+- The pre-flight took any proxy containing `127.0.0.
 
-Judge an aside checkout another session adopted before it was hidden
-where it is instead of moving it back, re-check a non-force removal for
-changes before the double-force remove, and m
-
-**File**: `docs/guides/worktrees.md` (modified, +2/-0)
+**File**: `docs/guides/web-dashboard.md` (modified, +1/-1)
 ```diff
-@@ -97,6 +97,8 @@ Without Force, purge preserves a dirty worktree and retains its session for retr
+@@ -65,7 +65,7 @@ In `--remote` mode the token rotates every four hours. Use `aoe url` for the liv
  
- Native daemon clients can abandon a stuck purge using its current reservation generation. Abandon removes the session record and schedules runtime cleanup; it does not cancel a hook or cleanup already underway, and does not start another worktree or branch removal.
+ `--remote` selects a tunnel in this order, unless named-tunnel flags override it:
  
-+**Purging first moves the worktree** to a sibling `.aoe-purge-<session-id>`, marked by an `aoe-purge` file in its git admin directory, which `git worktree list` still shows but aoe hides from sessions, then removes it. A failed removal moves it back. A purge interrupted by a crash is finished on the next purge attempt while its session still exists; otherwise (web deletes remove the session first) `aoe worktree cleanup` lists the `.aoe-purge-<session-id>` checkout as orphaned once no process is still purging it, and can remove it.
-+
- **The default branch's checkout is never removed.** A bare-repo layout keeps
- that checkout available to other tooling. AoE refuses to remove it or delete
- its branch, reports the refusal, and deletes the session record instead.
+-1. **Tailscale Funnel:** if `tailscale` is installed and logged in, AoE runs `tailscale funnel --bg --yes <port>` for a stable `https://<machine>.<tailnet>.ts.net` URL. Install Tailscale, run `tailscale up`, enable [Funnel](https://login.tailscale.com/f/funnel), and grant the node the `funnel` nodeAttr in its [ACL](https://login.tailscale.com/admin/acls/file). Target the node's tag if tagged. A conflicting non-loopback Funnel on port 443 is refused, not replaced; clear it with `tailscale funnel reset`, or use `--no-tailscale`. Stale loopback AoE configuration can be replaced.
++1. **Tailscale Funnel:** if `tailscale` is installed and logged in, AoE runs `tailscale funnel --bg --yes <port>` for a stable `https://<machine>.<tailnet>.ts.net` URL. Install Tailscale, run `tailscale up`, enable [Funnel](https://login.tailscale.com/f/funnel), and grant the node the `funnel` nodeAttr in its [ACL](https://login.tailscale.com/admin/acls/file). Target the node's tag if tagged. A conflicting non-loopback Funnel on port 443 is refused, not replaced; clear it with `tailscale funnel reset`, or use `--no-tailscale`. Stale loopback AoE configuration can be replaced. AoE also refuses to start Funnel when port 443 has tailnet-only Serve config, which Funnel would make public, or when `tailscale funnel status` can't be read. If a start fails after turning Funnel on, AoE turns it back off, but only when port 443 was unused before and still holds just AoE's route; otherwise the error says what was left on. Two aoe daemons on one machine, such as a release and a debug build, take turns: a start waits up to 60 s for the other's to finish.
+ 2. **Named Cloudflare tunnel:** an explicit named tunnel takes precedence over Tailscale and provides a stable hostname on your domain:
+ 
+    ```bash
 ```
 
-**File**: `src/cli/add.rs` (modified, +3/-0)
+**File**: `src/server/tunnel.rs` (modified, +1012/-64)
 ```diff
-@@ -232,6 +232,9 @@ pub async fn run(profile: &str, args: AddArgs) -> Result<()> {
-     if !args.scratch && !path.is_dir() {
-         bail!("Path is not a directory: {}", path.display());
-     }
-+    if !args.scratch {
-+        crate::session::builder::ensure_not_purging(&path)?;
+@@ -170,6 +170,18 @@ impl TunnelHandle {
+     /// Configure Tailscale Funnel for the local port and return a handle carrying the
+     /// stable `https://<host>.<tailnet>.ts.net` URL.
+     pub async fn spawn_tailscale(local_port: u16) -> anyhow::Result<Self> {
++        use anyhow::Context as _;
++        let home =
++            dirs::home_dir().context("couldn't find the home directory for the Funnel lock")?;
++        let lock = funnel_lock_path(&home);
++        Self::spawn_tailscale_with(std::ffi::OsStr::new("tailscale"), &lock, local_port).await
 +    }
++
++    async fn spawn_tailscale_with(
++        program: &std::ffi::OsStr,
++        lock: &std::path::Path,
++        local_port: u16,
++    ) -> anyhow::Result<Self> {
+         // Hard cap on each tailscale command so we never wedge if tailscale pops an
+         // interactive prompt (HTTPS-certs consent, Funnel-not-enabled-in-ACL, node not
+         // signed in).
+@@ -181,7 +193,7 @@ impl TunnelHandle {
+         );
  
-     if (!args.extra_repos.is_empty() || !args.projects.is_empty())
-         && explicit_worktree_branch(&args).is_none()
-```
-
-**File**: `src/cli/session.rs` (modified, +4/-0)
-```diff
-@@ -1034,6 +1034,10 @@ async fn import_sessions(profile: &str, args: ImportArgs) -> Result<()> {
-             if already_imported(all_instances, &s.session_id) {
-                 continue;
-             }
-+            if crate::git::GitWorktree::is_within_purging(std::path::Path::new(&s.cwd)) {
-+                eprintln!("Skipping {}: its project path is being purged", s.cwd);
-+                continue;
-+            }
-             let inst = build_import_instance(s, structured, &group, session_config);
-             ids.push(inst.id.clone());
-             all_instances.push(inst.clone());
-```
-
-**File**: `src/cli/worktree.rs` (modified, +238/-46)
-```diff
-@@ -6,7 +6,7 @@ use std::collections::HashSet;
- use std::path::{Path, PathBuf};
- 
- use crate::git::{GitWorktree, WorktreeEntry};
--use crate::session::Storage;
-+use crate::session::{Instance, Storage};
- 
- #[derive(Subcommand)]
- pub enum WorktreeCommands {
-@@ -170,45 +170,146 @@ fn partition_orphaned_worktrees(
-         })
- }
- 
--async fn cleanup_orphaned(profile: &str, force: bool) -> Result<()> {
--    let storage = Storage::open_unwatched(profile)?;
--    let (instances, _groups) = storage.load_with_groups()?;
-+/// Where a purge moves `inst`'s worktree. A row whose checkout is there is mid-purge or awaiting
-+/// its retry, so neither is orphaned.
-+fn purge_aside(inst: &Instance) -> Option<PathBuf> {
-+    let path = Path::new(&inst.project_path);
-+    path.parent()?
-+        .join(format!(".aoe-purge-{}", inst.id))
-+        .canonicalize()
-+        .ok()
-+}
- 
--    let mut orphaned_sessions = Vec::new();
--    let mut orphaned_worktrees = Vec::new();
-+/// A row is orphaned once its checkout is gone and no lifecycle operation, such as a purge that
-+/// may restore it, has it reserved.
-+fn is_orphaned_session(inst: &Instance, now: chrono::DateTime<chrono::Utc>) -> bool {
-+    if inst.has_fresh_lifecycle_reservation(now) {
-+        return false;
-+    }
-+    if inst.worktree_info.is_some() {
-+        !Path::new(&inst.project_path).exists() && purge_aside(inst).is_none()
-+    } else if let Some(ws_info) = &inst.workspace_info {
-+        !Path::new(&ws_info.workspace_dir).exists()
-+    } else {
-+        false
-+    }
-+}
- 
--    for inst in &instances {
--        if let Some(_wt_info) = &inst.worktree_info {
--            let worktree_path = PathBuf::from(&inst.project_path);
--            if !worktree_path.exists() {
--                orphaned_sessions.push(inst.clone());
-+pub(crate) fn find_orphaned_sessions(instances: &[Instance]) -> Vec<Instance> {
-+    let now = chrono::Utc::now();
-+    instances
-+        .iter()
-+        .filter(|inst| is_orphaned_session(inst, now))
-+        .cloned()
-+        .collect()
-+}
-+
-+/// Removes the listed rows that are still orphaned, judged again under each row's lifecycle lock
-+/// and the store lock. Returns how many were removed.
-+pub(crate) fn remove_orphaned_sessions(storage: &Storage, orphans: &[Instance]) -> Result<usize> {
-+    let mut held = Vec::new();
-+    let mut ids = HashSet::new();
-+    for orphan in orphans {
-+        match storage.try_acquire_instance_lifecycle_lock(&orphan.id)? {
-+            Some(lock) => {
-+                held.push(lock);
-+                ids.insert(orphan.id.clone());
-+            }
-+            None => eprintln!("✗ Skipped session {}: it is busy", orphan.id),
-+        }
-+    }
-+    let mut removed = 0;
-+    storage.update(|instances, _groups| {
-+        let now = chrono::Utc::now();
-+        let before = instances.len();
-+        instances.retain(|inst| !(ids.contains(&inst.id) && is_orphaned_session(inst, now)));
-+        removed = before - instances.len();
-+        Ok(())
-+    })?;
-+    Ok(removed)
-+}
-+
-+/// The removable and the protected orphaned worktrees of `git_wt`'s repository.
-+pub(crate) fn find_orphaned_worktrees(
-+    instances: &[Instance],
-+    git_wt: &GitWorktree,
-+) -> Result<(Vec<WorktreeEntry>, Vec<WorktreeEntry>)> {
-+    let tracked: HashSet<String> = instances
-+        .iter()
-+        .flat_map(|inst| {
-+            let aside = purge_aside(inst).map(|aside| aside.to_string_lossy().into_owned());
-+            std::iter::once(inst.project_path.clone()).chain(aside)
-+        })
-+        .collect();
-+    Ok(partition_orphaned_worktrees(
-+        git_wt.list_worktrees_with_abandoned_purges()?,
-+        &git_wt.repo_path,
-+        &tracked,
-+        &git_wt.protected_default_branch_names()?,
-+    ))
-+}
-+
-+/// The listed worktrees that are abandoned purges, which keep that classification until removal.
-+pub(crate) fn purging_paths(orphans: &[WorktreeEntry]) -> HashSet<PathBuf> {
-+    orphans
-+        .iter()
-+        .filter(|wt| GitWorktree::is_purging(&wt.path))
-+        .map(|wt| wt.path.clone())
-+        .collect()
-+}
-+
-+/// Removes the listed orphaned worktrees and returns how many were removed. An abandoned purge is
-+/// removed only while it is still marked and its claim held: recovery may since have kept it for
-+/// a session to adopt.
-+pub(crate) fn remove_orphaned_worktrees(
-+    git_wt: &GitWorktree,
-+    orphans: &[WorktreeEntry],
-+    purging: &HashSet<PathBuf>,
-+) -> usize {
-+    let mut removed = 0;
-+    for wt in orphans {
-+        let _claim = if purging.contains(&wt.path) {
-+            let Some(claim) = GitWorktree::claim_abandoned_purge(&wt.path) else {
-+                eprintln!(
-+                    "✗ Skipped {}: its purge was resumed or kept",
-+                    wt.path.display()
-+                );
-+                continue;
-+            };
-+            Some(claim)
-+        } else if GitWorktree::is_purging(&wt.path) {
-+            eprintln!("✗ Skipped {}: its purge is in progress", wt.path.display());
-+     
-```
-
-**File**: `src/git/mod.rs` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@ pub use remote::{
-     get_remote_url,
- };
- pub(crate) use worktree::WorktreeCreation;
--pub use worktree::{GitWorktree, WorktreeEntry};
-+pub use worktree::{GitWorktree, PurgeClaim, WorktreeEntry};
- 
- /// Open the repository at `path` without searching parents, so an unrelated
- /// ancestor repo (e.g. a dotfile-managed home) is never found.
-```
-
-**File**: `src/git/worktree/mod.rs` (modified, +127/-0)
-```diff
-@@ -28,6 +28,17 @@ const MUTATION_OBSERVATION_TIMEOUT: Duration = Duration::from_secs(5);
- /// intentional remove or move.
- const WORKTREE_LOCK_REASON: &str = "aoe-managed worktree (prevents cross-boundary prune)";
- 
-+/// File in a worktree's admin directory marking a purge in progress. Listings skip a marked
-+/// worktree so no session can adopt it; its lock and git's dirty refusal are untouched.
-+const PURGE_MARKER: &str = "aoe-purge";
-+const PURGE_CLAIM: &str = "aoe-purge.claim";
-+
-+/// An `flock` on a marked worktree's claim file, held by whoever is finishing its purge. A marked
-+/// worktree whose claim is free was abandoned.
-+pub struct PurgeClaim {
-+    _lock: std::fs::File,
-+}
-+
- #[derive(Default)]
- pub(crate) struct WorktreeCreation {
-     pub branch_created: bool,
-@@ -195,6 +206,72 @@ impl GitWorktree {
-         .map(drop)
-     }
- 
-+    fn purge_marker(path: &Path) -> Result<PathBuf> {
-+        crate::git::cleanup::read_linked_worktree_gitdir(path)
-+            .map(|admin| admin.join(PURGE_MARKER))
-+            .ok_or_else(|| GitError::WorktreeNotFound(path.to_path_buf()))
-+    }
-+
-+    /// Hide `path` from `list_worktrees` while its purge runs, owned by the returned claim.
-+    pub fn mark_purging(path: &Path) -> Result<PurgeClaim> {
-+        let claim = Self::claim_purge(path)?;
-+        std::fs::write(Self::purge_marker(path)?, "")?;
-+        Ok(claim)
-+    }
-+
-+    fn claim_purge(path: &Path) -> Result<PurgeClaim> {
-+        use fs2::FileExt;
-+        let claim_path = Self::purge_marker(path)?.with_file_name(PURGE_CLAIM);
-+        let lock = std::fs::OpenOptions::new()
-+            .create(true)
-+            .write(true)
-+            .truncate(false)
-+            .open(claim_path)?;
-+        lock.try_lock_exclusive().map_err(|_| {
-+            GitError::WorktreeCommandFailed(format!(
-+                "{} is being purged by another process",
-+                path.display()
-+            ))
-+        })?;
-+        Ok(PurgeClaim { _lock: lock })
-+    }
-+
-+    /// A child forked by a concurrent test can hold a dropped claim's descriptor until it execs.
-+    #[cfg(test)]
-+    pub(crate) fn await_purge_released(path: &Path) {
-+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
-+        while Self::claim_purge(path).is_err() {
-+            assert!(
-+                std::time::Instant::now() < deadline,
-+                "purge claim never released"
-+            );
-+            std::thread::yield_now();
-+        }
-+    }
-+
-+    /// Claims a marked worktree whose purge was abandoned, or `None` if its purge is live or it is
-+    /// no longer marked.
-+    pub fn claim_abandoned_purge(path: &Path) -> Option<PurgeClaim> {
-+        let claim = Self::claim_purge(path).ok()?;
-+        Self::is_purging(path).then_some(claim)
-+    }
-+
-+    pub fn unmark_purging(path: &Path) -> Result<()> {
-+        match std::fs::remove_file(Self::purge_marker(path)?) {
-+            Err(error) if error.kind() != std::io::ErrorKind::NotFound => Err(error.into()),
-+            _ => Ok(()),
-+        }
-+    }
-+
-+    /// Whether `path` is in or under a checkout marked for purging, including through a nested repo.
-+    pub(crate) fn is_within_purging(path: &Path) -> bool {
-+        path.ancestors().any(Self::is_purging)
-+    }
-+
-+    pub(crate) fn is_purging(path: &Path) -> bool {
-+        Self::purge_marker(path).is_ok_and(|marker| marker.exists())
-+    }
-+
-     /// Unlock `path`'s admin entry, best-effort and idempotent. Must precede
-     /// `git worktree remove`/`move` (both refuse a locked tree) and any prune
-     /// meant to reap the entry. Works from the admin side even when the
-@@ -280,6 +357,15 @@ impl GitWorktree {
-     }
- 
-     pub fn list_worktrees(&self) -> Result<Vec<WorktreeEntry>> {
-+        self.worktree_entries(false)
-+    }
-+
-+    /// Also lists marked worktrees whose purge was abandoned, for cleanup to finish.
-+    pub fn list_worktrees_with_abandoned_purges(&self) -> Result<Vec<WorktreeEntry>> {
-+        self.worktree_entries(true)
-+    }
-+
-+    fn worktree_entries(&self, include_abandoned: bool) -> Result<Vec<WorktreeEntry>> {
-         let repo = open_repo_at(&self.repo_path)?;
-         let mut entries = vec![];
-         // Bare repos have no main worktree, only linked ones.
-@@ -297,6 +383,9 @@ impl GitWorktree {
-             let Ok(path) = wt.path().canonicalize() else {
-                 continue;
-             };
-+            if Self::is_purging(&path) && !(include_abandoned && Self::claim_purge(&path).is_ok()) {
-+                continue;
-+            }
-             entries.push(WorktreeEntry {
-                 branch: Self::get_current_branch(&path).ok(),
-                 path,
-@@ -679,6 +768,44 @@ mod tests {
-         assert!(wt_path.join(".git").is_file());
-     }
- 
-+    #[test]
-+    fn only_cleanup_lists_an_abandoned_purge() {
-+        let (dir, _repo) = init_repo();
-+        let git_wt = GitWorktree::new(dir.path().to_path_buf()).unwrap();
-+        let parent = TempDir::
-```
-
-**File**: `src/git/worktree/relocate.rs` (modified, +1/-1)
-```diff
-@@ -390,7 +390,7 @@ impl GitWorktree {
- 
-     /// `git worktree repair`, which fixes both the checkout's `.git` pointer and
-     /// the admin `gitdir` file, even when a relative pointer broke in the move.
--    fn repair_worktree(&self, path: &Path) -> Result<()> {
-+    pub(crate) fn repair_worktree(&self, path: &Path) -> Result<()> {
-         run_bounded(
-             &self.repo_path,
-             ["worktree", "repair", path_str(path)?],
-```
-
-**File**: `src/session/builder.rs` (modified, +9/-0)
-```diff
-@@ -651,6 +651,14 @@ pub fn build_instance(
-         })
- }
- 
-+/// A checkout marked for purging is about to be removed, so no new session may take it.
-+pub(crate) fn ensure_not_purging(path: &std::path::Path) -> Result<()> {
-+    if crate::git::GitWorktree::is_within_purging(path) {
-+        bail!("Project path is being purged: {}", path.display());
-+    }
-+    Ok(())
-+}
-+
- pub(crate) fn plan_instance(
-     params: InstanceParams,
-     existing_titles: &[&str],
-@@ -904,6 +912,7 @@ pub(crate) fn plan_instance(
-         if !final_path_buf.is_dir() {
-             bail!("Project path is not a directory: {}", final_path);
+         // Pre-flight 1.
+-        if let Err(e) = check_funnel_capability().await {
++        if let Err(e) = check_funnel_capability(program).await {
+             debug!(reason = %e, "spawn_tailscale: funnel cap check failed");
+             anyhow::bail!(
+                 "Tailscale Funnel is not enabled for this tailnet. \
+@@ -190,14 +202,14 @@ impl TunnelHandle {
+             );
          }
-+        ensure_not_purging(&final_path_buf)?;
-     }
  
-     let mut instance = Instance::new(&final_title, &final_path);
++        // Held until this start succeeds or its reset ends; the guard owns it, so it's released
++        // after the guard's own `off`. Another aoe daemon can't activate in between.
++        let funnel_lock = lock_funnel_starts(lock).await?;
++
+         // Pre-flight 2.
+-        if let Some(existing) = inspect_existing_funnel(local_port).await {
+-            anyhow::bail!(
+-                "port 443 is already configured on this node for a different \
+-                 backend ({}). Run `tailscale funnel reset` to clear the \
+-                 existing config, or pass --no-tailscale to use Cloudflare.",
+-                existing
+-            );
++        let preflight = inspect_existing_funnel(program, local_port).await;
++        if let FunnelPreflight::Refuse(why) = &preflight {
++            anyhow::bail!("{why}");
+         }
+ 
+         // Single-command Funnel (Tailscale 1.52+).
+@@ -208,14 +220,33 @@ impl TunnelHandle {
+             local_port
+         );
+ 
+-        let mut child = Command::new("tailscale")
++        // If :443 had nothing on it before, everything there from now on is this start's: a
++        // start that fails or is cancelled turns it back off, even while `--bg` is still running
++        // (it may already have applied the config), so no Funnel is left pointing at a port
++        // nothing serves. A public Funnel that was already there (the user's own, or a sibling
++        // path) keeps its other routes; only `/` changes.
++        let mut guard = FunnelStartGuard::new(
++            program,
++            local_port,
++            preflight == FunnelPreflight::Unused,
++            funnel_lock,
++        );
++
++        let child = Command::new(program)
+             .args(funnel_args)
+             .stdin(std::process::Stdio::null())
+             .stdout(std::process::Stdio::piped())
+             .stderr(std::process::Stdio::piped())
+             .kill_on_drop(true)
+-            .spawn()
+-            .map_err(|e| anyhow::anyhow!("failed to run tailscale funnel: {}", e))?;
++            .spawn();
++        let mut child = match child {
++            Ok(child) => child,
++            Err(e) => {
++                // `--bg` never ran, so there's nothing to turn off.
++                guard.disarm();
++                anyhow::bail!("failed to run tailscale funnel: {e}");
++            }
++        };
+         let stdout = child.stdout.take();
+         let stderr = child.stderr.take();
+ 
+@@ -257,29 +288,39 @@ impl TunnelHandle {
+                     Err(_) => "Enable it from your tailnet admin console under \
+                               Settings > Features > Funnel.".to_string(),
+                 };
+-                return Err(anyhow::anyhow!(
++                let e = anyhow::anyhow!(
+                     "Tailscale Funnel is not enabled for this tailnet.\n\n\
+                      {detail}\n\n\
+                      After enabling, re-run `aoe serve --remote`. \
+                      Or pass --no-tailscale to use Cloudflare instead."
+-                ));
+-            }
+-            res = tokio::time::timeout(STEP_TIMEOUT, child.wait()) => {
+-                res
+-                    .map_err(|_| {
+-                        anyhow::anyhow!(
+-                            "tailscale funnel timed out after {}s; your node may not have \
+-                             HTTPS certs enabled or Funnel may not be enabled in your tailnet \
+-                             ACL. Run `AGENT_OF_EMPIRES_DEBUG=1 aoe serve --remote` and \
+-                             check debug.log for the live output, or try \
+-                             `tailscale funnel --bg --yes {}` ma
 ```
 
 ---
 
-### Incident Patch 2: `ef58696d` (2026-10-30)
-**Commit Message**: fix(session): refuse unattested managed resumes (#4942)
+### Incident Patch 2: `687771d9` (2026-10-31)
+**Commit Message**: fix(logging): make debug.log diagnosable, nothing dropped and every lifecycle event and failure logged (#5093)
 
-* fix(session): refuse unattested managed resumes
+* fix(logging): stop dropping unrooted targets and log session lifecycle
 
-Refuse resolver-error fallbacks before retiring a managed pane. Preserve failed conversation identities until an explicit retry or fresh intent, without blocking native user commands or non-agent handoffs.
+`filter_for_level` built the EnvFilter from `DEFAULT_TARGET_ROOTS` alone, so
+events on any other root (`task.panic` errors, `push`, `file_watch`,
+`events`, `conversation_summary`, `shutdown`) were dropped at every level,
+and dependency crates never logged. Add the missing roots, prepend a fixed
+`warn` catch-all, and add a source-scan test so a new root cannot drift
+out again. Migration v053 deletes the persisted `runtime_filter`, which
+would otherwise re-apply the old root list at boot.
 
-Refs #4941
+Log every committed status transition once at `publish` time (ACP sessions
+had none), add `info` summaries for session create/purge/trash/restart/
+rename, and move the two per-poll debug sites that made up 88% of the file
+(`list_sessions resolved`, `worker rpc ok`) to `trace`.
 
-* fix(session): preserve resume preflight invariants
+Prune dead `KNOWN_SUB_TARGETS` entries, add the new ones, and test both
+that each entry exists in source and that the web mirror matches.
 
-Keep the durable CAS baseline while refreshing captured identity. Validate Prime fork sources read-only before teardown, leaving copy and rebinding in launch preparation. Honor deliberate fresh intent for opaque wrappers without consuming their prior conversation.
+Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
-Refs #4941
+* feat(logging): narrate every lifecycle event and
 
-* fix(session): surface managed resume recovery
-
-Keep refusal guidance visible across daemon and TUI boundaries.
-Preserve mutation receipts without exposing internal diagnostics.
-
-* test(session): distinguish managed refusal paths
-
-* fix(session): classify managed Prime refusals
-
-Apply shared refusal handling before the Prime-specific launch guard.
-Keep fresh launch and explicit pin/fork errors unchanged.
-
-* fix(session): make managed resume recovery actionable
-
-Surface finite causes and explicit retry or fresh instructions without
-ref
-
-**File**: `docs/api.md` (modified, +12/-3)
+**File**: `docs/development.md` (modified, +5/-3)
 ```diff
-@@ -558,11 +558,13 @@ Before delivery, the HTTP endpoint removes bracketed-paste delimiters and remain
- | `403` | `{"error": "read_only"}` | Server is in read-only mode |
- | `404` | `{"error": "not_found"}` | No session with that id |
- | `409` | `{"error": "session_not_running"}` | Session exists but the tmux pane is gone |
--| `409` | `{"error": "resume_failed", "message": "...", "resume_session_id": "..."}` | Auto-revive tried to resume a stored conversation, but the pane exited before AoE could prove the ID invalid. The ID is preserved for explicit retry or replacement. |
-+| `409` | `{"error": "resume_failed", "message": "...", "resume_session_id": "..."}` | Auto-revive tried to resume a stored conversation, but the pane exited during the probe. The ID and failure marker are preserved in this call; the next default revival can start fresh. |
- | `409` | `{"error": "session_transient", "status": "..."}` | Session is mid-lifecycle and cannot accept input yet |
- | `409` | `{"error": "session_archived" \| "session_trashed", "message": "..."}` | Session is archived or trashed, even with a live pane or `revive: false`; unarchive or restore it first. `/start`, `/ensure`, `/container-terminal` and structured-view prompts refuse the same way. |
- | `500` | `{"error": "tmux_error"}` or `{"error": "internal"}` | Unexpected failure (logged server-side) |
+@@ -51,9 +51,11 @@ aoe logs
+ `cargo xtask dev` runs a dashboard-enabled debug backend on 8081 and Vite with HMR on 5173; `--watch` rebuilds and restarts the backend when Rust inputs change, leaving the previous backend running if a rebuild fails.
  
-+After a prior failed resume probe, a default restart or send-driven revival can start a new conversation and deliver input there. The old native transcript is not deleted, but its AoE association is abandoned. `/ensure` reports this as `resume_outcome: "fresh_after_failed_resume"` with `prior_session_id` and a message, rather than claiming a successful resume. See [session recovery policy](guides/session-resume.md#pinning-or-resetting-a-conversation) for explicit retry and direct CLI start behavior.
-+
- Concurrent POSTs to the same `id` are serialized server-side, so two
- orchestrators racing on the same session won't interleave keystrokes
- inside the pane. Concurrent POSTs to *different* ids run in parallel.
-@@ -650,13 +652,20 @@ attachment is delivered. Genuine authority loss or an unknown outcome remains
- blocked until reconciled.
+ Use explicit dotted tracing area targets so per-target logging overrides affect
+-native and dashboard failures consistently. Settings > Logging exposes server,
+-migration and process areas; clearing one override restores inheritance without
+-clearing other targets.
++native and dashboard failures consistently. Every `target:` root used in `src/`
++must be listed in `DEFAULT_TARGET_ROOTS` in `src/logging.rs`; a unit test
++enforces it, and an unlisted root only reaches the file at `warn` and above.
++Dependency crates log at `warn` regardless of `default_level`. Clearing one override in
++Settings > Logging restores inheritance without clearing other targets.
  
- A failed launch can still commit a lifecycle generation. The finite
--`aoe-error-code` values `start_failed` and `resume_failed`, with valid same-epoch
--runtime receipt headers, acknowledge that preparation commit, not a successful
-+`aoe-error-code` values `start_failed`, `resume_failed`, and
-+`managed_resume_refused`, with valid same-epoch runtime receipt headers,
-+acknowledge that preparation commit, not a successful
- launch. Clients must apply its snapshot before retrying. A later send or target
- probe failure can likewise retain a preparation cursor; it does not acknowledge
- message delivery. Transport loss or malformed mutation receipts remain unknown;
- effect-free daemon refusals do not acknowledge a commit.
+ Filter changes saved in Settings > Logging apply to the TUI, running daemon and structured runners in the same app namespace. Sink and rotation changes require restart. No-op and unrelated saves preserve temporary runtime filters.
  
-+`409 managed_resume_refused` preserves the managed conversation. Its finite
-+`aoe-managed-resume-cause` header supplies an application-owned recovery reason.
-+Missing, unknown, or ambiguous cause metadata keeps the refusal generic; native
-+clients do not read response bodies to derive that reason. See
-+[managed resume recovery](guides/session-resume.md#common-managed-resume-and-fork-refusals).
-+
- A failed purge can commit a retained-row failure marker. `409 purge_failed`
- includes the finite code header and its canonical receipt; clients wait for that
- snapshot before retrying or escalating. Unlike an unknown outcome, this committed
 ```
 
 **File**: `docs/guides/configuration.md` (modified, +1/-1)
 ```diff
-@@ -207,7 +207,7 @@ agent_detect_as = { "lenovo-claude" = "claude" }
- - **`agent_detect_as`** reuses built-in status detection and ACP adapter inheritance. It never proves which native CLI owns a terminal conversation. Use [status rules](#status-rules-for-custom-agents) when output differs from the built-in.
- - **`agent_acp_cmd`** (optional): ACP launch command that lets the agent run in the structured view (see below).
- - **`agent_execution_as`** declares the native agent actually invoked by an opaque wrapper, together with its `agent_config_dir` store contract. This is required for managed resume and fork through such a wrapper.
--  Bare, non-path wrappers can receive Default automatic resume flags and pane-scoped capture without this contract. Cleared launches selected by a failed-resume marker or disabled `auto_resume_on_restart` start fresh, mint and pass fresh-session flags where supported, and capture the new pane-scoped ID; explicit resume and fork remain unavailable. See [Execution identity and wrappers](session-resume.md#execution-identity-and-wrappers).
-+  Bare, non-path wrappers can start fresh and capture their pane-scoped published ID without this contract. Resuming the recorded conversation requires the contract. See [Execution identity and wrappers](session-resume.md#execution-identity-and-wrappers) for wrapper contracts and [Pinning or resetting a conversation](session-resume.md#pinning-or-resetting-a-conversation) for failed-resume recovery.
- - **`agent_config_dir`** (optional): The config directory the wrapper points its CLI at, when that is not the built-in default (see below).
- - **`default_tool`** can select a custom-agent name for new sessions.
+@@ -49,7 +49,7 @@ Updates use a locked read-modify-write operation, preserving concurrent changes.
+ | Variable | Description |
+ |----------|-------------|
+ | `AGENT_OF_EMPIRES_PROFILE` | Default profile |
+-| `AOE_LOG_LEVEL` | File log level: `trace`, `debug`, `info`, `warn`, `error` |
++| `AOE_LOG_LEVEL` | File log level for AoE's own targets: `trace`, `debug`, `info`, `warn`, `error`. Dependency crates stay at `warn`. One-shot CLI commands always log to the same file at the configured level once the app directory exists; `[logging].output = "stdout"` applies to a foreground `aoe serve` only |
+ | `AGENT_OF_EMPIRES_DEBUG` | Legacy alias for `AOE_LOG_LEVEL=debug` |
+ | `AOE_DEFER_SANDBOX_MIGRATION` | Start without moving sandboxed sessions' agent stores; retried later or by `aoe migrate`. See [Per-session agent stores](sandbox.md#per-session-agent-stores) |
  
 ```
 
-**File**: `docs/guides/session-resume.md` (modified, +26/-10)
+**File**: `src/acp/acp_client/connection/command_loop.rs` (modified, +3/-1)
 ```diff
-@@ -1,6 +1,6 @@
- # Native Session Resume
- 
--Explicit resume and fork against a qualified conversation require the native agent, physical store, working directory, and filesystem to agree with the prepared launch. Automatic start and restart also try a stored native ID when its binding cannot be attested, using the agent's normal resume selector and failed-resume probe. A pin or fork that migration left unqualified resumes against configuration-derived context instead of a recorded one, subject to the per-agent limits in [Supported managed contexts](#supported-managed-contexts). A status label or raw session ID does not qualify that ID for explicit use. Existing transcripts are never deleted to repair a mismatch.
-+Managed resume requires a resolved native execution context, including automatic start and restart with a recorded conversation ID. If that context cannot be attested, AoE refuses the launch with recovery guidance instead of delegating the ID to unconstrained native lookup. Ordinary pane replacement checks this before retiring the outgoing pane, preserving its recorded identity and transcripts on refusal. This protection does not roll back an earlier explicitly requested container discard or container reconstruction for a tool change. Qualified conversations also validate their agent, store, working directory, and filesystem. A pin or fork that migration left unqualified uses configuration-derived context, subject to [Supported managed contexts](#supported-managed-contexts); a status label or raw ID does not qualify it.
- 
- Runtime conversation changes such as `/clear`, `/new`, fork, continue, or a fresh pane generation rotate the recorded identity when the native agent publishes the change. The old identity and any artifact predating the launch boundary cannot be recaptured after an AoE process restart.
- 
-@@ -28,19 +28,19 @@ Hermes host identity hooks validate the complete JSON payload while retaining on
- 
- Sandbox config and conversation stores are staged per AoE instance, including custom `agent_config_dir` roots, and a cross-process lease guards each managed store, so two sessions in the same directory cannot claim each other's conversation.
- 
--`agent_detect_as` controls status detection and ACP adapter inheritance, not terminal execution identity. Direct built-in commands identify their native agent independently. Opaque wrappers need the explicit contract described below for explicit resume or fork and capture from shared stores.
-+`agent_detect_as` controls status detection and ACP adapter inheritance, not terminal execution identity. Direct built-in commands identify their native agent independently. Opaque wrappers need the explicit contract below for managed resume, fork, and capture from shared stores.
- 
- ## Execution identity and wrappers
- 
- A conflicting built-in tool and command, such as tool `claude` with command `codex`, is rejected for managed resume and fork. An opaque wrapper requires both `session.agent_execution_as` and `session.agent_config_dir` in trusted global or profile configuration. This asserts that the wrapper invokes that native agent, forwards native arguments unchanged, and uses only the declared store and working-directory/filesystem context. Repository overrides are refused because a repository must not grant itself access to another native conversation store.
- 
--A Default start or restart can pass native resume flags to a bare, non-path wrapper mapped by `agent_detect_as` and capture its pane-scoped published ID (for example Claude, Codex, Cursor, or Pi), even without the execution contract. If a failed-resume marker or disabled `auto_resume_on_restart` selects a fresh launch, Cleared intent starts fresh through the same wrapper, minting an ID and passing fresh-session flags where supported, then capturing its pane-scoped publication. The failed-resume marker applies to the next automatic attempt for that ID; a subsequent restart follows the resulting durable conversation state. Neither path proves the wrapper's execution identity or store. Shared-store capture, explicit resume, and fork still require the contract; shell-active commands, remote launchers, paths, and different built-in commands do not gain the exception. A known conversation can also be tried after an external working-directory or store move on Default; its old binding stays authoritative until a qualified observation updates it.
-+A bare, non-path wrapper mapped by `agent_detect_as` can still start fresh and capture its pane-scoped published ID without the execution contract. AoE does not preassign a native ID from a status alias alone, including after an explicit fresh choice or disabled `auto_resume_on_restart`. Resuming a published ID still requires the contract. A native selector supplied by the user remains user-owned only when the row has no AoE-managed conversation state; AoE does not inject another selector. A known conversation can still be tried after an external working-directory or store
+@@ -160,7 +160,9 @@ impl Session {
+                     // The supervisor publishes the terminal here (#1100).
+                     info!(target: "acp.protocol", "force-stop requested with no prompt in flight; best-effort cancel only");
+                     self.stand_down_idle_completion();
+-                    let _ = self.send_cancel().await;
++                    if let Err(error) = self.send_cancel().await {
++                        debug!(target: "acp.protocol", %error, "cancel notification failed");
++                    }
+                 }
+                 Some(ClientCmd::SetMode(mode_id)) => self.dispatch_mode(mode_id, false),
+                 Some(ClientCmd::DeleteSession {
 ```
 
-**File**: `src/cli/session.rs` (modified, +5/-8)
+**File**: `src/acp/acp_client/connection/notifications.rs` (modified, +1/-1)
 ```diff
-@@ -1241,14 +1241,11 @@ async fn restart_all_sessions(profile: &str, parallel: usize) -> Result<()> {
-     for (_id, title) in &succeeded {
-         println!("  · {}", title);
-     }
--    if !fresh_after_failed_resume.is_empty() {
-+    for (title, sid) in &fresh_after_failed_resume {
-         println!(
--            "ℹ {} started fresh (a prior resume attempt failed for the stored sid; the old conversation is still reachable via the agent's own resume/history picker):",
--            fresh_after_failed_resume.len()
-+            "  · {}: started fresh after a prior resume failed for sid {}; the old conversation remains in the agent's history",
-+            title, sid
-         );
--        for (title, sid) in &fresh_after_failed_resume {
--            println!("  · {}: sid {}", title, sid);
--        }
-     }
-     if !orphaned.is_empty() {
-         println!(
-@@ -1403,8 +1400,8 @@ async fn restart_session(profile: &str, args: SessionIdArgs) -> Result<()> {
-         }
-         StartOutcome::FreshAfterFailedResume { sid } => {
-             println!(
--                "✓ Restarted session: {} (started fresh; a prior resume attempt failed for sid {sid}, the old conversation is still reachable via the agent's own resume/history picker)",
--                title
-+                "Restarted session: {} (started fresh after a prior resume failed for sid {}; the old conversation remains in the agent's history)",
-+                title, sid
-             );
-         }
-         StartOutcome::Resumed | StartOutcome::Fresh => {
+@@ -283,7 +283,7 @@ impl Shared {
+             // During replay only transcript events are dropped; ambient state
+             // and lifecycle events still pass so pickers stay current.
+             if suppressing && is_transcript_event(&event) {
+-                debug!(
++                tracing::trace!(
+                     target: "acp.protocol",
+                     session = %self.session_label,
+                     kind = transcript_event_kind(&event),
 ```
 
-**File**: `src/daemon/error.rs` (modified, +91/-0)
+**File**: `src/acp/acp_client/connection/prompt.rs` (modified, +10/-3)
 ```diff
-@@ -1,8 +1,10 @@
- //! Fixed error discriminators shared by native clients and daemon handlers.
- 
-+use crate::session::ManagedResumeCause;
- use reqwest::{header::HeaderMap, StatusCode};
- 
- pub const ERROR_CODE_HEADER: &str = "aoe-error-code";
-+pub const MANAGED_RESUME_CAUSE_HEADER: &str = "aoe-managed-resume-cause";
- 
- #[derive(Clone, Copy, Debug, PartialEq, Eq)]
- pub enum ApiErrorCode {
-@@ -16,6 +18,7 @@ pub enum ApiErrorCode {
-     TlsRequired,
-     RuntimeEpochMismatch,
-     ResumeFailed,
-+    ManagedResumeRefused(ManagedResumeCause),
-     StartFailed,
-     PurgeFailed,
-     NoRevive,
-@@ -47,6 +50,7 @@ impl ApiErrorCode {
-             Self::TlsRequired => "tls_required",
-             Self::RuntimeEpochMismatch => "runtime_epoch_mismatch",
-             Self::ResumeFailed => "resume_failed",
-+            Self::ManagedResumeRefused(_) => "managed_resume_refused",
-             Self::NoRevive => "no_revive",
-             Self::CreationTrustChanged => "creation_trust_changed",
-             Self::CreationCancelled => "creation_cancelled",
-@@ -72,6 +76,7 @@ impl ApiErrorCode {
-             | Self::LifecycleSuperseded
-             | Self::RuntimeEpochMismatch
-             | Self::ResumeFailed
-+            | Self::ManagedResumeRefused(_)
-             | Self::PurgeFailed
-             | Self::NoRevive
-             | Self::CreationTrustChanged
-@@ -117,6 +122,7 @@ impl ApiErrorCode {
-             b"tls_required" => Self::TlsRequired,
-             b"runtime_epoch_mismatch" => Self::RuntimeEpochMismatch,
-             b"resume_failed" => Self::ResumeFailed,
-+            b"managed_resume_refused" => Self::ManagedResumeRefused(managed_resume_cause(headers)),
-             b"no_revive" => Self::NoRevive,
-             b"creation_trust_changed" => Self::CreationTrustChanged,
-             b"creation_cancelled" => Self::CreationCancelled,
-@@ -137,6 +143,19 @@ impl ApiErrorCode {
-     }
+@@ -84,6 +84,8 @@ struct TurnFlags {
+     prompt_cancelled: bool,
+     orphan_cancel_sent: bool,
+     cancelling: bool,
++    /// What the adapter reported; `None` when no `PromptResponse` arrived.
++    agent_stop_reason: Option<StopReason>,
  }
  
-+fn managed_resume_cause(headers: &HeaderMap) -> ManagedResumeCause {
-+    let mut values = headers.get_all(MANAGED_RESUME_CAUSE_HEADER).iter();
-+    match (values.next(), values.next()) {
-+        (Some(value), None) => match value.as_bytes() {
-+            b"wrapper_contract_required" => ManagedResumeCause::WrapperContractRequired,
-+            b"unsupported_managed_arguments" => ManagedResumeCause::UnsupportedManagedArguments,
-+            b"opencode_schema_unattested" => ManagedResumeCause::OpenCodeSchemaUnattested,
-+            _ => ManagedResumeCause::ExecutionContextUnattested,
-+        },
-+        _ => ManagedResumeCause::ExecutionContextUnattested,
-+    }
-+}
-+
- #[cfg(test)]
- mod tests {
-     use super::*;
-@@ -217,6 +236,20 @@ mod tests {
-                 Some(ApiErrorCode::SessionTrashed),
-             ),
-             (StatusCode::FORBIDDEN, "session_archived", false, None),
-+            (
-+                StatusCode::CONFLICT,
-+                "managed_resume_refused",
-+                false,
-+                Some(ApiErrorCode::ManagedResumeRefused(
-+                    ManagedResumeCause::ExecutionContextUnattested,
-+                )),
-+            ),
-+            (
-+                StatusCode::INTERNAL_SERVER_ERROR,
-+                "managed_resume_refused",
-+                false,
-+                None,
-+            ),
-             (
-                 StatusCode::BAD_REQUEST,
-                 "create_hook_failed",
-@@ -244,4 +277,62 @@ mod tests {
-             );
-         }
+ struct Turn {
+@@ -304,6 +306,7 @@ impl Session {
+         let e = match res {
+             Ok(resp) => {
+                 turn.flags.prompt_cancelled = matches!(resp.stop_reason, StopReason::Cancelled);
++                turn.flags.agent_stop_reason = Some(resp.stop_reason);
+                 if !turn.flags.prompt_cancelled {
+                     if let Some(info) = self.take_parking_rejection() {
+                         self.shared.emit(Event::RateLimit { info }).await;
+@@ -400,7 +403,9 @@ impl Session {
+                     target: "acp.protocol",
+                     "force-stop requested during in-flight prompt; ending turn and restarting worker"
+                 );
+-                let _ = self.send_cancel().await;
++                if let Err(error) = self.send_cancel().await {
++                    debug!(target: "acp.protocol", %error, "cancel notification failed");
++                }
+                 turn.flags.force_stopped = true;
+                 turn.flags.shutdown = true;
+                 return Ok(Flow::Break);
+@@ -642,11 +647,13 @@ impl Session {
+         shared.reset_message_dedup();
+         shared.prompt_in_flight.store(false, Ordering::Relaxed);
+         // Missing after a Stopped, this line signals a stranded prompt (#3190).
+-        debug!(
++        info!(
+             target: "acp.protocol",
+             session = %shared.session_label,
+             reason,
+-            "prompt drain complete; between-prompt idle ownership restored"
++            agent_stop_reason = ?f.agent_stop_reason,
++            duration_ms = now_ms() - prompt_started_at_ms,
++            "turn finished; between-prompt idle ownership restored"
+         );
      }
-+
-+    #[test]
-+    fn managed_resume_cause_headers_cannot_expand_or_erase_a_refusal() {
-+        use ManagedResumeCause::*;
-+        for (value, expected) in [
-+            ("wrapper_contract_required", WrapperContractRequired),
-+            ("unsupported_managed_arguments", UnsupportedManagedArguments),
-+            ("opencode_schema_unattested", OpenCodeSchemaUnattested),
-+            ("execution_context_unattested", ExecutionContextUnattested),
-+            ("secret-token", ExecutionContextUnattested),
-+            (
-+                "wrapper_contract_required, secret-token",
-+                ExecutionContextUnattested,
-+            ),
-+            ("", ExecutionContextUnattested),
-+        ] {
-+            let mut headers = HeaderMap::new();
-+            headers.insert(MANAGED_RESUME_CAUSE_HEADER, HeaderValue::from_static(value));
-+            assert_eq!(
-+                ApiErrorCode::from_headers(StatusCode::CONFLICT, &headers, false),
-+                None
-+            );
-+            headers.insert(
-+                ERROR_CODE_HEADER,
-+                HeaderValue::from_static("managed_resume_refused"),
-+            );
-+            assert_eq!(
-+                ApiErrorCode::from_headers(StatusCode::CONFLICT, &headers, false),
-+                Some(ApiErrorCode::ManagedResumeRefused(expected)),
-+            );
-+            assert_eq!(
-+                ApiErrorCode::from_headers(StatusCode::BAD_REQUEST, &headers, false),
-+                None
-+            );
-+            headers.append(MANAGED_RESUME_CAUSE_HEADER, HeaderValue::from_static(value));
-+
+ }
 ```
 
-**File**: `src/daemon/mod.rs` (modified, +143/-5)
+**File**: `src/acp/acp_client/spawn.rs` (modified, +11/-2)
+```diff
+@@ -9,7 +9,7 @@ use std::process::Stdio;
+ use tracing::{debug, info, warn};
+ 
+ use super::errors::AcpError;
+-use super::resolve_command::resolve_agent_command;
++use super::resolve_command::{resolve_agent_command, Unresolved};
+ 
+ #[derive(Debug, Clone)]
+ pub struct SpawnConfig {
+@@ -464,7 +464,16 @@ pub(super) fn spawn_subprocess(
+             r.path.to_string_lossy().into_owned(),
+             r.prepend_paths.clone(),
+         ),
+-        Err(_) => (config.spec.command.clone(), Vec::new()),
++        Err(Unresolved::NotBare) => (config.spec.command.clone(), Vec::new()),
++        Err(error) => {
++            debug!(
++                target: "acp.protocol.spawn",
++                command = %config.spec.command,
++                ?error,
++                "could not resolve command via node-manager dirs; using bare command"
++            );
++            (config.spec.command.clone(), Vec::new())
++        }
+     };
+ 
+     let mut cmd = tokio::process::Command::new(&spawn_command);
+```
+
+**File**: `src/acp/adapters.rs` (modified, +4/-2)
 ```diff
 @@ -1,7 +1,7 @@
- //! Reusable client and shared wire contract for the daemon REST API.
+ use std::path::{Path, PathBuf};
  
- mod error;
--pub use error::{ApiErrorCode, ERROR_CODE_HEADER};
-+pub use error::{ApiErrorCode, ERROR_CODE_HEADER, MANAGED_RESUME_CAUSE_HEADER};
+ use thiserror::Error;
+-use tracing::{info, warn};
++use tracing::{error, info, warn};
  
- pub(crate) mod lifecycle;
- mod runtime;
-@@ -143,6 +143,7 @@ pub(crate) enum LocalRuntimeError {
+ use crate::acp::node::{NodeSource, ResolvedNode};
  
- fn committed_failure_message(code: ApiErrorCode) -> &'static str {
-     match code {
-+        ApiErrorCode::ManagedResumeRefused(cause) => cause.message(),
-         ApiErrorCode::PurgeFailed => "Purge failed; apply its committed state before retrying",
-         ApiErrorCode::ResumeFailed => {
-             "Resume failed after start committed; the conversation is preserved for explicit retry"
-@@ -153,6 +154,7 @@ fn committed_failure_message(code: ApiErrorCode) -> &'static str {
- 
- fn daemon_status_message(status: StatusCode, code: Option<ApiErrorCode>, body: &str) -> String {
-     match code {
-+        Some(ApiErrorCode::ManagedResumeRefused(cause)) => cause.message().into(),
-         Some(ApiErrorCode::SmartRenameSkipped) => {
-             "Auto-name is unavailable for this session; check its repository and tool configuration"
-                 .into()
-@@ -890,6 +892,7 @@ impl DaemonClient {
-                 Some(
-                     ApiErrorCode::StartFailed
-                         | ApiErrorCode::ResumeFailed
-+                        | ApiErrorCode::ManagedResumeRefused(_)
-                         | ApiErrorCode::PurgeFailed
-                 )
-             ) {
-@@ -911,12 +914,14 @@ impl DaemonClient {
-                     return Err(DaemonClientError::InvalidMutationReceipt);
-                 }
-             }
--            // D1: 409 lifecycle_locked maps from status plus the single finite
--            // server-owned header without reading the body. 401 maps from status
--            // alone; neither retains a body or token in the error.
-+            // Finite rejections and 401 never retain a response body.
-             if matches!(
-                 code,
--                Some(ApiErrorCode::LifecycleLocked | ApiErrorCode::LifecycleSuperseded)
-+                Some(
-+                    ApiErrorCode::LifecycleLocked
-+                        | ApiErrorCode::LifecycleSuperseded
-+                        | ApiErrorCode::ManagedResumeRefused(_)
-+                )
-             ) || status == StatusCode::UNAUTHORIZED
-             {
-                 return Err(DaemonClientError::Status {
-@@ -1782,6 +1787,43 @@ mod tests {
-             (500, "start_failed", "epoch-1", "3", true, false),
-             (409, "resume_failed", "epoch-1", "3", true, false),
-             (409, "purge_failed", "epoch-1", "3", true, false),
-+            (409, "managed_resume_refused", "epoch-1", "3", true, false),
-+            (409, "managed_resume_refused", "foreign", "3", false, true),
-+            (409, "managed_resume_refused", "epoch-1", "0", false, true),
-+            (
-+                409,
-+                "managed_resume_refused",
-+                "absent",
-+                "absent",
-+                false,
-+                false,
-+            ),
-+            (
-+                409,
-+                "managed_resume_refused",
-+                "epoch-1",
-+                "absent",
-+                false,
-+                true,
-+            ),
-+            (
-+                409,
-+                "managed_resume_refused",
-+                "epoch-1",
-+                "3, 4",
-+                false,
-+                true,
-+            ),
-+            (500, "managed_resume_refused", "epoch-1", "3", false, false),
-+            (
-+                409,
-+                "managed_resume_refused, resume_failed",
-+                "epoch-1",
-+                "3",
-+                false,
-+                false,
-+            ),
-+            (409, "MANAGED_RESUME_REFUSED", "epoch-1", "3", false, false),
-             (409, "purge_failed", "foreign", "3", false, true),
-             (409, "purge_failed", "epoch-1", "0", false, true),
-             (409, "purge_failed", "absent", "absent", false, true),
-@@ -1870,6 +1912,102 @@ mod tests {
-         );
-     }
- 
-+    #[tokio::test]
-+    async fn managed_resume_refusal_recovers_without_reflecting_private_bodies() {
-+        use axum::response::IntoResponse;
-+        for (unix, authenticated, cause) in [
-+            (false, false, "wrapper_contract_required"),
-+            (false, true, "wrapper_contract_required"),
-+            (true, false, "wrapper_contract_required"),
-+            (false, false, "secret-token"),
-+        ] {
-+            let expected = if cause == "wrapper_contract_required" {
-+                crate::session::ManagedResumeCause::WrapperContractRequired
-+            } else {
-+                crate::session::ManagedResumeCause::ExecutionContextUnattested
-+            };
-+            let root = tempfile::tempdir().unwrap();
-+            let socket = root.path().join("api.sock");
-+            let app = axum::Router::new().route(
-+                "/api/sessions/
-```
-
-**File**: `src/server/api/sessions/ensure.rs` (modified, +2/-1)
-```diff
-@@ -352,7 +352,8 @@ pub(super) async fn agent_target_response(
-                 body["prior_session_id"] = sid.into();
-                 "fresh_after_failed_resume"
-             }
--        }.into();
-+        }
-+        .into();
-     }
-     crate::server::runtime::mutation_response(&snapshot.value.cursor, Json(body))
- }
-```
-
-**File**: `src/server/api/sessions/lifecycle.rs` (modified, +207/-0)
-```diff
-@@ -2908,6 +2908,18 @@ async fn prepare_agent_session_inner(
-                 response
-             } else if error.is::<crate::session::NativeStoreUnavailable>() {
-                 StatusCode::SERVICE_UNAVAILABLE.into_response()
-+            } else if let Some(refusal) =
-+                error.downcast_ref::<crate::session::ManagedResumeRefused>()
-+            {
-+                let mut response = crate::server::api::api_error_with_code_header(
-+                    crate::daemon::ApiErrorCode::ManagedResumeRefused(refusal.0),
-+                    refusal.0.message(),
-+                );
-+                response.headers_mut().insert(
-+                    crate::daemon::MANAGED_RESUME_CAUSE_HEADER,
-+                    axum::http::HeaderValue::from_static(refusal.0.as_str()),
-+                );
-+                response
-             } else {
-                 tracing::warn!(target: "http.api.sessions", session = %id, %error, "session start failed");
-                 api_error(
-@@ -3030,6 +3042,201 @@ mod durable_stop_tests {
-     use super::*;
-     use crate::process::worker_registry::{self, WorkerRecord};
- 
-+    #[tokio::test]
-+    #[serial_test::serial]
-+    async fn managed_resume_refusal_publishes_safe_recovery_without_replacing_the_pane() {
-+        use crate::tmux::test_helpers::{
-+            only_pane_id, pane_field, tmux_available, wait_for_pane_command, TmuxTestSession,
-+        };
-+        if !tmux_available() {
-+            return;
-+        }
-+        let root = tempfile::tempdir_in("/tmp").unwrap();
-+        let _home = crate::session::test_support::isolate_app_dir_at(root.path());
-+        let _env = crate::session::test_support::EnvGuard::unset(&[
-+            "TMUX",
-+            "TMUX_PANE",
-+            "OMP_SESSION_ID",
-+            "PI_SESSION_ID",
-+            "AOE_SESSION_ID",
-+            "AOE_PROFILE",
-+            "AOE_DAEMON_URL",
-+            "AOE_DAEMON_TOKEN",
-+            "PRIME_AGENT_SESSION_DIR",
-+            "PRIME_AGENT_CODING_AGENT_SESSION_DIR",
-+            "PRIME_AGENT_CODING_AGENT_DIR",
-+        ])
-+        .and_set("AOE_TMUX_SOCKET", root.path().join("tmux.sock"));
-+        let _omp = crate::session::test_support::install_login_shell_path_command(
-+            root.path(),
-+            "omp",
-+            "#!/bin/sh\nexit 97\n",
-+        );
-+        let _prime = crate::session::test_support::install_login_shell_path_command(
-+            root.path(),
-+            "prime-agent",
-+            "#!/bin/sh\nexit 97\n",
-+        );
-+        crate::session::config::update_app_state(|state| {
-+            state.has_acknowledged_agent_hooks = true;
-+        })
-+        .unwrap();
-+        crate::session::config::update_config(|config| {
-+            config.systemd.enabled = false;
-+            config.session.smart_rename = false;
-+            config.session.auto_resume_on_restart = true;
-+        })
-+        .unwrap();
-+        let project = root.path().join("private-project");
-+        std::fs::create_dir(&project).unwrap();
-+        std::fs::create_dir_all(project.join(".prime/agent")).unwrap();
-+        std::fs::write(
-+            project.join(".prime/agent/settings.json"),
-+            r#"{"sessionDir":7}"#,
-+        )
-+        .unwrap();
-+        let transcript = root.path().join("private-transcript.jsonl");
-+        std::fs::write(&transcript, "private-conversation-body\n").unwrap();
-+        let sid = "11111111-2222-4333-8444-555555555555";
-+        for tool in ["omp", "prime-agent"] {
-+            let mut row = Instance::new("managed refusal", project.to_str().unwrap());
-+            row.tool = tool.into();
-+            row.command = tool.into();
-+            row.source_profile = "default".into();
-+            row.status = Status::Stopped;
-+            row.agent_session_id = Some(sid.into());
-+            let mut binding = crate::session::ConversationBinding::unknown(sid);
-+            binding.transcript_path = Some(transcript.clone());
-+            row.agent_session_binding = Some(binding);
-+            row.omp_capture_generation = Some("original-generation".into());
-+            if tool == "omp" {
-+                assert!(row.supports_native_resume());
-+            } else {
-+                let agent = crate::agents::get_agent("prime-agent").unwrap();
-+                assert!(row.launch_invokes_resolved_agent_directly(agent));
-+                assert_eq!(row.command, "prime-agent");
-+                assert_eq!(row.agent_session_id.as_deref(), Some(sid));
-+                assert_eq!(
-+                    std::fs::read_to_string(project.join(".prime/agent/settings.json")).unwrap(),
-+                    r#"{"sessionDir":7}"#
-+                );
+@@ -347,7 +347,9 @@ fn publish(tmp: &Path, final_dir: &Path) -> std::io::Result<()> {
+             Ok(())
+         }
+         Err(e) => {
+-            let _ = std::fs::rename(&backup, final_dir);
++            if let Err(error) = std::fs::rename(&backup, final_dir) {
++                error!(target: "acp.adapters", %error, backup = %backup.display(), "failed to restore adapter backup");
 +            }
-+            assert_eq!(row.resume_intent, crate::session::ResumeIntent::Default);
-+            let conversation = row.conversation_state();
-+            let name = crate::tmux::Session::generate_name(&row.id, &row.title);
-+            let _pane = TmuxTestSession::from_name(&name);
-+            assert!(crate::tmux:
+             let _ = std::fs::remove_dir_all(tmp);
+             Err(e)
+         }
+```
+
+**File**: `src/acp/event_store/mod.rs` (modified, +12/-0)
+```diff
+@@ -339,6 +339,18 @@ fn decode(json: &str) -> Option<Event> {
+     serde_json::from_str(json).ok()
+ }
+ 
++fn decode_logged(json: &str, session_id: &str, what: &str) -> Option<Event> {
++    serde_json::from_str(json)
++        .map_err(|e| {
++            warn!(
++                target: "acp.event_store",
++                session = %session_id,
++                "{what}: deserialise failed: {e}"
++            )
++        })
++        .ok()
++}
++
+ /// Log a failed query as `None`.
+ fn logged<T>(result: rusqlite::Result<T>, what: &str, session_id: &str) -> Option<T> {
+     result
 ```
 
 ---
 
-### Incident Patch 3: `7b7710d2` (2026-10-30)
-**Commit Message**: fix(sandbox): harden the sandbox image registry check (#5073)
+### Incident Patch 3: `2a2e1a42` (2026-10-31)
+**Commit Message**: feat(tui): show plugin-provided row status (#4789)
 
-* fix(sandbox): harden the sandbox image registry check
+* feat(tui): show plugin status and browser links
 
-The dashboard can now trigger the registry check on demand, so a
-registry's responses are untrusted input.
+Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
 
-- Disable redirects and treat any non-2xx as a failure.
-- Refuse a bearer realm that is not https or names a loopback,
-  unspecified or link-local host.
-- Classify failures as registry_unreachable, registry_auth or
-  registry_bad_response. The API returns only the code; the full chain
-  is logged on the daemon.
-- Return no digest when no RepoDigest names the image's repository,
-  instead of the first entry.
+* test(tui): cover plugin status provider combinations
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
 
-* fix(sandbox): treat a rooted localhost realm as local
+* refactor(tui): keep plugin contributions status-only
 
-Addresses review comment from @coderabbitai on #5073.
+Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+* docs: clarify native TUI plugin row rendering
 
-* fix(sandbox): match official Docker Hub images by their short name
+Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
 
-Addresses review comment from @coderabbitai on #5073.
+* fix(tui): stabilize plugin status CI
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
 
-* test(sandbox): isolate registry client tests from proxies and port reuse
+* docs: preserve plugin badge ordering contract
 
-Addresses review comment from @jerome-benoit on #5073.
+Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Sonnet
+* fix(tui): address plugin status review feedback
 
-**File**: `src/containers/image_update.rs` (modified, +306/-51)
+Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
+
+* fix(tui): factor status plan test cases into a type alias
+
+Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
+
+* fix(tui): harden plugin status poller and drop the web gate
+
+Keeps the last good snapshot on transient fetch failures, clears it only
+when the local daemon is genuinely gone, and stops polling on a rejected
+bearer token to avoid repeated IP-wide lockout
+
+**File**: `docs/plugin-api.md` (modified, +5/-1)
 ```diff
-@@ -1,5 +1,7 @@
- //! Detects a newer registry digest for the configured sandbox image; never pulls.
+@@ -429,7 +429,9 @@ request({ method: "ready", params: { nonce: location.hash.slice(1) } }, (m) => p
  
-+use std::net::IpAddr;
+ `status-bar`, `header-start` and `detail-badge` also take an integer `order`, default 0, lowest first; ties keep plugin id then entry id order. In the terminal UI they render as text and tone in the status line, `header-start` first; icons, tooltips and links are web only.
+ 
+-Give items a shared `group` to collapse them into one chip that shows one item at a time. Clicking or tapping it advances to the next item and wraps around, for example a usage badge cycling `5h`, `7d` and `opus` values:
++`row-badge` items on terminal session rows render every item with `text` or `tooltip`, using `tooltip` when `text` is absent. With no `items` list, the top-level `row-badge` uses `tooltip` as a fallback label for missing `text`. `row-column` renders text only; the TUI omits icons and links.
 +
- use anyhow::{anyhow, Result};
++In the web dashboard, give items a shared `group` to collapse them into one chip that shows one item at a time. Clicking or tapping it advances to the next item and wraps around, for example a usage badge cycling `5h`, `7d` and `opus` values:
  
- /// The digest doubles as the snooze key, so a dismissal sticks until the registry moves.
-@@ -54,6 +56,49 @@ pub enum ImageCheck {
-     Unknown(UnknownReason),
- }
+ ```json
+ { "items": [
+@@ -441,6 +443,8 @@ Give items a shared `group` to collapse them into one chip that shows one item a
  
-+/// Why the registry couldn't be asked. The code is what an API client sees; the chain stays
-+/// in the logs.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+enum RegistryErrorKind {
-+    Unreachable,
-+    Auth,
-+    BadResponse,
-+}
+ Items without a `group` stay separate chips, and each distinct `group` cycles independently. The position is kept per browser tab and is never sent to the worker. A cycling chip ignores `href`; a group with a single item renders as a normal chip. The TUI cannot click and shows the first item with text.
+ 
++Grouped `row-badge` items remain separate in the TUI and do not cycle.
 +
-+impl RegistryErrorKind {
-+    fn code(self) -> &'static str {
-+        match self {
-+            RegistryErrorKind::Unreachable => "registry_unreachable",
-+            RegistryErrorKind::Auth => "registry_auth",
-+            RegistryErrorKind::BadResponse => "registry_bad_response",
-+        }
-+    }
-+}
-+
-+#[derive(Debug, thiserror::Error)]
-+#[error("{}", .kind.code())]
-+struct RegistryError {
-+    kind: RegistryErrorKind,
-+    #[source]
-+    source: anyhow::Error,
-+}
-+
-+fn fail(kind: RegistryErrorKind, source: impl Into<anyhow::Error>) -> anyhow::Error {
-+    RegistryError {
-+        kind,
-+        source: source.into(),
-+    }
-+    .into()
-+}
-+
-+/// The short code for an error from [`check_image`]; anything unclassified is a bad response.
-+pub fn error_code(error: &anyhow::Error) -> &'static str {
-+    error
-+        .downcast_ref::<RegistryError>()
-+        .map_or(RegistryErrorKind::BadResponse, |e| e.kind)
-+        .code()
-+}
-+
- const MANIFEST_ACCEPT: &str = "application/vnd.oci.image.index.v1+json, \
-      application/vnd.docker.distribution.manifest.list.v2+json, \
-      application/vnd.docker.distribution.manifest.v2+json, \
-@@ -125,48 +170,50 @@ impl RegistryRef {
+ ### Pane payload
  
-     async fn fetch_remote_digest(&self, client: &reqwest::Client) -> Result<String> {
-         let url = self.manifest_url();
--        let resp = client
--            .get(&url)
--            .header(reqwest::header::ACCEPT, MANIFEST_ACCEPT)
--            .send()
--            .await?;
--
--        let resp = if resp.status() == reqwest::StatusCode::UNAUTHORIZED {
--            let token = self.obtain_token(client, &resp).await?;
-+        let request = || {
-             client
-                 .get(&url)
-                 .header(reqwest::header::ACCEPT, MANIFEST_ACCEPT)
--                .bearer_auth(token)
--                .send()
--                .await?
-+        };
-+        let resp = send(request()).await?;
-+
-+        let resp = if resp.status() == reqwest::StatusCode::UNAUTHORIZED {
-+            let token = self.obtain_token(client, &resp).await?;
-+            send(request().bearer_auth(token)).await?
-         } else {
-             resp
-         };
- 
--        let resp = resp.error_for_status()?;
-+        let resp = ensure_success(resp)?;
-         resp.headers()
-             .get("docker-content-digest")
-             .and_then(|v| v.to_str().ok())
-             .map(|s| s.trim().to_string())
-             .filter(|s| !s.is_empty())
--            .ok_or_else(|| anyhow!("registry response missing Docker-Content-Digest header"))
-+            .ok_or_else(|| {
-+                fail(
-+                    RegistryErrorKind::BadResponse,
-+                    anyhow!("registry response missing Docker-Content-Digest header"),
-+                )
-+            })
-     }
- 
-     async fn obtain_token(
-         &self,
-         client: &reqwest::Client,
-         challenge: &reqwest::Response,
-     ) -> Result<String> {
-+        let bad = |e: anyhow::Error| fail(RegistryErrorKind::BadResponse, e);
-         let header = challenge
-             .headers()
-             .get(reqwest::header::WWW_AUTHENTICATE)
-             .and_then(|v| v.to_str().ok())
--            .ok_or_else(|| anyhow!("registry 401 without WWW-Authenticate header"))?;
-+            .ok_or_else(|| bad(anyhow!("registry 401 without WWW-Authenticate header")))?;
- 
-         let params = parse_bearer_challenge(header)
--            .ok_or_else(|| anyhow!("unsupported WWW-Authenticate challenge: {header}"))?;
-+            .ok_or_else(|| bad(anyhow!("unsupported WWW-Authenticate challenge: {header}")))?;
- 
--        let mut url = reqwest::Url::parse(&params.realm)?;
-+        let mut url = validate_bearer_realm(&params.realm)?;
-         {
-             let mut qp = url.query_pairs_mut();
-             if let Some(service) = &params.service {
-@@ -177,21 +224,71 @@ impl RegistryRef {
-             }
-         }
- 
--        let token: TokenResponse = client
--            .get(url)
--            .send()
--            .await?
--            .error_for_status()?
-+        let token: TokenResponse = ensure_success(send(client.get(url)).await?)?
-             .json()
--            .await?;
-+            .await
-+            .map_err(|e| bad(e.into()))?;
- 
-         token
-             .token
-             .or(token.access_token)
--            .ok_or_else(|| anyhow!("registry token endpoint returned no token"))
-+            .ok_or_else(|| bad(anyhow!("registry token endpoint return
+ A `pane` entry renders a dockable tool-window, pushed with `ui.state.set`:
 ```
 
-**File**: `src/server/api/sandbox_image.rs` (modified, +14/-8)
+**File**: `src/plugin/ui_state.rs` (modified, +2/-1)
 ```diff
-@@ -44,9 +44,12 @@ impl ImageState {
-             Ok(ImageCheck::Unknown(reason)) => ImageState::Unknown {
-                 reason: reason.code(),
-             },
--            Err(error) => ImageState::CheckFailed {
--                error: format!("{error:#}"),
--            },
-+            Err(error) => {
-+                tracing::warn!(target: "http.api.sandbox_image", "image check failed: {error:#}");
-+                ImageState::CheckFailed {
-+                    error: image_update::error_code(&error).to_string(),
-+                }
-+            }
-         }
-     }
- }
-@@ -148,8 +151,11 @@ where
-         state
-     })
-     .await
--    .unwrap_or_else(|e| ImageState::CheckFailed {
--        error: format!("image check task failed: {e}"),
-+    .unwrap_or_else(|e| {
-+        tracing::error!(target: "http.api.sandbox_image", "image check task failed: {e}");
-+        ImageState::CheckFailed {
-+            error: "registry_bad_response".into(),
-+        }
-     })
+@@ -252,7 +252,8 @@ pub struct Notification {
+     pub href: Option<String>,
  }
  
-@@ -539,10 +545,10 @@ mod tests {
-                 Ok(ImageCheck::Unknown(UnknownReason::RuntimeUnavailable)),
-                 serde_json::json!({"state": "unknown", "reason": "runtime_unavailable"}),
-             ),
--            // A registry or network error is never reported as current.
-+            // A registry or network error is never reported as current, and the chain stays out.
-             (
--                Err(anyhow::anyhow!("registry timed out")),
--                serde_json::json!({"state": "check_failed", "error": "registry timed out"}),
-+                Err(anyhow::anyhow!("registry timed out at 10.0.0.5")),
-+                serde_json::json!({"state": "check_failed", "error": "registry_bad_response"}),
-             ),
-         ];
-         for (result, expected) in cases {
+-#[derive(Debug, Clone, Serialize, Deserialize)]
++/// One entry in a plugin UI snapshot.
++#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+ pub struct UiEntry {
+     pub plugin_id: String,
+     pub slot: UiSlot,
+```
+
+**File**: `src/tui/app.rs` (modified, +6/-0)
+```diff
+@@ -1316,6 +1316,8 @@ impl App {
+                 needs_full_refresh = true;
+             }
+ 
++            self.home.request_plugin_ui_refresh();
++
+             if last_metrics_sample.elapsed() >= METRICS_SAMPLE_INTERVAL {
+                 self.home.request_metrics_refresh();
+                 last_metrics_sample = std::time::Instant::now();
+@@ -1325,6 +1327,10 @@ impl App {
+                 refresh_needed = true;
+             }
+ 
++            if self.home.apply_plugin_ui_updates() {
++                needs_full_refresh = true;
++            }
++
+             needs_full_refresh |= self.home.apply_session_feed();
+             needs_full_refresh |= self.poll_dashboard_launch();
+             needs_full_refresh |= self.poll_dashboard_stop();
+```
+
+**File**: `src/tui/home/lifecycle.rs` (modified, +1/-0)
+```diff
+@@ -230,6 +230,7 @@ impl HomeView {
+             search_matches: Vec::new(),
+             search_match_index: 0,
+             available_tools,
++            plugin_ui: crate::tui::plugin_ui_poller::PluginUiState::default(),
+             show_diagnostics: resolved.session.show_diagnostics_pane,
+             show_shortcut_bar: resolved.session.show_shortcut_bar,
+             preview_link_prefixes: resolved.session.preview_link_prefixes.clone(),
+```
+
+**File**: `src/tui/home/mod.rs` (modified, +1/-0)
+```diff
+@@ -355,6 +355,7 @@ pub struct HomeView {
+ 
+     pub(super) available_tools: AvailableTools,
+ 
++    pub(super) plugin_ui: crate::tui::plugin_ui_poller::PluginUiState,
+     pub(super) show_diagnostics: bool,
+     pub(super) show_shortcut_bar: bool,
+     pub(super) preview_link_prefixes: Vec<String>,
+```
+
+**File**: `src/tui/home/render.rs` (modified, +160/-5)
+```diff
+@@ -889,6 +889,65 @@ fn title_width_for_column(
+     (title_width.min(budget), false)
+ }
+ 
++const MAX_PLUGIN_STATUS_WIDTH: usize = 32;
++
++const MAX_PLUGIN_STATUS_COUNT: usize = 16;
++
++#[derive(Clone, Copy)]
++struct PluginStatusSpan<'a> {
++    text: &'a str,
++    tone: Option<crate::plugin::ui_state::Tone>,
++    width: usize,
++}
++
++struct PluginStatusPlan<'a> {
++    spans: [Option<PluginStatusSpan<'a>>; MAX_PLUGIN_STATUS_COUNT],
++    len: usize,
++    width: usize,
++}
++
++impl<'a> PluginStatusPlan<'a> {
++    fn iter(&self) -> impl Iterator<Item = PluginStatusSpan<'a>> + '_ {
++        self.spans[..self.len].iter().flatten().copied()
++    }
++}
++
++fn plan_plugin_statuses<'a>(
++    statuses: impl Iterator<Item = (&'a str, Option<crate::plugin::ui_state::Tone>)>,
++    budget: usize,
++) -> PluginStatusPlan<'a> {
++    let mut plan = PluginStatusPlan {
++        spans: [None; MAX_PLUGIN_STATUS_COUNT],
++        len: 0,
++        width: 0,
++    };
++    let budget = budget.min(MAX_PLUGIN_STATUS_WIDTH);
++
++    for (text, tone) in statuses {
++        if plan.len == MAX_PLUGIN_STATUS_COUNT {
++            break;
++        }
++        let available = budget.saturating_sub(plan.width).saturating_sub(2);
++        if available == 0 {
++            break;
++        }
++        let text_width = rendered_width(text);
++        let visible_width = text_width.min(available);
++        plan.spans[plan.len] = Some(PluginStatusSpan {
++            text,
++            tone,
++            width: visible_width,
++        });
++        plan.len += 1;
++        plan.width += 2 + visible_width;
++        if visible_width < text_width {
++            break;
++        }
++    }
++
++    plan
++}
++
+ /// The activity column's text: remaining snooze under Attention sort, else the age of a
+ /// resting (Idle or Unknown) row, else blank. `last_accessed_at` is only a fallback for a
+ /// missing `idle_entered_at`; on an active row it reads as idle time.
+@@ -1975,6 +2034,7 @@ impl HomeView {
+         line_spans.push(Span::styled(format!("{} ", icon), icon_style));
+         let prefix_width: usize = line_spans.iter().map(|s| s.width()).sum();
+         let room = (list_width as usize).saturating_sub(prefix_width);
++        let text_width = rendered_width(&text);
+ 
+         let inst = match item {
+             Item::Session { id, .. } => self.get_instance(id).map(|inst| (id, inst)),
+@@ -2039,18 +2099,46 @@ impl HomeView {
+             LAST_ACTIVITY_SLOT
+         };
+ 
+-        let (title_width, keep_tag) = title_width_for_column(
+-            rendered_width(&text),
+-            room,
+-            tag_span.as_ref().map_or(0, |s| s.width()),
+-            slot_width + badge_width + LAST_ACTIVITY_RIGHT_MARGIN,
++        let tag_width = tag_span.as_ref().map_or(0, |span| span.width());
++        let fixed_trailing = slot_width + badge_width + LAST_ACTIVITY_RIGHT_MARGIN;
++
++        let status_budget = room
++            .saturating_sub(tag_width + fixed_trailing + text_width.min(MIN_TITLE_CELLS))
++            .min(MAX_PLUGIN_STATUS_WIDTH);
++
++        let plugin_status_plan = plan_plugin_statuses(
++            crate::tui::plugin_ui::session_row_statuses(&self.plugin_ui.snapshot, id),
++            status_budget,
+         );
++        let plugin_status_width = plugin_status_plan.width;
++
++        let (title_width, keep_tag) = if plugin_status_width > 0 {
++            (
++                text_width
++                    .min(room.saturating_sub(tag_width + fixed_trailing + plugin_status_width)),
++                true,
++            )
++        } else {
++            title_width_for_column(text_width, room, tag_width, fixed_trailing)
++        };
+         line_spans.push(Span::styled(
+             truncate_to_width(&text, title_width),
+             text_style,
+         ));
+         line_spans.extend(tag_span.filter(|_| keep_tag));
+ 
++        for status in plugin_status_plan.iter() {
++            line_spans.push(Span::raw("  "));
++            let status_style = crate::tui::plugin_ui::tone_style(status.tone, theme);
++            line_spans.push(Span::styled(
++                truncate_to_width(status.text, status.width),
++                if is_selected {
++                    selected_row_style(status_style, theme)
++                } else {
++                    status_style
++                },
++            ));
++        }
+         let used_width: usize = line_spans.iter().map(|s| s.width()).sum();
+         let column_pad = activity_column_padding(used_width, list_width, slot_width, badge_width);
+         let column_fits = column_pad.is_some();
+@@ -5427,3 +5515,70 @@ mod tests {
+         assert_eq!(sb.rendered(), "[sb]");
+     }
+ }
++
++#[cfg(test)]
++mod plugin_status_plan_tests {
++    use super::plan_plugin_statuses;
++    use crate::plugin::ui_state::Tone;
++
++    /// (name, budget, count, expected span list, expected width).
++    type StatusPlanCase = (
++        &'static str,
++        usize,
++        usize,
++        Vec<(&'static str, Option<Tone>, usize)>,
++        usize,
++    );
++
++    #[test]
++    fn s
+```
+
+**File**: `src/tui/home/status.rs` (modified, +8/-0)
+```diff
+@@ -9,6 +9,14 @@ impl HomeView {
+         self.instances.values().cloned().collect()
+     }
+ 
++    pub fn request_plugin_ui_refresh(&mut self) {
++        self.plugin_ui.request_refresh(!self.instances.is_empty());
++    }
++
++    pub fn apply_plugin_ui_updates(&mut self) -> bool {
++        self.plugin_ui.apply_pending()
++    }
++
+     /// Request a system-health sample in the background while either health
+     /// surface is visible. Call `apply_metrics_updates` to pick up the result.
+     pub fn request_metrics_refresh(&mut self) {
+```
+
+**File**: `src/tui/mod.rs` (modified, +2/-0)
+```diff
+@@ -15,6 +15,8 @@ pub(crate) mod markdown;
+ mod metrics_poller;
+ pub(crate) mod open_url;
+ pub(crate) mod plugin_ui;
++pub(crate) mod plugin_ui_poller;
++
+ pub(crate) mod remote_home;
+ pub(crate) mod responsive;
+ mod session_feed;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5133** (2026-10-30): feat(tui): suggestions view with Start via the prefilled new-session dialog (@Seluj78)
-- **PR #5132** (2026-10-30): feat(suggestions): core mapping from provider source keys to projects (@Seluj78)
-- **PR #5131** (2026-10-30): feat(web): suggested sessions view with Start into the prefilled wizard (@Seluj78)
-- **PR #5130** (2026-10-30): feat(plugin-api): setup checks reported by suggestion providers (@Seluj78)
-- **PR #5129** (2026-10-30): feat(suggestions): per-criterion prompt templates applied at prepare (@Seluj78)
-- **PR #5121** (2026-10-30): feat(suggestions): core store, snapshot and HTTP API (no automation) (@Seluj78)
+- **PR #5178** (2026-10-31): docs(suggestions): add user guide for suggested sessions (@Seluj78)
+- **PR #5175** (2026-10-31): fix(tui): repair the two unit tests red on the suggestions integration branch (@Seluj78)
+- **PR #5170** (2026-10-31): feat(suggestions): started-session link, grouped view with refresh status, edge states (@Seluj78)
+- **PR #5169** (2026-10-31): feat(tui): initial_prompt in the new-session dialog and aoe add --prompt, sanitise suggestion text (@Seluj78)
+- **PR #5168** (2026-10-31): feat(suggestions): refresh interval, wizard Edit template link, uses_agent and provider fix (@Seluj78)
+- **PR #5167** (2026-10-31): refactor(tui): share one suggestions store and open a suggestion's source from the palette (@Seluj78)
 
 ---
 
@@ -3415,29 +2942,28 @@ Co-Authored-By: Claude Sonnet
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. session): remove a purged worktree outside the store locks (#4496)
+## X. serve): turn off the Funnel a failed Tailscale start switched on (#5043)
 
 **RULE**:
-When implementing operations in `docs/guides/worktrees.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/guides/web-dashboard.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce52748a`: session): remove a purged worktree outside the store locks (#4496). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3b7b4b7f`: serve): turn off the Funnel a failed Tailscale start switched on (#5043). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guides/worktrees.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guides/web-dashboard.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-**Purging first moves the worktree** to a sibling `.aoe-purge-<session-id>`, marked by an `aoe-purge` file in its git admin directory, which `git worktree list` still shows but aoe hides from sessions, then removes it. A failed removal moves it back. A purge interrupted by a crash is finished on the next purge attempt while its session still exists; otherwise (web deletes remove the session first) `aoe worktree cleanup` lists the `.aoe-purge-<session-id>` checkout as orphaned once no process is still purging it, and can remove it.
-
+1. **Tailscale Funnel:** if `tailscale` is installed and logged in, AoE runs `tailscale funnel --bg --yes <port>` for a stable `https://<machine>.<tailnet>.ts.net` URL. Install Tailscale, run `tailscale up`, enable [Funnel](https://login.tailscale.com/f/funnel), and grant the node the `funnel` nodeAttr in its [ACL](https://login.tailscale.com/admin/acls/file). Target the node's tag if tagged. A conflicting non-loopback Funnel on port 443 is refused, not replaced; clear it with `tailscale funnel reset`, or use `--no-tailscale`. Stale loopback AoE configuration can be replaced. AoE also refuses to start Funnel when port 443 has tailnet-only Serve config, which Funnel would make public, or when `tailscale funnel status` can't be read. If a start fails after turning Funnel on, AoE turns it back off, but only when port 443 was unused before and still holds just AoE's route; otherwise the error says what was left on. Two aoe daemons on one machine, such as a release and a debug build, take turns: a start waits up to 60 s for the other's to finish.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+1. **Tailscale Funnel:** if `tailscale` is installed and logged in, AoE runs `tailscale funnel --bg --yes <port>` for a stable `https://<machine>.<tailnet>.ts.net` URL. Install Tailscale, run `tailscale up`, enable [Funnel](https://login.tailscale.com/f/funnel), and grant the node the `funnel` nodeAttr in its [ACL](https://login.tailscale.com/admin/acls/file). Target the node's tag if tagged. A conflicting non-loopback Funnel on port 443 is refused, not replaced; clear it with `tailscale funnel reset`, or use `--no-tailscale`. Stale loopback AoE configuration can be replaced.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce52748a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3b7b4b7f` are properly handled with clean fallback behavior.

@@ -905,8 +905,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
     "sourceVersion": "hf-meta-llama-meta-llama-3-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "8719c035e0723d9d5b260e409efa564999d30c17f41bc90e9d4a31d80ec58de5",
-    "lastHarvestedAt": "2026-10-28T14:22:22.707Z",
+    "contentHash": "e6443a7facfea77fd963d03feb6c4337d83d1a893309c1ed148639215ee2e6a3",
+    "lastHarvestedAt": "2026-10-31T14:45:46.349Z",
     "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct"
   },
   "hf-openai-gpt-oss-120b": {
@@ -7233,10 +7233,10 @@
     "repository": "Tencent-TDS/KuiklyUI",
     "platform": "github",
     "sourceUrl": "https://github.com/Tencent-TDS/KuiklyUI",
-    "sourceVersion": "2fcb6f77",
+    "sourceVersion": "9baf4df2",
     "license": "NOASSERTION",
-    "contentHash": "94c7021ac105ad56ad310d8fbb63456c8fe0f6a1812080936b4ebd651e7dffc1",
-    "lastHarvestedAt": "2026-10-28T19:46:48.194Z",
+    "contentHash": "f9fd776e501afb76af73c79f60c512683d803213a7bc942b91ba2c861e92f098",
+    "lastHarvestedAt": "2026-10-31T14:45:53.023Z",
     "learningId": "learn-github-tencent-tds-kuiklyui"
   },
   "seaql-sea-orm": {
@@ -7443,10 +7443,10 @@
     "repository": "agent-of-empires/agent-of-empires",
     "platform": "github",
     "sourceUrl": "https://github.com/agent-of-empires/agent-of-empires",
-    "sourceVersion": "996a3a71",
+    "sourceVersion": "8bd72072",
     "license": "MIT",
-    "contentHash": "711fddc7256f6cc859b35022e90b734b553b32418cb33844cc099bd6872fafa7",
-    "lastHarvestedAt": "2026-10-30T18:58:28.572Z",
+    "contentHash": "9d8d6d0166514bad469ba6adeeec8830091ebce7db4f4f13abd241b9557b3515",
+    "lastHarvestedAt": "2026-10-31T14:45:47.637Z",
     "learningId": "learn-github-agent-of-empires-agent-of-empires"
   },
   "nativescript-nativescript": {

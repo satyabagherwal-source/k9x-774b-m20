@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T14:39:35.854Z",
+  "last_updated": "2026-10-31T14:45:53.029Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1175,14 +1175,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-      "content_hash": "8719c035e0723d9d5b260e409efa564999d30c17f41bc90e9d4a31d80ec58de5",
-      "verified_at": "2026-10-28T14:22:22.715Z",
+      "content_hash": "e6443a7facfea77fd963d03feb6c4337d83d1a893309c1ed148639215ee2e6a3",
+      "verified_at": "2026-10-31T14:45:46.356Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T14:22:22.715Z"
+      "last_updated": "2026-10-31T14:45:46.356Z"
     },
     "openai/gpt-oss-120b": {
       "repository": "openai/gpt-oss-120b",
@@ -10896,14 +10896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tencent-tds-kuiklyui",
-      "content_hash": "94c7021ac105ad56ad310d8fbb63456c8fe0f6a1812080936b4ebd651e7dffc1",
-      "verified_at": "2026-10-28T19:46:48.203Z",
+      "content_hash": "f9fd776e501afb76af73c79f60c512683d803213a7bc942b91ba2c861e92f098",
+      "verified_at": "2026-10-31T14:45:53.029Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T19:46:48.203Z"
+      "last_updated": "2026-10-31T14:45:53.029Z"
     },
     "SeaQL/sea-orm": {
       "repository": "SeaQL/sea-orm",
@@ -11211,14 +11211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-of-empires-agent-of-empires",
-      "content_hash": "711fddc7256f6cc859b35022e90b734b553b32418cb33844cc099bd6872fafa7",
-      "verified_at": "2026-10-30T18:58:28.580Z",
+      "content_hash": "9d8d6d0166514bad469ba6adeeec8830091ebce7db4f4f13abd241b9557b3515",
+      "verified_at": "2026-10-31T14:45:47.643Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T18:58:28.580Z"
+      "last_updated": "2026-10-31T14:45:47.643Z"
     },
     "NativeScript/NativeScript": {
       "repository": "NativeScript/NativeScript",

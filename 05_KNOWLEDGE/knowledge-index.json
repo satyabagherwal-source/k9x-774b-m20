@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T14:39:35.763Z",
+  "last_updated": "2026-10-31T14:45:52.972Z",
   "total_verified_learnings": 1184,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -844,8 +844,8 @@
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "996a3a71",
-      "content_hash": "711fddc7256f6cc859b35022e90b734b553b32418cb33844cc099bd6872fafa7",
+      "source_version": "8bd72072",
+      "content_hash": "9d8d6d0166514bad469ba6adeeec8830091ebce7db4f4f13abd241b9557b3515",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "promoted_rules": [
@@ -903,6 +903,11 @@
           "number": 5833,
           "title": "session): remove a purged worktree outside the store locks (#4496)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6227,
+          "title": "serve): turn off the Funnel a failed Tailscale start switched on (#5043)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -910,7 +915,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T18:58:28.361Z",
+      "verified_at": "2026-10-31T14:45:47.534Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25864,7 +25869,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
       "source_version": "hf-meta-llama-meta-llama-3-8b-instruct",
-      "content_hash": "8719c035e0723d9d5b260e409efa564999d30c17f41bc90e9d4a31d80ec58de5",
+      "content_hash": "e6443a7facfea77fd963d03feb6c4337d83d1a893309c1ed148639215ee2e6a3",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -26003,7 +26008,7 @@
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4auvsz",
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4o8ney"
       ],
-      "verified_at": "2026-10-28T14:22:22.589Z",
+      "verified_at": "2026-10-31T14:45:46.274Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54431,8 +54436,8 @@
       "slug": "tencent-tds-kuiklyui",
       "platform": "github",
       "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
-      "source_version": "2fcb6f77",
-      "content_hash": "94c7021ac105ad56ad310d8fbb63456c8fe0f6a1812080936b4ebd651e7dffc1",
+      "source_version": "9baf4df2",
+      "content_hash": "f9fd776e501afb76af73c79f60c512683d803213a7bc942b91ba2c861e92f098",
       "dossier_path": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
       "promoted_rules": [
@@ -54470,6 +54475,11 @@
           "number": 5383,
           "title": "h5): stabilize Hover positioning in transformed containers (#1838)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6228,
+          "title": "web): dispatch notifications across live Kuikly pages (#1847)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54477,7 +54487,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T19:46:48.105Z",
+      "verified_at": "2026-10-31T14:45:52.959Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162593,6 +162603,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T14:39:35.744Z"
+    },
+    "rule-6227": {
+      "learning_id": "rule-6227",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6227,
+      "title": "serve): turn off the Funnel a failed Tailscale start switched on (#5043)",
+      "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+      "source_version": "8bd72072",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T14:45:47.534Z"
+    },
+    "rule-6228": {
+      "learning_id": "rule-6228",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6228,
+      "title": "web): dispatch notifications across live Kuikly pages (#1847)",
+      "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
+      "source_version": "9baf4df2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T14:45:52.959Z"
     }
   },
   "aliases": {

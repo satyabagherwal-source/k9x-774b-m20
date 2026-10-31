@@ -6617,3 +6617,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-gpt-oss-120b` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-31T14:39:24.479Z |
 | `learn-github-bahdotsh-wrkflw` | `https://github.com/bahdotsh/wrkflw` | `153b8ee0` | Multi-dimensional audit evidence | 2026-10-31T14:39:25.836Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `86db624f` | Multi-dimensional audit evidence | 2026-10-31T14:39:35.845Z |
+| `learn-huggingface-meta-llama-meta-llama-3-8b-instruct` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-31T14:45:46.349Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `8bd72072` | Multi-dimensional audit evidence | 2026-10-31T14:45:47.637Z |
+| `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `9baf4df2` | Multi-dimensional audit evidence | 2026-10-31T14:45:53.023Z |

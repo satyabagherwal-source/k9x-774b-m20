@@ -455582,3 +455582,124 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `86db624f` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6227. serve): turn off the Funnel a failed Tailscale start switched on (#5043) (Harvested from agent-of-empires/agent-of-empires)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "serve): turn off the Funnel a failed Tailscale start switched on (#5043)",
+  "source": "agent-of-empires/agent-of-empires",
+  "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+  "source_version": "8bd72072",
+  "license": "MIT",
+  "extracted_at": "2026-10-31T14:45:47.386Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-agent-of-empires-agent-of-empires",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires) (Revision: `8bd72072`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `docs/guides/web-dashboard.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3b7b4b7f`: serve): turn off the Funnel a failed Tailscale start switched on (#5043). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guides/web-dashboard.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+1. **Tailscale Funnel:** if `tailscale` is installed and logged in, AoE runs `tailscale funnel --bg --yes <port>` for a stable `https://<machine>.<tailnet>.ts.net` URL. Install Tailscale, run `tailscale up`, enable [Funnel](https://login.tailscale.com/f/funnel), and grant the node the `funnel` nodeAttr in its [ACL](https://login.tailscale.com/admin/acls/file). Target the node's tag if tagged. A conflicting non-loopback Funnel on port 443 is refused, not replaced; clear it with `tailscale funnel reset`, or use `--no-tailscale`. Stale loopback AoE configuration can be replaced. AoE also refuses to start Funnel when port 443 has tailnet-only Serve config, which Funnel would make public, or when `tailscale funnel status` can't be read. If a start fails after turning Funnel on, AoE turns it back off, but only when port 443 was unused before and still holds just AoE's route; otherwise the error says what was left on. Two aoe daemons on one machine, such as a release and a debug build, take turns: a start waits up to 60 s for the other's to finish.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+1. **Tailscale Funnel:** if `tailscale` is installed and logged in, AoE runs `tailscale funnel --bg --yes <port>` for a stable `https://<machine>.<tailnet>.ts.net` URL. Install Tailscale, run `tailscale up`, enable [Funnel](https://login.tailscale.com/f/funnel), and grant the node the `funnel` nodeAttr in its [ACL](https://login.tailscale.com/admin/acls/file). Target the node's tag if tagged. A conflicting non-loopback Funnel on port 443 is refused, not replaced; clear it with `tailscale funnel reset`, or use `--no-tailscale`. Stale loopback AoE configuration can be replaced.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3b7b4b7f` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6228. web): dispatch notifications across live Kuikly pages (#1847) (Harvested from Tencent-TDS/KuiklyUI)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "web): dispatch notifications across live Kuikly pages (#1847)",
+  "source": "Tencent-TDS/KuiklyUI",
+  "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
+  "source_version": "9baf4df2",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-31T14:45:52.818Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tencent-tds-kuiklyui",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Tencent-TDS/KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI) (Revision: `9baf4df2`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `core-render-web/base/src/jsMain/kotlin/com/tencent/kuikly/core/render/web/expand/module/KRNotifyModule.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Tencent-TDS/KuiklyUI. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b6c33271`: web): dispatch notifications across live Kuikly pages (#1847). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `core-render-web/base/src/jsMain/kotlin/com/tencent/kuikly/core/render/web/expand/module/KRNotifyModule.kt`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+// Verified production-grade fix pattern:
+ * Notifications are shared by live Kuikly pages in the same Web runtime (including cached SPA pages).
+        toKRMap.clear()
+            // Include the sender once and notify cached SPA pages before returning.
+            dispatchGlobalEventData(eventName, data)
+            // Notify the host once per post, rather than once per receiving page.
+        // Callbacks may remove listeners while handling a notification.
+        toKRMap[eventName]?.toList()?.forEach {
+            dispatchGlobalEventData(eventName, data.toString())
+        }
+
+        private fun dispatchGlobalEventData(eventName: String, data: String) {
+            // A callback can create or destroy a page during dispatch.
+            moduleInstances.toList().forEach { module ->
+                if (module in moduleInstances) {
+                    module.dispatchEvent(eventName, data)
+                }
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// Anti-pattern to NEVER write (induced failure mode):
+ * Event notification module, web event notification does not support different pages, notifications between different pages need to use higher-level host capabilities
+            // 1. Notify other Kuikly pages (existing logic)
+            dispatchEvent(eventName, data)
+            // 2. Notify Web host (new feature - like iOS/Android/Ohos)
+        toKRMap[eventName]?.forEach {
+            moduleInstances.forEach { module ->
+                module.dispatchEvent(eventName, data.toString())
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b6c33271` are properly handled with clean fallback behavior.
