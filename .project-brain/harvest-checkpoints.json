@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T02:28:00.651Z",
+  "last_updated": "2026-10-31T02:35:25.494Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5721,14 +5721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-orange-opensource-hurl",
-      "content_hash": "e07e3b206f809e79e52f59ae80aff0c5517eb056ac8ac2ab8e50deff8eff4b32",
-      "verified_at": "2026-10-29T23:34:50.516Z",
+      "content_hash": "e503c3ccb3722d3e0d67c85b48e3f46c95c73bb7afc29586c6292dd86062e5f4",
+      "verified_at": "2026-10-31T02:35:22.684Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T23:34:50.516Z"
+      "last_updated": "2026-10-31T02:35:22.684Z"
     },
     "gregberge/svgr": {
       "repository": "gregberge/svgr",
@@ -15936,14 +15936,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
-      "content_hash": "54c2d11b82afe63c9212309843b5a00fccc119ec6fd3323be2ebd76965de0b54",
-      "verified_at": "2026-10-27T20:25:14.528Z",
+      "content_hash": "ea5e035549e1783c510e36c44e6cb0a13712b2617db427613a67c6f512780a66",
+      "verified_at": "2026-10-31T02:35:25.493Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T20:25:14.528Z"
+      "last_updated": "2026-10-31T02:35:25.493Z"
     },
     "Comfy-Org/Fibo-2.0": {
       "repository": "Comfy-Org/Fibo-2.0",

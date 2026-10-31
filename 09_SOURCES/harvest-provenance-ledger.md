@@ -6438,3 +6438,5 @@ Every entry in this ledger must capture:
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `3461a87f` | Multi-dimensional audit evidence | 2026-10-31T02:21:24.972Z |
 | `learn-huggingface-minimaxai-minimax-m3-1-flash` | `https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash` | `hf-minimax` | Multi-dimensional audit evidence | 2026-10-31T02:27:59.137Z |
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `9e28ec50` | Multi-dimensional audit evidence | 2026-10-31T02:28:00.642Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `89de8e38` | Multi-dimensional audit evidence | 2026-10-31T02:35:22.678Z |
+| `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-31T02:35:25.487Z |

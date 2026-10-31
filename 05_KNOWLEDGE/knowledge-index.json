@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T02:28:00.578Z",
+  "last_updated": "2026-10-31T02:35:25.437Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -43945,8 +43945,8 @@
       "slug": "orange-opensource-hurl",
       "platform": "github",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "4607520e",
-      "content_hash": "e07e3b206f809e79e52f59ae80aff0c5517eb056ac8ac2ab8e50deff8eff4b32",
+      "source_version": "89de8e38",
+      "content_hash": "e503c3ccb3722d3e0d67c85b48e3f46c95c73bb7afc29586c6292dd86062e5f4",
       "dossier_path": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "promoted_rules": [
@@ -43989,6 +43989,21 @@
           "number": 5555,
           "title": "version number in doc generation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6019,
+          "title": "POSIX Shell Command Synthesis Quoting Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6020,
+          "title": "Lossy Byte-Boundary Protocol Ingestion Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6021,
+          "title": "Asymmetric Path Resolution Prefix Jail Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43996,7 +44011,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T23:34:50.445Z",
+      "verified_at": "2026-10-31T02:35:22.614Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -125526,7 +125541,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
-      "content_hash": "54c2d11b82afe63c9212309843b5a00fccc119ec6fd3323be2ebd76965de0b54",
+      "content_hash": "ea5e035549e1783c510e36c44e6cb0a13712b2617db427613a67c6f512780a66",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -125554,6 +125569,21 @@
           "number": 4987,
           "title": "GGUF Format Constraint: Per-Layer vs. Per-Expert Quantization",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6022,
+          "title": "Zero-Egress In-Place Binary Shard Transformation Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6023,
+          "title": "Heterogeneous Shard Identity & Shared Module Symlink Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6024,
+          "title": "Layer-Wise Homogeneous MoE Quantization Constraint",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -125561,7 +125591,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T20:25:14.396Z",
+      "verified_at": "2026-10-31T02:35:25.424Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -158513,6 +158543,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T02:28:00.562Z"
+    },
+    "rule-6019": {
+      "learning_id": "rule-6019",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6019,
+      "title": "POSIX Shell Command Synthesis Quoting Invariant",
+      "source_url": "https://github.com/Orange-OpenSource/hurl",
+      "source_version": "89de8e38",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:35:22.614Z"
+    },
+    "rule-6020": {
+      "learning_id": "rule-6020",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6020,
+      "title": "Lossy Byte-Boundary Protocol Ingestion Invariant",
+      "source_url": "https://github.com/Orange-OpenSource/hurl",
+      "source_version": "89de8e38",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:35:22.614Z"
+    },
+    "rule-6021": {
+      "learning_id": "rule-6021",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6021,
+      "title": "Asymmetric Path Resolution Prefix Jail Invariant",
+      "source_url": "https://github.com/Orange-OpenSource/hurl",
+      "source_version": "89de8e38",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:35:22.614Z"
+    },
+    "rule-6022": {
+      "learning_id": "rule-6022",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6022,
+      "title": "Zero-Egress In-Place Binary Shard Transformation Rule",
+      "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:35:25.424Z"
+    },
+    "rule-6023": {
+      "learning_id": "rule-6023",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6023,
+      "title": "Heterogeneous Shard Identity & Shared Module Symlink Invariant",
+      "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:35:25.424Z"
+    },
+    "rule-6024": {
+      "learning_id": "rule-6024",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6024,
+      "title": "Layer-Wise Homogeneous MoE Quantization Constraint",
+      "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:35:25.424Z"
     }
   },
   "aliases": {

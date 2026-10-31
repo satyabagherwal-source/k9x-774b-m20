@@ -3733,10 +3733,10 @@
     "repository": "Orange-OpenSource/hurl",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
-    "sourceVersion": "4607520e",
+    "sourceVersion": "89de8e38",
     "license": "Apache-2.0",
-    "contentHash": "e07e3b206f809e79e52f59ae80aff0c5517eb056ac8ac2ab8e50deff8eff4b32",
-    "lastHarvestedAt": "2026-10-29T23:34:50.509Z",
+    "contentHash": "e503c3ccb3722d3e0d67c85b48e3f46c95c73bb7afc29586c6292dd86062e5f4",
+    "lastHarvestedAt": "2026-10-31T02:35:22.678Z",
     "learningId": "learn-github-orange-opensource-hurl"
   },
   "gregberge-svgr": {
@@ -10605,8 +10605,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "54c2d11b82afe63c9212309843b5a00fccc119ec6fd3323be2ebd76965de0b54",
-    "lastHarvestedAt": "2026-10-27T20:25:14.520Z",
+    "contentHash": "ea5e035549e1783c510e36c44e6cb0a13712b2617db427613a67c6f512780a66",
+    "lastHarvestedAt": "2026-10-31T02:35:25.487Z",
     "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf"
   },
   "hf-comfy-org-fibo-2.0": {

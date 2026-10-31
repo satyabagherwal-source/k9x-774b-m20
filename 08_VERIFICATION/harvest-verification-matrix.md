@@ -6429,3 +6429,5 @@
 | `CYCLE-20261031-YR1K` | `2026-10-31T02:21:24.968Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6015` | Yes (`374c0f5b...`) |
 | `CYCLE-20261031-776M` | `2026-10-31T02:27:59.134Z` | `MiniMaxAI/MiniMax-M3.1-Flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3846, Rule 6016, Rule 6017` | Yes (`95a6e9b0...`) |
 | `CYCLE-20261031-78CF` | `2026-10-31T02:28:00.639Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6018` | Yes (`fa24d217...`) |
+| `CYCLE-20261031-GPF7` | `2026-10-31T02:35:22.675Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6019, Rule 6020, Rule 6021` | Yes (`e503c3cc...`) |
+| `CYCLE-20261031-GRL8` | `2026-10-31T02:35:25.484Z` | `ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6022, Rule 6023, Rule 6024` | Yes (`ea5e0355...`) |

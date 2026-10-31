@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T02:28:00.647Z",
-  "total_cycles_completed": 6406,
-  "total_learnings_persisted": 6406,
-  "total_rules_promoted": 5996,
+  "last_updated": "2026-10-31T02:35:25.491Z",
+  "total_cycles_completed": 6408,
+  "total_learnings_persisted": 6408,
+  "total_rules_promoted": 6002,
   "history": [
-    {
-      "timestamp": "2026-10-30T15:49:23.800Z",
-      "repository": "alibaba/zvec",
-      "learningId": "learn-github-alibaba-zvec",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T15:54:13.757Z",
-      "repository": "domcyrus/rustnet",
-      "learningId": "learn-github-domcyrus-rustnet",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T16:00:32.375Z",
       "repository": "aio-libs/aiohttp",
@@ -1403,6 +1389,20 @@
       "repository": "prometheus/prometheus",
       "learningId": "learn-github-prometheus-prometheus",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T02:35:22.682Z",
+      "repository": "Orange-OpenSource/hurl",
+      "learningId": "learn-github-orange-opensource-hurl",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T02:35:25.491Z",
+      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

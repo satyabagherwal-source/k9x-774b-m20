@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T02:28:03.179Z",
-    "lastVerified": "2026-10-31T02:28:03.179Z",
+    "lastChecked": "2026-10-31T02:35:28.037Z",
+    "lastVerified": "2026-10-31T02:35:28.037Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -99,9 +99,9 @@
   "stakater-reloader": {
     "name": "Reloader",
     "officialUrl": "https://github.com/stakater/Reloader",
-    "lastChecked": "2026-10-30T06:56:50.648Z",
+    "lastChecked": "2026-10-31T02:34:16.119Z",
     "revisionIdentifier": "41b3ad27",
-    "lastVerified": "2026-10-30T06:56:50.648Z"
+    "lastVerified": "2026-10-31T02:34:16.119Z"
   },
   "gravitl-netmaker": {
     "name": "netmaker",
@@ -343,9 +343,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T02:07:30.130Z",
+    "lastChecked": "2026-10-31T02:34:23.625Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T02:07:30.130Z"
+    "lastVerified": "2026-10-31T02:34:23.625Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1307,8 +1307,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T22:56:34.831Z",
-    "lastVerified": "2026-10-30T22:56:34.831Z",
+    "lastChecked": "2026-10-31T02:34:18.632Z",
+    "lastVerified": "2026-10-31T02:34:18.632Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -2262,9 +2262,9 @@
   "expo-create-react-native-app": {
     "name": "create-react-native-app",
     "officialUrl": "https://github.com/expo/create-react-native-app",
-    "lastChecked": "2026-10-28T06:11:40.943Z",
+    "lastChecked": "2026-10-31T02:34:13.790Z",
     "revisionIdentifier": "3a7b11ee",
-    "lastVerified": "2026-10-28T06:11:40.943Z"
+    "lastVerified": "2026-10-31T02:34:13.790Z"
   },
   "kubeedge-kubeedge": {
     "name": "kubeedge/kubeedge",
@@ -2780,13 +2780,13 @@
     "officialUrl": "https://github.com/Orange-OpenSource/hurl",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T23:34:49.061Z",
-    "lastVerified": "2026-10-29T23:34:49.061Z",
+    "lastChecked": "2026-10-31T02:34:12.229Z",
+    "lastVerified": "2026-10-31T02:34:12.229Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-orange-opensource-hurl",
-    "contentHash": "e07e3b206f809e79e52f59ae80aff0c5517eb056ac8ac2ab8e50deff8eff4b32",
-    "promotedRulesCount": 1,
+    "contentHash": "e503c3ccb3722d3e0d67c85b48e3f46c95c73bb7afc29586c6292dd86062e5f4",
+    "promotedRulesCount": 3,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -6185,9 +6185,9 @@
   "lindb-lindb": {
     "name": "lindb",
     "officialUrl": "https://github.com/lindb/lindb",
-    "lastChecked": "2026-10-30T06:16:37.836Z",
+    "lastChecked": "2026-10-31T02:34:21.119Z",
     "revisionIdentifier": "612070e1",
-    "lastVerified": "2026-10-30T06:16:37.836Z"
+    "lastVerified": "2026-10-31T02:34:21.119Z"
   },
   "vercel-labs-opensrc": {
     "name": "opensrc",
@@ -11947,6 +11947,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
     "contentHash": "95a6e9b074238d41c51d58e0eb9c6f73abdb8bbea92ed67623e5e682dc68d9c1",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf": {
+    "name": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+    "officialUrl": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-31T02:34:11.557Z",
+    "lastVerified": "2026-10-31T02:34:11.557Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
+    "contentHash": "ea5e035549e1783c510e36c44e6cb0a13712b2617db427613a67c6f512780a66",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
