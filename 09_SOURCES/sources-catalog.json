@@ -1115,8 +1115,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-reranker-v2-m3",
     "sourceVersion": "hf-baai-bge-reranker-v2-m3",
     "license": "Open-Source",
-    "contentHash": "602b25911366677e5f5d04f4765fe3ce7722de1ca7697832b9e1dfafe0f944e7",
-    "lastHarvestedAt": "2026-10-28T16:27:14.893Z",
+    "contentHash": "9a337dd9c9edb9d075029808acd34e35bb8bea0bb67177e1be0fb42a5dd109ce",
+    "lastHarvestedAt": "2026-10-31T17:36:58.358Z",
     "learningId": "learn-huggingface-baai-bge-reranker-v2-m3"
   },
   "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese": {
@@ -1703,10 +1703,10 @@
     "repository": "tw93/Pake",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Pake",
-    "sourceVersion": "9b54b543",
+    "sourceVersion": "64854199",
     "license": "GPL-3.0",
-    "contentHash": "3cb07140d99d444c5d74a83e6e333ec8e44c02d2e21a42453fd3d1c45a6ba5c8",
-    "lastHarvestedAt": "2026-10-30T21:55:42.026Z",
+    "contentHash": "e141532ec9036b56f3185f5b62c94fe30d3d257ea91775894c53f8ec1636d2a8",
+    "lastHarvestedAt": "2026-10-31T17:36:59.125Z",
     "learningId": "learn-github-tw93-pake"
   },
   "hf-datalab-to-indra-ocr": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "ef92bc17",
+    "sourceVersion": "6c1466ab",
     "license": "Apache-2.0",
-    "contentHash": "ce83b77807f381fc1eae88ec76733139f7435508489dc326de98d8b3a25e2c03",
-    "lastHarvestedAt": "2026-10-31T01:21:33.898Z",
+    "contentHash": "d19ddd38e014e826a51bb154cda15c871cbcbdcc1fbb5df32c3fc6a7d4165ace",
+    "lastHarvestedAt": "2026-10-31T17:37:11.408Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "af87eca0",
+    "sourceVersion": "b818208e",
     "license": "MIT",
-    "contentHash": "2ffdb17f90f2beff6e91368ac8b478edb7844a1962a0730721b63ea9c948d7d1",
-    "lastHarvestedAt": "2026-10-31T02:07:29.582Z",
+    "contentHash": "f3b4050cd3d8cc40afb4e8417f4928b0ca81867d45e4719914f807a2b3cc6f5c",
+    "lastHarvestedAt": "2026-10-31T17:37:05.836Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {

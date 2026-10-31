@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T17:30:14.111Z",
+  "last_updated": "2026-10-31T17:37:11.327Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18966,7 +18966,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-reranker-v2-m3",
       "source_version": "hf-baai-bge-reranker-v2-m3",
-      "content_hash": "602b25911366677e5f5d04f4765fe3ce7722de1ca7697832b9e1dfafe0f944e7",
+      "content_hash": "9a337dd9c9edb9d075029808acd34e35bb8bea0bb67177e1be0fb42a5dd109ce",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md",
       "promoted_rules": [
@@ -19003,7 +19003,7 @@
         "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv3yddzy",
         "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv4d3zyp"
       ],
-      "verified_at": "2026-10-28T16:27:14.788Z",
+      "verified_at": "2026-10-31T17:36:58.242Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54490,8 +54490,8 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "af87eca0",
-      "content_hash": "2ffdb17f90f2beff6e91368ac8b478edb7844a1962a0730721b63ea9c948d7d1",
+      "source_version": "b818208e",
+      "content_hash": "f3b4050cd3d8cc40afb4e8417f4928b0ca81867d45e4719914f807a2b3cc6f5c",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
@@ -54549,6 +54549,11 @@
           "number": 6006,
           "title": "return current-session skip count in response (#12824)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6267,
+          "title": "call chasm time skipping APIs in workflow time skipping path (#12848)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54556,7 +54561,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T02:07:29.483Z",
+      "verified_at": "2026-10-31T17:37:05.734Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55951,8 +55956,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "ef92bc17",
-      "content_hash": "ce83b77807f381fc1eae88ec76733139f7435508489dc326de98d8b3a25e2c03",
+      "source_version": "6c1466ab",
+      "content_hash": "d19ddd38e014e826a51bb154cda15c871cbcbdcc1fbb5df32c3fc6a7d4165ace",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -56010,6 +56015,11 @@
           "number": 5990,
           "title": "Classify MongoDB timeout errors as external errors",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6268,
+          "title": "Size array value builders from entry counts",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56017,7 +56027,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T01:21:33.840Z",
+      "verified_at": "2026-10-31T17:37:11.307Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -69581,8 +69591,8 @@
       "slug": "tw93-pake",
       "platform": "github",
       "source_url": "https://github.com/tw93/Pake",
-      "source_version": "9b54b543",
-      "content_hash": "3cb07140d99d444c5d74a83e6e333ec8e44c02d2e21a42453fd3d1c45a6ba5c8",
+      "source_version": "64854199",
+      "content_hash": "e141532ec9036b56f3185f5b62c94fe30d3d257ea91775894c53f8ec1636d2a8",
       "dossier_path": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "promoted_rules": [
@@ -69630,6 +69640,11 @@
           "number": 5901,
           "title": "Binary Container Frame Normalization and Ordering Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6266,
+          "title": "Merge pull request #1426 from NgoQuocViet2001/fix-download-filename-decoding",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -69637,7 +69652,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T21:55:41.924Z",
+      "verified_at": "2026-10-31T17:36:59.024Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -163376,6 +163391,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T17:30:14.082Z"
+    },
+    "rule-6266": {
+      "learning_id": "rule-6266",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6266,
+      "title": "Merge pull request #1426 from NgoQuocViet2001/fix-download-filename-decoding",
+      "source_url": "https://github.com/tw93/Pake",
+      "source_version": "64854199",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T17:36:59.024Z"
+    },
+    "rule-6267": {
+      "learning_id": "rule-6267",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6267,
+      "title": "call chasm time skipping APIs in workflow time skipping path (#12848)",
+      "source_url": "https://github.com/temporalio/temporal",
+      "source_version": "b818208e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T17:37:05.734Z"
+    },
+    "rule-6268": {
+      "learning_id": "rule-6268",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6268,
+      "title": "Size array value builders from entry counts",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "6c1466ab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T17:37:11.307Z"
     }
   },
   "aliases": {

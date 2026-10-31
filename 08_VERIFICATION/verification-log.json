@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-RIEO",
-    "timestamp": "2026-10-30T08:04:02.160Z",
-    "repository": "Pika-Labs/Pika-H3-Flex",
-    "learningId": "learn-huggingface-pika-labs-pika-h3-flex",
-    "contentHash": "4d9ea41aa092bc1f8161977b78e31c2339dc2baaeb620b20356b506cec8cc4b5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-RJRN",
-    "timestamp": "2026-10-30T08:04:03.923Z",
-    "repository": "scrapy/scrapy",
-    "learningId": "learn-github-scrapy-scrapy",
-    "contentHash": "a776ddb6d26b4ac788e9c283e181b9413dafee0b310a26810004fd6727b6253a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-SAM1",
-    "timestamp": "2026-10-30T08:04:38.713Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "d7b26f07ed8057ce50db4b0cff46af06dd8ca2dff1b492edf290c761e2fbdfb5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-SOAR",
-    "timestamp": "2026-10-30T08:04:56.451Z",
-    "repository": "duckdb/duckdb",
-    "learningId": "learn-github-duckdb-duckdb",
-    "contentHash": "f400ec526dadff2abdbf6aa355c276ca9fd26068c2d58253edf5e283ec2e5eb1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-AOCD",
     "timestamp": "2026-10-30T08:18:56.317Z",
     "repository": "ClickHouse/ClickHouse",
@@ -7492,6 +7432,66 @@
     "contentHash": "e5d00afc0b0fe73e299a14f51572613b21eb79dfa2ba9c17e175b859ca3c1907",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-O5WS",
+    "timestamp": "2026-10-31T17:36:58.348Z",
+    "repository": "BAAI/bge-reranker-v2-m3",
+    "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
+    "contentHash": "9a337dd9c9edb9d075029808acd34e35bb8bea0bb67177e1be0fb42a5dd109ce",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-O6I9",
+    "timestamp": "2026-10-31T17:36:59.121Z",
+    "repository": "tw93/Pake",
+    "learningId": "learn-github-tw93-pake",
+    "contentHash": "e141532ec9036b56f3185f5b62c94fe30d3d257ea91775894c53f8ec1636d2a8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-OBOO",
+    "timestamp": "2026-10-31T17:37:05.832Z",
+    "repository": "temporalio/temporal",
+    "learningId": "learn-github-temporalio-temporal",
+    "contentHash": "f3b4050cd3d8cc40afb4e8417f4928b0ca81867d45e4719914f807a2b3cc6f5c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-OFZG",
+    "timestamp": "2026-10-31T17:37:11.404Z",
+    "repository": "trinodb/trino",
+    "learningId": "learn-github-trinodb-trino",
+    "contentHash": "d19ddd38e014e826a51bb154cda15c871cbcbdcc1fbb5df32c3fc6a7d4165ace",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

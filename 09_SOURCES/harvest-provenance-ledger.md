@@ -6663,3 +6663,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-clip-vit-base-patch32` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-31T17:22:54.794Z |
 | `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `ea99cfaf` | Multi-dimensional audit evidence | 2026-10-31T17:22:55.635Z |
 | `learn-huggingface-sentence-transformers-all-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/all-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-31T17:30:14.202Z |
+| `learn-huggingface-baai-bge-reranker-v2-m3` | `https://huggingface.co/BAAI/bge-reranker-v2-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-31T17:36:58.358Z |
+| `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `64854199` | Multi-dimensional audit evidence | 2026-10-31T17:36:59.125Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `b818208e` | Multi-dimensional audit evidence | 2026-10-31T17:37:05.836Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `6c1466ab` | Multi-dimensional audit evidence | 2026-10-31T17:37:11.408Z |

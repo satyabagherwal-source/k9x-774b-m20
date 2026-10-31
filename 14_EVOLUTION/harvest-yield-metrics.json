@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T17:30:14.207Z",
-  "total_cycles_completed": 6631,
-  "total_learnings_persisted": 6631,
-  "total_rules_promoted": 6266,
+  "last_updated": "2026-10-31T17:37:11.413Z",
+  "total_cycles_completed": 6635,
+  "total_learnings_persisted": 6635,
+  "total_rules_promoted": 6269,
   "history": [
-    {
-      "timestamp": "2026-10-31T03:59:09.038Z",
-      "repository": "dragonflydb/dragonfly",
-      "learningId": "learn-github-dragonflydb-dragonfly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T04:09:42.098Z",
-      "repository": "baidu/Unlimited-OCR-2",
-      "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T04:09:42.999Z",
-      "repository": "duckdb/duckdb",
-      "learningId": "learn-github-duckdb-duckdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T04:15:56.350Z",
-      "repository": "ccore/Qwen3.5-4B-3D-Coder",
-      "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T04:16:06.441Z",
       "repository": "ClickHouse/ClickHouse",
@@ -1403,6 +1375,34 @@
       "repository": "sentence-transformers/all-mpnet-base-v2",
       "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T17:36:58.363Z",
+      "repository": "BAAI/bge-reranker-v2-m3",
+      "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T17:36:59.130Z",
+      "repository": "tw93/Pake",
+      "learningId": "learn-github-tw93-pake",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T17:37:05.841Z",
+      "repository": "temporalio/temporal",
+      "learningId": "learn-github-temporalio-temporal",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T17:37:11.413Z",
+      "repository": "trinodb/trino",
+      "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

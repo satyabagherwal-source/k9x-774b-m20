@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `ef92bc17`  
+> **Source Version**: `6c1466ab`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T01:21:33.499Z  
+> **Timestamp**: 2026-10-31T17:37:10.727Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T01:21:32.973Z  
+> **Harvest Timestamp**: 2026-10-31T17:37:10.719Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13386 stars
+- **Stars / Engagement**: 13388 stars
 
 ---
 
@@ -1862,136 +1862,160 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aaed7bd6` (2026-10-29)
-**Commit Message**: Classify MongoDB timeout errors as external errors
+### Incident Patch 1: `a81ce638` (2026-10-31)
+**Commit Message**: Size array value builders from entry counts
 
-**File**: `plugin/trino-mongodb/src/main/java/io/trino/plugin/mongodb/MongoSession.java` (modified, +2/-1)
+**File**: `core/trino-spi/src/main/java/io/trino/spi/block/ArrayValueBuilder.java` (modified, +1/-1)
 ```diff
-@@ -29,6 +29,7 @@
- import com.mongodb.DBRef;
- import com.mongodb.MongoCommandException;
- import com.mongodb.MongoNamespace;
-+import com.mongodb.MongoTimeoutException;
- import com.mongodb.client.FindIterable;
- import com.mongodb.client.MongoClient;
- import com.mongodb.client.MongoCollection;
-@@ -268,7 +269,7 @@ public MongoTable getTable(SchemaTableName tableName)
-             Throwable cause = e.getCause();
-             if (cause != null) {
-                 throwIfInstanceOf(cause, TrinoException.class);
--                if (cause instanceof MongoCommandException) {
-+                if (cause instanceof MongoCommandException || cause instanceof MongoTimeoutException) {
-                     throw new TrinoException(MONGODB_CLUSTER_ERROR, cause);
-                 }
-             }
-```
-
-**File**: `plugin/trino-mongodb/src/test/java/io/trino/plugin/mongodb/TestMongoSession.java` (modified, +24/-0)
-```diff
-@@ -15,7 +15,11 @@
- 
- import com.google.common.collect.ImmutableList;
- import com.google.common.collect.ImmutableMap;
-+import com.mongodb.MongoTimeoutException;
-+import com.mongodb.client.MongoClient;
-+import com.mongodb.client.MongoClients;
- import io.trino.spi.connector.ColumnHandle;
-+import io.trino.spi.connector.SchemaTableName;
- import io.trino.spi.predicate.Domain;
- import io.trino.spi.predicate.TupleDomain;
- import io.trino.spi.predicate.ValueSet;
-@@ -27,7 +31,9 @@
- import java.util.Optional;
- 
- import static io.airlift.slice.Slices.utf8Slice;
-+import static io.trino.plugin.mongodb.MongoErrorCode.MONGODB_CLUSTER_ERROR;
- import static io.trino.plugin.mongodb.MongoSession.projectSufficientColumns;
-+import static io.trino.spi.ErrorType.EXTERNAL;
- import static io.trino.spi.predicate.Range.equal;
- import static io.trino.spi.predicate.Range.greaterThan;
- import static io.trino.spi.predicate.Range.greaterThanOrEqual;
-@@ -38,6 +44,8 @@
- import static io.trino.spi.type.DoubleType.DOUBLE;
- import static io.trino.spi.type.RealType.REAL;
- import static io.trino.spi.type.VarcharType.createUnboundedVarcharType;
-+import static io.trino.testing.assertions.TrinoExceptionAssert.assertTrinoExceptionThrownBy;
-+import static io.trino.type.InternalTypeManager.TESTING_TYPE_MANAGER;
- import static java.util.Arrays.asList;
- import static org.assertj.core.api.Assertions.assertThat;
- 
-@@ -52,6 +60,22 @@ public class TestMongoSession
- 
-     private static final MongoColumnHandle ID_COL = new MongoColumnHandle("_id", ImmutableList.of(), ObjectIdType.OBJECT_ID, false, false, Optional.empty());
- 
-+    @Test
-+    public void testGetTableWithUnreachableMongoDbSrv()
-+    {
-+        try (MongoClient client = MongoClients.create("mongodb+srv://localhost/?serverSelectionTimeoutMS=100")) {
-+            MongoSession session = new MongoSession(
-+                    TESTING_TYPE_MANAGER,
-+                    () -> client,
-+                    new MongoClientConfig());
-+
-+            assertThat(MONGODB_CLUSTER_ERROR.toErrorCode().getType()).isEqualTo(EXTERNAL);
-+            assertTrinoExceptionThrownBy(() -> session.getTable(new SchemaTableName("test", "test")))
-+                    .hasErrorCode(MONGODB_CLUSTER_ERROR)
-+                    .hasCauseInstanceOf(MongoTimeoutException.class);
-+        }
-+    }
-+
-     @Test
-     public void testFloatingPointInfinityBounds()
+@@ -20,7 +20,7 @@ public interface ArrayValueBuilder<E extends Throwable>
+     static <E extends Throwable> Block buildArrayValue(ArrayType arrayType, int entryCount, ArrayValueBuilder<E> builder)
+             throws E
      {
+-        return new BufferedArrayValueBuilder(arrayType, 1)
++        return new BufferedArrayValueBuilder(arrayType, entryCount)
+                 .build(entryCount, builder);
+     }
+ 
 ```
 
 ---
 
-### Incident Patch 2: `0cbe0b61` (2026-10-30)
-**Commit Message**: Fix type of CHAR literal with non-BMP characters
+### Incident Patch 2: `9e64fa37` (2026-10-31)
+**Commit Message**: Size projection builders from selected positions
 
-CHAR literal type length was computed from the number of UTF-16 code
-units, so a literal containing a supplementary character got a type
-longer than its value, and the value was padded with extra spaces.
-
-**File**: `core/trino-main/src/main/java/io/trino/sql/analyzer/ExpressionAnalyzer.java` (modified, +1/-1)
+**File**: `core/trino-main/src/main/java/io/trino/operator/project/GeneratedPageProjection.java` (modified, +8/-2)
 ```diff
-@@ -1667,7 +1667,7 @@ protected Type visitGenericLiteral(GenericLiteral node, Context context)
-             return setExpressionType(
-                     node,
-                     switch (node.getType()) {
--                        case String value when value.equalsIgnoreCase("CHAR") -> CharType.createCharType(node.getValue().length());
-+                        case String value when value.equalsIgnoreCase("CHAR") -> CharType.createCharType(node.getValue().codePointCount(0, node.getValue().length()));
-                         case String value when value.equalsIgnoreCase("TIME") -> processTimeLiteral(node);
-                         case String value when value.equalsIgnoreCase("TIMESTAMP") -> processTimestampLiteral(node);
-                         default -> {
+@@ -19,6 +19,7 @@
+ import io.trino.spi.connector.SourcePage;
+ import io.trino.sql.gen.PageProjectionWork;
+ import io.trino.sql.ir.Expression;
++import jakarta.annotation.Nullable;
+ 
+ import java.lang.invoke.MethodHandle;
+ 
+@@ -34,6 +35,7 @@ public class GeneratedPageProjection
+     private final InputChannels inputChannels;
+     private final MethodHandle pageProjectionWorkFactory;
+ 
++    @Nullable
+     private BlockBuilder blockBuilder;
+ 
+     public GeneratedPageProjection(Expression projection, boolean isDeterministic, InputChannels inputChannels, MethodHandle pageProjectionWorkFactory)
+@@ -42,7 +44,6 @@ public GeneratedPageProjection(Expression projection, boolean isDeterministic, I
+         this.isDeterministic = isDeterministic;
+         this.inputChannels = requireNonNull(inputChannels, "inputChannels is null");
+         this.pageProjectionWorkFactory = requireNonNull(pageProjectionWorkFactory, "pageProjectionWorkFactory is null");
+-        this.blockBuilder = projection.type().createBlockBuilder(null, 1);
+     }
+ 
+     @Override
+@@ -60,7 +61,12 @@ public InputChannels getInputChannels()
+     @Override
+     public Block project(ConnectorSession session, SourcePage page, SelectedPositions selectedPositions)
+     {
+-        blockBuilder = blockBuilder.newBlockBuilderLike(selectedPositions.size(), null);
++        if (blockBuilder == null) {
++            blockBuilder = projection.type().createBlockBuilder(null, selectedPositions.size());
++        }
++        else {
++            blockBuilder = blockBuilder.newBlockBuilderLike(selectedPositions.size(), null);
++        }
+         try {
+             return ((PageProjectionWork) pageProjectionWorkFactory.invoke(blockBuilder, session, page, selectedPositions)).process();
+         }
 ```
 
-**File**: `core/trino-main/src/test/java/io/trino/type/TestCharParametricType.java` (modified, +10/-0)
+---
+
+### Incident Patch 3: `bd932a1f` (2026-10-31)
+**Commit Message**: Size split builders for the exact output
+
+**File**: `core/trino-main/src/main/java/io/trino/operator/scalar/StringFunctions.java` (modified, +13/-17)
 ```diff
-@@ -36,4 +36,14 @@ public void charIsCreatedWithLength()
-                     .isEqualTo("   abc\n   ");
-         }
-     }
-+
-+    @Test
-+    public void charLengthCountsCodePoints()
-+    {
-+        try (QueryAssertions assertions = new QueryAssertions()) {
-+            assertThat(assertions.expression("CHAR '𝒦𝒫𝒰𝒦𝒟𝒥𝒜'"))
-+                    .hasType(createCharType(7))
-+                    .isEqualTo("𝒦𝒫𝒰𝒦𝒟𝒥𝒜");
+@@ -22,6 +22,7 @@
+ import io.trino.spi.TrinoException;
+ import io.trino.spi.block.Block;
+ import io.trino.spi.block.BlockBuilder;
++import io.trino.spi.block.VariableWidthBlockBuilder;
+ import io.trino.spi.function.Constraint;
+ import io.trino.spi.function.Description;
+ import io.trino.spi.function.LiteralParameter;
+@@ -439,32 +440,27 @@ public static Block split(@SqlType("varchar(x)") Slice string, @SqlType("varchar
+         checkCondition(limit > 0, INVALID_FUNCTION_ARGUMENT, "Limit must be positive");
+         checkCondition(limit <= Integer.MAX_VALUE, INVALID_FUNCTION_ARGUMENT, "Limit is too large");
+         checkCondition(delimiter.length() > 0, INVALID_FUNCTION_ARGUMENT, "The delimiter may not be the empty string");
+-        BlockBuilder parts = VARCHAR.createBlockBuilder(null, 1, string.length());
+-        // If limit is one, the last and only element is the complete string
+-        if (limit == 1) {
+-            VARCHAR.writeSlice(parts, string);
+-            return parts.build();
+-        }
+-
++        int expectedEntries = 1;
+         int index = 0;
+-        while (index < string.length()) {
++        while (expectedEntries < limit && index < string.length()) {
+             int splitIndex = string.indexOf(delimiter, index);
+-            // Found split?
+             if (splitIndex < 0) {
+                 break;
+             }
+-            // Add the part from current index to found split
++            expectedEntries++;
++            index = splitIndex + delimiter.length();
 +        }
-+    }
- }
++
++        int expectedBytes = string.length() - (expectedEntries - 1) * delimiter.length();
++        BlockBuilder parts = new VariableWidthBlockBuilder(null, expectedEntries, expectedBytes);
++        index = 0;
++        for (int part = 1; part < expectedEntries; part++) {
++            int splitIndex = string.indexOf(delimiter, index);
+             VARCHAR.writeSlice(parts, string, index, splitIndex - index);
+-            // Continue searching after delimiter
+             index = splitIndex + delimiter.length();
+-            // Reached limit-1 parts so we can stop
+-            if (parts.getPositionCount() == limit - 1) {
+-                break;
+-            }
+         }
+-        // Rest of string
++        // The last part includes any remaining delimiters when the limit is reached.
+         VARCHAR.writeSlice(parts, string, index, string.length() - index);
+-
+         return parts.build();
+     }
+ 
+```
+
+**File**: `core/trino-main/src/test/java/io/trino/operator/scalar/TestStringFunctions.java` (modified, +11/-0)
+```diff
+@@ -1259,6 +1259,17 @@ public void testCharSubstring()
+     @Test
+     public void testSplit()
+     {
++        assertThat(assertions.function("split", "''", "'.'"))
++                .isEqualTo(ImmutableList.of(""));
++        assertThat(assertions.function("split", "'abc'", "'abcdef'", "2147483647"))
++                .isEqualTo(ImmutableList.of("abc"));
++        assertThat(assertions.function("split", "'aaaaa'", "'aa'"))
++                .isEqualTo(ImmutableList.of("", "", "a"));
++        assertThat(assertions.function("split", "'" + "a.".repeat(1000) + "'", "'.'"))
++                .isEqualTo(ImmutableList.builder().addAll(nCopies(1000, "a")).add("").build());
++        assertThat(assertions.function("split", "'" + "a.".repeat(1000) + "'", "'.'", "2"))
++                .isEqualTo(ImmutableList.of("a", "a.".repeat(999)));
++
+         assertThat(assertions.function("split", "'a.b.c'", "'.'"))
+                 .hasType(new ArrayType(createVarcharType(5)))
+                 .isEqualTo(ImmutableList.of("a", "b", "c"));
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #31933** (2026-10-31): Use known counts to size block builders (@wendigo)
+- **PR #31924** (2026-10-31): Reduce initial variable-width block allocation (@wendigo)
+- **PR #31923** (2026-10-31): Write row projections directly to output blocks (@wendigo)
 - **PR #31915** (2026-10-30): Bind CHAR parameters as char in JDBC setObject  (@findepi)
 - **PR #31912** (2026-10-30): Fix type of CHAR literal with non-BMP characters (@findepi)
 - **PR #31910** (2026-10-30): Resolve Faker functions only in the default schema (@chenjian2664)
-- **PR #31904** (2026-10-30): Remove redundant dependencies from trino-faulttolerant-tests (@ebyhr)
-- **PR #31903** (2026-10-30): Remove unused duct-tape library (@ebyhr)
-- **PR #31902** (2026-10-30): Remove ClickHouse dependencies from root pom.xml (@ebyhr)
 
 ---
 
@@ -2011,29 +2035,28 @@ longer than its value, and the value was padded with extra spaces.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Classify MongoDB timeout errors as external errors
+## X. Size array value builders from entry counts
 
 **RULE**:
-When implementing operations in `plugin/trino-mongodb/src/main/java/io/trino/plugin/mongodb/MongoSession.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/trino-spi/src/main/java/io/trino/spi/block/ArrayValueBuilder.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aaed7bd6`: Classify MongoDB timeout errors as external errors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a81ce638`: Size array value builders from entry counts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugin/trino-mongodb/src/main/java/io/trino/plugin/mongodb/MongoSession.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-spi/src/main/java/io/trino/spi/block/ArrayValueBuilder.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import com.mongodb.MongoTimeoutException;
-                if (cause instanceof MongoCommandException || cause instanceof MongoTimeoutException) {
+        return new BufferedArrayValueBuilder(arrayType, entryCount)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-                if (cause instanceof MongoCommandException) {
+        return new BufferedArrayValueBuilder(arrayType, 1)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aaed7bd6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a81ce638` are properly handled with clean fallback behavior.

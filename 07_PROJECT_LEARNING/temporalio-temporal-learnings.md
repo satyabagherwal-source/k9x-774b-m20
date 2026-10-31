@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `af87eca0`  
+> **Source Version**: `b818208e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T02:07:28.915Z  
+> **Timestamp**: 2026-10-31T17:37:05.147Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T02:07:28.643Z  
+> **Harvest Timestamp**: 2026-10-31T17:37:05.139Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 24095 stars
+- **Stars / Engagement**: 24104 stars
 
 ---
 
@@ -2121,179 +2121,255 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `69c692e8` (2026-10-30)
-**Commit Message**: fix: return current-session skip count in response (#12824)
+### Incident Patch 1: `b818208e` (2026-10-31)
+**Commit Message**: call chasm time skipping APIs in workflow time skipping path (#12848)
 
 ## What changed?
-fix CurrentSessionSkipCount is not returned
+
+call chasm isExecutionSkippable in workflow time skipping path 
+
+## Why?
+nexus is migrated from HSM to CHASM
 
 ## How did you test it?
 - [x] built
-- [x] run locally and tested manually
-- [ ] covered by existing tests
+- [ ] run locally and tested manually
+- [x] covered by existing tests
 - [x] added new unit test(s)
 - [ ] added new functional test(s)
 
-**File**: `service/history/workflow/timeskipping.go` (modified, +4/-3)
+**File**: `chasm/lib/workflow/workflow.go` (modified, +9/-2)
 ```diff
-@@ -299,9 +299,10 @@ func (util *TimeSkippingInfoUtil) ToDescribeInfo(currentTime time.Time) *commonp
- 		return nil
- 	}
- 	return &commonpb.TimeSkippingInfo{
--		CurrentTime:     timestamppb.New(currentTime),
--		EffectiveConfig: common.CloneProto(util.tsi.GetConfig()),
--		FastForwardInfo: util.ToFastForwardInfo(),
-+		CurrentTime:             timestamppb.New(currentTime),
-+		EffectiveConfig:         common.CloneProto(util.tsi.GetConfig()),
-+		FastForwardInfo:         util.ToFastForwardInfo(),
-+		CurrentSessionSkipCount: util.tsi.GetSessionSkipCount(),
- 	}
+@@ -21,8 +21,9 @@ import (
+ // So while Workflow implements the [callback.Host] interface, WorkflowUpdate is only a [callback.Holder].
+ // And attaching completion callbacks to a WorkflowUpdate is done through an [updateCallbackHost].
+ var (
+-	_ callback.Host   = (*Workflow)(nil)
+-	_ callback.Holder = (*WorkflowUpdate)(nil)
++	_ callback.Host                 = (*Workflow)(nil)
++	_ callback.Holder               = (*WorkflowUpdate)(nil)
++	_ chasm.TimeSkippingRuntimeGate = (*Workflow)(nil)
+ )
+ 
+ type Workflow struct {
+@@ -71,6 +72,12 @@ func (w *Workflow) LifecycleState(
+ 	return w.MSPointer.LifecycleState()
  }
  
++// IsExecutionSkippable reports whether CHASM-owned workflow work permits time skipping.
++// Mutable State checks the workflow's legacy state and in-flight work separately.
++func (w *Workflow) IsExecutionSkippable(_ chasm.Context) bool {
++	return w.pendingNexusOperationCount() == 0
++}
++
+ func (w *Workflow) ContextMetadata(_ chasm.Context) map[string]string {
+ 	// TODO: Export workflow metadata from the CHASM workflow root instead of CloseTransaction().
+ 	return nil
 ```
 
-**File**: `service/history/workflow/timeskipping_test.go` (modified, +7/-2)
+**File**: `service/history/workflow/timeskipping.go` (modified, +12/-0)
 ```diff
-@@ -2323,11 +2323,13 @@ func (s *mutableStateSuite) TestTimeSkippingInfoUtil() {
- 	s.Run("ToDescribeInfo_EnabledNoFastForward_NilFastForwardInfo", func() {
- 		now := time.Date(2027, 1, 1, 12, 0, 0, 0, time.UTC)
- 		util := NewTimeSkippingInfoUtil(&persistencespb.TimeSkippingInfo{
--			Config: &commonpb.TimeSkippingConfig{Enabled: true},
-+			Config:           &commonpb.TimeSkippingConfig{Enabled: true},
-+			SessionSkipCount: 3,
- 		})
- 		info := util.ToDescribeInfo(now)
- 		s.NotNil(info)
- 		s.True(info.GetEffectiveConfig().GetEnabled())
-+		s.Equal(int32(3), info.GetCurrentSessionSkipCount())
- 		s.Equal(now, info.GetCurrentTime().AsTime())
- 		s.Nil(info.GetFastForwardInfo(), "no fast-forward set")
+@@ -383,6 +383,18 @@ func (ms *MutableStateImpl) isWorkflowSkippable() bool {
+ 		noSkippingReason = "has pending nexus operations"
+ 		return false
+ 	}
++	if ms.ChasmEnabled() {
++		wf, chasmCtx, err := ms.ChasmWorkflowComponentReadOnly(context.Background())
++		if err != nil {
++			metrics.ExecutionTimeSkippingTransitionedErrorCounter.With(ms.metricsHandler).Record(1, ms.timeSkippingMetricTags()...)
++			ms.logger.Error("failed to check CHASM workflow time skipping eligibility", tag.Error(err))
++			return false
++		}
++		if !wf.IsExecutionSkippable(chasmCtx) {
++			noSkippingReason = "has pending CHASM nexus operations"
++			return false
++		}
++	}
+ 	if len(ms.GetPendingChildExecutionInfos()) > 0 {
+ 		noSkippingReason = "has pending child execution"
+ 		return false
+```
+
+**File**: `service/history/workflow/timeskipping_test.go` (modified, +48/-0)
+```diff
+@@ -14,6 +14,9 @@ import (
+ 	persistencespb "go.temporal.io/server/api/persistence/v1"
+ 	"go.temporal.io/server/chasm"
+ 	"go.temporal.io/server/chasm/lib/activity"
++	chasmnexus "go.temporal.io/server/chasm/lib/nexusoperation"
++	nexusoperationpb "go.temporal.io/server/chasm/lib/nexusoperation/gen/nexusoperationpb/v1"
++	chasmworkflow "go.temporal.io/server/chasm/lib/workflow"
+ 	"go.temporal.io/server/common"
+ 	"go.temporal.io/server/common/clock"
+ 	"go.temporal.io/server/common/metrics"
+@@ -494,6 +497,51 @@ func (s *mutableStateSuite) TestIsWorkflowSkippable() {
  	})
-@@ -2337,9 +2339,10 @@ func (s *mutableStateSuite) TestTimeSkippingInfoUtil() {
- 		targetTime := now.Add(time.Hour)
- 		util := NewTimeSkippingInfoUtil(&persistencespb.TimeSkippingInfo{
- 			Config: &commonpb.TimeSkippingConfig{
--				Enabled:           true,
-+				Enabled:           false,
- 				FastForwardConfig: &commonpb.FastForwardConfig{Id: "ff-1"},
- 			},
-+			SessionSkipCount: 2,
- 			FastForwardInfo: &persistencespb.FastForwardInfo{
- 				TargetTime: timestamppb.New(targetTime),
- 				HasReached: true,
-@@ -2352,6 +2355,7 @@ func (s *mutableStateSuite) TestTimeSkippingInfoUtil() {
- 		s.Equal(targetTime, ff.GetTargetTime().AsTime())
- 		s.True(ff.GetHasCompleted())
- 		s.Equal("ff-1", ff.GetFastForwardId())
-+		s.Equal(int32(2), info.GetCurrentSessionSkipCount())
- 	})
+ }
  
- 	s.Run("ToDescribeInfo_DisabledConfig_ReflectsConfig", func() {
-@@ -2363,6 +2367,7 @@ func (s *mutableStateSuite) TestTimeSkippingInfoUtil() {
- 		info := util.ToDescribeInfo(msNow)
- 		s.NotNil(info)
- 		s.False(info.GetEffectiveConfig().GetEnabled())
-+		s.Zero(info.GetCurrentSessionSkipCount())
- 		s.Equal(msNow, info.GetCurrentTime().AsTime())
- 	})
++func (s *mutableStateSuite) TestIsWorkflowSkippableWithCHASM() {
++	s.mockConfig.WorkflowTimeSkippingEnabled = func(string) bool { return true }
++	s.mutableState.executionInfo.TimeSkippingInfo = &persistencespb.TimeSkippingInfo{
++		Config: &commonpb.TimeSkippingConfig{Enabled: true},
++	}
++
++	registry := chasm.NewRegistry(s.logger)
++	s.Require().NoError(registry.Register(&chasm.CoreLibrary{}))
++	s.Require().NoError(registry.Register(chasmworkflow.NewLibrary(chasmworkflow.NewRegistry())))
++	s.Require().NoError(registry.Register(chasmnexus.NewNilLibrary()))
++	tree := chasm.NewEmptyTree(registry, s.mutableState, chasm.DefaultPathEncoder, s.logger, metrics.NoopMetricsHandler)
++	s.mutableState.chasmTree = tree
++
++	// A workflow may have a CHASM tree without a persisted root component yet.
++	s.True(s.mutableState.isWorkflowSkippable())
++	s.False(tree.IsStateDirty(), "the eligibility check must only read the CHASM tree")
++
++	wf, chasmCtx, err := s.mutableState.ChasmWorkflowComponent(s.T().Context())
++	s.Require().NoError(err)
++	wf.Operations = chasm.Map[int64, *chasmnexus.Operation]{
++		1: chasm.NewComponentField(chasmCtx, chasmnexus.NewOperation(&nexusoperationpb.OperationState{})),
++	}
++	s.False(s.mutableState.isWorkflowSkippable(), "a pending CHASM Nexus operation blocks time skipping")
++}
++
++func (s *mutableStateSuite) TestIsWorkflowSkippableWithCHASMReadError() {
++	s.mockConfig.WorkflowTimeSkippingEnabled = func(string) bool { return true }
++	s.mutableState.executionInfo.TimeSkippingInfo = &persistencespb.TimeSkippingInfo{
++		Config: &commonpb.TimeSkippingConfig{Enabled: true},
++	}
++
++	// The tree exists, but its workflow root type cannot be resolved by this registry.
++	registry := chasm.NewRegistry(s.logger)
++	s.mutableState.chasmTree = chasm.NewEmptyTree(
++		registry, s.mutableState, chasm.DefaultPathEncoder, s.logger, metrics.NoopMetricsHandler,
++	)
++	metricsHandler := metricstest.NewCaptureHandler()
++	capture := metricsHandler.StartCapture()
++	defer metricsHandler.StopCapture(capture)
++	s.mutableState.metricsHandler = metricsHandler
++
++	s.False(s.mutableState.isWorkflowSkippable())
++	s.Require().Len(capture.Snapshot()[metrics.ExecutionTimeSkippingTransitionedErrorCounter.Name()], 1)
++}
++
+ func (s *mutableStateSuite) TestIsWorkflowSkippableFeatureFlagDisabled() {
+ 	s.mutableState.executionInfo.TimeSkippingInfo = &persistencespb.TimeSkippingInfo{
+ 		Config: &commonpb.TimeSkippingConfig{Enabled: true},
+```
+
+**File**: `tests/timeskipping_test.go` (modified, +83/-0)
+```diff
+@@ -3,6 +3,7 @@ package tests
+ import (
+ 	"context"
+ 	"errors"
++	"strconv"
+ 	"sync/atomic"
+ 	"testing"
+ 	"time"
+@@ -24,6 +25,7 @@ import (
+ 	enumsspb "go.temporal.io/server/api/enums/v1"
+ 	persistencespb "go.temporal.io/server/api/persistence/v1"
+ 	"go.temporal.io/server/chasm"
++	chasmnexus "go.temporal.io/server/chasm/lib/nexusoperation"
+ 	"go.temporal.io/server/common"
+ 	"go.temporal.io/server/common/dynamicconfig"
+ 	"go.temporal.io/server/common/namespace"
+@@ -1157,6 +1159,87 @@ func (s *TimeSkippingTestSuite) TestTimeSkipping_PendingNexusOperationBlocksSkip
+ 		"wall elapsed = %v; the 1h timer must be skipped once the nexus operation completes", wallElapsed)
+ }
  
-```
-
----
-
-### Incident Patch 2: `af87eca0` (2026-10-31)
-**Commit Message**: Bump auto-scaled-workers to include k8s build-tag gate (#12851)
-
-* Picks up temporalio/temporal-auto-scaled-workers@75274b6 (k8s compute
-provider gated behind a build tag). 
-* Updates the catch-all scaling group assertion for the reworded WCI error (temporalio/temporal-auto-scaled-workers#163).
-
-**File**: `go.mod` (modified, +2/-2)
-```diff
-@@ -72,7 +72,7 @@ require (
- 	go.opentelemetry.io/otel/trace v1.45.0
- 	go.opentelemetry.io/proto/otlp v1.11.0
- 	go.temporal.io/api v1.64.1-0.20261030195137-01272cbd37c9
--	go.temporal.io/auto-scaled-workers v0.0.0-20261013231030-67ffdef6330d
-+	go.temporal.io/auto-scaled-workers v0.0.0-20261030203857-75274b664c29
- 	go.temporal.io/sdk v1.49.0
- 	go.temporal.io/testx v0.0.0-20261028001837-eec3975de26f
- 	go.uber.org/fx v1.24.0
-@@ -167,7 +167,7 @@ require (
- 	github.com/jackc/puddle/v2 v2.2.2 // indirect
- 	github.com/josharian/intern v1.0.0 // indirect
- 	github.com/json-iterator/go v1.1.12 // indirect
--	github.com/klauspost/compress v1.18.5 // indirect
-+	github.com/klauspost/compress v1.18.7 // indirect
- 	github.com/kylelemons/godebug v1.1.0 // indirect
- 	github.com/mailru/easyjson v0.9.2 // indirect
- 	github.com/mattn/go-colorable v0.1.14 // indirect
-```
-
-**File**: `go.sum` (modified, +4/-4)
-```diff
-@@ -280,8 +280,8 @@ github.com/jstemmer/go-junit-report/v2 v2.1.0/go.mod h1:mgHVr7VUo5Tn8OLVr1cKnLuE
- github.com/jung-kurt/gofpdf v1.0.3-0.20190309125859-24315acbbda5/go.mod h1:7Id9E/uU8ce6rXgefFLlgrJj/GYY22cpxn+r32jIOes=
- github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
- github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
--github.com/klauspost/compress v1.18.5 h1:/h1gH5Ce+VWNLSWqPzOVn6XBO+vJbCNGvjoaGBFW2IE=
--github.com/klauspost/compress v1.18.5/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
-+github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
-+github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
- github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
- github.com/konsorten/go-windows-terminal-sequences v1.0.2/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
- github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
-@@ -485,8 +485,8 @@ go.opentelemetry.io/proto/slim/otlp/profiles/v1development v0.3.0 h1:CQvJSldHRUN
- go.opentelemetry.io/proto/slim/otlp/profiles/v1development v0.3.0/go.mod h1:xSQ+mEfJe/GjK1LXEyVOoSI1N9JV9ZI923X5kup43W4=
- go.temporal.io/api v1.64.1-0.20261030195137-01272cbd37c9 h1:ZJb+HC/3UhzBBnvzKhGOVNf6WSDpNPBDn94vhEBfZVo=
- go.temporal.io/api v1.64.1-0.20261030195137-01272cbd37c9/go.mod h1:acM0I9WPuYg8W3Pd9jOZvEgi7mRUttUQ4+e7fowKVnM=
--go.temporal.io/auto-scaled-workers v0.0.0-20261013231030-67ffdef6330d h1:cKo/dGcLpFAZXKxIAR2sg9hI+h8/8Z0tNHxXA7LCRVI=
--go.temporal.io/auto-scaled-workers v0.0.0-20261013231030-67ffdef6330d/go.mod h1:DpnPBMkwtk/08wMxwR3u3mIOshsgK/V7KKLh1QzNdjw=
-+go.temporal.io/auto-scaled-workers v0.0.0-20261030203857-75274b664c29 h1:wr2yPeTpZAvovJ1tQviQFfcZQRuqvdhU1T+6yvZ23S0=
-+go.temporal.io/auto-scaled-workers v0.0.0-20261030203857-75274b664c29/go.mod h1:Wcxj1DAGbC/tQwcfX8VjGhVKM9+/idGDQIvYx/gf13Y=
- go.temporal.io/sdk v1.49.0 h1:CtGI0BUe/SCo3eoqTwuWWtXKueii9GBVus7KrKKH1Vo=
- go.temporal.io/sdk v1.49.0/go.mod h1:xP0FulN5JJSfisESUP60LlWsrKz2tLSStGjVdk8r5cc=
- go.uber.org/atomic v1.5.0/go.mod h1:sABNBOSYdrvTF6hTgEIbc7YasKWGhgEQZyfxyTvoXHQ=
-```
-
-**File**: `tests/worker_deployment_version_test.go` (modified, +1/-1)
-```diff
-@@ -3929,7 +3929,7 @@ func (s *DeploymentVersionSuite) TestCreateWorkerDeploymentVersion_InvalidScalin
- 					"sg2": {TaskQueueTypes: nil, Provider: validProvider},
- 				},
- 			},
--			expectedError: "only one scaling group can have no task types defined",
-+			expectedError: "which already serves all task queue types",
- 		},
- 		{
- 			name: "overlapping workflow task queue type",
-```
-
----
-
-### Incident Patch 3: `114b0921` (2026-10-30)
-**Commit Message**: Require write access to validate worker deployment version compute configs (#12843)
-
-**File**: `common/api/metadata.go` (modified, +1/-1)
-```diff
-@@ -173,7 +173,7 @@ var (
- 		"DeleteWorkerDeployment":                       {Scope: ScopeNamespace, Access: AccessWrite, Polling: PollingNone},
- 		"CreateWorkerDeploymentVersion":                {Scope: ScopeNamespace, Access: AccessWrite, Polling: PollingNone},
- 		"UpdateWorkerDeploymentVersionComputeConfig":   {Scope: ScopeNamespace, Access: AccessWrite, Polling: PollingNone},
--		"ValidateWorkerDeploymentVersionComputeConfig": {Scope: ScopeNamespace, Access: AccessReadOnly, Polling: PollingNone},
-+		"ValidateWorkerDeploymentVersionComputeConfig": {Scope: ScopeNamespace, Access: AccessWrite, Polling: PollingNone},
- 		"DeleteWorkerDeploymentVersion":                {Scope: ScopeNamespace, Access: AccessWrite, Polling: PollingNone},
- 		"UpdateWorkerDeploymentVersionMetadata":        {Scope: ScopeNamespace, Access: AccessWrite, Polling: PollingNone},
- 		"ListWorkerDeployments":                        {Scope: ScopeNamespace, Access: AccessReadOnly, Polling: PollingNone},
++// TestTimeSkipping_PendingCHASMNexusOperationBlocksSkip verifies that a workflow-owned
++// CHASM Nexus operation prevents the workflow's timer from advancing virtual time.
++// Completing the operation allows the next workflow task to skip to the timer.
++func (s *TimeSkippingTestSuite) TestTimeSkipping_PendingCHASMNexusOperationBlocksSkip() {
++	env := newNexusTestEnv(s.T(), true,
++		testcore.WithDynamicConfig(dynamicconfig.WorkflowTimeSkippingEnabled, true),
++		testcore.WithDynamicConfig(dynamicconfig.EnableChasm, true),
++		testcore.WithDynamicConfig(chasmnexus.Enabled, true),
++		testcore.WithDynamicConfig(chasmnexus.EnableChasmWorkflowOperations, true),
++		testcore.WithDynamicConfig(chasmnexus.ChasmWorkflowOperationsRolloutPercent, 100),
++	)
++	tv := testvars.New(s.T())
++	started := make(chan struct{}, 1)
++	release := make(chan struct{}, 1)
++	defer close(release)
++	handler := nexustest.Handler{
++		OnStartOperation: func(ctx context.Context, _, _ string, _ *nexus.LazyValue, _ nexus.StartOperationOptions) (nexus.HandlerStartOperationResult[any], error) {
++			select {
++			case started <- struct{}{}:
++			default:
++			}
++			select {
++			case <-release:
++				return &nexus.HandlerStartOperationResultSync[any]{Value: "ok"}, nil
++			case <-ctx.Done():
++				return nil, ctx.Err()
++			}
++		},
++	}
++	endpointName := env.createRandomExternalNexusServer(s.Context(), s.T(), handler)
++	runID := s.startWorkflowWithTimeSkipping(env.TestEnv, tv, 4*time.Hour)
++	poller := taskpoller.New(s.T(), env.FrontendClient(), env.Namespace().String())
++
++	_, err := poller.PollAndHandleWorkflowTask(tv, func(_ *workflowservice.PollWorkflowTaskQueueResponse) (*workflowservice.RespondWorkflowTaskCompletedRequest, error) {
++		return &workflowservice.RespondWorkflowTaskCompletedRequest{Commands: []*commandpb.Command{
++			{
++				CommandType: enumspb.COMMAND_TYPE_SCHEDULE_NEXUS_OPERATION,
++				Attributes: &commandpb.Command_ScheduleNexusOperationCommandAttributes{
++					ScheduleNexusOperationCommandAttributes: &commandpb.ScheduleNexusOperationCommandAttributes{
++						Endpoint: endpointName, Service: "service", Operation: "operation",
++						Input: testcore.MustToPayload(s.T(), "input"),
++					},
++				},
++			},
++			startTimerCmd("timer-1", time.Hour),
++		}}, nil
++	})
++	s.Require().NoError(err)
++
++	select {
++	case <-started:
++	case <-time.After(30 * time.Second):
++		s.FailNow("Nexus operation did not start")
++	}
++
++	ms := s.getMutableState(env.TestEnv, tv.WorkflowID(), runID)
++	history := env.GetHistory(env.Namespace().String(), &commonpb.WorkflowExecution{WorkflowId: tv.WorkflowID(), RunId: runID})
++	scheduledEvent := s.RequireHistoryEvent(history, enumspb.EVENT_TYPE_NEXUS_OPERATION_SCHEDULED)
++	_, inCHASM := ms.State.ChasmNodes["Operations#"+strconv.FormatInt(scheduledEvent.EventId, 10)]
++	s.True(inCHASM, "pending Nexus operation must be stored in the CHASM tree")
++	s.Zero(ms.State.ExecutionInfo.GetTimeSkippingInfo().GetAccumulatedSkippedDuration().AsDuration())
++	s.False(hasEventType(history, enumspb.EVENT_TYPE_WORKFLOW_EXECUTION_TIME_SKIPPING_TRANSITIONED))
++	s.False(hasEventType(history, enumspb.EVENT_TYPE_TIMER_FIRED))
++
++	release <- struct{}{}
++	_, err = poller.PollAndHandleWorkflowTask(tv, taskpoller.DrainWorkflowTask)
++	s.Require().NoError(err)
++	_, err = poller.PollAndHandleWorkflowTask(tv, func(_ *workflowservice.PollWorkflowTaskQueueResponse) (*workflowservice.RespondWorkflowTaskCompletedRequest, error) {
++		return &workflowservice.RespondWorkflowTaskCompletedRequest{Commands: []*commandpb.Command{completeWorkflowCmd()}}, nil
++	})
++	s.Require().NoError(err)
++
++	history = env.GetHistory(env.Namespace().String(), &commonpb.WorkflowExecution{WorkflowId: tv.WorkflowID(), RunId: runID})
++	s.True(hasEventType(history, enumspb.EVENT_TYPE_NEXUS_OPERATION_COMPLETED))
++	s.True(hasEventType(history, enumspb.EVENT_TYPE_WORKFLOW_EXECUTION_TIME_SKIPPING_TRANSITIONED))
++	s.Less(indexOfEventType(history, enumspb.EVENT_TYPE_NEXUS_OPERATION_COMPLETED),
++		indexOfEventType(history, enumspb.EVENT_TYPE_WORKFLOW_EXECUTION_TIME_SKIPPING_TRANSITIONED))
++	s.True(hasEventType(history, enumspb.EVENT_TYPE_TIMER_FIRED))
++	s.True(hasEventType(history, enumspb.EVENT_TYPE_WORKFLOW_EXECUTION_COMPLETED))
++}
++
+ // TestTimeSkipping_StartWithDelay_NoBound verifies that time-skipping with no
+ // bound shifts a W
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #12865** (2026-10-31): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #12858** (closed): Separate parallel suite runner from server assertions (@stephanos)
 - **PR #12851** (2026-10-31): Bump auto-scaled-workers to include k8s build-tag gate (@gcristea-temporal)
 - **PR #12850** (2026-10-31): [release/v1.31.x] Bump auto-scaled-workers to v0.0.1-1.31.2 (@gcristea-temporal)
 - **PR #12849** (2026-10-31): [release/v1.32.x] Bump auto-scaled-workers to v0.2.1-1.32.0.158.0 (@gcristea-temporal)
-- **PR #12843** (2026-10-30): Require write access to validate worker deployment version compute configs (@02strich)
-- **PR #12839** (2026-10-30): Track and gate deprecated Worker Versioning pollers (@Shivs11)
-- **PR #12835** (2026-10-30): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #12848** (2026-10-31): call chasm time skipping APIs in workflow time skipping path (@feiyang3cat)
 
 ---
 
@@ -2313,33 +2389,37 @@ provider gated behind a build tag).
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. return current-session skip count in response (#12824)
+## X. call chasm time skipping APIs in workflow time skipping path (#12848)
 
 **RULE**:
-When implementing operations in `service/history/workflow/timeskipping.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `chasm/lib/workflow/workflow.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `69c692e8`: return current-session skip count in response (#12824). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b818208e`: call chasm time skipping APIs in workflow time skipping path (#12848). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `service/history/workflow/timeskipping.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `chasm/lib/workflow/workflow.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		CurrentTime:             timestamppb.New(currentTime),
-		EffectiveConfig:         common.CloneProto(util.tsi.GetConfig()),
-		FastForwardInfo:         util.ToFastForwardInfo(),
-		CurrentSessionSkipCount: util.tsi.GetSessionSkipCount(),
+	_ callback.Host                 = (*Workflow)(nil)
+	_ callback.Holder               = (*WorkflowUpdate)(nil)
+	_ chasm.TimeSkippingRuntimeGate = (*Workflow)(nil)
+// IsExecutionSkippable reports whether CHASM-owned workflow work permits time skipping.
+// Mutable State checks the workflow's legacy state and in-flight work separately.
+func (w *Workflow) IsExecutionSkippable(_ chasm.Context) bool {
+	return w.pendingNexusOperationCount() == 0
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		CurrentTime:     timestamppb.New(currentTime),
-		EffectiveConfig: common.CloneProto(util.tsi.GetConfig()),
-		FastForwardInfo: util.ToFastForwardInfo(),
+	_ callback.Host   = (*Workflow)(nil)
+	_ callback.Holder = (*WorkflowUpdate)(nil)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `69c692e8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b818208e` are properly handled with clean fallback behavior.

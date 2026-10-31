@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T17:30:14.212Z",
+  "last_updated": "2026-10-31T17:37:11.417Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1475,14 +1475,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-reranker-v2-m3",
-      "content_hash": "602b25911366677e5f5d04f4765fe3ce7722de1ca7697832b9e1dfafe0f944e7",
-      "verified_at": "2026-10-28T16:27:14.900Z",
+      "content_hash": "9a337dd9c9edb9d075029808acd34e35bb8bea0bb67177e1be0fb42a5dd109ce",
+      "verified_at": "2026-10-31T17:36:58.367Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T16:27:14.900Z"
+      "last_updated": "2026-10-31T17:36:58.367Z"
     },
     "jonatasgrosman/wav2vec2-large-xlsr-53-japanese": {
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -2691,14 +2691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tw93-pake",
-      "content_hash": "3cb07140d99d444c5d74a83e6e333ec8e44c02d2e21a42453fd3d1c45a6ba5c8",
-      "verified_at": "2026-10-30T21:55:42.036Z",
+      "content_hash": "e141532ec9036b56f3185f5b62c94fe30d3d257ea91775894c53f8ec1636d2a8",
+      "verified_at": "2026-10-31T17:36:59.134Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T21:55:42.036Z"
+      "last_updated": "2026-10-31T17:36:59.134Z"
     },
     "datalab-to/indra-ocr": {
       "repository": "datalab-to/indra-ocr",
@@ -7731,14 +7731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trinodb-trino",
-      "content_hash": "ce83b77807f381fc1eae88ec76733139f7435508489dc326de98d8b3a25e2c03",
-      "verified_at": "2026-10-31T01:21:33.904Z",
+      "content_hash": "d19ddd38e014e826a51bb154cda15c871cbcbdcc1fbb5df32c3fc6a7d4165ace",
+      "verified_at": "2026-10-31T17:37:11.417Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T01:21:33.904Z"
+      "last_updated": "2026-10-31T17:37:11.417Z"
     },
     "pinterest/gestalt": {
       "repository": "pinterest/gestalt",
@@ -9786,14 +9786,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-temporalio-temporal",
-      "content_hash": "2ffdb17f90f2beff6e91368ac8b478edb7844a1962a0730721b63ea9c948d7d1",
-      "verified_at": "2026-10-31T02:07:29.590Z",
+      "content_hash": "f3b4050cd3d8cc40afb4e8417f4928b0ca81867d45e4719914f807a2b3cc6f5c",
+      "verified_at": "2026-10-31T17:37:05.845Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T02:07:29.590Z"
+      "last_updated": "2026-10-31T17:37:05.845Z"
     },
     "Mintplex-Labs/anything-llm": {
       "repository": "Mintplex-Labs/anything-llm",

@@ -6654,3 +6654,7 @@
 | `CYCLE-20261031-630H` | `2026-10-31T17:22:54.785Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`3df7cad9...`) |
 | `CYCLE-20261031-63O0` | `2026-10-31T17:22:55.632Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6264` | Yes (`236ecbd4...`) |
 | `CYCLE-20261031-FI2E` | `2026-10-31T17:30:14.198Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 996, Rule 6265, Rule 498` | Yes (`e5d00afc...`) |
+| `CYCLE-20261031-O5WS` | `2026-10-31T17:36:58.348Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`9a337dd9...`) |
+| `CYCLE-20261031-O6I9` | `2026-10-31T17:36:59.121Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6266` | Yes (`e141532e...`) |
+| `CYCLE-20261031-OBOO` | `2026-10-31T17:37:05.832Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6267` | Yes (`f3b4050c...`) |
+| `CYCLE-20261031-OFZG` | `2026-10-31T17:37:11.404Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6268` | Yes (`d19ddd38...`) |
