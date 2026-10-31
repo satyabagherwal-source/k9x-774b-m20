@@ -1075,8 +1075,8 @@
     "sourceUrl": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
     "sourceVersion": "hf-venastine-research-xing4.0-29b-a4b-gguf",
     "license": "Open-Source",
-    "contentHash": "b5eb6b6b17792b0544d55e540c312aaaffd5b118ed92ba49f3a6d7a63f67ddbd",
-    "lastHarvestedAt": "2026-10-28T15:58:16.174Z",
+    "contentHash": "e3e0ac9b298721bb6a45450090a8ac5e87248900880a56f646db0d91b920ddee",
+    "lastHarvestedAt": "2026-10-31T17:08:00.150Z",
     "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf"
   },
   "hf-naiveai-naive-n0.5-flash": {
@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "7c0523a3",
+    "sourceVersion": "e38d2e32",
     "license": "Apache-2.0",
-    "contentHash": "0dbcdfc76505fe4083217edc61b7cba4e406d6203f629b058b32444950192a6a",
-    "lastHarvestedAt": "2026-10-31T00:41:26.074Z",
+    "contentHash": "0cce456924bfca4ef9abc13ae221c1f057e7180ca7c1eec3c8f3b1b05fe01e75",
+    "lastHarvestedAt": "2026-10-31T17:03:58.135Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -7593,10 +7593,10 @@
     "repository": "apache/arrow",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/arrow",
-    "sourceVersion": "a95f92de",
+    "sourceVersion": "b4a98b73",
     "license": "Apache-2.0",
-    "contentHash": "406eefe3a12abe3ac07b8e856f207751de9f5762645ace46a56b833511ac3fd0",
-    "lastHarvestedAt": "2026-10-30T21:13:04.503Z",
+    "contentHash": "72aad5d6856ea1860503331a22ba322f247da242451d98b3dd784738a1985e45",
+    "lastHarvestedAt": "2026-10-31T17:03:45.618Z",
     "learningId": "learn-github-apache-arrow"
   },
   "crosspaste-crosspaste-desktop": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T16:57:19.271Z",
+  "last_updated": "2026-10-31T17:08:00.088Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2247,8 +2247,8 @@
       "slug": "apache-arrow",
       "platform": "github",
       "source_url": "https://github.com/apache/arrow",
-      "source_version": "a95f92de",
-      "content_hash": "406eefe3a12abe3ac07b8e856f207751de9f5762645ace46a56b833511ac3fd0",
+      "source_version": "b4a98b73",
+      "content_hash": "72aad5d6856ea1860503331a22ba322f247da242451d98b3dd784738a1985e45",
       "dossier_path": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "promoted_rules": [
@@ -2286,6 +2286,11 @@
           "number": 5878,
           "title": "GH-54936: [C++] Ensure reading an invalid map array from IPC doesn't crash (#549",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6258,
+          "title": "GH-55335: [CI][R] Run R nightly binary upload later (#55337)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2293,7 +2298,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T21:13:04.415Z",
+      "verified_at": "2026-10-31T17:03:45.531Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -2343,8 +2348,8 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "7c0523a3",
-      "content_hash": "0dbcdfc76505fe4083217edc61b7cba4e406d6203f629b058b32444950192a6a",
+      "source_version": "e38d2e32",
+      "content_hash": "0cce456924bfca4ef9abc13ae221c1f057e7180ca7c1eec3c8f3b1b05fe01e75",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
@@ -2407,6 +2412,11 @@
           "number": 5964,
           "title": "PostgreSQL symbolic operator precedence and JSON aggregate parsing (#40384)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6259,
+          "title": "Firebird SRP login failure for mismatched authentication plugins (#40392)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2414,7 +2424,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T00:41:25.971Z",
+      "verified_at": "2026-10-31T17:03:58.046Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30475,7 +30485,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
       "source_version": "hf-venastine-research-xing4.0-29b-a4b-gguf",
-      "content_hash": "b5eb6b6b17792b0544d55e540c312aaaffd5b118ed92ba49f3a6d7a63f67ddbd",
+      "content_hash": "e3e0ac9b298721bb6a45450090a8ac5e87248900880a56f646db0d91b920ddee",
       "dossier_path": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
       "promoted_rules": [
@@ -30492,6 +30502,16 @@
         {
           "number": 2600,
           "title": "GGUF Quantization Metadata Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6260,
+          "title": "Invariant Sinkhorn Normalization & Residual Clamping in Multi-Stream Architectures",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6261,
+          "title": "Decoupled Low-Rank MLA KV-Cache Boundary Separation",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -30512,7 +30532,7 @@
         "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv3xybf6",
         "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv4co4ot"
       ],
-      "verified_at": "2026-10-28T15:58:16.069Z",
+      "verified_at": "2026-10-31T17:08:00.071Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -163214,6 +163234,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T16:57:19.254Z"
+    },
+    "rule-6258": {
+      "learning_id": "rule-6258",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6258,
+      "title": "GH-55335: [CI][R] Run R nightly binary upload later (#55337)",
+      "source_url": "https://github.com/apache/arrow",
+      "source_version": "b4a98b73",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T17:03:45.531Z"
+    },
+    "rule-6259": {
+      "learning_id": "rule-6259",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6259,
+      "title": "Firebird SRP login failure for mismatched authentication plugins (#40392)",
+      "source_url": "https://github.com/apache/shardingsphere",
+      "source_version": "e38d2e32",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T17:03:58.046Z"
+    },
+    "rule-6260": {
+      "learning_id": "rule-6260",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6260,
+      "title": "Invariant Sinkhorn Normalization & Residual Clamping in Multi-Stream Architectures",
+      "source_url": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "source_version": "hf-venastine-research-xing4.0-29b-a4b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T17:08:00.071Z"
+    },
+    "rule-6261": {
+      "learning_id": "rule-6261",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6261,
+      "title": "Decoupled Low-Rank MLA KV-Cache Boundary Separation",
+      "source_url": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "source_version": "hf-venastine-research-xing4.0-29b-a4b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T17:08:00.071Z"
     }
   },
   "aliases": {

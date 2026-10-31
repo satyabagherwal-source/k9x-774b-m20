@@ -6654,3 +6654,6 @@ Every entry in this ledger must capture:
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `299269af` | Multi-dimensional audit evidence | 2026-10-31T16:50:40.225Z |
 | `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `c8c0e7a2` | Multi-dimensional audit evidence | 2026-10-31T16:57:11.318Z |
 | `learn-huggingface-pablodawson-minimax-h3-360-orbit-lora` | `https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA` | `hf-pabloda` | Multi-dimensional audit evidence | 2026-10-31T16:57:19.342Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `b4a98b73` | Multi-dimensional audit evidence | 2026-10-31T17:03:45.618Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `e38d2e32` | Multi-dimensional audit evidence | 2026-10-31T17:03:58.135Z |
+| `learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf` | `https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF` | `hf-venasti` | Multi-dimensional audit evidence | 2026-10-31T17:08:00.150Z |

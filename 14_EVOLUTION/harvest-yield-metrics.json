@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T16:57:19.346Z",
-  "total_cycles_completed": 6622,
-  "total_learnings_persisted": 6622,
-  "total_rules_promoted": 6256,
+  "last_updated": "2026-10-31T17:08:00.154Z",
+  "total_cycles_completed": 6625,
+  "total_learnings_persisted": 6625,
+  "total_rules_promoted": 6260,
   "history": [
-    {
-      "timestamp": "2026-10-31T03:34:13.933Z",
-      "repository": "kube-rs/kube",
-      "learningId": "learn-github-kube-rs-kube",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T03:34:16.037Z",
-      "repository": "briaai/Fibo-2.0-dev",
-      "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T03:45:21.569Z",
-      "repository": "XHToken/Spark-X2.6-4B-GGUF",
-      "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T03:45:30.240Z",
       "repository": "gardener/gardener",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-31T16:57:19.346Z",
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T17:03:45.623Z",
+      "repository": "apache/arrow",
+      "learningId": "learn-github-apache-arrow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T17:03:58.140Z",
+      "repository": "apache/shardingsphere",
+      "learningId": "learn-github-apache-shardingsphere",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T17:08:00.154Z",
+      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-DRYP",
-    "timestamp": "2026-10-30T06:57:22.129Z",
-    "repository": "joreilly/Confetti",
-    "learningId": "learn-github-joreilly-confetti",
-    "contentHash": "0b0ba83c3d77dc76dcd731851614d8f5aeb561eac9d5c9ad0d12fc8a41c5f496",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-O7H1",
-    "timestamp": "2026-10-30T07:05:28.789Z",
-    "repository": "bitnami/sealed-secrets",
-    "learningId": "learn-github-bitnami-sealed-secrets",
-    "contentHash": "41e6c1e6e657ddc183ffb48e2cac73acbf9bb66f2a0f265e48bc3b4c5ef5a2df",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-4H7G",
-    "timestamp": "2026-10-30T07:18:07.900Z",
-    "repository": "genkit-ai/genkit",
-    "learningId": "learn-github-genkit-ai-genkit",
-    "contentHash": "e9d0e0a7e741ec159d5ab232279023cb3e5f56aaf1676a626d52f96db2f3602e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-5702",
     "timestamp": "2026-10-30T07:18:41.330Z",
     "repository": "lucky-media/astro-seo",
@@ -7490,6 +7445,51 @@
     "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
     "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
     "contentHash": "d1ab6a83a62cdab8f4ac358c082503a69bf7853b2c5330ff5acb223ec049a48e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-HGB3",
+    "timestamp": "2026-10-31T17:03:45.615Z",
+    "repository": "apache/arrow",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "72aad5d6856ea1860503331a22ba322f247da242451d98b3dd784738a1985e45",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-HPYR",
+    "timestamp": "2026-10-31T17:03:58.131Z",
+    "repository": "apache/shardingsphere",
+    "learningId": "learn-github-apache-shardingsphere",
+    "contentHash": "0cce456924bfca4ef9abc13ae221c1f057e7180ca7c1eec3c8f3b1b05fe01e75",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-MWPE",
+    "timestamp": "2026-10-31T17:08:00.146Z",
+    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+    "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
+    "contentHash": "e3e0ac9b298721bb6a45450090a8ac5e87248900880a56f646db0d91b920ddee",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {

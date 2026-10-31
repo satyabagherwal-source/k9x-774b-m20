@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source**: github ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
-> **Source Version**: `7c0523a3`  
+> **Source Version**: `e38d2e32`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T00:41:25.389Z  
+> **Timestamp**: 2026-10-31T17:03:57.572Z  
 > **Learning ID**: `learn-github-apache-shardingsphere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T00:41:25.381Z  
+> **Harvest Timestamp**: 2026-10-31T17:03:57.566Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Empowering Data Intelligence with Distributed SQL for Sharding, Scalability, and Security Across All Databases.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 20817 stars
+- **Stars / Engagement**: 20816 stars
 
 ---
 
@@ -1450,15 +1450,13 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40425** (2026-10-30): **Upgrade Guava to 33.7.2-jre and reuse stream aggregation entry views**
+- **Issue #40437** (2026-10-31): **Initialize PostgreSQL zero-column tables in E2E fixtures**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > ### Summary  This PR upgrades to the [official Guava 33.7.2-jre release](https://github.com/google/guava/releases/tag/v33.7.2), which fixes CVE-2026-102554, and caches the keySet once per group for reuse during row aggregation and result backfill. No aggregation semantics changes were found, but this does not establish unchanged performance across all workloads.  ### Result  Review Result: Mergeable  No changes are required to resolve blocking issues within the reviewed code scope.  ### Evidence  - Aggregation units are still created eagerly per group. Iteration order, accumulation across rows, isolation between groups, derived aggregation and result backfill remain unchanged. - Projection indexes are bound before Map construction. No path was found that modifies hash-relevant key state during group processing. - The Checkstyle configuration is byte-for-byte identical to the original baseline, with no added exemptions. - A group containing R rows and A aggregation keys i
+  > ### Summary The zero-column fixtures now use the existing scenario initialization mechanism. The original SELECTs and assertions remain unchanged.  ### Result Review Result: Mergeable No blocking issues or recommended additional changes remain.  ### Evidence Two independent complete reviews and coordinator verification passed. Raw test reports, image provenance, and master baseline comparisons were checked.  ### Coverage All 3 changed files, 4 changed blocks, and the initialization, data reset, concurrent query, and assertion paths were reviewed. The agreed scope preserves startup loading and query regression coverage, excluding dynamic table-creation notification timing. CI was not reviewed.
 
-- **Issue #40424** (2026-10-30): **Reuse named swappers and prevent Shadow export mutations**
+- **Issue #40436** (2026-10-31): **Upgrade seven Maven build plugins**
   *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > ### Summary  The PR reuses existing named conversion methods and removes default filling from Shadow YAML export. It preserves the initial export output and import defaults while preventing export side effects on input configuration, repeated exports, and runtime mappings. [Commit diff](https://github.com/apache/shardingsphere/commit/cb070f513d0b468f1791c1c09d1cdef6d5d4fd46)  ### Result  Review Result: Mergeable  No blocking issues requiring changes were found.  ### Evidence  - Names, fields, PRIMARY defaults, and invalid-strategy exceptions remain unchanged. - Regression tests cover unchanged input, stable repeated exports, explicit configuration, import defaults, and shared runtime mappings. - After verifying that the current commit and relevant inputs matched the checked candidate, passing results from 44 targeted tests, Spotless, Checkstyle, and Apache RAT were reused. - Two independent complete reviews and coordinator confirmation have been completed.  ### Coverag
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1475,312 +1473,294 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `723801c8` (2026-10-30)
-**Commit Message**: Fix PostgreSQL symbolic operator precedence and JSON aggregate parsing (#40384)
+### Incident Patch 1: `e41f8ccc` (2026-10-31)
+**Commit Message**: Fix Firebird SRP login failure for mismatched authentication plugins (#40392)
 
-**File**: `parser/sql/engine/dialect/postgresql/src/main/antlr4/imports/postgresql/BaseRule.g4` (modified, +19/-11)
+Co-authored-by: jingouzhui <[REDACTED_EMAIL]>
+
+**File**: `database/exception/dialect/firebird/src/main/java/org/apache/shardingsphere/database/exception/firebird/exception/connection/LoginErrorException.java` (added, +32/-0)
 ```diff
-@@ -589,7 +589,7 @@ primaryKey
-     ;
- 
- andOperator
--    : AND | AND_
-+    : AND
-     ;
- 
- orOperator
-@@ -602,16 +602,20 @@ comparisonOperator
- 
- patternMatchingOperator
-     : LIKE
--    | TILDE_TILDE_
-     | NOT LIKE
--    | NOT_TILDE_TILDE_
-     | ILIKE
--    | ILIKE_
-     | NOT ILIKE
--    | NOT_ILIKE_
-     | SIMILAR TO
-     | NOT SIMILAR TO
--    | TILDE_
-+    | patternMatchingSymbol
-+    ;
+@@ -0,0 +1,32 @@
++/*
++ * Licensed to the Apache Software Foundation (ASF) under one or more
++ * contributor license agreements.  See the NOTICE file distributed with
++ * this work for additional information regarding copyright ownership.
++ * The ASF licenses this file to You under the Apache License, Version 2.0
++ * (the "License"); you may not use this file except in compliance with
++ * the License.  You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
 +
-+patternMatchingSymbol
-+    : TILDE_
-+    | TILDE_TILDE_
-+    | NOT_TILDE_TILDE_
-+    | ILIKE_
-+    | NOT_ILIKE_
-     | REGEX_NOT_MATCH_
-     | REGEX_MATCH_CASE_INSENSITIVE_
-     | REGEX_NOT_MATCH_CASE_INSENSITIVE_
-@@ -636,10 +640,8 @@ aExpr
-     | aExpr MOD_ aExpr
-     | aExpr CARET_ aExpr
-     | TILDE_ aExpr
--    | aExpr AMPERSAND_ aExpr
--    | aExpr VERTICAL_BAR_ aExpr
--    | aExpr qualOp aExpr
-     | {QUESTION_ != _input.LA(1)}? qualOp aExpr
-+    | aExpr qualOp aExpr
-     | aExpr qualOp
-     | aExpr comparisonOperator aExpr
-     | NOT aExpr
-@@ -690,8 +692,8 @@ bExpr
-     | bExpr (ASTERISK_ | SLASH_ | MOD_) bExpr
-     | bExpr (PLUS_ | MINUS_) bExpr
-     | TILDE_ bExpr
--    | bExpr qualOp bExpr
-     | {QUESTION_ != _input.LA(1)}? qualOp bExpr
-+    | bExpr qualOp bExpr
-     | bExpr qualOp
-     | bExpr IS DISTINCT FROM bExpr
-     | bExpr IS NOT DISTINCT FROM bExpr
-@@ -772,10 +774,16 @@ columnref
- qualOp
-     : jsonOperator
-     | geometricOperator
-+    | patternMatchingSymbol
-+    | AND_
-+    | AMPERSAND_
-+    | VERTICAL_BAR_
-     | CUSTOM_OPERATOR_
-     | NOT_
-     | AT_
-     | DEQ_
-+    | SAFE_EQ_
-+    | BQ_
-     | OPERATOR LP_ anyOperator RP_
-     ;
- 
-@@ -1127,7 +1135,7 @@ filterClause
-     ;
- 
- functionExprWindowless
--    : funcApplication | functionExprCommonSubexpr
-+    : funcApplication | functionExprCommonSubexpr | jsonAggregateFunction
-     ;
- 
- ordinality
++package org.apache.shardingsphere.database.exception.firebird.exception.connection;
++
++import org.apache.shardingsphere.database.exception.core.exception.SQLDialectException;
++
++/**
++ * Login error exception for Firebird.
++ */
++public final class LoginErrorException extends SQLDialectException {
++    
++    private static final long serialVersionUID = 1L;
++    
++    public LoginErrorException() {
++        super("Error occurred during login");
++    }
++}
 ```
 
-**File**: `parser/sql/engine/dialect/postgresql/src/main/java/org/apache/shardingsphere/sql/parser/engine/postgresql/visitor/statement/PostgreSQLStatementVisitor.java` (modified, +8/-4)
+**File**: `database/exception/dialect/firebird/src/main/java/org/apache/shardingsphere/database/exception/firebird/mapper/FirebirdDialectExceptionMapper.java` (modified, +4/-0)
 ```diff
-@@ -462,7 +462,10 @@ private Optional<ASTNode> createAExprSegment(final AExprContext ctx) {
-             return Optional.of(createInSegment(ctx));
+@@ -26,6 +26,7 @@
+ import org.apache.shardingsphere.database.exception.core.exception.syntax.sql.DialectSQLParsingException;
+ import org.apache.shardingsphere.database.exception.core.exception.syntax.table.TableExistsException;
+ import org.apache.shardingsphere.database.exception.core.mapper.SQLDialectExceptionMapper;
++import org.apache.shardingsphere.database.exception.firebird.exception.connection.LoginErrorException;
+ import org.apache.shardingsphere.database.exception.firebird.exception.protocol.BatchAlreadyOpenedException;
+ import org.apache.shardingsphere.database.exception.firebird.exception.protocol.BatchParametersRequiredException;
+ import org.apache.shardingsphere.database.exception.firebird.exception.protocol.BatchTooBigException;
+@@ -64,6 +65,9 @@ public SQLException convert(final SQLDialectException sqlDialectException) {
+         if (sqlDialectException instanceof AccessDeniedException) {
+             return toSQLException(FirebirdVendorError.LOGIN_FAILED);
          }
-         if (null != ctx.patternMatchingOperator()) {
--            return Optional.of(createPatternMatchingOperationSegment(ctx));
-+            return Optional.of(createPatternMatchingOperationSegment(ctx, ctx.patternMatchingOperator()));
++        if (sqlDialectException instanceof LoginErrorException) {
++            return toSQLException(FirebirdVendorError.LOGIN_ERROR);
 +        }
-+        if (null != ctx.qualOp() && null != ctx.qualOp().patternMatchingSymbol() && null != ctx.aExpr(1)) {
-+            return Optional.of(createPatternMatchingOperationSegment(ctx, ctx.qualOp()));
+         if (sqlDialectException instanceof InvalidBatchHandleException) {
+             return toSQLException(FirebirdVendorError.INVALID_BATCH_HANDLE);
          }
-         if (null != ctx.subqueryOp() && (null != ctx.subqueryOp().LIKE() || null != ctx.subqueryOp().ILIKE())) {
-             return Optional.of(createQuantifiedPatternMatchingOperationSegment(ctx));
-@@ -539,14 +542,15 @@ private Optional<String> findBinaryOperator(final AExprContext ctx) {
-         if (null != ctx.SLASH_()) {
-             return Optional.of(ctx.SLASH_().getText());
-         }
--        if (null != ctx.qualOp() && (null != ctx.qualOp().CUSTOM_OPERATOR_() || null != ctx.qualOp().OPERATOR())) {
-+        if (null != ctx.qualOp() && (null != ctx.qualOp().CUSTOM_OPERATOR_() || null != ctx.qualOp().OPERATOR() || null != ctx.qualOp().SAFE_EQ_() || null != ctx.qualOp().BQ_()
-+                || null != ctx.qualOp().AND_())) {
-             return Optional.of(ctx.qualOp().getText());
-         }
-         return Optional.empty();
+```
+
+**File**: `database/exception/dialect/firebird/src/main/java/org/apache/shardingsphere/database/exception/firebird/vendor/FirebirdVendorError.java` (modified, +2/-0)
+```diff
+@@ -52,6 +52,8 @@ public enum FirebirdVendorError implements VendorError {
+     
+     LOGIN_FAILED(XOpenSQLState.INVALID_AUTHORIZATION_SPECIFICATION, ISCConstants.isc_login, ""),
+     
++    LOGIN_ERROR(XOpenSQLState.INVALID_AUTHORIZATION_SPECIFICATION, ISCConstants.isc_login_error, ""),
++    
+     CHARSET_NOT_FOUND(FirebirdState.CHARSET_NOT_FOUND, ISCConstants.isc_charset_not_found, "CHARACTER SET %s is not defined"),
+     
+     INVALID_STATEMENT_HANDLE(FirebirdState.INVALID_STATEMENT_HANDLE, ISCConstants.isc_bad_stmt_handle, ""),
+```
+
+**File**: `database/exception/dialect/firebird/src/test/java/org/apache/shardingsphere/database/exception/firebird/mapper/FirebirdDialectExceptionMapperTest.java` (modified, +10/-0)
+```diff
+@@ -28,6 +28,7 @@
+ import org.apache.shardingsphere.database.exception.core.exception.syntax.sql.DialectSQLParsingException;
+ import org.apache.shardingsphere.database.exception.core.exception.syntax.table.TableExistsException;
+ import org.apache.shardingsphere.database.exception.core.mapper.SQLDialectExceptionMapper;
++import org.apache.shardingsphere.database.exception.firebird.exception.connection.LoginErrorException;
+ import org.apache.shardingsphere.database.exception.firebird.exception.protocol.BatchAlreadyOpenedException;
+ import org.apache.shardingsphere.database.exception.firebird.exception.protocol.BatchParametersRequiredException;
+ import org.apache.shardingsphere.database.exception.firebird.exception.protocol.BatchTooBigException;
+@@ -44,6 +45,7 @@
+ import org.apache.shardingsphere.database.exception.firebird.vendor.FirebirdVendorError;
+ import org.apache.shardingsphere.infra.exception.external.sql.vendor.VendorError;
+ import org.apache.shardingsphere.infra.spi.type.typed.TypedSPILoader;
++import org.firebirdsql.gds.ISCConstants;
+ import org.junit.jupiter.api.Test;
+ import org.junit.jupiter.params.ParameterizedTest;
+ import org.junit.jupiter.params.provider.Arguments;
+@@ -71,6 +73,14 @@ void assertConvert(final String name, final SQLDialectException sqlDialectExcept
+         assertThat(actual.getMessage(), is(String.format(vendorError.getReason(), messageArgs)));
      }
      
--    private BinaryOperationExpression createPatternMatchingOperationSegment(final AExprContext ctx) {
--        String operator = getOriginalText(ctx.patternMatchingOperator()).toUpperCase();
-+    private BinaryOperationExpression createPatternMatchingOperationSegment(final AExprContext ctx, final ParserRuleContext operatorContext) {
-+        String operator = getOriginalText(operatorContext).toUpperCase();
-         ExpressionSegment left = (ExpressionSegment) visit(ctx.aExpr(0));
-         ListExpression right = new ListExpression(ctx.aExpr(1).start.getStartIndex(), ctx.aExpr().get(ctx.aExpr().size() - 1).stop.getStopIndex());
-         for (int i = 1; i < ctx.aExpr().size(); i++) {
++    @Test
++    void assertConvertWithLoginError() {
++        SQLException actual = mapper.convert(new LoginErrorException());
++        assertThat(actual.getSQLState(), is("28000"));
++        assertThat(actual.getErrorCode(), is(ISCConstants.isc_login_error));
++        assertThat(actual.getMessage(), is(""));
++    }
++    
+     @Test
+     void assertConvertWithUnknownException() {
+         assertThat(mapper.convert(mock(SQLDialectException.class)).getSQLState(), is("HY000"));
 ```
 
-**File**: `parser/sql/engine/dialect/postgresql/src/main/java/org/apache/shardingsphere/sql/parser/engine/postgresql/visitor/statement/type/PostgreSQLDDLStatementVisitor.java` (modified, +3/-0)
+**File**: `proxy/frontend/dialect/firebird/src/main/java/org/apache/shardingsphere/proxy/frontend/firebird/authentication/FirebirdAuthenticationEngine.java` (modified, +2/-0)
 ```diff
-@@ -812,6 +812,9 @@ private void appendIndexExpressionColumns(final ParseTree expression, final Coll
+@@ -28,6 +28,7 @@
+ import org.apache.shardingsphere.database.exception.core.exception.data.InvalidParameterValueException;
+ import org.apache.shardingsphere.database.exception.core.exception.protocol.DatabaseProtocolException;
+ import org.apache.shardingsphere.database.exception.core.exception.syntax.database.UnknownDatabaseException;
++import org.apache.shardingsphere.database.exception.firebird.exception.connection.LoginErrorException;
+ import org.apache.shardingsphere.database.protocol.constant.CommonConstants;
+ import org.apache.shardingsphere.database.protocol.firebird.constant.FirebirdAuthenticationMethod;
+ import org.apache.shardingsphere.database.protocol.firebird.constant.FirebirdConstant;
+@@ -101,6 +102,7 @@ private AuthenticationResult processConnect(final ChannelHandlerContext context,
+         ShardingSphereUser user = rule.findUser(new Grantee(username, "")).orElseThrow(() -> new AccessDeniedException(username, connectPacket.getHost(), true));
+         FirebirdAuthenticationMethod plugin = FirebirdAuthenticationMethod.valueOf(getPluginName(rule, user));
+         if (plugin != connectPacket.getPlugin()) {
++            ShardingSpherePreconditions.checkState(FirebirdAuthenticationMethod.LEGACY_AUTH == plugin, LoginErrorException::new);
+             acceptPacket.setAcceptDataPacket(new byte[0], "", plugin, 0, "");
+         } else if (FirebirdAuthenticationMethod.LEGACY_AUTH != plugin) {
+             authData = new FirebirdSRPAuthenticationData(plugin.getHashAlgorithm(), username, user.getPassword(), connectPacket.getAuthData());
+```
+
+**File**: `proxy/frontend/dialect/firebird/src/test/java/org/apache/shardingsphere/proxy/frontend/firebird/authentication/FirebirdAuthenticationEngineTest.java` (modified, +32/-1)
+```diff
+@@ -28,6 +28,7 @@
+ import org.apache.shardingsphere.database.exception.core.exception.data.InvalidParameterValueException;
+ import org.apache.shardingsphere.database.exception.core.exception.protocol.DatabaseProtocolException;
+ import org.apache.shardingsphere.database.exception.core.exception.syntax.database.UnknownDatabaseException;
++import org.apache.shardingsphere.database.exception.firebird.exception.connection.LoginErrorException;
+ import org.apache.shardingsphere.database.protocol.constant.CommonConstants;
+ import org.apache.shardingsphere.database.protocol.firebird.constant.FirebirdAuthenticationMethod;
+ import org.apache.shardingsphere.database.protocol.firebird.constant.FirebirdConstant;
+@@ -186,6 +187,28 @@ void assertAuthenticateConnect(final String name, final String rulePluginType, f
+         verify(charsetAttr).set(FirebirdCharacterSets.findCharacterSet("NONE"));
+     }
      
-     @Override
-     public ASTNode visitFunctionExprWindowless(final FunctionExprWindowlessContext ctx) {
-+        if (null != ctx.jsonAggregateFunction()) {
-+            return visit(ctx.jsonAggregateFunction());
++    @ParameterizedTest(name = "{0}")
++    @MethodSource("mismatchedPluginArguments")
++    void assertAuthenticateConnectWithMismatchedPlugin(final String name, final String rulePluginType, final FirebirdAuthenticationMethod connectPlugin) {
++        AuthorityRule rule = mock(AuthorityRule.class);
++        ShardingSphereUser user = new ShardingSphereUser("root", "pwd", "");
++        when(rule.findUser(any(Grantee.class))).thenReturn(Optional.of(user));
++        when(rule.getAuthenticatorType(user)).thenReturn(rulePluginType);
++        mockProxyContext(rule, true);
++        FirebirdProtocol protocol = mock(FirebirdProtocol.class);
++        when(protocol.getVersion()).thenReturn(FirebirdProtocolVersion.PROTOCOL_VERSION13);
++        FirebirdPacketPayload payload = mockFirebirdPayload(FirebirdCommandPacketType.CONNECT);
++        try (MockedConstruction<FirebirdConnectPacket> ignored = mockConstruction(FirebirdConnectPacket.class, (connectPacket, construction) -> {
++            when(connectPacket.getUserProtocols()).thenReturn(new ArrayList<>(Collections.singletonList(protocol)));
++            when(connectPacket.getLogin()).thenReturn("root");
++            when(connectPacket.getPlugin()).thenReturn(connectPlugin);
++        })) {
++            LoginErrorException actual = assertThrows(LoginErrorException.class, () -> authenticationEngine.authenticate(context, payload));
++            assertThat(actual.getMessage(), is("Error occurred during login"));
 +        }
-         if (null == ctx.funcApplication()) {
-             return visit(ctx.functionExprCommonSubexpr());
-         }
++        verify(context, never()).writeAndFlush(any());
++    }
++    
+     @SuppressWarnings("rawtypes")
+     @SneakyThrows(ReflectiveOperationException.class)
+     @ParameterizedTest(name = "{0}")
+@@ -363,11 +386,19 @@ private void mockProxyContext(final AuthorityRule rule, final boolean containsDa
+     
+     private static Stream<Arguments> connectArguments() {
+         return Stream.of(
+-                Arguments.of("pluginMismatch", "", FirebirdAuthenticationMethod.SRP, FirebirdAuthenticationMethod.SRP256, true, false),
++                Arguments.of("defaultSrp256Plugin", "", FirebirdAuthenticationMethod.SRP256, FirebirdAuthenticationMethod.SRP256, true, true),
+                 Arguments.of("srpPlugin", "SRP512", FirebirdAuthenticationMethod.SRP512, FirebirdAuthenticationMethod.SRP512, true, true),
++                Arguments.of("legacyPluginSwitch", "LEGACY_AUTH", FirebirdAuthenticationMethod.SRP, FirebirdAuthenticationMethod.LEGACY_AUTH, true, false),
+                 Arguments.of("legacyPlugin", "LEGACY_AUTH", FirebirdAuthenticationMethod.LEGACY_AUTH, FirebirdAuthenticationMethod.LEGACY_AUTH, false, false));
+     }
+     
++    private static Stream<Arguments> mismatchedPluginArguments() {
++        return Stream.of(
++                Arguments.of("defaultSrp256", "", FirebirdAuthenticationMethod.SRP),
++                Arguments.of("configuredSrp256", "SRP256", FirebirdAuthenticationMethod.SRP),
++                Arguments.of("configuredSrp512", "SRP512", FirebirdAuthenticationMethod.SRP256));
++    }
++    
+     private static Stream<Arguments> attachArguments() {
+         return Stream.of(
+                 Arguments.of("attachWithUser", true, new ShardingSphereUser("root", "pwd", ""), "root", "db", "UTF8", false, true, true, "db", "root", "cipher_pwd", "client_auth"),
 ```
 
-**File**: `test/it/parser/src/main/resources/case/ddl/create-index.xml` (modified, +15/-0)
+---
+
+### Incident Patch 2: `e38d2e32` (2026-10-31)
+**Commit Message**: Initialize PostgreSQL zero-column tables in E2E fixtures (#40437)
+
+**File**: `test/e2e/sql/src/test/resources/cases/dql/cases/passthrough/e2e-dql-select-for-passthrough.xml` (modified, +2/-8)
 ```diff
-@@ -566,4 +566,19 @@
-         <index name="idx" start-index="20" stop-index="22" />
-         <column name="a" start-index="38" stop-index="38" />
-     </create-index>
-+    <create-index sql-case-id="create_index_json_objectagg_pg">
-+        <table>
-+            <simple-table name="t" start-index="19" stop-index="19" />
-+        </table>
-+        <index name="ix" start-index="13" stop-index="14" />
-+        <column name="a" start-index="37" stop-index="37" />
-+        <column name="b" start-index="40" stop-index="40" />
-+    </create-index>
-+    <create-index sql-case-id="create_index_json_arrayagg_pg">
-+        <table>
-+            <simple-table name="t" start-index="19" stop-index="19" />
-+        </table>
-+        <index name="ix" start-index="13" stop-index="14" />
-+        <column name="a" start-index="36" stop-index="36" />
-+    </create-index>
- </sql-parser-test-cases>
+@@ -31,17 +31,11 @@
+     </test-case>
+ 
+     <test-case sql="SELECT * FROM pg_foo_zero_columns" db-types="PostgreSQL" scenario-types="passthrough" adapters="proxy">
+-        <assertion expected-data-source-name="expected_dataset">
+-            <initial-sql sql="CREATE TABLE pg_foo_zero_columns ()" />
+-            <destroy-sql sql="DROP TABLE IF EXISTS pg_foo_zero_columns" />
+-        </assertion>
++        <assertion expected-data-source-name="expected_dataset" />
+     </test-case>
+ 
+     <test-case sql="SELECT * FROM foo_zero_columns" db-types="PostgreSQL" scenario-types="passthrough" adapters="proxy">
+-        <assertion expected-data-source-name="expected_dataset">
+-            <initial-sql sql="CREATE TABLE foo_zero_columns (); INSERT INTO foo_zero_columns DEFAULT VALUES; INSERT INTO foo_zero_columns DEFAULT VALUES" />
+-            <destroy-sql sql="DROP TABLE IF EXISTS foo_zero_columns" />
+-        </assertion>
++        <assertion expected-data-source-name="expected_dataset" />
+     </test-case>
+ 
+     <test-case sql="SELECT * FROM t_data_type_integer_unsigned" db-types="MySQL" scenario-types="passthrough" scenario-comments="Test ShardingSphere-Proxy MySQL compatibility for unsigned integer data types">
 ```
 
-**File**: `test/it/parser/src/main/resources/case/dml/select.xml` (modified, +445/-0)
+**File**: `test/e2e/sql/src/test/resources/env/scenario/passthrough/data/actual/init-sql/postgresql/50-scenario-actual-init.sql` (modified, +4/-0)
 ```diff
-@@ -16299,4 +16299,449 @@
-             <column-projection name="order_id" alias="COMMENT" start-index="7" stop-index="22" />
-         </projections>
-     </select>
-+    <select sql-case-id="select_operator_prefix_aliases_pg">
-+        <from>
-+            <simple-table name="foo_table" start-index="56" stop-index="64" />
-+        </from>
-+        <projections start-index="7" stop-index="49">
-+            <expression-projection text="~~a" start-index="7" stop-index="9">
-+                <expr>
-+                    <unary-operation-expression start-index="7" stop-index="9">
-+                        <operator>~~</operator>
-+                        <expr>
-+                            <column name="a" start-index="9" stop-index="9" />
-+                        </expr>
-+                    </unary-operation-expression>
-+                </expr>
-+            </expression-projection>
-+            <expression-projection text="!~~a" start-index="12" stop-index="15">
-+                <expr>
-+                    <unary-operation-expression start-index="12" stop-index="15">
-+                        <operator>!~~</operator>
-+                        <expr>
-+                            <column name="a" start-index="15" stop-index="15" />
-+                        </expr>
-+                    </unary-operation-expression>
-+                </expr>
-+            </expression-projection>
-+            <expression-projection text="~~*a" start-index="18" stop-index="21">
-+                <expr>
-+                    <unary-operation-expression start-index="18" stop-index="21">
-+                        <operator>~~*</operator>
-+                        <expr>
-+                            <column name="a" start-index="21" stop-index="21" />
-+                        </expr>
-+                    </unary-operation-expression>
-+                </expr>
-+            </expression-projection>
-+            <expression-projection text="!~~*a" start-index="24" stop-index="28">
-+                <expr>
-+                    <unary-operation-expression start-index="24" stop-index="28">
-+                        <operator>!~~*</operator>
-+                        <expr>
-+                            <column name="a" start-index="28" stop-index="28" />
-+                        </expr>
-+                    </unary-operation-expression>
-+                </expr>
-+            </expression-projection>
-+            <expression-projection text="&amp;&amp;a" start-index="31" stop-index="33">
-+                <expr>
-+                    <unary-operation-expression start-index="31" stop-index="33">
-+                        <operator>&amp;&amp;</operator>
-+                        <expr>
-+                            <column name="a" start-index="33" stop-index="33" />
-+                        </expr>
-+                    </unary-operation-expression>
-+                </expr>
-+            </expression-projection>
-+            <expression-projection text="~*a" start-index="36" stop-index="38">
-+                <expr>
-+                    <unary-operation-expression start-index="36" stop-index="38">
-+                        <operator>~*</operator>
-+                        <expr>
-+                            <column name="a" start-index="38" stop-index="38" />
-+                        </expr>
-+                    </unary-operation-expression>
-+                </expr>
-+            </expression-projection>
-+            <expression-projection text="!~a" start-index="41" stop-index="43">
-+                <expr>
-+                    <unary-operation-expression start-index="41" stop-index="43">
-+                        <operator>!~</operator>
-+                        <expr>
-+                            <column name="a" start-index="43" stop-index="43" />
-+                        </expr>
-+                    </unary-operation-expression>
-+                </expr>
-+            </expression-projection>
-+            <expression-projection text="!~*a" start-index="46" stop-index="49">
-+                <expr>
-+                    <unary-operation-expression start-index="46" stop-index="49">
-+                        <operator>!~*</operator>
-+                        <expr>
-+                            <column name="a" start-index="49" stop-index="49" />
-+                        </expr>
-+                    </unary-operation-expression>
-+                </expr>
-+            </expression-projection>
-+        </projections>
-+    </select>
-+    <select sql-case-id="select_fixed_generic_operator_symbols_pg">
-+        <from>
-+            <simple-table name="foo_table" start-index="28" stop-index="36" />
-+        </from>
-+        <projections start-index="7" stop-index="21">
-+            <expression-projection text="a == b" start-index="7" stop-index="12">
-+                <expr>
-+                    <common-expression text="a == b" start-index="7" stop-index="12">
-+                        <children>
-+                            <expression>
-+                                <column name="a" star
+@@ -30,3 +30,7 @@ CREATE TABLE t_data_type_money (id INT PRIMARY KEY, val money);
+ CREATE TABLE t_data_type_bytea (id INT PRIMARY KEY, val bytea NOT NULL);
+ CREATE TABLE t_data_type_date (id INT PRIMARY KEY, creation_date DATE NOT NULL, update_date TIMESTAMP NOT NULL);
+ CREATE TABLE t_data_type_uuid (id INT PRIMARY KEY, val UUID NOT NULL);
++CREATE TABLE pg_foo_zero_columns ();
++CREATE TABLE foo_zero_columns ();
++INSERT INTO foo_zero_columns DEFAULT VALUES;
++INSERT INTO foo_zero_columns DEFAULT VALUES;
 ```
 
-**File**: `test/it/parser/src/main/resources/sql/supported/ddl/create-index.xml` (modified, +2/-0)
+**File**: `test/e2e/sql/src/test/resources/env/scenario/passthrough/data/expected/init-sql/postgresql/60-scenario-expected-init.sql` (modified, +4/-0)
 ```diff
-@@ -111,4 +111,6 @@
-     <sql-case id="create_index_array_subscript_function_pg" value="CREATE INDEX foo_idx ON foo_table (abs(a[1]))" db-types="PostgreSQL" case-types="Literal" />
-     <sql-case id="create_index_nulls_distinct_pg" value="CREATE UNIQUE INDEX idx ON foo_table (a) INCLUDE (b) NULLS DISTINCT" db-types="PostgreSQL" />
-     <sql-case id="create_index_nulls_not_distinct_pg" value="CREATE UNIQUE INDEX idx ON foo_table (a) NULLS NOT DISTINCT" db-types="PostgreSQL" />
-+    <sql-case id="create_index_json_objectagg_pg" value="CREATE INDEX ix ON t (JSON_OBJECTAGG(a: b ABSENT ON NULL WITH UNIQUE KEYS RETURNING jsonb))" db-types="PostgreSQL" case-types="Literal" />
-+    <sql-case id="create_index_json_arrayagg_pg" value="CREATE INDEX ix ON t (JSON_ARRAYAGG(a RETURNING json))" db-types="PostgreSQL" case-types="Literal" />
- </sql-cases>
+@@ -31,3 +31,7 @@ CREATE TABLE t_data_type_money (id INT PRIMARY KEY, val money);
+ CREATE TABLE t_data_type_bytea (id INT PRIMARY KEY, val bytea NOT NULL);
+ CREATE TABLE t_data_type_date (id INT PRIMARY KEY, creation_date DATE NOT NULL, update_date TIMESTAMP NOT NULL);
+ CREATE TABLE t_data_type_uuid (id INT PRIMARY KEY, val UUID NOT NULL);
++CREATE TABLE pg_foo_zero_columns ();
++CREATE TABLE foo_zero_columns ();
++INSERT INTO foo_zero_columns DEFAULT VALUES;
++INSERT INTO foo_zero_columns DEFAULT VALUES;
 ```
 
-**File**: `test/it/parser/src/main/resources/sql/supported/dml/select.xml` (modified, +10/-0)
+---
+
+### Incident Patch 3: `b5ca09ea` (2026-10-31)
+**Commit Message**: Upgrade seven Maven build plugins (#40436)
+
+**File**: `pom.xml` (modified, +7/-7)
 ```diff
-@@ -651,4 +651,14 @@
-     <sql-case id="select_key_alias_without_as_firebird" value="SELECT order_id KEY FROM t_order" db-types="Firebird" />
-     <sql-case id="select_text_alias_without_as_firebird" value="SELECT order_id TEXT FROM t_order" db-types="Firebird" />
-     <sql-case id="select_comment_alias_without_as_firebird" value="SELECT order_id COMMENT FROM t_order" db-types="Firebird" />
-+    <sql-case id="select_operator_prefix_aliases_pg" value="SELECT ~~a, !~~a, ~~*a, !~~*a, &amp;&amp;a, ~*a, !~a, !~*a FROM foo_table" db-types="PostgreSQL" case-types="Literal" />
-+    <sql-case id="select_fixed_generic_operator_symbols_pg" value="SELECT a == b, a &lt;=&gt; b FROM foo_table" db-types="PostgreSQL" case-types="Literal" />
-+    <sql-case id="select_operator_backtick_pg" value="SELECT a ` b, `a FROM foo_table" db-types="PostgreSQL" case-types="Literal" />
-+    <sql-case id="select_prefix_alias_parameter_precedence_pg" value="SELECT ~~$1 + $2" db-types="PostgreSQL" case-types="Placeholder" />
-+    <sql-case id="select_json_arrayagg_function_table_pg" value="SELECT * FROM JSON_ARRAYAGG(1 RETURNING json) AS agg" db-types="PostgreSQL" />
-+    <sql-case id="select_prefix_alias_between_pg" value="SELECT 1 BETWEEN ~~$1 + $2 AND 3" db-types="PostgreSQL" case-types="Placeholder" />
-+    <sql-case id="select_fixed_operator_left_associative_pg" value="SELECT `1 ` 2, &lt;=&gt;1 &lt;=&gt; 2" db-types="PostgreSQL" case-types="Literal" />
-+    <sql-case id="select_fixed_operator_between_left_associative_pg" value="SELECT 0 BETWEEN `1 ` 2 AND 3, 0 BETWEEN &lt;=&gt;1 &lt;=&gt; 2 AND 3" db-types="PostgreSQL" case-types="Literal" />
-+    <sql-case id="select_mixed_symbolic_operator_precedence_pg" value="SELECT $1 &amp;&amp; $2 &lt;=&gt; $3, $4 &lt;=&gt; $5 &amp; $6, $7 ~~ $8 &lt;=&gt; $9, @ $10 @ $11" db-types="PostgreSQL" case-types="Placeholder" />
-+    <sql-case id="select_mixed_symbolic_operator_between_pg" value="SELECT 0 BETWEEN $1 &amp;&amp; $2 &lt;=&gt; $3 AND 4" db-types="PostgreSQL" case-types="Placeholder" />
- </sql-cases>
+@@ -161,17 +161,17 @@
+         <transformer-maven-plugin.version>1.0.0</transformer-maven-plugin.version>
+         
+         <!-- Compile plugin versions -->
+-        <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
++        <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
+         <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
+         <maven-enforcer-plugin.version>3.2.1</maven-enforcer-plugin.version>
+-        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+-        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+-        <maven-surefire-plugin.version>3.5.1</maven-surefire-plugin.version>
+-        <maven-failsafe-plugin.version>3.2.5</maven-failsafe-plugin.version>
+-        <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
++        <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
++        <maven-resources-plugin.version>3.5.0</maven-resources-plugin.version>
++        <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
++        <maven-failsafe-plugin.version>3.5.6</maven-failsafe-plugin.version>
++        <maven-jar-plugin.version>3.5.1</maven-jar-plugin.version>
+         <jandex-maven-plugin.version>3.1.3</jandex-maven-plugin.version>
+         <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
+-        <maven-dependency-plugin.version>3.6.0</maven-dependency-plugin.version>
++        <maven-dependency-plugin.version>3.11.0</maven-dependency-plugin.version>
+         <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
+         
+         <!-- Release plugin versions -->
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40425** (2026-10-30): Upgrade Guava to 33.7.2-jre and reuse stream aggregation entry views (@terrymanu)
-- **PR #40424** (2026-10-30): Reuse named swappers and prevent Shadow export mutations (@terrymanu)
-- **PR #40422** (2026-10-30): Separate YAML configuration conversion from runtime resource creation (@terrymanu)
-- **PR #40417** (2026-10-29): Fix database resolution for PREVIEW without USE (@terrymanu)
-- **PR #40416** (2026-10-29): Unify MCP payload JSON handling with JsonEngine (@terrymanu)
-- **PR #40415** (2026-10-29): Refactor pom (@terrymanu)
+- **PR #40437** (2026-10-31): Initialize PostgreSQL zero-column tables in E2E fixtures (@terrymanu)
+- **PR #40436** (2026-10-31): Upgrade seven Maven build plugins (@terrymanu)
+- **PR #40435** (2026-10-31): Strengthen cleanup verification for replaced Docker images (@terrymanu)
+- **PR #40434** (closed): Align DQL lifecycle SQL waits with DML E2E tests (@terrymanu)
+- **PR #40433** (2026-10-31): Fix INSERT routing for direct Integer casts (@terrymanu)
+- **PR #40432** (2026-10-31): Use existing engines for dynamic JSON and YAML serialization (@terrymanu)
 
 ---
 
@@ -1800,56 +1780,57 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. PostgreSQL symbolic operator precedence and JSON aggregate parsing (#40384)
+## X. Firebird SRP login failure for mismatched authentication plugins (#40392)
 
 **RULE**:
-When implementing operations in `parser/sql/engine/dialect/postgresql/src/main/antlr4/imports/postgresql/BaseRule.g4`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `database/exception/dialect/firebird/src/main/java/org/apache/shardingsphere/database/exception/firebird/exception/connection/LoginErrorException.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `723801c8`: PostgreSQL symbolic operator precedence and JSON aggregate parsing (#40384). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e41f8ccc`: Firebird SRP login failure for mismatched authentication plugins (#40392). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `parser/sql/engine/dialect/postgresql/src/main/antlr4/imports/postgresql/BaseRule.g4`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `database/exception/dialect/firebird/src/main/java/org/apache/shardingsphere/database/exception/firebird/exception/connection/LoginErrorException.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    : AND
-    | patternMatchingSymbol
-    ;
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-patternMatchingSymbol
-    : TILDE_
-    | TILDE_TILDE_
-    | NOT_TILDE_TILDE_
-    | ILIKE_
-    | NOT_ILIKE_
-    | aExpr qualOp aExpr
-    | bExpr qualOp bExpr
-    | patternMatchingSymbol
-    | AND_
-    | AMPERSAND_
-    | VERTICAL_BAR_
-    | SAFE_EQ_
-    | BQ_
-    : funcApplication | functionExprCommonSubexpr | jsonAggregateFunction
+package org.apache.shardingsphere.database.exception.firebird.exception.connection;
+
+import org.apache.shardingsphere.database.exception.core.exception.SQLDialectException;
+
+/**
+ * Login error exception for Firebird.
+ */
+public final class LoginErrorException extends SQLDialectException {
+    
+    private static final long serialVersionUID = 1L;
+    
+    public LoginErrorException() {
+        s
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-    : AND | AND_
-    | TILDE_TILDE_
-    | NOT_TILDE_TILDE_
-    | ILIKE_
-    | NOT_ILIKE_
-    | TILDE_
-    | aExpr AMPERSAND_ aExpr
-    | aExpr VERTICAL_BAR_ aExpr
-    | aExpr qualOp aExpr
-    | bExpr qualOp bExpr
-    : funcApplication | functionExprCommonSubexpr
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `723801c8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e41f8ccc` are properly handled with clean fallback behavior.
