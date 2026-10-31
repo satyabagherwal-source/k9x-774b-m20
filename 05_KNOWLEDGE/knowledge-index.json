@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T04:50:45.607Z",
+  "last_updated": "2026-10-31T05:00:56.241Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -22405,7 +22405,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
       "source_version": "hf-edge0-audio8-asr-infinite",
-      "content_hash": "265fc7d943e247cc55abc22e06e8b9d6384f93d83107269bd717fd6908d409ac",
+      "content_hash": "61f160e9a833da5b717d3995a16e6f35fff2a2543c6344158a795dd7646b31a7",
       "dossier_path": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "promoted_rules": [
@@ -22417,7 +22417,7 @@
         {
           "number": 994,
           "title": "Semantic VAD Over Acoustic VAD Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 995,
@@ -22472,6 +22472,11 @@
         {
           "number": 5146,
           "title": "Semantic VAD Horizon Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6074,
+          "title": "Rolling KV Cache Invariant for Unbounded Streaming",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -22815,7 +22820,7 @@
         "learn-huggingface-hf-edge0-audio8-asr-infinite-mv41u2xc",
         "learn-huggingface-hf-edge0-audio8-asr-infinite-mv4fpi3i"
       ],
-      "verified_at": "2026-10-28T02:54:53.856Z",
+      "verified_at": "2026-10-31T05:00:53.584Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66180,8 +66185,8 @@
       "slug": "tickernelz-opencode-mem",
       "platform": "github",
       "source_url": "https://github.com/tickernelz/opencode-mem",
-      "source_version": "0d964894",
-      "content_hash": "69e58d9bf5e4c6d9f15d8e897fb6ed65b5e23018dac0f62f4e06b1d2874aa9df",
+      "source_version": "bd173ed4",
+      "content_hash": "95d863686017530cb03d8e05f8e34fa5e6b58ba8e9d32173b4028a8fbfaef980",
       "dossier_path": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "promoted_rules": [
@@ -66229,6 +66234,11 @@
           "number": 5702,
           "title": "Separation Of In-Flight Embedding Vectors From Serialized Model Context",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6075,
+          "title": "embedding): release the local ONNX model after an idle timeout (#459)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -66236,7 +66246,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T09:30:00.546Z",
+      "verified_at": "2026-10-31T05:00:56.212Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -82687,15 +82697,15 @@
       "learning_id": "rule-994",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 994,
-      "title": "Semantic VAD Over Acoustic VAD Invariant (Harvested from Edge0/Audio8-ASR-Infinite)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Semantic VAD Over Acoustic VAD Invariant",
+      "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
+      "source_version": "hf-edge0-audio8-asr-infinite",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.816Z"
+      "verified_at": "2026-10-31T05:00:53.584Z"
     },
     "rule-995": {
       "learning_id": "rule-995",
@@ -82709,7 +82719,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T02:54:53.856Z"
+      "verified_at": "2026-10-31T05:00:53.584Z"
     },
     "rule-996": {
       "learning_id": "rule-996",
@@ -159568,6 +159578,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T04:43:44.130Z"
+    },
+    "rule-6074": {
+      "learning_id": "rule-6074",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6074,
+      "title": "Rolling KV Cache Invariant for Unbounded Streaming",
+      "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
+      "source_version": "hf-edge0-audio8-asr-infinite",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T05:00:53.584Z"
+    },
+    "rule-6075": {
+      "learning_id": "rule-6075",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6075,
+      "title": "embedding): release the local ONNX model after an idle timeout (#459)",
+      "source_url": "https://github.com/tickernelz/opencode-mem",
+      "source_version": "bd173ed4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T05:00:56.212Z"
     }
   },
   "aliases": {

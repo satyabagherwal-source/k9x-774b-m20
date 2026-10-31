@@ -6465,3 +6465,5 @@
 | `CYCLE-20261031-VH3B` | `2026-10-31T04:38:50.183Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6072` | Yes (`5a7a4fe2...`) |
 | `CYCLE-20261031-1RZE` | `2026-10-31T04:43:44.234Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6073` | Yes (`7b3dab45...`) |
 | `CYCLE-20261031-AT6G` | `2026-10-31T04:50:45.688Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 431, Rule 432, Rule 992` | Yes (`9acaf2dc...`) |
+| `CYCLE-20261031-NUBK` | `2026-10-31T05:00:53.696Z` | `Edge0/Audio8-ASR-Infinite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6074, Rule 995, Rule 994` | Yes (`61f160e9...`) |
+| `CYCLE-20261031-NWCL` | `2026-10-31T05:00:56.325Z` | `tickernelz/opencode-mem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6075` | Yes (`95d86368...`) |

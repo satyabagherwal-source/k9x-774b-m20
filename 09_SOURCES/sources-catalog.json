@@ -125,8 +125,8 @@
     "sourceUrl": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
     "sourceVersion": "hf-edge0-audio8-asr-infinite",
     "license": "Open-Source",
-    "contentHash": "265fc7d943e247cc55abc22e06e8b9d6384f93d83107269bd717fd6908d409ac",
-    "lastHarvestedAt": "2026-10-28T02:54:53.948Z",
+    "contentHash": "61f160e9a833da5b717d3995a16e6f35fff2a2543c6344158a795dd7646b31a7",
+    "lastHarvestedAt": "2026-10-31T05:00:53.700Z",
     "learningId": "learn-huggingface-edge0-audio8-asr-infinite"
   },
   "hf-abenzerps-qwen-image-2.1-uncensored-gguf": {
@@ -1413,10 +1413,10 @@
     "repository": "tickernelz/opencode-mem",
     "platform": "github",
     "sourceUrl": "https://github.com/tickernelz/opencode-mem",
-    "sourceVersion": "0d964894",
+    "sourceVersion": "bd173ed4",
     "license": "MIT",
-    "contentHash": "69e58d9bf5e4c6d9f15d8e897fb6ed65b5e23018dac0f62f4e06b1d2874aa9df",
-    "lastHarvestedAt": "2026-10-30T09:30:00.627Z",
+    "contentHash": "95d863686017530cb03d8e05f8e34fa5e6b58ba8e9d32173b4028a8fbfaef980",
+    "lastHarvestedAt": "2026-10-31T05:00:56.329Z",
     "learningId": "learn-github-tickernelz-opencode-mem"
   },
   "hf-autotrust-jev-35b-nvfp4": {

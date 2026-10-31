@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T04:50:48.252Z",
-    "lastVerified": "2026-10-31T04:50:48.252Z",
+    "lastChecked": "2026-10-31T05:00:58.870Z",
+    "lastVerified": "2026-10-31T05:00:58.870Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -180,12 +180,12 @@
     "officialUrl": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T02:54:42.817Z",
-    "lastVerified": "2026-10-28T02:54:42.817Z",
+    "lastChecked": "2026-10-31T05:00:40.379Z",
+    "lastVerified": "2026-10-31T05:00:40.379Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-    "contentHash": "265fc7d943e247cc55abc22e06e8b9d6384f93d83107269bd717fd6908d409ac",
+    "contentHash": "61f160e9a833da5b717d3995a16e6f35fff2a2543c6344158a795dd7646b31a7",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -321,8 +321,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-31T01:15:07.596Z",
-    "lastVerified": "2026-10-31T01:15:07.596Z",
+    "lastChecked": "2026-10-31T05:00:47.829Z",
+    "lastVerified": "2026-10-31T05:00:47.829Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -344,9 +344,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T04:16:02.853Z",
+    "lastChecked": "2026-10-31T05:00:52.665Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T04:16:02.853Z"
+    "lastVerified": "2026-10-31T05:00:52.665Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1540,9 +1540,9 @@
   "go-kratos-kratos": {
     "name": "kratos",
     "officialUrl": "https://github.com/go-kratos/kratos",
-    "lastChecked": "2026-10-30T11:12:22.330Z",
+    "lastChecked": "2026-10-31T05:00:45.316Z",
     "revisionIdentifier": "dd0fb7df",
-    "lastVerified": "2026-10-30T11:12:22.330Z"
+    "lastVerified": "2026-10-31T05:00:45.316Z"
   },
   "lunasec-io-lunasec": {
     "name": "lunasec",
@@ -3281,9 +3281,9 @@
   "i18next-react-i18next": {
     "name": "react-i18next",
     "officialUrl": "https://github.com/i18next/react-i18next",
-    "lastChecked": "2026-10-28T11:11:52.279Z",
+    "lastChecked": "2026-10-31T05:00:42.751Z",
     "revisionIdentifier": "16a017ee",
-    "lastVerified": "2026-10-28T11:11:52.279Z"
+    "lastVerified": "2026-10-31T05:00:42.751Z"
   },
   "kumahq-kuma": {
     "name": "kumahq/kuma",
@@ -3764,9 +3764,9 @@
   "svenstaro-miniserve": {
     "name": "miniserve",
     "officialUrl": "https://github.com/svenstaro/miniserve",
-    "lastChecked": "2026-10-30T04:54:19.285Z",
+    "lastChecked": "2026-10-31T05:00:37.758Z",
     "revisionIdentifier": "e698dbd0",
-    "lastVerified": "2026-10-30T04:54:19.285Z"
+    "lastVerified": "2026-10-31T05:00:37.758Z"
   },
   "hf-google-t5-t5-small": {
     "name": "google-t5/t5-small",
@@ -7201,14 +7201,14 @@
     "officialUrl": "https://github.com/tickernelz/opencode-mem",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T09:27:20.498Z",
-    "lastVerified": "2026-10-30T09:27:20.498Z",
+    "lastChecked": "2026-10-31T05:00:55.357Z",
+    "lastVerified": "2026-10-31T05:00:55.357Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tickernelz-opencode-mem",
-    "contentHash": "69e58d9bf5e4c6d9f15d8e897fb6ed65b5e23018dac0f62f4e06b1d2874aa9df",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 4,
+    "contentHash": "95d863686017530cb03d8e05f8e34fa5e6b58ba8e9d32173b4028a8fbfaef980",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
