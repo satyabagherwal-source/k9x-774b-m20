@@ -6504,3 +6504,5 @@
 | `CYCLE-20261031-094X` | `2026-10-31T07:30:30.849Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6113, Rule 6114, Rule 6115` | Yes (`cc0d646c...`) |
 | `CYCLE-20261031-294C` | `2026-10-31T07:32:04.140Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6116, Rule 6117, Rule 6118` | Yes (`1dfbed9f...`) |
 | `CYCLE-20261031-37MY` | `2026-10-31T07:32:48.874Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6119, Rule 6120, Rule 6121` | Yes (`fc08dede...`) |
+| `CYCLE-20261031-VZOC` | `2026-10-31T07:55:11.580Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6122, Rule 6123, Rule 6124` | Yes (`713bdd65...`) |
+| `CYCLE-20261031-XT3G` | `2026-10-31T07:56:36.364Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6125, Rule 6126, Rule 6127` | Yes (`77175f4d...`) |

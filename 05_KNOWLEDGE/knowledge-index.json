@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T07:32:48.794Z",
+  "last_updated": "2026-10-31T07:56:36.297Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -27406,7 +27406,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
       "source_version": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
-      "content_hash": "13b66d234335a5f84b65baf7e62d7f424fbe9b86fc70cd1bf59e901c81463433",
+      "content_hash": "77175f4d7536aa6362af7f36ea1c60413ddb14d3b196b00bcd5779e33d1cba29",
       "dossier_path": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md",
       "promoted_rules": [
@@ -27451,6 +27451,21 @@
           "number": 5180,
           "title": "Hybrid-Attention State Buffer Temporal Stability Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6125,
+          "title": "In-Register Low-Bit Radix Decomposition Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6126,
+          "title": "Radix-3 Base-256 Alignment and Boundary Padding Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6127,
+          "title": "Recurrent-Linear Context Cache Decoupling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -27471,7 +27486,7 @@
         "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv44xvpe",
         "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv4i78uo"
       ],
-      "verified_at": "2026-10-28T04:56:04.432Z",
+      "verified_at": "2026-10-31T07:56:36.281Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55618,13 +55633,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "9f2b612e",
-      "content_hash": "8ced0cff377f0ef10cb71d915eaa181d5cf8f5c02cc8ace30914a300ba78c43c",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "45aba0f1",
+      "content_hash": "713bdd6598848ea265bfd7d7feeb68f2be566a5fe99ba42092c59dca4fb62035",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -55720,6 +55735,21 @@
           "number": 6071,
           "title": "Merge 'core/translate: fix deferred FK checks for generated child keys' from app",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6122,
+          "title": "Dual-Accumulator High-Precision Bit-Preserving Type Fallback",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6123,
+          "title": "Strict Boundary Parameter Binding Type Trapping",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6124,
+          "title": "Asymmetric Resumable I/O Loop Pump for Foreign Statements",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55727,7 +55757,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T04:38:49.303Z",
+      "verified_at": "2026-10-31T07:55:11.470Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -160480,6 +160510,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T07:32:48.775Z"
+    },
+    "rule-6122": {
+      "learning_id": "rule-6122",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6122,
+      "title": "Dual-Accumulator High-Precision Bit-Preserving Type Fallback",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "45aba0f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T07:55:11.470Z"
+    },
+    "rule-6123": {
+      "learning_id": "rule-6123",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6123,
+      "title": "Strict Boundary Parameter Binding Type Trapping",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "45aba0f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T07:55:11.470Z"
+    },
+    "rule-6124": {
+      "learning_id": "rule-6124",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6124,
+      "title": "Asymmetric Resumable I/O Loop Pump for Foreign Statements",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "45aba0f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T07:55:11.470Z"
+    },
+    "rule-6125": {
+      "learning_id": "rule-6125",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6125,
+      "title": "In-Register Low-Bit Radix Decomposition Invariant",
+      "source_url": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "source_version": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T07:56:36.281Z"
+    },
+    "rule-6126": {
+      "learning_id": "rule-6126",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6126,
+      "title": "Radix-3 Base-256 Alignment and Boundary Padding Invariant",
+      "source_url": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "source_version": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T07:56:36.281Z"
+    },
+    "rule-6127": {
+      "learning_id": "rule-6127",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6127,
+      "title": "Recurrent-Linear Context Cache Decoupling Invariant",
+      "source_url": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "source_version": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T07:56:36.281Z"
     }
   },
   "aliases": {

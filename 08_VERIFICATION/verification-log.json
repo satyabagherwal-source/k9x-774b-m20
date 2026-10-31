@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261029-3DUC",
-    "timestamp": "2026-10-29T00:29:42.228Z",
-    "repository": "max-sixty/worktrunk",
-    "learningId": "learn-github-max-sixty-worktrunk",
-    "contentHash": "f7a3e7e2a72b7a5bc030ed89b840f4a1ce97667b45634214f845b4cdb3e42c26",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-3MZ0",
-    "timestamp": "2026-10-29T00:29:54.060Z",
-    "repository": "crate/crate",
-    "learningId": "learn-github-crate-crate",
-    "contentHash": "bb8f0a5abb5523801bee05550e02ebca2e8b01507b0db9067feabd9a0f4570b2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261029-9ZGJ",
     "timestamp": "2026-10-29T00:34:50.179Z",
     "repository": "OpenMOSS-Team/MOSS-Image-SFT",
@@ -7490,6 +7460,36 @@
     "repository": "clockworklabs/SpacetimeDB",
     "learningId": "learn-github-clockworklabs-spacetimedb",
     "contentHash": "fc08dedea6f7838993359de0168a3df52d4bfc36170c94817a52c85c6eaea5e2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-VZOC",
+    "timestamp": "2026-10-31T07:55:11.580Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "713bdd6598848ea265bfd7d7feeb68f2be566a5fe99ba42092c59dca4fb62035",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-XT3G",
+    "timestamp": "2026-10-31T07:56:36.364Z",
+    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+    "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
+    "contentHash": "77175f4d7536aa6362af7f36ea1c60413ddb14d3b196b00bcd5779e33d1cba29",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

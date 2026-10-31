@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T07:32:48.883Z",
-  "total_cycles_completed": 6481,
-  "total_learnings_persisted": 6481,
-  "total_rules_promoted": 6112,
+  "last_updated": "2026-10-31T07:56:36.372Z",
+  "total_cycles_completed": 6483,
+  "total_learnings_persisted": 6483,
+  "total_rules_promoted": 6118,
   "history": [
-    {
-      "timestamp": "2026-10-30T20:52:08.932Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T20:52:38.707Z",
-      "repository": "clastix/kamaji",
-      "learningId": "learn-github-clastix-kamaji",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T20:59:20.215Z",
       "repository": "astral-sh/uv",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-31T07:32:48.883Z",
       "repository": "clockworklabs/SpacetimeDB",
       "learningId": "learn-github-clockworklabs-spacetimedb",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T07:55:11.588Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T07:56:36.372Z",
+      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

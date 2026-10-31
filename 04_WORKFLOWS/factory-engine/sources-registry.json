@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T07:32:51.435Z",
-    "lastVerified": "2026-10-31T07:32:51.435Z",
+    "lastChecked": "2026-10-31T07:56:38.917Z",
+    "lastVerified": "2026-10-31T07:56:38.917Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -425,12 +425,12 @@
     "lastVerified": "2026-10-31T05:42:48.654Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T06:45:31.169Z",
-    "lastVerified": "2026-10-31T06:45:31.169Z",
+    "lastChecked": "2026-10-31T07:53:48.675Z",
+    "lastVerified": "2026-10-31T07:53:48.675Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -439,7 +439,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "081ff52e"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1332,13 +1333,13 @@
     "officialUrl": "https://github.com/tursodatabase/turso",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T14:33:36.141Z",
-    "lastVerified": "2026-10-30T14:33:36.141Z",
+    "lastChecked": "2026-10-31T07:53:51.310Z",
+    "lastVerified": "2026-10-31T07:53:51.310Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "d503df5d134a9528f91e562a0b414d009c2a9152f1e48768175e0dfad5c86f03",
-    "promotedRulesCount": 1,
+    "contentHash": "713bdd6598848ea265bfd7d7feeb68f2be566a5fe99ba42092c59dca4fb62035",
+    "promotedRulesCount": 3,
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -1584,13 +1585,13 @@
     "officialUrl": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T04:54:57.483Z",
-    "lastVerified": "2026-10-28T04:54:57.483Z",
+    "lastChecked": "2026-10-31T07:53:36.392Z",
+    "lastVerified": "2026-10-31T07:53:36.392Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-    "contentHash": "13b66d234335a5f84b65baf7e62d7f424fbe9b86fc70cd1bf59e901c81463433",
-    "promotedRulesCount": 2,
+    "contentHash": "77175f4d7536aa6362af7f36ea1c60413ddb14d3b196b00bcd5779e33d1cba29",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -1779,9 +1780,9 @@
   "sigstore-cosign": {
     "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
-    "lastChecked": "2026-10-31T03:26:10.390Z",
+    "lastChecked": "2026-10-31T07:53:43.821Z",
     "revisionIdentifier": "ef56e699",
-    "lastVerified": "2026-10-31T03:26:10.390Z"
+    "lastVerified": "2026-10-31T07:53:43.821Z"
   },
   "alibaba-zvec": {
     "name": "alibaba/zvec",
@@ -2844,12 +2845,12 @@
     "lastVerified": "2026-10-31T03:45:22.348Z"
   },
   "kgateway-dev-kgateway": {
-    "name": "kgateway-dev/kgateway",
+    "name": "kgateway",
     "officialUrl": "https://github.com/kgateway-dev/kgateway",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T15:49:18.764Z",
-    "lastVerified": "2026-10-30T15:49:18.764Z",
+    "lastChecked": "2026-10-31T07:53:41.358Z",
+    "lastVerified": "2026-10-31T07:53:41.358Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kgateway-dev-kgateway",
@@ -2858,7 +2859,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "753b3276"
   },
   "zilliztech-attu": {
     "name": "attu",
@@ -4278,9 +4280,9 @@
   "wix-react-native-ui-lib": {
     "name": "react-native-ui-lib",
     "officialUrl": "https://github.com/wix/react-native-ui-lib",
-    "lastChecked": "2026-10-28T13:36:43.109Z",
+    "lastChecked": "2026-10-31T07:53:38.860Z",
     "revisionIdentifier": "1d6f609a",
-    "lastVerified": "2026-10-28T13:36:43.109Z"
+    "lastVerified": "2026-10-31T07:53:38.860Z"
   },
   "sealerio-sealer": {
     "name": "sealer",
@@ -4813,9 +4815,9 @@
   "smol-rs-smol": {
     "name": "smol",
     "officialUrl": "https://github.com/smol-rs/smol",
-    "lastChecked": "2026-10-30T07:15:28.974Z",
+    "lastChecked": "2026-10-31T07:53:33.711Z",
     "revisionIdentifier": "41579301",
-    "lastVerified": "2026-10-30T07:15:28.974Z"
+    "lastVerified": "2026-10-31T07:53:33.711Z"
   },
   "hf-bigscience-bloom": {
     "name": "bigscience/bloom",

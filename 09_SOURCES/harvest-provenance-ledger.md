@@ -6513,3 +6513,5 @@ Every entry in this ledger must capture:
 | `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `873bc5b1` | Multi-dimensional audit evidence | 2026-10-31T07:30:30.853Z |
 | `learn-huggingface-lightricks-ltx-2-5` | `https://huggingface.co/Lightricks/LTX-2.5` | `hf-lightri` | Multi-dimensional audit evidence | 2026-10-31T07:32:04.143Z |
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `f7e474f7` | Multi-dimensional audit evidence | 2026-10-31T07:32:48.877Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `45aba0f1` | Multi-dimensional audit evidence | 2026-10-31T07:55:11.583Z |
+| `learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-10-31T07:56:36.367Z |

@@ -355,8 +355,8 @@
     "sourceUrl": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
     "sourceVersion": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "13b66d234335a5f84b65baf7e62d7f424fbe9b86fc70cd1bf59e901c81463433",
-    "lastHarvestedAt": "2026-10-28T04:56:04.523Z",
+    "contentHash": "77175f4d7536aa6362af7f36ea1c60413ddb14d3b196b00bcd5779e33d1cba29",
+    "lastHarvestedAt": "2026-10-31T07:56:36.367Z",
     "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf"
   },
   "hf-viggle-qwen-image-2.1-viggle-turbo": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "f301e7f4",
+    "sourceVersion": "45aba0f1",
     "license": "MIT",
-    "contentHash": "d503df5d134a9528f91e562a0b414d009c2a9152f1e48768175e0dfad5c86f03",
-    "lastHarvestedAt": "2026-10-30T14:33:38.005Z",
+    "contentHash": "713bdd6598848ea265bfd7d7feeb68f2be566a5fe99ba42092c59dca4fb62035",
+    "lastHarvestedAt": "2026-10-31T07:55:11.583Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {

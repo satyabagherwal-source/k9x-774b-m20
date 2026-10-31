@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T07:32:48.887Z",
+  "last_updated": "2026-10-31T07:56:36.375Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -425,14 +425,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-      "content_hash": "13b66d234335a5f84b65baf7e62d7f424fbe9b86fc70cd1bf59e901c81463433",
-      "verified_at": "2026-10-28T04:56:04.530Z",
+      "content_hash": "77175f4d7536aa6362af7f36ea1c60413ddb14d3b196b00bcd5779e33d1cba29",
+      "verified_at": "2026-10-31T07:56:36.375Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T04:56:04.530Z"
+      "last_updated": "2026-10-31T07:56:36.375Z"
     },
     "Viggle/Qwen-Image-2.1-viggle-turbo": {
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "8ced0cff377f0ef10cb71d915eaa181d5cf8f5c02cc8ace30914a300ba78c43c",
-      "verified_at": "2026-10-31T04:38:49.416Z",
+      "content_hash": "713bdd6598848ea265bfd7d7feeb68f2be566a5fe99ba42092c59dca4fb62035",
+      "verified_at": "2026-10-31T07:55:11.591Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T04:38:49.416Z"
+      "last_updated": "2026-10-31T07:55:11.591Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
