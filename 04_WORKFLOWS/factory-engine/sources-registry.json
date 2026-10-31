@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T14:08:19.675Z",
-    "lastVerified": "2026-10-31T14:08:19.675Z",
+    "lastChecked": "2026-10-31T14:19:47.032Z",
+    "lastVerified": "2026-10-31T14:19:47.032Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -423,22 +423,21 @@
     "lastVerified": "2026-10-31T05:42:48.654Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T13:47:22.310Z",
-    "lastVerified": "2026-10-31T13:47:22.310Z",
+    "lastChecked": "2026-10-31T14:19:43.739Z",
+    "lastVerified": "2026-10-31T14:19:43.739Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "6bba0088afc249b0496aa629bb23af09b3e8b07dd975b5b3bc2047ecefbb7a45",
+    "contentHash": "52c4752cf5505961617c1ad1c8d96c122408ea4de0ad177c37275babafa4baf1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "081ff52e"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -949,8 +948,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T10:58:47.370Z",
-    "lastVerified": "2026-10-31T10:58:47.370Z",
+    "lastChecked": "2026-10-31T14:19:35.382Z",
+    "lastVerified": "2026-10-31T14:19:35.382Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -4271,14 +4270,14 @@
     "officialUrl": "https://github.com/MaterializeInc/materialize",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T22:10:31.573Z",
-    "lastVerified": "2026-10-30T22:10:31.573Z",
+    "lastChecked": "2026-10-31T14:19:41.648Z",
+    "lastVerified": "2026-10-31T14:19:41.648Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "c76bc9bf010169a14f1c5906d076e561aa5d2afe32fbc4b25b583e03d06ffb1e",
+    "contentHash": "99c5d9c99f76bb1074c2baa0438a78ac5fbd0daa99e595ad794149a4fe4dafa6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4436,12 +4435,12 @@
     "officialUrl": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T13:49:52.979Z",
-    "lastVerified": "2026-10-28T13:49:52.979Z",
+    "lastChecked": "2026-10-31T14:19:27.962Z",
+    "lastVerified": "2026-10-31T14:19:27.962Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
-    "contentHash": "ad34a17d93b274ddf2da439614a6e0d390884e1dd957993af1a86e214784852a",
+    "contentHash": "5c910b13da537a4bb2e36132a64d757e7367380703feef67a0ee190ba4057a3a",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -5431,22 +5430,21 @@
     "lastVerified": "2026-10-31T11:09:24.570Z"
   },
   "gocd-gocd": {
-    "name": "gocd",
+    "name": "gocd/gocd",
     "officialUrl": "https://github.com/gocd/gocd",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-10-30T22:56:32.422Z",
-    "lastVerified": "2026-10-30T22:56:32.422Z",
+    "lastChecked": "2026-10-31T14:19:36.325Z",
+    "lastVerified": "2026-10-31T14:19:36.325Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gocd-gocd",
-    "contentHash": "e3fb7162431fa253be18959e029d7fbc007f312cf304b246db6dc56c47cf9da8",
+    "contentHash": "be3893a377d5dba0826225080d12bdaf4432aa84d514b215dfad9fea0f87dd48",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "3e76856b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-openbmb-minicpm-ocr-1.0": {
     "name": "openbmb/MiniCPM-OCR-1.0",
@@ -7145,9 +7143,9 @@
   "vercel-swr": {
     "name": "swr",
     "officialUrl": "https://github.com/vercel/swr",
-    "lastChecked": "2026-10-28T19:17:10.887Z",
+    "lastChecked": "2026-10-31T14:19:30.439Z",
     "revisionIdentifier": "8148ef01",
-    "lastVerified": "2026-10-28T19:17:10.887Z"
+    "lastVerified": "2026-10-31T14:19:30.439Z"
   },
   "prometheus-prometheus": {
     "name": "prometheus/prometheus",
@@ -7427,9 +7425,9 @@
   "railwayapp-nixpacks": {
     "name": "nixpacks",
     "officialUrl": "https://github.com/railwayapp/nixpacks",
-    "lastChecked": "2026-10-30T18:13:26.606Z",
+    "lastChecked": "2026-10-31T14:19:25.399Z",
     "revisionIdentifier": "144b4f9a",
-    "lastVerified": "2026-10-30T18:13:26.606Z"
+    "lastVerified": "2026-10-31T14:19:25.399Z"
   },
   "hf-liquidai-d1-3b": {
     "name": "LiquidAI/d1-3B",

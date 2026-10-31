@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T14:08:14.687Z",
+  "last_updated": "2026-10-31T14:19:44.385Z",
   "total_verified_learnings": 1184,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14896,8 +14896,8 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "3e76856b",
-      "content_hash": "e3fb7162431fa253be18959e029d7fbc007f312cf304b246db6dc56c47cf9da8",
+      "source_version": "758c46de",
+      "content_hash": "be3893a377d5dba0826225080d12bdaf4432aa84d514b215dfad9fea0f87dd48",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
@@ -14940,6 +14940,11 @@
           "number": 5570,
           "title": "build(deps-ui-dev): bump sass-loader (#14701)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6219,
+          "title": "build(deps-ui-dev): bump sass-embedded (#14705)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14947,7 +14952,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T00:40:04.256Z",
+      "verified_at": "2026-10-31T14:19:36.923Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28318,7 +28323,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
       "source_version": "hf-qwen-qwen3.8-flash-next",
-      "content_hash": "ad34a17d93b274ddf2da439614a6e0d390884e1dd957993af1a86e214784852a",
+      "content_hash": "5c910b13da537a4bb2e36132a64d757e7367380703feef67a0ee190ba4057a3a",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md",
       "promoted_rules": [
@@ -28356,7 +28361,7 @@
         "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv4ajtgj",
         "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv4nwg64"
       ],
-      "verified_at": "2026-10-28T13:49:53.937Z",
+      "verified_at": "2026-10-31T14:19:29.021Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37761,8 +37766,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "0fa4f5f1",
-      "content_hash": "c76bc9bf010169a14f1c5906d076e561aa5d2afe32fbc4b25b583e03d06ffb1e",
+      "source_version": "07eda4c6",
+      "content_hash": "99c5d9c99f76bb1074c2baa0438a78ac5fbd0daa99e595ad794149a4fe4dafa6",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -37825,6 +37830,11 @@
           "number": 5915,
           "title": "build(deps): bump msgpack from 1.2.3 to 1.2.4 in /misc/dbt-materialize in the si",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6220,
+          "title": "cargo-bench: Only create one CI annotation (#40383)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37832,7 +37842,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T22:10:33.277Z",
+      "verified_at": "2026-10-31T14:19:42.252Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42607,8 +42617,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "081ff52e",
-      "content_hash": "6bba0088afc249b0496aa629bb23af09b3e8b07dd975b5b3bc2047ecefbb7a45",
+      "source_version": "279a17f6",
+      "content_hash": "52c4752cf5505961617c1ad1c8d96c122408ea4de0ad177c37275babafa4baf1",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -42781,6 +42791,11 @@
           "number": 6110,
           "title": "Revert \"Require fresh sessions for proposal cycles\"",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6221,
+          "title": "Add ARC dataset for size-ranked histograms",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42788,7 +42803,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T06:45:31.763Z",
+      "verified_at": "2026-10-31T14:19:44.364Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162441,6 +162456,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T14:01:19.751Z"
+    },
+    "rule-6219": {
+      "learning_id": "rule-6219",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6219,
+      "title": "build(deps-ui-dev): bump sass-embedded (#14705)",
+      "source_url": "https://github.com/gocd/gocd",
+      "source_version": "758c46de",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T14:19:36.923Z"
+    },
+    "rule-6220": {
+      "learning_id": "rule-6220",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6220,
+      "title": "cargo-bench: Only create one CI annotation (#40383)",
+      "source_url": "https://github.com/MaterializeInc/materialize",
+      "source_version": "07eda4c6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T14:19:42.252Z"
+    },
+    "rule-6221": {
+      "learning_id": "rule-6221",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6221,
+      "title": "Add ARC dataset for size-ranked histograms",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "279a17f6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T14:19:44.364Z"
     }
   },
   "aliases": {

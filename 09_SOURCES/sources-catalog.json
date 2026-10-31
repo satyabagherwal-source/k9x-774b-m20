@@ -875,8 +875,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
     "sourceVersion": "hf-qwen-qwen3.8-flash-next",
     "license": "Open-Source",
-    "contentHash": "ad34a17d93b274ddf2da439614a6e0d390884e1dd957993af1a86e214784852a",
-    "lastHarvestedAt": "2026-10-28T13:49:54.030Z",
+    "contentHash": "5c910b13da537a4bb2e36132a64d757e7367380703feef67a0ee190ba4057a3a",
+    "lastHarvestedAt": "2026-10-31T14:19:29.141Z",
     "learningId": "learn-huggingface-qwen-qwen3-8-flash-next"
   },
   "hf-deepseek-ai-deepseek-v4-pro": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "081ff52e",
+    "sourceVersion": "279a17f6",
     "license": "Apache-2.0",
-    "contentHash": "6bba0088afc249b0496aa629bb23af09b3e8b07dd975b5b3bc2047ecefbb7a45",
-    "lastHarvestedAt": "2026-10-31T06:45:31.864Z",
+    "contentHash": "52c4752cf5505961617c1ad1c8d96c122408ea4de0ad177c37275babafa4baf1",
+    "lastHarvestedAt": "2026-10-31T14:19:44.472Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "0fa4f5f1",
+    "sourceVersion": "07eda4c6",
     "license": "NOASSERTION",
-    "contentHash": "c76bc9bf010169a14f1c5906d076e561aa5d2afe32fbc4b25b583e03d06ffb1e",
-    "lastHarvestedAt": "2026-10-30T22:10:33.381Z",
+    "contentHash": "99c5d9c99f76bb1074c2baa0438a78ac5fbd0daa99e595ad794149a4fe4dafa6",
+    "lastHarvestedAt": "2026-10-31T14:19:42.358Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {
@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "3e76856b",
+    "sourceVersion": "758c46de",
     "license": "Apache-2.0",
-    "contentHash": "e3fb7162431fa253be18959e029d7fbc007f312cf304b246db6dc56c47cf9da8",
-    "lastHarvestedAt": "2026-10-30T00:40:04.360Z",
+    "contentHash": "be3893a377d5dba0826225080d12bdaf4432aa84d514b215dfad9fea0f87dd48",
+    "lastHarvestedAt": "2026-10-31T14:19:37.029Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {

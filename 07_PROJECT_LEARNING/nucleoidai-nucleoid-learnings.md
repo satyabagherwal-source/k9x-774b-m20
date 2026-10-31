@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `081ff52e`  
+> **Source Version**: `279a17f6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T06:45:31.176Z  
+> **Timestamp**: 2026-10-31T14:19:43.747Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T06:45:31.169Z  
+> **Harvest Timestamp**: 2026-10-31T14:19:43.739Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -455,7 +455,6 @@ export async function instances({
 
 export async function value({
   puzzle_id,
-  train_state,
   instance_name,
   declarations,
   input_instance_matrix,
@@ -486,13 +485,8 @@ export async function value({
 
   milestone.evaluating_rules();
 
-  train_state.push(implementation);
-
   const input_value = await nucleoid.run(
-    [declarations[0], ...train_state].join("\n\n")
-  );
-  const output_value = await nucleoid.run(
-    [...declarations, ...train_state].join("\n\n")
+    [declarations[0], implementation].join("\n\n")
   );
 
   milestone.instance_constructed({
@@ -501,10 +495,30 @@ export async function value({
     input_instance_matrix,
     output_instance_matrix,
     input_value,
-    output_value,
   });
 
-  return { implementation, input_value, output_value };
+  return { implementation, input_value };
+}
+
+export async function state(train_dataset) {
+  for (const [index, dataset] of train_dataset.dataset.entries()) {
+    const implementations = dataset.instances.map(
+      ({ implementation }) => implementation
+    );
+
+    const obj_list = await nucleoid.run(
+      [...train_dataset.declarations, ...implementations, "Obj[:]"].join("\n\n")
+    );
+
+    milestone.state({ index, obj_list });
+
+    [...obj_list].forEach((instance) => {
+      const found_instance = dataset.instances.find(
+        ({ instance_name }) => instance.id === instance_name
+      );
+      found_instance.output_value = instance;
+    });
+  }
 }
 
 ```
@@ -520,7 +534,7 @@ import * as nucleoid from "./lib/nucleoid";
 import * as milestone from "./milestone";
 
 // Genesis puzzle_id: 3aa6fb7a
-export async function start(puzzle_id: string = "3aa6fb7a") {
+export async function start(puzzle_id: string = "9af7a82c") {
   const puzzle = JSON.parse(
     await readFile(
       join(__dirname, "..", "data", "training", `${puzzle_id}.json`),
@@ -546,6 +560,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     train,
     test_input_matrix,
   });
+
   milestone.analysis();
 
   let instance_index: number = 0;
@@ -562,6 +577,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
 
   for (const [index, dataset] of train_dataset.dataset.entries()) {
     const { input_matrix, output_matrix } = dataset;
+
     milestone.training_pair({ index, total: train_dataset.dataset.length });
 
     const { instances } = await analyzer.instances({
@@ -571,23 +587,19 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
       output_matrix,
     });
 
-    const train_state = [];
-
     for (const { input_instance_matrix, output_instance_matrix } of instances) {
       const instance_name: string = `obj${String(instance_index++).padStart(
         12,
         "0"
       )}`;
 
-      const { implementation, input_value, output_value } =
-        await analyzer.value({
-          puzzle_id,
-          train_state,
-          instance_name,
-          declarations,
-          input_instance_matrix,
-          output_instance_matrix,
-        });
+      const { implementation, input_value } = await analyzer.value({
+        puzzle_id,
+        instance_name,
+        declarations,
+        input_instance_matrix,
+        output_instance_matrix,
+      });
 
       dataset.instances.push({
         instance_name,
@@ -595,10 +607,11 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
         output_instance_matrix,
         implementation,
         input_value,
-        output_value,
       });
     }
   }
+
+  await analyzer.state(train_dataset);
 
   milestone.visualization();
 
@@ -613,26 +626,32 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     Array(test_input_matrix[0].length).fill(0)
   );
 
-  const test_state = [];
   const input_instances = [];
 
   for (const { input_instance_matrix } of instances) {
-    const { input_value, output_value } = await visualizer.value({
+    const instance_name: string = `obj${String(instance_index++).padStart(
+      12,
+      "0"
+    )}`;
+
+    const { implementation, input_value } = await visualizer.value({
       puzzle_id,
-      test_state,
       declarations,
       train_dataset,
-      instance_name: `obj${String(instance_index++).padStart(12, "0")}`,
+      instance_name,
       input_instances,
       input_instance_matrix,
     });
 
     input_instances.push({
+      instance_name,
+      implementation,
       input_value,
       input_instance_matrix,
-      output_value,
     });
   }
+
+  await visualizer.state({ declarations, input_instances });
 
   for (const input_instance of input_instances) {
     const { input_value, input_instance_matrix, output_value } = input_instance;
@@ -957,140 +976,514 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `081ff52e` (2026-10-31)
-**Commit Message**: Revert "Require fresh sessions for proposal cycles"
+### Incident Patch 1: `279a17f6` (2026-10-31)
+**Commit Message**: Add ARC dataset for size-ranked histograms
 
-This reverts commit 20ef3c688670ba47b6d14fb22077cbf0d92cace1.
+Add four synthetic training pairs demonstrating histogram bars ranked by region cell count, with positions derived from the full object population. Document the dataset’s construction and rule behavior.
 
-**File**: `.claude/agents/nuc-proposal.agent.md` (modified, +1/-2)
+**File**: `arc/README.md` (modified, +38/-22)
 ```diff
-@@ -107,8 +107,7 @@ caller-owned commit yourself.
- The caller follows the skill's
- [execution-mode rule](../skills/nuc-proposal/SKILL.md#choose-execution-mode-caller-only).
- In continuous mode, after finalizing an `Accepted` or `Rejected` outcome for a
--new NUC, it starts the next proposal in a fresh session (`/clear`, then
--`/nuc-proposal`) under the
-+new NUC, it immediately starts the next proposal under the
- [continuous-cycle rule](../skills/nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only).
- In single-proposal mode, it finishes the requested outcome and stops without
- starting another proposal or running token comparison (the token non-regression
+@@ -99,6 +99,17 @@ output, such as a stage, a step about to start, or a step's result, and are the
+ only callers of the `src\lib\terminal.ts` renderer. The analyzer, visualizer,
+ OpenRouter client, and entry point report progress only through them.
+ 
++`milestone.state` displays the result of each batched state pass as a table:
++one per training pair at the end of the analysis, titled
++`Training pair N · State`, and one for the test objects, titled
++`Test · State`, before their outputs are composed. Each row is an object that
++`Obj[:]` returns after the declarative rules run, with `id` first and then one
++column per property in the order the runtime reports them. Cells keep the
++formatting of the boxed object states, so strings stay quoted, and a property
++that an object lacks shows a grey `—`. Tables span the panel width. Wider
++tables continue in panels titled `(continued)` that repeat `id`, and a cell
++too wide for its panel wraps instead of being cut.
++
+ ## Instruction datasets
+ 
+ The synchronous `document(puzzle_id)` function reads only the puzzle's own
+@@ -154,30 +165,35 @@ states because the shapes are not rotated. Held-out inputs and outputs are not
+ included.
+ 
+ `dataset.9af7a82c.json` follows the rule of `data\training\9af7a82c.json`
+-with four synthesized pairs instead of copies of its grids, nineteen region
+-instances in total (3, 4, 6, and 6 per pair). A seeded generator partitioned
+-fully colored canvases (2 by 8, 6 by 3, 5 by 8, and 8 by 4, rows by columns,
++with four synthesized pairs instead of copies of its grids, eighteen region
++instances in total (3, 5, 6, and 4 per pair). A seeded generator partitioned
++fully colored canvases (3 by 6, 7 by 3, 4 by 7, and 6 by 4, rows by columns,
+ unlike the puzzle's 3 by 3, 3 by 4, and 4 by 3 inputs) into three to six
+-4-connected regions, one per color, with freshly drawn shapes, cell counts
+-from 1 to 17, colors, and positions; no matrix equals a grid in `data`.
++4-connected regions, one per color, with freshly grown shapes, cell counts
++from 1 to 11, colors, and positions; no matrix equals a grid in `data`.
+ Cell counts are distinct within each pair. In every pair the count order
+-differs from color order and from first-appearance order, and some pairs
+-contradict ordering by bounding-box width, height, or area. Each output is a
+-histogram: the region with the r-th largest cell count becomes a vertical bar
+-of its color in column r, starting at the top row and as tall as the region's
+-cell count, giving 11 by 3, 8 by 4, 17 by 6, and 15 by 6 outputs. The class
+-takes `color`, `cell_count`, and `size_rank`, the region's zero-based position
+-when its pair's regions are ordered by cell count, largest first; each pair
+-lists its instances in that order. Every object executes in its own Nucleoid
+-process, so the rank is a constructor property rather than a comparison across
+-instances. Unconditional class-level rules introduce `bar_height` (the cell
+-count), which is absent before the rules run, and move `x` to `size_rank` and
+-`y` to the output origin 0. Tags identify the geometry: `l9100` is a single
+-shape, as in `dataset.28bf18c6.json`, and `l6953` is a vertical bar. Input
+-masks retain each pair's input canvas and output masks its output canvas;
+-`output_canvas` is `FIT` because each histogram fills its nonzero bounding
+-box. Orientation is 0 in both states because the regions are not rotated and
+-the bars are vertical. Held-out inputs and outputs are not included.
++differs from color order and from first-appearance order, and some bar is
++taller than its region's bounding box; the pairs also contradict ordering by
++bounding-box area, height, and width. Each output is a histogram: the region
++with the r-th largest cell count becomes a vertical bar of its color in
++column r, starting at the top row and as tall as the region's cell count,
++giving 9 by 3, 7 by 5, 11 by 6, and 8 by 4 outputs. The class takes `color`
++and `cell_count`, the region's number of cells, as scalars rather than a
++matrix of cells. Unconditional class-level rules introduce `bar_height` (the
++cell count), which is absent before the rules run, move `y` to the output
++origin 0, and derive `x`, the bar's column, from the pair's whole population:
++`Obj.filter(other => other.cell_count > $Obj.cell_count).length` counts the
++larger regions and re-evaluates whenever an instance is added. The solver
++runs each instance with the implementations of the earlier instances of its
++training pair or test input, so each pair lists its instances largest first,
++and every recorded `x` already counts all larger regions of its pair. Tags
++identify the geometry: `l9100` is a single shape, as in
++`dataset.28bf18c6.json`, and `l6953` is a vertical bar. Input masks retain
++each pair's input canvas and output masks its output canvas; `output_canvas`
++is `FIT` because each histogram fills its nonzero bounding box, and two
++outputs are narrower than their inputs. Orientation is 0 in both states
++because the 
 ```
 
-**File**: `.claude/rules/proposals.instructions.md` (modified, +6/-12)
+**File**: `arc/src/dataset/dataset.9af7a82c.json` (added, +639/-0)
 ```diff
-@@ -102,8 +102,7 @@ candidate sources or prior artifacts. Return the new checkpoint path/raw pin
- or explicit skip/error; the caller retains one head and all ancestors,
- receipts, reports and scoring evidence for subsequent validation/selection.
- Use that updated head for the next authorized proposal, or keep the old head
--on a legitimate skip. Each continuous cycle starts a fresh session, so name
--that head's path and raw pin in the cycle's resume report. A learner error pauses the caller as a process blocker
-+on a legitimate skip. A learner error pauses the caller as a process blocker
- without changing the already-recorded gate/independent decision.
- 
- This is a single-owner immutable checkpoint chain, not concurrent/global-head
-@@ -324,21 +323,16 @@ not independent behavior/integrity, accepted-corpus baseline, compatibility,
- development evaluation, or outcome recording.
- 
- In continuous mode, after finalizing and committing an `Accepted` or `Rejected`
--outcome for a new NUC, the caller starts the next distinct proposal in a fresh
--session under the [continuous-cycle rule](../skills/nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only).
--It ends the cycle with the exact resume command: `/clear` followed by
--`/nuc-proposal` with the same request and hint. Only the user can run
--`/clear`; never claim to have run it or continue in the same context instead.
--Run cycles sequentially with fresh sessions, agents, baselines, candidate
--worktrees and reports, preserving the selection, compatibility and acceptance
--requirements.
-+outcome for a new NUC, the caller immediately starts a distinct new proposal under
-+the [continuous-cycle rule](../skills/nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only).
-+Run cycles sequentially with fresh agents, baselines, candidate worktrees and
-+reports, preserving the selection, compatibility and acceptance requirements.
- Only the caller continues; workers stop at their handoffs. This does not
- recursively reevaluate the completed NUC's outcome metadata. Stop or pause
- under the conditions defined by the skill rather than bypassing a blocker.
- 
- Continuous cycles, including those coordinated through `/nuc-evaluate`, do not
--request confirmation to record an outcome. The resumed session starts the next
--NUC without asking. An uncertain
-+request confirmation to record an outcome or start the next NUC. An uncertain
- category addition, selection, or update is the exception: workers return it
- to the caller, who asks the user for confirmation before proceeding.
- Use the existing selection rules and verified inputs;
+@@ -0,0 +1,639 @@
++{
++  "declarations": [
++    "class Obj(x: int, y: int, orientation: int, color: int, cell_count: int):\n    this.x = x\n    this.y = y\n    this.orientation = orientation\n    this.tag = 'l9100'\n    this.color = color\n    this.cell_count = cell_count",
++    "$Obj.tag = 'l6953'",
++    "$Obj.bar_height = $Obj.cell_count",
++    "$Obj.x = Obj.filter(other => other.cell_count > $Obj.cell_count).length",
++    "$Obj.y = 0"
++  ],
++  "output_canvas": "FIT",
++  "dataset": [
++    {
++      "input_matrix": [
++        [4, 6, 6, 3, 3, 3],
++        [4, 4, 6, 6, 6, 3],
++        [4, 3, 3, 3, 3, 3]
++      ],
++      "output_matrix": [
++        [3, 6, 4],
++        [3, 6, 4],
++        [3, 6, 4],
++        [3, 6, 4],
++        [3, 6, 0],
++        [3, 0, 0],
++        [3, 0, 0],
++        [3, 0, 0],
++        [3, 0, 0]
++      ],
++      "instances": [
++        {
++          "instance_name": "objd34be173a902",
++          "input_x": 1,
++          "output_x": 0,
++          "input_y": 0,
++          "output_y": 0,
++          "input_orientation": 0,
++          "output_orientation": 0,
++          "input_instance_matrix": [
++            [0, 0, 0, 3, 3, 3],
++            [0, 0, 0, 0, 0, 3],
++            [0, 3, 3, 3, 3, 3]
++          ],
++          "output_instance_matrix": [
++            [3, 0, 0],
++            [3, 0, 0],
++            [3, 0, 0],
++            [3, 0, 0],
++            [3, 0, 0],
++            [3, 0, 0],
++            [3, 0, 0],
++            [3, 0, 0],
++            [3, 0, 0]
++          ],
++          "implementation": "objd34be173a902 = Obj(x=1, y=0, orientation=0, color=3, cell_count=9)",
++          "input_value": {"cell_count":9,"color":3,"id":"objd34be173a902","orientation":0,"tag":"l9100","x":1,"y":0},
++          "output_value": {"bar_height":9,"cell_count":9,"color":3,"id":"objd34be173a902","orientation":0,"tag":"l6953","x":0,"y":0}
++        },
++        {
++          "instance_name": "objdae61419974a",
++          "input_x": 1,
++          "output_x": 1,
++          "input_y": 0,
++          "output_y": 0,
++          "input_orientation": 0,
++          "output_orientation": 0,
++          "input_instance_matrix": [
++            [0, 6, 6, 0, 0, 0],
++            [0, 0, 6, 6, 6, 0],
++            [0, 0, 0, 0, 0, 0]
++          ],
++          "output_instance_matrix": [
++            [0, 6, 0],
++            [0, 6, 0],
++            [0, 6, 0],
++            [0, 6, 0],
++            [0, 6, 0],
++            [0, 0, 0],
++            [0, 0, 0],
++            [0, 0, 0],
++            [0, 0, 0]
++          ],
++          "implementation": "objdae61419974a = Obj(x=1, y=0, orientation=0, color=6, cell_count=5)",
++          "input_value": {"cell_count":5,"color":6,"id":"objdae61419974a","orientation":0,"tag":"l9100","x":1,"y":0},
++          "output_value": {"bar_height":5,"cell_count":5,"color":6,"id":"objdae61419974a","orientation":0,"tag":"l6953","x":1,"y":0}
++        },
++        {
++          "instance_name": "obj6db755e6433b",
++          "input_x": 0,
++          "output_x": 2,
++          "input_y": 0,
++          "output_y": 0,
++          "input_orientation": 0,
++          "output_orientation": 0,
++          "input_instance_matrix": [
++            [4, 0, 0, 0, 0, 0],
++            [4, 4, 0, 0, 0, 0],
++            [4, 0, 0, 0, 0, 0]
++          ],
++          "output_instance_matrix": [
++            [0, 0, 4],
++            [0, 0, 4],
++            [0, 0, 4],
++            [0, 0, 4],
++            [0, 0, 0],
++            [0, 0, 0],
++            [0, 0, 0],
++            [0, 0, 0],
++            [0, 0, 0]
++          ],
++          "implementation": "obj6db755e6433b = Obj(x=0, y=0, orientation=0, color=4, cell_count=4)",
++          "input_value": {"cell_count":4,"color":4,"id":"obj6db755e6433b","orientation":0,"tag":"l9100","x":0,"y":0},
++          "output_value": {"bar_height":4,"cell_count":4,"color":4,"id":"obj6db755e6433b","orientation":0,"tag":"l6953","x":2,"y":0}
++        }
++      ]
++    },
++    {
++      "input_matrix": [
++        [6, 7, 7],
++        [6, 6, 7],
++        [6, 5, 5],
++        [6, 5, 1],
++        [6, 5, 3],
++        [3, 3, 3],
++        [3, 3, 3]
++      ],
++      "output_matrix": [
++        [3, 6, 5, 7, 1],
++        [3, 6, 5, 7, 0],
++        [3, 6, 5, 7, 0],
++        [3, 6, 5, 0, 0],
++        [3, 6, 0, 0, 0],
++        [3, 6, 0, 0, 0],
++        [3, 0, 0, 0, 0]
++      ],
++      "instances": [
++        {
++          "instance_name": "objbc770a90a54e",
++          "input_x": 0,
++          "output_x": 0,
++          "input_y": 4,
++          "output_y": 0,
++          "input_orientation": 0,
++          "output_orientation": 0,
++          "input_instance_matrix": [
++            [0, 0, 0],
++            [0, 0, 0],
++            [0, 0, 0],
++            [0, 0, 0],
++            [0, 0, 3],
++            [3, 3, 3],
++            [3, 3, 3]
++          ],
++          "output_instance_matrix": [
++            [3, 0, 0, 0, 0],
++            [3, 0, 0, 0, 0],
++            [3, 0, 0, 0, 0],
++            [3, 0, 0, 0, 0],
++            [3, 0, 0, 0, 0],
++            [3, 0, 0,
 ```
 
-**File**: `.claude/skills/nuc-evaluate/SKILL.md` (modified, +2/-3)
+---
+
+### Incident Patch 2: `4815f055` (2026-10-31)
+**Commit Message**: Add state table output and ARC-NUC-9af7a82c doc
+
+Add a terminal.table helper that renders bordered, wrapped tables and splits wide ones into panels that repeat the first column. Add milestone.state, which prints the Obj state table, and call it from the analyzer (per training pair) and the visualizer (test state).
+
+Also add the ARC-NUC-9af7a82c progress record for the region size histogram puzzle, including its dataset, the open rank-across-objects issue, and the unrecorded runs.
+
+**File**: `arc/docs/ARC-NUC-9af7a82c.md` (added, +64/-0)
 ```diff
-@@ -308,9 +308,8 @@ Keep implementation changes isolated and preserve unrelated staged and
- unstaged work. Baselines and reports remain in the session workspace.
- 
- After recording the outcome, follow the
--[continuous-cycle rule](../nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only).
--It ends the cycle with a fresh-session resume command (`/clear`, then
--`/nuc-proposal`), without requesting confirmation to record outcomes. For uncertain
-+[continuous-cycle rule](../nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only)
-+without requesting confirmation to record outcomes or continue. For uncertain
- category additions, selections, updates, or assignments, workers return the
- question to the caller, who asks the user for confirmation under the proposal skill's
- [classification rule](../nuc-proposal/SKILL.md#classify-every-proposal).
+@@ -0,0 +1,64 @@
++# ARC-NUC-9af7a82c -- Region Size Histogram
++
++Progress record for ARC training puzzle `9af7a82c`: its instruction dataset,
++the solver and Nucleoid changes it needed, its runs, and what is still open.
++
++| Item | Status |
++| --- | --- |
++| Puzzle | [`data/training/9af7a82c.json`](../data/training/9af7a82c.json) |
++| Instruction dataset | [`dataset.9af7a82c.json`](../src/dataset/dataset.9af7a82c.json): 4 synthesized pairs, 15 region instances; not yet committed |
++| Output canvas | `FIT` |
++| Nucleoid enhancements | None recorded |
++| Solver changes | None specific to this puzzle |
++| Solver runs | None recorded |
++| Updated | 29-Oct-2026 |
++
++## Puzzle
++
++Each training input is a small, fully colored canvas (3 by 3, 3 by 4, or 4 by
++3) split into one region per color. The output is a histogram: the region with
++the r-th largest cell count becomes a vertical bar of its color in column r,
++starting at the top row and as tall as the region's cell count. Outputs can be
++taller than their inputs, such as 5 by 3 from 3 by 3. Every bar starts at the
++top and the tallest spans every row, so each output fills its nonzero bounding
++box and the dataset is `FIT`; see
++[ARC-NUC-28bf18c6](ARC-NUC-28bf18c6.md#decision-output_canvas-trims-the-composed-matrix).
++
++## Dataset
++
++The working-tree file has four synthesized pairs (5 by 4 to 8 by 3, 5 by 3 to
++8 by 4, 2 by 5 to 7 by 3, and 6 by 3 to 6 by 5) with 3, 4, 3, and 5 regions.
++Each region is an `Obj(x, y, orientation, color, cells)`, where `cells` is its
++cropped mask, and unconditional class rules derive the bar:
++
++```nuc
++$Obj.tag = 'l6953'
++$Obj.cell_count = $Obj.cells.flatMap(row => row).filter(cell => cell != 0).length
++$Obj.bar_height = $Obj.cell_count
++$Obj.x = Obj.filter(other => other.cell_count > $Obj.cell_count).length
++$Obj.y = 0
++```
++
++`x` is the region's rank: the number of other regions with a larger cell count.
++
++## Runs
++
++No `bun start 9af7a82c` run is recorded yet; its difference is unknown, not
++zero.
++
++## Open items
++
++- **The rank needs every region in one program.** The recorded output `x`
++  values come out only when all of a pair's instances run together. The solver
++  runs each object in its own Nucleoid process, where `Obj` holds just that
++  object, so every rank is 0 and every bar lands in column 0. On 29-Oct-2026,
++  per-object runs with the local debug runtime turned the first pair's
++  recorded ranks 1, 2, and 0 into 0, 0, and 0. Either the world model or the
++  per-object execution has to change for the ranks to reach placement.
++- **The README describes an earlier version.** Its paragraph lists nineteen
++  instances on 2 by 8, 6 by 3, 5 by 8, and 8 by 4 canvases, and a `size_rank`
++  constructor property chosen because objects run in separate processes. The
++  working-tree file computes `cell_count` from `cells` and ranks by comparing
++  instances. Synchronize the two once the approach is settled.
++- **The dataset file is not committed.**
++- Record the first run's date, runtime, exit status, and difference.
 ```
 
-**File**: `.claude/skills/nuc-proposal/SKILL.md` (modified, +10/-22)
+**File**: `arc/src/analyzer.ts` (modified, +5/-3)
 ```diff
-@@ -113,8 +113,7 @@ confirmed category/applicability policy, not a new random draw.
- `/nuc-proposal [request] [--hint <text>]` takes an optional hint: everything
- after `--hint` is the user's guidance for the proposal, such as a syntax idea,
- prior art, or an area to explore. The caller passes it unchanged to each
--proposal agent it launches. It carries the hint into every later continuous
--cycle through that cycle's `/clear` resume command.
-+proposal agent it launches, in every continuous cycle of the invocation.
+@@ -112,17 +112,19 @@ export async function value({
+ }
  
- A hint is not a request. It never makes an open-ended request specific or
- changes the execution mode, category draw, runtime applicability, or selected
-@@ -329,22 +328,15 @@ coordinating caller must finish its outcome before starting the next cycle:
- - **Rejected:** record and commit only rejection documentation and index/outcome
-   metadata; leave rejected language changes isolated.
+ export async function state(train_dataset) {
+-  for (const entry of train_dataset.dataset) {
+-    const implementations = entry.instances.map(
++  for (const [index, dataset] of train_dataset.dataset.entries()) {
++    const implementations = dataset.instances.map(
+       ({ implementation }) => implementation
+     );
  
--Start every cycle in a fresh session. After the outcome commit, do not begin
--the next NUC in the same context. End the cycle with a short outcome report
--and the exact command that resumes the loop: `/clear`, then `/nuc-proposal`
--with this invocation's unchanged request and `--hint` text, if any. `/clear`
--is a CLI command only the user can run. Never claim to have run it, and never
--continue in the same context in its place. The fresh session derives the next
--NUC number, accepted revision, baselines, worktrees and report paths from
--`main` and these rules. The loop runs one cycle per session for as long as
--the user resumes it, and ends when the user stops, pauses or redirects the
--work. A `Blocked` decision, failed outcome recording, or missing required
-+Immediately start another fresh "purpose a NUC" cycle without waiting for a
-+new user prompt. Repeat sequentially in the active agent session until the
-+user stops, pauses or redirects the work, the session ends, or a resource limit
-+is reached. A `Blocked` decision, failed outcome recording, or missing required
- input pauses continuation; report the blocker instead of bypassing it.
+     const obj_list = await nucleoid.run(
+       [...train_dataset.declarations, ...implementations, "Obj[:]"].join("\n\n")
+     );
  
--Continuous cycles do not ask for confirmation before recording an outcome,
--including when coordinated through `/nuc-evaluate`. The resumed session starts
--its NUC without asking. The resume command is a handoff, not a question. The
--exception is an uncertain proposal category: the caller asks the user under
-+Continuous cycles do not ask for confirmation before recording an outcome or
-+continuing, including when coordinated through `/nuc-evaluate`. The exception
-+is an uncertain proposal category: the caller asks the user under
- [the classification rule](#classify-every-proposal) before assigning it.
- Workers return that uncertainty to the caller. Use the existing selection
- rules and verified inputs. For other missing prerequisites or blockers,
-@@ -360,13 +352,9 @@ workers across cycles or combine pending proposals.
++    milestone.state({ index, obj_list });
++
+     [...obj_list].forEach((instance) => {
+-      const found_instance = entry.instances.find(
++      const found_instance = dataset.instances.find(
+         ({ instance_name }) => instance.id === instance_name
+       );
+       found_instance.output_value = instance;
+```
+
+**File**: `arc/src/lib/terminal.ts` (modified, +114/-0)
+```diff
+@@ -194,6 +194,120 @@ export function value(title: string, data) {
+   );
+ }
  
- Use actual independent behavior/compatibility results and token measurements
- when comparison ran as feedback for the next enhancement; report legitimate
--skips rather than inventing counts. The next cycle starts from cleared context,
--so it takes that feedback from the committed outcome records, such as the
--latest NUC's Evaluation section. With configured strategy learning, retain
-+skips rather than inventing counts. With configured strategy learning, retain
- the independent evaluator's new verified checkpoint as the next head (or retain
--the old head when learning legitimately skipped). Name that head's path and
--raw pin in the resume report and command, so the fresh session selects from it
--rather than an older head or genesis. Actually invoke
-+the old head when learning legitimately skipped). Actually invoke
- `select_proposal_strategy` from that head before dispatching the next proposer;
- use fresh trial/receipt paths and never carry a stale selection pin. Preserve
- earlier artifacts and all acceptance, compatibility and version-protection
++function span(widths): number {
++  return widths.reduce((sum: number, cell: number) => sum + cell + 3, -1);
++}
++
++function tableRule(widths, left: string, joint: string, right: string): string {
++  return `  ${frame(
++    left +
++      widths.map((cell: number) => "─".repeat(cell + 2)).join(joint) +
++      right
++  )}`;
++}
++
++function tableRow(widths, cells) {
++  const lines = cells.map((text: string, index: number) =>
++    wrap(text, widths[index])
++  );
++  const height: number = Math.max(...lines.map((cell) => cell.length));
++  return Array.from(
++    { length: height },
++    (_, line: number) =>
++      `  ${frame("│")}${lines
++        .map(
++          (cell, index: number) => ` ${pad(cell[line] ?? "", widths[index])} `
++        )
++        .join(frame("│"))}${frame("│")}`
++  );
++}
++
++export function table(title: string, columns, rows) {
++  if (rows.length === 0) {
++    block(title, [styleText("gray", "(empty)")]);
++    return;
++  }
++
++  const inner: number = width() - 2;
++  const header = columns.map((column: string) =>
++    styleText(["bold", "white"], column)
++  );
++  const body = rows.map((row) =>
++    columns.map((column: string) =>
++      Object.hasOwn(row, column)
++        ? styleText(
++            "whiteBright",
++            inspect(row[column], {
++              colors: false,
++              depth: null,
++              compact: true,
++              breakLength: Infinity,
++              maxArrayLength: null,
++              maxStringLength: null,
++            })
++          )
++        : styleText("gray", "—")
++    )
++  );
++  const natural = columns.map((_, column: number) =>
++    Math.max(...[header, ...body].map((cells) => stringWidth(cells[column])))
++  );
++
++  // The first column labels each row, so every panel repeats it.
++  const panels = [];
++  let current = [0];
++  let used: number = natural[0] + 2;
++  for (let column: number = 1; column < columns.length; column++) {
++    if (current.length > 1 && used + natural[column] + 3 > inner) {
++      panels.push(current);
++      current = [0];
++      used = natural[0] + 2;
++    }
++    current.push(column);
++    used += natural[column] + 3;
++  }
++  panels.push(current);
++
++  for (const [index, panel] of panels.entries()) {
++    const widths = panel.map((column: number) => natural[column]);
++    while (span(widths) > inner && Math.max(...widths) > 1) {
++      widths[widths.indexOf(Math.max(...widths))] -= 1;
++    }
++    widths[widths.length - 1] += Math.max(0, inner - span(widths));
++
++    const titleWidth: number = span(widths) - 2;
++    console.log(`\n  ${frame(`┌${"─".repeat(titleWidth + 2)}┐`)}`);
++    for (const line of wrap(
++      stripVTControlCharacters(index === 0 ? title : `${title} (continued)`),
++      titleWidth
++    )) {
++      console.log(
++        `  ${frame("│")} ${pad(
++          styleText(["bold", "white"], line),
++          titleWidth
++        )} ${frame("│")}`
++      );
++    }
++    console.log(tableRule(widths, "├", "┬", "┤"));
++    for (const line of tableRow(
++      widths,
++      panel.map((column: number) => header[column])
++    )) {
++      console.log(line);
++    }
++    console.log(tableRule(widths, "├", "┼", "┤"));
++    for (const cells of body) {
++      for (const line of tableRow(
++        widths,
++        panel.map((column: number) => cells[column])
++      )) {
++        console.log(line);
++      }
++    }
++    console.log(tableRule(widths, "└", "┴", "┘"));
++  }
++}
++
+ function cell(value: number, colored: boolean): string {
+   const text: string = `${String(value).padStart(2)} `;
+   if (!colored || !palette[value]) {
+```
+
+**File**: `arc/src/milestone.ts` (modified, +12/-0)
+```diff
+@@ -65,6 +65,18 @@ export function instance_constructed({
+   terminal.value("Input state", input_value);
+ }
+ 
++export function state({ index = null, obj_list }) {
++  const properties = [
++    ...new Set(obj_list.flatMap((instance) => Object.keys(instance))),
++  ].filter((property: string) => property !== "id");
++
++  terminal.table(
++    index === null ? "Test · State" : `Training pair ${index + 1} · State`,
++    ["id", ...properties],
++    obj_list
++  );
++}
++
+ export function visualization() {
+   terminal.section(
+     2,
+```
+
+**File**: `arc/src/visualizer.ts` (modified, +2/-0)
+```diff
+@@ -225,6 +225,8 @@ export async function state({ declarations, input_instances }) {
+     [...declarations, ...implementations, "Obj[:]"].join("\n\n")
+   );
+ 
++  milestone.state({ obj_list });
++
+   [...obj_list].forEach((instance) => {
+     const found_instance = input_instances.find(
+       ({ instance_name }) => instance.id === instance_name
 ```
 
 #### Recent Merged Pull Requests:
@@ -1119,29 +1512,60 @@ This reverts commit 20ef3c688670ba47b6d14fb22077cbf0d92cace1.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Revert "Require fresh sessions for proposal cycles"
+## X. Add ARC dataset for size-ranked histograms
 
 **RULE**:
-When implementing operations in `.claude/agents/nuc-proposal.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `081ff52e`: Revert "Require fresh sessions for proposal cycles". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `279a17f6`: Add ARC dataset for size-ranked histograms. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/nuc-proposal.agent.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-new NUC, it immediately starts the next proposal under the
+`milestone.state` displays the result of each batched state pass as a table:
+one per training pair at the end of the analysis, titled
+`Training pair N · State`, and one for the test objects, titled
+`Test · State`, before their outputs are composed. Each row is an object that
+`Obj[:]` returns after the declarative rules run, with `id` first and then one
+column per property in the order the runtime reports them. Cells keep the
+formatting of the boxed object states, so strings stay quoted, and a property
+that an object lacks shows a grey `—`. Tables span the panel width. Wider
+tables continue in panels titled `(continued)` that repeat `id`, and a cell
+too wide for its panel wraps instead of being cut.
+
+with four synthesized pairs instead of copies of its grids, eighteen region
+instances in total (3, 5, 6, and 4 per pair). A seeded generator partitioned
+fully colored canvases (3 by 6, 7 by 3, 4 by 7, and 6 by 4, rows by columns,
+4-connected regions, one per color, with freshly grown shapes, cell counts
+from 1 to 11, colors, and positions; no matrix equals a grid in `data`.
+differs from color order and from first-appearance order, and some bar is
+taller than its region's bounding box; t
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-new NUC, it starts the next proposal in a fresh session (`/clear`, then
-`/nuc-proposal`) under the
+with four synthesized pairs instead of copies of its grids, nineteen region
+instances in total (3, 4, 6, and 6 per pair). A seeded generator partitioned
+fully colored canvases (2 by 8, 6 by 3, 5 by 8, and 8 by 4, rows by columns,
+4-connected regions, one per color, with freshly drawn shapes, cell counts
+from 1 to 17, colors, and positions; no matrix equals a grid in `data`.
+differs from color order and from first-appearance order, and some pairs
+contradict ordering by bounding-box width, height, or area. Each output is a
+histogram: the region with the r-th largest cell count becomes a vertical bar
+of its color in column r, starting at the top row and as tall as the region's
+cell count, giving 11 by 3, 8 by 4, 17 by 6, and 15 by 6 outputs. The class
+takes `color`, `cell_count`, and `size_rank`, the region's zero-based position
+when its pair's regions are ordered by cell count, largest first; each pair
+lists its instances in that order. Every object executes in its own Nucleoid
+process, so the rank is a constructor property rather than a comparison across
+instances. Unconditional class-level rules introduce `bar_height` (the cell
+count), which is absent before the rules run, and move
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `081ff52e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `279a17f6` are properly handled with clean fallback behavior.

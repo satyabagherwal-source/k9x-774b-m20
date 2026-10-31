@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source**: github ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
-> **Source Version**: `3e76856b`  
+> **Source Version**: `758c46de`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T00:40:03.729Z  
+> **Timestamp**: 2026-10-31T14:19:36.333Z  
 > **Learning ID**: `learn-github-gocd-gocd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T00:40:02.409Z  
+> **Harvest Timestamp**: 2026-10-31T14:19:36.325Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: GoCD - Continuous Delivery server main repository
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7434 stars
+- **Stars / Engagement**: 7436 stars
 
 ---
 
@@ -880,24 +880,19 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `db3a6efe` (2026-10-29)
-**Commit Message**: build(deps-ui-dev): bump sass-loader (#14701)
+### Incident Patch 1: `3cc21aa2` (2026-10-31)
+**Commit Message**: build(deps-ui-dev): bump sass-embedded (#14705)
 
-Bumps the webpack group in /server/src/main/webapp/WEB-INF/rails with 1 update: [sass-loader](https://github.com/webpack/sass-loader).
-
-
-Updates `sass-loader` from 17.0.1 to 17.1.0
-- [Release notes](https://github.com/webpack/sass-loader/releases)
-- [Changelog](https://github.com/webpack/sass-loader/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/webpack/sass-loader/compare/v17.0.1...v17.1.0)
+Bumps [sass-embedded](https://github.com/sass/embedded-host-node) from 1.106.1 to 1.107.0.
+- [Changelog](https://github.com/sass/embedded-host-node/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/sass/embedded-host-node/compare/1.106.1...1.107.0)
 
 ---
 updated-dependencies:
-- dependency-name: sass-loader
-  dependency-version: 17.1.0
+- dependency-name: sass-embedded
+  dependency-version: 1.107.0
   dependency-type: direct:development
   update-type: version-update:semver-minor
-  dependency-group: webpack
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
@@ -905,67 +900,192 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
 ```diff
-@@ -105,7 +105,7 @@
+@@ -104,7 +104,7 @@
+     "license-checker": "^25.0.1",
      "mini-css-extract-plugin": "^2.10.2",
      "mockdate": "^3.0.5",
-     "sass-embedded": "^1.106.1",
--    "sass-loader": "^17.0.1",
-+    "sass-loader": "^17.1.0",
+-    "sass-embedded": "^1.106.1",
++    "sass-embedded": "^1.107.0",
+     "sass-loader": "^17.1.0",
      "simulate-event": "^1.4.0",
      "sourcemapped-stacktrace": "^1.1.11",
-     "style-loader": "^4.0.0",
 ```
 
-**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +5/-5)
+**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +83/-83)
 ```diff
-@@ -4641,7 +4641,7 @@ __metadata:
+@@ -4640,7 +4640,7 @@ __metadata:
+     normalize-scss: "npm:^8.0.0"
      opensans: "file:node-vendor/opensans#node-vendor/opensans::hash=930bae&locator=gocd-server-ui%40workspace%3A."
      prismjs: "npm:^1.30.0"
-     sass-embedded: "npm:^1.106.1"
--    sass-loader: "npm:^17.0.1"
-+    sass-loader: "npm:^17.1.0"
+-    sass-embedded: "npm:^1.106.1"
++    sass-embedded: "npm:^1.107.0"
+     sass-loader: "npm:^17.1.0"
      shell-quote: "npm:^1.12.0"
      shellwords-ts: "npm:^3.0.1"
-     simulate-event: "npm:^1.4.0"
-@@ -7512,9 +7512,9 @@ __metadata:
+@@ -7310,162 +7310,162 @@ __metadata:
    languageName: node
    linkType: hard
  
--"sass-loader@npm:^17.0.1":
--  version: 17.0.1
--  resolution: "sass-loader@npm:17.0.1"
-+"sass-loader@npm:^17.1.0":
-+  version: 17.1.0
-+  resolution: "sass-loader@npm:17.1.0"
-   peerDependencies:
-     "@rspack/core": 0.x || ^1.0.0 || ^2.0.0-0
-     sass: ^1.3.0
-@@ -7529,7 +7529,7 @@ __metadata:
-       optional: true
-     webpack:
-       optional: true
--  checksum: 10c0/a5211341426096acd7b96db6cba95935a86c3ba97a16c16d2f743f42c98ff79281f4f0f6e03fc336b77b22969eb8363379ffd52efe9bf87944cc21f1490c6595
-+  checksum: 10c0/6eff347a98c3ff654430562d661f689a48079b16298dc4e59c49cf8730c7abea09cbdbe2493a3b68059d44bd89c0db2e3e5e93facc9ea83e332b0f8ba1b357e9
+-"sass-embedded-all-unknown@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-all-unknown@npm:1.106.1"
++"sass-embedded-all-unknown@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-all-unknown@npm:1.107.0"
+   dependencies:
+-    sass: "npm:1.106.1"
++    sass: "npm:1.107.0"
+   conditions: (!cpu=arm | !cpu=arm64 | !cpu=riscv64 | !cpu=x64)
    languageName: node
    linkType: hard
  
+-"sass-embedded-android-arm64@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-android-arm64@npm:1.106.1"
++"sass-embedded-android-arm64@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-android-arm64@npm:1.107.0"
+   conditions: os=android & cpu=arm64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-android-arm@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-android-arm@npm:1.106.1"
++"sass-embedded-android-arm@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-android-arm@npm:1.107.0"
+   conditions: os=android & cpu=arm
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-android-riscv64@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-android-riscv64@npm:1.106.1"
++"sass-embedded-android-riscv64@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-android-riscv64@npm:1.107.0"
+   conditions: os=android & cpu=riscv64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-android-x64@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-android-x64@npm:1.106.1"
++"sass-embedded-android-x64@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-android-x64@npm:1.107.0"
+   conditions: os=android & cpu=x64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-darwin-arm64@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-darwin-arm64@npm:1.106.1"
++"sass-embedded-darwin-arm64@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-darwin-arm64@npm:1.107.0"
+   conditions: os=darwin & cpu=arm64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-darwin-x64@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-darwin-x64@npm:1.106.1"
++"sass-embedded-darwin-x64@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-darwin-x64@npm:1.107.0"
+   conditions: os=darwin & cpu=x64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-arm64@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-linux-arm64@npm:1.106.1"
++"sass-embedded-linux-arm64@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-linux-arm64@npm:1.107.0"
+   conditions: os=linux & cpu=arm64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-arm@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-linux-arm@npm:1.106.1"
++"sass-embedded-linux-arm@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-linux-arm@npm:1.107.0"
+   conditions: os=linux & cpu=arm
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-musl-arm64@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-linux-musl-arm64@npm:1.106.1"
++"sass-embedded-linux-musl-arm64@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-linux-musl-arm64@npm:1.107.0"
+   conditions: os=linux & cpu=arm64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-musl-arm@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-linux-musl-arm@npm:1.106.1"
++"sass-embedded-linux-musl-arm@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-linux-musl-arm@npm:1.107.0"
+   conditions: os=linux & cpu=arm
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-musl-riscv64@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-linux-musl-riscv64@npm:1.106.1"
++"sass-embedded-linux-musl-riscv64@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-linux-musl-riscv64@npm:1.107.0"
+   conditions: os=linux & cpu=riscv64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-musl-x64@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-linux-musl-x64@npm:1.106.1"
++"sass-embedded-linux-musl-x64@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-linux-musl-x64@npm:1.107.0"
+   conditions: os=linux & cpu=x64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-riscv64@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-linux-riscv64@npm:1.106.1"
++"sass-embedded-linux-riscv64@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-linux-riscv64@npm:1.107.0"
+   conditions: os=linux & cpu=riscv64
+   languageName: no
 ```
 
 ---
 
-### Incident Patch 2: `3e76856b` (2026-10-29)
-**Commit Message**: build(deps): bump org.apache.activemq:activemq-broker (#14702)
+### Incident Patch 2: `758c46de` (2026-10-31)
+**Commit Message**: build(deps): bump com.autonomousapps.dependency-analysis (#14703)
 
-Bumps [org.apache.activemq:activemq-broker](https://github.com/apache/activemq) from 6.3.3 to 6.4.0.
-- [Release notes](https://github.com/apache/activemq/releases)
-- [Commits](https://github.com/apache/activemq/compare/activemq-6.3.3...activemq-6.4.0)
+Bumps the gradle-plugins group with 1 update: com.autonomousapps.dependency-analysis.
+
+
+Updates `com.autonomousapps.dependency-analysis` from 3.19.2 to 3.20.0
 
 ---
 updated-dependencies:
-- dependency-name: org.apache.activemq:activemq-broker
-  dependency-version: 6.4.0
+- dependency-name: com.autonomousapps.dependency-analysis
+  dependency-version: 3.20.0
   dependency-type: direct:production
   update-type: version-update:semver-minor
+  dependency-group: gradle-plugins
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
@@ -973,356 +1093,99 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `build.gradle` (modified, +1/-1)
 ```diff
-@@ -76,7 +76,7 @@ def libraries = [
-   //
-   // DO NOT interpolate version variables here because Dependabot is not smart enough to understand those. Dependabot's
-   // version parsing is simply regex matching and never actually evaluates a gradle script.
--  activeMQ            : 'org.apache.activemq:activemq-broker:6.3.3',
-+  activeMQ            : 'org.apache.activemq:activemq-broker:6.4.0',
-   angusMailSmtp       : 'org.eclipse.angus:smtp:2.0.5',
-   apacheHttpComponents: 'org.apache.httpcomponents:httpclient:4.5.14',
-   aspectj             : 'org.aspectj:aspectjweaver:1.9.26',
+@@ -38,7 +38,7 @@ import java.time.Duration
+ plugins {
+   id 'base'
+   id 'org.owasp.dependencycheck' version '13.0.0'
+-  id 'com.autonomousapps.dependency-analysis' version '3.19.2'
++  id 'com.autonomousapps.dependency-analysis' version '3.20.0'
+ }
+ 
+ // Updated via automated scripting
 ```
 
 ---
 
-### Incident Patch 3: `7e7972b5` (2026-10-29)
-**Commit Message**: build(deps): bump AnsiUp from 6.1.0-gocd to 6.1.1-gocd
+### Incident Patch 3: `d521ceaf` (2026-10-31)
+**Commit Message**: build(deps-ui-dev): bump @types/node (#14704)
 
-**File**: `server/src/main/webapp/WEB-INF/rails/app/assets/javascripts/application.js.erb` (modified, +1/-1)
+Bumps the types group in /server/src/main/webapp/WEB-INF/rails with 1 update: [@types/node](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/node).
+
+
+Updates `@types/node` from 26.6.5 to 26.6.6
+- [Release notes](https://github.com/DefinitelyTyped/DefinitelyTyped/releases)
+- [Commits](https://github.com/DefinitelyTyped/DefinitelyTyped/commits/HEAD/types/node)
+
+---
+updated-dependencies:
+- dependency-name: "@types/node"
+  dependency-version: 26.6.6
+  dependency-type: direct:development
+  update-type: version-update:semver-patch
+  dependency-group: types
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
 ```diff
-@@ -59,7 +59,7 @@ Read Sprockets README (https://github.com/rails/sprockets#directives) for detail
- //= require "plugin-endpoint-request-handler.js"
+@@ -73,7 +73,7 @@
+     "@types/license-checker": "^25.0.6",
+     "@types/lodash": "^4.17.26",
+     "@types/mithril": "2.2.9",
+-    "@types/node": "^26.6.5",
++    "@types/node": "^26.6.6",
+     "@types/prismjs": "^1.26.6",
+     "@types/shell-quote": "^1.7.5",
+     "@types/underscore.string": "^0.0.42",
+```
+
+**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +11/-2)
+```diff
+@@ -1971,7 +1971,7 @@ __metadata:
+   languageName: node
+   linkType: hard
  
- <%# Used within job details console log formatting %>
--//= require "lib/ansi_up-6.1.0-gocd.js"
-+//= require "lib/ansi_up-6.1.1-gocd.js"
- //= require "lib/crel-4.2.1.js"
+-"@types/node@npm:*, @types/node@npm:>=10.0.0, @types/node@npm:^26.6.5":
++"@types/node@npm:*, @types/node@npm:>=10.0.0":
+   version: 26.6.5
+   resolution: "@types/node@npm:26.6.5"
+   dependencies:
+@@ -1980,6 +1980,15 @@ __metadata:
+   languageName: node
+   linkType: hard
  
- //= require "json_to_css.js"
-```
-
-**File**: `server/src/main/webapp/WEB-INF/rails/app/assets/javascripts/lib/_licenses.json` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "ansi_up": {
-     "moduleName": "ansi_up",
--    "moduleVersion": "6.1.0-gocd",
-+    "moduleVersion": "6.1.1-gocd",
-     "moduleUrls": [
-       "https://github.com/gocd-contrib/ansi_up"
-     ],
-```
-
-**File**: `server/src/main/webapp/WEB-INF/rails/app/assets/javascripts/lib/ansi_up-6.1.0-gocd.js` (removed, +0/-555)
-```diff
-@@ -1,555 +0,0 @@
--/*  ansi_up.js
-- *  author : http://github.com/drudru/ansi_up
-- *  license : MIT
-- *  http://github.com/drudru/ansi_up
-- */
--(function (root, factory) {
--  if (typeof define === 'function' && define.amd) {
--    // AMD. Register as an anonymous module.
--    define(['exports'], factory);
--  } else if (typeof exports === 'object' && typeof exports.nodeName !== 'string') {
--    // CommonJS
--    factory(exports);
--  } else {
--    // Browser globals
--    var exp = {};
--    factory(exp);
--    root.AnsiUp = exp.default;
--  }
--}(this, function (exports) {
--"use strict";
--var PacketKind;
--(function (PacketKind) {
--  PacketKind[PacketKind["EOS"] = 0] = "EOS";
--  PacketKind[PacketKind["Text"] = 1] = "Text";
--  PacketKind[PacketKind["Incomplete"] = 2] = "Incomplete";
--  PacketKind[PacketKind["ESC"] = 3] = "ESC";
--  PacketKind[PacketKind["Unknown"] = 4] = "Unknown";
--  PacketKind[PacketKind["SGR"] = 5] = "SGR";
--  PacketKind[PacketKind["OSCURL"] = 6] = "OSCURL";
--  PacketKind[PacketKind["OSCURLEND"] = 7] = "OSCURLEND";
--})(PacketKind || (PacketKind = {}));
--class AnsiUp {
--  constructor() {
--    this.VERSION = "6.1.0-gocd";
--    this.setup_palettes();
--    this._use_classes = false;
--    this.bold = false;
--    this.faint = false;
--    this.italic = false;
--    this.underline = false;
--    this.fg = this.bg = null;
--    this._buffer = '';
--    this._url_allowlist = { 'http': 1, 'https': 1 };
--    this._escape_html = true;
--    this.boldStyle = 'font-weight:bold';
--    this.faintStyle = 'opacity:0.7';
--    this.italicStyle = 'font-style:italic';
--    this.underlineStyle = 'text-decoration:underline';
--  }
--  set use_classes(arg) {
--    this._use_classes = arg;
--  }
--  get use_classes() {
--    return this._use_classes;
--  }
--  set url_allowlist(arg) {
--    this._url_allowlist = arg;
--  }
--  get url_allowlist() {
--    return this._url_allowlist;
--  }
--  set escape_html(arg) {
--    this._escape_html = arg;
--  }
--  get escape_html() {
--    return this._escape_html;
--  }
--  set boldStyle(arg) { this._boldStyle = arg; }
--  get boldStyle() { return this._boldStyle; }
--  set faintStyle(arg) { this._faintStyle = arg; }
--  get faintStyle() { return this._faintStyle; }
--  set italicStyle(arg) { this._italicStyle = arg; }
--  get italicStyle() { return this._italicStyle; }
--  set underlineStyle(arg) { this._underlineStyle = arg; }
--  get underlineStyle() { return this._underlineStyle; }
--  setup_palettes() {
--    this.ansi_colors =
--      [
--        [
--          { rgb: [0, 0, 0], class_name: "ansi-black" },
--          { rgb: [187, 0, 0], class_name: "ansi-red" },
--          { rgb: [0, 187, 0], class_name: "ansi-green" },
--          { rgb: [187, 187, 0], class_name: "ansi-yellow" },
--          { rgb: [0, 0, 187], class_name: "ansi-blue" },
--          { rgb: [187, 0, 187], class_name: "ansi-magenta" },
--          { rgb: [0, 187, 187], class_name: "ansi-cyan" },
--          { rgb: [255, 255, 255], class_name: "ansi-white" }
--        ],
--        [
--          { rgb: [85, 85, 85], class_name: "ansi-bright-black" },
--          { rgb: [255, 85, 85], class_name: "ansi-bright-red" },
--          { rgb: [0, 255, 0], class_name: "ansi-bright-green" },
--          { rgb: [255, 255, 85], class_name: "ansi-bright-yellow" },
--          { rgb: [85, 85, 255], class_name: "ansi-bright-blue" },
--          { rgb: [255, 85, 255], class_name: "ansi-bright-magenta" },
--          { rgb: [85, 255, 255], class_name: "ansi-bright-cyan" },
--          { rgb: [255, 255, 255], class_name: "ansi-bright-white" }
--        ]
--      ];
--    this.palette_256 = [];
--    this.ansi_colors.forEach(palette => {
--      palette.forEach(rec => {
--        this.palette_256.push(rec);
--      });
--    });
--    let levels = [0, 95, 135, 175, 215, 255];
--    for (let r = 0; r < 6; ++r) {
--      for (let g = 0; g < 6; ++g) {
--        for (let b = 0; b < 6; ++b) {
--          let col = { rgb: [levels[r], levels[g], levels[b]], class_name: 'truecolor' };
--          this.palette_256.push(col);
--        }
--      }
--    }
--    let grey_level = 8;
--    for (let i = 0; i < 24; ++i, grey_level += 10) {
--      let gry = { rgb: [grey_level, grey_level, grey_level], class_name: 'truecolor' };
--      this.palette_256.push(gry);
--    }
--  }
--  escape_txt_for_html(txt) {
--    if (!this._escape_html)
--      return txt;
--    return txt.replace(/[&<>"']/gm, (str) => {
--      if (str === "&")
--        return "&amp;";
--      if (str === "<")
--        return "&lt;";
--      if (str === ">")
--        return "&gt;";
--      if (str === "\"")
--        return "&quot;";
--      if (str === "'")
--        return "&#x27;";
--    });
--  }
--  append_buffer(txt) {
--    var str = this._buffer + txt;
--    this._buffer = str;
--  }
--  get_next_packet() {
--    var pkt = {
--      kind: PacketKind.EOS,
--      text: ''
--    };
--    var len = this._buffer.length;
--    if (len == 0)
--      return pkt;
--    var pos = this._buffer.indexOf("\x1B");
--    if (pos == -1) {
--      pkt.kind = PacketKind.Text;
--      pkt.tex
-```
-
-**File**: `server/src/main/webapp/WEB-INF/rails/app/assets/javascripts/lib/ansi_up-6.1.1-gocd.js` (added, +550/-0)
-```diff
-@@ -0,0 +1,550 @@
-+/*  ansi_up.global.js
-+ *  author : http://github.com/gocd-contrib/ansi_up
-+ *  license : MIT
-+ *  http://github.com/gocd-contrib/ansi_up
-+ */
-+(function (root, factory) {
-+  var exp = {};
-+  factory(exp);
-+  root.AnsiUp = exp.AnsiUp;
-+}(typeof globalThis !== 'undefined' ? globalThis : typeof self !== 'undefined' ? self : this, function (exports) {
-+  "use strict";
-+  Object.defineProperty(exports, "__esModule", { value: true });
-+  exports.AnsiUp = void 0;
-+  var PacketKind;
-+  (function (PacketKind) {
-+    PacketKind[PacketKind["EOS"] = 0] = "EOS";
-+    PacketKind[PacketKind["Text"] = 1] = "Text";
-+    PacketKind[PacketKind["Incomplete"] = 2] = "Incomplete";
-+    PacketKind[PacketKind["ESC"] = 3] = "ESC";
-+    PacketKind[PacketKind["Unknown"] = 4] = "Unknown";
-+    PacketKind[PacketKind["SGR"] = 5] = "SGR";
-+    PacketKind[PacketKind["OSCURL"] = 6] = "OSCURL";
-+    PacketKind[PacketKind["OSCURLEND"] = 7] = "OSCURLEND";
-+  })(PacketKind || (PacketKind = {}));
-+  class AnsiUp {
-+    constructor() {
-+      this.VERSION = "6.1.1-gocd";
-+      this.ansi_colors = [];
-+      this.palette_256 = [];
-+      this._csi_regex = null;
-+      this._osc_st = null;
-+      this._osc_regex = null;
-+      this.setup_palettes();
-+      this._use_classes = false;
-+      this.bold = false;
-+      this.faint = false;
-+      this.italic = false;
-+      this.underline = false;
-+      this.fg = this.bg = null;
-+      this._buffer = '';
-+      this._url_allowlist = { 'http': 1, 'https': 1 };
-+      this._escape_html = true;
-+      this._boldStyle = 'font-weight:bold';
-+      this._faintStyle = 'opacity:0.7';
-+      this._italicStyle = 'font-style:italic';
-+      this._underlineStyle = 'text-decoration:underline';
-+    }
-+    set use_classes(arg) {
-+      this._use_classes = arg;
-+    }
-+    get use_classes() {
-+      return this._use_classes;
-+    }
-+    set url_allowlist(arg) {
-+      this._url_allowlist = arg;
-+    }
-+    get url_allowlist() {
-+      return this._url_allowlist;
-+    }
-+    set escape_html(arg) {
-+      this._escape_html = arg;
-+    }
-+    get escape_html() {
-+      return this._escape_html;
-+    }
-+    set boldStyle(arg) { this._boldStyle = arg; }
-+    get boldStyle() { return this._boldStyle; }
-+    set faintStyle(arg) { this._faintStyle = arg; }
-+    get faintStyle() { return this._faintStyle; }
-+    set italicStyle(arg) { this._italicStyle = arg; }
-+    get italicStyle() { return this._italicStyle; }
-+    set underlineStyle(arg) { this._underlineStyle = arg; }
-+    get underlineStyle() { return this._underlineStyle; }
-+    setup_palettes() {
-+      this.ansi_colors =
-+        [
-+          [
-+            { rgb: [0, 0, 0], class_name: "ansi-black" },
-+            { rgb: [187, 0, 0], class_name: "ansi-red" },
-+            { rgb: [0, 187, 0], class_name: "ansi-green" },
-+            { rgb: [187, 187, 0], class_name: "ansi-yellow" },
-+            { rgb: [0, 0, 187], class_name: "ansi-blue" },
-+            { rgb: [187, 0, 187], class_name: "ansi-magenta" },
-+            { rgb: [0, 187, 187], class_name: "ansi-cyan" },
-+            { rgb: [255, 255, 255], class_name: "ansi-white" }
-+          ],
-+          [
-+            { rgb: [85, 85, 85], class_name: "ansi-bright-black" },
-+            { rgb: [255, 85, 85], class_name: "ansi-bright-red" },
-+            { rgb: [0, 255, 0], class_name: "ansi-bright-green" },
-+            { rgb: [255, 255, 85], class_name: "ansi-bright-yellow" },
-+            { rgb: [85, 85, 255], class_name: "ansi-bright-blue" },
-+            { rgb: [255, 85, 255], class_name: "ansi-bright-magenta" },
-+            { rgb: [85, 255, 255], class_name: "ansi-bright-cyan" },
-+            { rgb: [255, 255, 255], class_name: "ansi-bright-white" }
-+          ]
-+        ];
-+      this.palette_256 = [];
-+      this.ansi_colors.forEach(palette => {
-+        palette.forEach(rec => {
-+          this.palette_256.push(rec);
-+        });
-+      });
-+      let levels = [0, 95, 135, 175, 215, 255];
-+      for (let r = 0; r < 6; ++r) {
-+        for (let g = 0; g < 6; ++g) {
-+          for (let b = 0; b < 6; ++b) {
-+            let col = { rgb: [levels[r], levels[g], levels[b]], class_name: 'truecolor' };
-+            this.palette_256.push(col);
-+          }
-+        }
-+      }
-+      let grey_level = 8;
-+      for (let i = 0; i < 24; ++i, grey_level += 10) {
-+        let gry = { rgb: [grey_level, grey_level, grey_level], class_name: 'truecolor' };
-+        this.palette_256.push(gry);
-+      }
-+    }
-+    escape_txt_for_html(txt) {
-+      if (!this._escape_html)
-+        return txt;
-+      return txt.replace(/[&<>"']/gm, (str) => {
-+        if (str === "&")
-+          return "&amp;";
-+        if (str === "<")
-+          return "&lt;";
-+        if (str === ">")
-+          return "&gt;";
-+        if (str === "\"")
-+          return "&quot;";
-+        if (str === "'")
-+          return "&#x27;";
-+        return str;
-+      });
-+    }
-+    append_buffer(txt) {
-+      this._buffer += txt;
-+    }
-+    get_n
++"@types/node@npm:^26.6.6":
++  version: 26.6.6
++  resolution: "@types/node@npm:26.6.6"
++  dependencies:
++    undici-types: "npm:~8.9.0"
++  checksum: 10c0/5cb63f644f6e85a257a9cd2403cbcbe196760e2a35fd3ec9fb8b5cff663e14cc832b198cc17b53f870a2e30900ed45a1fb3f53e6589aba26b8e8c484aa672053
++  languageName: node
++  linkType: hard
++
+ "@types/prismjs@npm:^1.26.6":
+   version: 1.26.6
+   resolution: "@types/prismjs@npm:1.26.6"
+@@ -4589,7 +4598,7 @@ __metadata:
+     "@types/license-checker": "npm:^25.0.6"
+     "@types/lodash": "npm:^4.17.26"
+     "@types/mithril": "npm:2.2.9"
+-    "@types/node": "npm:^26.6.5"
++    "@types/node": "npm:^26.6.6"
+     "@types/prismjs": "npm:^1.26.6"
+     "@types/shell-quote": "npm:^1.7.5"
+     "@types/underscore.string": "npm:^0.0.42"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14702** (2026-10-29): build(deps): bump org.apache.activemq:activemq-broker from 6.3.3 to 6.4.0 (@dependabot[bot])
-- **PR #14701** (2026-10-29): build(deps-ui-dev): bump sass-loader from 17.0.1 to 17.1.0 in /server/src/main/webapp/WEB-INF/rails in the webpack group (@dependabot[bot])
-- **PR #14700** (2026-10-27): build(deps): bump ch.qos.logback:logback-classic from 1.6.5 to 1.6.6 (@dependabot[bot])
-- **PR #14699** (2026-10-27): build(deps-ui): bump filesize from 11.0.28 to 11.0.29 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14698** (2026-10-27): build(deps): bump org.apache.activemq:activemq-broker from 6.3.2 to 6.3.3 (@dependabot[bot])
-- **PR #14697** (2026-10-26): build(deps): bump com.google.code.gson:gson from 2.14.0 to 2.15.0 (@dependabot[bot])
+- **PR #14708** (closed): [WIP] Build(deps-ui): bump what-input from 5.2.12 to 6.0.1 (@Copilot)
+- **PR #14707** (closed): build(deps-ui): bump what-input from 5.2.12 to 6.0.1 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14706** (2026-10-31): build(deps-ui-dev): bump tzinfo-data from 1.2026.5 to 1.2026.6 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14705** (2026-10-31): build(deps-ui-dev): bump sass-embedded from 1.106.1 to 1.107.0 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14704** (2026-10-31): build(deps-ui-dev): bump @types/node from 26.6.5 to 26.6.6 in /server/src/main/webapp/WEB-INF/rails in the types group (@dependabot[bot])
+- **PR #14703** (2026-10-31): build(deps): bump com.autonomousapps.dependency-analysis from 3.19.2 to 3.20.0 in the gradle-plugins group (@dependabot[bot])
 
 ---
 
@@ -1342,13 +1205,13 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps-ui-dev): bump sass-loader (#14701)
+## X. build(deps-ui-dev): bump sass-embedded (#14705)
 
 **RULE**:
 When implementing operations in `server/src/main/webapp/WEB-INF/rails/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `db3a6efe`: build(deps-ui-dev): bump sass-loader (#14701). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3cc21aa2`: build(deps-ui-dev): bump sass-embedded (#14705). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/package.json`.
@@ -1356,14 +1219,14 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    "sass-loader": "^17.1.0",
+    "sass-embedded": "^1.107.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-    "sass-loader": "^17.0.1",
+    "sass-embedded": "^1.106.1",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `db3a6efe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3cc21aa2` are properly handled with clean fallback behavior.

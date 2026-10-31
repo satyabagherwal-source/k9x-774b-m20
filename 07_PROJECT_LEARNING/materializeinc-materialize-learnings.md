@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source**: github ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
-> **Source Version**: `0fa4f5f1`  
+> **Source Version**: `07eda4c6`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T22:10:32.701Z  
+> **Timestamp**: 2026-10-31T14:19:41.656Z  
 > **Learning ID**: `learn-github-materializeinc-materialize`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T22:10:31.573Z  
+> **Harvest Timestamp**: 2026-10-31T14:19:41.648Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The live data layer for apps and AI agents. Create up-to-the-second views into your business, just using SQL
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 6391 stars
+- **Stars / Engagement**: 6392 stars
 
 ---
 
@@ -1064,11 +1064,11 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #40383** (2026-10-31): **cargo-bench: Only create one CI annotation**
+  *Symptoms*: Less noisy. Test run: https://buildkite.com/materialize/nightly/builds/18645  Before: <img width="1684" height="668" alt="Screenshot 2026-10-31 at 08 20 09" src="https://github.com/user-attachments/assets/40e34813-3cc8-4e6d-8681-f4f95236bacc" /> After: <img width="1684" height="80" alt="Screenshot 2026-10-31 at 08 50 35" src="https://github.com/user-attachments/assets/0ca57d12-793c-4785-8884-ceed0f6d4230" /> 
+
 - **Issue #40379** (2026-10-30): **doc: lead v26.48 Kafka sink headers note with the transactional use case**
   *Symptoms*: Reframes the v26.48 "Kafka sink headers are generally available" release note around the customer so-what: using the `materialize-sink-id` header to deliver transactionally consistent updates to downstream systems, with a link to the [Transactional downstream updates using Kafka](https://materialize.com/docs/export-data/patterns/transactional-downstream-updates-kafka/) pattern up front. The `HEADERS` GA detail moves to a second paragraph.  The section anchor (`#v26.48-kafka-sink-headers-ga`) is unchanged so existing links keep working.  Feedback from the #shipped-it post that the original note didn't land the "so what" for customers.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
-
-- **Issue #40375** (2026-10-30): **release: mark v26.48 as released**
-  *Symptoms*: Opened and merged by the Complete release workflow in MaterializeInc/release, which marks shipped releases as released in the user-facing docs.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1085,529 +1085,301 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `225e7beb` (2026-10-30)
-**Commit Message**: build(deps): bump msgpack from 1.2.3 to 1.2.4 in /misc/dbt-materialize in the simple group (#40362)
+### Incident Patch 1: `07eda4c6` (2026-10-31)
+**Commit Message**: cargo-bench: Only create one CI annotation (#40383)
 
-Bumps the simple group in /misc/dbt-materialize with 1 update:
-[msgpack](https://github.com/msgpack/msgpack-python).
+Less noisy. Test run:
+https://buildkite.com/materialize/nightly/builds/18645
 
-Updates `msgpack` from 1.2.3 to 1.2.4
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/msgpack/msgpack-python/releases">msgpack's
-releases</a>.</em></p>
-<blockquote>
-<h2>v1.2.4</h2>
-<h2>What's Changed</h2>
-<ul>
-<li>fallback: pass object_pairs_hook a list of pairs by <a
-href="https://github.com/youdie006"><code>@​youdie006</code></a> in <a
-href="https://redirect.github.com/msgpack/msgpack-python/pull/744">msgpack/msgpack-python#744</a></li>
-<li>fallback: leave the object unread when a header type does not match
-by <a
-href="https://github.com/Shaisolaris"><code>@​Shaisolaris</code></a> in
-<a
-href="https://redirect.github.com/msgpack/msgpack-python/pull/748">msgpack/msgpack-python#748</a></li>
-<li>Bump the all-dependencies group with 3 updates by <a
-href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot]
-in <a
-href="https://redirect.github.com/msgpack/msgpack-python/pull/749">msgpack/msgpack-python#749</a></li>
-<
+Before:
+<img width="1684" height="668" alt="Screenshot 2026-10-31 at 08 20 09"
+src="https://github.com/user-attachments/assets/40e34813-3cc8-4e6d-8681-f4f95236bacc"
+/>
+After:
+<img width="1684" height="80" alt="Screenshot 2026-10-31 at 08 50 35"
+src="https://github.com/user-attachments/assets/0ca57d12-793c-4785-8884-ceed0f6d4230"
+/>
 
-**File**: `misc/dbt-materialize/requirements.txt` (modified, +1/-1)
+**File**: `ci/mkpipeline.py` (modified, +26/-0)
 ```diff
-@@ -29,7 +29,7 @@ leather==0.4.1
- MarkupSafe==3.0.4
- mashumaro==3.17
- more-itertools==10.8.0
--msgpack==1.2.3
-+msgpack==1.2.4
- networkx==3.4.2
- orderly-set==5.5.0
- packaging==26.3
-```
-
----
-
-### Incident Patch 2: `8e3d7d73` (2026-10-30)
-**Commit Message**: doc: publish Iceberg guide for S3-compatible storage and REST catalogs (#40104)
-
-### Motivation
-
-[EDU-106](https://linear.app/materializeinc/issue/EDU-106). Publishes
-the unpublished REST catalog draft as a Polaris + MinIO guide that uses
-vended credentials.
-
-### Verification
-
-Ran every step against emulator v26.47.0, Polaris 1.7.0 and MinIO. A
-subagent also followed the guide word for word, and upsert and append
-sinks both committed to the bucket. Tested failure cases and recorded
-their errors: no `SCOPE`, a principal role the principal doesn't have,
-missing data privileges, no `ACCESS DELEGATION`, and an endpoint that
-can't be reached. `hugo` build passes and the anchors resolve. CI covers
-this code path in `test/iceberg/vended-credentials.td`.
-
----
-_Generated by [Claude
-Code](https://claude.ai/code/session_01FbYd9BRUmRYvY51XAhiasR)_
-
----------
-
-Co-authored-by: Claude <[REDACTED_EMAIL]>
-Co-authored-by: Valerie Chiang <[REDACTED_EMAIL]>
-
-**File**: `doc/user/content/export-data/iceberg-rest.md` (modified, +199/-170)
-```diff
-@@ -1,169 +1,202 @@
- ---
--title: "Iceberg REST catalog with S3-compatible storage"
--description: "How to export results from Materialize to Apache Iceberg tables in a catalog implementing the Iceberg REST specification, backed by S3-compatible object storage."
--draft: true
--#menu:
--  #main:
--    #parent: sink-iceberg
--    #name: "REST catalog"
--    #weight: 40
-+title: "S3-compatible storage and Iceberg REST catalogs"
-+description: "How to export results from Materialize to Apache Iceberg tables in an Iceberg REST catalog, such as Apache Polaris, backed by S3-compatible object storage, such as MinIO."
-+menu:
-+  main:
-+    parent: sink-iceberg
-+    name: "S3-compatible storage and REST catalogs"
-+    weight: 40
- aliases:
-   - /serve-results/sink/iceberg-rest/
- ---
- 
- {{< public-preview />}}
- 
--This guide walks you through the steps required to set up Iceberg sinks in
--Materialize Cloud against a catalog that implements the [Iceberg REST catalog
--specification](https://iceberg.apache.org/spec/) with OAuth2 client credentials,
--and whose tables are stored in Amazon S3 or an S3-compatible object store such as
--MinIO. [Apache Polaris](https://polaris.apache.org/) is the catalog Materialize
--tests this path against.
--
--Some catalogs have their own guide, because they authenticate differently or need
--specific options:
--
--- [AWS S3 Tables](/export-data/iceberg-aws/), which authenticates through
--  an AWS connection.
--- [GCP BigLake](/export-data/iceberg-gcp/), which authenticates through a
--  GCP connection.
--- [Databricks Unity Catalog](/export-data/iceberg-databricks/), which
--  authenticates with OAuth2 but manages its own storage.
--
--## How Materialize reaches your storage
--
--An Iceberg catalog connection to a REST catalog carries **no** storage
--configuration of its own: no endpoint, no region, and no S3 access keys. Every
--option in the connection is about reaching the *catalog*. Materialize learns how
--to reach the *storage* from the catalog itself, one of two ways:
--
--| Path | How it works | When to use it |
--| --- | --- | --- |
--| Catalog-supplied properties | The catalog returns storage properties (`s3.endpoint`, `s3.region`, `s3.access-key-id`, ...) when Materialize loads its configuration and tables. Materialize passes them to its S3 client unchanged. | The catalog is configured with credentials it is willing to hand to clients. |
--| Credential vending | With `ACCESS DELEGATION = 'vended-credentials'`, Materialize asks the catalog for temporary, table-scoped credentials and uses only those. | The catalog withholds long-lived credentials, or you would rather not have them leave the catalog. |
--
--The practical consequence: **the S3-compatible endpoint is configured on the
--catalog, not in Materialize.** A catalog that returns no usable storage
--configuration leaves the sink unable to write, even though the connection itself
--validates.
--
--An `AWS CONNECTION` cannot be used to supply the endpoint and keys instead:
--`CATALOG TYPE = 'rest'` rejects it, since that option exists for [AWS S3
--Tables](/export-data/iceberg-aws/), whose catalog and storage are both
--authenticated with SigV4.
--
--{{< note >}}
--Materialize's Iceberg sinks are tested against Apache Polaris with MinIO storage.
--Other catalog and storage combinations use the same code path, but are not
--covered by Materialize's tests.
--{{< /note >}}
-+This guide walks you through setting up an Iceberg sink to a catalog that
-+implements the [Iceberg REST catalog
-+specification](https://iceberg.apache.org/rest-catalog-spec/), with tables
-+stored in Amazon S3 or S3-compatible object storage. The examples use [Apache
-+Polaris](https://polaris.apache.org/) as the catalog and MinIO as the object
-+store.
- 
--## Prerequisites
--
--### A REST catalog reachable from Materialize
--
--The catalog's REST endpoint, its OAuth2 token endpoint, and the object storage
--behind it must all be reachable from Materialize over the public internet.
--Iceberg catalog connections do not support tunneling through [AWS
--PrivateLink](/sql/create-connection/#aws-privatelink) or [SSH
--bastion hosts](/sql/create-connection/#ssh-tunnel), so a catalog that is only
--reachable inside a private network cannot be used.
--
--If any of those endpoints sits behind a firewall, allow traffic from the [static
--egress IP addresses](/ingest-data/network-security/static-ips/) associated with
--your Materialize region.
--
--### OAuth2 client credentials
-+Materialize does not take a storage endpoint or storage credentials of its own.
-+The catalog supplies both: with [credential
-+vending](/sql/create-connection/#iceberg-catalog-access-delegation), it hands
-+Materialize temporary credentials scoped to the table it writes.
- 
--Materialize authenticates to the catalog with the OAuth2 client credentials
--grant: it exchanges a client ID and client secret for a bearer token, and
--refreshes the token as it expires. Create a catalog principal for Materialize and
--obtain its client ID and client secret.
-+{{< tip >}}
-+Some c
-```
-
-**File**: `doc/user/content/export-data/iceberg.md` (modified, +4/-0)
-```diff
-@@ -31,6 +31,10 @@ the catalog hosting them:
- - [Databricks Unity Catalog](/export-data/iceberg-databricks/)[^4] on
-   AWS, which authenticates with the OAuth2 credentials of a Databricks service
-   principal.
-+- [S3-compatible storage and Iceberg REST
-+  catalogs](/export-data/iceberg-rest/), such as Apache Polaris with MinIO,
-+  which authenticates with OAuth2 client credentials and writes with
-+  catalog-vended storage credentials.
- 
- ## Consume an Iceberg sink
- 
-```
-
-**File**: `doc/user/content/sql/create-connection.md` (modified, +1/-1)
-```diff
-@@ -934,7 +934,7 @@ Materialize supports the following catalog type and destination combinations:
- | --- | --- | --- |
- | `'s3tablesrest'` | [AWS S3 Tables](https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-tables.html) | [AWS connection](#aws) |
- | `'rest'` | [Google Cloud BigLake](https://docs.cloud.google.com/lakehouse/docs/lakehouse-iceberg-rest-catalog) {{< private-preview-inline />}} | [GCP connection](#gcp) |
--| `'rest'` | Any [Iceberg REST catalog](https://iceberg.apache.org/spec/), including [Databricks Unity Catalog](/export-data/iceberg-databricks/) | OAuth2 credentials in a secret |
-+| `'rest'` | Any [Iceberg REST catalog](https://iceberg.apache.org/rest-catalog-spec/), including [Databricks Unity Catalog](/export-data/iceberg-databricks/) and [Apache Polaris](/export-data/iceberg-rest/) | OAuth2 credentials in a secret |
- 
- #### Syntax {#iceberg-catalog-syntax}
- 
-```
-
-**File**: `doc/user/data/examples/create_connection.yml` (modified, +18/-1)
-```diff
-@@ -799,7 +799,8 @@
-         CREDENTIAL = SECRET <secret_name>,
-         OAUTH2 SERVER URL = '<token_url>',
-         SCOPE = '<scope>',
--        ACCESS DELEGATION = 'vended-credentials'
-+        ACCESS DELEGATION = 'vended-credentials',
-+        STORAGE PROVIDER = '<provider>'
-     );
-   syntax_elements:
-     - name: "`<connection_name>`"
-@@ -834,6 +835,10 @@
- 
-         Required for catalogs that serve their token endpoint elsewhere, or
-         behind an auth gateway that will not serve an unauthenticated exchange.
-+
-+        The URL must resolve to a public address. Materialize sends the
-+        credential to it, so it rejects a URL that resolves to a private address
-+        when the connection is created.
-     - name: "`SCOPE`"
-       description: |
-         *Value:* `text`. Optional.
-@@ -849,6 +854,18 @@
-         as the only way to reach it.
- 
-         See [Storage access delegation](/sql/create-connection/#iceberg-catalog-access-delegation).
-+    - name: "`STORAGE PROVIDER`"
-+      description: |
-+        *Value:* `'s3'`, `'gcs'`, or `'adls'`. Optional. Defaults to `'s3'`.
-+
-+        The object store holding the catalog's data files: Amazon S3 or an
-+        S3-compatible store, Google Cloud Storage, or Azure Data Lake Storage
-+        Gen2. The catalog reports where data files live but not what kind of
-+        store they are in, so Materialize uses this to pick its storage client.
-+
-+        Not supported with `CATALOG TYPE = 's3tablesrest'`, which always stores
-+        data in S3. A connection that authenticates with a GCP connection always
-+        uses `'gcs'`, and rejects any other value.
- 
- - name: "example-iceberg-catalog-connection"
-   description: |
-```
-
----
-
-### Incident Patch 3: `0fa4f5f1` (2026-10-30)
-**Commit Message**: ci: Switch us from Hetzner to AWS, fix issues found during runs (#40351)
-
-We want to run with AWS for 1 week instead of Hetzner, and compare the
-actual costs. The main difference is that Hetzner charges us by the
-hour, while with AWS we can terminate agents by the minute.
-
-Test run: https://buildkite.com/materialize/nightly/builds/18641
-
-**File**: `ci/mkpipeline.py` (modified, +28/-9)
-```diff
-@@ -25,6 +25,7 @@
- import copy
- import hashlib
- import os
-+import re
- import sys
- import threading
- import traceback
-@@ -388,14 +389,16 @@ def fetch_hashes() -> None:
-     truncate_skip_length(pipeline)
-     handle_sanitizer_skip(pipeline, args.sanitizer)
-     prioritize_pipeline(pipeline, args.priority)
-+    # Before `switch_jobs_to_aws`, so that steps on the default queue are
-+    # switched too.
-+    set_default_agents_queue(pipeline)
-     switch_jobs_to_aws(pipeline, args.priority)
-     # After `switch_jobs_to_aws`, so that the queue a step ends up on is the one
-     # that gets sized up. The other order lets the aarch64 to x86_64 fallback
-     # land on a smaller machine than the size-up asked for.
-     increase_agents_timeouts(pipeline, args.sanitizer, args.coverage)
-     permit_rerunning_successful_steps(pipeline)
-     set_retry_on_agent_lost(pipeline)
--    set_default_agents_queue(pipeline)
-     unparallelize(pipeline)
-     expand_parallel_concurrency_groups(pipeline)
-     set_parallelism_name(pipeline)
-@@ -571,7 +574,9 @@ def increase_agents_timeouts(
-             if step.get("id") == "build-aarch64":
-                 step["name"] = "Build aarch64 with coverage"
-             if step.get("id") == "cargo-test":
--                step["agents"]["queue"] = "hetzner-x86-64-dedi-32cpu-128gb"
-+                # Keep a step that `switch_jobs_to_aws` moved on AWS.
-+                if step["agents"]["queue"].startswith("hetzner-"):
-+                    step["agents"]["queue"] = "hetzner-x86-64-dedi-32cpu-128gb"
-                 step.pop("parallelism", None)
-     else:
-         for step in steps(pipeline):
-@@ -589,13 +594,18 @@ def rewrite_step_dependency(step: dict[str, Any], old: str, new: str) -> None:
-         step["depends_on"] = [new if dep == old else dep for dep in d]
+@@ -189,6 +189,30 @@ def annotate(style: str, context: str, markdown: str) -> None:
+         print(f"Failed to post annotation: {e}")
  
  
-+# Matches the purpose suffix of a dedicated queue, for example `-doctests` in
-+# hetzner-x86-64-16cpu-32gb-doctests.
-+HETZNER_DEDICATED_QUEUE_SUFFIX = re.compile(r"(?<=gb)-[a-z-]+$")
++def initialize_cargo_bench_annotation(pipeline: Any) -> None:
++    """Open the shared results disclosure before Cargo bench shards start."""
++    if not any(
++        step.get("id") == "cargo-bench" and not step.get("skip")
++        for step in steps(pipeline)
++    ):
++        return
++    initialized_key = "cargo-bench-annotation-initialized"
++    if (
++        spawn.capture(
++            ["buildkite-agent", "meta-data", "get", initialized_key, "--default=false"]
++        ).strip()
++        == "true"
++    ):
++        return
++    # NOTE: Keep the outer details open so appends, including retries, stay
++    # nested. The HTML renderer closes it at the end of the annotation.
++    spawn.runv(
++        ["buildkite-agent", "annotate", "--context=cargo-bench", "--style=info"],
++        stdin=b"<details><summary>Cargo bench results</summary>\n\n",
++    )
++    spawn.runv(["buildkite-agent", "meta-data", "set", initialized_key, "true"])
 +
 +
- def switch_jobs_to_aws(pipeline: Any, priority: int) -> None:
-     """Switch jobs to AWS if Hetzner is currently overloaded"""
-     # If Hetzner is entirely broken, you have to take these actions to switch everything back to AWS:
-     # - CI_FORCE_SWITCH_TO_AWS env variable to 1
-     # - Reconfigure the agent from hetzner-aarch64-4cpu-8gb to linux-aarch64-small in https://buildkite.com/materialize/test/settings/steps and other pipelines
--    # - Reconfigure the agent from hetzner-aarch64-4cpu-8gb to linux-aarch64-small in ci/mkpipeline.sh
+ def main() -> int:
+     parser = argparse.ArgumentParser(
+         prog="mkpipeline",
+@@ -422,6 +446,8 @@ def fetch_hashes() -> None:
+     cmd = ["buildkite-agent", "pipeline", "upload"]
+     if args.dry_run:
+         cmd.append("--dry-run")
++    else:
++        initialize_cargo_bench_annotation(pipeline)
+     spawn.runv(cmd, stdin=yaml.dump(pipeline).encode())
  
-+    force = ui.env_is_truthy("CI_FORCE_SWITCH_TO_AWS", "1")
-     stuck: set[str] = set()
-     # TODO(def-): Remove me when Hetzner fixes its aarch64 availability
-     stuck.update(
-@@ -607,7 +617,7 @@ def switch_jobs_to_aws(pipeline: Any, priority: int) -> None:
-         ]
-     )
- 
--    if ui.env_is_truthy("CI_FORCE_SWITCH_TO_AWS", "0"):
-+    if force:
-         stuck = set(
-             {
-                 "hetzner-x86-64-16cpu-32gb",
-@@ -702,8 +712,14 @@ def switch_jobs_to_aws(pipeline: Any, priority: int) -> None:
-             continue
- 
-         agent = step["agents"].get("queue", None)
--        if not agent in stuck:
-+        if not agent or not agent.startswith("hetzner-"):
-+            continue
-+        # Dedicated queues like hetzner-x86-64-16cpu-32gb-doctests are separate
-+        # agent pools, so they only count as stuck by their own name, but they
-+        # map to AWS like the machine size they are named after.
-+        if agent not in stuck and not force:
-             continue
-+        agent = HETZNER_DEDICATED_QUEUE_SUFFIX.sub("", agent)
- 
-         if agent == "hetzner-aarch64-2cpu-4gb":
-             if "hetzner-x86-64-2cpu-4gb" not in stuck:
-@@ -748,11 +764,14 @@ def switch_jobs_to_aws(pipeline: Any, priority: int) -> None:
-             "hetzner-x86-64-dedi-16cpu-64gb",
-         ):
-             step["agents"]["queue"] = "linux-x86_64-large"
--        elif agent in (
--            "hetzner-x86-64-dedi-32cpu-128gb",
--            "hetzner-x86-64-dedi-48cpu-192gb",
--        ):
-+        elif agent == "hetzner-x86-64-dedi-32cpu-128gb":
-             step["agents"]["queue"] = "builder-linux-x86_64"
-+        elif agent == "hetzner-x86-64-dedi-48cpu-192gb":
-+            step["agents"]["queue"] = "l-builder-linux-x86_64"
-+        else:
-+            print(
-+                f"+++ WARNING: No AWS fallback for Hetzner queue {step['agents']['queue']}, keeping it"
-+            )
- 
- 
- def permit_rerunning_successful_steps(pipeline: Any) -> None:
+     if fail_build_reason is not None and not args.dry_run:
 ```
 
-**File**: `ci/release-qualification/pipeline.template.yml` (modified, +1/-1)
+**File**: `test/cargo-bench/mzcompose.py` (modified, +22/-7)
 ```diff
-@@ -823,7 +823,7 @@ steps:
-         timeout_in_minutes: 240
-         agents:
-           # building is expensive
--          queue: hetzner-x86-64-16cpu-32gb
-+          queue: hetzner-x86-64-dedi-16cpu-64gb
-         env:
-           # New versions of Docker don't work with GHCR + local builds
-           MZ_GHCR: 0
-```
-
-**File**: `misc/python/materialize/checks/mzcompose_actions.py` (modified, +3/-1)
-```diff
-@@ -252,7 +252,9 @@ def __init__(self, scenario: "Scenario", mz_service: str | None = None) -> None:
+@@ -856,13 +856,28 @@ def workflow_default(c: Composition, parser: WorkflowArgumentParser) -> None:
  
-     def execute(self, e: Executor) -> None:
-         c = e.mzcompose_composition()
--        iceberg_credentials = setup_polaris_for_iceberg(c)
-+        iceberg_credentials = setup_polaris_for_iceberg(
-+            c, polaris_extra_environment=["JAVA_OPTS_APPEND=-Xmx2g"]
+     failed = report.has_regressions or bool(current_failures) or bool(mispredicted)
+     if buildkite.is_in_buildkite():
+-        buildkite.add_annotation(
+-            "error" if failed else "info",
+-            f"Cargo bench results ({', '.join(shard_packages)})",
+-            markdown,
+-            # `bin/ci-annotate-errors` posts under the job's style-named
+-            # context (`error` or `info`) and would otherwise replace this table.
+-            context="cargo-bench",
++        title = ", ".join(shard_packages)
++        retry_count = int(os.getenv("BUILDKITE_RETRY_COUNT", "0"))
++        if retry_count > 0:
++            title += f" (retry #{retry_count})"
++        if failed:
++            title += " [failed]"
++        annotation = (
++            f"\n\n<details><summary>{title}</summary>\n\n"
++            f"{buildkite.truncate_annotation_str(markdown)}\n\n</details>\n\n"
 +        )
-         input = dedent(
-             f"""
-             > CREATE VIEW iceberg_credentials AS SELECT '{iceberg_credentials[0]}' AS user, '{iceberg_credentials[1]}' AS key;
++        annotate_cmd = [
++            "buildkite-agent",
++            "annotate",
++            "--context=cargo-bench",
++            "--append",
++        ]
++        # Only failures set the shared style so passing shards preserve it.
++        if failed:
++            annotate_cmd.append("--style=error")
++        spawn.runv(
++            annotate_cmd,
++            stdin=annotation.encode(),
+         )
+         try:
+             spawn.runv(
 ```
 
-**File**: `misc/python/materialize/mzcompose/composition.py` (modified, +5/-5)
+---
+
+### Incident Patch 2: `6f20f9fc` (2026-10-31)
+**Commit Message**: tests: Make cargo bench more stable (#40369)
+
+Fixes: [QAR-162](https://linear.app/materializeinc/issue/QAR-162)
+
+Motivated by https://buildkite.com/materialize/nightly/builds/18633
+
+Test run: https://buildkite.com/materialize/nightly/builds/18636 &
+https://buildkite.com/materialize/nightly/builds/18638
+
+**File**: `ci/nightly/pipeline.template.yml` (modified, +1/-9)
 ```diff
-@@ -150,6 +150,7 @@ def __init__(
-         self._tls = threading.local()
-         self.sources_and_sinks_ignored_from_validation = set()
-         self.is_sanity_restart_mz = sanity_restart_mz
-+        self.sanity_restart_max_retries = 60
-         self.current_test_case_name_override: str | None = None
-         self.host_network = host_network
-         self.resolve_image_specs = resolve_image_specs
-@@ -1396,15 +1397,14 @@ def sanity_restart_mz(self) -> None:
+@@ -297,18 +297,10 @@ steps:
+                 - common-ancestor
  
-             self.sql("SELECT 1")
- 
--            NUM_RETRIES = 60
--            for i in range(NUM_RETRIES + 1):
-+            num_retries = self.sanity_restart_max_retries
-+            for i in range(num_retries + 1):
-                 error = self.validate_sources_sinks_clusters()
-                 if not error:
-                     break
--                if i == NUM_RETRIES:
-+                if i == num_retries:
-                     raise ValueError(error)
--                # Sources and cluster replicas need a few seconds to start up
--                print(f"Retrying ({i + 1}/{NUM_RETRIES})...")
-+                print(f"Retrying ({i + 1}/{num_retries})...")
-                 time.sleep(1)
-         else:
-             ui.header(
+       - id: cargo-bench
+-        label: ":rust: Cargo bench against ancestor"
++        label: ":rust: Cargo bench against merge base or 'latest'"
+         sanitizer: skip
+         depends_on: []
+-        # Measured: 48 minutes for the largest closure built twice on the
+-        # 8-core queue, 73 minutes for a shard that also ran its benchmarks.
+         timeout_in_minutes: 240
+-        # Annotation-only while the noise floor on this hardware is being
+-        # calibrated. QAR-162 covers dropping `soft_fail` so regressions and
+-        # HEAD build failures fail the build.
+-        soft_fail: true
+-        # One shard per package with bench targets, so this should track that
+-        # package count. Extra shards exit as no-ops, fewer shards double up.
+         parallelism: 9
+         inputs:
+           - Cargo.lock
 ```
 
-**File**: `misc/python/materialize/mzcompose/helpers/iceberg.py` (modified, +2/-0)
+**File**: `ci/plugins/mzcompose/hooks/command` (modified, +1/-1)
 ```diff
-@@ -235,6 +235,7 @@ def setup_polaris_for_iceberg(
-     namespace: str = "default_namespace",
-     vended: bool = False,
-     static_credentials: bool = True,
-+    polaris_extra_environment: list[str] = [],
- ) -> tuple[str, str]:
+@@ -455,7 +455,7 @@ cleanup() {
+     && [[ ! "$BUILDKITE_LABEL" =~ Terraform\ .* ]] \
+     && [[ ! "$BUILDKITE_LABEL" =~ Orchestratord\ .* ]] \
+     && [[ ! "$BUILDKITE_LABEL" =~ Cluster\ spec\ sheet.* ]] \
+-    && [[ ! "$BUILDKITE_LABEL" =~ ^:rust:\ Cargo\ bench\ against\ ancestor ]]; then
++    && [[ ! "$BUILDKITE_LABEL" =~ ^:rust:\ Cargo\ bench\ .* ]]; then
+       echo "+++ services.log is empty, failing"
+       if [[ $CI_ANNOTATE_ERRORS_RESULT -ne 0 ]]; then
+         # Keep the retryable code (128 for GHCR/DockerHub trouble, 199 for a
+```
+
+**File**: `misc/python/materialize/cargo_bench/ancestor.py` (modified, +3/-4)
+```diff
+@@ -7,7 +7,7 @@
+ # the Business Source License, use of this software will be governed
+ # by the Apache License, Version 2.0.
+ 
+-"""Clamping of the cargo-bench comparison point to the bench baseline."""
++"""Clamping of cargo-bench pull request comparisons to the bench baseline."""
+ 
+ import subprocess
+ from pathlib import Path
+@@ -20,9 +20,8 @@
+ # benches ran on the system allocator.
+ #
+ # Bump this to the merge commit of any future change of that kind (allocator,
+-# bench profile, measurement harness). Without the bump, every comparison
+-# against an older ancestor reports the change itself as regressions and
+-# improvements until the next release branch point moves past it.
++# bench profile, measurement harness). Without the bump, PR comparisons
++# against an older merge base attribute changes in the bench setup to the PR.
+ BENCH_BASELINE = "e95ca7eec04d5817669176949c48a417856cf656"
+ 
+ 
+```
+
+**File**: `test/cargo-bench/mzcompose.py` (modified, +66/-32)
+```diff
+@@ -19,9 +19,10 @@
+ first run compiles it from scratch into a parked target dir and later runs
+ reuse that.
+ 
+-A package whose dependency closure has no committed change between the ancestor
+-and the current commit is not built at all: identical source at identical paths
+-would only reproduce the identical-binary skip below at the cost of two builds.
++Unless the benchmark harness changed, a package whose dependency closure has no
++committed change between the ancestor and the current commit is not built at
++all: identical source at identical paths would only reproduce the
++identical-binary skip below at the cost of two builds.
+ That prediction is unchecked by construction, so scheduled runs build those
+ packages anyway and fail when a predicted-unchanged package yields differing
+ binaries, which points at a hole in the closure or an unpinned compile-time
+@@ -76,6 +77,8 @@
+ # dependency versions, workspace profiles, and the rustflags cargo applies.
+ BUILD_INPUTS = ("Cargo.lock", "Cargo.toml", ".cargo")
+ 
++HARNESS_INPUTS = ("test/cargo-bench", "misc/python/materialize/cargo_bench")
++
+ 
+ @dataclass(frozen=True)
+ class TargetFailure:
+@@ -84,8 +87,10 @@ class TargetFailure:
+ 
+ 
+ def resolve_ancestor() -> str:
+-    """Pick the commit to compare against: `default_ancestor()`, moved forward to the bench baseline when HEAD contains the baseline and that ancestor does not."""
++    """Choose the comparison commit, clamping PR merge bases to the bench baseline."""
+     ancestor = default_ancestor()
++    if not buildkite.is_in_pull_request():
++        return ancestor
+     clamped = clamp_to_baseline(ancestor, "HEAD", MZ_ROOT)
+     if clamped != ancestor:
+         print(
+@@ -95,7 +100,7 @@ def resolve_ancestor() -> str:
+ 
+ 
+ def default_ancestor() -> str:
+-    """The merge base in a pull request, else the latest release tag."""
++    """The PR merge base, or the latest stable release's commit."""
+     if buildkite.is_in_pull_request():
+         return buildkite.get_merge_base()
+     current = MzVersion.parse_cargo()
+@@ -108,12 +113,9 @@ def default_ancestor() -> str:
+     ]
+     if not releases:
+         raise RuntimeError(f"no release tag older than {current} found")
+-    tag = spawn.capture(
++    return spawn.capture(
+         ["git", "rev-parse", f"{max(releases)}^{{commit}}"], cwd=MZ_ROOT
+     ).strip()
+-    # The tag sits on its release branch and carries backports that main
+-    # lacks, so the comparison point is where that branch left main.
+-    return spawn.capture(["git", "merge-base", tag, "HEAD"], cwd=MZ_ROOT).strip()
+ 
+ 
+ def target_dir() -> Path:
+@@ -369,6 +371,8 @@ def run_benches(
+     env: dict[str, str],
+     results_root: Path,
+     threshold: float,
++    *,
++    force_run: bool = False,
+ ) -> tuple[
+     list[TargetFailure], list[TargetFailure], list[TargetFailure], list[BuiltBench]
+ ]:
+@@ -382,16 +386,13 @@ def run_benches(
+     only in the ancestor is never run, since there is no HEAD result to
+     compare it against.
+ 
+-    Benchmarks that regress in the first pass are measured once more, both
+-    sides again, restricted to exactly those benchmark ids. Between-process
+-    variance on large inputs dwarfs criterion's within-run interval, and a
+-    swing that does not reproduce on the spot is not a regression. The rerun
+-    costs time proportional to the number of flagged rows, nothing when there
+-    are none.
++    First-pass regressions get up to four paired reruns, filtered to those IDs.
++    A clean comparison ends confirmation. Earlier attempts remain in artifacts.
++
++    `force_run` runs targets even when their binaries are identical.
+ 
+     Returns the ancestor, current, and rerun failures, then the targets
+-    skipped for identical binaries. A rerun failure is not a failure of the
+-    commit under test: the flagged rows keep their first-pass verdict.
++    skipped for identical binaries. Current-side failures also fail the step.
      """
-     Set up Polaris catalog with MinIO for Iceberg sink usage.
-@@ -274,6 +275,7 @@ def setup_polaris_for_iceberg(
-     with c.override(
-         Polaris(
-             extra_environment=[
-+                *polaris_extra_environment,
-                 f"AWS_ACCESS_KEY_ID={username}",
-                 f"AWS_SECRET_ACCESS_KEY={key}",
-             ],
-```
-
-**File**: `misc/python/materialize/mzcompose/services/postgres.py` (modified, +1/-1)
-```diff
-@@ -75,7 +75,7 @@ def __init__(
-                 "ports": ports,
-                 "environment": environment,
-                 "healthcheck": {
--                    "test": ["CMD", "pg_isready", "-U", "postgres"],
-+                    "test": ["CMD", "pg_isready", "-h", "127.0.0.1", "-U", "postgres"],
-                     "interval": "1s",
-                     "start_period": "30s",
-                 },
-```
-
-**File**: `misc/python/materialize/scalability/endpoint/endpoints.py` (modified, +20/-3)
-```diff
-@@ -9,11 +9,12 @@
- 
- import psycopg
- 
--from materialize import git
-+from materialize import git, spawn
- from materialize.docker import get_mz_version_from_image_tag
- from materialize.mz_version import MzVersion
- from materialize.mzcompose import ADDITIONAL_BENCHMARKING_SYSTEM_PARAMETERS
- from materialize.mzcompose.composition import Composition
-+from materialize.mzcompose.services.balancerd import Balancerd
- from materialize.mzcompose.services.listener_config import (
-     resolve_listeners_config_path,
- )
-@@ -218,8 +219,24 @@ def up_internal(self) -> None:
-             self.composition.sql("grant materialize to user1;")
- 
-             if self.use_balancerd:
--                self.composition.up("balancerd")
--                self._port = self.composition.default_port("balancerd")
-+                container_id = self.composition.container_id("materialized")
-+                assert container_id is not None
-+                backend_ip = spawn.capture(
-+                    [
-+                        "docker",
-+                        "inspect",
-+                        "--format={{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}",
-+                        container_id,
-+                    ]
-+                ).strip()
-+                with self.composition.override(
-+                    Balancerd(
-+                        static_resolver_addr=f"{backend_ip}:6875",
-+                        https_resolver_template=f"{backend_ip}:6876",
-+                    )
-+                ):
-+                    self.composition.up("balancerd")
-+                    self._port = self.composition.default_port("balancerd")
-             else:
-                 self._port = self.composition.default_port("materialized")
-             # TODO: Also make it work through balancerd
-```
-
-**File**: `misc/python/materialize/sqlsmith.py` (modified, +1/-0)
-```diff
-@@ -66,6 +66,7 @@
-     "timestamp out of range",
-     "date out of range",
-     "integer out of range",
-+    "OID out of range",
-     "unterminated escape sequence in LIKE",
-     "null character not permitted",
-     "is defined for numbers between",
+     ancestor_by_key = {(b.package, b.name): b for b in ancestor_built}
+     ancestor_target_by_key = {(t.package, t.name): t for t in ancestor_targets}
+@@ -431,7 +432,8 @@ def run_benches(
+         ancestor_digest = loaded_image_digest(ancestor_bin.executable, scratch)
+         head_digest = loaded_image_digest(head_bin.executable, scratch)
+         if (
+-            ancestor_digest is not None
++            not force_run
++            and ancestor_digest is not None
+             and head_digest is not None
+             and ancestor_digest == head_digest
+         ):
+@@ -466,18 +468,30 @@ def run_benches(
+         # id, so an anchored alternation reruns exactly the flagged ids and
+         # nothing else.
+         pattern = "^(?:" + "|".join(re.escape(id) for id in regressed) + ")$"
+-        ancestor_rc, head_rc = run_pair(
+-            ancestor_bin,
+-            head_bin,
+-            env,
+-            results_root / RERUN / head_bin.package / head_bin.name,
+-            [pattern],
+-            f", confirming {len(regressed)} regression(s)",
+-            h
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #40383** (2026-10-31): cargo-bench: Only create one CI annotation (@def-)
 - **PR #40379** (2026-10-30): doc: lead v26.48 Kafka sink headers note with the transactional use case (@val-materialize)
 - **PR #40375** (2026-10-30): release: mark v26.48 as released (@materialize-bot)
 - **PR #40374** (closed): v26.48.2 release notes (@bosconi)
 - **PR #40373** (closed): v26.48.1 release notes (@bosconi)
-- **PR #40364** (2026-10-30): compute: default enable_columnar_accumulable_diff to true (@antiguru)
-- **PR #40362** (2026-10-30): build(deps): bump msgpack from 1.2.3 to 1.2.4 in /misc/dbt-materialize in the simple group (@dependabot[bot])
+- **PR #40369** (2026-10-31): tests: Make cargo bench more stable (@def-)
 
 ---
 
@@ -1627,28 +1399,53 @@ Test run: https://buildkite.com/materialize/nightly/builds/18641
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump msgpack from 1.2.3 to 1.2.4 in /misc/dbt-materialize in the si
+## X. cargo-bench: Only create one CI annotation (#40383)
 
 **RULE**:
-When implementing operations in `misc/dbt-materialize/requirements.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ci/mkpipeline.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `225e7beb`: build(deps): bump msgpack from 1.2.3 to 1.2.4 in /misc/dbt-materialize in the simple group (#40362). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `07eda4c6`: cargo-bench: Only create one CI annotation (#40383). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `misc/dbt-materialize/requirements.txt`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/mkpipeline.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-msgpack==1.2.4
+def initialize_cargo_bench_annotation(pipeline: Any) -> None:
+    """Open the shared results disclosure before Cargo bench shards start."""
+    if not any(
+        step.get("id") == "cargo-bench" and not step.get("skip")
+        for step in steps(pipeline)
+    ):
+        return
+    initialized_key = "cargo-bench-annotation-initialized"
+    if (
+        spawn.capture(
+            ["buildkite-agent", "meta-data", "get", initialized_key, "--default=false"]
+        ).strip()
+        == "true"
+    ):
+        return
+    # NOTE: Keep the outer details open so appends, including retries, stay
+    # nested. The HTML renderer closes it at the end of the annotation.
+    spawn.runv(
+        ["buildkite-agent", "annotate", "--context=cargo-bench", "--style=info"],
+        stdin=b"<details><summary>Cargo bench results</summary>\n\n",
+    )
+    spawn.runv(["buildkite-agent", "meta-data", "set", initialized_key, "true"])
+
+
+    else:
+        initialize_cargo_bench_annotation(pipeline)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-msgpack==1.2.3
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `225e7beb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `07eda4c6` are properly handled with clean fallback behavior.

@@ -6606,3 +6606,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf` | `https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-10-31T14:01:19.852Z |
 | `learn-huggingface-minimaxai-minimax-h3` | `https://huggingface.co/MiniMaxAI/MiniMax-H3` | `hf-minimax` | Multi-dimensional audit evidence | 2026-10-31T14:08:08.588Z |
 | `learn-github-apollographql-apollo-kotlin` | `https://github.com/apollographql/apollo-kotlin` | `c4701d11` | Multi-dimensional audit evidence | 2026-10-31T14:08:14.800Z |
+| `learn-huggingface-qwen-qwen3-8-flash-next` | `https://huggingface.co/Qwen/Qwen3.8-Flash-Next` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-31T14:19:29.141Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `758c46de` | Multi-dimensional audit evidence | 2026-10-31T14:19:37.029Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `07eda4c6` | Multi-dimensional audit evidence | 2026-10-31T14:19:42.358Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `279a17f6` | Multi-dimensional audit evidence | 2026-10-31T14:19:44.472Z |
