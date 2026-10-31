@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T19:00:42.433Z",
+  "last_updated": "2026-10-31T21:37:33.023Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3544,6 +3544,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-projectcontour-contour"
+    },
+    {
+      "id": "CD-9JRZ",
+      "directive_title": "Merge pull request #850 from Kuddev/fix/technical-protocol-name-check-20261101",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Kuddev/pebrel",
+      "source_commit": "9d8db55f",
+      "date_staged": "2026-10-31",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-kuddev-pebrel"
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T21:30:49.009Z",
+  "last_updated": "2026-10-31T21:39:34.933Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -185,14 +185,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cactus-compute-whistle",
-      "content_hash": "61c1551e84f8a8f2feeed7f979dff8e65c4b041c54575edbf9d2b3814b7e1851",
-      "verified_at": "2026-10-28T20:08:48.997Z",
+      "content_hash": "a8e594c9fdeec1c24399d3f5406a92a32bed3e5e43b6c40153fb2a11cc26c26e",
+      "verified_at": "2026-10-31T21:39:34.932Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T20:08:48.997Z"
+      "last_updated": "2026-10-31T21:39:34.932Z"
     },
     "Open-Source-Legal/OpenContracts": {
       "repository": "Open-Source-Legal/OpenContracts",
@@ -5181,14 +5181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kuddev-pebrel",
-      "content_hash": "8f761374585ff3f26c1c78d2b8244b272f24d84a088f50d4d43514aed2918605",
-      "verified_at": "2026-10-31T01:53:42.503Z",
+      "content_hash": "7583de199830d6234f06aa19a92600f36d1a42c312e3f4ea1cc607d6b55f1867",
+      "verified_at": "2026-10-31T21:37:33.028Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T01:53:42.503Z"
+      "last_updated": "2026-10-31T21:37:33.028Z"
     },
     "alibaba/formily": {
       "repository": "alibaba/formily",

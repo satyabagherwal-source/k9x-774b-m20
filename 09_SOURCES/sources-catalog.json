@@ -195,8 +195,8 @@
     "sourceUrl": "https://huggingface.co/Cactus-Compute/whistle",
     "sourceVersion": "hf-cactus-compute-whistle",
     "license": "Open-Source",
-    "contentHash": "61c1551e84f8a8f2feeed7f979dff8e65c4b041c54575edbf9d2b3814b7e1851",
-    "lastHarvestedAt": "2026-10-28T20:08:48.989Z",
+    "contentHash": "a8e594c9fdeec1c24399d3f5406a92a32bed3e5e43b6c40153fb2a11cc26c26e",
+    "lastHarvestedAt": "2026-10-31T21:39:34.923Z",
     "learningId": "learn-huggingface-cactus-compute-whistle"
   },
   "hf-qwen-qwen3.8-27b": {
@@ -3373,10 +3373,10 @@
     "repository": "Kuddev/pebrel",
     "platform": "github",
     "sourceUrl": "https://github.com/Kuddev/pebrel",
-    "sourceVersion": "cf6bafb2",
+    "sourceVersion": "9d8db55f",
     "license": "GPL-3.0",
-    "contentHash": "8f761374585ff3f26c1c78d2b8244b272f24d84a088f50d4d43514aed2918605",
-    "lastHarvestedAt": "2026-10-31T01:53:42.492Z",
+    "contentHash": "7583de199830d6234f06aa19a92600f36d1a42c312e3f4ea1cc607d6b55f1867",
+    "lastHarvestedAt": "2026-10-31T21:37:33.017Z",
     "learningId": "learn-github-kuddev-pebrel"
   },
   "alibaba-formily": {

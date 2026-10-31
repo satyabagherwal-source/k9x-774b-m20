@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source**: github ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
-> **Source Version**: `cf6bafb2`  
+> **Source Version**: `9d8db55f`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T01:53:42.180Z  
+> **Timestamp**: 2026-10-31T21:37:32.726Z  
 > **Learning ID**: `learn-github-kuddev-pebrel`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T01:53:41.966Z  
+> **Harvest Timestamp**: 2026-10-31T21:37:32.121Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI-native, GPU-accelerated terminal emulator for Windows with SSH, persistent sessions, split panes, and first-class AI CLI workflows.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3653 stars
+- **Stars / Engagement**: 3663 stars
 
 ---
 
@@ -1204,150 +1204,250 @@ if __name__ == "__main__":
 
 ```
 
-### Core Architecture Module: `nebula_app/src/ai_hook.rs`
+### Core Architecture Module: `nebula_app/res/prompt-suggestions/claude/hooks/prompt.js`
 ```
-//! AI lifecycle integration. The dependency flow is:
-//! transport -> protocol/payload -> typed events -> ordering -> pane lifecycle.
-//!
-//! UI adapters render the shared lifecycle and deliver its notifications. They
-//! never reinterpret a completed hook by scanning terminal prose. Screen evidence
-//! is an explicit fallback for capabilities absent from the active integration.
-//!
-//! `PEBREL_HOOK_LOG` (legacy `NEBULA_HOOK_LOG`) diagnoses bridge delivery without
-//! payloads; `GateVerdict` explains rejected events in application debug logs.
-
-mod bridges;
-mod event;
-pub(crate) mod installation;
-pub(crate) mod integrations;
-pub(crate) mod lifecycle;
-mod native_events;
-mod ordering;
-mod payload;
-mod protocol;
-pub(crate) mod remote;
-
-pub(crate) use event::CodexHookMode;
-pub use event::{
-    AiBackgroundTasks, AiHookCapabilities, AiHookEvent, AiHookKind, AiPermissionMode,
-    AiTurnOutcome, AttentionContext, capabilities_for,
+// Claude Code function hooks own the composer. No screen parsing, draft writes,
+// model overrides, transcript polling, or per-user style storage live here.
+const state = {
+  revision: 0,
+  interactive: false,
+  composer: false,
+  busy: false,
+  turn: null,
+  handled: null,
+  loading: null,
+  dots: 1,
+  tick: null,
+  deadline: null,
+  scheduled: null,
 };
-pub use ordering::GateVerdict;
-pub(crate) use ordering::{accept_for_pane, reorder_batch};
-use protocol::parse_envelope;
-pub(crate) use protocol::parse_remote_envelope;
 
-#[cfg(test)]
-mod native_tests;
-#[cfg(test)]
-mod tests;
-
-/// Environment variable carrying this instance's pipe name into child shells
-/// (ConPTY merges the current process environment, so setting it process-wide
-/// before the first PTY spawn covers every pane).
-pub const PIPE_ENV: &str = "PEBREL_NOTIFY_PIPE";
-pub const LEGACY_PIPE_ENV: &str = "NEBULA_NOTIFY_PIPE";
-/// Per-pane identity, injected into each pane's PTY environment.
-pub const PANE_ENV: &str = "PEBREL_PANE_ID";
-pub const LEGACY_PANE_ENV: &str = "NEBULA_PANE_ID";
-/// Absolute path of `nebula-hook.exe`, exported so the opencode Bun plugin
-/// (which cannot resolve nebula.exe's install dir on its own) can shell out to
-/// the bridge. Same process-wide scope as [`PIPE_ENV`].
-pub const HOOK_EXE_ENV: &str = "PEBREL_HOOK_EXE";
-pub const LEGACY_HOOK_EXE_ENV: &str = "NEBULA_HOOK_EXE";
-
-/// 仅用于阻止未知 notify 包装器再次套娃；子串不能作为修改/删除的归属依据。
-fn contains_helper(value: &str) -> bool {
-    value.contains("pebrel-hook") || value.contains("nebula-hook")
+function stopLoading($) {
+  state.tick?.cancel();
+  state.deadline?.cancel();
+  state.tick = state.deadline = null;
+  if (state.loading !== null) {
+    state.loading = null;
+    $.ui.invalidate("ui.render");
+  }
 }
 
-fn is_helper_executable(value: &str) -> bool {
-    let filename = value.rsplit(['/', '\\']).next().unwrap_or_default();
-    let absolute = value.starts_with('/')
-        || value.starts_with("\\\\")
-        || (value.as_bytes().first().is_some_and(u8::is_ascii_alphabetic)
-            && value.as_bytes().get(1) == Some(&b':')
-            && matches!(value.as_bytes().get(2), Some(b'/' | b'\\')));
-    (value == filename || absolute)
-        && !value.contains(['"', '\r', '\n', '\0'])
-        && ["pebrel-hook.exe", "nebula-hook.exe", "pebrel-hook", "nebula-hook"]
-            .iter()
-            .any(|name| filename.eq_ignore_ascii_case(name))
+function invalidate($) {
+  state.revision += 1;
+  state.scheduled?.cancel();
+  state.scheduled = null;
+  stopLoading($);
 }
 
-/// 只接受历史安装器产生的单条调用；echo、管道和追加命令仍属于用户。
-fn is_helper_shell_command(command: &str, source: &str) -> bool {
-    let Some(path) = command.trim().strip_suffix(source).and_then(|s| s.strip_suffix(' ')) else {
-        return false;
-    };
-    let path = path.trim_end();
-    let executable = if let Some(quoted) = path.strip_prefix('"').and_then(|s| s.strip_suffix('"'))
-    {
-        if quoted.contains('"') {
-            return false;
-        }
-        quoted
-    } else if let Some(quoted) = path.strip_prefix('\'').and_then(|s| s.strip_suffix('\'')) {
-        let decoded = quoted.replace("'\\''", "'");
-        return remote::quote(&decoded) == path && is_helper_executable(&decoded);
-    } else {
-        if path.chars().any(char::is_whitespace)
-            || path.contains(['"', '\'', ';', '&', '|', '<', '>'])
-        {
-            return false;
-        }
-        path
-    };
-    is_helper_executable(executable)
+function current(revision) {
+  return state.revision === revision && state.interactive && state.composer && !state.busy;
 }
 
-/// The hook entry's argv tail. `claude` is the source discriminator
-/// `nebula-hook` reads from `args[0]`, and it must travel as a real argument:
-/// appended to the command string instead, some shell has to re-parse the whole
-/// line, which is exactly what broke in #80.
-const HELPER_ARGS: [&str; 1] = ["claude"];
-
-/// Claude hook events we subscribe to. Session boundaries carry the id needed
-/// for resume/fork; PostToolUse lets a stale permission state return to working
-/// before the whole turn completes.
-const CLAUDE_EVENTS: [&str; 10] = [
-    "SessionStart",
-    "UserPromptSubmit",
-    "Notification",
-    "PermissionRequest",
-    "PreToolUse",
-    "PostToolUse",
-    "PostToolUseFailure",
-    "Stop",
-    "StopFailure",
-    "SessionEnd",
-];
-
-pub use local::{setup_ai_cli, spawn_config_guard};
-#[cfg(windows)]
-pub use windows::spawn_gpui_server;
-#[cfg(all(windows, feature = "legacy-shell"))]
-pub use windows::spawn_server;
-
-#[cfg(unix)]
-mod unix;
-#[cfg(unix)]
-pub use unix::spawn_gpui_server;
-
-mod local;
-#[cfg(windows)]
-mod windows;
-
-pub(crate) fn apply_child_environment(env: &mut std::collections::HashMap<String, String>) {
-    #[cfg(unix)]
-    unix::apply_child_environment(env);
-    #[cfg(not(unix))]
-    let _ = env;
+function startLoading($, text, revision) {
+  state.loading = text;
+  state.dots = 1;
+  $.ui.invalidate("ui.render");
+  state.tick = $.clock.every(400, () => {
+    if (!current(revision)) return stopLoading($);
+    state.dots = state.dots % 3 + 1;
+    $.ui.invalidate("ui.render");
+  });
 }
 
-pub(crate) fn shutdown() {
-    #[cfg(unix)]
-    unix::shutdown();
+function boundedMessages(messages) {
+  function excerpt(message, limit) {
+    let text = message.text;
+    if (typeof text !== "string" || !/\S/u.test(text)) return "";
+    if (text.length > limit) {
+      const gap = "\n[... omitted ...]\n";
+      if (limit <= gap.length + 2) {
+        text = text.slice(-limit).replace(/^[\uDC00-\uDFFF]/, "");
+      } else {
+        const headLength = Math.floor((limit - gap.length) / 2);
+        const head = text.slice(0, headLength).replace(/[\uD800-\uDBFF]$/, "");
+        const tail = text.slice(-(limit - gap.length - headLength)).replace(/^[\uDC00-\uDFFF]/, "");
+        text = head + gap + tail;
+      }
+    }
+    return text;
+  }
+  const result = [];
+  let remaining = 12000;
+  let userIndex = -1;
+  // Reserve the latest user's wording even after a long, tool-heavy answer.
+  for (let index = messages.length - 1; index >= 0; index -= 1) {
+    if (messages[index].role !== "user") continue;
+    const text = excerpt(messages[index], 3000);
+    if (text.trim() === "") continue;
+    userIndex = index;
+    result.push({ index, message: { role: "user", text } });
+    remaining -= text.length;
+    break;
+  }
+  for (let index = messages.length - 1; index >= 0 && remaining > 0 && result.length < 24; index -= 1) {
+    if (index === userIndex) continue;
+    const message = messages[index];
+    if (message.role !== "user" && message.role !== "assistant") continue;
+    const text = excerpt(message, Math.min(remaining, 3000));
+    if (text.trim() === "") continue;
+    remaining -= text.length;
+    result.push({ index, message: { role: message.role, text } });
+  }
+  return result.sort((a, b) => a.index - b.index).map(entry => entry.message);
+}
+
+async function bridge($) {
+  const [endpoint, token, nativeSuggestion] = await Promise.all([
+    $.env.get("PEBREL_PREDICTION_ENDPOINT"),
+    $.env.get("PEBREL_PREDICTION_TOKEN"),
+    $.env.get("CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION"),
+  ]);
+  // Suppress the built-in inference at process launch, never via persisted
+  // config.set or by discarding its already-paid result in prompt.suggest.
+  if (nativeSuggestion !== "false" && nativeSuggestion !== "0") return null;
+  const match = /^http:\/\/127\.0\.0\.1:(\d{1,5})$/.exec(endpoint ?? "");
+  if (!match || Number(match[1]) < 1 || Number(match[1]) > 65535) return null;
+  if (!token || token.length > 512 || /[\r\n]/.test(token)) return null;
+  return { endpoint, headers: { Authorization: `Bearer ${token}` } };
+}
+
+function readJson(response) {
+  if (!response.ok || typeof response.text !== "string" || response.text.length > 8192) {
+    throw new Error("Invalid prediction bridge response");
+  }
+  let bytes = 0;
+  for (const char of response.text) {
+    const point = char.codePointAt(0);
+    bytes += point <= 0x7f ? 1 : point <= 0x7ff ? 2 : point <= 0xffff ? 3 : 4;
+    if (bytes > 8192) throw new Error("Invalid prediction bridge response");
+  }
+  return JSON.parse(response.text);
+}
+
+function candidate(value) {
+  if (typeof value !== "string" || value.length > 1024) return null;
+  if (/[\u0000-\u001F\u007F-\u009F\u2028\u2029]/.test(value)) return null;
+  const text = value.trim();
+  return text && [...text].length <= 240 ? text : null;
+}
+
+async function sameEmptyComposer($, revision, session) {
+  if (!current(revision)) return false;
+  const [id, draft] = await Promise.all([$.session.id(), $.prompt.read()]);
+  return current(revision) && id === session && draft.text === "";
+}
+
+async function predict($, turn, revision) {
+  try {
+    if (!current(revision)) return;
+    const [connection, session, draft] = await Promise.all([
+      bridge($), $.session.id(), $.prompt.read(),
+    ]);
+    if (!connection || !current(revision) || draft.text !== "") return;
+    const config = readJson(await $.http.fetch(
+      `${connection.endpoint}/v1/prompt-suggestions/config`,
+      { headers: connection.headers },
+    ));
+    // Settings own model-name validation; the complete response is bounded above.
+    if (!config.enabled || typeof config.loading_text !== "string" ||
+        config.loading_text.trim() === "" ||
+        /[\u0000-\u001F\u007F-\u009F\u2028\u2029]/.test(config.loading_text)) return;
+    if (!await sameEmptyComposer($, revision, session)) return;
+    startLoading($, config.loading_text, revision);
+    const messages = boundedMessages(await $.session.messages());
+    if (!messages.some(message => message.role === "user")) return;
+    if (!await sameEmptyComposer($, revision, session)) return;
+    const response = readJson(await $.http.fetch(
+      `${connection.endpoint}/v1/prompt-suggestions`,
+      {
+        method: "POST",
+        headers: { ...connection.headers, "Content-Type": "application/json" },
+        body: JSON.stringify({ agent: "claude", session, turn, revision, messages }),
+      },
+    ));
+    const text = candidate(response.suggestion);
+    if (text && await sameEmptyComposer($, revision, session)) {
+      // Native suggest rechecks empty/not-working atomically when it lands.
+      // It owns Tab/right-arrow acceptance and never submits the draft.
+      stopLoading($);
+      await $.prompt.suggest({ text });
+    }
+  } catch {
+    // Predictions are optional; a failed bridge must not disrupt a main turn.
+  } finally {
+    if (state.revision === revision) stopLoading($);
+  }
+}
+
+export function register(on) {
+  on("session.start", ($, event, next) => {
+    invalidate($);
+    state.interactive = event.isInteractive && event.surface === "terminal";
+    state.composer = state.busy = false;
+    state.turn = state.handled = null;
+    return next(event);
+  });
+
+  on("turn.start", ($, event, next) => {
+    if (event.agentId === undefined) {
+      invalidate($);
+      state.busy = true;
+      state.turn = event.turnId;
+    }
+    return next(event);
+  });
+
+  on("turn.complete", async ($, event, next) => {
+    const result = await next(event);
+    if (event.agentId !== undefined || (state.turn && state.turn !== event.turnId)) return result;
+    state.busy = false;
+    if (state.handled === event.turnId) return result;
+    state.handled = event.turnId;
+    invalidate($);
+    if (event.reason !== "answer" || event.isAborted || !event.answer.trim()) return result;
+    const revision = state.revision;
+    // Leave the turn.complete stack before asking the composer. Awaiting the
+    // bridge inside that hook would keep the main turn working unnecessarily.
+    state.scheduled = $.clock.after(0, () => {
+      state.scheduled = null;
+      if (!current(revision)) return;
+      // http.fetch has no AbortSignal. Bound UI lifetime and ignore late results;
+      // the host owns the request/network deadline.
+      state.deadline = $.clock.after(10000, () => {
+        if (state.revision === revision) invalidate($);
+      });
+      return predict($, event.turnId, revision);
+    });
+    return result;
+  });
+
+  on("prompt.edit", ($, event, next) => {
+    // This event is pre-edit; cancel before next instead of rereading old text.
+    invalidate($);
+    return next(event);
+  });
+
+  on("prompt.change", ($, event, next) => {
+    invalidate($);
+    return next(event);
+  });
+
+  on("session.end", ($, event, next) => {
+    invalidate($);
+    state.composer = state.busy = false;
+    state.turn = state.handled = null;
+    if (event.reason !== "clear" && event.reason !== "resume") state.interactive = false;
+    return next(event);
+  });
+
+  on("ui.render", { component: "PromptHint" }, ($, event, next) => {
+    if (event.surface !== "terminal") return next(event);
+    state.composer = true;
+    if (!state.loading || event.props.isDraft || event.props.isWorking) return next(event);
+    const loading = `${state.loading}${".".repeat(state.dots)}`;
+    const tail = event.props.tail ? `${event.props.tail} ${loading}` : loading;
+    return next({ ...event, props: { ...event.props, tail } });
+  });
 }
 
 ```
@@ -1358,11 +1458,11 @@ pub(crate) fn shutdown() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #784** (2026-10-26): **[Bug] 字体回退后出现中文字符的渲染问题**
-  *Symptoms*: ### Operating system / 操作系统  Windows (WSL)  ### OS version and display / 系统版本与显示  Winodws  11 23H2  ### Pebrel version / 版本号  2.3.0  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  fish  ### Program running in the pane / 面板里正在跑的程序  Other / 其他, vim / nvim / other full-screen TUI — 全屏 TUI  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Terminal rendering / scrolling / selection / garbled text — 终端渲染、滚动、选区、乱码  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  # 字体启用 MonoLisa, Maple Mono NF CN # 程序 通过打开neovim或是yazi这样的tui工具, 查看文档   ### Expected behavior / 期望结果  <img width="550" height="142" alt="Image" src="https://github.com/user-attachments/assets/79b42eb1-a817-46bc-b5b5-31c68ab23d7e" />  来自于Windows Terminal的截图, 证明不是字体或是文件问题  ### Actual behavior / 实际结果  <img width="713" height="151" alt="Image" src="https://github.com/user-attachments/assets/dc760904-b4ed-4235-93f1-6d2fa627e96c" />  ### Logs / screenshots / 日志或截图  # 奇妙的问题 当文件的后辍名为txt或是md等文本文件时, 全部的渲染都是正常的  <img width="307" height="189" alt="Image" src="https://github.com/user-attachments/assets/c2e8d92d-17ec-425a-9659-e2e5a56c07e9" />  但是一但是代码文件, 经测试有cpp, java, zig , go, 全部都会出现如下的中文显示问题  <img width="713" height="151" alt="Image" src="https://github.com/user-attachments/assets/dc760904-b4ed-4235-93f1-6d2f
+- **Issue #821** (2026-10-31): **[Bug] Settings search ignores the UI language: Japanese queries find nothing except section names**
+  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows 11 25H2  ### Pebrel version / 版本号  2.3.1 (release). The same code is on current `main`.  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  Not sure / 不确定  ### Program running in the pane / 面板里正在跑的程序  Nothing, plain shell prompt / 什么都没跑  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Settings / theme / layout / blur — 设置页、主题、布局、模糊背景  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1. Set the UI language to Japanese. 2. Open Settings and type フォント (font), 不透明度 (opacity), プロキシ (proxy) or ショートカット (shortcut) in the settings search box. 3. Open the keymap page and type the Japanese name of an action shown in the list, for example コピー (copy).  ### Expected behavior / 期望结果  The search goes to the page that owns the setting (Appearance for フォント, Network for プロキシ, and so on), like "font" in English or "字体" in Chinese. On the keymap page, the rows whose Japanese action label matches are shown.  ### Actual behavior / 实际结果  Settings search does not work in Japanese. A Japanese query only matches the page names shown in the navigation (for example 外観). Words for the settings on a page are not matched. A few queries match by accident because Japanese and Chinese share the kanji (背景, 
 
-- **Issue #689** (2026-10-23): **[Bug] 辛苦佬加个删历史记录的，临时指令太多了有点碍事了**
-  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  .  ### Pebrel version / 版本号  2.2.1  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  cmd  ### Program running in the pane / 面板里正在跑的程序  Other / 其他  ### Connection type / 连接方式  Other / 其他  ### Affected area / 影响范围  Other / 其他  ### Did it work in a previous version? / 旧版本是否正常？  No, it never worked / 一直如此  ### Can you reproduce it? / 复现概率  Once / not sure / 仅一次  ### Steps to reproduce / 复现步骤  .  ### Expected behavior / 期望结果  .  ### Actual behavior / 实际结果  .  ### Logs / screenshots / 日志或截图  Reported from Pebrel Settings (Pebrel 2.2.1).  Platform: windows x86_64 Build: release  ### Non-default settings / 改过的设置  _No response_  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
+- **Issue #797** (2026-10-31): **[Bug] 右键 在pebrel中打开时 会弹出几十个终端选项卡**
+  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows 11 专业工作站版 Windows 11 专业工作站版  ### Pebrel version / 版本号  v2.3.1  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  PowerShell 7 (pwsh)  ### Program running in the pane / 面板里正在跑的程序  Other / 其他  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Startup crash / hang / cannot exit — 启动崩溃、卡死、无法退出, Terminal rendering / scrolling / selection / garbled text — 终端渲染、滚动、选区、乱码  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  <img width="241" height="1094" alt="Image" src="https://github.com/user-attachments/assets/68466ab2-7aa8-4be4-b39c-b7eb37632c9c" /> 打开一个后 在从文件夹右键点击 在pebrel中打开时 时 就会弹出几十个同样的终端弹窗 百分百复现 很难受  ### Expected behavior / 期望结果  fix it  ### Actual behavior / 实际结果  弹出42个选项卡后 就会新建一个进程  这个进程只有一个  ### Logs / screenshots / 日志或截图  <img width="518" height="1082" alt="Image" src="https://github.com/user-attachments/assets/f4339bf5-7060-42e6-8df0-6a0f0b0fd008" />  ### Non-default settings / 改过的设置  _No response_  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1379,580 +1479,415 @@ pub(crate) fn shutdown() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cf6bafb2` (2026-10-30)
-**Commit Message**: feat(terminal): add bounded APC image rendering (#767)
+### Incident Patch 1: `9d8db55f` (2026-10-31)
+**Commit Message**: Merge pull request #850 from Kuddev/fix/technical-protocol-name-check-20261101
 
-Add a bounded direct RGB/RGBA graphics profile with ordered replay, validated responses, independent placements, shared decode resources, and adjacent image paint batching. Preserve existing image protocols and enforce scoped memory budgets.
+fix: preserve protocol names and real process fixtures in naming checks
 
-**File**: `architecture/notes/nebula_terminal/kitty_graphics/2026-10-25-kitty-graphics-placements.md` (added, +126/-0)
+**File**: `architecture/notes/scripts/check_prohibited_names/2026-11-01-protocol-and-process-fixtures.md` (added, +71/-0)
 ```diff
-@@ -0,0 +1,126 @@
-+# Kitty protocol: placements own the grid, the cell size comes from the pane
+@@ -0,0 +1,71 @@
++# Graphics protocol and real process fixtures in naming checks
 +
 +## Status
 +
-+Proposed; implemented and validated locally on Windows x64 MSVC, Rust 1.97.1,
-+against yazi 26.9.1.
++Prepared for maintainer review under the task's explicit instruction to retain
++necessary technical terms. This is a scoped governance correction, separate from
++the release candidate and its behavior fixes.
 +
 +## Context
 +
-+Terminals that implement the Kitty protocol must serve two clients with
-+different dialects. Neovim transmits an image and then asks the terminal to
-+place it at the cursor with an explicit `c`/`r` cell count. yazi (and other
-+"KGP-old" clients) instead asks for one `1x1` placement per cell: it moves the
-+cursor to every cell of the preview rectangle and sends
-+`a=p,i=ID,p=INDEX,x=..,y=..,w=..,h=..,c=1,r=1` each time, with the source pixel
-+rectangle already computed on its side. The image is the union of the cells the
-+cursor visited, and no command carries the total size.
-+
-+The same clients ask the terminal for its cell geometry with `CSI 16 t` before
-+choosing a preview size. `vte 0.15` has no handler for that sequence, and ConPTY
-+reports a zero pixel dimension, so neither the parser nor the platform PTY can
-+answer. A client that never learns the cell size falls back to its configured
-+maximum pixel box and stretches that box across the whole preview rectangle.
-+
-+The repository already owns one lifetime model for grid images: cells carry
-+`ImageCell`, and a renderer keeps only weak references
-+([grid-owned images](../../term/2026-09-27-grid-owned-inline-images.md)). The
-+Kitty protocol has to join that model, not run beside it.
++The naming gate preserves compatibility interfaces while rejecting incidental
++product mentions. Release documentation needs the proper graphics protocol name.
++Terminal activity regressions must use the real executable identity consumed by
++the implementation, including a terminal multiplexer with an agent inside it.
 +
 +## Evidence
 +
-+Measured on yazi 26.9.1 previewing a 1179x1279 JPEG in a 46x20 cell preview
-+pane, 14x36 device pixels per cell (8.00x20.57 logical, scale 1.75).
++PR #849 failed the range check in run `41242096322`. The reported additions mix
++two legitimate interfaces with incidental comments, a hook fixture identifier,
++and a commit-message mention. Treating every reported line alike would either
++break meaningful tests or admit unrelated prose.
 +
-+- Without `CSI 16 t` the client decoded to 1200x900 (its configured maximum),
-+  asked for a 56x36 cell placement, and stretched that bitmap across the
-+  preview: aspect 0.759 of the source, i.e. visibly squashed.
-+- Answering `CSI 16 t` with `14`/`36` made the client decode to 644x698 and
-+  place 46x20 cells; the painted aspect became 0.9226 against the source 0.9218.
-+- A 1600x400 image placed as 46x5 cells painted 644x161, aspect 4.0000 against
-+  the source 4.0.
-+- A first implementation that reported pixel widths instead of cells, and that
-+  published one event per placement, produced 3680 events for one preview and a
-+  box larger than the pane.
++Two new regression methods reproduce four failed positive subcases against the
++previous checker: English and Chinese protocol names and two executable fixtures.
++The incidental prose and fixture label deliberately remain negative examples.
 +
 +## Decision
 +
-+`nebula_terminal::kitty_graphics::KittyGraphics` parses the APC commands
-+(`a=t` transfer with chunked base64, `a=p` placement, `a=d` erase, `a=q` probe,
-+`a=T` transfer-and-place) and translates each dialect into the existing grid
-+model:
++Recognize the complete English and Chinese graphics protocol names alongside
++the existing keyboard protocol forms. In the owning activity test source only,
++recognize the actual process assignment and the two-program fixture loop.
++Remove only those exact fragments, then scan all remaining text as before.
 +
-+- A placement union-tracked per image id becomes one `ImagePlacement`, anchored
-+  at the first cell the cursor visited. `a=p` writes the tile into the grid at
-+  the cursor and never moves the text cursor (`C=1`), so prompt state survives.
-+- The bitmap is published once per transfer, not once per placement: one
-+  `Event::KittyImage` carrying raw pixels, the channel count and the placement.
-+  Decoding happens on the app's background executor through the existing
-+  `InlineImageStore` queue.
-+- `a=d` clears the cells owning that image id, drops its pixels and geometry,
-+  and lets the next transfer with the same id start from a clean slate. yazi
-+  reuses one id for the process lifetime, so a surviving geometry would decode
-+  the next picture at the previous stride.
-+- `CSI 16 t` is answered from the raw byte stream, because the parser cannot see
-+  it, with `\x1b[6;height;width t` in device pixels.
-+- `Msg::CellMetrics` carries cell metrics without resizing the pseudo console.
-+  Panes whose born geometry equals their target geometry never send `Resize`, so
-+  without this message the stream would never learn the cell size.
-+- Shared-memory transfers (`t=s`) answer `ENOTSUP` so clients fall back to
-+  base64; the transfer path allocates no per-chunk temporaries and writes no
-+  files.
++Do not add a file, directory, commit or accepted subject to exemptions. Keep the
++per-commit range scan, including added-then-deleted content. Commit messages,
++comments, arbitrary strings and test labels retain their existing restrictions;
++the original failing candidate range is not expected to pass unchanged.
 +
 +## Rejected alternatives
 +
-+- Reporting pixel dimensions in the event: the terminal would have to divide by
-+  a cell size it may not know, which is exactly the bug above.
-+- One event per placement: a single preview emits thousands of placements.
-+- Keeping the previous geometry when a reused id starts a new transfer: decodes
-+  the new payload at the old stride.
-+- Accepting `t=s` probes: the payload is then a shared-memory name, not pixels,
-+  and the terminal has no portable way to map it.
-+- Asking for `a=q` support by replying `OK` to everything, including shared
-+  memory: the client would then never send base64 transfers.
-+- A second image store beside `InlineImageStore`: the grid already owns image
-+  lifetime, and two stores disagree after scroll, reflow or alt-screen swaps.
-+- Painting inside a cell-sized box and stretching the bitmap to fill it: a
-+  client that rounds its pixel area up to whole cells paints a slightly
-+  non-square picture; the placement therefore keeps the bitmap's own aspect.
++- Encode, concatenate or rename the real executable to evade the checker: this
++  conceals the compatibility interface and weakens the regression.
++- Admit every literal or comment in test files: this hides unrelated comparisons
++  and promotional URLs beside valid fixtures.
++- Exempt historical commits or switch to a final-tree-only scan: this loses the
++  existing contract for content added and later removed.
++- Broaden commit-message exceptions: process fixtures do not require that change.
 +
 +## Consequences
 +
-+The terminal core reports cells and pixels, never a division of the
-```
-
-**File**: `architecture/notes/nebula_terminal/kitty_graphics/2026-10-30-bounded-transfer-store.md` (added, +77/-0)
-```diff
-@@ -0,0 +1,77 @@
-+# Bound graphics transfers without conflating data and placement lifetimes
-+
-+## Status
-+
-+Implemented in the local PR review worktree. This budget repair is not a statement
-+that the complete graphics PR is ready to merge.
-+
-+## Context
-+
-+Frontend decode/cache limits do not constrain the protocol layer's raw image map
-+or incomplete base64 buffers. Conversely, dropping raw data whenever the last
-+visible cell disappears breaks the protocol's separate transmit/place lifecycle.
-+
-+## Evidence
-+
-+The [protocol review references](https://github.com/Kuddev/pebrel/pull/767)
-+distinguishes lowercase placement deletion from uppercase data deletion and
-+requires deletion commands to abort incomplete uploads. A headerless command for
-+an already stored ID must not create another independent partial transfer.
-+
-+## Decision
-+
-+[`KittyGraphics`](../../../../nebula_terminal/src/kitty_graphics.rs) owns one active
-+partial transfer and a FIFO-bounded named data store: at most 16 completed images
-+and 128 MiB of raw payload bytes. Incomplete base64 is limited to 24 MiB and to
-+the declared pixel count's encoded size, whichever is smaller. Append limits are
-+checked before joining or decoding. Capacity grows geometrically within that
-+limit rather than reallocating for every small chunk.
-+
-+Starting a new header abandons the previous partial context. A headerless new ID
-+does not borrow stale dimensions from its completed image. Any delete command
-+aborts the incomplete upload.
-+
-+Grid cells own placement identities; the protocol registry and event payloads
-+hold weak references where they must not prolong a placement or queued pixels.
-+Losing the last cell drops placement metadata, but named raw data remains in the
-+bounded store for a later `a=p`. Uppercase data deletion and FIFO eviction release
-+that stored data. A retransmission establishes new dimensions and identity.
-+
-+## Rejected alternatives
-+
-+- Rely only on the frontend's cache limit: leaves core maps unconstrained.
-+- Keep a strong placement identity in the protocol map: grid erasure no longer
-+  invalidates frontend work.
-+- Delete raw data whenever a placement dies: breaks re-display without retransmit.
-+- Reserve exactly one additional chunk each time: can repeatedly relocate an
-+  increasingly large buffer.
-+
-+## Consequences
-+
-+These are per-stage logical payload budgets, not a 128 MiB process-memory promise.
-+Encoded input, base64 decode temporaries, one background decode, frontend BGRA
-+cache, allocator overhead and GPU storage have separate lifetimes and costs.
-+The existing frontend queue/cache and synchronization semantics still require
-+their own review; passing the core regression set does not validate those paths.
++Real process identity and proper protocol names remain readable. Incidental
++comments, hook labels and commit prose must be cleaned in a normal replacement
++branch; published branches do not need to be force-pushed. Runtime behavior and
++the prohibited product-name list are unchanged.
 +
 +## Validation
 +
-+Small fixtures cover count eviction, oversized final chunks, abandoned/headerless
-+uploads, lowercase re-placement, uppercase release, deletion during an incomplete
-+upload, chunk boundaries and declared-cell scaling. No large-allocation or
-+reported machine-freezing reproduction is required by these tests.
-+
-+On 2026-10-30 the Windows core run passed 16 graphics tests and two cell-size query
-+tests. Architecture and whitespace checks passed against main `1b58f5dd`.
-+Full frontend rendering, synchronization and PR readiness are not established by
-+those checks.
++The naming and architecture-governance suites pass: 43 tests. Positive fixtures
++are paired with wrong-path, arbitrary-string, appended-comparison and appended-URL
++negative cases. The old checker fails all four new positive subcases. Existing
++staged, message, push/range, Unicode and merge-resolution coverage remains intact.
 +
 +## Supersedes
 +
-+None.
++None. Extends exact compatibility recognition while retaining the editorial
++boundary in `2026-10-22-remote-control-references.md`.
 +
 +## Revisit when
 +
-+Transport, placement or decode ownership changes, or measured workloads justify a
-+different budget. Such changes must preserve bounded incomplete transfers and the
-+separate stored-data/placement lifetimes.
++The protocol terminology or the owning process-identity fixtures change. Supply
++both a real false positive and out-of-scope counterexamples before extending it.
 ```
 
-**File**: `architecture/notes/nebula_terminal/kitty_graphics/2026-10-30-ordered-placements.md` (added, +108/-0)
+**File**: `scripts/check_prohibited_names.py` (modified, +6/-0)
 ```diff
-@@ -0,0 +1,108 @@
-+# Ordered graphics placements and shared image resources
+@@ -86,6 +86,7 @@
+     re.compile(r"\bsource\s*=\s*[\"']git\+https?://[^\"']+[\"']", re.IGNORECASE),
+ )
+ PROTOCOL_COMPATIBILITY_PATTERNS = (
++    re.compile(r"\bkitty\s+(?:graphics\s+protocol\b|图形协议)", re.IGNORECASE),
+     re.compile(r"\bKITTY_[A-Z0-9_]+\b"),
+     re.compile(r"\bkitty_(?:keyboard|seq|event|release|escape|input)[A-Za-z0-9_]*\b", re.IGNORECASE),
+     re.compile(r"\b(?:kitty|tmux)/(?:legacy|style|protocol)\b", re.IGNORECASE),
+@@ -250,6 +251,11 @@ def source_without_allowed_occurrences(path: str, text: str) -> str:
+         text = text.replace(r"/\/tmux$/", "").replace(r"\/tmux\)$/", "")
+     if path == "nebula_app/src/ssh_session/resume/tests.rs":
+         text = re.sub(r'(?<=\\n)[0-9]+ pts/[0-9]+ tmux: client(?=\\n)', "", text)
++    if path == "nebula_app/src/gpui_shell/terminal/view/activity_tests.rs":
++        # These fixtures exercise actual process identity. Labels and explanatory
++        # prose are not interfaces, and appended text must remain checked.
++        text = text.replace('view.running_program = Some("tmux".into())', "")
++        text = text.replace('for program in ["tmux", "screen"]', "")
+     return mobile_reference_remainder(path, text)
+ 
+ 
+```
+
+**File**: `scripts/tests/test_prohibited_names.py` (modified, +33/-0)
+```diff
+@@ -21,6 +21,39 @@ def run_git(repository: Path, *args: str) -> None:
+ 
+ 
+ class ProhibitedNamesTests(unittest.TestCase):
++    def test_graphics_protocol_names_preserve_the_exact_technical_reference(self) -> None:
++        for text in ("Support the Kitty graphics protocol.", "支持 Kitty 图形协议。"):
++            with self.subTest(text=text):
++                self.assertFalse(check_prohibited_names.prohibited_source_line("CHANGELOG.md", text))
++                self.assertTrue(check_prohibited_names.prohibited_source_line(
++                    "CHANGELOG.md", text + " Compare with Kitty."
++                ))
++                self.assertTrue(check_prohibited_names.prohibited_source_line(
++                    "CHANGELOG.md", text + " https://example.invalid/kitty"
++                ))
++        for text in ("Kitty graphics are beautiful", "Kitty 图像", "Use Kitty instead",
++                     "Kitty graphics protocol_adapter"):
++            self.assertTrue(check_prohibited_names.prohibited_source_line("CHANGELOG.md", text))
++
++    def test_activity_fixtures_preserve_real_process_names_without_exempting_prose(self) -> None:
++        path = "nebula_app/src/gpui_shell/terminal/view/activity_tests.rs"
++        cases = ('view.running_program = Some("tmux".into());',
++                 'for program in ["tmux", "screen"] {')
++        for text in cases:
++            with self.subTest(text=text):
++                self.assertFalse(check_prohibited_names.prohibited_source_line(path, text))
++                self.assertTrue(check_prohibited_names.prohibited_source_line("README.md", text))
++                self.assertTrue(check_prohibited_names.prohibited_source_line(
++                    path.replace("activity_tests", "other_tests"), text
++                ))
++                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " // use tmux"))
++                self.assertTrue(check_prohibited_names.prohibited_source_line(
++                    path, text + " // https://example.invalid/tmux"
++                ))
++        for text in ('let label = "tmux";', '// tmux 里的 Agent 经 hook 报告回合',
++                     'hook("inside-tmux", "UserPromptSubmit", 1)', 'println!("tmux");'):
++            self.assertTrue(check_prohibited_names.prohibited_source_line(path, text))
++
+     def test_desktop_endpoint_protocol_references_do_not_allow_prose(self) -> None:
+         cases = (
+             ("resume.rs", 'Self { executable: "tmux".into(), socket: String::new() }'),
+```
+
+---
+
+### Incident Patch 2: `7b09d5e4` (2026-10-31)
+**Commit Message**: fix: preserve technical protocol and process fixture references
+
+**File**: `architecture/notes/scripts/check_prohibited_names/2026-11-01-protocol-and-process-fixtures.md` (added, +71/-0)
+```diff
+@@ -0,0 +1,71 @@
++# Graphics protocol and real process fixtures in naming checks
 +
 +## Status
 +
-+Implemented for the direct, uncompressed RGB/RGBA profile. Review and validation
-+are limited to that profile rather than claiming the entire graphics protocol.
++Prepared for maintainer review under the task's explicit instruction to retain
++necessary technical terms. This is a scoped governance correction, separate from
++the release candidate and its behavior fixes.
 +
 +## Context
 +
-+The first implementation mutated the grid while VTE could still be buffering a
-+DEC 2026 frame. It conflated a bitmap with one screen-space bounding box, lacked
-+transfer/placement replies, and marked publication complete before a saturated
-+frontend queue could accept it.
++The naming gate preserves compatibility interfaces while rejecting incidental
++product mentions. Release documentation needs the proper graphics protocol name.
++Terminal activity regressions must use the real executable identity consumed by
++the implementation, including a terminal multiplexer with an agent inside it.
 +
 +## Evidence
 +
-+The [protocol review references](https://github.com/Kuddev/pebrel/pull/767) defines
-+independent image/placement identities, source crops, first-chunk metadata,
-+quiet-response modes, and cursor movement by the complete placement row count.
-+The upstream `graphics.c` linked in the protocol review deletion filters distinguish visible placements
-+from an explicit image/placement ID. VTE 0.15.0 has no general APC handler hook.
++PR #849 failed the range check in run `41242096322`. The reported additions mix
++two legitimate interfaces with incidental comments, a hook fixture identifier,
++and a commit-message mention. Treating every reported line alike would either
++break meaningful tests or admit unrelated prose.
++
++Two new regression methods reproduce four failed positive subcases against the
++previous checker: English and Chinese protocol names and two executable fixtures.
++The incidental prose and fixture label deliberately remain negative examples.
 +
 +## Decision
 +
-+Reuse the existing private, one-shot OSC title markers for ordered operations.
-+The input stream holds command payloads and the protocol state. The Term holds
-+only weak pending references; dropping a disconnected stream releases unfinished
-+uploads even if the failed pane retains its Term. An uncontended, stream-local
-+mutex permits the VTE callback to access that same state without a second owner.
-+Lock order is always Term before graphics state. Capability queries are pure
-+bounded validations and can answer without committing a synchronized frame.
++Recognize the complete English and Chinese graphics protocol names alongside
++the existing keyboard protocol forms. In the owning activity test source only,
++recognize the actual process assignment and the two-program fixture loop.
++Remove only those exact fragments, then scan all remaining text as before.
 +
-+Pending markers use keyed lookup and FIFO release rather than rescanning a growing
-+vector for every chunk. The existing 16-item/32-MiB OSC encoded-data admission
-+remains. Graphics command metadata has a 65,536-marker ceiling within the same
-+32-MiB pending-byte budget; VTE's existing bounded synchronization buffer normally
-+commits much earlier. Rejected uploads receive the protocol budget error.
-+
-+Image IDs are scoped to the primary or alternate screen. Named images retain one
-+raw allocation. Each placement has its own grid-owned lifetime, crop and scale;
-+render snapshots keep weak placement lifetime and immutable geometry. All its
-+placements select the same image resource/texture. Replacing one placement does
-+not cancel another. Bitmap retransmission/quota eviction invalidates its resource
-+lease, including stale snapshots and in-flight decode, without walking scrollback.
-+
-+The raw store keeps 16 images and charges their eventual BGRA cost against 128 MiB.
-+Transfers keep one bounded base64 buffer. Queries never replace named data.
-+The final chunk uses the first header's action/IDs and the applicable quiet mode.
-+The supported selectors are a/A and i/I, including explicit placement IDs.
-+
-+graphics decode jobs hold weak raw-data references and have 16 metadata slots separate
-+from the existing OSC encoded queue. The core already owns/bounds those raw bytes,
-+so they do not consume the OSC 32-MiB encoded-data budget. Queued, active and cached
-+resource IDs suppress duplicate decodes; a later placement can retry a texture
-+evicted by the unchanged 16-image/128-MiB frontend cache.
-+
-+Independent one-cell placements can produce many render fragments. The paint path
-+streams adjacent clips into one submission only when the texture, full source
-+transform and vertical extent match. It preserves erased gaps and different
-+mappings, and does not allocate a per-frame batch vector. The 46-by-20 tile case
-+therefore uses 20 paint submissions instead of 920 without changing grid ownership.
++Do not add a file, directory, commit or accepted subject to exemptions. Keep the
++per-commit range scan, including added-then-deleted content. Commit messages,
++comments, arbitrary strings and test labels retain their existing restrictions;
++the original failing candidate range is not expected to pass unchanged.
 +
 +## Rejected alternatives
 +
-+- End synchronization for every APC chunk: breaks atomic frames and causes excess
-+  work. Only real replay points perform grid changes.
-+- Move the raw store into the retained Term: extends upload lifetime on disconnect.
-+- One union rectangle for all placements: loses independent crops and positioning.
-+- One decoded bitmap per placement: multiplies memory for tiled clients.
-+- Treat unsupported file, PNG, Unicode-placeholder or relative-placement controls
-+  as ordinary placements: returns success for a different operation.
-+- Increase the encoded queue's byte cap: leaves duplicate ownership and starvation.
++- Encode, concatenate or rename the real executable to evade the checker: this
++  conceals the compatibility interface and weakens the regression.
++- Admit every literal or comment in test files: this hides unrelated comparisons
++  and promotional URLs beside valid fixtures.
++- Exempt historical commits or switch to a final-tree-only scan: this loses the
++  existing contract for content added and later removed.
++- Broaden commit-message exceptions: process fixtures do not require that change.
 +
 +## Consequences
 +
-+The initial profile supports direct RGB/RGBA, chunking, query/quiet replies,
-+anonymous display, source crop, c/r sizing, pixel offsets, C=1, independent
-+placements and scoped deletion. PNG/file/shared-memory/compression, Unicode
-+placeholders, animation, relative placements and nonzero z-order return ENOTSUP.
-+This remains a grid-backed profile, not an arbitrary floating overlay renderer.
-+
-+Per-stage bounds are not a process/GPU working-set promise: encoded input, one
-+bounded decode temporary, BGRA cache, allocator and graphics-driver costs remain
-+distinct. No dependency or thread pool is added. Existing OSC 1337 stays on its
-+original transport and shared rendering path.
++Real process identity and proper protocol names remain readable. Incidental
++comments, hook labels and commit prose must be cleaned in a normal replacement
++branch; published branches do not need to be force-pushed. Runtime behavior and
++the prohibited product-name list are unchanged.
 +
 +## Validation
 +
-+Small wire fixtures cover sync
++The naming and architecture-governance suites pass: 43 tests. Positive fixtures
++are paired with wrong-path, arbitrary-string, appended-comparison and appended-URL
++negative cases. The old checker fails all four new positive subcases. Existing
++staged, message, push/range, Unicode and merge-resolution coverage remains intact.
++
++## Supersedes
++
++None. Extends exact compatibility recognition while retaining the editorial
++boundary in `2026-10-22-remote-control-references.md`.
++
++## Revisit when
++
++The protocol terminology or the owning process-identity fixtures change. Supply
++both a real false positive and out-of-scope counterexamples before extending it.
 ```
 
-**File**: `nebula_app/src/display/terminal_math/tests.rs` (modified, +36/-4)
+**File**: `scripts/check_prohibited_names.py` (modified, +6/-0)
 ```diff
-@@ -1728,9 +1728,33 @@ fn image_projection_preserves_erased_tiles_row_offsets_and_clipping() {
-         }],
-     };
-     let runs = [
--        ImageRun { id: 1, row: 0, column: 6, source_row: 0, source_column: 0, columns: 1 },
--        ImageRun { id: 1, row: 0, column: 8, source_row: 0, source_column: 2, columns: 2 },
--        ImageRun { id: 1, row: 1, column: 6, source_row: 1, source_column: 0, columns: 4 },
-+        ImageRun {
-+            id: 1,
-+            row: 0,
-+            column: 6,
-+            source_row: 0,
-+            source_column: 0,
-+            columns: 1,
-+            placement: None,
-+        },
-+        ImageRun {
-+            id: 1,
-+            row: 0,
-+            column: 8,
-+            source_row: 0,
-+            source_column: 2,
-+            columns: 2,
-+            placement: None,
-+        },
-+        ImageRun {
-+            id: 1,
-+            row: 1,
-+            column: 6,
-+            source_row: 1,
-+            source_column: 0,
-+            columns: 4,
-+            placement: None,
-+        },
-     ];
-     let projected = projection.project_image_runs(&runs, 9);
-     let geometry: Vec<_> = projected
-@@ -1766,7 +1790,15 @@ fn expanded_formula_clips_image_without_changing_texture_origin() {
-             shift_after: 3,
-         }],
-     };
--    let runs = [ImageRun { id: 1, row: 0, column: 4, source_row: 2, source_column: 2, columns: 4 }];
-+    let runs = [ImageRun {
-+        id: 1,
-+        row: 0,
-+        column: 4,
-+        source_row: 2,
-+        source_column: 2,
-+        columns: 4,
-+        placement: None,
-+    }];
-     let projected = projection.project_image_runs(&runs, 9);
-     assert_eq!(projected.len(), 1);
-     let r = &projected[0];
+@@ -86,6 +86,7 @@
+     re.compile(r"\bsource\s*=\s*[\"']git\+https?://[^\"']+[\"']", re.IGNORECASE),
+ )
+ PROTOCOL_COMPATIBILITY_PATTERNS = (
++    re.compile(r"\bkitty\s+(?:graphics\s+protocol\b|图形协议)", re.IGNORECASE),
+     re.compile(r"\bKITTY_[A-Z0-9_]+\b"),
+     re.compile(r"\bkitty_(?:keyboard|seq|event|release|escape|input)[A-Za-z0-9_]*\b", re.IGNORECASE),
+     re.compile(r"\b(?:kitty|tmux)/(?:legacy|style|protocol)\b", re.IGNORECASE),
+@@ -250,6 +251,11 @@ def source_without_allowed_occurrences(path: str, text: str) -> str:
+         text = text.replace(r"/\/tmux$/", "").replace(r"\/tmux\)$/", "")
+     if path == "nebula_app/src/ssh_session/resume/tests.rs":
+         text = re.sub(r'(?<=\\n)[0-9]+ pts/[0-9]+ tmux: client(?=\\n)', "", text)
++    if path == "nebula_app/src/gpui_shell/terminal/view/activity_tests.rs":
++        # These fixtures exercise actual process identity. Labels and explanatory
++        # prose are not interfaces, and appended text must remain checked.
++        text = text.replace('view.running_program = Some("tmux".into())', "")
++        text = text.replace('for program in ["tmux", "screen"]', "")
+     return mobile_reference_remainder(path, text)
+ 
+ 
 ```
 
-**File**: `nebula_app/src/gpui_shell/terminal/inline_image.rs` (modified, +496/-41)
+**File**: `scripts/tests/test_prohibited_names.py` (modified, +33/-0)
 ```diff
-@@ -5,7 +5,7 @@
- //! expanding concurrently on the UI thread or exhausting process memory.
+@@ -21,6 +21,39 @@ def run_git(repository: Path, *args: str) -> None:
  
- use std::collections::VecDeque;
--use std::sync::Arc;
-+use std::sync::{Arc, Weak};
  
- use gpui::{Bounds, ContentMask, Corners, Pixels, RenderImage, Window, point, px, size};
- use image::{Frame, ImageFormat};
-@@ -19,9 +19,29 @@ const MAX_CACHE_BYTES: usize = 128 * 1024 * 1024;
- const MAX_QUEUED_IMAGES: usize = 16;
- const MAX_QUEUED_BYTES: usize = 32 * 1024 * 1024;
- 
-+enum ImageData {
-+    Encoded(Arc<Vec<u8>>),
-+    Pixels { data: Weak<Vec<u8>>, channels: u8 },
-+}
+ class ProhibitedNamesTests(unittest.TestCase):
++    def test_graphics_protocol_names_preserve_the_exact_technical_reference(self) -> None:
++        for text in ("Support the Kitty graphics protocol.", "支持 Kitty 图形协议。"):
++            with self.subTest(text=text):
++                self.assertFalse(check_prohibited_names.prohibited_source_line("CHANGELOG.md", text))
++                self.assertTrue(check_prohibited_names.prohibited_source_line(
++                    "CHANGELOG.md", text + " Compare with Kitty."
++                ))
++                self.assertTrue(check_prohibited_names.prohibited_source_line(
++                    "CHANGELOG.md", text + " https://example.invalid/kitty"
++                ))
++        for text in ("Kitty graphics are beautiful", "Kitty 图像", "Use Kitty instead",
++                     "Kitty graphics protocol_adapter"):
++            self.assertTrue(check_prohibited_names.prohibited_source_line("CHANGELOG.md", text))
 +
-+impl ImageData {
-+    fn encoded_bytes(&self) -> usize {
-+        match self {
-+            Self::Encoded(data) => data.len(),
-+            Self::Pixels { .. } => 0,
-+        }
-+    }
-+    fn available(&self) -> bool {
-+        match self {
-+            Self::Encoded(_) => true,
-+            Self::Pixels { data, .. } => data.strong_count() != 0,
-+        }
-+    }
-+}
++    def test_activity_fixtures_preserve_real_process_names_without_exempting_prose(self) -> None:
++        path = "nebula_app/src/gpui_shell/terminal/view/activity_tests.rs"
++        cases = ('view.running_program = Some("tmux".into());',
++                 'for program in ["tmux", "screen"] {')
++        for text in cases:
++            with self.subTest(text=text):
++                self.assertFalse(check_prohibited_names.prohibited_source_line(path, text))
++                self.assertTrue(check_prohibited_names.prohibited_source_line("README.md", text))
++                self.assertTrue(check_prohibited_names.prohibited_source_line(
++                    path.replace("activity_tests", "other_tests"), text
++                ))
++                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " // use tmux"))
++                self.assertTrue(check_prohibited_names.prohibited_source_line(
++                    path, text + " // https://example.invalid/tmux"
++                ))
++        for text in ('let label = "tmux";', '// tmux 里的 Agent 经 hook 报告回合',
++                     'hook("inside-tmux", "UserPromptSubmit", 1)', 'println!("tmux");'):
++            self.assertTrue(check_prohibited_names.prohibited_source_line(path, text))
 +
- pub(super) struct PendingInlineImage {
-     sequence: u64,
--    data: Arc<Vec<u8>>,
-+    data: ImageData,
-     placement: ImagePlacement,
+     def test_desktop_endpoint_protocol_references_do_not_allow_prose(self) -> None:
+         cases = (
+             ("resume.rs", 'Self { executable: "tmux".into(), socket: String::new() }'),
+```
+
+---
+
+### Incident Patch 3: `234dfdf9` (2026-10-31)
+**Commit Message**: Merge pull request #804 from M1nt-Ch0c0/fix/fish-welcome
+
+Fix welcome command for fish shells
+
+**File**: `nebula_app/src/window_context/welcome.rs` (modified, +63/-2)
+```diff
+@@ -182,6 +182,12 @@ fn powershell_single_quoted_path(path: &std::path::Path) -> String {
+     format!("'{}'", path.to_string_lossy().replace('\'', "''"))
  }
  
-@@ -36,13 +56,27 @@ pub(super) struct InlineImage {
- pub(super) struct InlineImageStore {
-     queued: VecDeque<PendingInlineImage>,
-     queued_bytes: usize,
--    decoding: bool,
-+    decoding: Option<u64>,
-     next_sequence: u64,
-     images: VecDeque<(u64, InlineImage)>,
-     decoded_bytes: usize,
- }
- 
- impl InlineImageStore {
-+    fn prune_queued(&mut self) {
-+        self.queued.retain(|pending| pending.placement.is_alive() && pending.data.available());
-+        self.queued_bytes = self.queued.iter().map(|pending| pending.data.encoded_bytes()).sum();
-+    }
++// The interactive shell may be fish (including when launched through WSL).
++// Keep the outer command portable and let sh interpret the POSIX script.
++fn unix_intro_command() -> Vec<u8> {
++    b"sh -c 'clear; if command -v fastfetch >/dev/null 2>&1; then fastfetch; else printf \"\\033[36mPebrel\\033[0m\\n\"; uname -a; fi'\n".to_vec()
++}
 +
-+    fn contains(&self, id: u64) -> bool {
-+        self.decoding == Some(id)
-+            || self.queued.iter().any(|pending| pending.placement.id == id)
-+            || self
-+                .images
-+                .iter()
-+                .any(|(_, image)| image.placement.id == id && image.placement.is_alive())
-+    }
-+
-     pub fn enqueue(
-         &mut self,
-         data: Arc<Vec<u8>>,
-@@ -61,7 +95,14 @@ impl InlineImageStore {
-         if !placement.is_alive() {
-             return Ok(());
-         }
--        if self.queued.len() >= MAX_QUEUED_IMAGES {
-+        self.prune_queued();
-+        if self
-+            .queued
-+            .iter()
-+            .filter(|pending| matches!(pending.data, ImageData::Encoded(_)))
-+            .count()
-+            >= MAX_QUEUED_IMAGES
-+        {
-             return Err("too many terminal images are waiting to decode");
-         }
-         let next_bytes = self
-@@ -74,27 +115,90 @@ impl InlineImageStore {
- 
-         let sequence = self.next_sequence;
-         self.next_sequence = self.next_sequence.wrapping_add(1);
--        self.queued.push_back(PendingInlineImage { sequence, data, placement });
-+        self.queued.push_back(PendingInlineImage {
-+            sequence,
-+            data: ImageData::Encoded(data),
-+            placement,
-+        });
-         self.queued_bytes = next_bytes;
-         Ok(())
+ /// Bytes to send to a freshly spawned shell so it prints the Nebula intro.
+ #[cfg(windows)]
+ pub(super) fn nebula_fastfetch_intro_command() -> Vec<u8> {
+@@ -195,7 +201,7 @@ pub(super) fn nebula_fastfetch_intro_command() -> Vec<u8> {
+ #[cfg(windows)]
+ pub(crate) fn nebula_fastfetch_intro_command_for(columns: usize, shell: NebulaShell) -> Vec<u8> {
+     if shell == NebulaShell::Bash {
+-        return b"clear; if command -v fastfetch >/dev/null 2>&1; then fastfetch; else printf '\\033[36mPebrel\\033[0m\\n'; uname -a; fi\n".to_vec();
++        return unix_intro_command();
      }
  
-+    /// Queue a Kitty protocol transfer, whose payload is raw pixels rather than
-+    /// an encoded container. `channels` is the byte count per pixel (3 = RGB,
-+    /// 4 = RGBA); the pixel geometry rides along in `placement.layout`.
-+    pub fn enqueue_pixels(
-+        &mut self,
-+        data: Weak<Vec<u8>>,
-+        channels: u8,
-+        placement: ImagePlacement,
-+    ) -> Result<(), &'static str> {
-+        if !matches!(channels, 3 | 4) {
-+            return Err("image transfer has an unsupported channel count");
-+        }
+     // 新 tab 必须秒出：所有系统信息在 Rust 侧一次性缓存；交给 PowerShell 的
+@@ -212,7 +218,7 @@ pub(crate) fn nebula_fastfetch_intro_command_for(columns: usize, shell: NebulaSh
+ /// Bytes to send to a freshly spawned shell so it prints the Nebula intro.
+ #[cfg(not(windows))]
+ pub(super) fn nebula_fastfetch_intro_command() -> Vec<u8> {
+-    b"clear; if command -v fastfetch >/dev/null 2>&1; then fastfetch; else printf '\\033[36mPebrel\\033[0m\\n'; uname -a; fi\n".to_vec()
++    unix_intro_command()
+ }
+ 
+ /// Width-aware variant; the Unix intro delegates to fastfetch, which already
+@@ -233,6 +239,61 @@ mod tests {
+ 
+     use super::*;
+ 
++    #[cfg(unix)]
++    #[test]
++    fn unix_intro_runs_in_fish_and_posix_shells_with_or_without_fastfetch() {
++        use std::os::unix::fs::{PermissionsExt, symlink};
++        use std::process::Command;
 +
-+        let Some(pixels_owner) = data.upgrade() else { return Ok(()) };
-+        if pixels_owner.len() > MAX_IMAGE_DECODED_BYTES {
-+            return Err("image transfer exceeds the decoded image budget");
++        let root = tempfile::tempdir().unwrap();
++        symlink("/bin/sh", root.path().join("sh")).unwrap();
++        for (name, body) in [("clear", "exit 0"), ("uname", "echo FALLBACK")] {
++            let path = root.path().join(name);
++            fs::write(&path, format!("#!/bin/sh\n{body}\n")).unwrap();
++            fs::set_permissions(path, fs::Permissions::from_mode(0o755)).unwrap();
 +        }
-+        if !placement.layout.width.is_finite()
-+            || !placement.layout.height.is_finite()
-+            || placement.layout.width <= 0.0
-+            || placement.layout.height <= 0.0
-+        {
-+            return Err("image transfer has an invalid display size");
-+        }
-+        let pixels = placement.layout.width as u64 * placement.layout.height as u64;
-+        if pixels > MAX_IMAGE_PIXELS {
-+            return Err("image transfer exceeds the pixel budget");
-+        }
-+        if (pixels * u64::from(channels)) != pixels_owner.len() as u64 {
-+            return Err("image transfer is shorter than its declared size");
-+        }
-+        if !placement.is_alive() {
-+            return Ok(());
-+        }
-+        self.prune_queued();
-+        if self.contains(placement.id) {
-+            return Ok(());
-+        }
-+        // 原始像素仍归核心的 16 张有界仓库；队列只留弱引用，不与 OSC 编码数据争 32 MiB。
-+        if self
-+            .queued
-+            .iter()
-+            .filter(|pending| matches!(pending.data, ImageData::Pixels { .. }))
-+            .count()
-+            >= MAX_CACHED_IMAGES
-+        {
-+            return Err("too many terminal images are waiting to decode");
-+        }
-+
-+        let se
-```
-
-**File**: `nebula_app/src/gpui_shell/terminal/native_results/viewport.rs` (modified, +10/-2)
-```diff
-@@ -381,6 +381,7 @@ mod tests {
-                     columns: 2,
-                     source_column: 2,
-                     source_row,
-+                    placement: None,
-                 };
-                 let (image, clip) = super::super::super::inline_image::image_geometry(
-                     layout,
-@@ -400,8 +401,15 @@ mod tests {
-             }
-             let original = original.unwrap();
-             projection.top += 1.0;
--            let run =
--                ImageRun { id: 1, row: 5, column: 6, columns: 2, source_column: 2, source_row: 1 };
-+            let run = ImageRun {
-+                id: 1,
-+                row: 5,
-+                column: 6,
-+                columns: 2,
-+                source_column: 2,
-+                source_row: 1,
-+                placement: None,
++        let command = String::from_utf8(unix_intro_command()).unwrap();
++        let search_path = std::env::var_os("PATH").unwrap();
++        for shell in ["sh", "bash", "fish"] {
++            let Some(executable) = std::env::split_paths(&search_path)
++                .map(|directory| directory.join(shell))
++                .find(|path| path.is_file())
++            else {
++                assert_ne!(shell, "sh", "sh is required for the welcome command");
++                continue;
 +            };
-             let (scrolled, _) = super::super::super::inline_image::image_geometry(
-                 layout,
-                 &run,
-```
-
-**File**: `nebula_app/src/gpui_shell/terminal/view.rs` (modified, +8/-0)
-```diff
-@@ -789,6 +789,14 @@ impl TerminalView {
-                     Err(error) => log::warn!("terminal image dropped: {error}"),
-                 }
-             },
-+            // APC graphics: pixels arrive raw, already placed in the grid, so
-+            // decoding is the only work left — and it happens off the UI thread.
-+            TermEvent::KittyImage { data, channels, placement } => {
-+                match self.inline_images.enqueue_pixels(data, channels, placement) {
-+                    Ok(()) => self.drive_inline_image_decode(cx),
-+                    Err(error) => log::warn!("APC image dropped: {error}"),
++            for fastfetch in [false, true] {
++                let fastfetch_path = root.path().join("fastfetch");
++                if fastfetch {
++                    fs::write(&fastfetch_path, "#!/bin/sh\necho FASTFETCH\n").unwrap();
++                    fs::set_permissions(&fastfetch_path, fs::Permissions::from_mode(0o755))
++                        .unwrap();
++                } else if fastfetch_path.exists() {
++                    fs::remove_file(&fastfetch_path).unwrap();
 +                }
-+            },
-             TermEvent::CommandStart => {
-                 self.native_clipboard.clear();
-                 self.on_command_start(cx);
-```
-
-**File**: `nebula_app/src/gpui_shell/terminal/view/layout.rs` (modified, +11/-0)
-```diff
-@@ -66,6 +66,10 @@ impl TerminalView {
-                 self.commit_viewport(viewport);
-             } else {
-                 self.window_size = viewport.window_size();
-+                // 出生几何就是目标几何时没有任何 resize 要下发，字节流因此永远
-+                // 不知道 cell 尺寸：`CSI 16 t`（yazi 用它把像素换算成格子）无
-+                // 从回答，客户端只好把预览图拉伸铺满整块 pane。这里只补度量。
-+                self.announce_cell_metrics(self.window_size);
-             }
-             return;
-         }
-@@ -142,6 +146,13 @@ impl TerminalView {
-         notifier.on_resize_grid(viewport.window_size());
-     }
- 
-+    /// 只把 cell 像素尺寸告诉字节流，不动 conhost、不 reflow、不去抖。
-+    fn announce_cell_metrics(&mut self, window_size: nebula_terminal::event::WindowSize) {
-+        let Some(session) = &self.session else { return };
-+        let mut notifier = nebula_terminal::event_loop::Notifier(session.notifier.0.clone());
-+        notifier.on_cell_metrics(window_size);
++                let output = Command::new(&executable)
++                    .args(["-c", &command])
++                    .env("PATH", root.path())
++                    .output()
++                    .unwrap();
++                assert!(
++                    output.status.success(),
++                    "{shell}: {}",
++                    String::from_utf8_lossy(&output.stderr)
++                );
++                let stdout = String::from_utf8(output.stdout).unwrap();
++                if fastfetch {
++                    assert_eq!(stdout, "FASTFETCH\n");
++                } else {
++                    assert!(
++                        stdout.contains("Pebrel") && stdout.contains("FALLBACK"),
++                        "{shell}: {stdout:?}"
++                    );
++                }
++            }
++        }
 +    }
 +
-     /// Commit one viewport in grid-before-PTY order. Output produced after
-     /// `ResizePseudoConsole` therefore always parses against the same geometry
-     /// history ConPTY used to generate its absolute cursor coordinates.
+     #[test]
+     fn deleted_scripts_are_recreated_for_both_layouts() {
+         let root = tempfile::tempdir().unwrap();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #818** (closed): feat(terminal): render cropped graphics placements and present decoded frames (@glitch-cmyk658)
-- **PR #801** (closed): fix(terminal): preserve native TUI mouse selection across pane boundaries (@Kuddev)
-- **PR #800** (2026-10-28): docs: add WeChat community below README sponsors (@Kuddev)
-- **PR #793** (2026-10-28): i18n(settings): use typed ids for setting help and option labels (@Tettu0530)
-- **PR #790** (2026-10-27): release: prepare Pebrel 2.3.1 (@Kuddev)
-- **PR #789** (2026-10-26): feat(sponsors): add approved AIAPI branding (@Kuddev)
+- **PR #850** (2026-10-31): fix: preserve protocol names and real process fixtures in naming checks (@Kuddev)
+- **PR #849** (closed): fix: complete reviewed issue fixes and prepare 2.3.2 candidate (@Kuddev)
+- **PR #838** (2026-10-31): feat(shell): add undo-safe native PSReadLine pointer edits (@Kuddev)
+- **PR #837** (2026-10-31): feat(shell): support native Bash and Zsh pointer editing (@Kuddev)
+- **PR #836** (2026-10-31): feat(predictions): connect native adapters to runtime and settings (@Kuddev)
+- **PR #835** (2026-10-31): feat(predictions): add native Pi and OpenCode adapters (@Kuddev)
 
 ---
 
@@ -1972,45 +1907,49 @@ Add a bounded direct RGB/RGBA graphics profile with ordered replay, validated re
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. terminal): add bounded APC image rendering (#767)
+## X. Merge pull request #850 from Kuddev/fix/technical-protocol-name-check-20261101
 
 **RULE**:
-When implementing operations in `architecture/notes/nebula_terminal/kitty_graphics/2026-10-25-kitty-graphics-placements.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `architecture/notes/scripts/check_prohibited_names/2026-11-01-protocol-and-process-fixtures.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cf6bafb2`: terminal): add bounded APC image rendering (#767). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9d8db55f`: Merge pull request #850 from Kuddev/fix/technical-protocol-name-check-20261101. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `architecture/notes/nebula_terminal/kitty_graphics/2026-10-25-kitty-graphics-placements.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `architecture/notes/scripts/check_prohibited_names/2026-11-01-protocol-and-process-fixtures.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Kitty protocol: placements own the grid, the cell size comes from the pane
+# Graphics protocol and real process fixtures in naming checks
 
 ## Status
 
-Proposed; implemented and validated locally on Windows x64 MSVC, Rust 1.97.1,
-against yazi 26.9.1.
+Prepared for maintainer review under the task's explicit instruction to retain
+necessary technical terms. This is a scoped governance correction, separate from
+the release candidate and its behavior fixes.
 
 ## Context
 
-Terminals that implement the Kitty protocol must serve two clients with
-different dialects. Neovim transmits an image and then asks the terminal to
-place it at the cursor with an explicit `c`/`r` cell count. yazi (and other
-"KGP-old" clients) instead asks for one `1x1` placement per cell: it moves the
-cursor to every cell of the preview rectangle and sends
-`a=p,i=ID,p=INDEX,x=..,y=..,w=..,h=..,c=1,r=1` each time, with the source pixel
-rectangle already computed on its side. The image is the union of the cells the
-cursor visited, and no command carries the total size.
+The naming gate preserves compatibility interfaces while rejecting incidental
+product mentions. Release documentation needs the proper graphics protocol name.
+Terminal activity regressions must use the real executable identity consumed by
+the implementation, including a terminal multiplexer with an agent inside it.
 
-The same clients ask the terminal for its cell geometry with `CSI 16 t` before
-choosing a preview size. `vte 0.15` has no handler for that sequence, and ConPTY
-reports a zero pixel dimension, so neither the parser nor the platform PTY can
-answer. A client that never learns the cell size falls back to its configured
-maximum pixel box and stretches that box across the whole preview rectangle.
+## Evidence
 
-The repository already owns o
+PR #849 failed the range check in run `41242096322`. The reported additions mix
+two legitimate interfaces with incidental comments, a hook fixture identifier,
+and a commit-message mention. Treating every reported line alike would either
+break meaningful tests or admit unrelated prose.
+
+Two new regression methods reproduce four failed positive subcases against the
+previous checker: English and Chinese protocol names and two executable fixtures.
+The incidental prose and fixture label deliberately remain negative examples.
+
+## Decision
+
+Recognize the complete English and 
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2020,4 +1959,4 @@ The repository already owns o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cf6bafb2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9d8db55f` are properly handled with clean fallback behavior.

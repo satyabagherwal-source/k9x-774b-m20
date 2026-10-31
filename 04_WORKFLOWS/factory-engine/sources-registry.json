@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T21:30:51.563Z",
-    "lastVerified": "2026-10-31T21:30:51.563Z",
+    "lastChecked": "2026-10-31T21:39:37.485Z",
+    "lastVerified": "2026-10-31T21:39:37.485Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -247,8 +247,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T20:59:43.330Z",
-    "lastVerified": "2026-10-31T20:59:43.330Z",
+    "lastChecked": "2026-10-31T21:37:43.385Z",
+    "lastVerified": "2026-10-31T21:37:43.385Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -590,8 +590,8 @@
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T17:37:04.105Z",
-    "lastVerified": "2026-10-31T17:37:04.105Z",
+    "lastChecked": "2026-10-31T21:37:38.379Z",
+    "lastVerified": "2026-10-31T21:37:38.379Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -2167,9 +2167,9 @@
   "fission-fission": {
     "name": "fission",
     "officialUrl": "https://github.com/fission/fission",
-    "lastChecked": "2026-10-31T05:52:27.953Z",
+    "lastChecked": "2026-10-31T21:37:35.908Z",
     "revisionIdentifier": "ae2aabf5",
-    "lastVerified": "2026-10-31T05:52:27.953Z"
+    "lastVerified": "2026-10-31T21:37:35.908Z"
   },
   "tailscale-tailscale": {
     "name": "tailscale/tailscale",
@@ -2435,14 +2435,14 @@
     "officialUrl": "https://github.com/Kuddev/pebrel",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T01:53:41.966Z",
-    "lastVerified": "2026-10-31T01:53:41.966Z",
+    "lastChecked": "2026-10-31T21:37:32.121Z",
+    "lastVerified": "2026-10-31T21:37:32.121Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kuddev-pebrel",
-    "contentHash": "8f761374585ff3f26c1c78d2b8244b272f24d84a088f50d4d43514aed2918605",
+    "contentHash": "7583de199830d6234f06aa19a92600f36d1a42c312e3f4ea1cc607d6b55f1867",
     "promotedRulesCount": 0,
-    "recentFixesCount": 1,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7454,9 +7454,9 @@
   "pathwaycom-serviette": {
     "name": "serviette",
     "officialUrl": "https://github.com/pathwaycom/serviette",
-    "lastChecked": "2026-10-31T05:07:19.126Z",
+    "lastChecked": "2026-10-31T21:37:40.874Z",
     "revisionIdentifier": "e2a7a09b",
-    "lastVerified": "2026-10-31T05:07:19.126Z"
+    "lastVerified": "2026-10-31T21:37:40.874Z"
   },
   "railwayapp-nixpacks": {
     "name": "nixpacks",
@@ -7528,12 +7528,12 @@
     "officialUrl": "https://huggingface.co/Cactus-Compute/whistle",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T20:08:35.683Z",
-    "lastVerified": "2026-10-28T20:08:35.683Z",
+    "lastChecked": "2026-10-31T21:37:30.976Z",
+    "lastVerified": "2026-10-31T21:37:30.976Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-cactus-compute-whistle",
-    "contentHash": "61c1551e84f8a8f2feeed7f979dff8e65c4b041c54575edbf9d2b3814b7e1851",
+    "contentHash": "a8e594c9fdeec1c24399d3f5406a92a32bed3e5e43b6c40153fb2a11cc26c26e",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -8968,9 +8968,9 @@
   "lottie-react-native-lottie-react-native": {
     "name": "lottie-react-native",
     "officialUrl": "https://github.com/lottie-react-native/lottie-react-native",
-    "lastChecked": "2026-10-29T11:43:48.120Z",
+    "lastChecked": "2026-10-31T21:37:33.442Z",
     "revisionIdentifier": "7ac5e96c",
-    "lastVerified": "2026-10-29T11:43:48.120Z"
+    "lastVerified": "2026-10-31T21:37:33.442Z"
   },
   "serpapi-google-search-results-ruby": {
     "name": "google-search-results-ruby",

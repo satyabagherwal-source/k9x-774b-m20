@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T21:30:48.914Z",
+  "last_updated": "2026-10-31T21:39:34.840Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20186,7 +20186,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cactus-Compute/whistle",
       "source_version": "hf-cactus-compute-whistle",
-      "content_hash": "61c1551e84f8a8f2feeed7f979dff8e65c4b041c54575edbf9d2b3814b7e1851",
+      "content_hash": "a8e594c9fdeec1c24399d3f5406a92a32bed3e5e43b6c40153fb2a11cc26c26e",
       "dossier_path": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
       "promoted_rules": [
@@ -20279,6 +20279,21 @@
           "number": 5392,
           "title": "Silence-First Transcription: No Hallucination Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6331,
+          "title": "Dual-Pass Streaming Consensus Windowing for Sequence Decoders",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6332,
+          "title": "Outlier-Free Fixed-Block Quantization via Orthogonal Pre-Transformation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6333,
+          "title": "Acoustic Frame Discrete Alignment Guard for Sub-Sample Latency",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -20299,7 +20314,7 @@
         "learn-huggingface-hf-cactus-compute-whistle-mv437sal",
         "learn-huggingface-hf-cactus-compute-whistle-mv4gguek"
       ],
-      "verified_at": "2026-10-28T20:08:48.880Z",
+      "verified_at": "2026-10-31T21:39:34.820Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35929,8 +35944,8 @@
       "slug": "kuddev-pebrel",
       "platform": "github",
       "source_url": "https://github.com/Kuddev/pebrel",
-      "source_version": "cf6bafb2",
-      "content_hash": "8f761374585ff3f26c1c78d2b8244b272f24d84a088f50d4d43514aed2918605",
+      "source_version": "9d8db55f",
+      "content_hash": "7583de199830d6234f06aa19a92600f36d1a42c312e3f4ea1cc607d6b55f1867",
       "dossier_path": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "promoted_rules": [
@@ -35965,7 +35980,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T01:53:42.350Z",
+      "verified_at": "2026-10-31T21:37:32.883Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -164621,6 +164636,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T21:30:48.894Z"
+    },
+    "rule-6331": {
+      "learning_id": "rule-6331",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6331,
+      "title": "Dual-Pass Streaming Consensus Windowing for Sequence Decoders",
+      "source_url": "https://huggingface.co/Cactus-Compute/whistle",
+      "source_version": "hf-cactus-compute-whistle",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T21:39:34.820Z"
+    },
+    "rule-6332": {
+      "learning_id": "rule-6332",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6332,
+      "title": "Outlier-Free Fixed-Block Quantization via Orthogonal Pre-Transformation",
+      "source_url": "https://huggingface.co/Cactus-Compute/whistle",
+      "source_version": "hf-cactus-compute-whistle",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T21:39:34.820Z"
+    },
+    "rule-6333": {
+      "learning_id": "rule-6333",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6333,
+      "title": "Acoustic Frame Discrete Alignment Guard for Sub-Sample Latency",
+      "source_url": "https://huggingface.co/Cactus-Compute/whistle",
+      "source_version": "hf-cactus-compute-whistle",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T21:39:34.820Z"
     }
   },
   "aliases": {

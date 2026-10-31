@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-JHIE",
-    "timestamp": "2026-10-30T15:25:41.606Z",
-    "repository": "superhighfives/pika",
-    "learningId": "learn-github-superhighfives-pika",
-    "contentHash": "afa835e5fb5f1c44852fcb8bd56687e973b3e3ba25d4d64a742758471df6dbd1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-Y4UC",
-    "timestamp": "2026-10-30T15:37:05.028Z",
-    "repository": "urllib3/urllib3",
-    "learningId": "learn-github-urllib3-urllib3",
-    "contentHash": "77f7c673934638954d40c620c16e8b3ffd48187c0d098ca5b588d6694a2e6348",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-Y8RQ",
     "timestamp": "2026-10-30T15:37:10.118Z",
     "repository": "karmada-io/karmada",
@@ -7490,6 +7460,36 @@
     "repository": "LiquidAI/d1-3B",
     "learningId": "learn-huggingface-liquidai-d1-3b",
     "contentHash": "7e5f39f1dd53e1c38e10599b7df63995393cb2ac0be9cfa52d50585a557cfb28",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-9JRP",
+    "timestamp": "2026-10-31T21:37:33.013Z",
+    "repository": "Kuddev/pebrel",
+    "learningId": "learn-github-kuddev-pebrel",
+    "contentHash": "7583de199830d6234f06aa19a92600f36d1a42c312e3f4ea1cc607d6b55f1867",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-C5U0",
+    "timestamp": "2026-10-31T21:39:34.920Z",
+    "repository": "Cactus-Compute/whistle",
+    "learningId": "learn-huggingface-cactus-compute-whistle",
+    "contentHash": "a8e594c9fdeec1c24399d3f5406a92a32bed3e5e43b6c40153fb2a11cc26c26e",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

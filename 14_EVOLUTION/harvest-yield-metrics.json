@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T21:30:49.004Z",
-  "total_cycles_completed": 6701,
-  "total_learnings_persisted": 6701,
-  "total_rules_promoted": 6334,
+  "last_updated": "2026-10-31T21:39:34.929Z",
+  "total_cycles_completed": 6703,
+  "total_learnings_persisted": 6703,
+  "total_rules_promoted": 6337,
   "history": [
-    {
-      "timestamp": "2026-10-31T10:00:29.042Z",
-      "repository": "ntex-rs/ntex",
-      "learningId": "learn-github-ntex-rs-ntex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T10:00:41.100Z",
-      "repository": "Comfy-Org/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T10:07:22.044Z",
       "repository": "akhilaaa3/Jev-Omni",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-31T21:30:49.004Z",
       "repository": "LiquidAI/d1-3B",
       "learningId": "learn-huggingface-liquidai-d1-3b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T21:37:33.025Z",
+      "repository": "Kuddev/pebrel",
+      "learningId": "learn-github-kuddev-pebrel",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T21:39:34.929Z",
+      "repository": "Cactus-Compute/whistle",
+      "learningId": "learn-huggingface-cactus-compute-whistle",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
