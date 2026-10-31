@@ -6708,3 +6708,7 @@
 | `CYCLE-20261031-XDIH` | `2026-10-31T20:32:05.801Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md` | Yes (`33f6198d...`) |
 | `CYCLE-20261031-5YZ0` | `2026-10-31T20:38:46.860Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md` | Yes (`1d1cc344...`) |
 | `CYCLE-20261031-66JX` | `2026-10-31T20:38:56.685Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md` | Yes (`12ed42b3...`) |
+| `CYCLE-20261031-G27G` | `2026-10-31T20:46:37.612Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`4f3fe48d...`) |
+| `CYCLE-20261031-G2WJ` | `2026-10-31T20:46:38.515Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6311` | Yes (`7d442a8f...`) |
+| `CYCLE-20261031-G77V` | `2026-10-31T20:46:44.107Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6312` | Yes (`30ac0aa8...`) |
+| `CYCLE-20261031-GBAF` | `2026-10-31T20:46:49.383Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6313` | Yes (`1c31cb78...`) |

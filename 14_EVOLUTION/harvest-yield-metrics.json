@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T20:38:56.702Z",
-  "total_cycles_completed": 6685,
-  "total_learnings_persisted": 6685,
-  "total_rules_promoted": 6314,
+  "last_updated": "2026-10-31T20:46:49.392Z",
+  "total_cycles_completed": 6689,
+  "total_learnings_persisted": 6689,
+  "total_rules_promoted": 6317,
   "history": [
-    {
-      "timestamp": "2026-10-31T08:14:03.275Z",
-      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-      "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T08:14:03.692Z",
-      "repository": "t8y2/dbx",
-      "learningId": "learn-github-t8y2-dbx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T08:28:11.692Z",
-      "repository": "valeriansaliou/sonic",
-      "learningId": "learn-github-valeriansaliou-sonic",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T08:31:08.062Z",
-      "repository": "SupersonicLabs/Julia-1",
-      "learningId": "learn-huggingface-supersoniclabs-julia-1",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T08:50:26.358Z",
       "repository": "Comfy-Org/Wan-2.2",
@@ -1403,6 +1375,34 @@
       "repository": "aleo-labs-protocol/snarkOS",
       "learningId": "learn-github-aleo-labs-protocol-snarkos",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:46:37.628Z",
+      "repository": "autotrust/GEV-26B-Decide",
+      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:46:38.524Z",
+      "repository": "metalbear-co/mirrord",
+      "learningId": "learn-github-metalbear-co-mirrord",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:46:44.116Z",
+      "repository": "TableProApp/TablePro",
+      "learningId": "learn-github-tableproapp-tablepro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:46:49.392Z",
+      "repository": "rustls/rustls",
+      "learningId": "learn-github-rustls-rustls",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

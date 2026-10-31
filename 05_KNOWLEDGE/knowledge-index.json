@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T20:38:56.597Z",
+  "last_updated": "2026-10-31T20:46:49.303Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18395,7 +18395,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
       "source_version": "hf-autotrust-gev-26b-decide",
-      "content_hash": "d12a51cd1bbdc9eec5802db79580dda7b84424d2c52936b63e5922c3d4f8a4c6",
+      "content_hash": "4f3fe48d90e964f5d207078f1c38bca675da081bc79f854653c67625b59b9182",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
       "promoted_rules": [
@@ -18472,7 +18472,7 @@
         "learn-huggingface-hf-autotrust-gev-26b-decide-mv41mus8",
         "learn-huggingface-hf-autotrust-gev-26b-decide-mv4fhk3v"
       ],
-      "verified_at": "2026-10-28T19:24:24.805Z",
+      "verified_at": "2026-10-31T20:46:37.508Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39093,8 +39093,8 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "af2dab92",
-      "content_hash": "c47321bea8adacc9d1e4622ebae43a7316d198e6ae8b80dacb6c337f7e6dca76",
+      "source_version": "c4bb0e3d",
+      "content_hash": "7d442a8ffc81b026a1dc8d1d311f5c152f6f02fc3a3166771ea37223880023bd",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
@@ -39142,6 +39142,11 @@
           "number": 5975,
           "title": "layer): say Ready! and hold for a debugger from the Unix layer",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6311,
+          "title": "Merge pull request #5181 from metalbear-co/appleutil-v10",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39149,7 +39154,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T01:04:48.489Z",
+      "verified_at": "2026-10-31T20:46:38.415Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49529,8 +49534,8 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "6148ff16",
-      "content_hash": "73c11ee134e3ff0a30e59af03d2772c5d2175defa86ce83d4e19b0a7506289d8",
+      "source_version": "8dca43ed",
+      "content_hash": "1c31cb7861569a3690fd1673be117cf16af43bde3a5e0540ef3296bcd3b2475b",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
@@ -49598,6 +49603,11 @@
           "number": 6204,
           "title": "Reject TLS1.3 negotiated via legacy_version",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6313,
+          "title": "clippy `redundant_clone` case",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49605,7 +49615,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T13:06:48.002Z",
+      "verified_at": "2026-10-31T20:46:49.283Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53877,8 +53887,8 @@
       "slug": "tableproapp-tablepro",
       "platform": "github",
       "source_url": "https://github.com/TableProApp/TablePro",
-      "source_version": "dcbce8af",
-      "content_hash": "b6054ad5243cc11d07a0a2ffa3f35d0f36fe7a6b3ee3b218cea0e8e0efc60792",
+      "source_version": "4c77c2f7",
+      "content_hash": "30ac0aa83189ada986199a40531fcc2ab68308c8476655abf5bc01ed5801a9be",
       "dossier_path": "07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
       "promoted_rules": [
@@ -53901,6 +53911,11 @@
           "number": 5486,
           "title": "linux-grid): copy rows as a text table, JSON Lines, one row or INSERT without ge",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6312,
+          "title": "build(linux): give the package builds room for DuckDB 2.0 (#3937)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53908,7 +53923,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T01:49:56.854Z",
+      "verified_at": "2026-10-31T20:46:44.008Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -164241,6 +164256,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T20:23:15.421Z"
+    },
+    "rule-6311": {
+      "learning_id": "rule-6311",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6311,
+      "title": "Merge pull request #5181 from metalbear-co/appleutil-v10",
+      "source_url": "https://github.com/metalbear-co/mirrord",
+      "source_version": "c4bb0e3d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T20:46:38.416Z"
+    },
+    "rule-6312": {
+      "learning_id": "rule-6312",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6312,
+      "title": "build(linux): give the package builds room for DuckDB 2.0 (#3937)",
+      "source_url": "https://github.com/TableProApp/TablePro",
+      "source_version": "4c77c2f7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T20:46:44.008Z"
+    },
+    "rule-6313": {
+      "learning_id": "rule-6313",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6313,
+      "title": "clippy `redundant_clone` case",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "8dca43ed",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T20:46:49.283Z"
     }
   },
   "aliases": {

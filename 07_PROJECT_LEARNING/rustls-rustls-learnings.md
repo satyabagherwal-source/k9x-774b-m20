@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source**: github ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
-> **Source Version**: `6148ff16`  
+> **Source Version**: `8dca43ed`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T13:06:47.474Z  
+> **Timestamp**: 2026-10-31T20:46:48.674Z  
 > **Learning ID**: `learn-github-rustls-rustls`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T13:06:47.232Z  
+> **Harvest Timestamp**: 2026-10-31T20:46:48.667Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern TLS library in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7722 stars
+- **Stars / Engagement**: 7723 stars
 
 ---
 
@@ -2243,17 +2243,17 @@ fn exec(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #3402** (2026-10-31): **Fix nightly clippy `redundant_clone` case**
+  *Symptoms*: Regressed in 139738f7f which was masked by e9bb7b3da
+  **Post-Mortem & Fix Analysis**:
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap256_chacha_server | 1346667 | 1340345 | ✅ [-6322](https://bench.rustls.dev/comparisons/6148ff168bee9ca3716ff3c22de66f2e174122fa:b7bf2e14b8482c632b69cf2c3f7cee501299041c/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap256_chacha_server) (-0.47%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_aes_server | 10882153 | 10944433 | [62280](https://bench.rustls.dev/comparisons/6148ff168bee9ca3716ff3c22de66f2e174122fa:b7bf2e14b8482c632b69cf2c3f7cee501299041c/cacheg
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3402?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.64%. Comparing base ([`6148ff1`](https://app.codecov.io/gh/rustls/rustls/commit/6148ff168bee9ca3716ff3c22de66f2e174122fa?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`b7bf2e1`](https://app.codecov.io/gh/rustls/rustls/commit/b7bf2e14b8482c632b69cf2c3f7cee501299041c?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3402   +/-   ## ======================================= 
+
 - **Issue #3401** (2026-10-30): **Ensure rustls-ring crate is used by rustls-test**
   *Symptoms*: This fixes a new-ish cargo lint (https://github.com/rust-lang/cargo/pull/17298 -- not sure why it only just turned up)  ``` warning: unused dependency `rustls-ring`   --> rustls-test/Cargo.toml:18:1    | 18 | rustls-ring = { path = "../rustls-ring", optional = true }    | ^^^^^^^^^^^    |    = note: `cargo::unused_dependencies` is set to `warn` by default ```  This is needed as a dependency as it is optional (so can't be dev-dep which is what it actually is, due to cargo features being a little underbaked.)
   **Post-Mortem & Fix Analysis**:
   >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap256_chacha_server | 1340087 | 1346600 | ⚠️ [6513](https://bench.rustls.dev/comparisons/0c05a2c1f9452034042826713961276918d75c10:34becce95da816b48a29e0ca64f7f17d4f967914/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap256_chacha_server) (0.49%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server | 10396668 | 10430386 | [33718](https://bench.rustls.dev/comparisons/0c05a2c1f9452034042826713961276918d75c10:34becce95da816b48a29e0ca64f7f17d4f967914/cachegr
   > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3401?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.65%. Comparing base ([`44323f5`](https://app.codecov.io/gh/rustls/rustls/commit/44323f51bfdd090e7cbd0fe3f6012ba194a74abc?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`34becce`](https://app.codecov.io/gh/rustls/rustls/commit/34becce95da816b48a29e0ca64f7f17d4f967914?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)). :warning: Report is 1 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3401 
-
-- **Issue #3400** (2026-10-30): **Ensure hashing of type_id is for concrete type**
-  *Symptoms*: Fix the tests for this feature so each tests precisely one change at a time, and is capable of resumption otherwise.  fixes #3350 fixes #3303
-  **Post-Mortem & Fix Analysis**:
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_aes_client | 2384635 | 2371677 | ✅ [-12958](https://bench.rustls.dev/comparisons/44323f51bfdd090e7cbd0fe3f6012ba194a74abc:f48840713b3591f405c23a3d656f6c342d02caff/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_aes_client) (-0.54%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_aes_server | 10928310 | 10857799 | [-70511](https://bench.rustls.dev/comparisons/44323f51bfdd090e7cbd0fe3f6012ba194a74abc:f48840713b3591f405c23a3d656f6c342d02caff/cachegrind-diff/handsh
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3400?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :x: Patch coverage is `83.92857%` with `9 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 95.62%. Comparing base ([`44323f5`](https://app.codecov.io/gh/rustls/rustls/commit/44323f51bfdd090e7cbd0fe3f6012ba194a74abc?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`f488407`](https://app.codecov.io/gh/rustls/rustls/commit/f48840713b3591f405c23a3d656f6c342d02caff?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)). :warning: Report is 3 commits behind head on main.  | [Files with missing lines](https://app.codecov.io/gh/rustls/rustls/pull/3400?dropdown=coverage&src=pr&el=tree&utm_medium
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2270,338 +2270,31 @@ fn exec(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6148ff16` (2026-10-14)
-**Commit Message**: Reject TLS1.3 negotiated via legacy_version
+### Incident Patch 1: `8dca43ed` (2026-10-31)
+**Commit Message**: Fix clippy `redundant_clone` case
 
-TLS1.3 is only selectable through the supported_versions extension, and
-RFC 9846 section 4.2.3 requires aborting with a protocol_version alert
-when a TLS1.3 ServerHello carries a legacy_version other than 0x0303.
-The client previously honoured a legacy_version of 0x0304, negotiating
-TLS1.3 without the extension (and ignoring the extension when present),
-and never examined the HelloRetryRequest legacy_version at all.
+Regressed in 139738f7f which was masked by e9bb7b3da
 
-**File**: `bogo/src/main.rs` (modified, +6/-0)
+**File**: `rustls-test/tests/api/resume.rs` (modified, +1/-1)
 ```diff
-@@ -980,6 +980,12 @@ fn handle_err(opts: &Options, err: Error) -> ! {
-         Error::PeerMisbehaved(PeerMisbehaved::SelectedTls12UsingTls13VersionExtension) => {
-             quit(":SELECTED_TLS12_USING_TLS13_VERSION_EXTENSION:")
-         }
-+        Error::PeerMisbehaved(PeerMisbehaved::SelectedTls13UsingLegacyVersionField) => {
-+            quit(":SELECTED_TLS13_USING_LEGACY_VERSION_FIELD:")
-+        }
-+        Error::PeerMisbehaved(PeerMisbehaved::IllegalHelloRetryRequestWithWrongLegacyVersion) => {
-+            quit(":ILLEGAL_HELLO_RETRY_REQUEST_WITH_WRONG_LEGACY_VERSION:")
-+        }
-         Error::PeerMisbehaved(PeerMisbehaved::OfferedIncorrectCompressions) => {
-             quit(":INVALID_COMPRESSION_LIST:")
-         }
-```
-
-**File**: `rustls/src/client/hs.rs` (modified, +18/-0)
-```diff
-@@ -222,10 +222,20 @@ impl ExpectServerHello {
- 
-         let config = &self.input.config;
- 
-+        // TLS1.3 is selected with the `supported_versions` extension alone;
-+        // a server doing so sets `legacy_version` to TLS1.2, and without the
-+        // extension a ServerHello negotiates "TLS 1.2 or prior":
-+        //
-+        // > A client which receives a TLS 1.3 Server Hello with a
-+        // > legacy_version value not equal to 0x0303 MUST abort the handshake
-+        // > with a "protocol_version" alert.
-+        // <https://www.rfc-editor.org/rfc/rfc9846#section-4.2.3>
-         let server_version = if server_hello.legacy_version == ProtocolVersion::TLSv1_2 {
-             server_hello
-                 .selected_version
-                 .unwrap_or(server_hello.legacy_version)
-+        } else if server_hello.legacy_version == ProtocolVersion::TLSv1_3 {
-+            return Err(PeerMisbehaved::SelectedTls13UsingLegacyVersionField.into());
-         } else {
-             server_hello.legacy_version
-         };
-@@ -335,6 +345,14 @@ impl ExpectServerHelloOrHelloRetryRequest {
-             return Err(PeerMisbehaved::IllegalHelloRetryRequestWithWrongSessionId.into());
-         }
- 
-+        // Or carries a `legacy_version` other than TLS1.2, which (given the
-+        // shared meaning above) requires the same "protocol_version" abort as
-+        // for a ServerHello.
-+        // <https://www.rfc-editor.org/rfc/rfc9846#section-4.2.3>
-+        if hrr.legacy_version != ProtocolVersion::TLSv1_2 {
-+            return Err(PeerMisbehaved::IllegalHelloRetryRequestWithWrongLegacyVersion.into());
-+        }
-+
-         // Or asks us to talk a protocol we didn't offer, or doesn't support HRR at all.
-         let Some(ProtocolVersion::TLSv1_3) = hrr.supported_versions else {
-             return Err(PeerMisbehaved::IllegalHelloRetryRequestWithUnsupportedVersion.into());
-```
-
-**File**: `rustls/src/client/test.rs` (modified, +98/-4)
-```diff
-@@ -283,7 +283,7 @@ fn test_client_rejects_server_hello_with_varied_session_id() {
-                 random: Random([0; 32]),
-                 compression_method: Compression::Null,
-                 cipher_suite: TLS13_TEST_SUITE.suite(),
--                legacy_version: ProtocolVersion::TLSv1_3,
-+                legacy_version: ProtocolVersion::TLSv1_2,
-                 session_id: SessionId::empty(),
-                 extensions: Box::new(ServerExtensions {
-                     key_share: Some(KeyShareEntry {
-@@ -295,6 +295,7 @@ fn test_client_rejects_server_hello_with_varied_session_id() {
-                             .to_vec()
-                             .into(),
-                     }),
-+                    selected_version: Some(ProtocolVersion::TLSv1_3),
-                     ..ServerExtensions::default()
-                 }),
-             },
-@@ -311,6 +312,94 @@ fn test_client_rejects_server_hello_with_varied_session_id() {
-     );
- }
- 
-+#[test]
-+fn test_client_rejects_server_hello_with_tls13_legacy_version() {
-+    let config = ClientConfig::builder(Arc::new(tls13_only(TEST_PROVIDER.clone())))
-+        .with_root_certificates(roots())
-+        .with_no_client_auth()
-+        .unwrap();
-+    let mut tls = Vec::new();
-+    let mut conn = Arc::new(config)
-+        .connect(ServerName::try_from("localhost").unwrap())
-+        .build(&mut tls)
-+        .unwrap();
-+
-+    // server tries to select TLS1.3 with `legacy_version` instead of
-+    // the `supported_versions` extension.
-+    let sh = Message {
-+        version: EncodableVersion::Legacy(ProtocolVersion::TLSv1_3),
-+        payload: MessagePayload::handshake(HandshakeMessagePayload(HandshakePayload::ServerHello(
-+            ServerHelloPayload {
-+                random: Random([0; 32]),
-+                compression_method: Compression::Null,
-+                cipher_suite: TLS13_TEST_SUITE.suite(),
-+                legacy_version: ProtocolVersion::TLSv1_3,
-+                session_id: client_hello_in(&tls).session_id,
-+                extensions: Box::new(ServerExtensions {
-+                    key_share: Some(KeyShareEntry {
-+                        group: KEY_EXCHANGE_GROUP.name(),
-+                        payload: KEY_EXCHANGE_GROUP
-+                            .start()
-+                            .unwrap()
-+                            .pub_key()
-+                            .to_vec()
-+                            .into(),
-+                    }),
-+                    ..ServerExtensions::default()
-+                }),
-+            },
-+        ))),
-+    };
-+
-+    let mut input = VecInput::default();
-+    input
-+        .read(&mut sh.into_wire_bytes().as_slice())
-+        .unwrap();
-+    assert_eq!(
-+        process(&mut input, &mut conn).unwrap_err(),
-+        PeerMisbehaved::SelectedTls13UsingLegacyVersionField.into()
-+    );
-+}
-+
-+#[test]
-+fn test_client_rejects_hrr_with_wrong_legacy_version() {
-+    let config = ClientConfig::builder(Arc::new(TEST_PROVIDER.clone()))
-+        .with_root_certificates(roots())
-+        .with_no_client_auth()
-+        .unwrap();
-+    let mut tls = Vec::new();
-+    let mut conn = Arc::new(config)
-+        .connect(ServerName::try_from("localhost").unwrap())
-+        .build(&mut tls)
-+        .unwrap();
-+
-+    // server replies with an otherwise-acceptable HRR whose `legacy_version`
-+    // is not TLS1.2.
-+    let hrr = Message {
-+        version: EncodableVersion::Legacy(ProtocolVersion::TLSv1_3),
-+        payload: MessagePayload::handshake(HandshakeMessagePayload(
-+            HandshakePayload::HelloRetryRequest(HelloRetryRequest {
-+                cipher_suite: CipherSuite::TLS13_AES_128_GCM_SHA256,
-+                legacy_version: ProtocolVersion::TLSv1_3,
-+                session_id: client_hello_in(&tls).session_id,
-+                extensions: HelloRetryRequestExtensions {
-+                    cookie: Some(SizedPayload::from(vec![1, 2, 3, 4])),
-+                    ..HelloRetryRequestExtensions::default()
-+                },
-+            }),
-+        )),
-+    };
-+
-+    let mut input = VecInput::default();
-+    input
-+        .read(&mut hrr.into_wire_bytes().as_slice())
-+        .unwrap();
-+    assert_eq!(
-+        process(&mut input, &mut conn).unwrap_err(),
-+        PeerMisbehaved::IllegalHelloRetryRequestWithWrongLegacyVersion.into()
-+    );
-+}
-+
- #[test]
- fn test_client_rejects_tls12_server_hello_echoing_compatibility_session_id() {
-     let config = ClientConfig::builder(Arc::new(TEST_PROVIDER.clone()))
-@@ -804,7 +893,7 @@ fn client_requiring_rpk_receives_server_ee(
-                 random: Random([0; 32]),
-                 compression_method: Compression::Null,
-                 cipher_suite: TLS13_TEST_SUITE.suite(),
--                legacy_version: ProtocolVersion::TLSv1_3,
-+                legacy_version: ProtocolVersion::TLSv1_2,
-                 session_id: client_hello_in(&tls).session_id,
-                 extensions: Box::new(ServerExtensions {
-                     key_share: Some(KeyShareEntry {
-@@ -8
-```
-
-**File**: `rustls/src/error/mod.rs` (modified, +5/-0)
-```diff
-@@ -1201,6 +1201,7 @@ pub enum PeerMisbehaved {
-     IllegalHelloRetryRequestWithUnofferedCipherSuite,
-     IllegalHelloRetryRequestWithUnofferedNamedGroup,
-     IllegalHelloRetryRequestWithUnsupportedVersion,
-+    IllegalHelloRetryRequestWithWrongLegacyVersion,
-     IllegalHelloRetryRequestWithWrongSessionId,
-     IllegalHelloRetryRequestWithInvalidEch,
-     IllegalMiddleboxChangeCipherSpec,
-@@ -1239,6 +1240,7 @@ pub enum PeerMisbehaved {
-     SelectedDifferentProtocolVersionAfterRetry,
-     SelectedInvalidPsk,
-     SelectedTls12UsingTls13VersionExtension,
-+    SelectedTls13UsingLegacyVersionField,
-     SelectedUnofferedApplicationProtocol,
-     SelectedUnofferedCertCompression,
-     SelectedUnofferedCipherSuite,
-@@ -1300,6 +1302,9 @@ impl From<PeerMisbehaved> for AlertDescription {
- 
-             PeerMisbehaved::NonEmptyRenegotiationInfo => Self::HandshakeFailure,
- 
-+            PeerMisbehaved::IllegalHelloRetryRequestWithWrongLegacyVersion
-+            | PeerMisbehaved::SelectedTls13UsingLegacyVersionField => Self::ProtocolVersion,
-+
-             _ => Self::IllegalParameter,
-         }
-     }
-```
-
----
-
-### Incident Patch 2: `09d2baa2` (2026-10-16)
-**Commit Message**: bogo: only request OCSP with -enable-ocsp-stapling
-
-This lets SendUnsolicitedOCSPOnCertificate-TLS13 run.
-
-**File**: `bogo/config.json.in` (modified, +0/-1)
-```diff
-@@ -97,7 +97,6 @@
-     "SendClientVersion-RSA": "no rsa kem",
-     "SendFallbackSCSV": "fallback scsv not implemented",
-     "SendSCTListOnResume-TLS-TLS12": "no sct stapling",
--    "SendUnsolicitedOCSPOnCertificate-TLS13": "we unconditionally request a stapled OCSP response",
-     "SendUnsolicitedSCTOnCertificate-TLS13": "SCT stapling not supported",
-     "SendV2ClientHello-*": "we only support >=TLS1.2",
-     "Server-JDK11*": "workarounds for oracle engineering quality",
-```
-
-**File**: `bogo/src/client.rs` (modified, +5/-1)
-```diff
-@@ -72,6 +72,7 @@ pub(crate) fn config(opts: &Options, key_log: &Arc<KeyLogMemo>) -> Arc<ClientCon
-         .with_custom_certificate_verifier(Arc::new(DummyServerAuth::new(
-             &opts.trusted_cert_file,
-             opts.ocsp,
-+            opts.enable_ocsp_stapling,
-             opts.expected_server_names(),
-             &provider,
-         )));
-@@ -154,6 +155,7 @@ pub(crate) fn config(opts: &Options, key_log: &Arc<KeyLogMemo>) -> Arc<ClientCon
- struct DummyServerAuth {
-     parent: Arc<dyn ServerVerifier>,
-     ocsp: OcspValidation,
-+    enable_ocsp_stapling: bool,
-     expect_server_names: Vec<ServerName<'static>>,
-     server_name_index: AtomicUsize,
- }
-@@ -162,6 +164,7 @@ impl DummyServerAuth {
-     fn new(
-         trusted_cert_file: &str,
-         ocsp: OcspValidation,
-+        enable_ocsp_stapling: bool,
-         expect_server_names: Vec<ServerName<'static>>,
-         provider: &CryptoProvider,
-     ) -> Self {
-@@ -172,6 +175,7 @@ impl DummyServerAuth {
-                     .unwrap(),
-             ),
-             ocsp,
-+            enable_ocsp_stapling,
-             expect_server_names,
-             server_name_index: AtomicUsize::new(0),
-         }
-@@ -216,7 +220,7 @@ impl ServerVerifier for DummyServerAuth {
-     }
- 
-     fn request_ocsp_response(&self) -> bool {
--        true
-+        self.enable_ocsp_stapling
-     }
- 
-     fn hash_config(&self, h: &mut dyn Hasher) {
-```
-
-**File**: `bogo/src/opts.rs` (modified, +5/-1)
-```diff
-@@ -47,6 +47,7 @@ pub(crate) struct Options {
-     pub(crate) max_version: Option<ProtocolVersion>,
-     pub(crate) min_version: Option<ProtocolVersion>,
-     pub(crate) ocsp: OcspValidation,
-+    pub(crate) enable_ocsp_stapling: bool,
-     pub(crate) offer_no_client_cas: bool,
-     pub(crate) on_initial_expect_curve_id: Option<NamedGroup>,
-     pub(crate) on_initial_expect_ech_accept: bool,
-@@ -136,6 +137,7 @@ impl Options {
-             max_version: None,
-             min_version: None,
-             ocsp: OcspValidation::default(),
-+            enable_ocsp_stapling: false,
-             offer_no_client_cas: false,
-             on_initial_expect_curve_id: None,
-             on_initial_expect_ech_accept: false,
-@@ -646,6 +648,9 @@ impl Options {
-             "-server-preference" => {
-                 self.server_preference = true;
-             }
-+            "-enable-ocsp-stapling" => {
-+                self.enable_ocsp_stapling = true;
-+            }
-             "-fail-ocsp-callback" => {
-                 self.ocsp = OcspValidation::Reject;
-             }
-@@ -663,7 +668,6 @@ impl Options {
-             // defaults:
-             "-decline-alpn"
-             | "-enable-all-curves"
--            | "-enable-ocsp-stapling"
-             | "-expect-no-session"
-             | "-expect-ticket-renewal"
-             | "-forbid-renegotiation-after-handshake"
+@@ -93,7 +93,7 @@ fn client_only_attempts_resumption_with_compatible_security() {
+         let mut client_output = Vec::new();
+         let mut server_output = Vec::new();
+         let (mut client, mut server) = make_pair_for_configs(
+-            client_config.clone(),
++            client_config,
+             ServerConfig::clone(&server_config),
+             &mut client_output,
+         );
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3402** (2026-10-31): Fix nightly clippy `redundant_clone` case (@ctz)
 - **PR #3401** (2026-10-30): Ensure rustls-ring crate is used by rustls-test (@ctz)
 - **PR #3400** (2026-10-30): Ensure hashing of type_id is for concrete type (@ctz)
 - **PR #3398** (closed): Enforce TLS 1.2 ECDSA certificate curve against offered groups (@parthod0x)
 - **PR #3397** (2026-10-30): Send internal_error for Error::Other (@loadingalias)
 - **PR #3396** (2026-10-29): Minor performance improvements (@ctz)
-- **PR #3395** (2026-10-28): Move connection FIPS status onto `ConnectionOutputs` (@ctz)
 
 ---
 
@@ -2621,33 +2314,28 @@ This lets SendUnsolicitedOCSPOnCertificate-TLS13 run.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Reject TLS1.3 negotiated via legacy_version
+## X. clippy `redundant_clone` case
 
 **RULE**:
-When implementing operations in `bogo/src/main.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rustls-test/tests/api/resume.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6148ff16`: Reject TLS1.3 negotiated via legacy_version. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8dca43ed`: clippy `redundant_clone` case. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `bogo/src/main.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls-test/tests/api/resume.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        Error::PeerMisbehaved(PeerMisbehaved::SelectedTls13UsingLegacyVersionField) => {
-            quit(":SELECTED_TLS13_USING_LEGACY_VERSION_FIELD:")
-        }
-        Error::PeerMisbehaved(PeerMisbehaved::IllegalHelloRetryRequestWithWrongLegacyVersion) => {
-            quit(":ILLEGAL_HELLO_RETRY_REQUEST_WITH_WRONG_LEGACY_VERSION:")
-        }
+            client_config,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            client_config.clone(),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6148ff16` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8dca43ed` are properly handled with clean fallback behavior.

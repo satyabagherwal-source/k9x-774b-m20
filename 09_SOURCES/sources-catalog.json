@@ -105,8 +105,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GEV-26B-Decide",
     "sourceVersion": "hf-autotrust-gev-26b-decide",
     "license": "Open-Source",
-    "contentHash": "d12a51cd1bbdc9eec5802db79580dda7b84424d2c52936b63e5922c3d4f8a4c6",
-    "lastHarvestedAt": "2026-10-28T19:24:24.910Z",
+    "contentHash": "4f3fe48d90e964f5d207078f1c38bca675da081bc79f854653c67625b59b9182",
+    "lastHarvestedAt": "2026-10-31T20:46:37.622Z",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide"
   },
   "hf-convaiinnovations-laya": {
@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "6148ff16",
+    "sourceVersion": "8dca43ed",
     "license": "NOASSERTION",
-    "contentHash": "73c11ee134e3ff0a30e59af03d2772c5d2175defa86ce83d4e19b0a7506289d8",
-    "lastHarvestedAt": "2026-10-31T13:06:48.090Z",
+    "contentHash": "1c31cb7861569a3690fd1673be117cf16af43bde3a5e0540ef3296bcd3b2475b",
+    "lastHarvestedAt": "2026-10-31T20:46:49.386Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -3013,10 +3013,10 @@
     "repository": "metalbear-co/mirrord",
     "platform": "github",
     "sourceUrl": "https://github.com/metalbear-co/mirrord",
-    "sourceVersion": "af2dab92",
+    "sourceVersion": "c4bb0e3d",
     "license": "MIT",
-    "contentHash": "c47321bea8adacc9d1e4622ebae43a7316d198e6ae8b80dacb6c337f7e6dca76",
-    "lastHarvestedAt": "2026-10-31T01:04:48.592Z",
+    "contentHash": "7d442a8ffc81b026a1dc8d1d311f5c152f6f02fc3a3166771ea37223880023bd",
+    "lastHarvestedAt": "2026-10-31T20:46:38.518Z",
     "learningId": "learn-github-metalbear-co-mirrord"
   },
   "openkruise-kruise": {
@@ -8043,10 +8043,10 @@
     "repository": "TableProApp/TablePro",
     "platform": "github",
     "sourceUrl": "https://github.com/TableProApp/TablePro",
-    "sourceVersion": "dcbce8af",
+    "sourceVersion": "4c77c2f7",
     "license": "AGPL-3.0",
-    "contentHash": "b6054ad5243cc11d07a0a2ffa3f35d0f36fe7a6b3ee3b218cea0e8e0efc60792",
-    "lastHarvestedAt": "2026-10-29T01:49:56.948Z",
+    "contentHash": "30ac0aa83189ada986199a40531fcc2ab68308c8476655abf5bc01ed5801a9be",
+    "lastHarvestedAt": "2026-10-31T20:46:44.111Z",
     "learningId": "learn-github-tableproapp-tablepro"
   },
   "twostraws-controlroom": {

@@ -6717,3 +6717,7 @@ Every entry in this ledger must capture:
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `4be31bd5` | Multi-dimensional audit evidence | 2026-10-31T20:32:05.804Z |
 | `learn-huggingface-autotrust-jev-27b-vl` | `https://huggingface.co/autotrust/JEV-27B-VL` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-31T20:38:46.871Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `0c3f87a5` | Multi-dimensional audit evidence | 2026-10-31T20:38:56.696Z |
+| `learn-huggingface-autotrust-gev-26b-decide` | `https://huggingface.co/autotrust/GEV-26B-Decide` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-31T20:46:37.622Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `c4bb0e3d` | Multi-dimensional audit evidence | 2026-10-31T20:46:38.518Z |
+| `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `4c77c2f7` | Multi-dimensional audit evidence | 2026-10-31T20:46:44.111Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `8dca43ed` | Multi-dimensional audit evidence | 2026-10-31T20:46:49.386Z |

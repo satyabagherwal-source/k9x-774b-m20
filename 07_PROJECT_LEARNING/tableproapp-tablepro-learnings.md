@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md`  
 > **Source**: github ([https://github.com/TableProApp/TablePro](https://github.com/TableProApp/TablePro))  
-> **Source Version**: `dcbce8af`  
+> **Source Version**: `4c77c2f7`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T01:49:56.341Z  
+> **Timestamp**: 2026-10-31T20:46:43.381Z  
 > **Learning ID**: `learn-github-tableproapp-tablepro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TableProApp/TablePro](https://github.com/TableProApp/TablePro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T01:49:56.334Z  
+> **Harvest Timestamp**: 2026-10-31T20:46:43.373Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Free and open source database client built natively for developers
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6335 stars
+- **Stars / Engagement**: 6349 stars
 
 ---
 
@@ -323,6 +323,7 @@ let package = Package(
         .library(name: "TableProKerberos", targets: ["TableProKerberos"]),
         .library(name: "TableProTeradataCore", targets: ["TableProTeradataCore"]),
         .library(name: "TableProTrinoCore", targets: ["TableProTrinoCore"]),
+        .library(name: "TableProDamengCore", targets: ["TableProDamengCore"]),
         .library(name: "TableProTLSClientIdentity", targets: ["TableProTLSClientIdentity"]),
         .library(name: "TableProTLSTestFixtures", targets: ["TableProTLSTestFixtures"]),
         .library(name: "TableProGoogleCloud", targets: ["TableProGoogleCloud"]),
@@ -397,7 +398,7 @@ let package = Package(
         ),
         .target(
             name: "TableProImport",
-            dependencies: ["TableProConnectionLibrary"],
+            dependencies: ["TableProConnectionLibrary", "TableProSSHTransport"],
             path: "Sources/TableProImport"
         ),
         .target(
@@ -444,8 +445,14 @@ let package = Package(
         ),
         .target(
             name: "TableProTrinoCore",
-            dependencies: [],
+            dependencies: ["TableProSQLGrammar"],
             path: "Sources/TableProTrinoCore"
+        ),
+        .target(
+            name: "TableProDamengCore",
+            dependencies: ["TableProSQLGrammar"],
+            path: "Sources/TableProDamengCore",
+            swiftSettings: pluginCoreSettings
         ),
         .target(
             name: "TableProTLSClientIdentity",
@@ -532,16 +539,7 @@ let package = Package(
             path: "Sources/TableProTabularIO"
         ),
         .target(
-            name: "TableProTabular",
-            dependencies: ["TableProTabularIO", "TableProNumberFormatting"],
-            path: "Sources/TableProTabular"
-        ),
-        .target(
-            name: "TableProSQLiteCore",
-            dependencies: ["CSQLite"],
-            path: "Sources/TableProSQLiteCore"
-        ),
-        // Linked by a plu
+            na
 ```
 
 ### Core Architecture Module: `apple/Packages/TableProCore/Sources/CSQLite/include/sqlite3.h`
@@ -1598,674 +1596,659 @@ struct SQLTokenStream {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dcbce8af` (2026-10-28)
-**Commit Message**: feat(linux-grid): copy rows as a text table, JSON Lines, one row or INSERT without generated keys (#3862)
+### Incident Patch 1: `34b2363d` (2026-10-31)
+**Commit Message**: build(linux): give the package builds room for DuckDB 2.0 (#3937)
 
-Co-authored-by: sedax90 <[REDACTED_EMAIL]>
-Co-authored-by: Ngo Quoc Dat <[REDACTED_EMAIL]>
-
-**File**: `linux/Cargo.lock` (modified, +2/-0)
+**File**: `linux/build-aux/debian/rules` (modified, +4/-0)
 ```diff
-@@ -5620,6 +5620,7 @@ version = "0.0.0"
- dependencies = [
-  "async-trait",
-  "chrono",
-+ "comfy-table",
-  "csv",
-  "futures",
-  "num-bigint",
-@@ -5633,6 +5634,7 @@ dependencies = [
-  "thiserror",
-  "tokio",
-  "tokio-util",
-+ "unicode-width",
-  "uuid",
-  "zip 8.6.0",
- ]
-```
-
-**File**: `linux/Cargo.toml` (modified, +4/-0)
-```diff
-@@ -85,6 +85,10 @@ mongodb = { version = "3.9.1", default-features = false, features = [
- ] }
- chrono = { version = "0.4", default-features = false, features = ["clock", "serde"] }
- csv = "1.4"
-+# Already built for duckdb's arrow, with its terminal support; a text
-+# table turns that off itself (force_no_tty).
-+comfy-table = "7.1"
-+unicode-width = "0.2"
- # No zlib feature: it pulls libz-sys, and the pure-Rust deflate keeps
- # the build free of another C dependency. Constant memory lets a sheet
- # spill its rows to a temporary file instead of holding them.
-```
-
-**File**: `linux/ROADMAP.md` (modified, +1/-1)
-```diff
-@@ -50,7 +50,7 @@ The app runs on GNOME 50 ([ADR 0015](docs/decisions/0015-gnome-50-platform-floor
- | Cell editing | Editors by column kind: inline text, a multi-line editor, a calendar for dates, a toggle for booleans, JSON checked before saving; values are edited from their exact text, never from what the cell displays. Table tabs only, on tables with a primary key; key, generated and auto-increment columns, and binary, spatial, array and composite values, are read-only |
- | Rows | Insert, duplicate and delete; Paste (Ctrl+V) adds tab-separated rows from the clipboard, filling the columns from the focused one or by a header's names, or edits the focused cell with one value, and asks first above 1,000 rows, up to 100,000; Set NULL and Empty, and DEFAULT on a new row; undo and redo; save or discard pending changes, and stop a save. On ClickHouse, Cassandra and ScyllaDB a save is not atomic, and Stop takes effect between statements |
- | Bulk delete | Deleting 10 rows or more asks first, unless Confirm Before Deleting Rows is off in Preferences |
--| Copy | Copy; Copy As rows, with headers, JSON, CSV with or without headers, Markdown or IN clause, and INSERT in an editable table tab; Copy Column Name; Show Row as JSON |
-+| Copy | Copy; Copy As rows, with headers, CSV with or without headers, JSON, JSON Lines, Markdown, a text table, IN clause or one row of SQL values, and INSERT with or without generated keys in an editable table tab; Copy Column Name; Show Row as JSON |
- | Foreign keys | Open Referenced Row (Ctrl+J) on a key cell opens the table it points at in a new tab, filtered on every column of the key; Show Referencing Rows on a saved row opens a table whose key points at it. A tab already showing those rows comes to the front |
- | Column widths | Kept per table; Widen Column and Narrow Column in the cell menu (Shift+Alt+Right and Shift+Alt+Left) change them from the keyboard |
- | CSV import | Into an existing table, with a column mapping, in one write batch (one transaction where the engine has them), up to 64 MiB |
-```
-
-**File**: `linux/changelog.d/3862.added.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+Copy rows as a text table, JSON Lines, one row of SQL values, or INSERT statements without generated keys.
-```
-
-**File**: `linux/changelog.d/3862.fixed.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+Copy As INSERT and SQL export wrote values that SQL Server IDENTITY and PostgreSQL GENERATED ALWAYS columns refuse.
-```
-
-**File**: `linux/crates/app/src/ui/browse_tab/grid_handlers.rs` (modified, +6/-0)
-```diff
-@@ -94,6 +94,12 @@ impl BrowseModel {
-                 .filter(|column| column.is_generated)
-                 .map(|column| column.name.clone())
-                 .collect(),
-+            numbered: self
-+                .current_columns
-+                .iter()
-+                .filter(|column| column.is_auto_increment)
-+                .map(|column| column.name.clone())
-+                .collect(),
-         }
-     }
+@@ -33,6 +33,10 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all optimize=-lto
+ %:
+ 	dh $@ --buildsystem=meson
  
-```
-
-**File**: `linux/crates/app/src/ui/clipboard/clipboard_copy.rs` (modified, +2/-1)
-```diff
-@@ -77,7 +77,7 @@ impl Copied {
-                 ..
-             } => Self::Value,
-             CopyRequest::InClause { .. } => Self::InList,
--            CopyRequest::Rows { .. } | CopyRequest::Insert(_) => Self::Rows,
-+            CopyRequest::Rows { .. } | CopyRequest::Insert(_) | CopyRequest::Values { .. } => Self::Rows,
-         }
-     }
- 
-@@ -180,6 +180,7 @@ fn copy_error_text(error: &CopyError) -> String {
-         CopyError::Insert(RenderInsertError::NoValues) => gettext("This row has no value to put in an INSERT"),
-         CopyError::Literal(_) => gettext("This column has a value that can't be written as SQL"),
-         CopyError::EmptyInClause => gettext("Nothing to copy: an IN clause can't carry NULL or binary values"),
-+        CopyError::TextTableTooLarge => gettext("Too much to copy as a text table. Copy fewer rows or use CSV."),
-         CopyError::ContainsNul => ClipboardError::ContainsNul.message(),
-     }
- }
-```
-
-**File**: `linux/crates/app/src/ui/clipboard/copy_renderer.rs` (modified, +67/-20)
-```diff
-@@ -4,8 +4,8 @@ use tablepro_core::column::{ColumnInfo, ColumnType, ResultColumn};
- use tablepro_core::dialect::{LiteralError, SqlDialect};
- use tablepro_core::edit::CellInput;
- use tablepro_core::export::{
--    self, CellsEncoder, CsvEncoder, CsvOptions, EncodeError, JsonArrayEncoder, MarkdownEncoder, RenderInsertError,
--    RowEncoder, TsvEncoder,
-+    self, CellsEncoder, CsvEncoder, CsvOptions, EncodeError, JsonArrayEncoder, JsonLinesEncoder, MarkdownEncoder,
-+    RenderInsertError, RowEncoder, TextTableError, TsvEncoder,
- };
- use tablepro_core::meta::TableRef;
- use tablepro_core::value::Value;
-@@ -32,6 +32,12 @@ pub enum CopyRequest {
-         dialect: Arc<dyn SqlDialect>,
-         values: InClauseRows,
-     },
-+    /// Every value of the rows as one list of the engine's literals.
-+    Values {
-+        dialect: Arc<dyn SqlDialect>,
-+        columns: Arc<[ResultColumn]>,
-+        rows: Vec<RowSnapshot>,
-+    },
- }
- 
- /// One column of the rows a user picked, for an IN list.
-@@ -51,7 +57,9 @@ pub enum CopyKind {
-     Csv,
-     CsvWithHeaders,
-     Json,
-+    JsonLines,
-     Markdown,
-+    TextTable,
- }
- 
- /// Rows as INSERT statements for the server the tab reads.
-@@ -83,6 +91,8 @@ pub(crate) enum CopyError {
-     /// Every value was NULL or binary, and `()` is not SQL anywhere.
-     #[error("no value can go in an IN list")]
-     EmptyInClause,
-+    #[error("the text table would be too large")]
-+    TextTableTooLarge,
-     #[error("the text holds a NUL character")]
-     ContainsNul,
- }
-@@ -98,6 +108,7 @@ pub(crate) fn render(request: CopyRequest) -> Result<ClipboardPayload, CopyError
-         CopyRequest::Rows { columns, rows, kind } => render_rows(columns, &rows, kind),
-         CopyRequest::Insert(insert) => render_insert(insert),
-         CopyRequest::InClause { dialect, values } => render_in_clause(&*dialect, &values),
-+        CopyRequest::Values { dialect, columns, rows } => render_values(&*dialect, &columns, &rows),
-     }?;
-     if holds_nul(&payload.text) {
-         return Err(CopyError::ContainsNul);
-@@ -126,7 +137,11 @@ fn render_rows(
-             ClipboardFormat::Csv,
-         ),
-         CopyKind::Json => encode(JsonArrayEncoder::new(columns), rows, ClipboardFormat::Json),
-+        // No desktop type names JSON Lines, and several values are not
-+        // one `application/json` document.
-+        CopyKind::JsonLines => encode(JsonLinesEncoder::new(columns), rows, ClipboardFormat::PlainText),
-         CopyKind::Markdown => encode(MarkdownEncoder::new(columns), rows, ClipboardFormat::Markdown),
-+        CopyKind::TextTable => text_table(&columns, rows),
-     }?;
-     Ok(ClipboardPayload {
-         cells: Some(cells),
-@@ -139,7 +154,12 @@ fn render_rows(
- fn copied_cells(columns: &Arc<[ResultColumn]>, rows: &[RowSnapshot], kind: CopyKind) -> Result<String, CopyError> {
-     let with_headers = match kind {
-         CopyKind::Value(_) | CopyKind::Rows | CopyKind::Csv => false,
--        CopyKind::RowsWithHeaders | CopyKind::CsvWithHeaders | CopyKind::Json | CopyKind::Markdown => true,
-+        CopyKind::RowsWithHeaders
-+        | CopyKind::CsvWithHeaders
-+        | CopyKind::Json
-+        | CopyKind::JsonLines
-+        | CopyKind::Markdown
-+        | CopyKind::TextTable => true,
-     };
-     let CopyKind::Value(column) = kind else {
-         return encoded(CellsEncoder::new(columns.clone(), with_headers), rows);
-@@ -183,6 +203,35 @@ fn render_in_clause(dialect: &dyn SqlDialect, values: &InClauseRows) -> Result<C
-     })
- }
- 
-+fn render_values(
-+    dialect: &dyn SqlDialect,
-+    columns: &[ResultColumn],
-+    rows: &[RowSnapshot],
-+) -> Result<ClipboardPayload, CopyError> {
-+    Ok(ClipboardPayload {
-+        text: export::render_value_list(dialect, columns, rows.iter().map(RowSnapshot::values))?,
-+        format: ClipboardFormat::Sql,
-+        rows: rows.len(),
-+        skipped: 0,
-+        cells: None,
-+    })
-+}
++# DuckDB 2.0's C++ debug info passes dwz's limit of 50 million DIEs, and
++# dwz then fails the build instead of leaving the file as it is.
++override_dh_dwz:
 +
-+fn text_table(columns: &[ResultColumn], rows: &[RowSnapshot]) -> Result<ClipboardPayload, CopyError> {
-+    let text =
-+        export::render_text_table(columns, rows.iter().map(RowSnapshot::values)).map_err(|error| match error {
-+            TextTableError::Encode(error) => CopyError::Encode(error),
-+            TextTableError::TooLarge => CopyError::TextTableTooLarge,
-+        })?;
-+    Ok(ClipboardPayload {
-+        text,
-+        format: ClipboardFormat::PlainText,
-+        rows: rows.len(),
-+        skipped: 0,
-+        cells: None,
-+    })
-+}
-+
- /// The cell's full text, never the grid's display form, which stands in
- /// `<NULL>` for a NULL and cuts long values.
- fn value_text(columns: &[ResultColumn], rows: &[RowSnapshot], column: usize) -> Result<String, CopyError> {
-@@ -236,27 +285,25 @@ fn render_insert(insert: InsertCopy) -> Result<ClipboardPayload, CopyError> {
-         columns,
-         rows,
-     } = insert;
--    let statements = rows
--        .iter()
-+    let count = rows.len();
-+    let cells: Vec<Vec<CellInput>> = rows
-+        .into_iter()
-         .map(|row| ma
+ # dh_clean deletes *.orig files, and every vendored crate ships a
+ # Cargo.toml.orig that its .cargo-checksum.json lists.
+ override_dh_clean:
+```
+
+**File**: `linux/crates/app/meson.build` (modified, +4/-2)
+```diff
+@@ -53,15 +53,17 @@ if profile != 'development'
+ endif
+ 
+ # The workspace suite excludes the app, whose tests need a display and
+-# the GTK test accessibility backend.
++# the GTK test accessibility backend. A package build compiles its tests in
++# the release profile, DuckDB's C++ a second time among them, which took
++# more than an hour on a 4-core builder with DuckDB 2.0.
+ test(
+   'workspace',
+   cargo,
+   args: ['test'] + cargo_options + ['--workspace', '--exclude', 'tablepro'],
+   env: test_env,
+   suite: 'unit',
+   is_parallel: false,
+-  timeout: 3600,
++  timeout: 7200,
+ )
+ 
+ gtk_env = app_env
 ```
 
 ---
 
-### Incident Patch 2: `75d47d52` (2026-10-28)
-**Commit Message**: ci: fix the nightly Build Linux and Release Build runs (#3865)
+### Incident Patch 2: `5fd3a352` (2026-10-31)
+**Commit Message**: fix(linux-grid): count the sort arrow in a header's width and measure columns again when a font changes (#3927)
 
-**File**: `.github/workflows/build-linux.yml` (modified, +3/-0)
-```diff
-@@ -383,6 +383,9 @@ jobs:
-           persist-credentials: false
-       # Every Meson suite runs inside the sandbox, from a source tree with
-       # no .git. The action gives the tests a display and a session bus.
-+      # On aarch64 the manifest links with lld: rustc links with GNU ld
-+      # there, and its parallel links of the gtk suite ran the runner out
-+      # of memory.
-       - uses: flatpak/flatpak-github-actions/flatpak-builder@79327416609af08178ad73b352877e51450790b3 # v6.8
-         with:
-           manifest-path: linux/build-aux/flatpak/app.tablepro.TablePro.Devel.json
-```
-
-**File**: `.github/workflows/release-build.yml` (modified, +3/-2)
-```diff
-@@ -16,7 +16,7 @@ jobs:
-   build:
-     name: Release Build
-     runs-on: xcode-27
--    timeout-minutes: 150
-+    timeout-minutes: 240
-     # The tag's version settings run here first; 9999999 is the largest build at MAJOR 0 (apple/RELEASING.md, Versions).
-     env:
-       VERSION: 0.0.0-dev
-@@ -62,7 +62,8 @@ jobs:
-         run: scripts/release/package.sh plugins --unsigned
- 
-       - name: Upload the build logs
--        if: ${{ failure() }}
-+        # A timeout cancels the job; the log shows where xcodebuild was when it stopped.
-+        if: ${{ failure() || cancelled() }}
-         continue-on-error: true
-         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-         with:
-```
-
-**File**: `.github/workflows/release.yml` (modified, +2/-2)
-```diff
-@@ -87,8 +87,8 @@ jobs:
-     needs: verify
-     runs-on: xcode-27
-     environment: signing
--    # The unsigned archive alone has taken up to 123 minutes in Release Build; signing and two notarizations come on top.
--    timeout-minutes: 180
-+    # The archive alone took 138 minutes for v0.84.0-beta.1; signing and two notarizations come on top.
-+    timeout-minutes: 240
-     permissions:
-       contents: read
-     env:
-```
-
-**File**: `linux/Cargo.toml` (modified, +7/-1)
-```diff
-@@ -161,11 +161,17 @@ self_named_module_files = "deny"
- 
- # Unoptimised with debug info, DuckDB's archive is 2.6 GB, which every
- # test binary of the app links, and the engine runs the suites at debug
--# speed.
-+# speed. The SDK's CXXFLAGS carry -g, so the Flatpak manifest adds -g0.
- [profile.dev.package.libduckdb-sys]
- opt-level = 2
- debug = false
- 
-+# Left unset, a build script's dependency takes the profile of a normal
-+# one it matches, and the tests add such a match (xattr, through
-+# testcontainers), so cargo test built DuckDB a second time.
-+[profile.dev.build-override]
-+debug = false
-+
- [profile.release]
- lto = "fat"
- codegen-units = 1
-```
-
-**File**: `linux/build-aux/flatpak/app.tablepro.TablePro.Devel.json` (modified, +9/-1)
-```diff
-@@ -25,6 +25,7 @@
-     "build-options": {
-         "append-path": "/usr/lib/sdk/rust-stable/bin:/usr/lib/sdk/llvm22/bin",
-         "prepend-ld-library-path": "/usr/lib/sdk/llvm22/lib",
-+        "cxxflags": "-g0",
-         "build-args": [
-             "--share=network"
-         ],
-@@ -34,7 +35,14 @@
-         "test-args": [
-             "--socket=x11",
-             "--share=network"
--        ]
-+        ],
-+        "arch": {
-+            "aarch64": {
-+                "env": {
-+                    "CARGO_ENCODED_RUSTFLAGS": "-Clink-arg=-fuse-ld=lld"
-+                }
-+            }
-+        }
-     },
-     "cleanup": [
-         "/share/man"
-```
-
-**File**: `linux/crates/drivers/clickhouse/tests/integration/writes.rs` (modified, +9/-6)
-```diff
-@@ -420,15 +420,17 @@ async fn killed_mutation_unresolvable_despite_another_tables_mutation_in_its_win
-         let update = batch_on(&held, &[&format!("ALTER TABLE {held_table} UPDATE n = 1 WHERE 1")]);
-         tokio::spawn(async move { connection.write_batch(&update, within(CALL)).await })
-     };
--    let waiting = format!(
--        "SELECT count() FROM system.processes WHERE query LIKE 'ALTER TABLE%{held}%' \
--         AND query NOT LIKE '%system.processes%'"
-+    // The server lists the ALTER in system.processes before it registers
-+    // the mutation, and KILL MUTATION only sees system.mutations.
-+    let registered = format!(
-+        "SELECT count() FROM system.mutations WHERE database = '{DATABASE}' AND table = '{held}' \
-+         AND NOT is_done"
-     );
-     let give_up = Instant::now() + Duration::from_secs(10);
--    while count(connection.as_ref(), &waiting).await == 0 {
-+    while count(connection.as_ref(), &registered).await == 0 {
-         assert!(
-             Instant::now() < give_up,
--            "the ALTER never showed up in system.processes"
-+            "the ALTER's mutation never showed up in system.mutations"
-         );
-         tokio::time::sleep(Duration::from_millis(100)).await;
-     }
-@@ -437,11 +439,12 @@ async fn killed_mutation_unresolvable_despite_another_tables_mutation_in_its_win
-         &format!("ALTER TABLE {other_table} UPDATE n = 1 WHERE 1"),
-     )
-     .await;
--    admin(
-+    let killed = admin(
-         connection.as_ref(),
-         &format!("KILL MUTATION WHERE database = '{DATABASE}' AND table = '{held}' SYNC"),
-     )
-     .await;
-+    assert_eq!(killed.rows().len(), 1, "KILL MUTATION found no mutation on {held}");
- 
-     let outcome = writing.await.expect("the write task");
-     let Err(DriverError::CommitOutcomeUnknown { token: Some(token), .. }) = outcome else {
-```
-
-**File**: `linux/crates/test-fixtures/src/mongo_fixture.rs` (modified, +3/-0)
-```diff
-@@ -113,6 +113,9 @@ impl MongoFixture {
-                 .with_cmd([format!("{CONFIG_DIR}/start.sh")])
-                 .with_env_var("TABLEPRO_PASSWORD", &password)
-                 .with_env_var("TABLEPRO_TLS", if listening == Listening::Tls { "1" } else { "0" })
-+                // The image hands rseq to TCMalloc for its per-CPU caches, and with
-+                // those on MongoDB 8.0 exits on kernels 6.19 to 7.0.13 (SERVER-121912).
-+                .with_env_var("GLIBC_TUNABLES", "glibc.pthread.rseq=1")
-                 .with_startup_timeout(READY_TIMEOUT);
-             if let (Some(network), Some(alias)) = (network, &network_alias) {
-                 request = request.with_network(network.name()).with_container_name(alias);
-```
-
----
-
-### Incident Patch 3: `6f91c0ef` (2026-10-28)
-**Commit Message**: feat(linux-workspace): open several connections in one window (#3856)
-
-Co-authored-by: sedax90 <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: Ngo Quoc Dat <[REDACTED_EMAIL]>
-
-**File**: `linux/ARCHITECTURE.md` (modified, +6/-6)
-```diff
-@@ -111,25 +111,25 @@ One second runtime remains. Relm4 runs a component's commands (`sender.command`,
- 
- ### Restoring sessions and opening files
- 
--`OpenSessions` (`crates/app/src/workspace/open_sessions.rs`) records the session each window adopts, a file or a saved connection, and drops it on a disconnect or a closed window. With the `restore-session` key on (the default, under Preferences), the first activate of a launch reads the record under a hold, opens a window for each session in it with `WindowLaunch::Restore`, then opens the files handed over while it read, or the picker when that opens nothing. A restored saved connection is looked up in the list again, and one deleted since says so in a toast. With the key off, the first activate opens the picker.
-+`OpenSessions` (`crates/app/src/workspace/open_sessions.rs`) records the sessions each window adopts, a file or a saved connection, grouped by the window that holds them, and drops one on a disconnect or a closed window. With the `restore-session` key on (the default, under Preferences), the first activate of a launch reads the record under a hold, opens a window for each recorded window with `WindowLaunch::Restore`, then opens the files handed over while it read, or the picker when that opens nothing. The window connects every recorded session at once. A restored saved connection is looked up in the list again, and one deleted since says so in a toast. With the key off, the first activate opens the picker.
- 
- A quit freezes the record before it asks the first window, so each window it closes stays on it, and writes it before the process may end. An approved quit then empties the list in memory; a cancelled one keeps only the windows still showing or connecting their session. Shutdown freezes it too: windows that go with the process are not the user closing them. An approved quit can leave the process running while a session closes, and an activate that reaches it then restores the record as a new launch would.
- 
- Files come from Open With in a file manager or from the command line (`HANDLES_OPEN`). They wait until the restore has read the record, since a file's window adds to it. Each file is resolved off the GTK thread, its path made canonical and matched against the saved connections, then it opens in the window that has it open, in the active window while that shows only the picker, or in a new window.
- 
- ## Windows and sessions
- 
--Each window is a `SessionWindow` (`crates/app/src/ui/session_window/`) for one connection session ([ADR 0012](docs/decisions/0012-window-per-session.md)). Its `SessionPage` is the picker of saved connections, the connect while it runs, the failure when it fails, or the session's `Workspace`. Every picker's `WelcomeView` binds the one `SavedConnectionList` that `AppServices` builds, which follows the list the `ConnectionStore` publishes after each write, so a save, a connect's last-opened stamp, an edit or a delete in any window reaches every picker. A row's menu and its `picker` actions name the connection by id and read it from the list again when they run. Every page past the picker holds the `SessionClaim` on the session's key, so leaving the page releases it.
-+Each window is a `SessionWindow` (`crates/app/src/ui/session_window/`) for its connection sessions ([ADR 0012](docs/decisions/0012-window-per-session.md), [ADR 0028](docs/decisions/0028-sessions-share-a-window.md)). It keeps a list of open sessions and a list of connects in progress, and its `SessionPage` follows from them: the `WorkspaceShell` with a `Workspace` per open session while any is open, else the first connect's progress, else the last failure, else the picker of saved connections. Every connect, from the picker, the connection tree, the connect dialog, a file, a restore or MCP, takes the same path and joins the window's sessions when it lands. A failure while other sessions are open is a toast with a Details button, whose dialog offers the remedy, and the tree's row keeps the reason. Every picker's `WelcomeView` binds the one `SavedConnectionList` that `AppServices` builds, which follows the list the `ConnectionStore` publishes after each write, so a save, a connect's last-opened stamp, an edit or a delete in any window reaches every picker. A row's menu and its `picker` actions name the connection by id and read it from the list again when they run. An open session, a connect in progress and the failed page each hold the `SessionClaim` on their key, so dropping one releases it.
- 
- - A connect claims the key in the `SessionRegistry` before it starts, so a second window asking for the same database brings the first forward. The connect runs on `Tasks` under a cancel token, and a result for an attempt the user cancelled or replaced is closed instead of adopted.
- - Adopting a connected session starts its `Session`, attaches it to the claim, which `SessionSignals` hears through the registry, records the key in `OpenSessions` and builds the `Workspace
-```
-
-**File**: `linux/changelog.d/3856.added.md` (added, +1/-0)
+**File**: `linux/changelog.d/3927.fixed.1.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Several connections open in one window, listed in a sidebar tree of groups, connections, schemas and tables.
++Changing the font or text size while a data grid was open left its columns at their old widths.
 ```
 
-**File**: `linux/crates/app/src/application/accelerators.rs` (modified, +5/-5)
+**File**: `linux/changelog.d/3927.fixed.md` (added, +1/-0)
 ```diff
-@@ -7,8 +7,8 @@ use super::{Accelerator, AcceleratorScope, ShortcutListing, ShortcutOwner, Short
- use AcceleratorScope::{Application, Component, Local, Stock};
- use ShortcutListing::{Listed, Unlisted};
- use ShortcutOwner::{
--    AssistantComposer, BrowseTab, CellEditor, DiagramCanvas, DiagramTab, FilterStrip, Grid, GridCell, HistoryRow,
--    InlineSuggestion, PickerPage, PickerRow, SidebarList, SqlEditor, SqlEditorCursors, SqlEditorTab, StructureTab,
-+    AssistantComposer, BrowseTab, CellEditor, ConnectionTree, DiagramCanvas, DiagramTab, FilterStrip, Grid, GridCell,
-+    HistoryRow, InlineSuggestion, PickerPage, PickerRow, SqlEditor, SqlEditorCursors, SqlEditorTab, StructureTab,
+@@ -0,0 +1 @@
++A data grid column sized by its header could cut the header's sort arrow.
+```
+
+**File**: `linux/crates/app/src/ui/data_grid/columns.rs` (modified, +106/-19)
+```diff
+@@ -16,6 +16,7 @@ use crate::services::grid::{
+     CellDisplay, ColumnLayout, GridColumn, LayoutSlot, Placement, default_width_chars, header_text, merge_order,
+     number_width_chars, sampled_texts, typical_texts, typical_width_chars,
  };
- use ShortcutSection::{BrowseTable, DataGrid, ErDiagram, General, TableStructure, Tabs};
++use crate::ui::handler_guard::HandlerGuard;
  
-@@ -392,9 +392,9 @@ pub const ACCELERATORS: &[Accelerator] = &[
-     ),
-     local(FilterStrip, BUBBLE, "filter.close", &["Escape"], Unlisted),
-     local(
--        SidebarList,
-+        ConnectionTree,
-         BUBBLE,
--        "sidebar.context-menu",
-+        "tree.context-menu",
-         &["Menu", "<Shift>F10"],
-         Unlisted,
-     ),
-@@ -535,7 +535,7 @@ pub const fn controller_name(owner: ShortcutOwner) -> &'static str {
-         SqlEditorTab => "tablepro-sql-editor-tab-shortcuts",
-         StructureTab => "tablepro-structure-tab-shortcuts",
-         FilterStrip => "tablepro-filter-strip-shortcuts",
--        SidebarList => "tablepro-sidebar-list-shortcuts",
-+        ConnectionTree => "tablepro-connection-tree-shortcuts",
-         HistoryRow => "tablepro-history-row-shortcuts",
-         PickerRow => "tablepro-picker-row-shortcuts",
-         DiagramTab => "tablepro-diagram-tab-shortcuts",
-```
-
-**File**: `linux/crates/app/src/application/app_window_host.rs` (modified, +6/-14)
-```diff
-@@ -1,8 +1,8 @@
--use gtk4 as gtk;
- use gtk4::glib;
- use gtk4::prelude::*;
-+use tablepro_session::SessionKey;
+ /// Rows sampled for a column's opening width.
+ const WIDTH_SAMPLE: usize = 200;
+@@ -25,6 +26,21 @@ const CELL_CHROME_PX: i32 = 13;
+ /// A resize step, in digits of the font the cells draw in, so a step is
+ /// the same number of characters at any text size.
+ const STEP_DIGITS: i32 = 2;
++/// Adwaita draws a header's title in `.caption-heading`: bold, at 82 % of
++/// the grid's font.
++const HEADER_SCALE: f64 = 0.82;
++/// GTK keeps a sort indicator beside the title of every sortable column,
++/// sorted or not: 16 px wide in Adwaita, 6 px from the title.
++const SORT_INDICATOR_PX: i32 = 16 + 6;
++
++/// Whether measuring may narrow a column the grid sized itself.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++enum Measure {
++    /// More rows only widen it, so it holds still as pages arrive.
++    Widen,
++    /// A font changed, so the width it had means nothing now.
++    Again,
++}
  
--use super::{TableProApplication, WindowHost, WindowLaunch};
-+use super::{TableProApplication, WindowHost};
- 
- /// The application keeps every window's controller, so a window that
- /// held it strongly would keep it alive past its own shutdown.
-@@ -18,17 +18,9 @@ impl AppWindowHost {
+ /// What a column's cells read to draw a row. The column makes one and
+ /// every cell it builds shares it.
+@@ -66,6 +82,8 @@ pub struct ColumnSet {
+     /// keep: a better guess from other rows should still reach them.
+     auto_widths: std::collections::HashMap<usize, i32>,
+     pages: Pages,
++    /// The fonts the grid last sized its columns in.
++    measured_in: Option<String>,
+     handlers: Vec<(glib::WeakRef<glib::Object>, glib::SignalHandlerId)>,
  }
  
- impl WindowHost for AppWindowHost {
--    fn present_window(&self, window_id: u32) -> bool {
--        self.app.upgrade().is_some_and(|app| app.present_window(window_id))
--    }
--
--    fn open_window(&self, launch: WindowLaunch) {
--        if let Some(app) = self.app.upgrade() {
--            app.open_window(launch);
--        }
--    }
--
--    fn application(&self) -> Option<gtk::Application> {
--        self.app.upgrade().map(|app| app.upcast())
-+    fn present_session(&self, window_id: u32, key: &SessionKey) -> bool {
-+        self.app
-+            .upgrade()
-+            .is_some_and(|app| app.present_session(window_id, key))
-     }
- }
-```
-
-**File**: `linux/crates/app/src/application/mcp_bridge.rs` (modified, +12/-9)
-```diff
-@@ -150,7 +150,9 @@ fn answer(app: &TableProApplication, request: McpRequest) {
- 
- /// Open the connection the way the picker does: in the window that has
- /// it, in the active window while it only shows the picker, or in a new
--/// window. Every prompt the connect needs shows there.
-+/// window. Every prompt the connect needs shows there. An agent's connect
-+/// never joins the sessions the user works in, where it would take the
-+/// front and the window's actions.
- fn open(
-     app: &TableProApplication,
-     services: &AppServices,
-@@ -179,7 +181,7 @@ fn open(
-             }
-         }
-         // A failed connect keeps its claim, and its window says why.
--        Some(window_id) if !app.imp().windows.keeps_session(window_id) => {
-+        Some(window_id) if !app.imp().windows.keeps_session(window_id, &key) => {
-             app.present_window(window_id);
-             let _ = reply.send(OpenOutcome::Closed);
-             return;
-@@ -201,7 +203,7 @@ fn open(
-                 break OpenOutcome::Closed;
-             };
-             match sessions.window_for(&key) {
--                Some(window_id) if app.imp().windows.keeps_session(window_id) => claimed = true,
-+                Some(window_id) if app.imp().windows.keeps_session(window_id, &key) => claimed = true,
-                 Some(_) => break OpenOutcome::Closed,
-                 None if claimed => break OpenOutcome::Closed,
-                 None => {}
-@@ -230,16 +232,17 @@ fn approve(
-     approval: WriteApproval,
-     mut reply: oneshot::Sender<bool>,
- ) {
--    let window = services
--        .sessions
--        .window_for(&SessionKey::Saved(approval.connection_id))
--        .and_then(|id| app.window_by_id(id));
--    let Some(window) = window else {
-+    let key = SessionKey::Saved(approval.connection_id);
-+    let owner = services.sessions.window_for(&key);
-+    let window = owner.and_then(|id| app.window_by_id(id));
-+    let (Some(owner), Some(window)) = (owner, window) else {
-         let _ = reply.send(false);
-         return;
-     };
-     let confirmation = WriteConfirmation::external(&approval.connection_name, &approval.sql, approval.destructive);
--    window.present();
-+    // The question comes over the connection it is about, which may be
-+    // behind another session of the window.
-+    app.present_session(owner, &key);
-     glib::spawn_future_local(async move {
-         let asked = approval.cancel.child_token();
-         let parent: gtk4::Widget = window.upcast();
-```
-
-**File**: `linux/crates/app/src/application/mod.rs` (modified, +23/-6)
-```diff
-@@ -120,6 +120,14 @@ impl TableProApplication {
-         true
-     }
- 
-+    /// Bring the window forward with the session under `key` in front.
-+    pub fn present_session(&self, window_id: u32, key: &SessionKey) -> bool {
-+        if let Some(input) = self.imp().windows.sender(window_id) {
-+            crate::runtime::DeliverInput::deliver(&input, crate::ui::SessionWindowInput::ShowSession(key.clone()));
-+        }
-+        self.present_window(window_id)
+@@ -234,20 +252,55 @@ impl DataGrid {
+     /// the first rows, and keeps it while rows scroll by, since an
+     /// automatic width measures every row GTK builds and shifts.
+     fn size_unsized_columns(&self) {
+-        let widths = self.opening_widths();
++        self.size_columns(Measure::Widen);
 +    }
 +
-     /// What activate and the new-window action open: the sessions open
-     /// at the last quit the first time, a picker after. A picker opened
-     /// first would write its session over the ones still to reopen.
-@@ -158,25 +166,34 @@ impl TableProApplication {
-             // A quit approved during the read leaves the record for the
-             // next launch and opens nothing.
-             if app.imp().restore.get() == imp::RestoreState::Loading {
--                let keys = match loaded {
-+                let windows = match loaded {
-                     OpenSessionsLoad::Restored(record) => services.open_sessions().restore(record),
-                     OpenSessionsLoad::Empty => Vec::new(),
-                 };
-                 app.imp().restore.set(imp::RestoreState::Done);
--                app.finish_restore(keys);
-+                app.finish_restore(windows);
-             }
-             drop(hold);
-         });
-         imp.restoring.replace(Some(restoring));
++    /// The monospace font, the interface font or the text size changed:
++    /// the columns the grid sized itself take the new measure, and a width
++    /// the user gave stays.
++    pub(super) fn fonts_changed(&self) {
++        self.size_columns(Measure::Again);
++        row_number_column::fit(self);
++    }
++
++    /// A grid out of any window hears of no font change, and one sized
++    /// before it had a window measured in no theme's font.
++    pub(super) fn rooted(&self) {
++        let measured_in = self.imp().columns.borrow().measured_in.clone();
++        if measured_in.is_some_and(|fonts| fonts != fonts_now(&self.column_view())) {
++            self.fonts_changed();
++        }
++    }
++
++    /// The interface font and the text size reach the grid as GTK system
++    /// settings; the monospace font is libadwaita's.
++    pub(super) fn watch_fonts(&self) {
++        let style = adw::StyleManager::default();
++        let handler = style.connect_monospace_font_name_notify(glib::clone!(
++            #[weak(rename_to = grid)]
++            self,
++            move |_| grid.fonts_changed()
++        ));
++        self.imp().font_watch.replace(Some(HandlerGuard::new(&style, handler)));
++    }
++
++    fn size_columns(&self, measure: Measure) {
++        let widths = self.opening_widths(measure);
++        self.imp().columns.borrow_mut().measured_in = Some(fonts_now(&self.column_view()));
+         for (index, view_column, width) in widths {
+             self.imp().columns.borrow_mut().auto_widths.insert(index, width);
+             view_column.set_fixed_width(width);
+         }
      }
  
--    fn finish_restore(&self, keys: Vec<SessionKey>) {
-+    /// One window for each recorded group of keys. Each group's keys are
-+    /// filed under its window as soon as the window has an id, so the
-+    /// record never groups them under a window that is gone.
-+    fn finish_restore(&self, windows: Vec<Vec<SessionKey>>) {
-         let files = self.imp().pending_files.take();
--        if keys.is_empty() && files.is_empty() {
-+        if windows.is_empty() && files.is_empty() {
-             self.open_window(WindowLaunch::Picker);
-         }
--        for key in keys {
--            self.open_window(WindowLaunch::Restore(key));
-+        let open_sessions = self.services().map(|services| services.open_sessions().clone());
-+        for keys in windows {
-+            let Some(window) = self.open_window(WindowLaunch::Restore(keys.clone())) else {
-+                continue;
-+            };
-+            if let Some(open_sessions) = &open_sessions {
-+                open_sessions.assign(&keys, window.id());
-+            }
-         }
-         self.open_files(&files);
-     }
+-    fn opening_widths(&self) -> Vec<(usize, gtk::ColumnViewColumn, i32)> {
++    fn opening_widths(&self, measure: Measure) -> Vec<(usize, gtk::ColumnViewColumn, i32)> {
+         let set = self.imp().columns.borrow();
+         let sample: Vec<Option<Arc<[Value]>>> = self.store().rows().take(WIDTH_SAMPLE).map(|row| row.cells()).collect();
+         let by_type = set.pages == Pages::Empty;
+         let view = self.column_view();
+-        let font = value_font(&view);
+-        let metrics = view.pango_context().metrics(Some(&font), None);
++        let context = view.create_pango_context();
++        let font = value_font(&context);
++        let metrics = context.metrics(Some(&font), None);
+         let char_px = pango::units_to_double(metrics.approximate_char_width());
+         let null = editable_null_sentinel();
+         let mut widths = Vec::new();
+@@ -272,31 +325,37 @@ impl DataGrid {
+             // no rows a value its type spells out, as a UUID or an enum's
+             // label, so those are measured as the cell draws them.
+             let sampled = match (by_type, paint.numbers.get()) {
+-                (_, true) => tabular_width(&view, &font, &"0".repeat(usize::try_from(chars).unwrap_or_default())),
++                (_, true) => tabular_width(&context, &font, &"0".repeat(usize::try_from(chars).unwrap_or_default())),
+                 (true, false) => 0,
+                 // One line each, so one layout measures them all
 ```
 
-**File**: `linux/crates/app/src/application/open_files.rs` (modified, +3/-2)
+**File**: `linux/crates/app/src/ui/data_grid/imp.rs` (modified, +14/-0)
 ```diff
-@@ -44,8 +44,9 @@ impl TableProApplication {
+@@ -18,6 +18,7 @@ use super::row_detail::RowDetailPane;
+ use super::selection::Target;
+ use super::selection_summary::SummaryState;
+ use super::{GridConfig, GridStore};
++use crate::ui::handler_guard::HandlerGuard;
+ 
+ /// The grid's selection model, made with the grid and given its rows once
+ /// the grid knows how it sorts.
+@@ -85,6 +86,7 @@ pub struct DataGrid {
+     pub editing: Cell<bool>,
+     /// The window's focus handler, while the grid is in a window.
+     pub focus_watch: RefCell<Option<(glib::WeakRef<gtk4::Window>, glib::SignalHandlerId)>>,
++    pub(super) font_watch: RefCell<Option<HandlerGuard>>,
+ }
+ 
+ #[glib::object_subclass]
+@@ -122,6 +124,7 @@ impl ObjectImpl for DataGrid {
+         self.find.stop();
+         self.summary.stop();
+         self.obj().stop_watching_focus();
++        drop(self.font_watch.take());
+         if let Some(menus) = self.menus.get() {
+             menus.unparent();
+         }
+@@ -134,12 +137,23 @@ impl WidgetImpl for DataGrid {
+     fn root(&self) {
+         self.parent_root();
+         self.obj().watch_focus();
++        self.obj().rooted();
      }
  
-     fn place_file(&self, file: gio::File, key: Option<SessionKey>) {
--        let owner = key.and_then(|key| self.services()?.sessions.window_for(&key));
--        if owner.is_some_and(|owner| self.present_window(owner)) {
-+        // The owner may show another of its sessions in front.
-+        let owner = key.and_then(|key| Some((self.services()?.sessions.window_for(&key)?, key)));
-+        if owner.is_some_and(|(owner, key)| self.present_session(owner, &key)) {
+     fn unroot(&self) {
+         self.obj().stop_watching_focus();
+         self.parent_unroot();
+     }
++
++    fn system_setting_changed(&self, setting: &gtk4::SystemSetting) {
++        self.parent_system_setting_changed(setting);
++        if matches!(
++            setting,
++            gtk4::SystemSetting::Dpi | gtk4::SystemSetting::FontName | gtk4::SystemSetting::FontConfig
++        ) {
++            self.obj().fonts_changed();
++        }
++    }
+ }
+ 
+ impl BinImpl for DataGrid {}
+```
+
+**File**: `linux/crates/app/src/ui/data_grid/mod.rs` (modified, +1/-0)
+```diff
+@@ -87,6 +87,7 @@ impl DataGrid {
+         find_bar::install(&grid);
+         imp.detail_pane.attach(&grid);
+         grid.set_columns(columns, sorting, rules);
++        grid.watch_fonts();
+         grid
+     }
+ 
+```
+
+**File**: `linux/crates/app/src/ui/data_grid/row_number_column.rs` (modified, +3/-1)
+```diff
+@@ -139,7 +139,9 @@ pub fn fit(grid: &DataGrid) {
+     };
+     let largest = grid.row_base() + u64::from(grid.store().len());
+     let digits = largest.max(1).ilog10() as i32 + 1;
+-    let metrics = grid.column_view().pango_context().metrics(None, None);
++    // A fresh context, since the view's own follows a font change only at
++    // the next frame.
++    let metrics = grid.column_view().create_pango_context().metrics(None, None);
+     let digit_px = pango::units_to_double(metrics.approximate_digit_width());
+     column.set_fixed_width((f64::from(digits.max(2)) * digit_px).ceil() as i32 + CHROME_PX);
+ }
+```
+
+**File**: `linux/crates/app/src/ui/data_grid/tests/columns.rs` (modified, +131/-3)
+```diff
+@@ -438,18 +438,146 @@ fn a_header_of_wide_letters_shows_whole() {
+         vec![named("id", "integer", true), named("WWWWWWWW", "text", false)],
+         vec![vec![Value::Int(1), text("a")]],
+     ));
++    let (header, title) = header_title(&grid, "WWWWWWWW");
++    let (_, needs, _, _) = title.measure(gtk::Orientation::Horizontal, -1);
++
++    wait_until(WAIT, || header.width() >= needs).expect("the header's title shows whole");
++}
++
++/// GTK keeps a sort indicator beside the title of every sortable column,
++/// so a column as wide as its title alone cuts the arrow once it sorts.
++#[gtk4::test]
++fn a_sorted_columns_header_shows_its_title_and_arrow_whole() {
++    let grid = laid_out(Grid::open(
++        vec![named("id", "integer", true), named("level", "text", false)],
++        vec![vec![Value::Int(1), text("a")]],
++    ));
++    grid.grid.sort_by(Some((1, true)));
++    let (header, title) = header_title(&grid, "level");
++    let title_and_arrow = title.parent().expect("the title's box");
++    let (_, needs, _, _) = title_and_arrow.measure(gtk::Orientation::Horizontal, -1);
++
++    wait_until(WAIT, || header.width() >= needs).expect("the title and its sort arrow show whole");
++}
++
++/// The text size reaches the grid as a GTK setting: a column it sized
++/// takes the new measure both ways, and a width the user gave stays.
++#[gtk4::test]
++fn a_text_size_change_measures_the_grids_columns_again() {
++    let grid = laid_out(Grid::open(
++        vec![
++            named("id", "integer", true),
++            named("code", "text", false),
++            named("note", "text", false),
++        ],
++        vec![vec![Value::Int(1), text("CF-1001"), text("Ships in two days")]],
++    ));
++    let code = data_column(&grid, 1);
++    let opened = code.fixed_width();
++    data_column(&grid, 2).set_fixed_width(300);
++    let scaled = TextScale::times(1.5);
++
++    wait_until(WAIT, || code.fixed_width() > opened).expect("the column widened with the text");
++    let display = grid.cell_of(1, 1).display().cloned().expect("the code's text");
++    wait_until(WAIT, || shows_whole(&display)).expect("the code shows whole at the larger text");
++    assert_eq!(
++        data_column(&grid, 2).fixed_width(),
++        300,
++        "the width the user gave changed"
++    );
++    let widened = code.fixed_width();
++
++    drop(scaled);
++    wait_until(WAIT, || code.fixed_width() < widened).expect("the column narrowed with the text");
++    assert_eq!(
++        data_column(&grid, 2).fixed_width(),
++        300,
++        "the width the user gave changed"
++    );
++}
++
++/// A grid out of its window hears of no text size change, so it measures
++/// again when it is back if its fonts are not the ones it measured in.
++#[gtk4::test]
++fn a_grid_back_in_its_window_takes_a_text_size_it_missed() {
++    let grid = laid_out(Grid::open(
++        vec![
++            named("id", "integer", true),
++            named("code", "text", false),
++            named("note", "text", false),
++        ],
++        vec![vec![Value::Int(1), text("CF-1001"), text("Ships in two days")]],
++    ));
++    let code = data_column(&grid, 1);
++    let opened = code.fixed_width();
++    data_column(&grid, 2).set_fixed_width(300);
++
++    grid.window.set_child(None::<&gtk::Widget>);
++    let _scaled = TextScale::times(1.5);
++    grid.window.set_child(Some(&grid.grid));
++
++    wait_until(WAIT, || code.fixed_width() > opened).expect("the column widened with the text");
++    assert_eq!(
++        data_column(&grid, 2).fixed_width(),
++        300,
++        "the width the user gave changed"
++    );
++}
++
++/// libadwaita announces a new monospace font; the grid measures the
++/// columns it sized again, from the rows it holds now.
++#[gtk4::test]
++fn a_monospace_font_change_measures_the_grids_columns_again() {
++    let grid = laid_out(Grid::open(
++        vec![named("id", "integer", true), named("note", "text", false)],
++        vec![vec![Value::Int(1), text(&"x".repeat(30))]],
++    ));
++    let column = data_column(&grid, 1);
++    let wide = column.fixed_width();
++    grid.grid.replace_rows(persisted(&[vec![Value::Int(1), text("a")]]), 0);
++    assert_eq!(column.fixed_width(), wide, "a page of shorter rows narrowed the column");
++
++    libadwaita::StyleManager::default().notify("monospace-font-name");
++
++    wait_until(WAIT, || column.fixed_width() < wide).expect("the column measured again");
++}
++
++/// The header of the column named `name`, and its title.
++fn header_title(grid: &Grid, name: &str) -> (gtk::Widget, gtk::Label) {
+     let title = descendants(&grid.grid.column_view())
+         .into_iter()
+         .filter_map(|widget| widget.downcast::<gtk::Label>().ok())
+-        .find(|label| label.label() == "WWWWWWWW")
++        .find(|label| label.label() == name)
+         .expect("the header's title");
+     let header = title
+         .parent()
+         .and_then(|title_box| title_box.parent())
+         .expect("the header button");
+-    let (_, needs, _, _) = title.measure(gtk::Orientation::Horizontal,
+```
+
+---
+
+### Incident Patch 3: `58848496` (2026-10-31)
+**Commit Message**: feat(linux-session): reopen a connection's other databases at launch and when a failed connect is retried (#3905)
+
+Co-authored-by: sedax90 <[REDACTED_EMAIL]>
+Co-authored-by: Ngo Quoc Dat <[REDACTED_EMAIL]>
+
+**File**: `linux/changelog.d/3905.added.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++A database opened beside its connection reopens with it at the next launch, with its tabs.
+```
+
+**File**: `linux/crates/app/src/ui/session_window/connections.rs` (modified, +14/-12)
+```diff
+@@ -619,19 +619,21 @@ impl SessionWindow {
+         if !self.tear_down_session(&key) {
              return;
          }
-         let idle = self
+-        let Some(saved) = stored else {
+-            self.show_toast(&crate::i18n::gettext("The connection was deleted."));
+-            return;
+-        };
+-        let source = ConnectSource::Saved(Box::new(saved));
+-        let Some(claim) = self.claim_for(&key) else {
+-            return;
+-        };
+-        if let Some(mut pending) = self.spawn_connect(claim, source, None, CredentialDemand::default()) {
+-            pending.databases = databases;
+-            self.imp().connects.borrow_mut().push(pending);
++        match stored {
++            Some(saved) => self.connect_saved(saved, databases),
++            None => self.show_toast(&crate::i18n::gettext("The connection was deleted.")),
+         }
+-        self.connects_changed();
++    }
++
++    /// Connect `saved` through the window's one connect path, and open
++    /// `databases` beside it once it joins.
++    pub(super) fn connect_saved(&self, saved: SavedConnection, databases: Vec<String>) {
++        self.connect_reopening(
++            None,
++            ConnectSource::Saved(Box::new(saved)),
++            CredentialDemand::default(),
++            databases,
++        );
+     }
+ 
+     /// Tick the level of the session in front in the main menu.
 ```
 
-**File**: `linux/crates/app/src/application/quit_sequence.rs` (modified, +3/-3)
+**File**: `linux/crates/app/src/ui/session_window/imp.rs` (modified, +5/-1)
 ```diff
-@@ -18,8 +18,8 @@ use crate::workspace::{CloseDecision, CloseReason};
- ///
- /// The open sessions stay recorded through the quit, so the next launch
- /// reopens the windows it closes. The record is written before the
--/// process may end, and a cancelled quit keeps only the windows still
--/// showing or connecting their session.
-+/// process may end, and a cancelled quit keeps only the sessions a
-+/// window still shows or connects.
- ///
- /// An approved quit can leave the process running with no window while
- /// a session closes, and a second launch then activates it. That
-@@ -56,7 +56,7 @@ impl QuitSequence {
-                     services
-                         .sessions
-                         .window_for(key)
--                        .is_some_and(|window_id| app.imp().windows.keeps_session(window_id))
-+                        .is_some_and(|window_id| app.imp().windows.keeps_session(window_id, key))
-                 }),
+@@ -27,6 +27,10 @@ use crate::ui::welcome_view::WelcomeView;
+ use crate::ui::workspace::WorkspaceShell;
+ use crate::workspace::{CloseGuards, WindowInhibitor};
+ 
++/// A connect that failed beside the window's sessions: where it came
++/// from, why it failed, and the other databases its next connect opens.
++pub(super) type FailureBeside = (ConnectSource, ConnectFailure, Vec<String>);
++
+ #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
+ #[template(resource = "/app/tablepro/TablePro/ui/session-window.ui")]
+ #[properties(wrapper_type = super::SessionWindow)]
+@@ -53,7 +57,7 @@ pub struct SessionWindow {
+     pub(super) failed: RefCell<Option<FailedConnect>>,
+     /// The last failure of each connect that failed beside something
+     /// else, until the key connects again, for its Details.
+-    pub(super) failures: RefCell<HashMap<SessionKey, (ConnectSource, ConnectFailure)>>,
++    pub(super) failures: RefCell<HashMap<SessionKey, FailureBeside>>,
+     /// The shell, from the first session the window adopts to the last
+     /// one it tears down.
+     pub(super) shell: RefCell<Option<WorkspaceShell>>,
+```
+
+**File**: `linux/crates/app/src/ui/session_window/locate_file.rs` (modified, +2/-1)
+```diff
+@@ -202,7 +202,8 @@ impl SessionWindow {
+         if self.failed_saved(located.id).is_none() {
+             return;
+         }
+-        if let Some((claim, _, _)) = self.take_failure(&SessionKey::Saved(located.id)) {
++        if let Some(super::session_page::TakenFailure { claim, .. }) = self.take_failure(&SessionKey::Saved(located.id))
++        {
+             self.connect_with(
+                 claim,
+                 ConnectSource::Saved(Box::new(located)),
+```
+
+**File**: `linux/crates/app/src/ui/session_window/mod.rs` (modified, +151/-27)
+```diff
+@@ -65,7 +65,7 @@ use self::file_location_dialog::FileCheck;
+ pub(crate) use self::launch_notice::LaunchNotice;
+ pub(super) use self::picker_page::PickerPage;
+ use self::resolve_file_identity::{FileResolveError, FileTarget, ResolvedFile, resolve_file_blocking};
+-use self::session_page::{FailedConnect, OpenSession, PendingConnect, SessionPage, source_key};
++use self::session_page::{FailedConnect, OpenSession, PendingConnect, SessionPage, TakenFailure, source_key};
+ use self::session_window_command::{AttemptError, ConnectFailure, Connected, SessionWindowCommand};
+ pub(crate) use self::session_window_input::{MovedTab, SessionWindowInput};
+ use crate::application::{AppServices, WindowHost, WindowLaunch};
+@@ -406,7 +406,7 @@ impl SessionWindow {
+         self.imp().shell.replace(Some(shell.clone()));
+         self.sync_tree();
+         if let Some(tree) = shell.tree() {
+-            for (key, (source, failure)) in self.imp().failures.borrow().iter() {
++            for (key, (source, failure, _)) in self.imp().failures.borrow().iter() {
+                 tree.set_failure(key, Some((&source_name(source), failure.message.as_str())));
              }
          }
+@@ -683,7 +683,7 @@ impl SessionWindow {
+                     self.open_database(id, database);
+                 }
+             }
+-            Err(AttemptError::Failed(failure)) => self.on_connect_failed(claim, source, failure),
++            Err(AttemptError::Failed(failure)) => self.on_connect_failed(claim, source, failure, databases),
+             // A location question was asked above, so this is a stop.
+             Err(AttemptError::Cancelled | AttemptError::AskLocation(_)) => {
+                 let key = claim.key().clone();
+@@ -699,7 +699,15 @@ impl SessionWindow {
+     /// toast says so and its Details say why. A session restored at
+     /// launch that no longer opens is not tried again at the next one; a
+     /// Retry that works records it again.
+-    fn on_connect_failed(&self, claim: SessionClaim, source: ConnectSource, failure: ConnectFailure) {
++    /// The connection's other databases wait with the failure for the
++    /// connect that brings it back.
++    fn on_connect_failed(
++        &self,
++        claim: SessionClaim,
++        source: ConnectSource,
++        failure: ConnectFailure,
++        databases: Vec<String>,
++    ) {
+         tracing::warn!(error = %failure.message, "connect failed");
+         let imp = self.imp();
+         let key = claim.key().clone();
+@@ -710,7 +718,12 @@ impl SessionWindow {
+                 ConnectSource::Saved(saved) => failure.missing_file.clone().map(|missing| (saved.id, missing)),
+                 _ => None,
+             };
+-            self.show_failure(FailedConnect { claim, source, failure });
++            self.show_failure(FailedConnect {
++                claim,
++                source,
++                failure,
++                databases,
++            });
+             if let Some((id, missing)) = missing {
+                 self.offer_locate(id, missing);
+             }
+@@ -721,7 +734,9 @@ impl SessionWindow {
+         if let Some(tree) = self.shell().and_then(|shell| shell.tree()) {
+             tree.set_failure(&key, Some((&name, failure.message.as_str())));
+         }
+-        imp.failures.borrow_mut().insert(key.clone(), (source, failure));
++        imp.failures
++            .borrow_mut()
++            .insert(key.clone(), (source, failure, databases));
+         // The toast goes to the page that shows from here on, which may
+         // be another connect's progress.
+         self.connects_changed();
+@@ -892,7 +907,20 @@ impl SessionWindow {
+             return None;
+         }
+         match self.imp().failed.take() {
+-            Some(failed) if failed.claim.key() == key => Some(failed.claim),
++            Some(FailedConnect {
++                claim,
++                source,
++                failure,
++                databases,
++            }) if claim.key() == key => {
++                // The connect this claim starts takes them, as it takes
++                // a failure beside the window's sessions.
++                self.imp()
++                    .failures
++                    .borrow_mut()
++                    .insert(key.clone(), (source, failure, databases));
++                Some(claim)
++            }
+             failed => {
+                 let left = failed.is_some();
+                 drop(failed);
+@@ -915,6 +943,76 @@ impl SessionWindow {
+ 
+     /// Connect with the failed page's claim when there is one, else as
+     /// any connect does.
++    /// Connect `source` with `claim`, or a claim of its own, and open
++    /// `databases` beside it once it joins: a reconnect's or a restore's.
++    pub(super) fn connect_reopening(
++        &self,
++        claim: Option<SessionClaim>,
++        source: ConnectSource,
++        demand: CredentialDemand,
++        databases: Vec<String>,
++    ) {
++        let key = source_key(&source);
++        let claim = match claim {
++            Some(claim) => claim
+```
+
+**File**: `linux/crates/app/src/ui/session_window/other_databases.rs` (modified, +9/-1)
+```diff
+@@ -176,6 +176,12 @@ impl SessionWindow {
+             }
+             (None, Ok(Ok(session))) => drop(session.begin_shutdown()),
+             (Some(_), Ok(Err(error))) if !matches!(error, ConnectError::Cancelled) => {
++                // A database restored at launch that no longer opens is
++                // not tried again at the next one.
++                self.forget_session(&SessionKey::SavedIn {
++                    id,
++                    database: database.clone(),
++                });
+                 self.show_toast(&gettext_f(
+                     "Could not open the database “{database}”: {error}",
+                     &[("database", &database), ("error", &connect_error_message(&error))],
+@@ -194,7 +200,8 @@ impl SessionWindow {
+             return;
+         };
+         claim.attach(&session);
+-        let Some(workspace) = self.new_workspace(claim.key().clone(), &session, &shell) else {
++        let key = claim.key().clone();
++        let Some(workspace) = self.new_workspace(key.clone(), &session, &shell) else {
+             drop(session.begin_shutdown());
+             return;
+         };
+@@ -216,6 +223,7 @@ impl SessionWindow {
+                 .push(OpenSession::new(claim, session, workspace.clone()));
+             others
+         };
++        self.remember_session(&key, None);
+         self.render();
+         shell.add_session(&workspace);
+         workspace.start();
+```
+
+**File**: `linux/crates/app/src/ui/session_window/secret_retry.rs` (modified, +2/-2)
+```diff
+@@ -22,8 +22,8 @@ impl SessionWindow {
+         if !offered {
+             return;
+         }
+-        if let Some((claim, source, _)) = self.take_failure(key) {
+-            self.reconnect(claim, source, CredentialDemand::reenter(kind));
++        if let Some(taken) = self.take_failure(key) {
++            self.reconnect(taken, CredentialDemand::reenter(kind));
+         }
+     }
+ }
+```
+
+**File**: `linux/crates/app/src/ui/session_window/session_page.rs` (modified, +10/-0)
+```diff
+@@ -63,6 +63,16 @@ pub(crate) struct FailedConnect {
+     pub(crate) claim: SessionClaim,
+     pub(crate) source: ConnectSource,
+     pub(crate) failure: ConnectFailure,
++    /// The connection's other databases its next connect opens again.
++    pub(crate) databases: Vec<String>,
++}
++
++/// A failure taken to act on, with the failed page's claim when it was
++/// the page's.
++pub(crate) struct TakenFailure {
++    pub(crate) claim: Option<SessionClaim>,
++    pub(crate) source: ConnectSource,
++    pub(crate) databases: Vec<String>,
+ }
+ 
+ /// The key a connect from `source` claims.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3865** (2026-10-28): ci: fix the nightly Build Linux and Release Build runs (@datlechin)
-- **PR #3862** (2026-10-28): feat(linux-grid): copy rows as a text table, JSON Lines, one row or INSERT without generated keys (@sedax90)
-- **PR #3860** (2026-10-27): feat(debugger): step through PL/pgSQL and Oracle PL/SQL routines with breakpoints (@datlechin)
-- **PR #3859** (2026-10-27): fix(copy): defer foreign key checks to the commit for a whole copy (@MrWeb)
-- **PR #3857** (2026-10-27): feat(export): set Structure, Drop or Data for a whole database or group (@datlechin)
-- **PR #3856** (2026-10-28): feat(linux-workspace): open several connections in one window (@sedax90)
+- **PR #3956** (2026-10-31): chore(release): v0.83.1 (@datlechin)
+- **PR #3955** (2026-10-31): fix(security): make the statement classifiers fail closed (GHSA-jj3q-3mpv-f853) (@datlechin)
+- **PR #3954** (2026-10-31): fix(security): make the statement classifiers fail closed (GHSA-jj3q-3mpv-f853) (@datlechin)
+- **PR #3953** (2026-10-31): fix(security): make drivers run only the statement the external gate read (GHSA-cr7m-37cv-h5p8) (@datlechin)
+- **PR #3952** (2026-10-31): fix(security): make drivers run only the statement the external gate read (GHSA-cr7m-37cv-h5p8) (@datlechin)
+- **PR #3951** (2026-10-31): fix(security): split external statements as the engine does and run them one at a time (GHSA-gg4q-84m8-8jhv) (@datlechin)
 
 ---
 
@@ -2285,22 +2268,24 @@ Co-authored-by: Ngo Quoc Dat <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. linux-grid): copy rows as a text table, JSON Lines, one row or INSERT without ge
+## X. build(linux): give the package builds room for DuckDB 2.0 (#3937)
 
 **RULE**:
-When implementing operations in `linux/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `linux/build-aux/debian/rules`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dcbce8af`: linux-grid): copy rows as a text table, JSON Lines, one row or INSERT without generated keys (#3862). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `34b2363d`: build(linux): give the package builds room for DuckDB 2.0 (#3937). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `linux/Cargo.lock`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `linux/build-aux/debian/rules`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
- "comfy-table",
- "unicode-width",
+# DuckDB 2.0's C++ debug info passes dwz's limit of 50 million DIEs, and
+# dwz then fails the build instead of leaving the file as it is.
+override_dh_dwz:
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2310,4 +2295,4 @@ Subsystems managing Swift data structures, boundary deserialization, API parsing
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dcbce8af` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `34b2363d` are properly handled with clean fallback behavior.
