@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source**: github ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
-> **Source Version**: `f876742c`  
+> **Source Version**: `07cd00d1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T18:07:12.689Z  
+> **Timestamp**: 2026-10-31T11:09:36.982Z  
 > **Learning ID**: `learn-github-ontos-ai-knowhere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T18:07:12.681Z  
+> **Harvest Timestamp**: 2026-10-31T11:09:36.880Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Knowhere extracts, parses, and outputs structured chunks ready for AI Agents and RAG.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 3845 stars
+- **Stars / Engagement**: 3852 stars
 
 ---
 
@@ -1009,49 +1009,1285 @@ class ResponseCode(Enum):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d748ed7e` (2026-10-29)
-**Commit Message**: Fix local CI after progressive and visual page-num changes.
+### Incident Patch 1: `07cd00d1` (2026-10-31)
+**Commit Message**: Merge pull request #487 from Ontos-AI/feat/wuchengke/toc-pairing-offset-recalibrate
 
-Remove an unused test import and type the vector_repair stage update so lint and typecheck stay green.
+Isolate paired TOC boundaries and recalibrate from last confirmed physical page
 
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `apps/worker/app/services/page_memory/scope_enrichment_service.py` (modified, +3/-3)
+**File**: `apps/worker/app/services/document_agent/calibration/procedure.py` (modified, +18/-9)
 ```diff
-@@ -861,9 +861,9 @@ def _publish_coarse_structure_and_write_scopes(
-         if state is not None:
-             stages: dict[str, EnhancementStage] = dict(state.stages)
-             stages["structure"] = {**stages.get("structure", {}), "status": "complete"}
--            vector_repair_stage: EnhancementStage = dict(
--                stages.get("vector_repair") or {}
--            )
-+            vector_repair_stage: EnhancementStage = {
-+                **(stages.get("vector_repair") or {}),
-+            }
-             pending_pages = list(vector_repair_stage.get("pending_pages") or [])
-             if pending_pages:
-                 corpus_storage: CorpusStorage = CorpusStorage.resolve_namespace(
+@@ -48,6 +48,7 @@ def offset_guided_anchoring(
+     ctx: ToolContext,
+     page_count: int,
+     calibration_overrides: dict[tuple[str, ...], TitleMatch],
++    body_start_page: int = 1,
+ ) -> dict[tuple[str, ...], TitleMatch] | None:
+     """Forward to production Phase-2 anchoring."""
+     return _anchoring.offset_guided_anchoring(
+@@ -56,6 +57,7 @@ def offset_guided_anchoring(
+         ctx=ctx,
+         page_count=page_count,
+         calibration_overrides=calibration_overrides,
++        body_start_page=body_start_page,
+     )
+ 
+ def pick_primary_offset(result: CalibrationResult) -> int | None:
+@@ -273,14 +275,6 @@ def anchor_hierarchy_from_regimes(
+         kind = normalize_kind(regime.kind)
+         offset = int(regime.offset)  # type: ignore[arg-type]
+         entry_titles = _entry_titles_for_regime(regime=regime, entries=flat_entries)
+-        working, pruned = prune_regime_out_of_scope(
+-            working,
+-            kind=kind,
+-            entry_titles=entry_titles,
+-            offset=offset,
+-            page_count=page_count,
+-        )
+-        total_pruned += pruned
+         if not working:
+             continue
+ 
+@@ -304,24 +298,39 @@ def anchor_hierarchy_from_regimes(
+                 bulk_offset_matches,
+             )
+ 
++            working, pruned = prune_regime_out_of_scope(
++                working,
++                kind=kind,
++                entry_titles=entry_titles,
++                offset=offset,
++                page_count=page_count,
++            )
++            total_pruned += pruned
++            projected = project_nodes_for_regime(
++                working, kind=kind, entry_titles=entry_titles
++            )
+             leaves = [
+                 (path, node)
+                 for path, node in iter_leaf_title_nodes(projected)
+                 if node.printed_page is not None
+             ]
+             if leaves:
+-                matches = bulk_offset_matches(leaves, offset)
++                matches = bulk_offset_matches(
++                    leaves, offset, page_count=page_count
++                )
+                 matches.update(regime_seed)
+                 merged.update(matches)
+                 regime_bulk += len(matches)
+             continue
+ 
++        body_start_page = min(body_pages) if body_pages else 1
+         matches = offset_guided_anchoring(
+             nodes=projected,
+             offset=offset,
+             ctx=ctx,
+             page_count=page_count,
+             calibration_overrides=regime_seed,
++            body_start_page=body_start_page,
+         )
+         if matches:
+             merged.update(matches)
 ```
 
-**File**: `packages/shared-python/shared/tests/test_progressive_completion.py` (modified, +0/-1)
+**File**: `apps/worker/app/services/document_agent/structure/anchoring_primitives.py` (modified, +47/-19)
 ```diff
-@@ -1,7 +1,6 @@
- """Final artifact publication and its outbox event form one logical commit."""
+@@ -298,13 +298,17 @@ def _bisect_offset_breakpoint(
+ def bulk_offset_matches(
+     leaves: list[tuple[tuple[str, ...], TitleNode]],
+     offset: int,
++    *,
++    page_count: int | None = None,
+ ) -> dict[tuple[str, ...], TitleMatch]:
+     """Generate TitleMatch overrides for all leaves using offset. No VLM calls."""
+     matches: dict[tuple[str, ...], TitleMatch] = {}
+     for path_titles, node in leaves:
+         if node.printed_page is None:
+             continue
+         page = node.printed_page + offset
++        if page < 1 or (page_count is not None and page > page_count):
++            continue
+         matches[path_titles] = TitleMatch(
+             page=page,
+             source="bulk_offset",
+@@ -408,14 +412,17 @@ def _recalibrate_after_breakpoint(
+     *,
+     entry_node: TitleNode,
+     old_offset: int,
++    start_page: int,
+     ctx: ToolContext,
+     page_count: int,
+ ) -> int | None:
+     """Re-find offset for the first remaining leaf after a breakpoint.
  
- from unittest.mock import Mock
--import pytest
+     Same mechanic as Phase-1: forward ``inspect.pages`` scan until the title
+-    START is found. Monotonicity says the physical page is strictly after the
+-    failed ``printed + old_offset`` slot, so the scan cursor starts there.
++    START is found. Physical page order is monotonic across TOC entries, so the
++    scan cursor starts at the last confirmed physical page (not
++    ``entry_printed_page + old_offset + 1``), allowing the new offset to be
++    smaller, larger, or negative relative to ``old_offset``.
+     """
+     entry_printed_page = entry_node.printed_page
+     if entry_printed_page is None:
+@@ -424,40 +431,39 @@ def _recalibrate_after_breakpoint(
+     # Lazy import: scan → inspect_pages → tools must not load at module import.
+     from app.services.document_agent.calibration.scan import scan_title_forward
  
- from shared.models.database.job_result import JobResult
- from shared.models.schemas.progressive_ingestion import StoredSnapshot
+-    start_page = entry_printed_page + old_offset + 1
+-    if start_page > page_count:
++    scan_start = max(int(start_page), 1)
++    if scan_start > page_count:
+         return None
+ 
+     scan = scan_title_forward(
+         ctx=ctx,
+         title=entry_node.title,
+-        start_page=start_page,
++        start_page=scan_start,
+         page_count=page_count,
+     )
+     if not scan.found or scan.found_page is None:
+         logger.info(
+             "[structure_anchoring] recalibrate miss: title={!r} start={} scanned={}",
+             entry_node.title,
+-            start_page,
++            scan_start,
+             scan.scanned_pages,
+         )
+         return None
+ 
+     new_offset = int(scan.found_page) - entry_printed_page
+-    if new_offset <= old_offset:
++    if new_offset == old_offset:
+         logger.info(
+-            "[structure_anchoring] recalibrate rejected non-monotonic offset: "
+-            "title={!r} old={} new={} found_page={}",
++            "[structure_anchoring] recalibrate unchanged offset: "
++            "title={!r} offset={} found_page={}",
+             entry_node.title,
+-            old_offset,
+             new_offset,
+             scan.found_page,
+         )
+         return None
+ 
+     logger.info(
+         "[structure_anchoring] recalibrate: title={!r} new_offset={} "
+-        "(delta=+{}, found_page={})",
++        "(delta={:+d}, found_page={})",
+         entry_node.title,
+         new_offset,
+         new_offset - old_offset,
+@@ -473,6 +479,7 @@ def offset_guided_anchoring(
+     ctx: ToolContext,
+     page_count: int,
+     calibration_overrides: dict[tuple[str, ...], TitleMatch],
++    body_start_page: int = 1,
+ ) -> dict[tuple[str, ...], TitleMatch] | None:
+     """Offset-guided bulk anchoring with recursive recalibrate on breakpoints.
+ 
+@@ -481,7 +488,8 @@ def offset_guided_anchoring(
+       2. If pass → bulk apply all leaves (Theorem 1)
+       3. If fail → binary search for last valid index (``-1`` if none)
+       4. Bulk apply only verified prefix (empty when breakpoint is ``-1``)
+-      5. Recalibrate remaining[0] via Phase-1 forward scan from printed+old+1
++      5. Recalibrate remaining[0] via Phase-1 forward scan from the last
++         confirmed physical page (or ``body_start_page`` when prefix is empty)
+       6. Recurse on remaining segment with new offset
+       7. If recalibrate fails → keep prefix only (caller prunes the rest)
+ 
+@@ -502,7 +510,7 @@ def offset_guided_anchoring(
+     # Single-leaf regimes (roman front-matter, F-1 appendix, …) still get a
+     # deterministic printed→physical override; Phase-1 already calibrated them.
+     if len(leaves) == 1:
+-        all_matches.update(bulk_offset_matches(leaves, offset))
++        all_matches.update(bulk_offset_matches(leaves, offset, page_count=page_count))
+     else:
+         _anchor_segment_recursive(
+             leaves=leaves,
+@@ -511,6 +519,7 @@ def offset_guided_anchoring(
+             page_count=page_count,
+             matches=all_matches,
+             depth=0,
++            scan_floor=max(int(body_start_page), 1),
+         )
+ 
+     if not all_matches:
+@@ -532,13 +541,14 @@ def _anchor_segment_recursive(
+     page_count: i
+```
+
+**File**: `apps/worker/app/services/document_agent/structure/toc_anchoring.py` (modified, +164/-12)
+```diff
+@@ -2,6 +2,7 @@
+ 
+ from __future__ import annotations
+ 
++import os
+ from dataclasses import replace
+ from pathlib import Path
+ from typing import Any
+@@ -56,9 +57,10 @@ def run_toc_anchoring(ctx: ToolContext) -> None:
+     physical overrides (no calibrate VLM). Otherwise keep the extracted TOC tree
+     and run the existing VLM calibration path.
+ 
+-    After calibration (primary + pending), each forest runs global paged-leaf
+-    rehome, then pending forests are classified/grafted. Blackboard writes happen
+-    only after that sequence.
++    Nearby pending TOCs that pair with an earlier host skip pending calibration.
++    After calibration (primary + unpaired pending), each forest runs global
++    paged-leaf rehome, then pending forests are classified/grafted. Blackboard
++    writes happen only after that sequence.
+     """
+     from app.services.document_agent.calibration.orchestrator import (
+         anchor_hierarchy,
+@@ -96,6 +98,8 @@ def run_toc_anchoring(ctx: ToolContext) -> None:
+         hierarchies=hierarchies,
+         filename=filename,
+     )
++    if not primary:
++        return
+     nodes = extract_toc_nodes(primary)
+     if not nodes:
+         return
+@@ -112,12 +116,24 @@ def run_toc_anchoring(ctx: ToolContext) -> None:
+     )
+     pending_records: list[dict[str, Any]] = []
+     if pending:
+-        pending_records = _calibrate_pending_tocs(
+-            pending_tocs=pending,
++        paired_by_index, unpaired = _split_paired_pending(
++            primary_toc=primary[0],
++            pending=pending,
+             ctx=ctx,
+-            page_texts=page_texts,
+-            page_count=page_count,
+-            body_pages=body_pages,
++        )
++        calibrated: list[dict[str, Any]] = []
++        if unpaired:
++            calibrated = _calibrate_pending_tocs(
++                pending_tocs=unpaired,
++                ctx=ctx,
++                page_texts=page_texts,
++                page_count=page_count,
++                body_pages=body_pages,
++            )
++        pending_records = _merge_pending_records(
++            pending=pending,
++            paired_by_index=paired_by_index,
++            calibrated=calibrated,
+         )
+ 
+     # scope-local TOC pre-pass: future hook (no-op this period)
+@@ -132,6 +148,7 @@ def run_toc_anchoring(ctx: ToolContext) -> None:
+         _assign_toc_relationships(
+             root_anchor=skeleton_anchor,
+             pending_records=pending_records,
++            root_toc=primary[0],
+         )
+         resolve_nodes, skeleton_anchor = _graft_contained_pending(
+             resolve_nodes=resolve_nodes,
+@@ -495,6 +512,106 @@ def find_tightest_containing_host(
+     return best_key
+ 
+ 
++def _split_paired_pending(
++    *,
++    primary_toc: dict[str, Any],
++    pending: list[dict[str, Any]],
++    ctx: ToolContext,
++) -> tuple[dict[int, dict[str, Any]], list[dict[str, Any]]]:
++    """Mark nearby duplicate TOCs as paired and keep the rest for calibration."""
++    from app.services.document_agent.structure.toc_pairing import check_paired_toc
++
++    model = ctx.settings.get("vlm_model") or os.environ.get("IMAGE_MODEL")
++    paired_by_index: dict[int, dict[str, Any]] = {}
++    unpaired: list[dict[str, Any]] = []
++    host_toc = primary_toc
++    host_is_primary = True
++    host_pending_index: int | None = None
++
++    for index, pending_toc in enumerate(pending):
++        match = check_paired_toc(host_toc, pending_toc, ctx=ctx, model=model)
++        if match.is_paired:
++            host_range = list(host_toc.get("toc_range") or [])
++            pending_toc["paired_with_range"] = host_range
++            pending_toc["paired_pattern"] = match.pattern
++            paired_by_index[index] = {
++                "toc": pending_toc,
++                "relationship": "paired",
++                "host": "root" if host_is_primary else host_pending_index,
++                "paired_with_range": host_range,
++                "paired_pattern": match.pattern,
++                "paired_reason": match.reason,
++            }
++            logger.info(
++                "{} pending TOC toc_range={} paired with {} pattern={}",
++                _LOG_PREFIX,
++                pending_toc.get("toc_range"),
++                host_range,
++                match.pattern,
++            )
++            continue
++        unpaired.append(pending_toc)
++        host_toc = pending_toc
++        host_is_primary = False
++        host_pending_index = index
++    return paired_by_index, unpaired
++
++
++def _merge_pending_records(
++    *,
++    pending: list[dict[str, Any]],
++    paired_by_index: dict[int, dict[str, Any]],
++    calibrated: list[dict[str, Any]],
++) -> list[dict[str, Any]]:
++    calibrated_by_id = {id(record.get("toc")): record for record in calibrated}
++    merged: list[dict[str, Any]] = []
++    for index, toc in enumerate(pending):
++        paired = paired_by_index.get(index)
++        if paired is not None:
++            merged.append(paired)
++            continue
++        calibrated_record = calibrated_by_id.get(id(t
+```
+
+**File**: `apps/worker/app/services/document_agent/structure/toc_pairing.py` (added, +329/-0)
+```diff
+@@ -0,0 +1,329 @@
++"""Pluggable paired-TOC detection: proximity gate + VLM head/tail check."""
++
++from __future__ import annotations
++
++import json
++import os
++import re
++from dataclasses import dataclass
++from pathlib import Path
++from typing import Any, cast
++
++from loguru import logger
++
++from app.services.document_agent.manifest import ToolContext
++from app.services.document_agent.structure.anchoring_primitives import (
++    toc_range_end,
++    toc_range_start,
++)
++from app.services.document_agent.visual import render_pages
++
++_LOG_PREFIX = "[profile.toc_pairing]"
++_HEAD_TAIL_EDGE = 2
++_TOC_EXPAND_PNG = re.compile(r"^toc_a\d+_p(\d+)\.png$")
++_TOC_ANCHOR_PNG = re.compile(r"^toc_anchor_page_(\d+)\.png$")
++_TOC_PAIR_PNG = re.compile(r"^toc_pair_page_(\d+)\.png$")
++
++
++@dataclass(frozen=True)
++class PairedTocPattern:
++    code: str
++    title: str
++    description: str
++
++
++@dataclass(frozen=True)
++class PairedTocMatch:
++    is_paired: bool
++    pattern: str | None = None
++    reason: str = ""
++
++
++PAIRED_TOC_PATTERNS: tuple[PairedTocPattern, ...] = (
++    PairedTocPattern(
++        code="bilingual_mirror",
++        title="Bilingual / Multi-language Mirror TOC",
++        description=(
++            "TOC B is a translated version of TOC A (e.g. Chinese '目次/目录' "
++            "followed by English 'Contents') listing the same document sections "
++            "and pointing to the same body page numbers."
++        ),
++    ),
++    # Additional paired patterns (e.g. summary-vs-detailed duplicate front TOC)
++    # can be registered here.
++)
++
++
++def toc_pages_from_range(hierarchy: dict[str, Any]) -> list[int]:
++    start = toc_range_start(hierarchy)
++    end = toc_range_end(hierarchy)
++    if start is None or end is None or end < start:
++        return []
++    return list(range(start, end + 1))
++
++
++def gap_pages_between(toc_a: dict[str, Any], toc_b: dict[str, Any]) -> int | None:
++    end_a = toc_range_end(toc_a)
++    start_b = toc_range_start(toc_b)
++    if end_a is None or start_b is None:
++        return None
++    return max(0, start_b - end_a - 1)
++
++
++def proximity_allows_pair_check(
++    toc_a: dict[str, Any],
++    toc_b: dict[str, Any],
++) -> bool:
++    pages_a = toc_pages_from_range(toc_a)
++    gap_pages = gap_pages_between(toc_a, toc_b)
++    if not pages_a or gap_pages is None:
++        return False
++    return gap_pages < len(pages_a)
++
++
++def sample_head_tail_pages(
++    pages: list[int],
++    *,
++    max_edge: int = _HEAD_TAIL_EDGE,
++) -> list[int]:
++    ordered = sorted({int(page) for page in pages if int(page) >= 1})
++    if len(ordered) <= max_edge * 2:
++        return ordered
++    sampled: list[int] = []
++    for page in [*ordered[:max_edge], *ordered[-max_edge:]]:
++        if page not in sampled:
++            sampled.append(page)
++    return sampled
++
++
++def check_paired_toc(
++    toc_a: dict[str, Any],
++    toc_b: dict[str, Any],
++    *,
++    ctx: ToolContext,
++    model: str | None,
++) -> PairedTocMatch:
++    """Return whether ``toc_b`` is a paired duplicate of ``toc_a``.
++
++    VLM runs only when the proximity gate holds. A failed or incomplete check
++    is ``is_paired=False`` so the caller continues on the calibrate path.
++    """
++    if not proximity_allows_pair_check(toc_a, toc_b):
++        return PairedTocMatch(
++            is_paired=False,
++            reason="proximity gate not met",
++        )
++    if not model:
++        return PairedTocMatch(
++            is_paired=False,
++            reason="no VLM model configured",
++        )
++
++    pages_a = sample_head_tail_pages(toc_pages_from_range(toc_a))
++    pages_b = sample_head_tail_pages(toc_pages_from_range(toc_b))
++    if not pages_a or not pages_b:
++        return PairedTocMatch(
++            is_paired=False,
++            reason="missing TOC page range",
++        )
++
++    try:
++        pngs_a = _resolve_toc_page_pngs(ctx, pages_a)
++        pngs_b = _resolve_toc_page_pngs(ctx, pages_b)
++    except Exception as exc:
++        logger.warning("{} resolve TOC page images failed: {}", _LOG_PREFIX, exc)
++        return PairedTocMatch(
++            is_paired=False,
++            reason=f"resolve page images failed: {exc}",
++        )
++
++    return _vlm_pair_check(
++        pages_a=pages_a,
++        pages_b=pages_b,
++        pngs_a=pngs_a,
++        pngs_b=pngs_b,
++        model=model,
++    )
++
++
++def _toc_pages_dir(ctx: ToolContext) -> Path:
++    return Path(ctx.output_dir or os.path.expanduser("~/.knowhere/_debug_profile")) / (
++        "toc_pages"
++    )
++
++
++def _index_existing_toc_pngs(toc_dir: Path) -> dict[int, str]:
++    found: dict[int, str] = {}
++    if not toc_dir.is_dir():
++        return found
++    for path in toc_dir.iterdir():
++        if not path.is_file():
++            continue
++        page: int | None = None
++        for pattern in (_TOC_EXPAND_PNG, _TOC_ANCHOR_PNG, _TOC_PAIR_PNG):
++            matched = pattern.match(path.name)
++            if matched:
++                page = int(matched.group(1))
++                break
++      
+```
+
+**File**: `apps/worker/app/services/document_agent/tools/extract_toc_with_boundaries.py` (modified, +28/-17)
+```diff
+@@ -382,6 +382,7 @@ def _extract_region_for_anchor(
+     *,
+     pdf_path: str,
+     page_count: int,
++    max_page: int,
+     output_dir: str,
+     dpi: int,
+     model: str,
+@@ -395,6 +396,8 @@ def _extract_region_for_anchor(
+     Each VLM batch is truncated to the contiguous TOC prefix before the first
+     non-TOC page. Expand only when that prefix fills a full
+     ``BOUNDARY_STEP_PAGES`` window with ``non_toc_pages == []``.
++    Expansion never crosses ``max_page`` (the page before the next confirmed
++    start, or ``page_count`` for the last start).
+     """
+     from app.services.document_agent.tools.vlm_toc_extractor import (
+         vlm_extract_toc_batch,
+@@ -410,8 +413,8 @@ def _extract_region_for_anchor(
+     try:
+         for round_idx in range(MAX_BOUNDARY_ROUNDS):
+             batch_start = anchor_page + round_idx * BOUNDARY_STEP_PAGES
+-            batch_end = min(batch_start + BOUNDARY_STEP_PAGES - 1, page_count)
+-            if batch_start > page_count:
++            batch_end = min(batch_start + BOUNDARY_STEP_PAGES - 1, max_page)
++            if batch_start > max_page:
+                 break
+ 
+             batch_pages = list(range(batch_start, batch_end + 1))
+@@ -457,11 +460,12 @@ def _extract_region_for_anchor(
+             if kept_toc_pages:
+                 region_scan_end = kept_toc_pages[-1]
+ 
+-            should_expand = _should_expand_toc_window(
++            window_expandable = _should_expand_toc_window(
+                 batch_start=batch_start,
+                 non_toc_pages=list(batch_result.non_toc_pages),
+                 kept_toc_pages=kept_toc_pages,
+             )
++            should_expand = window_expandable and batch_end < max_page
+             batch_trace.append(
+                 {
+                     "anchor": anchor_page,
+@@ -475,7 +479,7 @@ def _extract_region_for_anchor(
+                 }
+             )
+ 
+-            if not should_expand:
++            if not window_expandable:
+                 logger.info(
+                     "[extract.toc] boundary found: kept={} non_toc={} "
+                     "batch={}-{}",
+@@ -485,7 +489,7 @@ def _extract_region_for_anchor(
+                     batch_end,
+                 )
+                 break
+-            if batch_end >= page_count:
++            if batch_end >= max_page:
+                 break
+             logger.info(
+                 "[extract.toc] full TOC window {}-{}, expanding",
+@@ -549,20 +553,27 @@ def _extract_regions_for_confirmed_anchors(
+         len(confirmed),
+         pool_size,
+     )
++    confirmed = sorted(confirmed, key=lambda item: item.page)
+     pool = GeventPool(size=pool_size)
+-    jobs = [
+-        pool.spawn(
+-            _extract_region_for_anchor,
+-            anchor,
+-            pdf_path=pdf_path,
+-            page_count=page_count,
+-            output_dir=output_dir,
+-            dpi=dpi,
+-            model=model,
+-            render_lock=render_lock,
++    jobs = []
++    for index, anchor in enumerate(confirmed):
++        if index + 1 < len(confirmed):
++            region_max_page = min(page_count, confirmed[index + 1].page - 1)
++        else:
++            region_max_page = page_count
++        jobs.append(
++            pool.spawn(
++                _extract_region_for_anchor,
++                anchor,
++                pdf_path=pdf_path,
++                page_count=page_count,
++                max_page=region_max_page,
++                output_dir=output_dir,
++                dpi=dpi,
++                model=model,
++                render_lock=render_lock,
++            )
+         )
+-        for anchor in confirmed
+-    ]
+     pool.join()
+ 
+     by_anchor: dict[int, _TocRegionResult] = {}
+```
+
+**File**: `apps/worker/app/services/page_memory/skeleton_extractor.py` (modified, +55/-6)
+```diff
+@@ -319,7 +319,7 @@ def _parallel_pending_tocs(
+         if record is None:
+             continue
+         relationship = record.get("relationship")
+-        if relationship in {"unresolvable", "contained"}:
++        if relationship in {"unresolvable", "contained", "paired"}:
+             continue
+         if relationship != "parallel":
+             raise ValueError("pending TOC relationship missing after PROFILE classify")
+@@ -442,6 +442,24 @@ def _clamp_page(page: int, page_count: int) -> int:
+     return min(max(page, 1), max(page_count, 1))
+ 
+ 
++def _paired_host_range(
++    hierarchy: dict[str, Any],
++    records_by_range: dict[tuple[Any, ...], dict[str, Any]],
++) -> list[int] | None:
++    record = records_by_range.get(tuple(hierarchy.get("toc_range") or []))
++    raw = None
++    if isinstance(record, dict) and record.get("relationship") == "paired":
++        raw = record.get("paired_with_range")
++    if raw is None:
++        raw = hierarchy.get("paired_with_range")
++    if not isinstance(raw, (list, tuple)) or not raw:
++        return None
++    try:
++        return [int(raw[0]), int(raw[-1])]
++    except (TypeError, ValueError):
++        return None
++
++
+ def _toc_ownership_skeletons(
+     *,
+     skeletons: list[SectionSkeleton],
+@@ -461,19 +479,50 @@ def _toc_ownership_skeletons(
+         return []
+ 
+     coverage = _coverage_from_chapter_skeletons(skeletons, filename=filename)
++    pending_records = list(getattr(anatomy, "pending_skeleton_anchors", None) or [])
++    records_by_range: dict[tuple[Any, ...], dict[str, Any]] = {}
++    for record in pending_records:
++        toc = record.get("toc")
++        if isinstance(toc, dict):
++            records_by_range[tuple(toc.get("toc_range") or [])] = record
++
++    hierarchies = list(getattr(anatomy, "toc_hierarchies", None) or [])
++    parent_by_range: dict[tuple[Any, ...], str] = {}
+     pages_by_parent: dict[str, set[int]] = {}
+-    for hierarchy in list(getattr(anatomy, "toc_hierarchies", None) or []):
++
++    def _parent_path_for_span(start: int, end: int) -> str:
++        covering = deepest_covering_path(coverage, start=start, end=end)
++        return join_document_path([filename, *covering]) if covering else filename
++
++    for hierarchy in hierarchies:
+         start = toc_range_start(hierarchy)
+         end = toc_range_end(hierarchy)
+         if start is None or end is None:
+             continue
++        if _paired_host_range(hierarchy, records_by_range) is not None:
++            continue
+         pages = [page for page in toc_pages if start <= page <= end]
+         if not pages:
+             continue
+-        covering = deepest_covering_path(coverage, start=pages[0], end=pages[-1])
+-        parent_path = (
+-            join_document_path([filename, *covering]) if covering else filename
+-        )
++        parent_path = _parent_path_for_span(pages[0], pages[-1])
++        parent_by_range[tuple(hierarchy.get("toc_range") or [])] = parent_path
++        pages_by_parent.setdefault(parent_path, set()).update(pages)
++
++    for hierarchy in hierarchies:
++        start = toc_range_start(hierarchy)
++        end = toc_range_end(hierarchy)
++        if start is None or end is None:
++            continue
++        host_range = _paired_host_range(hierarchy, records_by_range)
++        if host_range is None:
++            continue
++        pages = [page for page in toc_pages if start <= page <= end]
++        if not pages:
++            continue
++        parent_path = parent_by_range.get(tuple(host_range))
++        if parent_path is None:
++            parent_path = _parent_path_for_span(host_range[0], host_range[-1])
++            parent_by_range[tuple(host_range)] = parent_path
+         pages_by_parent.setdefault(parent_path, set()).update(pages)
+ 
+     by_path = {item.section_path: item for item in skeletons}
+```
+
+**File**: `apps/worker/tests/contract/test_page_memory_toc_ownership_contract.py` (modified, +77/-1)
+```diff
+@@ -67,14 +67,15 @@ def _anatomy(
+     overrides: dict[tuple[str, ...], int],
+     hierarchies: list[dict[str, object]],
+     toc_pages: list[int],
++    pending_skeleton_anchors: list[dict[str, object]] | None = None,
+ ) -> SimpleNamespace:
+     return SimpleNamespace(
+         page_count=page_count,
+         toc_result=SimpleNamespace(toc_pages=toc_pages),
+         toc_hierarchies=hierarchies,
+         skeleton_anchor=serialize_skeleton_anchor(_anchor(overrides)),
+         skeleton_nodes=[serialize_title_node(node) for node in nodes],
+-        pending_skeleton_anchors=[],
++        pending_skeleton_anchors=list(pending_skeleton_anchors or []),
+     )
+ 
+ 
+@@ -86,6 +87,7 @@ def _extract(
+     hierarchies: list[dict[str, object]],
+     toc_pages: list[int],
+     filename: str = "doc.pdf",
++    pending_skeleton_anchors: list[dict[str, object]] | None = None,
+ ) -> list[SectionSkeleton]:
+     return extract_section_skeletons(
+         anatomy=_anatomy(
+@@ -94,6 +96,7 @@ def _extract(
+             overrides=overrides,
+             hierarchies=hierarchies,
+             toc_pages=toc_pages,
++            pending_skeleton_anchors=pending_skeleton_anchors,
+         ),
+         filename=filename,
+         page_texts={page: "body" for page in range(1, page_count + 1)},
+@@ -399,3 +402,76 @@ def test_prefix_stops_before_front_toc_and_every_page_has_an_owner() -> None:
+     assert 14 not in set(range(prefix.start_page, prefix.end_page + 1))
+     assert 15 not in set(range(prefix.start_page, prefix.end_page + 1))
+     assert owned == set(range(1, 19))
++
++
++def test_paired_toc_does_not_cut_primary_window() -> None:
++    pending_toc = {
++        "toc_range": [7, 12],
++        "toc_range_unit": "page",
++        "paired_with_range": [1, 6],
++        "toc_with_level": [
++            {"heading": "General provisions", "level": 1, "page_number": 13}
++        ],
++    }
++    skeletons = _extract(
++        page_count=30,
++        nodes=[TitleNode(title="总则", level=1, printed_page=13)],
++        overrides={("总则",): 13},
++        hierarchies=[
++            {
++                "toc_range": [1, 6],
++                "toc_range_unit": "page",
++                "toc_with_level": [{"heading": "总则", "level": 1, "page_number": 13}],
++            },
++            pending_toc,
++        ],
++        toc_pages=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
++        pending_skeleton_anchors=[
++            {
++                "toc": pending_toc,
++                "relationship": "paired",
++                "host": "root",
++                "paired_with_range": [1, 6],
++            }
++        ],
++    )
++    chapter = next(item for item in skeletons if item.title == "总则")
++    assert chapter.end_page == 30
++    assert all(item.title != "General provisions" for item in skeletons)
++
++
++def test_paired_toc_pages_merge_into_host_toc_node() -> None:
++    pending_toc = {
++        "toc_range": [7, 12],
++        "toc_range_unit": "page",
++        "paired_with_range": [1, 6],
++        "toc_tree": {},
++    }
++    skeletons = _extract(
++        page_count=30,
++        nodes=[TitleNode(title="总则", level=1, printed_page=13)],
++        overrides={("总则",): 13},
++        hierarchies=[
++            {
++                "toc_range": [1, 6],
++                "toc_range_unit": "page",
++                "toc_with_level": [{"heading": "总则", "level": 1, "page_number": 13}],
++            },
++            pending_toc,
++        ],
++        toc_pages=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
++        pending_skeleton_anchors=[
++            {
++                "toc": pending_toc,
++                "relationship": "paired",
++                "host": "root",
++                "paired_with_range": [1, 6],
++            }
++        ],
++    )
++    toc_nodes = [item for item in skeletons if is_toc_node(item)]
++    assert len(toc_nodes) == 1
++    assert toc_nodes[0].section_path == "doc.pdf/TOC"
++    assert toc_nodes[0].parent_path == "doc.pdf"
++    assert toc_nodes[0].start_page == 1
++    assert toc_nodes[0].end_page == 12
+```
+
+**File**: `apps/worker/tests/contract/test_structure_anchoring_contract.py` (modified, +88/-3)
+```diff
+@@ -1336,14 +1336,14 @@ def fake_verify(**kwargs: Any) -> dict[str, Any]:
+     def fake_scan(**kwargs: Any) -> TitleScanResult:
+         title = str(kwargs.get("title") or "")
+         start = int(kwargs.get("start_page") or 0)
+-        # Old slot for Ch3 was page 30; scan starts at 31 and finds 36 → offset 16.
++        # Scan starts at last confirmed physical page (Ch2 = 15) and finds 36 → offset 16.
+         assert title == "Ch3"
+-        assert start == 31
++        assert start == 15
+         return TitleScanResult(
+             title=title,
+             found=True,
+             found_page=36,
+-            scanned_pages=[31, 32, 33, 34, 35, 36],
++            scanned_pages=list(range(15, 37)),
+             next_start=37,
+         )
+ 
+@@ -1377,6 +1377,91 @@ def fake_scan(**kwargs: Any) -> TitleScanResult:
+     assert anchor.match_overrides[("Ch4",)].page == 46  # 30+16
+ 
+ 
++def test_phase2_recalibrate_allows_smaller_or_negative_offset_and_keeps_tail() -> None:
++    """When printed TOC over-counts pages after a breakpoint, offset decreases
++    and tail entries that exceeded page_count under old_offset still survive."""
++    from app.services.document_agent.calibration.procedure import (
++        anchor_hierarchy_from_regimes,
++    )
++    from app.services.document_agent.calibration.scan import TitleScanResult
++    from app.services.document_agent.calibration.types import (
++        CalibrationRegime,
++        CalibrationResult,
++        CalibrationSample,
++    )
++
++    leaves = [
++        _leaf("K.4", 92),
++        _leaf("L.1", 94),
++        _leaf("Ref", 143),  # 143 + 12 = 155 > 154, but 143 + 11 = 154 <= 154
++    ]
++    phase1 = CalibrationResult(
++        status="ok",
++        offset=12,
++        regimes=[
++            CalibrationRegime(
++                kind="decimal",
++                offset=12,
++                offset_status="ok",
++                entry_indices=[0, 1, 2],
++                samples=[CalibrationSample(title="K.4", physical=104)],
++            )
++        ],
++    )
++    ctx = _ctx()
++
++    def fake_verify(**kwargs: Any) -> dict[str, Any]:
++        expected = int(kwargs["candidate_matches"][0].page)
++        title = str(kwargs.get("title") or "")
++        ok = {
++            ("K.4", 104),  # 92 + 12
++            ("L.1", 105),  # 94 + 11
++            ("Ref", 154),  # 143 + 11
++        }
++        if (title, expected) in ok:
++            return {"selected_page": expected, "reason": "ok"}
++        return {"selected_page": None, "reason": "miss"}
++
++    def fake_scan(**kwargs: Any) -> TitleScanResult:
++        title = str(kwargs.get("title") or "")
++        start = int(kwargs.get("start_page") or 0)
++        assert title == "L.1"
++        assert start == 104
++        return TitleScanResult(
++            title=title,
++            found=True,
++            found_page=105,
++            scanned_pages=[104, 105],
++            next_start=106,
++        )
++
++    with (
++        _patch_verify(fake_verify),
++        patch(
++            "app.services.document_agent.calibration.scan.scan_title_forward",
++            fake_scan,
++        ),
++    ):
++        working, anchor = anchor_hierarchy_from_regimes(
++            nodes=leaves,
++            result=phase1,
++            entries=[
++                {"heading": "K.4", "level": 1, "page_number": 92},
++                {"heading": "L.1", "level": 1, "page_number": 94},
++                {"heading": "Ref", "level": 1, "page_number": 143},
++            ],
++            page_texts={104: "K.4", 105: "L.1", 154: "Ref"},
++            body_pages=list(range(13, 155)),
++            page_count=154,
++            ctx=ctx,
++        )
++
++    assert [n.title for n in working] == ["K.4", "L.1", "Ref"]
++    assert anchor.match_overrides[("K.4",)].page == 104
++    assert anchor.match_overrides[("L.1",)].page == 105
++    assert anchor.match_overrides[("Ref",)].page == 154
++
++
+ def test_phase2_recalibrate_miss_drops_suffix_from_tree() -> None:
+     """When suffix cannot be recalibrated, those leaves leave the TOC tree."""
+     from app.services.document_agent.calibration.procedure import (
+```
+
+---
+
+### Incident Patch 2: `21b7d086` (2026-10-31)
+**Commit Message**: Refactor anchoring procedures to improve offset handling
+
+- Added `body_start_page` parameter to `offset_guided_anchoring` for better control over starting page during anchoring.
+- Updated `bulk_offset_matches` to include optional `page_count` parameter, enhancing validation of page ranges.
+- Modified recalibration logic to allow for smaller or negative offsets while preserving tail entries.
+- Enhanced tests to validate new behaviors in recalibration and anchoring processes.
+
+**File**: `apps/worker/app/services/document_agent/calibration/procedure.py` (modified, +18/-9)
+```diff
+@@ -48,6 +48,7 @@ def offset_guided_anchoring(
+     ctx: ToolContext,
+     page_count: int,
+     calibration_overrides: dict[tuple[str, ...], TitleMatch],
++    body_start_page: int = 1,
+ ) -> dict[tuple[str, ...], TitleMatch] | None:
+     """Forward to production Phase-2 anchoring."""
+     return _anchoring.offset_guided_anchoring(
+@@ -56,6 +57,7 @@ def offset_guided_anchoring(
+         ctx=ctx,
+         page_count=page_count,
+         calibration_overrides=calibration_overrides,
++        body_start_page=body_start_page,
+     )
+ 
+ def pick_primary_offset(result: CalibrationResult) -> int | None:
+@@ -273,14 +275,6 @@ def anchor_hierarchy_from_regimes(
+         kind = normalize_kind(regime.kind)
+         offset = int(regime.offset)  # type: ignore[arg-type]
+         entry_titles = _entry_titles_for_regime(regime=regime, entries=flat_entries)
+-        working, pruned = prune_regime_out_of_scope(
+-            working,
+-            kind=kind,
+-            entry_titles=entry_titles,
+-            offset=offset,
+-            page_count=page_count,
+-        )
+-        total_pruned += pruned
+         if not working:
+             continue
+ 
+@@ -304,24 +298,39 @@ def anchor_hierarchy_from_regimes(
+                 bulk_offset_matches,
+             )
+ 
++            working, pruned = prune_regime_out_of_scope(
++                working,
++                kind=kind,
++                entry_titles=entry_titles,
++                offset=offset,
++                page_count=page_count,
++            )
++            total_pruned += pruned
++            projected = project_nodes_for_regime(
++                working, kind=kind, entry_titles=entry_titles
++            )
+             leaves = [
+                 (path, node)
+                 for path, node in iter_leaf_title_nodes(projected)
+                 if node.printed_page is not None
+             ]
+             if leaves:
+-                matches = bulk_offset_matches(leaves, offset)
++                matches = bulk_offset_matches(
++                    leaves, offset, page_count=page_count
++                )
+                 matches.update(regime_seed)
+                 merged.update(matches)
+                 regime_bulk += len(matches)
+             continue
+ 
++        body_start_page = min(body_pages) if body_pages else 1
+         matches = offset_guided_anchoring(
+             nodes=projected,
+             offset=offset,
+             ctx=ctx,
+             page_count=page_count,
+             calibration_overrides=regime_seed,
++            body_start_page=body_start_page,
+         )
+         if matches:
+             merged.update(matches)
+```
+
+**File**: `apps/worker/app/services/document_agent/structure/anchoring_primitives.py` (modified, +47/-19)
+```diff
+@@ -298,13 +298,17 @@ def _bisect_offset_breakpoint(
+ def bulk_offset_matches(
+     leaves: list[tuple[tuple[str, ...], TitleNode]],
+     offset: int,
++    *,
++    page_count: int | None = None,
+ ) -> dict[tuple[str, ...], TitleMatch]:
+     """Generate TitleMatch overrides for all leaves using offset. No VLM calls."""
+     matches: dict[tuple[str, ...], TitleMatch] = {}
+     for path_titles, node in leaves:
+         if node.printed_page is None:
+             continue
+         page = node.printed_page + offset
++        if page < 1 or (page_count is not None and page > page_count):
++            continue
+         matches[path_titles] = TitleMatch(
+             page=page,
+             source="bulk_offset",
+@@ -408,14 +412,17 @@ def _recalibrate_after_breakpoint(
+     *,
+     entry_node: TitleNode,
+     old_offset: int,
++    start_page: int,
+     ctx: ToolContext,
+     page_count: int,
+ ) -> int | None:
+     """Re-find offset for the first remaining leaf after a breakpoint.
+ 
+     Same mechanic as Phase-1: forward ``inspect.pages`` scan until the title
+-    START is found. Monotonicity says the physical page is strictly after the
+-    failed ``printed + old_offset`` slot, so the scan cursor starts there.
++    START is found. Physical page order is monotonic across TOC entries, so the
++    scan cursor starts at the last confirmed physical page (not
++    ``entry_printed_page + old_offset + 1``), allowing the new offset to be
++    smaller, larger, or negative relative to ``old_offset``.
+     """
+     entry_printed_page = entry_node.printed_page
+     if entry_printed_page is None:
+@@ -424,40 +431,39 @@ def _recalibrate_after_breakpoint(
+     # Lazy import: scan → inspect_pages → tools must not load at module import.
+     from app.services.document_agent.calibration.scan import scan_title_forward
+ 
+-    start_page = entry_printed_page + old_offset + 1
+-    if start_page > page_count:
++    scan_start = max(int(start_page), 1)
++    if scan_start > page_count:
+         return None
+ 
+     scan = scan_title_forward(
+         ctx=ctx,
+         title=entry_node.title,
+-        start_page=start_page,
++        start_page=scan_start,
+         page_count=page_count,
+     )
+     if not scan.found or scan.found_page is None:
+         logger.info(
+             "[structure_anchoring] recalibrate miss: title={!r} start={} scanned={}",
+             entry_node.title,
+-            start_page,
++            scan_start,
+             scan.scanned_pages,
+         )
+         return None
+ 
+     new_offset = int(scan.found_page) - entry_printed_page
+-    if new_offset <= old_offset:
++    if new_offset == old_offset:
+         logger.info(
+-            "[structure_anchoring] recalibrate rejected non-monotonic offset: "
+-            "title={!r} old={} new={} found_page={}",
++            "[structure_anchoring] recalibrate unchanged offset: "
++            "title={!r} offset={} found_page={}",
+             entry_node.title,
+-            old_offset,
+             new_offset,
+             scan.found_page,
+         )
+         return None
+ 
+     logger.info(
+         "[structure_anchoring] recalibrate: title={!r} new_offset={} "
+-        "(delta=+{}, found_page={})",
++        "(delta={:+d}, found_page={})",
+         entry_node.title,
+         new_offset,
+         new_offset - old_offset,
+@@ -473,6 +479,7 @@ def offset_guided_anchoring(
+     ctx: ToolContext,
+     page_count: int,
+     calibration_overrides: dict[tuple[str, ...], TitleMatch],
++    body_start_page: int = 1,
+ ) -> dict[tuple[str, ...], TitleMatch] | None:
+     """Offset-guided bulk anchoring with recursive recalibrate on breakpoints.
+ 
+@@ -481,7 +488,8 @@ def offset_guided_anchoring(
+       2. If pass → bulk apply all leaves (Theorem 1)
+       3. If fail → binary search for last valid index (``-1`` if none)
+       4. Bulk apply only verified prefix (empty when breakpoint is ``-1``)
+-      5. Recalibrate remaining[0] via Phase-1 forward scan from printed+old+1
++      5. Recalibrate remaining[0] via Phase-1 forward scan from the last
++         confirmed physical page (or ``body_start_page`` when prefix is empty)
+       6. Recurse on remaining segment with new offset
+       7. If recalibrate fails → keep prefix only (caller prunes the rest)
+ 
+@@ -502,7 +510,7 @@ def offset_guided_anchoring(
+     # Single-leaf regimes (roman front-matter, F-1 appendix, …) still get a
+     # deterministic printed→physical override; Phase-1 already calibrated them.
+     if len(leaves) == 1:
+-        all_matches.update(bulk_offset_matches(leaves, offset))
++        all_matches.update(bulk_offset_matches(leaves, offset, page_count=page_count))
+     else:
+         _anchor_segment_recursive(
+             leaves=leaves,
+@@ -511,6 +519,7 @@ def offset_guided_anchoring(
+             page_count=page_count,
+             matches=all_matches,
+             depth=0,
++            scan_floor=max(int(body_start_page), 1),
+         )
+ 
+     if not all_matches:
+@@ -532,13 +541,14 @@ def _anchor_segment_recursive(
+     page_count: i
+```
+
+**File**: `apps/worker/tests/contract/test_structure_anchoring_contract.py` (modified, +88/-3)
+```diff
+@@ -1336,14 +1336,14 @@ def fake_verify(**kwargs: Any) -> dict[str, Any]:
+     def fake_scan(**kwargs: Any) -> TitleScanResult:
+         title = str(kwargs.get("title") or "")
+         start = int(kwargs.get("start_page") or 0)
+-        # Old slot for Ch3 was page 30; scan starts at 31 and finds 36 → offset 16.
++        # Scan starts at last confirmed physical page (Ch2 = 15) and finds 36 → offset 16.
+         assert title == "Ch3"
+-        assert start == 31
++        assert start == 15
+         return TitleScanResult(
+             title=title,
+             found=True,
+             found_page=36,
+-            scanned_pages=[31, 32, 33, 34, 35, 36],
++            scanned_pages=list(range(15, 37)),
+             next_start=37,
+         )
+ 
+@@ -1377,6 +1377,91 @@ def fake_scan(**kwargs: Any) -> TitleScanResult:
+     assert anchor.match_overrides[("Ch4",)].page == 46  # 30+16
+ 
+ 
++def test_phase2_recalibrate_allows_smaller_or_negative_offset_and_keeps_tail() -> None:
++    """When printed TOC over-counts pages after a breakpoint, offset decreases
++    and tail entries that exceeded page_count under old_offset still survive."""
++    from app.services.document_agent.calibration.procedure import (
++        anchor_hierarchy_from_regimes,
++    )
++    from app.services.document_agent.calibration.scan import TitleScanResult
++    from app.services.document_agent.calibration.types import (
++        CalibrationRegime,
++        CalibrationResult,
++        CalibrationSample,
++    )
++
++    leaves = [
++        _leaf("K.4", 92),
++        _leaf("L.1", 94),
++        _leaf("Ref", 143),  # 143 + 12 = 155 > 154, but 143 + 11 = 154 <= 154
++    ]
++    phase1 = CalibrationResult(
++        status="ok",
++        offset=12,
++        regimes=[
++            CalibrationRegime(
++                kind="decimal",
++                offset=12,
++                offset_status="ok",
++                entry_indices=[0, 1, 2],
++                samples=[CalibrationSample(title="K.4", physical=104)],
++            )
++        ],
++    )
++    ctx = _ctx()
++
++    def fake_verify(**kwargs: Any) -> dict[str, Any]:
++        expected = int(kwargs["candidate_matches"][0].page)
++        title = str(kwargs.get("title") or "")
++        ok = {
++            ("K.4", 104),  # 92 + 12
++            ("L.1", 105),  # 94 + 11
++            ("Ref", 154),  # 143 + 11
++        }
++        if (title, expected) in ok:
++            return {"selected_page": expected, "reason": "ok"}
++        return {"selected_page": None, "reason": "miss"}
++
++    def fake_scan(**kwargs: Any) -> TitleScanResult:
++        title = str(kwargs.get("title") or "")
++        start = int(kwargs.get("start_page") or 0)
++        assert title == "L.1"
++        assert start == 104
++        return TitleScanResult(
++            title=title,
++            found=True,
++            found_page=105,
++            scanned_pages=[104, 105],
++            next_start=106,
++        )
++
++    with (
++        _patch_verify(fake_verify),
++        patch(
++            "app.services.document_agent.calibration.scan.scan_title_forward",
++            fake_scan,
++        ),
++    ):
++        working, anchor = anchor_hierarchy_from_regimes(
++            nodes=leaves,
++            result=phase1,
++            entries=[
++                {"heading": "K.4", "level": 1, "page_number": 92},
++                {"heading": "L.1", "level": 1, "page_number": 94},
++                {"heading": "Ref", "level": 1, "page_number": 143},
++            ],
++            page_texts={104: "K.4", 105: "L.1", 154: "Ref"},
++            body_pages=list(range(13, 155)),
++            page_count=154,
++            ctx=ctx,
++        )
++
++    assert [n.title for n in working] == ["K.4", "L.1", "Ref"]
++    assert anchor.match_overrides[("K.4",)].page == 104
++    assert anchor.match_overrides[("L.1",)].page == 105
++    assert anchor.match_overrides[("Ref",)].page == 154
++
++
+ def test_phase2_recalibrate_miss_drops_suffix_from_tree() -> None:
+     """When suffix cannot be recalibrated, those leaves leave the TOC tree."""
+     from app.services.document_agent.calibration.procedure import (
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #488** (2026-10-31): chore: promote main to staging (TOC pairing and offset recalibrate) (@EricNGOntos)
+- **PR #487** (2026-10-31): Isolate paired TOC boundaries and recalibrate from last confirmed physical page (@EricNGOntos)
 - **PR #486** (2026-10-30): perf: shorten progressive first-ready work and deliver coarse directories (@suguanYang)
 - **PR #485** (2026-10-29): chore: promote main to staging (visual page-num match) (@EricNGOntos)
 - **PR #484** (2026-10-29): Match visual page discovery by page_nums across shared boundaries (@EricNGOntos)
 - **PR #483** (2026-10-28): chore: promote main to staging (Fine boundary titles) (@EricNGOntos)
-- **PR #482** (2026-10-28): Keep Fine boundary titles across same-page parent headings (@EricNGOntos)
-- **PR #481** (2026-10-28): chore: promote main to staging (on-demand Fine) (@EricNGOntos)
 
 ---
 
@@ -1071,32 +2307,53 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. local CI after progressive and visual page-num changes.
+## X. Merge pull request #487 from Ontos-AI/feat/wuchengke/toc-pairing-offset-recalibr
 
 **RULE**:
-When implementing operations in `apps/worker/app/services/page_memory/scope_enrichment_service.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/worker/app/services/document_agent/calibration/procedure.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d748ed7e`: local CI after progressive and visual page-num changes.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `07cd00d1`: Merge pull request #487 from Ontos-AI/feat/wuchengke/toc-pairing-offset-recalibrate. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/worker/app/services/page_memory/scope_enrichment_service.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/worker/app/services/document_agent/calibration/procedure.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-            vector_repair_stage: EnhancementStage = {
-                **(stages.get("vector_repair") or {}),
-            }
+    body_start_page: int = 1,
+        body_start_page=body_start_page,
+            working, pruned = prune_regime_out_of_scope(
+                working,
+                kind=kind,
+                entry_titles=entry_titles,
+                offset=offset,
+                page_count=page_count,
+            )
+            total_pruned += pruned
+            projected = project_nodes_for_regime(
+                working, kind=kind, entry_titles=entry_titles
+            )
+                matches = bulk_offset_matches(
+                    leaves, offset, page_count=page_count
+                )
+        body_start_page = min(body_pages) if body_pages else 1
+            body_start_page=body_start_page,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-            vector_repair_stage: EnhancementStage = dict(
-                stages.get("vector_repair") or {}
-            )
+        working, pruned = prune_regime_out_of_scope(
+            working,
+            kind=kind,
+            entry_titles=entry_titles,
+            offset=offset,
+            page_count=page_count,
+        )
+        total_pruned += pruned
+                matches = bulk_offset_matches(leaves, offset)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d748ed7e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `07cd00d1` are properly handled with clean fallback behavior.

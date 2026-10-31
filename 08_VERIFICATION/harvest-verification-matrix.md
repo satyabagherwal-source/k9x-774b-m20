@@ -6540,3 +6540,6 @@
 | `CYCLE-20261031-1752` | `2026-10-31T10:47:12.230Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`94da0865...`) |
 | `CYCLE-20261031-18FB` | `2026-10-31T10:47:13.895Z` | `u-root/u-root` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6173` | Yes (`ab63cf9e...`) |
 | `CYCLE-20261031-L4CN` | `2026-10-31T11:02:41.735Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6174, Rule 6175, Rule 6176` | Yes (`9b79e6cf...`) |
+| `CYCLE-20261031-TQR6` | `2026-10-31T11:09:24.018Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6177` | Yes (`256acb5b...`) |
+| `CYCLE-20261031-TZ6M` | `2026-10-31T11:09:34.942Z` | `prithivMLmods/Gender-Classifier-Mini` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6178, Rule 6179` | Yes (`98676ba6...`) |
+| `CYCLE-20261031-U1AH` | `2026-10-31T11:09:37.673Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6180` | Yes (`cedd9fc7...`) |

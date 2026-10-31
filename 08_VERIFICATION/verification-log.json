@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261029-GK8R",
-    "timestamp": "2026-10-29T12:19:47.451Z",
-    "repository": "trufflesecurity/trufflehog",
-    "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "4fbdccf50b57f74b03b2f267bb4491d815349462d5aef27481a24bf70afab409",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-GOFY",
-    "timestamp": "2026-10-29T12:19:52.894Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "52b116edca0f183dc8f86b91cf4d86dd0190851e9a01ec65ec6827c130aa712b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-OLUF",
-    "timestamp": "2026-10-29T12:26:02.775Z",
-    "repository": "fallow-rs/fallow",
-    "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "d7d4c713c2d9bd5c80d34f25a39f739af72016df2cada716b837e3eb1b661fc8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261029-6FCE",
     "timestamp": "2026-10-29T16:23:51.086Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7492,6 +7447,51 @@
     "contentHash": "9b79e6cf26fdc8f1540cfba97ae7c9f2501577beeaf296cf9ada1b26f3ff937a",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-TQR6",
+    "timestamp": "2026-10-31T11:09:24.018Z",
+    "repository": "Dicklesworthstone/destructive_command_guard",
+    "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
+    "contentHash": "256acb5b405462630b67dc79f4e5e649c1728b85e783070faee0a7986a9e599c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-TZ6M",
+    "timestamp": "2026-10-31T11:09:34.942Z",
+    "repository": "prithivMLmods/Gender-Classifier-Mini",
+    "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
+    "contentHash": "98676ba626f18b66830fb91d0e89412158c9565269efc6fb9bda541b3f887e6a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-U1AH",
+    "timestamp": "2026-10-31T11:09:37.673Z",
+    "repository": "Ontos-AI/knowhere",
+    "learningId": "learn-github-ontos-ai-knowhere",
+    "contentHash": "cedd9fc7d7f172ff61a64a6a0e329185b84d8e63874335cf859813c317e733f9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

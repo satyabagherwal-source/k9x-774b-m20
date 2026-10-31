@@ -2293,10 +2293,10 @@
     "repository": "Ontos-AI/knowhere",
     "platform": "github",
     "sourceUrl": "https://github.com/Ontos-AI/knowhere",
-    "sourceVersion": "f876742c",
+    "sourceVersion": "07cd00d1",
     "license": "Apache-2.0",
-    "contentHash": "6fce9fd0daaecd03b6fd5480451c97eb6545a6f1e4d87d55228d711304f421b0",
-    "lastHarvestedAt": "2026-10-30T18:07:13.345Z",
+    "contentHash": "cedd9fc7d7f172ff61a64a6a0e329185b84d8e63874335cf859813c317e733f9",
+    "lastHarvestedAt": "2026-10-31T11:09:37.676Z",
     "learningId": "learn-github-ontos-ai-knowhere"
   },
   "bitterbot-ai-bitterbot-desktop": {
@@ -6143,10 +6143,10 @@
     "repository": "Dicklesworthstone/destructive_command_guard",
     "platform": "github",
     "sourceUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
-    "sourceVersion": "07c53c96",
+    "sourceVersion": "e4e06296",
     "license": "NOASSERTION",
-    "contentHash": "89a78d214307951cc52455d6fbaa99ab8b03a498f0b8dce45c2c5dbd0d697ec2",
-    "lastHarvestedAt": "2026-10-30T13:14:05.387Z",
+    "contentHash": "256acb5b405462630b67dc79f4e5e649c1728b85e783070faee0a7986a9e599c",
+    "lastHarvestedAt": "2026-10-31T11:09:24.021Z",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard"
   },
   "xinthink-react-native-material-kit": {
@@ -11405,8 +11405,8 @@
     "sourceUrl": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
     "sourceVersion": "hf-prithivmlmods-gender-classifier-mini",
     "license": "Open-Source",
-    "contentHash": "9c9dadd3556a5f1291b8ac6629ba27cbe7176c32b9921e7d16a4d502add3d3aa",
-    "lastHarvestedAt": "2026-10-28T08:45:46.949Z",
+    "contentHash": "98676ba626f18b66830fb91d0e89412158c9565269efc6fb9bda541b3f887e6a",
+    "lastHarvestedAt": "2026-10-31T11:09:34.947Z",
     "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini"
   },
   "hf-openbmb-minicpm-ocr-1.0": {

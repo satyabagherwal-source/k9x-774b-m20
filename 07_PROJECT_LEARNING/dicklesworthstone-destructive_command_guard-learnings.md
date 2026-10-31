@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source**: github ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
-> **Source Version**: `07c53c96`  
+> **Source Version**: `e4e06296`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T13:14:04.711Z  
+> **Timestamp**: 2026-10-31T11:09:23.325Z  
 > **Learning ID**: `learn-github-dicklesworthstone-destructive_command_guard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T13:08:54.536Z  
+> **Harvest Timestamp**: 2026-10-31T11:09:23.189Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A fast Rust safety hook that blocks destructive shell, git, and filesystem commands before AI coding agents run them. 50+ security packs (databases, Kubernetes, Docker, cloud, Terraform), heredoc/inline-script scanning, CI scan mode, and explain mode; works with Claude Code, Codex, Gemini, Copilot, Cursor, and more.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6229 stars
+- **Stars / Engagement**: 6232 stars
 
 ---
 
@@ -870,8 +870,8 @@ mod tests {
 //! Hook protocol handling.
 //!
 //! This module handles JSON input/output for supported hook protocols
-//! (Claude Code, Codex CLI, Copilot, VS Code Copilot Chat, Gemini, and Hermes
-//! Agent). It parses incoming hook requests and formats denial responses.
+//! (Claude Code, Factory Droid, Codex CLI, Copilot, VS Code Copilot Chat, Gemini,
+//! and Hermes Agent). It parses incoming hook requests and formats denials.
 
 use crate::evaluator::MatchSpan;
 use crate::exit_codes::EXIT_HOOK_BLOCK;
@@ -1087,7 +1087,7 @@ pub struct ToolCall {
 /// - a JSON array → each entry parsed individually as [`ToolCall`], with
 ///   entries that do not fit silently skipped (the ones that do fit are kept);
 /// - any non-array shape → `None`, so the rest of the payload still parses and
-///   the `tool_input` / `toolCall` extra
+///   the `tool_input` / `toolCall`
 ```
 
 ### Core Architecture Module: `src/packs/cdn/cloudflare_workers.rs`
@@ -1434,7 +1434,14 @@ pub(crate) fn may_name_protected_path(command: &str) -> bool {
     shell::may_name_protected_path(command) || word_splitting::candidate(command)
 }
 
-/// IFS assignments and expansions belong to the outer shell, not to a quoted
+/// An extracted shell body can establish a destination in an earlier command.
+/// Its individual commands cannot retain that evidence. This is a candidate
+/// gate for an additional complete-source evaluation, never a path exemption.
+pub(crate) fn shell_destination_context_required(command: &str) -> bool {
+    word_splitting::candidate(command) || shell::indirection::candidate(command)
+}
+
+/// Scalar/IFS assignments and expansions belong to the outer shell, not to a quoted
 /// Python/Node program supplied on stdin (#560). Reuse the existing ownership
 /// proof instead of letting source text establish shell state or exhaust the
 /// shell event budget. It rejects unquoted bodies and ambiguous receivers.
@@ -1444,18 +1451,22 @@ pub(crate) fn may_name_protected_path(command: &str) -> bool {
 /// `embedded::scan_command` below must always receive the original command.
 /// Do not apply a POSIX-only proof when the caller's dialect is unknown.
 fn scan_outer_writer_arguments(command: &str, dialect: ShellDialect) -> Vec<CredentialFileWrite> {
-    if dialect != ShellDialect::Posix || !word_splitting::candidate(command) {
-        return word_splitting::scan(command, dialect);
-    }
-    let outer = crate::heredoc::mask_inert_interpreter_stdin(command);
-    word_splitting::scan(outer.as_ref(), dialect)
+    let outer = if dialect == ShellDialect::Posix && shell_destination_context_required(command) {
+        crate::heredoc::mask_inert_interpreter_stdin(command)
+    } else {
+        std::borrow::Cow::Borrowed(command)
+    };
+    let mut hits = word_splitting::scan(outer.as_ref(), dialect);
+    hits.extend(shell::indirection::scan(outer.as_ref(), dialect));
+    hits
 }
 
 /// Inspect executable source before shell segmentation or masking removes it.
 /// Shell syntax uses the separate [`classify_credential_file_write`] above;
 /// inline scripts, heredocs, and here-strings use their proven interpreter.
-/// The IFS view retains preceding assignments until each writer's arguments
-/// have been split, then delegates every destination to the same path policy.
+/// The shell views retain preceding scalar assignments and recognized Git
+/// origins, including IFS-dependent argv, and delegate destination evidence
+/// to the same native path policy before source segmentation discards it.
 /// Apply explicit language/content exemptions to each decoded program, not
 /// to another program or shell writer in the same command.
 /// Retain all rule families, including coincident spans from a single rename.
@@ -1611,17 +1622,7 @@ mod source_ownership_tests {
     }
 
     #[test]
-    fn unquoted_expansions_and_shell_receivers_keep_the_original_ifs_analysis_560() {
-        for command in [
-            "cat <<CODE\n$(IFS=@; tee $UNRESOLVED)\nCODE",
-            "python3 - <<CODE\nprint('$(IFS=@; tee $UNRESOLVED)')\nCODE",
-            "sh <<'CODE'\nIFS=@; tee $UNRESOLVED\nCODE",
-            "python3 -c 'import os,sys; os.system(sys.stdin.read())' <<'CODE'\nIFS=@; tee $UNRESOLVED\nCODE",
-        ] {
-            let original = word_splitting::scan(command, ShellDialect::Posix);
-            let outer = scan_outer_writer_arguments(command, ShellDialect::Posix);
-            assert_eq!(
-     
+    fn unquoted_expansions_and_shell
 ```
 
 ### Core Architecture Module: `src/packs/core/credential_files/embedded.rs`
@@ -2476,973 +2477,1788 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `07c53c96` (2026-10-29)
-**Commit Message**: fix(allow-once): preserve policy precedence for exact outer grants (#599)
+### Incident Patch 1: `4850e2da` (2026-10-30)
+**Commit Message**: fix(core): preserve shell field and execution boundaries in indirect writes
 
-Quoted interpreter requests inside alias and trap envelopes can return from
-nested inspection before the deferred exact-command grant lookup. Recover a
-grant after an actual outer-request denial without authorizing a derived
-command or adding store I/O to unrelated quick rejections.
+Resolve provable zero-field and multi-field scalar expansions, including
+empty concatenations, without reparsing expanded argv as shell syntax.
+Keep assignment prefixes out of operands and prove writer-specific option
+boundaries before retaining opaque quoted source arguments.
 
-The direct quoted-launcher case already works on main after deff5c07. The
-decision-only reproduction still leaves four quoted alias/trap cases denied
-with unconsumed grants on pristine 025d06a0. The expanded 16-case matrix passes
-6 cases on official v0.15.3 x86_64, 12 on that main revision, and all 16 with
-this correction.
+Give expanded fields distinct analysis identities and map findings back
+to original source spans, preserving every protected rule family when a
+scalar contains several destinations. Inspect mandatory loop conditions
+and live grouped or assignment-only heredocs with correct mutation order.
 
-Inspect explicit configuration blocks before consuming ordinary grants,
-including later nested commands hidden by an earlier finding. Keep that
-inspection bounded and non-consuming; retain the original denial when source
-ownership or completeness cannot be proved. Preserve original command bytes,
-authoritative request cwd, expiry checks, and atomic single-use consumption.
-Select explicitly forced configuration grants independently of earlier
-ordinary entries.
+Extend strict Git path producers for quiet queries, path-format ordering,
+HEAD, index, config.worktree and config.lock. Preserve normalization at
+the query boundary and reject unquoted field assumptions contradicted by
+explicit root, hooksPath or IFS/glob inputs. No shell expression is run.
 
-Align quoted-interpreter triggers with extraction
+Extend the real-CLI regression target to 13 tests with blocked writes,
+safe controls, linked worktrees, relocated hooks and allowlist cases.
 
-**File**: `src/evaluator.rs` (modified, +1213/-63)
+Validation:
+- 180/180 executable native-subsystem cases passed using byte-verified
+  production source and repository-
+
+**File**: `src/packs/core/credential_files/shell.rs` (modified, +26/-3)
 ```diff
-@@ -364,6 +364,18 @@ thread_local! {
-     static ALLOW_ONCE_REQUEST_CWD: std::cell::RefCell<AllowOnceRequestCwd> = const {
-         std::cell::RefCell::new(AllowOnceRequestCwd::Unspecified)
-     };
-+    /// An ordinary exact grant cannot hide an explicit block on a later
-+    /// nested command. Policy inspection must read past whole-command grants,
-+    /// including the grant whose eligibility it is checking, without spending
-+    /// any of them. Recursive evaluation stays on this thread.
-+    static ALLOW_ONCE_POLICY_REPLAY: std::cell::Cell<bool> = const {
-+        std::cell::Cell::new(false)
-+    };
-+    /// A finding-only rescan can discard its verdict, so it must never spend
-+    /// a stateful grant. Permanent exemptions still govern its findings.
-+    static ALLOW_ONCE_SUPPRESSED: std::cell::Cell<bool> = const {
-+        std::cell::Cell::new(false)
-+    };
+@@ -3325,11 +3325,22 @@ fn skip_wrapper(name: &str, args: &[&Word]) -> Option<usize> {
+ const MAX_WRAPPER_DEPTH: usize = 16;
+ 
+ /// Drop reserved words, leading assignments, and wrapper commands.
+-fn strip_prefixes<'a>(mut words: &'a [&'a Word]) -> Option<&'a [&'a Word]> {
++fn strip_prefixes<'a>(words: &'a [&'a Word]) -> Option<&'a [&'a Word]> {
++    strip_prefixes_in_view(words, true)
++}
++
++/// Expanded argv has already lost syntactic assignment/reserved-word roles.
++/// A value such as `x=y` or `if` is an executable name, not new shell syntax.
++fn strip_prefixes_in_view<'a>(
++    mut words: &'a [&'a Word],
++    source_syntax: bool,
++) -> Option<&'a [&'a Word]> {
+     for _ in 0..MAX_WRAPPER_DEPTH {
+         let first = *words.first()?;
+         let text = first.as_string();
+-        if crate::context::is_shell_command_prefix_reserved_word(&text) || is_env_assignment(&text)
++        if source_syntax
++            && (crate::context::is_shell_command_prefix_reserved_word(&text)
++                || is_env_assignment(&text))
+         {
+             words = &words[1..];
+             continue;
+@@ -3346,6 +3357,14 @@ fn strip_prefixes<'a>(mut words: &'a [&'a Word]) -> Option<&'a [&'a Word]> {
  }
  
- #[derive(Clone, Default)]
-@@ -497,11 +509,51 @@ impl Drop for SafePatternScope {
-     }
- }
- 
-+struct AllowOncePolicyScope {
-+    previous: bool,
+ fn classify_simple_command(tokens: &[Token]) -> Option<CredentialFileWrite> {
++    classify_command_in_view(tokens, true)
 +}
 +
-+impl AllowOncePolicyScope {
-+    fn enter() -> Self {
-+        Self {
-+            previous: ALLOW_ONCE_POLICY_REPLAY.with(|slot| slot.replace(true)),
-+        }
-+    }
++fn classify_expanded_command(tokens: &[Token]) -> Option<CredentialFileWrite> {
++    classify_command_in_view(tokens, false)
 +}
 +
-+impl Drop for AllowOncePolicyScope {
-+    fn drop(&mut self) {
-+        ALLOW_ONCE_POLICY_REPLAY.with(|slot| slot.set(self.previous));
-+    }
-+}
-+
-+struct AllowOnceSuppressionScope {
-+    previous: bool,
-+}
-+
-+impl AllowOnceSuppressionScope {
-+    fn enter() -> Self {
-+        Self {
-+            previous: ALLOW_ONCE_SUPPRESSED.with(|slot| slot.replace(true)),
-+        }
-+    }
-+}
-+
-+impl Drop for AllowOnceSuppressionScope {
-+    fn drop(&mut self) {
-+        ALLOW_ONCE_SUPPRESSED.with(|slot| slot.set(self.previous));
-+    }
-+}
-+
- /// A whole-command grant authorizes the original outer request. Detection
- /// replays may change case, remove syntax, or extract executable children;
- /// none of those derived strings is a new request the operator authorized.
--/// An explicitly approved outer envelope is checked before its children run.
-+/// Policy inspection deliberately acquires none: an ordinary grant must not
-+/// bypass an explicit block merely because another finding appears first.
- fn original_command_grant<T>(command: &str, grant: impl FnOnce(&str) -> Option<T>) -> Option<T> {
-+    if ALLOW_ONCE_POLICY_REPLAY.with(std::cell::Cell::get) {
-+        return None;
-+    }
-     let source = SAFE_PATTERN_SOURCE.with(|slot| slot.borrow().clone());
-     match source {
-         Some(source) if source.parent.is_none() => grant(&source.command),
-@@ -5975,7 +6027,8 @@ fn windows_launcher_envelopes(
- /// allowlist grant for that rule first (mirrors the
- /// `ExecutableTextSink::Unverified` handling). Returns `None` when the rule
- /// is allowlisted — the caller falls back to ordinary evaluation — recording
--/// the hit for audit output.
-+/// the hit for audit output. Policy inspection cannot treat a waived refusal
-+/// as proof that the unread source contains no explicit block.
- fn launcher_unverified_denial(
-     rule: &str,
-     reason: &str,
-@@ -5985,6 +6038,12 @@ fn launcher_unverified_denial(
- ) -> Option<EvaluationResult> {
-     let (pack_id, pattern_name) = split_ast_rule_id(rule);
-     if let Some(hit) = allowlists.match_rule_at_path(&pack_id, &pattern_name, project_path) {
-+        if ALLOW_ONCE_POLICY_REPLAY.with(std::cell::Cell::get) {
-+            return Some(EvaluationResult {
-+                decision: EvaluationDecision::Indeterminate,
-+                ..EvaluationResult::allowed()
-+            });
-+        }
-         if first_allowlist_hit.is_none() {
-             *first_allowlist_hit = Some((
-                 PatternMatch {
-@@ -6689,6 +6748,149 @@ fn parse_obfuscated_posix_inline_launcher_segment(
-     }
- }
- 
-+/// Locate only a source operand whose option grammar is modeled here. Python
-+/// stops option parsing at its source; other interpreters can replace or add
-+/// programs through later flags, so their proof requires the minimal argv.
-+fn non_shell_inline_source_word<'a>(
-+    words: &[&'a str],
-+    language: crate::heredoc::ScriptLanguage,
-+) -> Option<&'a str> {
-+    use crate::heredoc::ScriptLanguage;
-+
-+    if language == ScriptLanguage::Python {
-+        return python_inline_source_word(words);
-+    }
-+    let [_, raw_flag, source] = words else {
-+        return None;
-+    };
-+    let flag = crate::normalize::decode_posix_literal_word(raw_flag)?;
-+    matches!(
-+        (language, flag.as_ref()),
-+        (ScriptLanguage::Ruby, "-e")
-+            | (ScriptLanguage::Perl, "-e" | "-E")
-+            | (
-+                ScriptLanguage::JavaScript,
-+                "-e" | "--eval" | "-p" | "--print"
-+            )
-+            | (ScriptLanguage::Php, "-r")
-+    )
-+    .then_some(*source)
-+}
-+
-+/// Prove that Tier 2 extracted this launcher's actual, fully literal source.
-+/// A successful extraction elsewhere in the command (including a decoy in
-+/// script argv or inside its source) does not prove ownership 
-```
-
-**File**: `src/heredoc.rs` (modified, +302/-9)
-```diff
-@@ -83,6 +83,9 @@ const HEREDOC_TRIGGER_PATTERNS: [&str; 31] = [
-     // - combined short-flag clusters (bash -lc, node -pe, perl -pi -e)
-     // - Windows .exe extensions (python.exe, python3.11.exe, etc.)
-     // - Attached quotes (python -c"...", bash -c'...')
-+    // - A closing quote on the executable path ('/usr/bin/python3' -c ...).
-+    //   Tier 2 already accepts it; without this, an argv-form Python sink
-+    //   with no incidental trigger can skip language-aware inspection (#599).
-     //
-     // Tier 1 MUST have zero false negatives for Tier 2 extraction.
-     //
-@@ -92,18 +95,18 @@ const HEREDOC_TRIGGER_PATTERNS: [&str; 31] = [
-     // superset invariant.  False positives are acceptable for Tier 1.
-     r"<<<",
-     // Python inline execution (matches python, python3, python3.11, python.exe, python3.11.exe, etc.)
--    r#"\bpython[0-9.]*(?:\.exe)?\b(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*[ce][A-Za-z]*(?:\s|['"]|$)"#,
-+    r#"\bpython[0-9.]*(?:\.exe)?\b["']?(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*[ce][A-Za-z]*(?:\s|['"]|$)"#,
-     // Ruby inline execution (matches ruby, ruby3, ruby3.0, ruby.exe, etc.)
--    r#"\bruby[0-9.]*(?:\.exe)?\b(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*e[A-Za-z]*(?:\s|['"]|$)"#,
--    r#"\birb[0-9.]*(?:\.exe)?\b(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*e[A-Za-z]*(?:\s|['"]|$)"#,
-+    r#"\bruby[0-9.]*(?:\.exe)?\b["']?(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*e[A-Za-z]*(?:\s|['"]|$)"#,
-+    r#"\birb[0-9.]*(?:\.exe)?\b["']?(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*e[A-Za-z]*(?:\s|['"]|$)"#,
-     // Perl inline execution (matches perl, perl5, perl5.36, perl.exe, etc.)
--    r#"\bperl[0-9.]*(?:\.exe)?\b(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*[eE][A-Za-z]*(?:\s|['"]|$)"#,
-+    r#"\bperl[0-9.]*(?:\.exe)?\b["']?(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*[eE][A-Za-z]*(?:\s|['"]|$)"#,
-     // Node.js inline execution (matches node, node18, nodejs, node.exe, etc.)
--    r#"\bnode(?:js)?[0-9.]*(?:\.exe)?\b(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*[ep][A-Za-z]*(?:\s|['"]|$)"#,
-+    r#"\bnode(?:js)?[0-9.]*(?:\.exe)?\b["']?(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*[ep][A-Za-z]*(?:\s|['"]|$)"#,
-     // Bun and Deno inline execution (issue #397). Bun runs `-e`/`-p` exactly as
-     // Node does, so the identical payload must reach the identical rules; before
-     // this, swapping `node` for `bun` was a one-word bypass of a live deny.
--    r#"\b(?:bun|deno)[0-9.]*(?:\.exe)?\b(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*[ep][A-Za-z]*(?:\s|['"]|$)"#,
-+    r#"\b(?:bun|deno)[0-9.]*(?:\.exe)?\b["']?(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*[ep][A-Za-z]*(?:\s|['"]|$)"#,
-     // Bun's `exec` subcommand hands its argument to a shell, so it is an inline
-     // shell payload under a subcommand rather than a flag (issue #397).
-     // The optional quote matches `subcommand_inline_payload`, which dequotes the
-@@ -134,15 +137,15 @@ const HEREDOC_TRIGGER_PATTERNS: [&str; 31] = [
-     r"\$\.system\s*\(",
-     r"\.doShellScript\s*\(",
-     // PHP inline execution
--    r#"\bphp[0-9.]*(?:\.exe)?\b(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*r[A-Za-z]*(?:\s|['"]|$)"#,
-+    r#"\bphp[0-9.]*(?:\.exe)?\b["']?(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*r[A-Za-z]*(?:\s|['"]|$)"#,
-     // Lua inline execution
--    r#"\blua[0-9.]*(?:\.exe)?\b(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*e[A-Za-z]*(?:\s|['"]|$)"#,
-+    r#"\blua[0-9.]*(?:\.exe)?\b["']?(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*e[A-Za-z]*(?:\s|['"]|$)"#,
-     // Shell inline execution (sh -c, bash -c, zsh -c, fish -c, bash -lc, etc.).
-     // dash/ksh/mksh are ordinary POSIX shells: without them `dash -c "git
-     // reset --hard"` was never unwrapped, and command-position rules such as
-     // core.git never saw the payload. An option or its value may be quoted
-     // (`bash -o 'errex
-```
-
-**File**: `src/packs/careful_company_running_windows/guardrails.rs` (modified, +285/-5)
-```diff
-@@ -347,9 +347,45 @@ fn authorization_store_write_span_with_paths_in_source(
-     command: &str,
-     stores: &AuthorizationStorePaths,
-     source_context: Option<(&str, usize)>,
-+) -> Option<Range<usize>> {
-+    if let Some(span) =
-+        authorization_store_write_span_in_range(command, stores, source_context, None)
-+    {
-+        return Some(span);
-+    }
-+
-+    // Masking a harmless sed script erases an argv position, not the write
-+    // performed by -i. Recover roles only when the original interval has the
-+    // same visible bytes. Parse its full owner so quoted examples and stored
-+    // source never become standalone commands merely because of a slice.
-+    let (source, start) = source_context?;
-+    let end = start.checked_add(command.len())?;
-+    let original = source.get(start..end)?;
-+    if original == command
-+        || !original
-+            .bytes()
-+            .zip(command.bytes())
-+            .all(|(raw, masked)| raw == masked || masked.is_ascii_whitespace())
-+    {
-+        return None;
-+    }
-+    authorization_store_write_span_in_range(source, stores, None, Some(start..end))
-+        .map(|span| span.start - start..span.end - start)
-+}
-+
-+fn authorization_store_write_span_in_range(
-+    command: &str,
-+    stores: &AuthorizationStorePaths,
-+    source_context: Option<(&str, usize)>,
-+    visible_range: Option<Range<usize>>,
- ) -> Option<Range<usize>> {
-     let ast = crate::heredoc::try_parse_shell_ast(command).ok()?;
-     let (source, source_base) = source_context.unwrap_or((command, 0));
-+    let visible = |span: &Range<usize>| {
-+        visible_range
-+            .as_ref()
-+            .is_none_or(|range| range.start <= span.start && span.end <= range.end)
-+    };
-     let mut pending = vec![ast.root()];
-     while let Some(node) = pending.pop() {
-         match node.kind().as_ref() {
-@@ -363,13 +399,34 @@ fn authorization_store_write_span_with_paths_in_source(
-                     .filter(|owner| {
-                         matches!(owner.kind().as_ref(), "command" | "redirected_statement")
-                     })
--                    .map_or(node.range().start, |owner| owner.range().start);
-+                    .map_or_else(
-+                        || node.range().start,
-+                        |owner| {
-+                            // Bash can attach the redirect to the whole `a && b`
-+                            // list, although only its final statement opens it.
-+                            // Keep preceding directory changes, but do not enter
-+                            // a compound/subshell body: its redirect opens first.
-+                            let mut statement = owner.field("body").unwrap_or(owner);
-+                            while statement.kind() == "list" {
-+                                let Some(last) = statement
-+                                    .children()
-+                                    .filter(|part| part.is_named() && part.kind() != "comment")
-+                                    .last()
-+                                else {
-+                                    break;
-+                                };
-+                                statement = last;
-+                            }
-+                            statement.range().start
-+                        },
-+                    );
-                 if node.children().any(|part| {
-                     matches!(
-                         part.kind().as_ref(),
-                         ">" | ">>" | ">|" | "&>" | "&>>" | ">&" | "<>"
-                     )
-                 }) && let Some(target) = node.field("destination")
-+                    && visible(&(node.range().start..target.range().end))
-                     && stores
-                         .at_source_prefix(source.get(..source_base.checked_add(statement_start)?)?)
-                         .matches_word(target.text().as_ref())
-@@ -381,7 +438,7 @@ fn authorization_store_write_span_with_paths_in_source(
-                 let statement_start = node
-                     .parent()
-                     .filter(|owner| owner.kind() == "redirected_statement")
--                    .map_or(node.range().start, |owner| owner.range().start);
-+                    .map_or_else(|| node.range().start, |owner| owner.range().start);
-                 let mut words = Vec::new();
-                 for child in node.children().filter(ast_grep_core::Node::is_named) {
-                     if !matches!(
-@@ -415,7 +472,23 @@ fn authorization_store_write_span_with_paths_in_source(
-                 }
-                 let scoped_stores = stores
-                     .at_source_prefix(source.get(..source_base.checked_add(statement_start)?)?);
--                if let Some(span) = authorization_writer_span(&words, &scoped_stores) {
-+                if let Some(span) = authorization_writer_span(&words, &scoped_stores)
-+                    && visible(&span)
-+                {
-+                    return Some(span);
-+                }
-+                // A map
-```
-
-**File**: `src/pending_exceptions.rs` (modified, +82/-8)
-```diff
-@@ -836,7 +836,7 @@ impl AllowOnceStore {
-         Ok(Some(selected))
-     }
- 
--    /// Match a command against allow-once entries, but only grant if `force_allow_config` is set.
-+    /// Match a command against the first scoped allow-once entry with `force_allow_config` set.
-     ///
-     /// This prevents single-use entries from being consumed when a config blocklist would still
-     /// deny the command (unless explicitly forced).
-@@ -864,18 +864,14 @@ impl AllowOnceStore {
-             rewrite_allow_once_records(&mut file, &active)?;
-         }
- 
--        let idx = active
--            .iter()
--            .position(|entry| entry.command_raw == command && entry.matches_scope(cwd));
-+        let idx = active.iter().position(|entry| {
-+            entry.command_raw == command && entry.matches_scope(cwd) && entry.force_allow_config
-+        });
- 
-         let Some(idx) = idx else {
-             return Ok(None);
-         };
- 
--        if !active[idx].force_allow_config {
--            return Ok(None);
--        }
--
-         let mut selected = active[idx].clone();
-         if active[idx].single_use {
-             selected.consumed_at = Some(format_timestamp(now));
-@@ -1971,6 +1967,84 @@ mod tests {
-         assert!(second.is_none());
-     }
- 
-+    #[test]
-+    fn test_forced_allow_once_skips_ordinary_and_mismatched_entries_issue_599() {
-+        let dir = TempDir::new().expect("tempdir");
-+        let cwd_dir = TempDir::new().expect("cwd tempdir");
-+        let other_dir = TempDir::new().expect("other cwd tempdir");
-+        let cwd = cwd_dir.path();
-+        let scope = cwd.to_str().unwrap();
-+        let store = AllowOnceStore::new(dir.path().join("allow_once.jsonl"));
-+        let now = DateTime::parse_from_rfc3339("2026-01-10T06:30:00Z")
-+            .unwrap()
-+            .with_timezone(&Utc);
-+        let command = "'/usr/bin/python3' -c 'print(1)'";
-+        let redaction = redaction_config();
-+        let pending =
-+            PendingExceptionRecord::new(now, scope, command, "blocked", &redaction, true, None);
-+        let ordinary = AllowOnceEntry::from_pending(
-+            &pending,
-+            now,
-+            AllowOnceScopeKind::Cwd,
-+            scope,
-+            true,
-+            false,
-+            &redaction,
-+        );
-+        let mut forced = ordinary.clone();
-+        forced.force_allow_config = true;
-+        let mut wrong_command = forced.clone();
-+        wrong_command.command_raw.push(' ');
-+        let mut wrong_cwd = forced.clone();
-+        wrong_cwd.scope_path = other_dir.path().to_str().unwrap().to_string();
-+        let preserved = [ordinary.clone(), wrong_command, wrong_cwd];
-+        for entry in &preserved {
-+            store.add_entry(entry, now).unwrap();
-+        }
-+
-+        assert!(
-+            store
-+                .match_command_force_config(command, cwd, now, None)
-+                .unwrap()
-+                .is_none(),
-+            "ordinary, altered-command, and other-cwd entries cannot override policy"
-+        );
-+        assert_eq!(store.load_active(now).unwrap().0, preserved);
-+
-+        // A later explicit forced authorization must not be hidden by the
-+        // retained ordinary entry for the same command and cwd.
-+        store.add_entry(&forced, now).unwrap();
-+        let selected = store
-+            .match_command_force_config(command, cwd, now, None)
-+            .unwrap()
-+            .expect("later matching forced entry");
-+        forced.consumed_at = Some(format_timestamp(now));
-+        assert_eq!(selected, forced);
-+        assert_eq!(store.load_active(now).unwrap().0, preserved);
-+        assert!(
-+            store
-+                .match_command_force_config(command, cwd, now, None)
-+                .unwrap()
-+                .is_none(),
-+            "a forced single-use entry cannot be reused"
-+        );
-+        assert_eq!(store.load_active(now).unwrap().0, preserved);
-+
-+        // Removing the policy later still leaves the ordinary authorization
-+        // usable once; the failed policy attempts never consumed it.
-+        let selected = store.match_command(command, cwd, now, None).unwrap();
-+        let mut consumed_ordinary = ordinary;
-+        consumed_ordinary.consumed_at = Some(format_timestamp(now));
-+        assert_eq!(selected, Some(consumed_ordinary));
-+        assert_eq!(store.load_active(now).unwrap().0, preserved[1..]);
-+        assert!(
-+            store
-+                .match_command(command, cwd, now, None)
-+                .unwrap()
-+                .is_none()
-+        );
-+    }
-+
-     #[test]
-     fn test_allow_once_project_scope_matches_subdir() {
-         let dir = TempDir::new().expect("tempdir");
-```
-
-**File**: `tests/cli_e2e.rs` (modified, +771/-2)
-```diff
-@@ -1460,6 +1460,17 @@ mod allow_once_management_tests {
- 
- mod allow_once_flow_tests {
-     use super::*;
-+    use destructive_command_guard::pending_exceptions::{
-+        AllowOnceEntry, AllowOnceScopeKind, PendingExceptionRecord,
-+    };
-+
-+    const INLINE_POLICY_REASON: &str = "issue 599 explicit policy";
-+    const INLINE_SENTINEL: &str = "decision-only sentinel\n";
-+    const QUOTED_PRINT: &str = "'/usr/bin/python3' -c 'print(1)'";
-+    const QUOTED_UNLINK: &str =
-+        "'/usr/bin/python3' -c 'import pathlib; pathlib.Path(\"important.txt\").unlink()'";
-+    const UNQUOTED_UNLINK: &str =
-+        "python3 -c 'import pathlib; pathlib.Path(\"important.txt\").unlink()'";
- 
-     /// Dedicated test environment with control over all file paths.
-     struct FlowTestEnv {
-@@ -1468,17 +1479,25 @@ mod allow_once_flow_tests {
-         xdg_config_dir: std::path::PathBuf,
-         pending_path: std::path::PathBuf,
-         allow_once_path: std::path::PathBuf,
-+        config_path: Option<std::path::PathBuf>,
-     }
- 
-     impl FlowTestEnv {
-         fn new() -> Self {
-+            Self::with_repository(true)
-+        }
-+
-+        fn with_repository(repository: bool) -> Self {
-             let temp = tempfile::tempdir().expect("tempdir");
-             let home_dir = temp.path().join("home");
-             let xdg_config_dir = temp.path().join("xdg_config");
-             std::fs::create_dir_all(&home_dir).expect("HOME dir");
-             std::fs::create_dir_all(&xdg_config_dir).expect("XDG_CONFIG_HOME dir");
--            // Create a .git directory so it's recognized as a repo
--            std::fs::create_dir_all(temp.path().join(".git")).expect(".git dir");
-+            // Preserve the existing tests' project scope. The inline tests
-+            // deliberately use a plain directory to exercise exact cwd scope.
-+            if repository {
-+                std::fs::create_dir_all(temp.path().join(".git")).expect(".git dir");
-+            }
- 
-             let pending_path = temp.path().join("pending_exceptions.jsonl");
-             let allow_once_path = temp.path().join("allow_once.jsonl");
-@@ -1489,7 +1508,219 @@ mod allow_once_flow_tests {
-                 xdg_config_dir,
-                 pending_path,
-                 allow_once_path,
-+                config_path: None,
-+            }
-+        }
-+
-+        fn with_inline_policy() -> Self {
-+            let mut env = Self::with_repository(false);
-+            for directory in ["tmp", "xdg_cache", "xdg_state", "xdg_data", "other_cwd"] {
-+                std::fs::create_dir_all(env.temp.path().join(directory))
-+                    .expect("isolated inline test directory");
-             }
-+            for filename in ["important.txt", "other.txt"] {
-+                std::fs::write(env.temp.path().join(filename), INLINE_SENTINEL)
-+                    .expect("decision-only payload sentinel");
-+            }
-+            env.config_path = Some(env.temp.path().join("inline-policy.toml"));
-+            env.write_inline_policy(None);
-+            env
-+        }
-+
-+        fn write_inline_policy(&self, blocked_command: Option<&str>) {
-+            let block = blocked_command.map_or_else(String::new, |command| {
-+                format!(
-+                    "[overrides]\nblock = [{{ pattern = {:?}, reason = {:?} }}]\n",
-+                    format!("^{}$", regex::escape(command)),
-+                    INLINE_POLICY_REASON,
-+                )
-+            });
-+            std::fs::write(
-+                self.config_path.as_ref().expect("inline policy path"),
-+                format!(
-+                    "[general]\ncheck_updates = false\nself_heal_hook = false\n\
-+                     [packs]\nenabled = [\"core.git\", \"core.filesystem\"]\n\
-+                     [history]\nenabled = false\n\
-+                     [heredoc]\nenabled = true\ntimeout_ms = 5000\n\
-+                     fallback_on_parse_error = false\n{block}"
-+                ),
-+            )
-+            .expect("write isolated inline policy");
-+        }
-+
-+        fn inline_command(&self, cwd: &std::path::Path) -> Command {
-+            let scratch = self.temp.path().join("tmp");
-+            let mut command = Command::new(dcg_binary());
-+            command
-+                .env_clear()
-+                .env("HOME", &self.home_dir)
-+                .env("USERPROFILE", &self.home_dir)
-+                .env("XDG_CONFIG_HOME", &self.xdg_config_dir)
-+                .env("XDG_CACHE_HOME", self.temp.path().join("xdg_cache"))
-+                .env("XDG_STATE_HOME", self.temp.path().join("xdg_state"))
-+                .env("XDG_DATA_HOME", self.temp.path().join("xdg_data"))
-+                .env("TMPDIR", &scratch)
-+                .env("TEMP", &scratch)
-+                .env("TMP", &scratch)
-+                .env(
-+                    "DCG_CONFIG",
-+                    self.config_path.as_ref().expect("inline policy path"),
-+                )
-+                .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
-+        
-```
-
----
-
-### Incident Patch 2: `efbd488c` (2026-10-29)
-**Commit Message**: fix(python): judge a sink argv passed by a name bound to a literal (#602)
-
-`args = ['rm', '-rf', '/home/user']` and then `subprocess.run(args)` runs
-the argv that is denied when written inline, but it was allowed. The
-backstops read operands only from the call text, a bare name became the
-run-time placeholder, and an argv whose program is unknown keeps the
-warn-only posture. No other layer saw the list either, since it is not
-contiguous command text.
-
-When a Python sink call's whole argv is a bare name (its first positional
-argument, or `args=NAME`), python_bound_argv_calls finds each statement
-that assigns a list or tuple literal to that name, annotated or not, at a
-line start or after `;`, and not inside a string literal. It writes each
-literal in the name's place. The backstop judges every such call with
-detect_destructive_in_args and keeps the most severe hit. The
-reconstruction loop reads each one too, so pack rules see the command
-(`cmd = ['dd', 'if=/dev/zero', 'of=/dev/sda']`).
-
-Every literal binding counts, in any scope and whatever comes between, so
-a later rebinding or another function's variable of the same name can
-only add a reading. That over-approximates toward a den
-
-**File**: `src/ast_pattern_engine.rs` (modified, +232/-69)
-```diff
-@@ -597,7 +597,14 @@ pub fn scan_executing_sink_matches(code: &str, language: ScriptLanguage) -> Vec<
-         let hit = if inert_string_end.is_some() {
-             detect_destructive_in_literal_args(arg_region, language)
-         } else {
--            detect_destructive_in_args(arg_region, language)
-+            // A name bound to a literal list or tuple is judged as that literal
-+            // written in its place (#602).
-+            python_bound_argv_calls(language, haystack, arg_region, python_text.as_ref())
-+                .iter()
-+                .fold(
-+                    detect_destructive_in_args(arg_region, language),
-+                    |found, call| more_severe(found, detect_destructive_in_args(call, language)),
-+                )
-         };
-         let Some(hit) = hit else {
-             continue;
-@@ -802,83 +809,94 @@ pub fn exec_sink_reconstructed_commands(
-         let inert_string_end = python_text
-             .as_ref()
-             .and_then(|text| text.inert_string_end(call_start));
--        let region = exec_sink_arg_region(
-+        let call_region = exec_sink_arg_region(
-             inert_string_end.map_or(haystack, |end| &haystack[..end]),
-             call_start,
-         );
--        // A call the rm/git backstop owns (any `detect_destructive_in_args`
--        // hit) is left to it, so an allowlisted `rm`/`git` is not re-denied
--        // here under a pack rule id.
--        if detect_destructive_in_args(region, language).is_some() {
--            continue;
--        }
--        // Operands, for the same reason `detect_destructive_in_args` uses them:
--        // reconstructing `dd` from `"d"+"d"` as two argv words would not be the
--        // command the call actually runs (#474).
--        //
--        // #562 resolution is enabled only once this call's program word
--        // (read with resolution off) is an archive tool, never a launcher.
--        let argv = if const_env.is_some() {
--            RESOLVE_ENABLED.with(|cell| cell.set(false));
--            let unresolved = exec_argv_operands(region, language);
--            let archive = unresolved
--                .values
--                .first()
--                .is_some_and(|program| is_archive_program(program));
--            if archive {
--                RESOLVE_ENABLED.with(|cell| cell.set(true));
--                let resolved = exec_argv_operands(region, language);
--                RESOLVE_ENABLED.with(|cell| cell.set(false));
--                resolved
--            } else {
--                unresolved
--            }
-+        // A name bound to a literal list or tuple is reconstructed as that
-+        // literal written in its place (#602); in a string nothing runs, the
-+        // name stays text.
-+        let bound = if inert_string_end.is_none() {
-+            python_bound_argv_calls(language, haystack, call_region, python_text.as_ref())
-         } else {
--            exec_argv_operands(region, language)
-+            Vec::new()
-         };
--        if argv.unverified {
--            continue;
--        }
--        // In a string nothing runs, a name is text, not a value decided at run
--        // time, so it raises no dynamic-path or alias question (#601). A fully
--        // literal command is still judged, as any destructive literal is.
--        if inert_string_end.is_some()
--            && argv
--                .values
--                .iter()
--                .any(|value| value.contains(RUNTIME_VALUE))
--        {
--            continue;
--        }
--        let operands = argv.values;
--        let command = match operands.as_slice() {
--            [] => continue,
--            // One string handed to a shell (#512): see below.
--            [script] => {
--                if !single_string_sink_runs_shell(language, sink, haystack, call_start, region) {
--                    continue;
-+        for region in std::iter::once(call_region).chain(bound.iter().map(String::as_str)) {
-+            // A call the rm/git backstop owns (any `detect_destructive_in_args`
-+            // hit) is left to it, so an allowlisted `rm`/`git` is not re-denied
-+            // here under a pack rule id.
-+            if detect_destructive_in_args(region, language).is_some() {
-+                continue;
-+            }
-+            // Operands, for the same reason `detect_destructive_in_args` uses them:
-+            // reconstructing `dd` from `"d"+"d"` as two argv words would not be the
-+            // command the call actually runs (#474).
-+            //
-+            // #562 resolution is enabled only once this call's program word
-+            // (read with resolution off) is an archive tool, never a launcher.
-+            let argv = if const_env.is_some() {
-+                RESOLVE_ENABLED.with(|cell| cell.set(false));
-+                let unresolved = exec_argv_operands(region, language);
-+                let archive = unresolved
-+                    .values
-+                    .first()
-+                    .is_some_and(|program| is_archive_progr
-```
-
-**File**: `src/evaluator.rs` (modified, +58/-0)
-```diff
-@@ -42374,6 +42374,64 @@ mod tests {
++fn classify_command_in_view(tokens: &[Token], source_syntax: bool) -> Option<CredentialFileWrite> {
+     let mut words: Vec<&Word> = Vec::new();
+     for token in tokens {
+         match token {
+@@ -3366,7 +3385,11 @@ fn classify_simple_command(tokens: &[Token]) -> Option<CredentialFileWrite> {
+             Token::Separator => {}
          }
      }
- 
-+    /// #602 end to end: a Python sink argv passed by a name bound to a literal
-+    /// list or tuple is judged as that literal written inline. A name bound to
-+    /// anything else, or only in a string or comment, keeps its old posture.
-+    #[test]
-+    fn python_argv_bound_to_a_name_is_judged_602() {
-+        let body = |code: &str| format!("python3 - <<'PY'\n{code}\nPY");
-+        let packs = ["core.git", "core.filesystem", "system.disk"];
-+        for command in [
-+            body("import subprocess\nargs = ['rm','-rf','/home/user']\nsubprocess.run(args)"),
-+            body("import subprocess\nargs = ('git','reset','--hard')\nsubprocess.run(args)"),
-+            body("import subprocess\nx = ['a']\nargs = ['git','add',*x]\nsubprocess.run(args)"),
-+            body("import subprocess\nargs = ['rm','-rf','/home/user']\nsubprocess.run(args=args)"),
-+            body(
-+                "import subprocess\nargs = ['rm','-rf','/home/user']\n\
-+                 subprocess.check_call(args)\nsubprocess.Popen(args)",
-+            ),
-+            "python3 -c 'import subprocess; a = [\"git\",\"reset\",\"--hard\"]; subprocess.run(a)'"
-+                .to_string(),
-+            body(
-+                "import subprocess\ncmd: list[str] = [\n    'git',\n    'reset',\n    \
-+                 '--hard',  # discard\n]\nsubprocess.run(cmd, check=True)",
-+            ),
-+            body(
-+                "import subprocess\ncmd = ['dd', 'if=/dev/zero', 'of=/dev/sda']\nsubprocess.run(cmd)",
-+            ),
-+            body(
-+                "import subprocess\ncmd = ['git', 'status']\nif x:\n    \
-+                 cmd = ['git', 'clean', '-fdx']\nsubprocess.run(cmd)",
-+            ),
-+        ] {
-+            let result = evaluate_with_pack_ids_in_dialect(&command, &packs, ShellDialect::Posix);
-+            assert!(
-+                result.is_denied(),
-+                "{command:?} must be denied: {:?}",
-+                result.pattern_info
-+            );
-+        }
-+        for command in [
-+            body("import subprocess\ncmd = ['git', 'status']\nsubprocess.run(cmd)"),
-+            body("import subprocess, sys\nargs = sys.argv[1:]\nsubprocess.run(args)"),
-+            body(
-+                "import subprocess\ns = \"args = ['rm','-rf','/home/user']\"\n\
-+                 args = ['git','status']\nsubprocess.run(args)",
-+            ),
-+            body(
-+                "import subprocess\n# args = ['rm','-rf','/home/user']\n\
-+                 args = ['git','status']\nsubprocess.run(args)",
-+            ),
-+        ] {
-+            let result = evaluate_with_pack_ids_in_dialect(&command, &packs, ShellDialect::Posix);
-+            assert!(
-+                result.is_allowed(),
-+                "{command:?} must be allowed: {:?}",
-+                result.pattern_info
-+            );
-+        }
-+    }
-+
-     #[test]
-     fn here_string_receiver_analysis_preserves_bash_rule_allowlists_issue_555() {
-         let enabled_packs = ["core.git".to_string(), "core.filesystem".to_string()]
+-    let argv = strip_prefixes(&words)?;
++    let argv = if source_syntax {
++        strip_prefixes(&words)
++    } else {
++        strip_prefixes_in_view(&words, false)
++    }?;
+     let (argv0, args) = argv.split_first()?;
+     let kind = writer_kind(&executable_name(argv0)?)?;
+     match kind {
 ```
 
----
-
-### Incident Patch 3: `66e108c9` (2026-10-29)
-**Commit Message**: fix(python): read sink call text in strings and comments as text (#601)
-
-The Python exec-sink backstops (scan_executing_sink_matches and
-exec_sink_reconstructed_commands) found `run(`, `Popen(` and
-`check_output(` with a regex over the whole body, comments and string
-literals included. An edit script that quotes another script's
-`subprocess.run([…` line in a search or replacement string, or a comment
-that mentions one, was refused as exec_sink.argv_unverified or as a
-reconstruction holding a run-time value.
-
-PythonSinkText now reads the body's comments and the contents of its
-plain string literals with a small lexer: prefixes, escapes, triple
-quotes, and f- and t-string replacement fields (PEP 701), whose code is
-not a string. Comments are blanked before the sink regex runs, as Perl's
-are. Call text inside a string literal is still a call when the body can
-run a string: when, outside every string and comment, it has a sink call
-or names something that executes, imports or looks up code at run time
-(exec, eval, compile, __import__, importlib, getattr, runpy, pickle,
-ctypes, subprocess, popen/system/spawn, code.interact, ...). Otherwise the
-call's region ends where the string does, a
-
-**File**: `src/ast_pattern_engine.rs` (modified, +399/-7)
+**File**: `src/packs/core/credential_files/shell/indirection.rs` (modified, +238/-54)
 ```diff
-@@ -565,20 +565,41 @@ pub fn scan_executing_sink_matches(code: &str, language: ScriptLanguage) -> Vec<
-         _ => return out,
-     };
+@@ -5,7 +5,7 @@
+ //! reparses expanded data as shell syntax. Unknown values lose their proof.
  
--    for caps in sink_regex.captures_iter(code) {
-+    // A Python comment never runs, and call text in a string literal is not a
-+    // call unless something can run the string (#601): see `PythonSinkText`.
-+    let python_text = (language == ScriptLanguage::Python)
-+        .then(|| PythonSinkText::read(code))
-+        .flatten();
-+    let haystack = python_text
-+        .as_ref()
-+        .map_or(code, |text| text.comments_masked.as_str());
-+
-+    for caps in sink_regex.captures_iter(haystack) {
-         let Some(m) = caps.get(0) else { continue };
-         let Some((call_start, sink)) = exec_sink_call(&caps) else {
-             continue;
+ use super::super::word_splitting;
+-use super::{CredentialFileWrite, Token, Word, classify_simple_command, git_redirect_write};
++use super::{CredentialFileWrite, Token, Word, classify_expanded_command, git_redirect_write};
+ use crate::normalize::ShellDialect;
+ use ast_grep_core::{AstGrep, Node, tree_sitter::StrDoc};
+ use ast_grep_language::SupportLang;
+@@ -132,6 +132,11 @@ impl Value {
+         let Some(ifs) = state.ifs.as_deref() else {
+             return false;
          };
-+        let inert_string_end = python_text
-+            .as_ref()
-+            .and_then(|text| text.inert_string_end(call_start));
- 
-         // Scan the sink call's full argument region — not just its first string
-         // literal — so a destructive payload nested inside a list/tuple literal
-         // (`subprocess.run(["sh", "-c", "rm -rf /etc"])`) is caught even when the
-         // first literal (`"sh"`) is inert (#136). The region spans from the
-         // opening paren of this match to the balanced close paren (bounded to the
-         // remainder of the source), descending into bracketed list elements.
--        let arg_region = exec_sink_arg_region(code, call_start);
--        let Some(hit) = detect_destructive_in_args(arg_region, language) else {
-+        // Call text inside an inert string ends where the string does.
-+        let arg_region = exec_sink_arg_region(
-+            inert_string_end.map_or(haystack, |end| &haystack[..end]),
-+            call_start,
-+        );
-+        let hit = if inert_string_end.is_some() {
-+            detect_destructive_in_literal_args(arg_region, language)
-+        } else {
-+            detect_destructive_in_args(arg_region, language)
-+        };
-+        let Some(hit) = hit else {
-             continue;
-         };
- 
-@@ -747,8 +768,15 @@ pub fn exec_sink_reconstructed_commands(
-     // Perl comments can hold a `system(...)` that never runs; mask them so a
-     // commented call is not reconstructed and over-blocked. Masking preserves
-     // length, so the sink spans still line up with `code`.
-+    // Python's are masked the same way, and call text in a string nothing can
-+    // run is not a call (#601).
-+    let python_text = (language == ScriptLanguage::Python)
-+        .then(|| PythonSinkText::read(code))
-+        .flatten();
-     let masked = if language == ScriptLanguage::Perl {
-         mask_perl_comments(code)
-+    } else if let Some(text) = python_text.as_ref() {
-+        std::borrow::Cow::Borrowed(text.comments_masked.as_str())
-     } else {
-         std::borrow::Cow::Borrowed(code)
-     };
-@@ -771,7 +799,13 @@ pub fn exec_sink_reconstructed_commands(
-         let Some((call_start, sink)) = exec_sink_call(&caps) else {
-             continue;
-         };
--        let region = exec_sink_arg_region(haystack, call_start);
-+        let inert_string_end = python_text
-+            .as_ref()
-+            .and_then(|text| text.inert_string_end(call_start));
-+        let region = exec_sink_arg_region(
-+            inert_string_end.map_or(haystack, |end| &haystack[..end]),
-+            call_start,
-+        );
-         // A call the rm/git backstop owns (any `detect_destructive_in_args`
-         // hit) is left to it, so an allowlisted `rm`/`git` is not re-denied
-         // here under a pack rule id.
-@@ -805,6 +839,17 @@ pub fn exec_sink_reconstructed_commands(
-         if argv.unverified {
-             continue;
-         }
-+        // In a string nothing runs, a name is text, not a value decided at run
-+        // time, so it raises no dynamic-path or alias question (#601). A fully
-+        // literal command is still judged, as any destructive literal is.
-+        if inert_string_end.is_some()
-+            && argv
-+                .values
-+                .iter()
-+                .any(|value| value.contains(RUNTIME_VALUE))
++        if let Self::Git { path, .. } = self
++            && !path.one_unquoted_field(ifs)
 +        {
++            return false;
++        }
+         let Some(word) = self.word(0..0) else {
+             return false;
+         };
+@@ -156,6 +161,77 @@ fn path_prefix(prefix: &str) -> bool {
+     )
+ }
+ 
++fn scalar_name(raw: &str) -> Option<&str> {
++    let name = raw
++        .strip_prefix("${")
++        .and_then(|value| value.strip_suffix('}'))
++        .or_else(|| raw.strip_prefix('$'))?;
++    word_splitting::identifier(name).then_some(name)
++}
++
++/// Only a complete scalar read can be split independently of neighboring
++/// literal/quoted pieces. Expanded bytes stay data, including quotes and `$`.
++fn scalar_fields(raw: &str, state: &State, range: Range<usize>) -> Option<Vec<Word>> {
++    if state.attributes_unknown {
++        return None;
++    }
++    let value = state.values.get(scalar_name(raw)?)?.literal()?;
++    word_splitting::fields(value, state.ifs.as_deref()?)
++        .ok()?
++        .into_iter()
++        .map(|field| Value::Literal(field.to_owned()).word(range.clone()))
++        .collect()
++}
++
++fn quoted_scalar_field(raw: &str) -> bool {
++    raw.strip_prefix('"')
++        .and_then(|value| value.strip_suffix('"'))
++        .and_then(scalar_name)
++        .is_some()
++}
++
++fn source_command<'a>(
++    node: &Node<'a, StrDoc<SupportLang>>,
++) -> Option<Node<'a, StrDoc<SupportLang>>> {
++    if node.kind() == "command" {
++        Some(node.clone())
++    } else {
++        node.field("body").filter(|body| body.kind() == "command")
++    }
++}
++
++/// Quoted opaque scalar operands after the writer's own `--` cannot inject
++/// options or alter operand count. Wrapper separators do not establish this
++/// boundary for the wrapped writer, and unknown unquoted fields never qualify.
++fn argv_ownership_proven(tokens: &[Token], unknown: &[(Range<usize>, bool)]) -> bool {
++    if unknown.is_empty() {
++        return true;
++    }
++    let words: Vec<_> = tokens
++        .iter()
++        .filter_map(|token| match token {
++            Token::Word(word) => Some(word),
++            _ => None,
++        })
++        .collect();
++    let Some(argv) = super::strip_prefixes_in_view(&words, false) else {
++        return false;
++    };
++    let mut operands = false;
++    let mut accepted = 0;
++    for word in argv.iter().skip(1) {
++        if let Some((_, single)) = unknown.iter().find(|(range, _)| *range == word.range) {
++            if !operands || !single {
++                return false;
++            }
++            accepted += 1;
++        } else if word.is_all_literal() && word.as_string() == "--" {
++            operands = true;
++        }
++    }
++    accepted == unknown.len()
++}
++
+ #[derive(Clone)]
+ struct State {
+     values: HashMap<String, Value>,
+@@ -225,6 +301,7 @@ impl State {
+ struct Decoded {
+     value: Value,
+     expanded: bool,
++    present: bool,
+ }
+ 
+ /// Decode a single scalar, retaining quoted data and expansion-time origins.
+@@ -240,14 +317,18 @@ fn decode(raw: &str, state: &State, assignment: bool) -> Option<Decoded> {
+     let mut quote = None;
+     let mut index = 0;
+     let mut expanded = false;
++    let mut quoted = false;
+     while index < raw.len() {
+         let ch = raw[index..].chars().next()?;
+         let here = index;
+         index += ch.len_utf8();
+         match (quote, ch) {
+             (Some('\''), '\'') | (Some('"'), '"') => quote = None,
+             (Some('\''), _) => chunk.push(ch),
+-            (None, '\'' | '"') => quote = Some(ch),
++            (None, '\'' | '"') => {
++                quote = Some(ch);
++                quoted = true;
++            }
+             (_, '\\') => {
+                 let next = raw[index..].chars().next()?;
+                 index += next.len_utf8();
+@@ -279,6 +360,7 @@ fn decode(raw: &str, state: &State, assignment: bool) -> Option<Decoded> {
+                         return None;
+                     }
+                     index = end;
++                    quoted = true;
+                     Value::Literal(word.as_string())
+                 } else {
+                     if state.attributes_unknown {
+@@ -314,7 +396,11 @@ fn decode(raw: &str, state: &State, assignment: bool) -> Option<Decoded> {
+                         })
+                     })?
+                 };
+-                if !assignment && quote.is_none() && !next.one_unquoted_field(state) {
++                if !assignment
++    
+```
+
+**File**: `src/packs/core/credential_files/shell/indirection/git_paths.rs` (modified, +260/-34)
+```diff
+@@ -16,7 +16,7 @@ const MAX_PATH_COMPONENTS: usize = 64;
+ enum GitPathKind {
+     Directory,
+     Hooks,
+-    Config,
++    File(&'static str),
+ }
+ 
+ #[derive(Debug, Clone, PartialEq, Eq)]
+@@ -26,13 +26,23 @@ pub(super) struct GitPath {
+     /// use: appending `name` to `/a/..` makes `/a/..name`, not `/name`.
+     /// Its normalized components never escape the symbolic root.
+     tail: String,
++    /// Git may remove a trailing slash or dot component while formatting its
++    /// output. Do not join another component onto an uncertain query boundary.
++    /// Once literal text has been appended, its exact boundary is known.
++    requires_separator: bool,
++    /// Literal path inputs which may appear in Git's output. They are shape
++    /// evidence only: the policy alias must never stand in for these bytes
++    /// when deciding whether an unquoted expansion is one shell field.
++    output_inputs: Vec<String>,
+ }
+ 
+ impl GitPath {
+     fn new(kind: GitPathKind) -> Self {
+         Self {
+             kind,
+             tail: String::new(),
++            requires_separator: true,
++            output_inputs: Vec::new(),
+         }
+     }
+ 
+@@ -42,8 +52,8 @@ impl GitPath {
+         if suffix.is_empty() {
+             return Some(self.clone());
+         }
+-        if self.tail.is_empty() && !suffix.starts_with('/')
+-            || self.kind == GitPathKind::Config
++        if self.requires_separator && !suffix.starts_with('/')
++            || matches!(self.kind, GitPathKind::File(_))
+             || self.tail.len().saturating_add(suffix.len()) > MAX_PATH_BYTES
+             || suffix.contains('\0')
+         {
+@@ -54,23 +64,60 @@ impl GitPath {
+         Some(Self {
+             kind: self.kind,
+             tail,
++            requires_separator: false,
++            output_inputs: self.output_inputs.clone(),
+         })
+     }
+ 
++    pub(super) fn one_unquoted_field(&self, ifs: &str) -> bool {
++        // Keep the scanner's denial-only interpretation of an otherwise
++        // unspecified Git environment. A custom non-whitespace separator
++        // cannot be checked against an opaque root, and observed root text
++        // must not be hidden by the semantic `.git` spelling.
++        if !ifs.chars().all(|ch| matches!(ch, ' ' | '\t' | '\n')) {
++            return false;
++        }
++        let splits_or_globs = |text: &str| {
++            text.chars()
++                .any(|ch| ifs.contains(ch) || matches!(ch, '*' | '?' | '[' | '('))
++        };
++        !splits_or_globs(&self.tail)
++            && self
++                .output_inputs
++                .iter()
++                .all(|input| !input.is_empty() && !splits_or_globs(input))
++    }
++
++    fn query_boundary(mut self) -> Self {
++        self.requires_separator = self
++            .tail
++            .rsplit('/')
++            .next()
++            .is_none_or(|component| matches!(component, "" | "." | ".."));
++        let components = normalized_components(&self.tail)
++            .expect("GitPath construction checks the symbolic root");
++        self.tail = if components.is_empty() {
++            String::new()
++        } else {
++            format!("/{}", components.join("/"))
++        };
++        self
++    }
++
+     /// An alias for the existing protected-path table. A bare directory gets
+     /// a trailing slash so the table recognizes its directory anchor as well.
+     pub(super) fn policy_path(&self) -> String {
+         let base = match self.kind {
+-            GitPathKind::Directory => ".git",
+-            GitPathKind::Hooks => ".git/hooks",
+-            GitPathKind::Config => ".git/config",
++            GitPathKind::Directory => ".git".to_owned(),
++            GitPathKind::Hooks => ".git/hooks".to_owned(),
++            GitPathKind::File(name) => format!(".git/{name}"),
+         };
+         let tail = normalized_components(&self.tail)
+             .expect("GitPath construction checks the symbolic root")
+             .join("/");
+         if tail.is_empty() {
+-            if self.kind == GitPathKind::Config {
+-                base.to_owned()
++            if matches!(self.kind, GitPathKind::File(_)) {
++                base
+             } else {
+                 format!("{base}/")
+             }
+@@ -112,46 +159,78 @@ pub(super) fn resolve_query(source: &str) -> Option<GitPath> {
+         return None;
+     }
+     let mut index = 1;
++    let mut output_inputs = Vec::new();
++    let mut hooks_path = None;
+     while argv.get(index)?.as_str() != "rev-parse" {
+         let option = argv.get(index)?.as_str();
+         match option {
+-            "-C" | "-c" | "--git-dir" | "--work-tree" => {
+-                argv.get(index + 1)?;
++            "-C" | "--git-dir" | "--work-tree" => {
++                let input = argv.get(index + 1)?;
++                // `git -C ''` explicitly leaves the current directory alone.
++                if option != "-C" || !input.is_empty() {
++                    output_inputs.push(input.clone());
++                }
++                index +=
+```
+
+**File**: `src/packs/core/credential_files/word_splitting.rs` (modified, +1/-1)
+```diff
+@@ -328,7 +328,7 @@ fn argv_needs_field_analysis(node: Node<'_, StrDoc<SupportLang>>) -> bool {
+ /// POSIX distinguishes IFS whitespace from other separators. Empty fields
+ /// before/interior to non-whitespace separators survive; a final separator
+ /// terminates the preceding field rather than inventing a final argument.
+-fn fields<'a>(value: &'a str, ifs: &str) -> Result<Vec<&'a str>, ()> {
++pub(super) fn fields<'a>(value: &'a str, ifs: &str) -> Result<Vec<&'a str>, ()> {
+     if value.len() > MAX_VALUE_BYTES
+         || ifs.len() > MAX_VALUE_BYTES
+         || !ifs.is_ascii()
+```
+
+**File**: `tests/repro_609_613_indirect_destinations.rs` (modified, +69/-0)
+```diff
+@@ -209,6 +209,8 @@ fn reported_scalar_destinations_have_their_literal_rule_identity() {
+         "f=/etc/sudoers; result=$(tee -a \"$f\")",
+         "f=/etc/sudoers; export result=$(tee -a \"$f\")",
+         "if true; then f=/etc/sudoers; tee -a \"$f\"; fi",
++        "f=/etc/sudoers; while tee \"$f\"; do break; done",
++        "f=/etc/sudoers; until tee \"$f\"; do break; done",
+     ] {
+         fixture.deny(source, CREDENTIAL);
+     }
+@@ -269,6 +271,8 @@ fn scalar_values_are_snapshots_and_child_scopes_do_not_replace_them() {
+         "f=/tmp/out; read f; tee -a \"$f\"",
+         "f=/etc/sudoers; printf -- '%n' f; tee -a \"$f\"",
+         r#"f=/etc/sudoers; printf '%s' "$((f=0))" "$(tee "$f")""#,
++        r#"f=/etc/sudoers; for x in "$((f=0))" "$(tee "$f")"; do :; done"#,
++        r#"f=/etc/sudoers; case "$((f=0))$(tee "$f")" in *) :;; esac"#,
+     ] {
+         fixture.allow(source);
+     }
+@@ -289,6 +293,8 @@ fn quoted_data_reads_and_benign_scalar_destinations_keep_their_behavior() {
+         "f=/etc/sudoers; cat \"$f\"",
+         "f=/etc/sudoers; chmod 600 \"$f\"",
+         "f=/etc/sudoers; cp \"$f\" /tmp/backup",
++        "f=/tmp/out; while tee \"$f\"; do break; done",
++        "f=/tmp/out; until tee \"$f\"; do break; done",
+         "option='--target-directory=/tmp'; cp /etc/sudoers \"$option\"",
+         "f='$(git rev-parse --git-dir)/config'; printf '%s' \"$f\"",
+         "printf '%s' 'f=/etc/sudoers; tee -a $f'",
+@@ -305,6 +311,7 @@ fn unresolved_option_fields_do_not_turn_protected_sources_into_destinations() {
+         "f=/etc/sudoers; options='--target-directory /tmp'; cp $options \"$f\"",
+         "f=~/.ssh/authorized_keys; options='-t /tmp'; install $options \"$f\"",
+         "options='-t /tmp'; d=$(git rev-parse --git-dir); cp $options \"$d/config\"",
++        "f=/etc/sudoers; sudo -- cp \"$unknown\" \"$f\"",
+     ] {
+         fixture.allow(source);
+     }
+@@ -313,6 +320,41 @@ fn unresolved_option_fields_do_not_turn_protected_sources_into_destinations() {
+         "f=/etc/sudoers; options='-t /tmp'; cp $options source >> \"$f\"",
+         CREDENTIAL,
+     );
++    // After the writer's own option terminator, quoted unknown scalars keep
++    // one operand each and cannot change a later proved destination's role.
++    for source in [
++        "f=/etc/sudoers; cp -- \"$unknown_source\" \"$f\"",
++        "f=/etc/sudoers; tee -- \"$unknown\" \"$f\"",
++        "f=/etc/sudoers; sudo -- cp -- \"$unknown_source\" \"$f\"",
++    ] {
++        fixture.deny(source, CREDENTIAL);
++    }
++}
++
++#[test]
++fn complete_scalar_fields_keep_splitting_and_command_name_semantics() {
++    let fixture = Fixture::new();
++    for source in [
++        "f=/etc/sudoers; empty=; tee $empty \"$f\"",
++        "f=/etc/sudoers; empty=; tee ${empty} \"$f\"",
++        "empty=; f=/etc/sudoers; tee $empty\"$f\"",
++        "empty=; f=/etc/sudoers; tee $empty${empty} \"$f\"",
++        "files='/tmp/out /etc/sudoers'; tee $files",
++        "options='-t /etc'; cp $options sudoers",
++        "v='a b'; f=/etc/sudoers; X=$v tee \"$f\"",
++    ] {
++        fixture.deny(source, CREDENTIAL);
++    }
++    for source in [
++        "files='/tmp/out /etc/sudoers'; tee \"$files\"",
++        "empty=; f=/tmp/out; tee \"$empty\" \"$f\"",
++        "runner='x=y'; f=/etc/sudoers; $runner tee \"$f\"",
++        "runner='x=y'; f=/etc/sudoers; \"$runner\" tee \"$f\"",
++        "runner=if; f=/etc/sudoers; $runner tee \"$f\"",
++        "runner='!'; f=/etc/sudoers; $runner tee \"$f\"",
++    ] {
++        fixture.allow(source);
++    }
+ }
+ 
+ #[test]
+@@ -324,6 +366,8 @@ fn heredoc_data_and_process_substitution_arguments_preserve_execution_boundaries
+         "f=/etc/sudoers; tee /tmp/out <<DATA\n$f\nDATA",
+         "f=/tmp/out; tee \"$f\" <<'DATA'\n/etc/sudoers\nDATA",
+         "f=/etc/sudoers; cat <<'DATA'\n$(tee -a \"$f\")\nDATA",
++        "f=/etc/sudoers; { :; } <<'DATA'\n$(tee -a \"$f\")\nDATA",
++        "f=/etc/sudoers; { f=/tmp/out; cat <<'INNER' | tee \"$f\"\ndata\nINNER\n} <<'OUTER'\ndata\nOUTER",
+         "f=/etc/sudoers; tee /tmp/out <(printf '%s' \"$f\")",
+     ] {
+         fixture.allow(source);
+@@ -332,6 +376,8 @@ fn heredoc_data_and_process_substitution_arguments_preserve_execution_boundaries
+         "f=/etc/sudoers; tee -a \"$f\" <<'DATA'\nordinary input\nDATA",
+         "f=/etc/sudoers; cat <<DATA\n$(tee -a \"$f\")\nDATA",
+         "f=/etc/sudoers; cat <<'DATA' | tee -a \"$f\"\nordinary input\nDATA",
++        "f=/etc/sudoers; { :; } <<DATA\n$(tee -a \"$f\")\nDATA",
++        "f=/etc/sudoers; unused=x <<DATA\n$(tee -a \"$f\")\nDATA",
+     ] {
+         fixture.deny(source, CREDENTIAL);
+     }
+@@ -343,17 +389,25 @@ fn git_admin_queries_and_bound_values_reach_native_writer_rules() {
+     for source in [
+         "cp source .git/config",
+         "cp source \"$(git rev-parse --git-dir)/config\"",
++        "cp source \"$(git rev-parse --quiet --git-dir)/config\"",
++        "cp source \"$(git rev-parse --git-dir --path-format=absolute)/config\"",
+         "cp so
+```
+
+---
+
+### Incident Patch 2: `e4e06296` (2026-10-30)
+**Commit Message**: fix(core): retain protected destinations across shell scopes
+
+Preserve assignment context when checking literal shell scripts, including
+-c, -lc, -cl and heredoc bodies, while retaining existing leaf-command
+checks and allowlist handling. Merge case and conditional execution paths
+conservatively and invalidate command identity after hash -p rebinding.
+
+Keep Git query results tied to the caller's working directory after -C,
+preserving proven absolute and administered paths without treating benign
+relative destinations as protected.
+
+Restrict POSIX heredoc masking to launcher discovery and proven stdin-data
+receivers. Continue checking live substitutions and executable receivers,
+so protected writers retain their credential-file rule identities.
+
+Expand the real-CLI regressions to 17 tests covering both reports, shell
+scope, worktrees, relocated hooks, traversal, safe controls, rule IDs and
+allowlist precedence. Production analysis never executes shell expressions.
+
+Validation: all 17 CLI tests passed; both reports were reproduced on
+efc1092e through dcg test and the batch hook. All 82 supplementary candidate
+observations passed, including 14 under default evaluation budgets.
+All-tar
+
+**File**: `src/evaluator.rs` (modified, +60/-13)
+```diff
+@@ -6089,13 +6089,21 @@ fn evaluate_windows_launcher_envelopes(
+     // a Windows shell launcher. A quoted body that is a proven non-shell
+     // interpreter's program (`python3 - <<'PY'`) is not shell syntax either:
+     // its own language's analysis and the raw rescan judge it (#560).
+-    // Expanding heredocs and executing targets stay visible, preserving the
+-    // fail-closed path for real substitutions.
++    // Substitution output supplied as contained stdin data is not an outer
++    // executable name either. Only this launcher view hides those bodies;
++    // the original source still reaches live command-substitution analysis.
++    // Executing or ambiguous receivers retain the fail-closed launcher path.
+     let data_view;
++    let stdin_view;
+     let launcher_source = match outer_dialect {
+         ShellDialect::Posix | ShellDialect::Unknown => {
+             data_view = crate::heredoc::mask_non_expanding_data_heredocs(command);
+-            crate::heredoc::mask_inert_interpreter_stdin(data_view.as_ref())
++            stdin_view = if outer_dialect == ShellDialect::Posix {
++                crate::heredoc::mask_launcher_stdin_data(data_view.as_ref())
++            } else {
++                Cow::Borrowed(data_view.as_ref())
++            };
++            crate::heredoc::mask_inert_interpreter_stdin(stdin_view.as_ref())
+         }
+         ShellDialect::PowerShell | ShellDialect::Cmd => std::borrow::Cow::Borrowed(command),
+     };
+@@ -27906,6 +27914,17 @@ fn proven_bash_redirect_offsets(source: &str) -> Vec<usize> {
+ fn literal_bash_source_range(
+     command: &str,
+     content: &crate::heredoc::ExtractedContent,
++) -> Option<Range<usize>> {
++    literal_bash_source_range_with_flags(command, content, &["-c"])
++}
++
++/// Share exact source and receiver ownership without widening the flags that
++/// can establish an exemption. Additional flags are used only for the
++/// complete-source destination check, which can add protected-write findings.
++fn literal_bash_source_range_with_flags(
++    command: &str,
++    content: &crate::heredoc::ExtractedContent,
++    inline_flags: &[&str],
+ ) -> Option<Range<usize>> {
+     if command.len() > crate::heredoc::MAX_SUBSTITUTION_SOURCE_BYTES
+         || !matches!(
+@@ -28028,7 +28047,7 @@ fn literal_bash_source_range(
+             let shell_script = bash
+                 && !nonlocal
+                 && literal_posix_shell_program(program_name.as_ref())
+-                && operand_text.as_ref() == "-c";
++                && inline_flags.contains(&operand_text.as_ref());
+             let ssh_script = ssh_inline
+                 && matches!(program_name.as_ref(), "ssh" | "/bin/ssh" | "/usr/bin/ssh")
+                 && literal_ssh_destination(operand_text.as_ref());
+@@ -34630,12 +34649,20 @@ fn evaluate_heredoc(
+             let inner_ordered_packs = carrier_first_packs
+                 .as_deref()
+                 .unwrap_or(context.ordered_packs);
+-            let contextual_redirects =
+-                if per_command_pass && literal_bash_source_range(command, &content).is_some() {
+-                    proven_bash_redirect_offsets(&content.content)
+-                } else {
+-                    Vec::new()
+-                };
++            let literal_shell_source =
++                per_command_pass && literal_bash_source_range(command, &content).is_some();
++            let contextual_redirects = if literal_shell_source {
++                proven_bash_redirect_offsets(&content.content)
++            } else {
++                Vec::new()
++            };
++            let destination_source_context = per_command_pass
++                && crate::packs::core::credential_files::shell_destination_context_required(
++                    &content.content,
++                )
++                && (literal_shell_source
++                    || literal_bash_source_range_with_flags(command, &content, &["-lc", "-cl"])
++                        .is_some());
+             let evaluate_source = |source: &str| {
+                 evaluate_command_with_pack_order_deadline_at_path_inner(
+                     source,
+@@ -34654,7 +34681,7 @@ fn evaluate_heredoc(
+                 )
+             };
+             let mut complete_source_result = None;
+-            let inner_commands = if per_command_pass {
++            let mut inner_commands = if per_command_pass {
+                 crate::heredoc::extract_shell_commands(&content.content)
+             } else {
+                 // Without a keyword or trigger the per-command pass has
+@@ -34681,7 +34708,23 @@ fn evaluate_heredoc(
+                     line_number: 1,
+                 }]
+             };
+-            for inner in inner_commands {
++            if destination_source_context {
++                // `f=/etc/sudoers; tee "$f"` requires both statements. Keep
++                // the existing per-command checks as well: they reach bodies
++                // of functions and other constructs the outer walk may not
++                // evaluate. Only proven
+```
+
+**File**: `src/heredoc.rs` (modified, +217/-0)
+```diff
+@@ -11717,6 +11717,190 @@ pub fn mask_non_expanding_data_heredocs(command: &str) -> std::borrow::Cow<'_, s
+     mask_non_executing_heredocs_with_policy(command, true)
+ }
+ 
++/// The output of a substitution inside stdin data is not an outer-shell
++/// executable name. This view is only for launcher discovery: callers must
++/// still inspect the original source's live substitutions independently.
++pub(crate) fn mask_launcher_stdin_data(command: &str) -> Cow<'_, str> {
++    if !command.contains("<<") || command.len() > MAX_SUBSTITUTION_SOURCE_BYTES {
++        return Cow::Borrowed(command);
++    }
++    let Some(heredocs) = active_heredocs(command) else {
++        return Cow::Borrowed(command);
++    };
++    let discarded = discarded_heredoc_operators(command);
++    let bodies: Vec<_> = heredocs
++        .iter()
++        .filter_map(|heredoc| match heredoc.body {
++            ActiveHeredocBody::Heredoc {
++                body_start,
++                body_end,
++                ..
++            } => Some(body_start..body_end),
++            ActiveHeredocBody::HereString => None,
++        })
++        .collect();
++    let mut output_executed = None;
++    let masked: Vec<_> = heredocs
++        .iter()
++        .filter_map(|heredoc| {
++            let ActiveHeredocBody::Heredoc {
++                body_start,
++                body_end,
++                ..
++            } = heredoc.body
++            else {
++                return None;
++            };
++            if discarded.contains(&heredoc.operator_start) {
++                return Some(body_start..body_end);
++            }
++            if heredoc.output != Some(HeredocOutput::Contained)
++                || heredoc.live_spans.is_none()
++                || stdin_is_the_program(command, heredoc.operator_start)
++            {
++                return None;
++            }
++            let target = extract_heredoc_target_command(command, heredoc.operator_start)?;
++            let data_sink = is_non_executing_heredoc_command(&target)
++                || is_noop_stdin_discarding_command(&target)
++                || is_structured_stdin_data_sink(command, heredoc.operator_start);
++            (data_sink
++                && !stdin_data_sink_may_be_overridden(command, heredoc.operator_start, &target)
++                && !*output_executed
++                    .get_or_insert_with(|| written_file_is_executed(command, &bodies)))
++            .then_some(body_start..body_end)
++        })
++        .collect();
++    if masked.is_empty() {
++        Cow::Borrowed(command)
++    } else {
++        Cow::Owned(blank_ranges(command, &masked))
++    }
++}
++
++/// Only simple literal assignments and no-op groups establish that no command
++/// reads this descriptor. A group containing `bash`, `read`, a substitution,
++/// or an unknown command can consume and execute the body and never qualifies.
++fn discarded_heredoc_operators(command: &str) -> Vec<usize> {
++    const MAX_PROOF_NODES: usize = 4096;
++    let Ok(ast) = try_parse_shell_ast(command) else {
++        return Vec::new();
++    };
++    if ast.root().get_inner_node().has_error() {
++        return Vec::new();
++    }
++    let nodes: Vec<_> = ast.root().dfs().take(MAX_PROOF_NODES + 1).collect();
++    if nodes.len() > MAX_PROOF_NODES {
++        return Vec::new();
++    }
++    let assignment_attributes_known = !nodes.iter().any(|node| match node.kind().as_ref() {
++        "declaration_command" | "function_definition" => true,
++        "command_name" => {
++            let text = node.text();
++            crate::normalize::decode_posix_literal_word(text.as_ref()).is_none_or(|name| {
++                matches!(
++                    name.as_ref(),
++                    "eval"
++                        | "."
++                        | "source"
++                        | "trap"
++                        | "declare"
++                        | "typeset"
++                        | "local"
++                        | "readonly"
++                        | "export"
++                        | "builtin"
++                        | "command"
++                        | "alias"
++                        | "unalias"
++                        | "enable"
++                )
++            })
++        }
++        _ => false,
++    });
++    let mut discarded = Vec::new();
++    let mut pending = vec![ast.root()];
++    while let Some(node) = pending.pop() {
++        if node.kind().as_ref() != "heredoc_redirect" {
++            if node.kind().as_ref() != "heredoc_body" {
++                pending.extend(node.children());
++            }
 +            continue;
 +        }
-         let operands = argv.values;
-         let command = match operands.as_slice() {
-             [] => continue,
-@@ -3979,6 +4024,212 @@ fn mask_perl_comments(code: &str) -> std::borrow::Cow<'_, str> {
-     String::from_utf8(out).map_or(std::borrow::Cow::Borrowed(code), std::borrow::Cow::Owned)
- }
- 
-+/// A Python body as the exec-sink scans read it (#601).
-+///
-+/// A sink name inside a comment is never a call, so comments are blanked, as
-+/// Perl's are. A sink name inside a string literal becomes a call only when
-+/// something runs the string, and `strings_may_run` says whether the body
-+/// could: outside every string and comment it has a sink call, or a name that
-+/// executes, imports or looks up code at run time. When it cannot, call text
-+/// in a string is judged by its literal content alone. De
++        let Some(owner) = node.parent() else {
++            continue;
++        };
++        let Some(body) = owner.field("body") else {
++            continue;
++        };
++        if owner.kind().as_ref() != "redirected_statement"
++            || owner
++                .children()
++                .filter(ast_grep_core::Node::is_named)
++                .any(|child| child.range() != body.range() && child.range() != node.range())
+
 ```
 
-**File**: `src/evaluator.rs` (modified, +72/-0)
+**File**: `src/packs/core/credential_files.rs` (modified, +8/-3)
 ```diff
-@@ -42302,6 +42302,78 @@ mod tests {
+@@ -33,6 +33,13 @@ pub(crate) fn may_name_protected_path(command: &str) -> bool {
+     shell::may_name_protected_path(command) || word_splitting::candidate(command)
+ }
+ 
++/// An extracted shell body can establish a destination in an earlier command.
++/// Its individual commands cannot retain that evidence. This is a candidate
++/// gate for an additional complete-source evaluation, never a path exemption.
++pub(crate) fn shell_destination_context_required(command: &str) -> bool {
++    word_splitting::candidate(command) || shell::indirection::candidate(command)
++}
++
+ /// Scalar/IFS assignments and expansions belong to the outer shell, not to a quoted
+ /// Python/Node program supplied on stdin (#560). Reuse the existing ownership
+ /// proof instead of letting source text establish shell state or exhaust the
+@@ -43,9 +50,7 @@ pub(crate) fn may_name_protected_path(command: &str) -> bool {
+ /// `embedded::scan_command` below must always receive the original command.
+ /// Do not apply a POSIX-only proof when the caller's dialect is unknown.
+ fn scan_outer_writer_arguments(command: &str, dialect: ShellDialect) -> Vec<CredentialFileWrite> {
+-    let outer = if dialect == ShellDialect::Posix
+-        && (word_splitting::candidate(command) || shell::indirection::candidate(command))
+-    {
++    let outer = if dialect == ShellDialect::Posix && shell_destination_context_required(command) {
+         crate::heredoc::mask_inert_interpreter_stdin(command)
+     } else {
+         std::borrow::Cow::Borrowed(command)
+```
+
+**File**: `src/packs/core/credential_files/shell/indirection.rs` (modified, +173/-36)
+```diff
+@@ -232,6 +232,24 @@ fn argv_ownership_proven(tokens: &[Token], unknown: &[(Range<usize>, bool)]) ->
+     accepted == unknown.len()
+ }
+ 
++/// Bash's `hash -p` can give a familiar command an unrelated implementation.
++/// Listing the cache leaves scalar values and producer identities unchanged.
++fn hash_may_rebind(args: &[&Word]) -> bool {
++    for word in args {
++        if !word.is_all_literal() {
++            return true;
++        }
++        let text = word.as_string();
++        if text == "-" || !text.starts_with('-') || text.starts_with("--") {
++            return false;
++        }
++        if text[1..].contains('p') {
++            return true;
++        }
++    }
++    false
++}
++
+ #[derive(Clone)]
+ struct State {
+     values: HashMap<String, Value>,
+@@ -298,6 +316,14 @@ impl State {
+     }
+ }
+ 
++fn merge_path(paths: &mut Option<State>, next: State) {
++    if let Some(paths) = paths {
++        paths.intersect(&next);
++    } else {
++        *paths = Some(next);
++    }
++}
++
+ struct Decoded {
+     value: Value,
+     expanded: bool,
+@@ -672,22 +698,7 @@ impl Scanner<'_> {
+                 state.attributes_unknown |= iteration.attributes_unknown;
+                 state.commands_unknown |= iteration.commands_unknown;
+             }
+-            "case_statement" => {
+-                if let Some(value) = node.field("value") {
+-                    if has_expansion_effect(value.clone()) {
+-                        state.forget();
+-                    }
+-                    self.nested(value, state, depth + 1);
+-                }
+-                for branch in node.children().filter(|child| child.kind() == "case_item") {
+-                    let mut local = state.clone();
+-                    local.forget();
+-                    self.children(branch, &mut local, depth + 1);
+-                    state.attributes_unknown |= local.attributes_unknown;
+-                    state.commands_unknown |= local.commands_unknown;
+-                }
+-                state.forget();
+-            }
++            "case_statement" => self.case_statement(node, state, depth),
+             "test_command" => {
+                 if has_expansion_effect(node.clone()) {
+                     state.forget();
+@@ -754,33 +765,157 @@ impl Scanner<'_> {
+         state: &mut State,
+         depth: usize,
+     ) {
+-        let mut alternative = None;
+-        let mut merged: Option<State> = None;
++        let (mut finished, mut remaining) = self.conditional_clause(node.clone(), state, depth);
++        let mut exhaustive = false;
++        for alternative in node
++            .children()
++            .filter(|child| matches!(child.kind().as_ref(), "elif_clause" | "else_clause"))
++        {
++            if alternative.kind() == "elif_clause" {
++                let (branch, skipped) = self.conditional_clause(alternative, &remaining, depth + 1);
++                finished.intersect(&branch);
++                remaining = skipped;
++            } else {
++                self.children(alternative, &mut remaining, depth + 1);
++                finished.intersect(&remaining);
++                exhaustive = true;
++            }
++        }
++        // An explicit else consumes the final false path. Retaining a
++        // fictitious skipped path would lose assignments made by every arm.
++        if !exhaustive {
++            finished.intersect(&remaining);
++        }
++        *state = finished;
++    }
++
++    fn conditional_clause(
++        &mut self,
++        node: Node<'_, StrDoc<SupportLang>>,
++        incoming: &State,
++        depth: usize,
++    ) -> (State, State) {
++        if depth > MAX_DEPTH || self.visited >= MAX_NODES {
++            let mut unknown = incoming.clone();
++            unknown.forget();
++            return (unknown.clone(), unknown);
++        }
++        self.visited += 1;
++        let mut conditions = Vec::new();
++        let mut body = Vec::new();
++        let mut in_body = false;
+         for child in node.children() {
+             if child.kind() == "then" {
+-                alternative = Some(state.clone());
+-            } else if child.is_named() {
+-                if matches!(child.kind().as_ref(), "elif_clause" | "else_clause") {
+-                    let mut branch = alternative.clone().unwrap_or_else(|| state.clone());
+-                    self.walk(child, &mut branch, depth + 1);
+-                    merged
+-                        .get_or_insert_with(|| state.clone())
+-                        .intersect(&branch);
+-                    if let Some(alternative) = &mut alternative {
+-                        alternative.intersect(&branch);
++                in_body = true;
++            } else if child.is_named()
++                && !matches!(child.kind().as_ref(), "elif_clause" | "else_clause")
++            {
++                if in_body {
++                    body.push(child);
++                } else {
++                    conditions.push(child);
++                }
++            }
++        }
++        let mut success = incoming.clone();
++    
+```
+
+**File**: `src/packs/core/credential_files/shell/indirection/git_paths.rs` (modified, +118/-7)
+```diff
+@@ -19,6 +19,13 @@ enum GitPathKind {
+     File(&'static str),
+ }
+ 
++#[derive(Clone, Copy, PartialEq, Eq)]
++enum PathFormat {
++    Default,
++    Absolute,
++    Relative,
++}
++
+ #[derive(Debug, Clone, PartialEq, Eq)]
+ pub(super) struct GitPath {
+     kind: GitPathKind,
+@@ -161,6 +168,8 @@ pub(super) fn resolve_query(source: &str) -> Option<GitPath> {
+     let mut index = 1;
+     let mut output_inputs = Vec::new();
+     let mut hooks_path = None;
++    let mut git_dir = None;
++    let mut changes_directory = false;
+     while argv.get(index)?.as_str() != "rev-parse" {
+         let option = argv.get(index)?.as_str();
+         match option {
+@@ -170,6 +179,11 @@ pub(super) fn resolve_query(source: &str) -> Option<GitPath> {
+                 if option != "-C" || !input.is_empty() {
+                     output_inputs.push(input.clone());
+                 }
++                if option == "-C" {
++                    changes_directory |= !unchanged_directory(input);
++                } else if option == "--git-dir" {
++                    git_dir = Some(input.as_str());
++                }
+                 index += 2;
+             }
+             "-c" => {
+@@ -182,30 +196,46 @@ pub(super) fn resolve_query(source: &str) -> Option<GitPath> {
+             }
+             "--bare" | "--no-pager" | "--no-optional-locks" => index += 1,
+             _ => {
+-                output_inputs.push(attached_global_option(option)?.to_owned());
++                let input = attached_global_option(option)?;
++                output_inputs.push(input.to_owned());
++                if option.starts_with("--git-dir=") {
++                    git_dir = Some(input);
++                }
+                 index += 1;
+             }
          }
      }
+     index += 1;
+     let mut path = None;
+-    let mut reformats_paths = false;
++    let mut format = PathFormat::Default;
+     while let Some(argument) = argv.get(index) {
+         match argument.as_str() {
+             // These options do not print anything, and rev-parse accepts them
+             // before or after the one path query. A format option only affects
+             // later queries; either spelling retains the same path origin.
+-            "--path-format=absolute" | "--path-format=relative" => reformats_paths = true,
++            "--path-format=absolute" => format = PathFormat::Absolute,
++            "--path-format=relative" => format = PathFormat::Relative,
+             "--quiet" | "-q" => {}
+             "--git-dir" | "--absolute-git-dir" | "--git-common-dir" if path.is_none() => {
++                // A relative result is interpreted by the caller's shell,
++                // which did not follow Git's -C options. Only retain an
++                // absolute result or an explicit literal .git spelling.
++                if changes_directory && !caller_anchored_directory(argument, format, git_dir) {
++                    return None;
++                }
+                 path = Some(GitPath::new(GitPathKind::Directory));
+             }
+             "--git-path" if path.is_none() => {
+                 index += 1;
+                 let operand = argv.get(index)?;
+                 let queried = administered_path(operand)?;
++                if changes_directory
++                    && !caller_anchored_path(&queried, format, git_dir, hooks_path.as_deref())
++                {
++                    return None;
++                }
+                 output_inputs.push(operand.clone());
+-                path = Some(if reformats_paths {
++                path = Some(if format != PathFormat::Default {
+                     queried.query_boundary()
+                 } else {
+                     queried
+@@ -226,6 +256,47 @@ pub(super) fn resolve_query(source: &str) -> Option<GitPath> {
+     })
+ }
  
-+    /// #601 end to end: Python call text in a comment, or in a string the body
-+    /// cannot run, is not a call. Strings handed to dynamic execution, real
-+    /// calls, and destructive literals are judged as before.
-+    #[test]
-+    fn python_call_text_in_strings_and_comments_is_not_a_call_601() {
-+        let body = |code: &str| format!("python3 - <<'PY'\n{code}\nPY");
-+        for command in [
-+            body("s = \"subprocess.run(['git','status'\""),
-+            body("# subprocess.run(['git','x'\nprint(1)"),
-+            body("s = 'subprocess.run([\"git\",\"add\",*x])'"),
-+            body("s = \"subprocess.Popen(['git','status'\""),
-+            body("s = \"subprocess.check_output(['git','status'\""),
-+            body("s = \"run(['git','status'\""),
-+            body(
-+                "import sys\nt = open(sys.argv[1]).read()\n\
-+                 t = t.replace(\"subprocess.run(['git', 'status'\", \"run_git('status'\")",
-+            ),
-+            "python3 -c 'print(1)  # subprocess.run([\"git\",\"x\"'".to_string(),
-+            body("s = '''subprocess.run(['git','mv',f'{old}','b'])'''"),
-+            body("s = '''subprocess.Popen(['git','mv',old,'b'])'''"),
-+            body(
-+                "s = '''subprocess.run(\n    [\n        \"git\",\n        \"mv\",\n        \
-+                 f\"{old}{suffix}\",\n    ],\n)'''",
-+            ),
-+            body("# subprocess.run(['git','mv',old,'b'])"),
-+            body("s = '''subprocess.check_output(['git',args])'''"),
-+            body("# subprocess.run(['git',args])"),
-+            body("print(1)  # subprocess.run(['rm','-rf','/home/user'])"),
-+            body("import subprocess\ncmd = ['git', 'status']\nsubprocess.run(cmd)"),
-+        ] {
-+            let result = evaluate_with_pack_ids_in_dialect(
-+                &command,
-+                &["core.git", "core.filesystem"],
-+                ShellDialect::Posix,
-+            );
-+            assert!(
-+                result.is_allowed(),
-+                "{command:?} must be allowed: {:?}",
-+                result.pattern_info
-+            );
++fn caller_anchored_directory(query: &str, format: PathFormat, git_dir: Option<&str>) -> bool {
++    format == PathFormat::Absolute
++        || query == "--absolute-git-dir"
++        || query == "--git-dir"
++            && format == PathFormat::Default
++            && git_dir.is_some_and(|root| root.starts_with('/') || contains_git_component(root))
++}
++
++fn caller_anchored_path(
++    path: &GitPath,
++    format: PathFormat,
++    git_dir: Option<&str>,
++    hooks_path: Option<&str>,
++) -> bool {
++    if format != PathFormat::Default {
++        return format == PathFormat::Absolute;
++    }
++    match path.kind {
++        GitPathKind::Hooks => hooks_path.is_some_and(|root| root.starts_with('/')),
++        GitPathKind::Directory | GitPathKind::File("HEAD" | "config.worktree" | "config.lock") => {
++            git_dir.is_some_and(|root| root.starts_with('/'))
 +        }
-+        let rm = "import subprocess; subprocess.run(['rm','-rf','/home/user'])";
-+        for command in [
-+            body("import subprocess\nx = ['a']\nsubprocess.run(['git', 'add', *x])"),
-+            body(&format!("exec(\"{rm}\")")),
-+            body(&format!("s = \"{rm}\"\nexec(s)")),
-+            body(&format!(
-+                "code = compile(\"{rm}\", 'x', 'exec')\nexec(code)"
-+            )),
-+            body(&format!(
-+                "import subprocess, sys\nsubprocess.run([sys.executable, '-c', \"{rm}\"])"
-+            )),
-+            body(&format!(
-+                "import subprocess, sys\ns = \"{rm}\"\nsubprocess.run([sys.executable, '-c', s])"
-+            )),
-+            body("s = \"subprocess.run(['rm','-rf','/home/user'])\"\nprint(s)"),
-+            body("import subprocess\nold = 'a'\nsubprocess.run(['git','mv',old,'b'])"),
-+            body("import subprocess\nargs = 'status'\nsubprocess.check_output(['git',args])"),
-+        ] {
-+            let result = evaluate_with_pack_ids_in_dialect(
-+                &command,
-+                &["core.git", "core.filesystem"],
-+                ShellDialect::Posix,
-+            );
-+            assert!(
-+                result.is_denied(),
-+                "{command:?} must stay denied: {:?}",
-+                result.pattern_info
-+            );
++        // GIT_INDEX_FILE and GIT_COMMON_DIR can supply relative paths even
++        // when --git-dir is explicitly absolute. The latter also owns config.
++        GitPathKind::File(_) => false,
++    }
++}
++
++fn unchanged_directory(path: &str) -> bool {
++    // Do not cancel pairs such as `-C subdir -C ..`: a symlink can make the
++    // second directory diff
+```
+
+**File**: `tests/repro_609_613_indirect_destinations.rs` (modified, +177/-6)
+```diff
+@@ -88,7 +88,14 @@ impl Fixture {
+         command
+     }
+ 
+-    fn assert(&self, source: &str, expected: &str, rule: Option<&str>, granted: bool) {
++    fn assert(
++        &self,
++        source: &str,
++        expected: &str,
++        rule: Option<&str>,
++        granted: bool,
++        require_span: bool,
++    ) {
+         for hook in [false, true] {
+             let mut command = self.command();
+             let input = if hook {
+@@ -131,7 +138,7 @@ impl Fixture {
+             );
+             if let Some(rule) = rule {
+                 assert_eq!(json["rule_id"], rule, "{source:?}, hook={hook}: {json}");
+-                if !hook {
++                if !hook && (require_span || !json["matched_span"].is_null()) {
+                     let span = json["matched_span"]
+                         .as_array()
+                         .expect("native destination finding has an original-source span");
+@@ -160,11 +167,11 @@ impl Fixture {
+     }
+ 
+     fn deny(&self, source: &str, rule: &str) {
+-        self.assert(source, "deny", Some(rule), false);
++        self.assert(source, "deny", Some(rule), false, true);
+     }
+ 
+     fn allow(&self, source: &str) {
+-        self.assert(source, "allow", None, false);
++        self.assert(source, "allow", None, false, false);
+     }
+ 
+     fn git(&self, cwd: &Path, arguments: &[&str]) -> String {
+@@ -278,6 +285,117 @@ fn scalar_values_are_snapshots_and_child_scopes_do_not_replace_them() {
+     }
+ }
+ 
++#[test]
++fn case_patterns_and_fallthrough_preserve_only_agreed_bindings() {
++    let fixture = Fixture::new();
++    for source in [
++        "f=/etc/sudoers; case x in x) tee \"$f\";; esac",
++        "f=/etc/sudoers; case \"$mode\" in first|second) tee \"$f\";; *) :;; esac",
++        "f=/etc/sudoers; case x in \"$(tee \"$f\")\") :;; esac",
++        "case x in x) f=/etc/sudoers; tee \"$f\";; esac",
++        "f=/etc/sudoers; case \"$mode\" in first) : ;& second) tee \"$f\";; esac",
++        "f=/etc/sudoers; case \"$mode\" in first) : ;;& *) tee \"$f\";; esac",
++        "f=/etc/sudoers; case x in x) f=/tmp/out & wait; tee \"$f\";; esac",
++    ] {
++        fixture.deny(source, CREDENTIAL);
++    }
++    for source in [
++        "f=/tmp/out; case x in x) tee \"$f\";; esac",
++        "f=/etc/sudoers; case x in x) f=/tmp/out; tee \"$f\";; esac",
++        "f=/tmp/out; case x in x) f=/etc/sudoers & wait; tee \"$f\";; esac",
++        r#"f=/etc/sudoers; case x in "$((f=0))") :;; *) tee "$f";; esac"#,
++        r#"f=/etc/sudoers; case x in "$((f=0))$(tee "$f")") :;; esac"#,
++        "f=/etc/sudoers; case x in x) f=/tmp/out ;& y) tee \"$f\";; esac",
++        "f=/etc/sudoers; case x in x) f=/tmp/out ;;& *) tee \"$f\";; esac",
++    ] {
++        fixture.allow(source);
++    }
++}
++
++#[test]
++fn conditional_joins_preserve_exhaustive_and_success_path_proofs() {
++    let fixture = Fixture::new();
++    for source in [
++        "if test \"$mode\"; then f=/etc/sudoers; else f=/etc/sudoers; fi; tee \"$f\"",
++        "if test \"$mode\"; then f=/etc/sudoers; elif test \"$other\"; then f=/etc/sudoers; else f=/etc/sudoers; fi; tee \"$f\"",
++        "if test \"$mode\" && f=/etc/sudoers; then tee \"$f\"; fi",
++    ] {
++        fixture.deny(source, CREDENTIAL);
++    }
++    for source in [
++        "f=/etc/sudoers; if test \"$mode\"; then f=/tmp/one; else f=/tmp/two; fi; tee \"$f\"",
++        "if test \"$mode\"; then f=/etc/sudoers; else f=/tmp/out; fi; tee \"$f\"",
++        "f=/tmp/out; if test \"$mode\"; then f=/etc/sudoers; fi; tee \"$f\"",
++        "f=/tmp/out; if test \"$mode\" && f=/etc/sudoers; then f=/tmp/out; else f=/tmp/out; fi; tee \"$f\"",
++    ] {
++        fixture.allow(source);
++    }
++}
++
++#[test]
++fn command_cache_rebinding_cannot_supply_false_writer_or_git_proofs() {
++    let fixture = Fixture::new();
++    for source in [
++        "hash -p /usr/bin/printf git; cp source \"$(git rev-parse --git-dir)\"",
++        "option=-p; hash \"$option\" /usr/bin/printf git; cp source \"$(git rev-parse --git-dir)\"",
++        "f=/etc/sudoers; hash -p /usr/bin/printf tee; tee \"$f\"",
++        "hash -p /usr/bin/printf tee; f=/etc/sudoers; tee \"$f\"",
++    ] {
++        fixture.allow(source);
++    }
++    for operation in [
++        "hash",
++        "hash -t git",
++        "hash -l",
++        "hash --help",
++        "hash -- -p",
++    ] {
++        fixture.deny(
++            &format!("f=/etc/sudoers; {operation}; tee \"$f\""),
++            CREDENTIAL,
++        );
++    }
++    fixture.deny(
++        "option=-t; f=/etc/sudoers; hash \"$option\" git; tee \"$f\"",
++        CREDENTIAL,
++    );
++}
++
++#[test]
++fn complete_literal_shell_bodies_keep_their_own_scalar_context() {
++    let fixture = Fixture::new();
++    for source in [
++        r#"bash -c 'f=/etc/sudoers; tee "$f"'"#,
++        r#"bash -lc 'f=/etc/sudoers; tee "$f"'"#,
++        r#"bash -cl 'f=/etc/sudoers; tee "$f"'"#,
++        "sh <<'SH'\nf=/etc/sudoers\ntee \"$f\"\nSH",
++    ] {
++        fixture.deny(source, CREDENTIAL);
++    }
++    for source in [
++        r#
+```
+
+---
+
+### Incident Patch 3: `12036e96` (2026-10-30)
+**Commit Message**: fix(core): resolve indirect protected writer destinations
+
+Track bounded same-command scalar values and recognized Git rev-parse path
+origins before shell segmentation discards their context. Feed typed words
+to the existing native destination policy, preserving credential, Git-write,
+and append/truncate redirect rule identities and ordinary allowlist handling.
+
+Keep Git-directory, common-directory, config, and relocated-hook origins
+symbolic so linked worktrees and core.hooksPath do not depend on a literal
+.git directory or executing a query. Reject ambiguous producers, root-crossing
+traversal, unresolved argv ownership, and quote/continuation splicing.
+
+Respect assignment snapshots, child/background scopes, boolean-list paths,
+mutation barriers, nested substitutions, and heredoc execution boundaries.
+Retain original source spans when an expanded option is longer than its
+source expression. Bound source, state, tokens, and materialized arguments.
+
+Add real dcg test and hook --batch regressions for both reports, safe computed
+paths, worktrees, relocated hooks, rule grants, and a no-execution sentinel.
+Run the new target in the existing credential-policy verification workflow.
+
+Pre-
+
+**File**: `.github/workflows/credential-policy-verification.yml` (modified, +5/-0)
+```diff
+@@ -12,6 +12,7 @@ on:
+       - src/heredoc.rs
+       - tests/credential_file_embedded_e2e.rs
+       - tests/credential_file_transfer_e2e.rs
++      - tests/repro_609_613_indirect_destinations.rs
+       - tests/repro_440_eval_sink_in_data_heredoc.rs
+       - tests/regression_heredoc_masking.rs
+       - Cargo.toml
+@@ -53,6 +54,10 @@ jobs:
+         with:
+           shared-key: credential-php-perl-verification
+           cache-on-failure: true
++      - name: Indirect destination CLI and hook regressions
++        run: |
++          set -euo pipefail
++          cargo test --locked --test repro_609_613_indirect_destinations -- --test-threads=1 2>&1 | tee target/credential-policy-verification/indirect-destinations.log
+       - name: Protected-file unit regressions
+         run: |
+           set -euo pipefail
+```
+
+**File**: `src/packs/core/credential_files.rs` (modified, +14/-8)
+```diff
+@@ -33,7 +33,7 @@ pub(crate) fn may_name_protected_path(command: &str) -> bool {
+     shell::may_name_protected_path(command) || word_splitting::candidate(command)
+ }
+ 
+-/// IFS assignments and expansions belong to the outer shell, not to a quoted
++/// Scalar/IFS assignments and expansions belong to the outer shell, not to a quoted
+ /// Python/Node program supplied on stdin (#560). Reuse the existing ownership
+ /// proof instead of letting source text establish shell state or exhaust the
+ /// shell event budget. It rejects unquoted bodies and ambiguous receivers.
+@@ -43,18 +43,24 @@ pub(crate) fn may_name_protected_path(command: &str) -> bool {
+ /// `embedded::scan_command` below must always receive the original command.
+ /// Do not apply a POSIX-only proof when the caller's dialect is unknown.
+ fn scan_outer_writer_arguments(command: &str, dialect: ShellDialect) -> Vec<CredentialFileWrite> {
+-    if dialect != ShellDialect::Posix || !word_splitting::candidate(command) {
+-        return word_splitting::scan(command, dialect);
+-    }
+-    let outer = crate::heredoc::mask_inert_interpreter_stdin(command);
+-    word_splitting::scan(outer.as_ref(), dialect)
++    let outer = if dialect == ShellDialect::Posix
++        && (word_splitting::candidate(command) || shell::indirection::candidate(command))
++    {
++        crate::heredoc::mask_inert_interpreter_stdin(command)
++    } else {
++        std::borrow::Cow::Borrowed(command)
++    };
++    let mut hits = word_splitting::scan(outer.as_ref(), dialect);
++    hits.extend(shell::indirection::scan(outer.as_ref(), dialect));
++    hits
+ }
+ 
+ /// Inspect executable source before shell segmentation or masking removes it.
+ /// Shell syntax uses the separate [`classify_credential_file_write`] above;
+ /// inline scripts, heredocs, and here-strings use their proven interpreter.
+-/// The IFS view retains preceding assignments until each writer's arguments
+-/// have been split, then delegates every destination to the same path policy.
++/// The shell views retain preceding scalar assignments and recognized Git
++/// origins, including IFS-dependent argv, and delegate destination evidence
++/// to the same native path policy before source segmentation discards it.
+ /// Apply explicit language/content exemptions to each decoded program, not
+ /// to another program or shell writer in the same command.
+ /// Retain all rule families, including coincident spans from a single rename.
+```
+
+**File**: `src/packs/core/credential_files/shell.rs` (modified, +2/-1)
+```diff
+@@ -28,6 +28,7 @@ use crate::normalize::{ShellDialect, is_env_assignment};
+ use crate::packs::PatternSuggestion;
+ use std::ops::Range;
+ 
++pub(super) mod indirection;
+ mod windows_shells;
+ 
+ /// Rule name under `core.filesystem`. The pattern entry in
+@@ -1274,7 +1275,7 @@ enum WriteMode {
+     Append,
+ }
+ 
+-#[derive(Debug)]
++#[derive(Debug, Clone)]
+ enum Token {
+     Word(Word),
+     /// An output redirect with a file target.
+```
+
+**File**: `src/packs/core/credential_files/shell/indirection.rs` (added, +1009/-0)
+```diff
+@@ -0,0 +1,1009 @@
++//! Positive destination evidence from same-command scalars and Git queries.
++//!
++//! This view only adds findings to the native path policy. It never grants a
++//! safe-path exemption, executes shell source, reads Git configuration, or
++//! reparses expanded data as shell syntax. Unknown values lose their proof.
++
++use super::super::word_splitting;
++use super::{CredentialFileWrite, Token, Word, classify_simple_command, git_redirect_write};
++use crate::normalize::ShellDialect;
++use ast_grep_core::{AstGrep, Node, tree_sitter::StrDoc};
++use ast_grep_language::SupportLang;
++use std::collections::HashMap;
++use std::ops::Range;
++
++mod git_paths;
++
++const MAX_BYTES: usize = 64 * 1024;
++const MAX_VALUE_BYTES: usize = 16 * 1024;
++const MAX_BINDINGS: usize = 64;
++const MAX_NODES: usize = 4096;
++const MAX_DEPTH: usize = 32;
++const MAX_TOKENS: usize = 128;
++const MAX_MATERIALIZED_BYTES: usize = 64 * 1024;
++
++/// Provenance is separate from bytes. In particular, the literal value
++/// `'$(git rev-parse --git-dir)'` can never acquire a Git origin on expansion.
++#[derive(Clone, Debug, PartialEq, Eq)]
++enum Value {
++    Literal(String),
++    Home {
++        prefix: String,
++        root: String,
++        tail: String,
++    },
++    Git {
++        prefix: String,
++        path: git_paths::GitPath,
++    },
++}
++
++impl Value {
++    fn append(self, next: Self) -> Option<Self> {
++        match (self, next) {
++            (Self::Literal(mut before), Self::Literal(after)) => {
++                before.push_str(&after);
++                (before.len() <= MAX_VALUE_BYTES).then_some(Self::Literal(before))
++            }
++            (
++                Self::Home {
++                    prefix,
++                    root,
++                    mut tail,
++                },
++                Self::Literal(after),
++            ) => {
++                if tail.is_empty() && !after.is_empty() && !after.starts_with('/') {
++                    return None;
++                }
++                tail.push_str(&after);
++                (prefix.len() + root.len() + tail.len() <= MAX_VALUE_BYTES).then_some(Self::Home {
++                    prefix,
++                    root,
++                    tail,
++                })
++            }
++            (Self::Git { prefix, path }, Self::Literal(after)) => Some(Self::Git {
++                prefix,
++                path: path.append_literal(&after)?,
++            }),
++            (Self::Literal(before), Self::Home { prefix, root, tail }) => Some(Self::Home {
++                prefix: before + &prefix,
++                root,
++                tail,
++            }),
++            (Self::Literal(before), Self::Git { prefix, path }) => Some(Self::Git {
++                prefix: before + &prefix,
++                path,
++            }),
++            // Two independently expanded roots do not prove a path.
++            _ => None,
 +        }
 +    }
 +
-     #[test]
-     fn here_string_receiver_analysis_preserves_bash_rule_allowlists_issue_555() {
-         let enabled_packs = ["core.git".to_string(), "core.filesystem".to_string()]
++    fn word(&self, range: Range<usize>) -> Option<Word> {
++        let (text, literal) = match self {
++            Self::Literal(value) => {
++                let text: Vec<char> = value.chars().collect();
++                let literal = vec![true; text.len()];
++                (text, literal)
++            }
++            Self::Home { prefix, root, tail } => {
++                if !path_prefix(prefix) {
++                    return None;
++                }
++                let (home, end) = super::read_word(root, 0);
++                if end != root.len() {
++                    return None;
++                }
++                let mut text: Vec<char> = prefix.chars().collect();
++                let mut literal = vec![true; text.len()];
++                text.extend(home.text);
++                literal.extend(home.literal);
++                text.extend(tail.chars());
++                literal.resize(text.len(), true);
++                (text, literal)
++            }
++            Self::Git { prefix, path } => {
++                if !path_prefix(prefix) {
++                    return None;
++                }
++                let text: Vec<char> = (prefix.clone() + &path.policy_path()).chars().collect();
++                let literal = vec![true; text.len()];
++                (text, literal)
++            }
++        };
++        (text.len() <= MAX_VALUE_BYTES).then_some(Word {
++            text,
++            literal,
++            range,
++            glued_paren: false,
++        })
++    }
++
++    fn literal(&self) -> Option<&str> {
++        match self {
++            Self::Literal(value) => Some(value),
++            Self::Home { .. } | Self::Git { .. } => None,
++        }
++    }
++
++    fn one_unquoted_field(&self, state: &State) -> bool {
++        let Some(ifs) = state.ifs.as_deref() else {
++            return false;
++        };
++        let Some(word) = self.word(0..0) else {
++            return false;
++        };
++        // Default splitting is a possible reading of a fresh shell. This is
++        // positive denial evidence only, never a claim that an unknown caller
++     
+```
+
+**File**: `src/packs/core/credential_files/shell/indirection/git_paths.rs` (added, +416/-0)
+```diff
+@@ -0,0 +1,416 @@
++//! Symbolic destinations returned by a single, statically identified Git query.
++//!
++//! No repository lookup is needed: a worktree's administrative directory and
++//! a relocated hooks directory keep their policy identity wherever Git stores
++//! them. The policy spelling below is a semantic alias, never a claim that the
++//! query actually printed `.git`.
++
++use super::super::read_word;
++
++const MAX_QUERY_BYTES: usize = 8 * 1024;
++const MAX_QUERY_WORDS: usize = 64;
++const MAX_PATH_BYTES: usize = 16 * 1024;
++const MAX_PATH_COMPONENTS: usize = 64;
++
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++enum GitPathKind {
++    Directory,
++    Hooks,
++    Config,
++}
++
++#[derive(Debug, Clone, PartialEq, Eq)]
++pub(super) struct GitPath {
++    kind: GitPathKind,
++    /// Decoded suffix below the symbolic root. Keep its exact characters until
++    /// use: appending `name` to `/a/..` makes `/a/..name`, not `/name`.
++    /// Its normalized components never escape the symbolic root.
++    tail: String,
++}
++
++impl GitPath {
++    fn new(kind: GitPathKind) -> Self {
++        Self {
++            kind,
++            tail: String::new(),
++        }
++    }
++
++    /// Append decoded literal path text. The caller retains expansion/quoting
++    /// provenance and must never pass an unresolved expansion here.
++    pub(super) fn append_literal(&self, suffix: &str) -> Option<Self> {
++        if suffix.is_empty() {
++            return Some(self.clone());
++        }
++        if self.tail.is_empty() && !suffix.starts_with('/')
++            || self.kind == GitPathKind::Config
++            || self.tail.len().saturating_add(suffix.len()) > MAX_PATH_BYTES
++            || suffix.contains('\0')
++        {
++            return None;
++        }
++        let tail = format!("{}{suffix}", self.tail);
++        normalized_components(&tail)?;
++        Some(Self {
++            kind: self.kind,
++            tail,
++        })
++    }
++
++    /// An alias for the existing protected-path table. A bare directory gets
++    /// a trailing slash so the table recognizes its directory anchor as well.
++    pub(super) fn policy_path(&self) -> String {
++        let base = match self.kind {
++            GitPathKind::Directory => ".git",
++            GitPathKind::Hooks => ".git/hooks",
++            GitPathKind::Config => ".git/config",
++        };
++        let tail = normalized_components(&self.tail)
++            .expect("GitPath construction checks the symbolic root")
++            .join("/");
++        if tail.is_empty() {
++            if self.kind == GitPathKind::Config {
++                base.to_owned()
++            } else {
++                format!("{base}/")
++            }
++        } else {
++            format!("{base}/{tail}")
++        }
++    }
++}
++
++fn normalized_components(tail: &str) -> Option<Vec<&str>> {
++    let mut components = Vec::new();
++    for component in tail.split('/') {
++        match component {
++            "" | "." => {}
++            ".." => {
++                // A linked worktree's git-dir need not be the common
++                // directory. Crossing either symbolic base loses the proof;
++                // do not pretend it is a top-level `.git` folder.
++                components.pop()?;
++            }
++            other => {
++                components.push(other);
++                if components.len() > MAX_PATH_COMPONENTS {
++                    return None;
++                }
++            }
++        }
++    }
++    Some(components)
++}
++
++/// Recognize the complete BODY of `$(...)` or backquotes, never source which
++/// merely contains a Git command. Multiple outputs, redirections, operators,
++/// dynamic argv and unbalanced quotes cannot supply a single-path proof.
++pub(super) fn resolve_query(source: &str) -> Option<GitPath> {
++    let argv = literal_argv(source)?;
++    let executable = argv.first()?.rsplit('/').next()?;
++    if !matches!(executable, "git" | "git.exe") {
++        return None;
++    }
++    let mut index = 1;
++    while argv.get(index)?.as_str() != "rev-parse" {
++        let option = argv.get(index)?.as_str();
++        match option {
++            "-C" | "-c" | "--git-dir" | "--work-tree" => {
++                argv.get(index + 1)?;
++                index += 2;
++            }
++            "--bare" | "--no-pager" | "--no-optional-locks" => index += 1,
++            _ if attached_global_option(option) => index += 1,
++            _ => return None,
++        }
++    }
++    index += 1;
++    while argv.get(index).is_some_and(|argument| {
++        matches!(
++            argument.as_str(),
++            "--path-format=absolute" | "--path-format=relative"
++        )
++    }) {
++        index += 1;
++    }
++    match &argv[index..] {
++        [query]
++            if matches!(
++                query.as_str(),
++                "--git-dir" | "--absolute-git-dir" | "--git-common-dir"
++            ) =>
++        {
++            Some(GitPath::new(GitPathKind::Directory))
++        }
++        [query, path] if query == "--git-path" => ad
+```
+
+**File**: `src/packs/core/credential_files/word_splitting.rs` (modified, +9/-9)
+```diff
+@@ -90,7 +90,7 @@ impl State {
+     }
+ }
+ 
+-fn maintained_variable(name: &str) -> bool {
++pub(super) fn maintained_variable(name: &str) -> bool {
+     name.starts_with("BASH_")
+         || matches!(
+             name,
+@@ -110,14 +110,14 @@ fn maintained_variable(name: &str) -> bool {
+         )
+ }
+ 
+-fn identifier(name: &str) -> bool {
++pub(super) fn identifier(name: &str) -> bool {
+     !name.is_empty()
+         && name.bytes().enumerate().all(|(index, byte)| {
+             byte.is_ascii_alphabetic() || byte == b'_' || index > 0 && byte.is_ascii_digit()
+         })
+ }
+ 
+-fn assignment(raw: &str) -> Option<(&str, bool, &str)> {
++pub(super) fn assignment(raw: &str) -> Option<(&str, bool, &str)> {
+     let (left, rhs) = raw.split_once('=')?;
+     let name = left.strip_suffix('+').unwrap_or(left);
+     identifier(name).then_some((name, left != name, rhs))
+@@ -772,7 +772,7 @@ fn classify(argv: &[String], span: Range<usize>) -> Result<Vec<CredentialFileWri
+ /// modifiers do not make a count assignment harmless. Backslash escapes do
+ /// not protect a source `%`: `\%n` still performs the assignment, whereas
+ /// `\045n` only prints percent/n and must not be re-parsed as a conversion.
+-fn printf_format_may_assign(format: &str) -> bool {
++pub(super) fn printf_format_may_assign(format: &str) -> bool {
+     let bytes = format.as_bytes();
+     let mut index = 0;
+     while index < bytes.len() {
+@@ -845,7 +845,7 @@ fn printf_may_assign(words: &[String], state: &State) -> bool {
+     false
+ }
+ 
+-fn mutates_shell(name: &str) -> bool {
++pub(super) fn mutates_shell(name: &str) -> bool {
+     matches!(
+         name,
+         "read"
+@@ -876,7 +876,7 @@ fn mutates_shell(name: &str) -> bool {
+     )
+ }
+ 
+-fn special_builtin(name: &str) -> bool {
++pub(super) fn special_builtin(name: &str) -> bool {
+     matches!(
+         name,
+         ":" | "."
+@@ -899,7 +899,7 @@ fn special_builtin(name: &str) -> bool {
+ /// The async terminator belongs to the whole statement, not to each
+ /// assignment inside it. Ask the syntax tree so line continuations before
+ /// `&`, and the distinct `&&` and `&>` operators, keep their shell meaning.
+-fn has_async_terminator(node: &Node<'_, StrDoc<SupportLang>>) -> bool {
++pub(super) fn has_async_terminator(node: &Node<'_, StrDoc<SupportLang>>) -> bool {
+     node.get_inner_node()
+         .next_sibling()
+         .is_some_and(|sibling| sibling.kind() == "&")
+@@ -911,7 +911,7 @@ fn has_async_terminator(node: &Node<'_, StrDoc<SupportLang>>) -> bool {
+ /// literal value. Keep quoted/escaped braces and commas as data. This bounded
+ /// lexical check never enumerates alternatives (which can grow exponentially)
+ /// and deliberately treats malformed range candidates as uncertain too.
+-fn declaration_may_expand_braces(raw: &str) -> bool {
++pub(super) fn declaration_may_expand_braces(raw: &str) -> bool {
+     let mut quote = None;
+     let mut braces = Vec::new();
+     let mut previous_dot = false;
+@@ -979,7 +979,7 @@ pub(super) fn scan(command: &str, dialect: ShellDialect) -> Vec<CredentialFileWr
+ /// it before reading words, and for each byte of that source the offset of the
+ /// same byte in `command`, with one more entry for the end. `None` when
+ /// nothing was removed.
+-fn join_line_continuations(command: &str) -> Option<(String, Vec<usize>)> {
++pub(super) fn join_line_continuations(command: &str) -> Option<(String, Vec<usize>)> {
+     if !command.contains("\\\n") {
+         return None;
+     }
+```
+
+**File**: `tests/repro_609_613_indirect_destinations.rs` (added, +566/-0)
+```diff
+@@ -0,0 +1,566 @@
++//! #609 / #613: shell indirection must not conceal protected destinations.
++//!
++//! Every source string is data sent to the real CLI and batch hook. The only
++//! commands executed by the fixture are Git repository/worktree setup and
++//! read-only queries used to establish the linked-worktree controls.
++
++use std::io::Write;
++use std::path::{Path, PathBuf};
++use std::process::{Command, Stdio};
++
++const CREDENTIAL: &str = "core.filesystem:credential-file-write";
++const GIT_WRITE: &str = "core.filesystem:git-internals-write";
++const GIT_APPEND: &str = "core.filesystem:redirect-append-git-internals-relative";
++const GIT_TRUNCATE: &str = "core.filesystem:redirect-truncate-git-internals-relative";
++const GRANT_REASON: &str = "isolated indirect-destination rule grant";
++
++struct Fixture {
++    directory: tempfile::TempDir,
++    home: PathBuf,
++    config: PathBuf,
++    cwd: PathBuf,
++    executable_dir: PathBuf,
++}
++
++impl Fixture {
++    fn new() -> Self {
++        let directory = tempfile::tempdir().expect("isolated regression directory");
++        let home = directory.path().join("home");
++        let cwd = directory.path().join("cwd");
++        let executable_dir = directory.path().join("executables");
++        for path in [&home, &cwd, &executable_dir] {
++            std::fs::create_dir(path).expect("isolated directory");
++        }
++        let config = directory.path().join("config.toml");
++        std::fs::write(&config, "[history]\nenabled = false\n").expect("isolated config");
++        Self {
++            directory,
++            home,
++            config,
++            cwd,
++            executable_dir,
++        }
++    }
++
++    fn grant(&self, rule: &str) {
++        let contents = format!("[[allow]]\nrule = \"{rule}\"\nreason = \"{GRANT_REASON}\"\n");
++        for relative in ["config/dcg", ".config/dcg", "appdata/dcg"] {
++            let directory = self.home.join(relative);
++            std::fs::create_dir_all(&directory).expect("allowlist directory");
++            std::fs::write(directory.join("allowlist.toml"), &contents)
++                .expect("isolated single-rule grant");
++        }
++    }
++
++    fn command(&self) -> Command {
++        let mut command = Command::new(env!("CARGO_BIN_EXE_dcg"));
++        command
++            .env_clear()
++            // A static proof must not require Git, a shell, or another
++            // producer executable to be installed on the classifier's PATH.
++            .env("PATH", &self.executable_dir)
++            .env("HOME", &self.home)
++            .env("USERPROFILE", &self.home)
++            .env("XDG_CONFIG_HOME", self.home.join("config"))
++            .env("XDG_DATA_HOME", self.home.join("data"))
++            .env("XDG_CACHE_HOME", self.home.join("cache"))
++            .env("APPDATA", self.home.join("appdata"))
++            .env("LOCALAPPDATA", self.home.join("localappdata"))
++            .env("TEMP", self.directory.path())
++            .env("TMP", self.directory.path())
++            .env("TMPDIR", self.directory.path())
++            .env("DCG_CONFIG", &self.config)
++            .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
++            .env(
++                "DCG_PENDING_EXCEPTIONS_PATH",
++                self.directory.path().join("pending.jsonl"),
++            )
++            .env("DCG_SELF_HEAL_HOOK", "0")
++            .env("DCG_NO_SELF_HEAL", "1")
++            .env("DCG_HISTORY_DISABLED", "1")
++            // Semantic verdicts, not a change to the production budgets.
++            .env("DCG_HOOK_TIMEOUT_MS", "5000")
++            .env("DCG_AST_TIMEOUT_MS", "5000")
++            .current_dir(&self.cwd)
++            .stdin(Stdio::piped())
++            .stdout(Stdio::piped())
++            .stderr(Stdio::piped());
++        command
++    }
++
++    fn assert(&self, source: &str, expected: &str, rule: Option<&str>, granted: bool) {
++        for hook in [false, true] {
++            let mut command = self.command();
++            let input = if hook {
++                command.args(["hook", "--batch"]);
++                serde_json::json!({
++                    "hook_event_name": "PreToolUse",
++                    "tool_name": "Bash",
++                    "tool_input": { "command": source },
++                })
++                .to_string()
++                    + "\n"
++            } else {
++                command.args(["test", "--stdin", "--dialect", "posix", "--format", "json"]);
++                source.to_owned()
++            };
++            let mut child = command
++                .spawn()
++                .expect("spawn the classifier, never the source");
++            child
++                .stdin
++                .take()
++                .expect("classifier stdin")
++                .write_all(input.as_bytes())
++                .expect("write classifier input");
++            let output = child.wait_with_output().expect("classifier response");
++            let stderr = String::from_utf8_lossy(&output.stderr);
++            let stdout = String::from_utf8_loss
 ```
 
 #### Recent Merged Pull Requests:
@@ -3471,66 +4287,55 @@ call's region ends where the string does, a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. allow-once): preserve policy precedence for exact outer grants (#599)
+## X. core): preserve shell field and execution boundaries in indirect writes
 
 **RULE**:
-When implementing operations in `src/evaluator.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/packs/core/credential_files/shell.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `07c53c96`: allow-once): preserve policy precedence for exact outer grants (#599). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4850e2da`: core): preserve shell field and execution boundaries in indirect writes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/evaluator.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/packs/core/credential_files/shell.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// An ordinary exact grant cannot hide an explicit block on a later
-    /// nested command. Policy inspection must read past whole-command grants,
-    /// including the grant whose eligibility it is checking, without spending
-    /// any of them. Recursive evaluation stays on this thread.
-    static ALLOW_ONCE_POLICY_REPLAY: std::cell::Cell<bool> = const {
-        std::cell::Cell::new(false)
-    };
-    /// A finding-only rescan can discard its verdict, so it must never spend
-    /// a stateful grant. Permanent exemptions still govern its findings.
-    static ALLOW_ONCE_SUPPRESSED: std::cell::Cell<bool> = const {
-        std::cell::Cell::new(false)
-    };
-struct AllowOncePolicyScope {
-    previous: bool,
+fn strip_prefixes<'a>(words: &'a [&'a Word]) -> Option<&'a [&'a Word]> {
+    strip_prefixes_in_view(words, true)
 }
 
-impl AllowOncePolicyScope {
-    fn enter() -> Self {
-        Self {
-            previous: ALLOW_ONCE_POLICY_REPLAY.with(|slot| slot.replace(true)),
-        }
-    }
+/// Expanded argv has already lost syntactic assignment/reserved-word roles.
+/// A value such as `x=y` or `if` is an executable name, not new shell syntax.
+fn strip_prefixes_in_view<'a>(
+    mut words: &'a [&'a Word],
+    source_syntax: bool,
+) -> Option<&'a [&'a Word]> {
+        if source_syntax
+            && (crate::context::is_shell_command_prefix_reserved_word(&text)
+                || is_env_assignment(&text))
+    classify_command_in_view(tokens, true)
 }
 
-impl Drop for AllowOncePolicyScope {
-    fn drop(&mut self) {
-        ALLOW_ONCE_POLICY_REPLAY.with(|slot| slot.set(self.previous));
-    }
+fn classify_expanded_command(tokens: &[Token]) -> Option<CredentialFileWrite> {
+    classify_command_in_view(tokens, false)
 }
 
-struct AllowOnceSuppressionScope {
-    previous: bool,
-}
-
-impl AllowOnceSuppressionScope {
-    fn enter() -> Self {
-        Self {
-            previous: ALLOW_ONCE_SUPPRE
+fn classify_command_in_view(tokens: &[Token], source_syntax: bool) -> Option<CredentialFileWrite> {
+    let argv = if source_syntax {
+        strip_prefixes(&words)
+    } else {
+        strip_prefixes_in_view(&words, false)
+    }?;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-/// An explicitly approved outer envelope is checked before its children run.
-/// the hit for audit output.
+fn strip_prefixes<'a>(mut words: &'a [&'a Word]) -> Option<&'a [&'a Word]> {
+        if crate::context::is_shell_command_prefix_reserved_word(&text) || is_env_assignment(&text)
+    let argv = strip_prefixes(&words)?;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `07c53c96` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4850e2da` are properly handled with clean fallback behavior.

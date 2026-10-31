@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T11:02:41.650Z",
+  "last_updated": "2026-10-31T11:09:37.596Z",
   "total_verified_learnings": 1183,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9690,8 +9690,8 @@
       "slug": "dicklesworthstone-destructive_command_guard",
       "platform": "github",
       "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
-      "source_version": "07c53c96",
-      "content_hash": "89a78d214307951cc52455d6fbaa99ab8b03a498f0b8dce45c2c5dbd0d697ec2",
+      "source_version": "e4e06296",
+      "content_hash": "256acb5b405462630b67dc79f4e5e649c1728b85e783070faee0a7986a9e599c",
       "dossier_path": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "promoted_rules": [
@@ -9739,6 +9739,11 @@
           "number": 5759,
           "title": "allow-once): preserve policy precedence for exact outer grants (#599)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6177,
+          "title": "core): preserve shell field and execution boundaries in indirect writes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9746,7 +9751,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T13:14:05.290Z",
+      "verified_at": "2026-10-31T11:09:23.914Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43482,8 +43487,8 @@
       "slug": "ontos-ai-knowhere",
       "platform": "github",
       "source_url": "https://github.com/Ontos-AI/knowhere",
-      "source_version": "f876742c",
-      "content_hash": "6fce9fd0daaecd03b6fd5480451c97eb6545a6f1e4d87d55228d711304f421b0",
+      "source_version": "07cd00d1",
+      "content_hash": "cedd9fc7d7f172ff61a64a6a0e329185b84d8e63874335cf859813c317e733f9",
       "dossier_path": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "promoted_rules": [
@@ -43531,6 +43536,11 @@
           "number": 5822,
           "title": "local CI after progressive and visual page-num changes.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6180,
+          "title": "Merge pull request #487 from Ontos-AI/feat/wuchengke/toc-pairing-offset-recalibr",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43538,7 +43548,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T18:07:13.247Z",
+      "verified_at": "2026-10-31T11:09:37.576Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -147545,7 +147555,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
       "source_version": "hf-prithivmlmods-gender-classifier-mini",
-      "content_hash": "9c9dadd3556a5f1291b8ac6629ba27cbe7176c32b9921e7d16a4d502add3d3aa",
+      "content_hash": "98676ba626f18b66830fb91d0e89412158c9565269efc6fb9bda541b3f887e6a",
       "dossier_path": "07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md",
       "promoted_rules": [
@@ -147558,6 +147568,16 @@
           "number": 5240,
           "title": "Dimension-Guarded Softmax Reduction Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6178,
+          "title": "Strict Tensor-Array Boundary Conversion Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6179,
+          "title": "Probabilistic Output Normalization & Label Mapping Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -147565,7 +147585,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T08:45:46.860Z",
+      "verified_at": "2026-10-31T11:09:34.847Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -161614,6 +161634,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T11:02:41.637Z"
+    },
+    "rule-6177": {
+      "learning_id": "rule-6177",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6177,
+      "title": "core): preserve shell field and execution boundaries in indirect writes",
+      "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
+      "source_version": "e4e06296",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T11:09:23.915Z"
+    },
+    "rule-6178": {
+      "learning_id": "rule-6178",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6178,
+      "title": "Strict Tensor-Array Boundary Conversion Invariant",
+      "source_url": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
+      "source_version": "hf-prithivmlmods-gender-classifier-mini",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T11:09:34.847Z"
+    },
+    "rule-6179": {
+      "learning_id": "rule-6179",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6179,
+      "title": "Probabilistic Output Normalization & Label Mapping Invariant",
+      "source_url": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
+      "source_version": "hf-prithivmlmods-gender-classifier-mini",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T11:09:34.847Z"
+    },
+    "rule-6180": {
+      "learning_id": "rule-6180",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6180,
+      "title": "Merge pull request #487 from Ontos-AI/feat/wuchengke/toc-pairing-offset-recalibr",
+      "source_url": "https://github.com/Ontos-AI/knowhere",
+      "source_version": "07cd00d1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T11:09:37.576Z"
     }
   },
   "aliases": {

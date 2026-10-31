@@ -6549,3 +6549,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-unsloth-qwen-image-2-1-gguf` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-31T10:47:12.240Z |
 | `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `9daa0a72` | Multi-dimensional audit evidence | 2026-10-31T10:47:13.898Z |
 | `learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-31T11:02:41.738Z |
+| `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `e4e06296` | Multi-dimensional audit evidence | 2026-10-31T11:09:24.021Z |
+| `learn-huggingface-prithivmlmods-gender-classifier-mini` | `https://huggingface.co/prithivMLmods/Gender-Classifier-Mini` | `hf-prithiv` | Multi-dimensional audit evidence | 2026-10-31T11:09:34.947Z |
+| `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `07cd00d1` | Multi-dimensional audit evidence | 2026-10-31T11:09:37.676Z |

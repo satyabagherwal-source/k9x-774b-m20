@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T11:02:44.293Z",
-    "lastVerified": "2026-10-31T11:02:44.293Z",
+    "lastChecked": "2026-10-31T11:09:40.237Z",
+    "lastVerified": "2026-10-31T11:09:40.237Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -247,8 +247,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T10:34:00.217Z",
-    "lastVerified": "2026-10-31T10:34:00.217Z",
+    "lastChecked": "2026-10-31T11:09:34.547Z",
+    "lastVerified": "2026-10-31T11:09:34.547Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1053,9 +1053,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-10-31T06:04:07.726Z",
+    "lastChecked": "2026-10-31T11:09:29.545Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-10-31T06:04:07.727Z"
+    "lastVerified": "2026-10-31T11:09:29.545Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -2740,14 +2740,14 @@
     "officialUrl": "https://github.com/Ontos-AI/knowhere",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-30T18:07:12.681Z",
-    "lastVerified": "2026-10-30T18:07:12.681Z",
+    "lastChecked": "2026-10-31T11:09:36.880Z",
+    "lastVerified": "2026-10-31T11:09:36.880Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ontos-ai-knowhere",
-    "contentHash": "6fce9fd0daaecd03b6fd5480451c97eb6545a6f1e4d87d55228d711304f421b0",
+    "contentHash": "cedd9fc7d7f172ff61a64a6a0e329185b84d8e63874335cf859813c317e733f9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2982,12 +2982,12 @@
     "officialUrl": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T08:43:58.007Z",
-    "lastVerified": "2026-10-28T08:43:58.007Z",
+    "lastChecked": "2026-10-31T11:09:22.077Z",
+    "lastVerified": "2026-10-31T11:09:22.077Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
-    "contentHash": "9c9dadd3556a5f1291b8ac6629ba27cbe7176c32b9921e7d16a4d502add3d3aa",
+    "contentHash": "98676ba626f18b66830fb91d0e89412158c9565269efc6fb9bda541b3f887e6a",
     "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -3855,9 +3855,9 @@
   "liftbridge-io-liftbridge": {
     "name": "liftbridge",
     "officialUrl": "https://github.com/liftbridge-io/liftbridge",
-    "lastChecked": "2026-10-30T19:05:33.638Z",
+    "lastChecked": "2026-10-31T11:09:26.999Z",
     "revisionIdentifier": "af2a6626",
-    "lastVerified": "2026-10-30T19:05:33.638Z"
+    "lastVerified": "2026-10-31T11:09:26.999Z"
   },
   "llphant-llphant": {
     "name": "LLPhant",
@@ -5411,9 +5411,9 @@
   "itinance-react-native-fs": {
     "name": "react-native-fs",
     "officialUrl": "https://github.com/itinance/react-native-fs",
-    "lastChecked": "2026-10-28T15:43:10.921Z",
+    "lastChecked": "2026-10-31T11:09:24.570Z",
     "revisionIdentifier": "64aa755c",
-    "lastVerified": "2026-10-28T15:43:10.921Z"
+    "lastVerified": "2026-10-31T11:09:24.570Z"
   },
   "gocd-gocd": {
     "name": "gocd",
@@ -5868,14 +5868,14 @@
     "officialUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T13:08:54.536Z",
-    "lastVerified": "2026-10-30T13:08:54.536Z",
+    "lastChecked": "2026-10-31T11:09:23.189Z",
+    "lastVerified": "2026-10-31T11:09:23.189Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-    "contentHash": "89a78d214307951cc52455d6fbaa99ab8b03a498f0b8dce45c2c5dbd0d697ec2",
+    "contentHash": "256acb5b405462630b67dc79f4e5e649c1728b85e783070faee0a7986a9e599c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 10,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

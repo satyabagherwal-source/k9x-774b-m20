@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T11:02:41.742Z",
-  "total_cycles_completed": 6517,
-  "total_learnings_persisted": 6517,
-  "total_rules_promoted": 6169,
+  "last_updated": "2026-10-31T11:09:37.682Z",
+  "total_cycles_completed": 6520,
+  "total_learnings_persisted": 6520,
+  "total_rules_promoted": 6173,
   "history": [
-    {
-      "timestamp": "2026-10-30T22:27:30.194Z",
-      "repository": "gauthierpiarrette/highball",
-      "learningId": "learn-github-gauthierpiarrette-highball",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T22:27:32.026Z",
-      "repository": "crossplane/crossplane",
-      "learningId": "learn-github-crossplane-crossplane",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T22:27:36.462Z",
-      "repository": "trailbaseio/trailbase",
-      "learningId": "learn-github-trailbaseio-trailbase",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T22:34:31.582Z",
       "repository": "speridlabs/idol",
@@ -1403,6 +1382,27 @@
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T11:09:24.027Z",
+      "repository": "Dicklesworthstone/destructive_command_guard",
+      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T11:09:34.953Z",
+      "repository": "prithivMLmods/Gender-Classifier-Mini",
+      "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T11:09:37.682Z",
+      "repository": "Ontos-AI/knowhere",
+      "learningId": "learn-github-ontos-ai-knowhere",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
