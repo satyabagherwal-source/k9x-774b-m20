@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
-> **Source Version**: `91dfab21`  
+> **Source Version**: `ae40f12a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T20:05:19.934Z  
+> **Timestamp**: 2026-10-31T12:46:59.382Z  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T20:05:18.535Z  
+> **Harvest Timestamp**: 2026-10-31T12:46:59.374Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2331,11 +2331,11 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #31935** (2026-10-30): **plan: support DROP VIEW with multiple views (#31910)**
-  *Symptoms*: Fixes #31910  ## Summary `DROP VIEW v1, v2 [, ...]` and `DROP VIEW IF EXISTS v1, v2, ...` failed with `20105 not supported: drop multiple (N) view`. They now work like MySQL (`DROP VIEW [IF EXISTS] view_name [, view_name] ...`) and like MO's own `DROP TABLE t1, t2`.  ## Cause `buildDropView` rejected any statement with more than one name. The executor already supports a multi-target `plan.DropTable` (`Tables`, used by `DROP TABLE t1, t2`), and each entry carries its own `IsView`.  ## Fix - `pkg/sql/plan/build_ddl.go`: move the per-name logic into `buildDropViewSingle` (unchanged rules: missing view / base table → `ErrBadView` without IF EXISTS; with IF EXISTS a missing view is skipped and a same-named base table is a no-op, never dropped; subscription views rejected). With several names, every entry is resolved first and placed in `DropTable.Tables`, so an error on any name drops nothing (MySQL behaves the same way). - `pkg/frontend/authenticate.go`: for a multi-name DROP VIEW, check DROP VIEW privilege per target (`authenticateMultiDropViewTargets`, same idea as `authenticateMultiDropTableTargets`), so a list spanning databases is not authorized by the first database only.  ## Evidence (before / after) - UT `pkg/sql/plan/build_ddl_drop_multi_view_test.go` (3 tests): RED on main (`not supported: drop multiple (3) view`), GREEN with the fix. `go test ./pkg/sql/plan/` ok; `./pkg/frontend -run 'Privilege|Authenticate|DropView|DropTable|determine'` ok. - E2E on single-node builds
+- **Issue #31947** (2026-10-31): **fix(frontend): allow the MySQL wait_timeout range**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Fixes #31510  ## What this PR does / why we need it:  `wait_timeout` is documented as an integer-seconds variable with a range up to one year, but the frontend admission bound rejected every configured/SET value above 86400 (one day), so `SET GLOBAL/SESSION wait_timeout = 86401` failed with the default-range error even though MySQL accepts it.  - Admission range raised to `1..31536000` seconds (one year); values are validated once by a shared `validateTimeoutLimits` consumed by both SESSION and GLOBAL before write/persistence. - Default stays `86400`; the server-configured min/max bounds remain a hard policy, and the interactive-handshake wait_timeout rule is unchanged. - The real idle consumer now applies the full int64 seconds value into `time.Duration` without overflow, so a long GLOBAL value actually reaches the connection idle deadline (verified for live GLOBAL change and new logins). - The stale 86401 error rows in the system_variables golden are updated for the lifted bound.  Verification (build on a fresh linear rebase of upstream main, CGO + in-tree thirdparties):  - New focused frontend tests plus existing timeout/variable guards: 18/18 PASS (includes the 5 new `TestWaitTimeout*` admission, DEFAULT forward-control, rejection, idle-consumer and live GLOBAL/new-login tests). - Distribute
 
-- **Issue #31934** (2026-10-30): **fix(ci): cancel obsolete PR runs and avoid post-merge main checks**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [x] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Refs #29249  ## What this PR does / why we need it:  Cancel obsolete ALL CI runs when a PR closes, using the existing controller and two minutes of cleanup grace before force cancellation. Revalidate PR closure and run attempts; protect reopened PRs, post-close reruns, other forks and branches still needed by another open PR.  Avoid repeating tests after merges to main: retain pre-merge checks and release-branch check-in regression, with daily/manual SCA and Maven warming. The lightweight close-event cancellation controller still releases stale work. Align native-contract assertions with the retained PR path filters.  Reduce cold SCA setup by installing pinned, SHA256-verified golangci-lint 2.14.0 release binaries on supported Go 1.27 hosts through the existing downloader. Bound the download to 60 seconds and retain source fallback. Publish the tool cache before native/analysis work can fail. Other tool versions and source installation remain pinned.  Validation: 45 Node helper tests, native build contracts, 16 GPU/toolchain tests, downloader failure/atomicity tests, actionlint for eight workflows, syntax and diff checks pass. Real Linux/macOS arm64 release binaries were verified and executed; the macOS binary passed a focused project lint check. Full local tool installation remains blocked by e
+- **Issue #31946** (2026-10-31): **fix(colexec): release block-info batch when pipeline sinker close fails (#31626)**
+  *Symptoms*: ## Summary  Fixes the memory leak described in #31626. `CNS3Writer.Close` previously returned immediately if `sinker.Close()` failed, leaving `blockInfoBat` allocated in the process mpool. The updated method preserves the sinker error but always releases the block-info batch and clears references.  由LW授权的ChatGPT  Business智能体提交。  ## Changes  - `pkg/sql/colexec/s3util.go`: retain the underlying Close error while performing unconditional block-info cleanup. - `pkg/sql/colexec/loom_test_cns3_close_blockinfo_leak_test.go`: add the complete real-worker regression test supplied in #31626, including failure-injected pipeline flush and healthy close control. - Scope: 2 files, approximately +183/-4 lines; no changes to gates, schema, protocol or output format.  ## Testing and evidence  - Source verified against upstream `main`; feature branch created from the current upstream main commit and is exactly two commits ahead. - **Isolated extracted-method Go behavior harness, not the repository package:** original Close failed `TestCNS3WriterCloseCleansOnSinkFailure` while success control passed. The revised Close passed both tests (`GO111MODULE=off go test -count=1 -v .`). - The regression attached in #31626 documents the *actual package* failure on upstream original main and provides detailed mpool accounting. The complete test is now committed here, but **the actual `go test ./pkg/sql/colexec -run TestLoomCNS3WriterCloseReleasesBlockInfoBat`, cgo/native build, and CI have not been run by
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2352,248 +2352,59 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d8c90c20` (2026-10-30)
-**Commit Message**: fix(plan): MySQL implicit boolean semantics for ENUM/SET, BIT literals and JSON conditions (#31492)
+### Incident Patch 1: `ae40f12a` (2026-10-31)
+**Commit Message**: Fix daemon claim races and reduce redundant race-test work (#31942)
 
 ## What type of PR is this?
 
-- [ ] API-change
 - [x] BUG
-- [ ] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [ ] Test and CI
-- [ ] Code Refactoring
+- [x] Improvement
+- [x] Test and CI
+- [x] Code Refactoring
 
 ## Which issue(s) this PR fixes:
 
-Related to #30931
-Related to #30930
-Related to #30932
+Refs #29249
 
 ## What this PR does / why we need it:
 
-Consolidated group #30931: ENUM/SET truthiness, BIT value literals, JSON
-IF/CASE conditions. Each defect traces to a surface consuming display
-text or a strict cast where the stored payload was required.
+Scope: the owner explicitly requested one PR for the related UT-racing
+fixes and meaningful test optimizations (rather than separate small
+PRs). #29249 is referenced as the ongoing quality tracker; this combined
+scope follows that task-specific request.
 
-Root causes
-- **#30931 (master)** ENUM/SET column references bind as display calls;
-boolean contexts string-parsed labels: `IF(e,1,0)`/`IF(s,1,0)` returned
-0 for every nonzero ordinal/bitmap, `WHERE e`/`s` and `e AND 1` failed
-with 'a' is not a valid bool expression', grouped/DISTINCT boundaries
-lost storage identity, and numeric SET IN/NOT IN comparisons re-parsed
-labels after a review-round condition narrowing. On the persisted path
-the binder binds raw storage (uint64/T_enum), which base already
-evaluates correctly - so the r8 round also removed an over-broad feature
-classification that refused native ses
+The combined scope is an owner-approved exception to #29249's usual
+focused daily-cleanup PR rule. The independent test-only changes have
+these retained coverage boundaries:
 
-**File**: `docs/design/20261027-implicit-boolean-semantics-enum-set-bit-json.md` (added, +217/-0)
+| Test optimization | Retained contracts |
+| --- | --- |
+| DIV | Full first-pass CTAS/view matrix, NULL and warning/error cases,
+integer boundaries and ODKU; a representative second pass with
+`NO_UNSIGNED_SUBTRACTION`, database recreation and teardown checks. |
+| Planner witnesses | All precisions 0–30 retain ALTER, candidate
+searches and exact-result checks; representative precisions retain
+cross-zone searches and the more expensive proofs. |
+| Snapshot/publication | Quoted database and publication names shar
+
+**File**: `pkg/cnservice/server_task_test.go` (modified, +4/-0)
 ```diff
-@@ -0,0 +1,217 @@
-+# Implicit boolean semantics for ENUM/SET, BIT literals, and JSON conditions
-+
-+- Status: Review required
-+- Tracking issue: [#30931](https://github.com/matrixorigin/matrixone/issues/30931) (consolidated group: #30930, #30932)
-+- Implementation PR: [#31492](https://github.com/matrixorigin/matrixone/pull/31492) - implemented from revision 8; after the revision-9 deviation repair lands, the PR description and implementation review must link THIS revision and its hash
-+- Design revision: 9
-+- Last updated: 2026-10-30
-+- Supersedes revision 8 (SHA256 15d933cf6ac0608423409fa31173d969cc8de16a01be3ee969e0c8678ad6d73a, the independently PASSed predecessor, returned with round-9 finding P2 - the minted per-feature MORPC slot and its version-gate wiring violate the repository's shutdown-only upgrade contract, `.agents/skills/mo-dev/references/upgrade-compatibility.md:13-40`), which superseded revision 7 (SHA256 ea470bd602e6209e383d96db1c1480f5e807a95b147230e48c9b96ac4ed3bb31, returned with finding F8 - exempt SET storage semantics from the boolean-condition contracts), which superseded revision 6 (SHA256 1cec7f6e700f2f3863aea39214475fce3bd3d73e33ef5d2e07608e85105ed1c1, returned with finding R2 - close the expired-but-serving old-CN path before authoring opens), revision 5 (bd774cfa..., finding R1 startup vs already-serving closure), revision 4 (921a53533489bc123ecc296455e72a3d92d926fdf263beb7870d199eb98501bb, finding P2 durable-floor ownership), revision 3 (4bd0cb7d..., findings H1-H2), revision 2 (791b1dfa..., findings G1-G4), and revision 1 (f0a689b7..., findings F1-F5). Revision 7 verified the R2 finding against the code - all anchors confirmed, none refuted - and distinguished heartbeat expiry (control-plane tick arithmetic carrying no shutdown evidence) from verified process shutdown/session drain, removed the unsupported automatic-exclusion-of-the-expired-CN claim, and stated the load-bearing rollout prerequisite of that revision's fence: verified retirement of every below-floor CN process before authoring new-operand definitions (retired together with the fence by the round-9 correction); every other revision-7 decision retains its approval in this revision. Revision 8 applies the F8 correction: SET storage conditions no longer classify as boolean-condition contracts because their executors (numeric iffCheck admission, the uint64 truth kernel, the numeric-to-BOOL cast) are unchanged in every receiver and session mode, so SET persisted/generated expressions keep base-native access with byte-identical answers; D8 item 6 documents the cross-mode consumption gate's exact scope, and Section 9 adds the SET persisted no-contract battery. Revision 9 applies the round-9 P2 correction: D8 is rescoped from a cross-version capability fence to a same-binary, same-version cross-mode contract - the minted protocol slot, every version-gate wire, and every gate-behavior test are removed (Section 3 deviation list, Section 7) - while every other revision-2..8 decision (the invariant, matrices, truth kernels, grouping activation and zones, the two-carrier mode propagation, the F8 SET scope, and the cross-mode consumption gate itself) is retained unchanged. The preserved pre-revision-9 implementation in PR #31492 predates this revision and is adapted only at the listed deviation points after this revision passes.
-+
-+## 0. Revision history and finding disposition
-+
-+Round-1 findings F1-F5 (resolved in revision 2): F1 grouping-extension activation (code + probe); F2 coercion/mode matrix (code + probe); F3 remote mixed-version (code); F4 duplicated overflow-folding numeric parser (code + probe); F5 cross-boundary silent truth loss against a falsified lossless claim (probe). All confirmed; decisions D6-D10 resulted.
-+
-+Round-2 findings G1-G4 (resolved in revision 3): G1 D10 zone overlap against the repository's own complete-domain reversibility rule (mysqlSpecialNumericTypeReversible, mysql_special_types.go:915-929, plus the saved probe-2 two-ordinal table); G2 D9 reuse target's extension dispatch (func_cast.go:7639-7642/8055-8086) contradicting the pinned "0x10" -> false oracle; G3 native-mode parity missing a gate on group-key construction (group_binder.go:220-241 has no mode guard); G4 D8 validation structural-only while encodeRemoteScopeWithProtocol plus the json_string_consumers/quantile protocol-test batteries provide the behavioral shape. All confirmed; decisions D9/D10 revised, D11 added, D8 validation re-planned.
-+
-+### Round-3 review findings (H1-H2, resolved in revision 4)
-+
-+| Finding | Disposition (revision 4) |
-+| --- | --- |
-+| H1 D8 covered remote pipelines but not persisted expressions: a generated `CASE WHEN j` can reach an older CN through catalog metadata and execute locally, bypassing stream confirmation and the old BOOL-vector assumption; the existing durable authoring/read owners were not covered | Confirmed by code: generated-column authoring persists the bound expression through the catalog 
-```
-
-**File**: `pkg/pb/plan/string_literal_form.go` (modified, +78/-1)
-```diff
-@@ -299,6 +299,7 @@ const (
- 	planBooleanTypeID                int32 = 10
- 	planJSONTypeID                   int32 = 62
- 	planInt32TypeID                  int32 = 22
-+	planEnumTypeID                   int32 = 66
- 	// These stable function IDs are mirrored from pkg/sql/plan/function to
- 	// avoid a dependency cycle. The generic CAST operator is not an assignment
- 	// bounds check; these three internal assignment casts are.
-@@ -458,6 +459,17 @@ type RemoteExpressionFeatures struct {
- 	// LeastGreatestCollationSemantics requires v117 for appended overload 4.
- 	// Released overload 0 retains its historical byte-order contract.
- 	LeastGreatestCollationSemantics bool
-+	// JSONBooleanConditionContracts marks expressions whose evaluation depends
-+	// on the MySQL conditional-boolean contracts fixed by this change: IF/CASE
-+	// condition slots that admit T_json in-domain (values evaluated with MySQL
-+	// conditional numeric coercion) and the ENUM storage-truth admission that
-+	// casts the stored ordinal to BOOL. Under the repository's shutdown-only
-+	// upgrade contract every in-cluster peer runs the same binary, so the
-+	// flag requires no protocol version; its consumer is the persisted
-+	// expression cross-mode consumption gate (pkg/sql/plan/persisted_ip.go),
-+	// which keeps a MatrixOne-native session from re-binding a catalog
-+	// definition authored under the MySQL contracts.
-+	JSONBooleanConditionContracts bool
+@@ -385,6 +385,10 @@ func (ts *testTS) UpdateDaemonTaskError(context.Context, task.DaemonTask, bool)
+ 	panic("unexpected UpdateDaemonTaskError")
  }
  
- func (features RemoteExpressionFeatures) Any() bool {
-@@ -496,7 +508,8 @@ func (features RemoteExpressionFeatures) Any() bool {
- 		features.DecimalStatisticalResultContracts ||
- 		features.TableCollationFunction ||
- 		features.InvalidDecimalStatisticalResultContract || features.ScalarDivision ||
--		features.LeastGreatestCollationSemantics
-+		features.LeastGreatestCollationSemantics ||
-+		features.JSONBooleanConditionContracts
- }
- 
- func isPlanMediumIntType(typ Type) bool {
-@@ -934,6 +947,66 @@ func isExpressionResultMetadataContract(expr *Expr) bool {
- 	}
- }
- 
-+// isMySQLBooleanConditionContractNode reports whether one expression node uses
-+// a boolean-condition semantic that depends on the MySQL conditional-boolean
-+// contracts fixed by this change: a T_json condition slot of IF/CASE that
-+// evaluates in-domain with MySQL conditional numeric coercion (native-mode
-+// statements keep the pre-change admission), or the ENUM storage-truth
-+// admission that casts the stored ordinal to BOOL. The walk flag feeds only
-+// the same-version cross-mode consumption gate in pkg/sql/plan/persisted_ip.go:
-+// under the repository's shutdown-only upgrade contract every in-cluster
-+// worker and rebinder runs the same binary, so the expression carries no
-+// protocol requirement: no per-feature MORPC version and no
-+// version gate. SET storage conditions are exempt (design revision
-+// 8, finding F8): the persisted binder binds their raw uint64
-+// storage type and
-+// MySQL-mode query plans recover the same numeric operand, so the
-+// pre-existing numeric admission, uint64 truth and numeric-to-BOOL cast
-+// kernels evaluate them identically in any receiver and session mode -
-+// classifying them would refuse an unchanged execution and lock native
-+// sessions out of SET catalog definitions base already serves.
-+func isMySQLBooleanConditionContractNode(expr *Expr, fn *Function, id int32) bool {
-+	if fn == nil {
-+		return false
-+	}
-+	switch id {
-+	case 21: // generic CAST
-+		if expr == nil || expr.Typ.Id != planBooleanTypeID {
-+			return false
-+		}
-+		if len(fn.Args) == 0 || fn.Args[0] == nil {
-+			return false
-+		}
-+		src := fn.Args[0].Typ
-+		return src.Id == planEnumTypeID
-+	case iffFunctionID:
-+		if len(fn.Args) == 0 || fn.Args[0] == nil {
-+			return false
-+		}
-+		// iffCheck admits the ENUM condition in-domain exactly the way
-+		// caseCheck's condition slots stay typed, so the IFF condition needs
-+		// the same consumption-gate mark the CASE contract does: an ENUM
-+		// condition evaluates through the new storage-truth kernel on a
-+		// MySQL-mode statement, while a native-mode session keeps the old
-+		// admission. A SET condition keeps its raw numeric uint64 type here
-+		// and everywhere else, so the unchanged kernel row never needs the
-+		// mark.
-+		cond := fn.Args[0].Typ
-+		return cond.Id == planJSONTypeID || cond.Id == planEnumTypeID
-+	case caseFunctionID:
-+		for i := 0; i+1 < len(fn.Args); i += 2 {
-+			arg := fn.Args[i]
-+			if arg == nil {
-+				continue
-+			}
-+			if arg.Typ.Id == planJSONTypeID || arg.Typ.Id == planEnumTypeID {
-+				return true
-+			}
-+		}
-+	}
-+	return false
++func (ts *testTS) RequestDaemonTaskStatus(context.Context, task.DaemonTask, task.TaskStatus) (int, error) {
++	panic("unexpected RequestDaemonTaskStatus")
 +}
 +
- // RequiredRemoteExpressionFeatures reports the independent versioned
- // expression features present in owner. Keep the features separate so callers
- // can retain precise diagnostics, while sharing one owner walk so adding one
-@@ -1018,6 +1091,10 @@ func RequiredRemoteExpressionFeatures(owner any) (features RemoteExpressionFeatu
- 					fn.Args[0] != nil && fn.Args[0].Typ.Id == 55 { // CAST YEAR -> BIT
- 					features.
+ func (ts *testTS) UpdateDaemonTaskStatus(
+ 	ctx context.Context,
+ 	taskID uint64,
 ```
 
-**File**: `pkg/sql/colexec/evalExpression.go` (modified, +41/-8)
+**File**: `pkg/embed/cdc_control_status_test.go` (added, +286/-0)
 ```diff
-@@ -1593,6 +1593,7 @@ func (expr *FunctionExpressionExecutor) iffNullResult(index, length int) (*vecto
- func (expr *FunctionExpressionExecutor) EvalCase(proc *process.Process, batches []*batch.Batch, selectList []bool) (err error) {
- 	expr.resetFlowControlPrepareParamKind()
- 	rowCount := expressionRowCount(batches)
-+	mode := function.CompatibilityModeFromProcess(proc)
- 	if len(expr.selectList1) < rowCount {
- 		expr.selectList1 = make([]bool, rowCount)
- 		expr.selectList2 = make([]bool, rowCount)
-@@ -1612,15 +1613,47 @@ func (expr *FunctionExpressionExecutor) EvalCase(proc *process.Process, batches
- 			return err
- 		}
- 		if i != len(expr.parameterExecutor)-1 {
--			bs := vector.GenerateFunctionFixedTypeParameter[bool](expr.parameterResults[i])
-+			if expr.parameterResults[i].GetType().Oid == types.T_json {
-+				if mode != function.SQLCompatibilityMySQL {
-+					// A native-mode statement never binds a JSON condition, so
-+					// reaching one here means a persisted expression authored
-+					// with the conditional contracts is being consumed
-+					// cross-mode. Fail closed with the typed error instead of
-+					// letting the BOOL parameter decoding assert on a T_json
-+					// vector and never decode JSON as BOOL.
-+					return moerr.NewNotSupported(proc.Ctx,
-+						"JSON CASE condition requires the MySQL conditional boolean contracts; a MatrixOne native-mode session cannot evaluate it")
-+				}
-+				// A JSON condition keeps its own domain through the searched CASE
-+				// and evaluates per row with MySQL conditional numeric coercion,
-+				// the same kernel IF uses. Only an explicit CAST takes the strict
-+				// JSON-to-BOOL path, which the BOOL parameter wrapper below would
-+				// also wrongly demand here. A native-mode statement never binds a
-+				// JSON condition (legacy admission), so it keeps the base
-+				// behavior below byte-identically.
-+				for j := 0; j < rowCount; j++ {
-+					truth, evalErr := function.IffConditionTruthyAt(expr.parameterResults[i], uint64(j), mode)
-+					if evalErr != nil {
-+						return evalErr
-+					}
-+					if remaining[j] && truth {
-+						remaining[j] = false
-+						selectedBranch[j] = true
-+					} else {
-+						selectedBranch[j] = false
-+					}
-+				}
-+			} else {
-+				bs := vector.GenerateFunctionFixedTypeParameter[bool](expr.parameterResults[i])
- 
--			for j := 0; j < rowCount; j++ {
--				b, null := bs.GetValue(uint64(j))
--				if remaining[j] && !null && b {
--					remaining[j] = false
--					selectedBranch[j] = true
--				} else {
--					selectedBranch[j] = false
-+				for j := 0; j < rowCount; j++ {
-+					b, null := bs.GetValue(uint64(j))
-+					if remaining[j] && !null && b {
-+						remaining[j] = false
-+						selectedBranch[j] = true
-+					} else {
-+						selectedBranch[j] = false
-+					}
- 				}
- 			}
- 			expr.parameterResults[i+1], err = expr.parameterExecutor[i+1].Eval(proc, batches, selectedBranch)
-```
-
-**File**: `pkg/sql/colexec/evaluate_case_json_bool_test.go` (added, +177/-0)
-```diff
-@@ -0,0 +1,177 @@
+@@ -0,0 +1,286 @@
 +// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -2607,383 +2418,314 @@ classification that refused native ses
 +// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
-+
-+package colexec
++package embed
 +
 +import (
++	"bytes"
++	"context"
++	"fmt"
++	"sync"
 +	"testing"
++	"time"
 +
-+	"github.com/matrixorigin/matrixone/pkg/container/batch"
-+	"github.com/matrixorigin/matrixone/pkg/container/types"
-+	"github.com/matrixorigin/matrixone/pkg/container/vector"
-+	"github.com/matrixorigin/matrixone/pkg/sql/plan/function"
-+	"github.com/matrixorigin/matrixone/pkg/testutil"
-+	"github.com/matrixorigin/matrixone/pkg/vm/process"
++	"github.com/google/uuid"
++	"github.com/matrixorigin/matrixone/pkg/catalog"
++	"github.com/matrixorigin/matrixone/pkg/cnservice"
++	"github.com/matrixorigin/matrixone/pkg/common/runtime"
++	"github.com/matrixorigin/matrixone/pkg/lockservice"
++	"github.com/matrixorigin/matrixone/pkg/logservice"
++	logservicepb "github.com/matrixorigin/matrixone/pkg/pb/logservice"
++	"github.com/matrixorigin/matrixone/pkg/pb/task"
++	"github.com/matrixorigin/matrixone/pkg/pb/txn"
++	"github.com/matrixorigin/matrixone/pkg/queryservice"
++	"github.com/matrixorigin/matrixone/pkg/taskservice"
++	"github.com/matrixorigin/matrixone/pkg/util/executor"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+// captureSelectExecutor returns a fixed vector from every evaluation and
-+// records the row mask each call received, so a test can assert which rows a
-+// flow-control evaluator routed to which arm.
-+type captureSelectExecutor struct {
-+	result *vector.Vector
-+	seen   [][]bool
++type cdcControlResult struct {
++	n   int
++	err error
 +}
 +
-+func (c *captureSelectExecutor) Eval(_ *process.Process, _ []*batch.Batch, selectList []bool) (*vector.Vector, error) {
-+	c.seen = append(c.seen, append([]bool(nil), selectList...))
-+	return c.result, nil
-+}
-+
-+func (c *captureSelectExecutor) EvalWithoutResultReusing(_ *process.Process, _ []*batch.Batch, selectList []bool) (*vector.Vector, error) {
-+	c.seen = append(c.seen, append([]bool(nil), selectList...))
-+	return c.result, nil
-+}
-+
-+func (c *captureSelectExecutor) ResetForNextQuery() {}
-+
-+func (c *captureSelectExecutor) Free() {}
-+
-+func (c *captureSelectExecutor) IsColumnExpr() bool { return false }
-+
-+func (c *captureSelectExecutor) TypeName() string { return "capture" }
-+
-+// TestEvalCaseJsonConditionInDomain pins the flow-control CASE evaluator on a
-+// JSON condition: the condition stays in its own domain (the BOOL parameter
-+// wrapper must not touch the JSON vector, which used to panic with a
-+// JSON-to-[]bool type assertion) and each arm is evaluated for exactly the
-+// rows whose MySQL conditional numeric truth selects it.
-+func TestEvalCaseJsonConditionInDomain(t *testing.T) {
-+	proc := testutil.NewProcess(t)
-+
-+	encodeJSON := func(text string) []byte {
-+		bj, err := types.ParseStringToByteJson(text)
-+		require.NoError(t, err)
-+		packed, err := bj.Marshal()
-+		require.NoError(t, err)
-+		return packed
-+	}
-+
-+	conditions := []struct {
-+		name string
-+		data []byte
-+		null bool
-+	}{
-+		{name: `"2tail" numeric prefix is true`, data: encodeJSON(`"2tail"`)},
-+		{name: `"abc" is false`, data: encodeJSON(`"abc"`)},
-+		{name: `" 12" is true`, data: encodeJSON(`" 12"`)},
-+		{name: `string "true" is false`, data: encodeJSON(`"true"`)},
-+		{name: "sql null selects else", data: encodeJSON(`"1"`), null: true},
-+	}
-+
-+	condVec := vector.NewVec(types.T_json.ToType())
-+	defer condVec.Free(proc.Mp())
-+	thenVec := vector.NewVec(types.T_int64.ToType())
-+	defer thenVec.Free(proc.Mp())
-+	elseVec := vector.NewVec(types.T_int64.ToType())
-+	defer elseVec.Free(proc.Mp())
-+	for i, cond := range conditions {
-+		require.NoError(t, vector.AppendBytes(condVec, cond.data, cond.null, proc.Mp()))
-+		require.NoError(t, vector.AppendFixed(thenVec, int64(10+i), false, proc.Mp()))
-+		require.NoError(t, vector.AppendFixed(elseVec, int64(-1), false, proc.Mp()))
-+	}
-+
-+	condExec := &captureSelectExecutor{result: condVec}
-+	thenExec := &captureSelectExecutor{result: thenVec}
-+	elseExec := &captureSelectExecutor{result: elseVec}
-+	expr := &FunctionExpressionExecutor{
-+		parameterResults:  make([]*vector.Vector, 3),
-+		parameterExecutor: []ExpressionExecutor{condExec, thenExec, elseExec},
-+	}
-+	expr.fid = function.CASE
-+	expr.resultType = types.T_int64.ToType()
-+
-+	input := batch.NewWithSize(1)
-+	t.Cleanup(func() { input.Clean(proc.Mp()) })
-+	input.Vecs[0] = condVec
-+	input.SetRowCount(len(conditions))
-+
-+	require.NotPanics(t, func() {
-+		require.NoError(t, expr.EvalCase(proc, []*batch.Batch{input}, nil))
++func testCDCControlConcurrentClaims(t *testing.T, c Cluster) {
++	cn0, err := c.GetCNService(0)
++	require.NoError(t, err)
++	cn1, err := c.GetCNService(1)
++	require.NoError(t, err)
++	ctx, cancel := context.WithTimeout(t.Context(), 2*time.Minute)
++	defer cancel()
++	hakeeper, err := logservice.NewCNHAKeeperClient(ctx, cn0.GetServiceConfig().CN.UUID, cn0.GetServiceConfig().HAKeeperClient)
++	require.NoError(t, err)
++	t.Cleanup(func() { require.NoError(t, hakeeper.Close()) })
++	state, err := hakeeper.GetClusterState(ctx)
++	require.NoError(t, err)
++	// The regular task-service address resolver can select either CN. Pin this
++	// test's storage to CN0 so the competing transaction is definitely on CN1.
++	holder := taskservice.NewTaskServiceHolder(runtime.ServiceRuntime(cn0.ServiceID()), func(context.Context, bool) (string, error) {
++		return fmt.Sprintf("127.0.0.1:%d", cn0.GetServiceConfig().CN.Frontend.Port), nil
 +	})
++	t.Cleanup(func() { require.NoError(t, holder.Close()) })
++	require.NoError(t, holder.Create(logservicepb.CreateTaskService{
++		User: state.TaskTableUser, TaskDatabase: "mo_task",
++	}))
++	svc, ok := holder.Get()
++	require.True(t, ok)
++	store := svc.GetStorage()
++	exec0 := cn0.RawService().(cnservice.Service).GetSQLExecutor()
++	exec1 := cn1.RawService().(cnservice.Service).GetSQLExecutor()
++	localLS := lockservice.GetLockServiceByServiceID(cn0.ServiceID())
++	require.NotNil(t, localLS)
++	ls := lockservice.GetLockServiceByServiceID(cn1.ServiceID())
++	require.NotNil(t, ls)
++	for _, kind := range []string{"owner_change", "heartbeat"} {
++		if !t.Run(kind, func(t *testing.T) {
++			ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
++			defer cancel()
++			cdcID := uuid.NewString()
++			t.Cleanup(func() {
++				clean, done := context.WithTimeout(context.Background(), 10*time.Second)
++				defer done()
++				result, e := exec0.Exec(clean, fmt.Sprintf("delete from mo_catalog.mo_cdc_task where account_id=0 and task_id='%s'", cdcID), executor.Options{}.WithAccountID(catalog.System_Account))
++				if e == nil {
++					result.Close()
++				}
++				require.NoError(t, e)
++			})
++			setup := fmt.Sprintf("insert into mo_catalog.mo_cdc_task (account_id,task_id,task_name,source_uri,sink_uri,tables,state) values (0,'%s','probe-%s','source','sink','db.table','running')", cdcID, cdcID)
++			result, e := exec0.Exec(ctx, setup, executor.Options{}.WithAccountID(catalog.System_Account).WithWaitCommittedLogApplied())
++			require.NoError(t, e)
++			result.Close()
++			dt := task.DaemonTask{Metadata: task.TaskMetadata{ID: cdcID}, TaskStatus: task.TaskStatus_Running, CreateAt: time.Now(), UpdateAt: time.Now(), Details: &task.Details{AccountID: 0, Account: "sys", Details: &task.Details_CreateCdc{CreateCdc: &task.CreateCdcDetails{TaskId: cdcID, TaskName: "probe-" + cdcID, Accounts: []*task.Account{{Id: 0, Name: "sys"}}}}}}
++			var id uint64
++			t.Cleanup(func() {
++				clean, done := context.WithTimeout(context.Background(), 10*time.Second)
++				defer done()
++				if id != 0 {
++					_, e := store.DeleteDaemonTask(clean, taskservice.WithTaskIDCond(taskservice.EQ, id))
++					require.NoError(t, e)
++				} else {
++					query := fmt.Sprintf("delete from mo_task.sys_daemon_task where account_id=0 and task_metadata_executor=%d and task_metadata_id='%s'", task.TaskCode_TestOnly, cdcID)
++					result, e := exec0.Exec(clean, query, executor.Options{}.WithAccountID(catalog.System_Account))
++					if e == nil {
++						result.Close()
++					}
++					require.NoError(t, e)
++				}
++			})
++			n, e := store.AddDaemonTask(ctx, dt)
++			require.NoError(t, e)
 +
-+	require.Len(t, condExec.seen, 1)
-+	for row := range conditions {
-+		require.True(t, condExec.seen[0][row], "every row must reach the condition")
-+	}
-+	require.Len(t, thenExec.seen, 1, "the THEN arm must be evaluated exactly once")
-+	require.Equal(t, []bool{true, false, true, false, false}, thenExec.seen[0],
-+		"THEN must cover exactly the conditionally-true JSON rows")
-+	require.Len(t, elseExec.seen, 1, "the ELSE arm must be evaluated exactly once")
-+	require.Equal(t, []bool{false, true, false, true, true}, elseExec.seen[0],
-+		"ELSE must cover the false and SQL-NULL JSON rows")
-+}
-+
-+// TestEvalCaseJsonConditionNeverDecodesJsonAsBoolInNativeMode pins the review
-+// repair (finding 5): a JSON condition vector only ev
 ```
 
-**File**: `pkg/sql/colexec/group/group_test.go` (modified, +81/-0)
+**File**: `pkg/embed/cdc_target_generation_verification_test.go` (modified, +9/-2)
 ```diff
-@@ -5815,3 +5815,84 @@ func TestJSONMinMaxFinalGroupPhysicalSpillReload(t *testing.T) {
- 	require.Len(t, seen, 64)
- 	require.Positive(t, g.OpAnalyzer.GetOpStats().SpillRows, "final group must physically spill")
+@@ -47,8 +47,15 @@ func TestCDCTargetGenerationContractsOnMO(t *testing.T) {
  }
-+
-+// TestGroupJointGroupingFlagsPreserveStorageTruthOnActiveArms pins the D6
-+// joint activation contract at the operator seam (review repair, finding 1):
-+// the rollup replacement nulls every flag-false group-by vector, so an arm
-+// whose visible display key is active but whose hidden storage sibling is
-+// flag-false loses the storage truth on EVERY active group. The planner side
-+// must therefore activate both slots together; this test records the operator
-+// consequence of each flag shape: joint activation keeps both key vectors
-+// real, an inactive arm nulls both, and a display-only activation nulls the
-+// storage sibling (the pre-fix symptom the planner repair removes).
-+func TestGroupJointGroupingFlagsPreserveStorageTruthOnActiveArms(t *testing.T) {
-+	for _, tc := range []struct {
-+		name            string
-+		flags           []bool
-+		wantRows        int
-+		wantStorageKept bool
-+	}{
-+		{name: "joint active display and storage keep truth", flags: []bool{true, true}, wantRows: 3, wantStorageKept: true},
-+		{name: "inactive arm nulls both key vectors", flags: []bool{false, false}, wantRows: 1, wantStorageKept: false},
-+		{name: "display-only activation nulls the storage sibling", flags: []bool{true, false}, wantRows: 2, wantStorageKept: false},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			proc := testutil.NewProcess(t)
-+			input := batch.NewWithSize(3)
-+			input.Vecs[0] = testutil.MakeVarcharVector([]string{"a", "a", "b"}, nil, proc.Mp())
-+			input.Vecs[1] = testutil.MakeInt32Vector([]int32{1, 2, 2}, nil, proc.Mp())
-+			input.Vecs[2] = testutil.MakeInt32Vector([]int32{1, 1, 1}, nil, proc.Mp())
-+			input.SetRowCount(3)
-+
-+			child := colexec.NewMockOperator().WithBatchs([]*batch.Batch{input})
-+			partial := newGroupOp(proc, []*plan.Expr{
-+				colExpr(0, types.T_varchar), colExpr(1, types.T_int32),
-+			}, []aggexec.AggFuncExecExpression{sumAgg(2)})
-+			partial.NeedEval = false
-+			partial.GroupingFlag = tc.flags
-+			partial.AppendChild(child)
-+			require.NoError(t, partial.Prepare(proc))
-+			partialOutputs := collectBatches(t, partial, proc)
-+			partials := make([]*batch.Batch, len(partialOutputs))
-+			for i := range partialOutputs {
-+				partials[i] = cloneBatch(t, proc, partialOutputs[i])
-+			}
-+
-+			partial.Free(proc, false, nil)
-+			child.Free(proc, false, nil)
-+
-+			mergeChild := colexec.NewMockOperator().WithBatchs(partials)
-+			merge := newMergeGroupOp([]aggexec.AggFuncExecExpression{sumAgg(2)})
-+			merge.GroupingAware = true
-+			merge.AppendChild(mergeChild)
-+			require.NoError(t, merge.Prepare(proc))
-+			outputs := collectBatches(t, merge, proc)
-+
-+			rows := 0
-+			storageNulls := 0
-+			for _, output := range outputs {
-+				rows += output.RowCount()
-+				wrapper := vector.GenerateFunctionFixedTypeParameter[int32](output.Vecs[1])
-+				for row := uint64(0); row < uint64(output.RowCount()); row++ {
-+					_, isNull := wrapper.GetValue(row)
-+					if isNull {
-+						storageNulls++
-+					}
-+				}
-+			}
-+			require.Equal(t, tc.wantRows, rows)
-+			if tc.wantStorageKept {
-+				require.Zero(t, storageNulls,
-+					"an activated arm keeps the storage sibling's truth on every group")
-+			} else {
-+				require.Equal(t, rows, storageNulls,
-+					"every flag-false storage slot is a rollup NULL on every arm")
-+			}
-+
-+			merge.Free(proc, false, nil)
-+			mergeChild.Free(proc, false, nil)
-+			proc.Free()
-+			require.Zero(t, proc.Mp().CurrNB())
+ 
+ func TestCDCSourceGenerationGuardAcrossCN(t *testing.T) {
+-	runCDCGenerationContracts(t, 2, "TestCDCTenantCatalogGuardBlocksOtherCNDrop", testCDCTenantCatalogGuardBlocksOtherCNDrop,
+-		"TestCDCFirstAckHoldsSourceGenerationAcrossCN", testCDCFirstAckHoldsSourceGenerationAcrossCN)
++	runCDCGenerationContract(t, 2, func(cluster Cluster) {
++		if !t.Run("TestCDCTenantCatalogGuardBlocksOtherCNDrop", func(t *testing.T) { testCDCTenantCatalogGuardBlocksOtherCNDrop(t, cluster) }) {
++			return
++		}
++		if !t.Run("TestCDCControlConcurrentClaims", func(t *testing.T) { testCDCControlConcurrentClaims(t, cluster) }) {
++			return
++		}
++		t.Run("TestCDCFirstAckHoldsSourceGenerationAcrossCN", func(t *testing.T) { testCDCFirstAckHoldsSourceGenerationAcrossCN(t, cluster) })
++	})
+ }
+ 
+ func runCDCGenerationContracts(t *testing.T, cnCount int, passiveName string, passive func(*testing.T, Cluster), activeName string, active func(*testing.T, Cluster)) {
+```
+
+**File**: `pkg/embed/daemon_claim_test.go` (modified, +115/-1)
+```diff
+@@ -16,6 +16,8 @@ package embed
+ 
+ import (
+ 	"context"
++	"fmt"
++	"strings"
+ 	"testing"
+ 	"time"
+ 
+@@ -62,6 +64,62 @@ func TestDaemonClaimSQLRoundTrip(t *testing.T) {
+ 		claim = rows[0]
+ 		require.Equal(t, t.Name(), claim.Metadata.ID)
+ 		cond = taskservice.WithTaskIDCond(taskservice.EQ, claim.ID)
++		t.Run("account condition", func(t *testing.T) {
++			matching, err := storage.QueryDaemonTask(ctx, cond, taskservice.WithAccount(taskservice.EQ, "sys"))
++			require.NoError(t, err)
++			require.Len(t, matching, 1)
++			other, err := storage.QueryDaemonTask(ctx, cond, taskservice.WithAccount(taskservice.EQ, "other"))
++			require.NoError(t, err)
++			require.Empty(t, other)
 +		})
-+	}
-+}
-```
-
-**File**: `pkg/sql/plan/base_binder.go` (modified, +89/-1)
-```diff
-@@ -106,6 +106,31 @@ func (b *baseBinder) baseBindExpr(astExpr tree.Expr, depth int32, isRoot bool) (
- 				return
- 			}
- 
-+			// NOT evaluates its operand with MySQL numeric truth, so the
-+			// stored ENUM ordinal or SET bitmap must survive both the display
-+			// wrapper and the display-typed reference a GROUP BY flattening
-+			// leaves behind. Unrelated operands pass through unchanged.
-+			expr, err = b.mysqlSpecialBooleanTruthyOperand(b.GetContext(), expr)
-+			if err != nil {
-+				return
++		t.Run("account value is matched literally", func(t *testing.T) {
++			unique := time.Now().UnixNano()
++			account := fmt.Sprintf("tenant'quoted-%d", unique)
++			other := task.DaemonTask{
++				Metadata: task.TaskMetadata{ID: fmt.Sprintf("account-probe-%d", unique)}, TaskStatus: task.TaskStatus_Paused,
++				CreateAt: time.Now(), UpdateAt: time.Now(),
++				Details: &task.Details{AccountID: 17, Account: account},
 +			}
-+			// NOT binds through the expression-plan entry, whose checker only
-+			// consults the general implicit-cast table - base keeps no
-+			// ENUM -> BOOL row there, and the contract must not add one
-+			// (it would leak admission into native mode). Normalize the
-+			// recovered ENUM operand through the explicit storage-truth BOOL
-+			// cast, the same wrap the boolean-truth recovery loop applies for
-+			// AND/OR/XOR; a native-mode statement skips this and keeps the
-+			// base checker failure byte-identically.
-+			if function.MySQLConditionalBooleanContracts(b.GetContext()) &&
-+				isEnumPlanType(&expr.Typ) {
-+				expr, err = makePlan2CastExpr(b.GetContext(), expr,
-+					plan.Type{Id: int32(types.T_bool)})
-+				if err != nil {
-+					return
++			byAccount := taskservice.WithAccount(taskservice.EQ, other.Details.Account)
++			var ownedID uint64
++			t.Cleanup(func() {
++				cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 5*time.Second)
++				defer cleanupCancel()
++				conditions := []taskservice.Condition{byAccount, taskservice.WithAccountID(taskservice.EQ, 17), taskservice.WithTaskExecutorCond(taskservice.EQ, task.TaskCode_TestOnly)}
++				if ownedID != 0 {
++					conditions = append(conditions, taskservice.WithTaskIDCond(taskservice.EQ, ownedID))
 +				}
-+			}
-+
- 			expr, err = BindFuncExprImplByPlanExpr(b.GetContext(), "not", []*plan.Expr{expr})
- 		}
- 
-@@ -250,6 +275,22 @@ func (b *baseBinder) baseBindExpr(astExpr tree.Expr, depth int32, isRoot bool) (
- 		// must start from the stored ordinal/bitmap instead of that string.
- 		if makeTypeByPlan2Type(typ).IsNumeric() {
- 			expr, _ = storedMySQLSpecialTypeExpr(expr)
-+		} else if types.T(typ.Id) == types.T_bool {
-+			// The explicit CAST ... AS BOOL shares the boolean-truth storage
-+			// contract: a projected display label (GROUP BY / DISTINCT /
-+			// derived boundary) resolves through the same provenance-aware
-+			// recovery as IF/CASE and the logical consumers, so the pending
-+			// cast converts the recovered stored ordinal/bitmap instead of
-+			// re-parsing the label text. The recovery carries its own D11 gate
-+			// and D10 zone semantics: a native-mode statement keeps the
-+			// pre-contract display bind untouched, and an ambiguous
-+			// declaration fails closed across a display-decoding boundary.
-+			recovered, recoveryErr := b.mysqlSpecialBooleanTruthyOperand(b.GetContext(), expr)
-+			if recoveryErr != nil {
-+				err = recoveryErr
-+				return
-+			}
-+			expr = recovered
- 		}
- 		if b.builder != nil {
- 			var rewritten bool
-@@ -11965,7 +12006,18 @@ func (b *baseBinder) bindInetNtoaBinaryLiteral(astExpr *tree.NumVal, typ Type) (
- 	return expr, nil
- }
- 
--func (b *baseBinder) GetContext() context.Context { return b.sysCtx }
-+// GetContext returns the binder's owning context with the D11 statement
-+// compatibility scalar attached, so the condition admission sites (IF/CASE
-+// typing, the boolean-context rewrites) see the same one-scalar decision the
-+// BindContext resolved. A resolved scalar overrides anything inherited on
-+// sysCtx; contexts without the scalar (tests, DUMP origin validation) keep
-+// the MySQL-compatible default, matching the resolver's default.
-+func (b *baseBinder) GetContext() context.Context {
-+	if b.ctx != nil && b.ctx.mysqlConditionalBooleanContractsValid {
-+		return function.WithMySQLConditionalBooleanContracts(b.sysCtx, b.ctx.mysqlConditionalBooleanContracts)
-+	}
-+	return b.sysCtx
-+}
- 
- // GetProcess exposes the compile session's process to the window-function
- // binder surface so constant-expression folding uses the same deterministic
-@@ -12242,6 +12294,42 @@ func rewriteMySQLSpecialTypeDisplayCast(ctx context.Context, expr *Expr, toType
- 			return bitmap, false, nil
- 		}
- 	}
-+	if types.T(toType.Id) == types.T_bool && function.MySQLConditionalBooleanContracts(ctx) {
-+		// D11 gate: this whole BOOL-target block binds with the MySQL
-+		// storage-truth contracts; a native-mode statement falls through to the
-+		// pre-contract behavior below, so explicit CAST ... AS BOOL keeps the
-+		// base bind/execute outcome byte-identically.
-+		// MySQL BIT (b'..') and HEX (x'..' / 0x..) literals are numeric bit
-+		// strings: a boolean context evaluates their payload numerically instead
-+		// of re-parsing the raw bytes as text. Fold the constant so logical
-+		// operators, CASE WHEN and predicates match the numeric semantics
-+		// arithmetic already gives these literals. Binary introducer strings are
-+		// excluded on purpose; they keep ordinary string truthiness.
-+		if isBinaryNumericLiteral(expr) {
-+			if literal := expr.GetLit(); literal != nil && !literal.Isnull {
-+				nonzero := false
-+				for _, b := range []byte(literal.GetSval()) {
-+					if b != 0 {
-+						nonzero = true
-+						break
-+					}
-+				}
-+				// The folded BOOL constant is already the boolean value; the
-+				// pending cast must not wrap it again.
-+				return makePlan2BoolConstExprWithType(nonzero), true, nil
-+			}
-+		}
-+		// Boolean contracts (WHERE/HAVING/ON predicates, AND/O
-```
-
-**File**: `pkg/sql/plan/bind_context.go` (modified, +9/-0)
-```diff
-@@ -68,11 +68,20 @@ func NewBindContext(builder *QueryBuilder, parent *BindContext) *BindContext {
- 			requiredProtocol := int64(0)
- 			bc.persistedExpressionProtocolRequirement = &requiredProtocol
- 		}
-+		if parent == nil {
-+			// D11 carrier one: resolve the statement compatibility scalar once
-+			// at (root) BindContext entry from the session flag the executors
-+			// read. Children inherit it below.
-+			bc.mysqlConditionalBooleanContracts = function.MySQLConditionalBooleanContractsFromProcess(builder.compCtx.GetProcess())
-+			bc.mysqlConditionalBooleanContractsValid = true
-+		}
- 	}
- 
- 	if parent != nil {
- 		bc.persistedExpressionProtocolRequirement = parent.persistedExpressionProtocolRequirement
- 		bc.ctasExecutionProtocolRequirement = parent.ctasExecutionProtocolRequirement
-+		bc.mysqlConditionalBooleanContracts = parent.mysqlConditionalBooleanContracts
-+		bc.mysqlConditionalBooleanContractsValid = parent.mysqlConditionalBooleanContractsValid
- 		bc.existentialBlock = parent.existentialBlock
- 		bc.subqueryNestingDepth = parent.subqueryNestingDepth
- 		bc.lower = parent.lower
-```
-
-**File**: `pkg/sql/plan/bind_insert.go` (modified, +16/-0)
-```diff
-@@ -2967,6 +2967,13 @@ func (builder *QueryBuilder) appendDedupAndMultiUpdateNodesForBindInsert(
- 			if err != nil {
- 				return 0, err
++				_, cleanupErr := storage.DeleteDaemonTask(cleanupCtx, conditions...)
++				require.NoError(t, cleanupErr)
++			})
++			n, err := storage.AddDaemonTask(ctx, other)
++			require.NoError(t, err)
++			require.Equal(t, 1, n)
++			matching, err := storage.QueryDaemonTask(ctx, byAccount, taskservice.WithAccountID(taskservice.EQ, 17), taskservice.WithLastRun(time.Time{}))
++			require.NoError(t, err)
++			require.Len(t, matching, 1)
++			ownedID = matching[0].ID
++			require.Equal(t, other.Metadata.ID, matching[0].Metadata.ID)
++			otherRows, err := storage.QueryDaemonTask(ctx, byAccount, taskservice.WithAccountID(taskservice.EQ, 18))
++			require.NoError(t, err)
++			require.Empty(t, otherRows)
++		})
++		t.Run("unassigned null claim", func(t *testing.T) {
++			require.Empty(t, claim.TaskRunner)
++			require.True(t, claim.LastRun.IsZero())
++			n, err := storage.RequestDaemonTaskStatus(ctx, claim, task.TaskStatus_PauseRequested)
++			require.NoError(t, err)
++			require.Equal(t, 1, n)
++			current, err := storage.QueryDaemonTask(ctx, cond)
++			require.NoError(t, err)
++			require.Len(t, current, 1)
++			n, err = storage.UpdateDaemonTask(ctx, current, cond, taskservice.WithLastRun(time.Time{}), taskservice.WithTaskRunnerCond(taskservice.EQ, ""))
++			require.NoError(t, err)
++			require.Equal(t, 1, n, "NULL claim must match initial admission")
++			n, err = storage.RequestDaemonTaskStatus(ctx, current[0], task.TaskStatus_Paused)
++			require.NoError(t, err)
++			require.Equal(t, 1, n)
++		})
+ 		claim.TaskRunner = "claim-test-cn"
+ 		claim.LastRun = time.Date(2026, 8, 1, 12, 0, 0, 123456000, time.UTC)
+ 		claim.LastHeartbeat = claim.LastRun.Truncate(time.Second)
+@@ -80,6 +138,39 @@ func TestDaemonClaimSQLRoundTrip(t *testing.T) {
+ 				require.Equal(t, 1, n)
  			}
-+			// Same cross-mode consumption boundary as the plain insert path:
-+			// a native-mode ODKU statement must fail closed on a persisted
-+			// definition that needs the conditional boolean contracts.
-+			if err := RequireMySQLConditionalBooleanConsumption(
-+				builder.GetContext(), builder.compCtx.GetProcess(), genExpr); err != nil {
-+				return 0, err
+ 		})
++		t.Run("status request preserves renewed heartbeat", func(t *testing.T) {
++			observed := rows[0]
++			renewed := observed
++			renewed.LastHeartbeat = time.Now().UTC().Truncate(time.Second)
++			n, err := storage.HeartbeatDaemonTask(ctx, []task.DaemonTask{renewed})
++			require.NoError(t, err)
++			require.Equal(t, 1, n)
++			for _, stale := range []task.DaemonTask{
++				func() task.DaemonTask { v := observed; v.AccountID++; return v }(),
++				func() task.DaemonTask { v := observed; v.TaskStatus = task.TaskStatus_Running; return v }(),
++				func() task.DaemonTask { v := observed; v.TaskRunner = "other-cn"; return v }(),
++				func() task.DaemonTask { v := observed; v.TaskRunner = strings.ToUpper(v.TaskRunner); return v }(),
++				func() task.DaemonTask { v := observed; v.LastRun = v.LastRun.Add(time.Microsecond); return v }(),
++			} {
++				n, err = storage.RequestDaemonTaskStatus(ctx, stale, task.TaskStatus_PauseRequested)
++				require.NoError(t, err)
++				require.Zero(t, n)
 +			}
- 			replaceColRefTag(genExpr, 0, scanTag)
- 			updateExprs[col.Name] = genExpr
- 			updateColIdxList = append(updateColIdxList, int32(i))
-@@ -5584,6 +5591,15 @@ func (builder *QueryBuilder) appendNodesForInsertStmt(
- 		if err != nil {
- 			return 0, nil, nil, -1, err
++			n, err = storage.RequestDaemonTaskStatus(ctx, observed, task.TaskStatus_PauseRequested)
++			require.NoError(t, err)
++			require.Equal(t, 1, n)
++			current, err := storage.QueryDaemonTask(ctx, cond)
++			require.NoError(t, err)
++			require.Len(t, current, 1)
++			require.True(t, renewed.LastHeartbeat.Equal(current[0].LastHeartbeat))
++			require.Equal(t, task.TaskStatus_PauseRequested, current[0].TaskStatus)
++			n, err = storage.RequestDaemonTaskStatus(ctx, current[0], current[0].TaskStatus)
++			require.NoError(t, err)
++			require.Equal(t, 1, n, "same-status CAS must report a matched row")
++			n, e
+```
+
+**File**: `pkg/embed/snapshot_publication_replay_test.go` (modified, +1/-3)
+```diff
+@@ -54,9 +54,7 @@ func TestSnapshotDatabasePublicationReplayBoundaries(t *testing.T) {
+ 			{name: "quoted_comment", comment: "owner's copy"},
+ 			{name: "backslash_comment", comment: `owner's C:\new\table\`},
+ 			{name: "external_fk", comment: "live publication", externalFK: true},
+-			{name: "quoted_publication", publication: "review-pub"},
+-			{name: "quoted_database", database: "review-db"},
+-			{name: "quoted_table", table: "review-items", explicitTables: true},
++			{name: "quoted_database_and_publication", database: "review-db", publication: "review-pub"},
+ 			{name: "quoted_identifiers", database: "review-db", publication: "review-pub", table: "review-items", explicitTables: true},
+ 			{name: "empty_accounts", comment: "owner's empty authorization", emptyAccounts: true},
+ 			{name: "empty_quoted_tables", database: "review-empty-db", publication: "review-empty-pub", table: "review-items", explicitTables: true, emptyAccounts: true},
+```
+
+**File**: `pkg/frontend/cdc_dao.go` (modified, +2/-2)
+```diff
+@@ -75,7 +75,7 @@ func NewCDCDao(
+ 
+ func (t *CDCDao) MustGetTaskService() taskservice.TaskService {
+ 	if t.ts == nil && t.ses != nil {
+-		t.ts = getPu(t.ses.GetService()).TaskService
++		t.ts = getPu(t.ses.GetService()).GetTaskService()
+ 	}
+ 	if t.ts == nil {
+ 		panic("taskService is nil")
+@@ -125,7 +125,7 @@ func (t *CDCDao) CreateTask(
+ 
+ 	// Get TaskService - handle nil case gracefully instead of panicking
+ 	if t.ts == nil && t.ses != nil {
+-		t.ts = getPu(t.ses.GetService()).TaskService
++		t.ts = getPu(t.ses.GetService()).GetTaskService()
+ 	}
+ 	if t.ts == nil {
+ 		return moerr.NewInternalError(ctx, "TaskService is not available. CDC task creation requires TaskService to be initialized.")
+```
+
+**File**: `pkg/frontend/cdc_exector.go` (modified, +8/-3)
+```diff
+@@ -1848,9 +1848,14 @@ func (exec *CDCTaskExecutor) Pause() error {
+ 			return moerr.NewInternalErrorNoCtx("CDC pause timed out waiting for table detector callbacks")
  		}
-+		// The copied catalog expression is rebound against THIS statement: a
-+		// definition that needs the conditional boolean contracts evaluates
-+		// with those kernels only on a MySQL-mode session, and a native-mode
-+		// DML statement must fail closed at plan time instead of pushing a
-+		// persisted JSON condition into the pre-contract BOOL decoding.
-+		if err := RequireMySQLConditionalBooleanConsumption(
-+			builder.GetContext(), builder.compCtx.GetProcess(), genExpr); err != nil {
-+			return 0, nil, nil, -1, err
+ 
+-		// Synchronously wait for all readers to stop before proceeding
+-		// This ensures no goroutine leaks and clean pause state
+-		exec.stopAllReaders()
++		// Do not publish Paused while a reader can still produce work. The
++		// completion owner survives a timeout and the next pause can retry.
++		if stopped, _ := exec.stopAllReaders(); !stopped {
++			if wasRunning {
++				v2.CdcTaskTotalGauge.WithLabelValues("running").Dec()
++			}
++			return moerr.NewInternalErrorNoCtx("pause timed out waiting for readers to stop")
 +		}
- 		proj1Pos := genColIdxToProj1Pos[i]
- 		columnExprs[int32(i)] = genExpr
- 		colIdxToProjPos[int32(i)] = int32(proj1Pos)
+ 
+ 		// Note: task was marked as paused earlier (before ClosePause) to maximize blocking window
+ 		// This may cause some watermark updates during stopAllReaders to be blocked,
+```
+
+**File**: `pkg/frontend/cdc_handle.go` (modified, +1/-1)
+```diff
+@@ -260,7 +260,7 @@ func doUpdateCDCTask(
+ 		)
+ 	}
+ 
+-	ts := getPu(service).TaskService
++	ts := getPu(service).GetTaskService()
+ 	if ts == nil {
+ 		if isCDCRestart(targetTaskStatus) {
+ 			eventCDCRestartTaskServiceUnavailable.WarnLazy(func() []zap.Field {
 ```
 
 ---
 
-### Incident Patch 2: `8197e28b` (2026-10-30)
-**Commit Message**: fix(sysview): publish declared COLUMNS metadata, numeric SUB_PART and full generated expressions (#31489)
+### Incident Patch 2: `dd762803` (2026-10-31)
+**Commit Message**: Revert long-scan reader cache admission change (#31943)
 
 ## What type of PR is this?
 
@@ -2997,922 +2739,463 @@ classification that refused native ses
 
 ## Which issue(s) this PR fixes:
 
-Related to #30936.
-Related to #30935.
-Related to #30937.
+Fixes #31868
 
 ## What this PR does / why we need it:
 
-Fixes the declared-catalog metadata defects of #30936/#30935/#30937 and
-delivers the corrected
-identities through the repository's supported model: **unconditional
-publication plus one
-idempotent stored-view refresh hop**. No feature-specific protocol gate
-and no mixed-version
-fallback exists in this PR: after the first implementation review every
-such mechanism was
-removed (`MORPCLatestVersion` stays 134, no read substitution, no
-admission survey, no per-tenant
-floor), while the stored-view migration the reviewers called "necessary"
-is retained.
+Revert #31767's reader cache-admission change following the reported
+25.7% TPCH 1T slowdown. Restore the previous per-reader cache-write
+cutoff and its ordinary, delegated and sharded constructor callers,
+preserving later unrelated changes.
 
-### Design record (design-first review chain)
+Keep immediate test cleanup and the independent FIFO working-set
+control. The persisted-reader regression checks the threshold transition
+and explicit cache-write suppression using two reads of one small block.
 
-The change is triggered (persisted-view migration, upgrade recovery,
-cross-subsystem changes), so
-the repository's design gate applies:
-`docs/design/20261026-declared-catalog-metadata-publication-and-repair.md`
+Validation: affected owning-package UT and race, ordinary/sharded reader
+consumer tests in both modes, formatting, go vet, pinned molint and
+incremental golangci-lint.
 
-**File**: `pkg/bootstrap/columns_upgrade_test.go` (modified, +191/-1)
+The reported 1T workload was not rerun locally. This rollback restores
+the prior admission tradeoff and may relinquish the warm-cache gains of
+#31767; it does not establish the precise mechanism of the reported
+slowdown.
+
+**File**: `pkg/fileservice/fifocache/fifo_test.go` (modified, +1/-2)
 ```diff
-@@ -4,7 +4,7 @@
- // you may not use this file except in compliance with the License.
- // You may obtain a copy of the License at
- //
--//     http://www.apache.org/licenses/LICENSE-2.0
-+//      http://www.apache.org/licenses/LICENSE-2.0
- //
- // Unless required by applicable law or agreed to in writing, software
- // distributed under the License is distributed on an "AS IS" BASIS,
-@@ -16,17 +16,22 @@ package bootstrap
- 
- import (
- 	"errors"
-+	"fmt"
- 	"strings"
- 	"testing"
- 
- 	"github.com/golang/mock/gomock"
- 	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions"
-+	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_18"
-+	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_7"
- 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
- 	"github.com/matrixorigin/matrixone/pkg/common/mpool"
- 	"github.com/matrixorigin/matrixone/pkg/common/runtime"
- 	"github.com/matrixorigin/matrixone/pkg/container/types"
-+	"github.com/matrixorigin/matrixone/pkg/defines"
- 	mock_frontend "github.com/matrixorigin/matrixone/pkg/frontend/test"
- 	pbtxn "github.com/matrixorigin/matrixone/pkg/pb/txn"
-+	"github.com/matrixorigin/matrixone/pkg/txn/clock"
- 	"github.com/matrixorigin/matrixone/pkg/util/executor"
- 	"github.com/matrixorigin/matrixone/pkg/util/sysview"
- 	"github.com/stretchr/testify/require"
-@@ -110,3 +115,188 @@ func TestColumnsUpgradeAdmissionAndIdempotence(t *testing.T) {
- 		})
- 	}
- }
-+
-+// TestColumnsUpgradeReachesExistingTenants drives the retained 4.0.19 tenant
-+// hop (design 5.2, routes per D14-2; renumbered by revision 10 onto the
-+// consolidated ladder): a 4.0.7 account holding any pre-correction
-+// information_schema identity is rewritten to exactly the published
-+// identities through the per-account walk, which steps the upstream 4.0.18
-+// handle and the final vehicle; a current account is a no-op, a mid-hop DDL
-+// failure leaves the account marker untouched and retries cleanly.
-+func TestColumnsUpgradeReachesExistingTenants(t *testing.T) {
-+	runtime.RunTest("", func(runtime.Runtime) {
-+		frozen := v4_0_7.Handler.Metadata()
-+		current := versions.Version{Version: frozen.Version, VersionOffset: frozen.VersionOffset, State: versions.StateReady}
-+		columnsDefinition := sysview.InformationSchemaColumnsBinaryFamilyNullDDL()
-+		statisticsDefinition := sysview.InformationSchemaStatisticsDDL
-+		tenantVersion := "4.0.7"
-+		var queuedVersion, queuedRoute bool
-+		var writes []string
-+		failStatistics := false
-+		injected := errors.New("injected STATISTICS create failure")
-+		op := mock_frontend.NewMockTxnOperator(gomock.NewController(t))
-+		op.EXPECT().TxnOptions().Return(pbtxn.TxnOptions{}).AnyTimes()
-+		op.EXPECT().Txn().Return(pbtxn.TxnMeta{}).AnyTimes()
-+		exec := executor.NewMemExecutor2(func(sql string) (executor.Result, error) {
-+			switch {
-+			case strings.HasPrefix(sql, "SELECT reldatabase, relname, account_id FROM mo_catalog.mo_tables"):
-+				return newBootstrapStringResult("mo_catalog"), nil
-+			case sql == versions.LatestVersionSQL:
-+				return recoveryVersionResult(t, current), nil
-+			case strings.HasPrefix(sql, "select version from mo_version"):
-+				// The latest ready version that the route chains from.
-+				return newBootstrapStringResult(frozen.Version), nil
-+			case strings.HasPrefix(sql, "select state from mo_version"):
-+				// The queued forward version has no row yet; the checker
-+				// proceeds to enqueue it with its route.
-+				return executor.Result{}, nil
-+			case strings.HasPrefix(sql, "insert into mo_version"):
-+				// The registered forward version carries the two shared entries.
-+				require.Contains(t, sql, "'4.0.19', 2, 0")
-+				queuedVersion = true
-+			case strings.HasPrefix(sql, "insert into mo_upgrade"):
-+				require.Contains(t, sql, "'4.0.7'")
-+				require.Contains(t, sql, "'4.0.19'")
-+				queuedRoute = true
-+			case strings.HasPrefix(sql, "select create_version from mo_account"):
-+				return newBootstrapStringResult(tenantVersion), nil
-+			case strings.Contains(sql, "relname = 'COLUMNS'"), strings.Contains(sql, "relname = 'columns'"):
-+				return newBootstrapStringResult(columnsDefinition), nil
-+			case strings.Contains(sql, "relname = 'STATISTICS'"), strings.Contains(sql, "relname = 'statistics'"):
-+				return newBootstrapStringResult(statisticsDefinition), nil
-+			case strings.HasPrefix(sql, "select rel_id, rel_logical_id, relkind from mo_catalog.mo_tables"):
-+				return executor.Result{}, nil
-+			case sql == "SELECT mo_ctl('cn', 'GetProtocolVersion', '')":
-+				return newBootstrapStringResult(`{"result":"cn:118"}`), nil
-+			case sql == strings.Replace(sysview.InformationSchemaColumnsDDL, "CREATE VIEW ", "CREATE OR REPLACE VIEW ", 1):
-+				writes = append(writes, sql)
-+				columnsDefinition = sysview.InformationSchemaColumnsDDL
-+			case sql == strings.Replace(sysview.InformationSchemaStatisticsPrefixSubPartDDL, "CREATE VIEW ", "CREATE OR REPLACE VIEW ", 1):
-+				writes = append(writes, sql)
-+				if failStatistics {
-+					return executor.Result{}, injected
-+				
-```
-
-**File**: `pkg/bootstrap/custom_upgrade.go` (modified, +8/-0)
-```diff
-@@ -201,6 +201,14 @@ func (s *service) UpgradeOneTenant(ctx context.Context, tenantID int32) error {
- 						from = v.Metadata().Version
- 					}
- 				}
-+				// A manual upgrade reports success only with the account at the
-+				// cluster's final version. The re-planned loop below still takes
-+				// over after a committed paged 4.0.7 stage, so only a non-pending
-+				// shortfall is terminal here instead of being cached as success.
-+				if !pendingV407 && from != currentCN.Version {
-+					return moerr.NewInvalidInputNoCtxf("cannot upgrade tenant version %s to current cn version %s",
-+						from, currentCN.Version)
-+				}
- 				return nil
- 			},
- 			opts)
-```
-
-**File**: `pkg/bootstrap/service_statistics_upgrade_test.go` (modified, +7/-5)
-```diff
-@@ -22,6 +22,7 @@ import (
- 
- 	"github.com/golang/mock/gomock"
- 	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions"
-+	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_18"
- 	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_6"
- 	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_7"
- 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-@@ -50,9 +51,10 @@ func TestPublishedCatalogUpgradeRoutes(t *testing.T) {
- 		offset        uint32
- 		hops          [][2]string
- 	}{
--		{name: "4.1", version: "4.0.1", offset: 1, hops: [][2]string{{"4.0.1", "4.0.2"}, {"4.0.2", "4.0.3"}, {"4.0.3", "4.0.4"}, {"4.0.4", "4.0.5"}, {"4.0.5", "4.0.6"}, {"4.0.6", "4.0.7"}, {"4.0.7", "4.0.18"}}},
--		{name: "4.2", version: "4.0.6", offset: 5, hops: [][2]string{{"4.0.6", "4.0.7"}, {"4.0.7", "4.0.18"}}},
--		{name: "4.0.7", version: "4.0.7", offset: v4_0_7.Handler.Metadata().VersionOffset, hops: [][2]string{{"4.0.7", "4.0.18"}}},
-+		{name: "4.1", version: "4.0.1", offset: 1, hops: [][2]string{{"4.0.1", "4.0.2"}, {"4.0.2", "4.0.3"}, {"4.0.3", "4.0.4"}, {"4.0.4", "4.0.5"}, {"4.0.5", "4.0.6"}, {"4.0.6", "4.0.7"}, {"4.0.7", "4.0.18"}, {"4.0.18", "4.0.19"}}},
-+		{name: "4.2", version: "4.0.6", offset: 5, hops: [][2]string{{"4.0.6", "4.0.7"}, {"4.0.7", "4.0.18"}, {"4.0.18", "4.0.19"}}},
-+		{name: "4.0.7_frozen", version: "4.0.7", offset: v4_0_7.Handler.Metadata().VersionOffset, hops: [][2]string{{"4.0.7", "4.0.19"}}},
-+		{name: "4.0.18_main_era", version: "4.0.18", offset: v4_0_18.Handler.Metadata().VersionOffset, hops: [][2]string{{"4.0.18", "4.0.19"}}},
- 	} {
- 		t.Run(tc.name, func(t *testing.T) {
- 			runtime.RunTest("", func(runtime.Runtime) {
-@@ -72,12 +74,12 @@ func TestPublishedCatalogUpgradeRoutes(t *testing.T) {
- 				}, &testTxnOperator{})
- 				s := newServiceForTest("", &memLocker{}, clock.NewHLCClock(func() int64 { return 0 }, 0), nil, exec, func(s *service) { s.initUpgrade() })
- 				t.Cleanup(s.stopper.Stop)
--				require.Equal(t, "4.0.18", s.GetFinalVersion())
-+				require.Equal(t, "4.0.19", s.GetFinalVersion())
- 				require.Equal(t, uint32(5), v4_0_6.Handler.Metadata().VersionOffset)
- 				require.NoError(t, s.doCheckUpgrade(t.Context()))
- 				require.Len(t, upgrades, len(tc.hops))
- 				for i, hop := range tc.hops {
--					require.Contains(t, upgrades[i], fmt.Sprintf("values ('%s', '%s', '4.0.18',", hop[0], hop[1]))
-+					require.Contains(t, upgrades[i], fmt.Sprintf("values ('%s', '%s', '4.0.19',", hop[0], hop[1]))
- 				}
- 			})
- 		})
-```
-
-**File**: `pkg/bootstrap/service_upgrade.go` (modified, +18/-0)
-```diff
-@@ -499,6 +499,14 @@ func (s *service) checkUpgradeRecovery(target versions.Version, txn executor.Txn
- 			(u.State != versions.StateCreated && u.State != versions.StateUpgradingTenant && u.State != versions.StateReady) {
- 			return &terminalUpgradeError{moerr.NewInvalidStateNoCtxf("cannot resume invalid upgrade step %s", u.String())}
- 		}
-+		// Offset-only legs target only the frozen 4.0.7 stage, whose only
-+		// durable per-account progress marker cannot identify two offsets
-+		// of the same version. Reject resumption here exactly as the
-+		// pre-mutation check rejects creating it.
-+		if u.FromVersion == v4_0_7.Handler.Metadata().Version &&
-+			u.ToVersion == v4_0_7.Handler.Metadata().Version {
-+			return &terminalUpgradeError{moerr.NewInvalidStateNoCtx("unsupported in-progress 4.0.7 offset-only upgrade; 4.0.7 is frozen and further migrations require a new catalog version")}
-+		}
- 		supported := false
- 		for _, h := range s.handles {
- 			v := h.Metadata()
-@@ -512,6 +520,16 @@ func (s *service) checkUpgradeRecovery(target versions.Version, txn executor.Txn
- 			return &terminalUpgradeError{moerr.NewInvalidStateNoCtxf("cannot resume unsupported upgrade step %s", u.String())}
- 		}
- 	}
-+	// A retained route to the frozen 4.0.7 stage needs the same catalog
-+	// admission upstream enforces before creating it: a final above 4.0.7
-+	// reaches this resume path without any other admission check.
-+	// canResumeUpgrade already pinned the route to the registered frozen
-+	// handle's offset.
-+	if target.Version == v4_0_7.Handler.Metadata().Version {
-+		if err := rejectLegacyCDCTasks(txn); err != nil {
-+			return err
-+		}
-+	}
- 	return nil
- }
- 
-```
-
-**File**: `pkg/bootstrap/service_upgrade_cdc_test.go` (modified, +115/-0)
-```diff
-@@ -22,6 +22,9 @@ import (
- 	"testing"
- 
- 	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions"
-+	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_18"
-+	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_19"
-+	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_6"
- 	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_7"
- 	"github.com/matrixorigin/matrixone/pkg/common/mpool"
- 	"github.com/matrixorigin/matrixone/pkg/common/runtime"
-@@ -112,3 +115,115 @@ func TestLegacyCDCAdmissionBeforeUpgradeMutation(t *testing.T) {
- 		})
- 	}
- }
-+
-+// TestLegacyCDCAdmissionEmptyCatalogAdmitsSourceOnward pins that a source
-+// below the frozen stage with no legacy CDC tasks admits past the gate and
-+// proceeds to create the consolidated route - the successor keeps upstream's
-+// admission/passage contract at the 4.0.19 final.
-+func TestLegacyCDCAdmissionEmptyCatalogAdmitsSourceOnward(t *testing.T) {
-+	runtime.RunTest("", func(runtime.Runtime) {
-+		source := v4_0_6.Handler.Metadata()
-+		var routes []string
-+		exec := executor.NewMemExecutor2(func(sql string) (executor.Result, error) {
-+			switch {
-+			case strings.HasPrefix(sql, "SELECT reldatabase, relname, account_id FROM mo_catalog.mo_tables"):
-+				return newBootstrapStringResult("mo_catalog"), nil
-+			case sql == versions.LatestVersionSQL:
-+				return recoveryVersionResult(t, versions.Version{Version: source.Version, VersionOffset: source.VersionOffset, State: versions.StateReady}), nil
-+			case strings.Contains(sql, "from mo_catalog.mo_cdc_task"):
-+				return executor.Result{}, nil
-+			case strings.Contains(sql, "select version from mo_version"):
-+				return newBootstrapStringResult(source.Version), nil
-+			case strings.HasPrefix(sql, "insert into mo_upgrade"):
-+				routes = append(routes, sql)
-+				return executor.Result{}, nil
-+			default:
-+				return executor.Result{}, nil
-+			}
-+		}, &testTxnOperator{})
-+		s := newServiceForTest("", &memLocker{}, clock.NewHLCClock(func() int64 { return 0 }, 0), nil, exec, func(s *service) { s.initUpgrade() })
-+		t.Cleanup(s.stopper.Stop)
-+		require.NoError(t, s.doCheckUpgrade(t.Context()))
-+		require.Len(t, routes, 3, "an admitted 4.0.6 source chains through the frozen stage, the upstream 4.0.18 handle and the final vehicle")
-+		require.Contains(t, fmt.Sprint(routes), fmt.Sprintf("'%s', '%s', '4.0.19',", source.Version, v4_0_7.Handler.Metadata().Version))
-+		require.Contains(t, fmt.Sprint(routes), fmt.Sprintf("'%s', '%s', '4.0.19',", v4_0_7.Handler.Metadata().Version, v4_0_18.Handler.Metadata().Version))
-+		require.Contains(t, fmt.Sprint(routes), fmt.Sprintf("'%s', '%s', '4.0.19',", v4_0_18.Handler.Metadata().Version, v4_0_19.Handler.Metadata().Version))
-+	})
-+}
-+
-+// TestLegacyCDCReadErrorStaysRetryableAtAdmission pins the successor's
-+// create-admission contract for a transient catalog read: the wrapped error
-+// stays retryable, terminates nothing, and no mutation runs.
-+func TestLegacyCDCReadErrorStaysRetryableAtAdmission(t *testing.T) {
-+	runtime.RunTest("", func(runtime.Runtime) {
-+		source := v4_0_6.Handler.Metadata()
-+		want := errors.New("catalog read failed")
-+		exec := executor.NewMemExecutor2(func(sql string) (executor.Result, error) {
-+			switch {
-+			case strings.HasPrefix(sql, "SELECT reldatabase, relname, account_id FROM mo_catalog.mo_tables"):
-+				return newBootstrapStringResult("mo_catalog"), nil
-+			case sql == versions.LatestVersionSQL:
-+				return recoveryVersionResult(t, versions.Version{Version: source.Version, VersionOffset: source.VersionOffset, State: versions.StateReady}), nil
-+			case strings.Contains(sql, "from mo_catalog.mo_cdc_task"):
-+				return executor.Result{}, want
-+			default:
-+				return executor.Result{}, fmt.Errorf("no mutation may follow a failed read: %s", sql)
-+			}
-+		}, &testTxnOperator{})
-+		s := newServiceForTest("", &memLocker{}, clock.NewHLCClock(func() int64 { return 0 }, 0), nil, exec, func(s *service) { s.initUpgrade() })
-+		t.Cleanup(s.stopper.Stop)
-+		err := s.doCheckUpgrade(t.Context())
-+		require.ErrorIs(t, err, want)
-+		var terminal *terminalUpgradeError
-+		require.False(t, errors.As(err, &terminal))
-+		require.False(t, s.upgrade.finalVersionCompleted.Load())
-+	})
-+}
-+
-+// TestLegacyCDCAdmissionRecoveryEnforcedBeforeResumeVerdict pins the
-+// recovery-path admission the successor registration newly reaches: a
-+// retained route to the frozen 4.0.7 stage admits only after the legacy CDC
-+// catalog is clean, and the paused-task rejection stays terminal before the
-+// resume verdict.
-+func TestLegacyCDCAdmissionRecoveryEnforcedBeforeResumeVerdict(t *testing.T) {
-+	frozen := v4_0_7.Handler.Metadata()
-+	target := versions.Version{Version: frozen.Version, VersionOffset: frozen.VersionOffset, State: versions.StateCreated}
-+	from := v4_0_6.Handler.Metadata().Version
-+	for _, paused := range []bool{true, false} {
-+		t.Run(fmt.Sprintf("paused=%v", paused), func(t *testing.T) {
-+			runtime.RunTest("", func(runtime.Runtime) {
-+				t
-```
-
-**File**: `pkg/bootstrap/service_upgrade_crossing_test.go` (modified, +28/-22)
-```diff
-@@ -34,7 +34,7 @@ import (
- 
- // crossingFakeDB is a stateful in-memory catalog for the frozen-4.0.7
- // crossing fixtures. The route of the integrated binary is keyed by the new
--// final row (4.0.18, 1); older retained routes (4.0.6/4.0.7 sources) live
-+// final row (4.0.19, 2); older retained routes (4.0.6/4.0.7 sources) live
- // under their own keys. Any read of an intermediate mo_version marker is a
- // hard error: the v36 persistence model proves such a row can never exist,
- // so the production flow must never look for one.
-@@ -60,7 +60,7 @@ type crossingFakeDB struct {
- 	strict       bool
- }
- 
--const crossingFinalDDLKey = "'4.0.18'"
-+const crossingFinalDDLKey = "'4.0.19'"
- 
- func crossingVersion(metadata versions.Version) versions.Version {
- 	return metadata
-@@ -107,7 +107,7 @@ func (db *crossingFakeDB) exec(sql string) (executor.Result, error) {
- 	case sql == versions.LatestVersionSQL:
- 		v := db.latest
- 		if db.finalExists {
--			v = versions.Version{Version: "4.0.18", VersionOffset: 1, State: db.finalState}
-+			v = versions.Version{Version: "4.0.19", VersionOffset: 2, State: db.finalState}
- 		}
- 		return recoveryVersionResult(db.t, v), nil
- 	case strings.HasPrefix(sql, "select state from mo_version"):
-@@ -279,10 +279,12 @@ func newCrossingService(t *testing.T, db *crossingFakeDB) *service {
- func crossingFinalSteps() []versions.VersionUpgrade {
- 	v407 := v4_0_7.Handler.Metadata()
- 	return []versions.VersionUpgrade{
--		{ID: 10, FromVersion: "4.0.6", ToVersion: "4.0.7", FinalVersion: "4.0.18", FinalVersionOffset: 1,
-+		{ID: 10, FromVersion: "4.0.6", ToVersion: "4.0.7", FinalVersion: "4.0.19", FinalVersionOffset: 2,
- 			State: versions.StateCreated, UpgradeOrder: 0, UpgradeCluster: v407.UpgradeCluster, UpgradeTenant: v407.UpgradeTenant, TotalTenant: 0, ReadyTenant: 0},
--		{ID: 11, FromVersion: "4.0.7", ToVersion: "4.0.18", FinalVersion: "4.0.18", FinalVersionOffset: 1,
-+		{ID: 11, FromVersion: "4.0.7", ToVersion: "4.0.18", FinalVersion: "4.0.19", FinalVersionOffset: 2,
- 			State: versions.StateCreated, UpgradeOrder: 1, UpgradeCluster: versions.No, UpgradeTenant: versions.Yes, TotalTenant: 0, ReadyTenant: 0},
-+		{ID: 12, FromVersion: "4.0.18", ToVersion: "4.0.19", FinalVersion: "4.0.19", FinalVersionOffset: 2,
-+			State: versions.StateCreated, UpgradeOrder: 2, UpgradeCluster: versions.No, UpgradeTenant: versions.Yes, TotalTenant: 0, ReadyTenant: 0},
+@@ -989,8 +989,7 @@ func TestPostEvictPanicDoesNotBlockDone(t *testing.T) {
  	}
  }
  
-@@ -347,13 +349,15 @@ func TestCrossingLegacyCDCGateMatrix(t *testing.T) {
- 						return
- 					}
- 					require.NoError(t, err)
--					require.Equal(t, 1, db.cdcReads, "the preflight runs once on an eligible source")
- 					switch src.name {
- 					case "ready-4.0.5":
--						requireCrossingRouteShape(t, db.finalSteps, [][2]string{{"4.0.5", "4.0.6"}, {"4.0.6", "4.0.7"}, {"4.0.7", "4.0.18"}})
-+						require.Equal(t, 1, db.cdcReads, "the creation preflight runs once on an eligible source")
-+						requireCrossingRouteShape(t, db.finalSteps, [][2]string{{"4.0.5", "4.0.6"}, {"4.0.6", "4.0.7"}, {"4.0.7", "4.0.18"}, {"4.0.18", "4.0.19"}})
- 					case "ready-4.0.6":
--						requireCrossingRouteShape(t, db.finalSteps, [][2]string{{"4.0.6", "4.0.7"}, {"4.0.7", "4.0.18"}})
-+						require.Equal(t, 1, db.cdcReads, "the creation preflight runs once on an eligible source")
-+						requireCrossingRouteShape(t, db.finalSteps, [][2]string{{"4.0.6", "4.0.7"}, {"4.0.7", "4.0.18"}, {"4.0.18", "4.0.19"}})
- 					case "interrupted-4.0.7":
-+						require.Equal(t, 2, db.cdcReads, "the crossing preflight and the frozen-4.0.7 resume admission each read the legacy gate once")
- 						require.False(t, db.finalExists, "an interrupted 4.0.7 is retained, not re-routed")
- 						require.Empty(t, db.mutations(), "recovery validation is read-only")
- 					}
-@@ -369,26 +373,27 @@ func requireCrossingRouteShape(t *testing.T, steps []versions.VersionUpgrade, wa
- 	for i, pair := range want {
- 		require.Equal(t, pair[0], steps[i].FromVersion)
- 		require.Equal(t, pair[1], steps[i].ToVersion)
--		require.Equal(t, "4.0.18", steps[i].FinalVersion)
--		require.Equal(t, uint32(1), steps[i].FinalVersionOffset)
-+		require.Equal(t, "4.0.19", steps[i].FinalVersion)
-+		require.Equal(t, uint32(2), steps[i].FinalVersionOffset)
- 		require.Equal(t, versions.StateCreated, steps[i].State)
- 		require.Equal(t, int32(i), steps[i].UpgradeOrder)
- 	}
- }
- 
- // (vi) REAL-ROUTE interruption, mid-crossing: the persisted shape the
--// integrated binary writes for a 4.0.6 -> 4.0.18 route (final row
--// 4.0.18/1 Created, steps [4.0.6 -> 4.0.7, 4.0.7 -> 4.0.18] under key
--// (4.0.18, 1), no intermediate mo_version marker) interrupted BEFORE the
--// 4.0.7 step completes. The restart must terminally reject a seeded legacy
--// task before any catalog mutation and must never look for a 4.0.7 marker.
-+// integrated binary writes for a 4.0.6 -> 4.0.19 route (final row
-+// 4.0.19/2 Created, steps [4.0.6 -> 4.0.7, 4.0.7 -> 4.0.18, 4.0.18 ->
-+// 4.0.19] under key (4.0.19, 2), no intermediate mo_version marker)
-+// interrupted BEFORE the 4.
+-// Long scans should compete through the cache policy instead of preventing
+-// every admission after a fixed reader position.
++// Admitted scan entries must not displace a frequently reused working set.
+ func TestCacheScanRetainsReusedWorkingSet(t *testing.T) {
+ 	ctx := t.Context()
+ 	cache := New[int, int](fscache.ConstCapacity(10), ShardInt[int], nil, nil, nil)
 ```
 
-**File**: `pkg/bootstrap/service_upgrade_recovery_test.go` (modified, +68/-0)
+**File**: `pkg/vm/engine/disttae/cluster_by_real_logtail_test.go` (modified, +1/-1)
 ```diff
-@@ -25,6 +25,7 @@ import (
- 	"time"
+@@ -792,7 +792,7 @@ func readClusterTaeRange(
+ 	reader, err := readutil.NewReader(
+ 		qryCtx, mp, pool, fs, tableDef,
+ 		timestamp.Timestamp{PhysicalTime: time.Now().UnixNano()},
+-		expr, ls, engine.FilterHint{})
++		expr, ls, 0, engine.FilterHint{})
+ 	require.NoError(t, err)
  
- 	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions"
-+	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_19"
- 	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_7"
- 	"github.com/matrixorigin/matrixone/pkg/common/mpool"
- 	"github.com/matrixorigin/matrixone/pkg/common/runtime"
-@@ -557,6 +558,11 @@ func (e *recoveryTestExecutor) exec(sql string) (executor.Result, error) {
- 		res.NewBatchWithRowCount(1)
- 		require.NoError(e.t, executor.AppendFixedRows(res, 0, []int32{state}))
- 		return res.GetResult(), nil
-+	case strings.Contains(sql, "from mo_catalog.mo_cdc_task"):
-+		// The re-keyed recheck admission probes the CDC catalog before a
-+		// non-ready final row is accepted (design D11-1); an empty task
-+		// catalog admits the retained route.
-+		return executor.Result{}, nil
- 	case strings.Contains(sql, "from mo_upgrade"):
- 		if strings.Contains(sql, "'4.0.12'") {
- 			return ownRecoveryResult(e.t, buildUpgradeVersionResult(11, versions.StateCreated, "4.0.11", "4.0.12", 1, 0, versions.No, versions.No, 0, 0)), nil
-@@ -789,3 +795,65 @@ func TestV407RejectsInterruptedOffsetOnlyRouteBeforeMutation(t *testing.T) {
- 		require.False(t, s.upgrade.finalVersionCompleted.Load())
- 	})
- }
-+
-+// TestV407InterruptedOffsetOnlyRouteRejectedAtRecoveryValidation closes the
-+// resume path the successor registration newly reaches: an unfinished route
-+// to the frozen identity that carries a 4.0.7 -> 4.0.7 leg terminates in the
-+// recovery validation with the same message as the pre-mutation check.
-+func TestV407InterruptedOffsetOnlyRouteRejectedAtRecoveryValidation(t *testing.T) {
-+	runtime.RunTest("", func(runtime.Runtime) {
-+		frozen := v4_0_7.Handler.Metadata()
-+		target := versions.Version{Version: frozen.Version, VersionOffset: frozen.VersionOffset, State: versions.StateCreated}
-+		txn := executor.NewMemTxnExecutor(func(sql string) (executor.Result, error) {
-+			switch {
-+			case strings.Contains(sql, "from mo_upgrade"):
-+				return ownRecoveryResult(t, buildUpgradeVersionResult(10, versions.StateUpgradingTenant, frozen.Version, frozen.Version, frozen.VersionOffset, 0, versions.Yes, versions.Yes, 1, 0)), nil
-+			default:
-+				return executor.Result{}, fmt.Errorf("recovery validation may read only the retained route: %s", sql)
-+			}
-+		}, &testTxnOperator{})
-+		s := newServiceForTest("", &memLocker{}, clock.NewHLCClock(func() int64 { return 0 }, 0), nil, nil, func(s *service) { s.initUpgrade() })
-+		t.Cleanup(s.stopper.Stop)
-+		require.True(t, s.canResumeUpgrade(target),
-+			"the registered handle's offset keeps the frozen identity resumable; the offset-only leg must reject it")
-+		err := s.checkUpgradeRecovery(target, txn)
-+		require.ErrorContains(t, err, "unsupported in-progress 4.0.7 offset-only upgrade")
-+		var terminal *terminalUpgradeError
-+		require.ErrorAs(t, err, &terminal)
-+	})
-+}
-+
-+// TestV407ReadyFrozenSourceCreatesDirectRoute pins the one allowed
-+// frozen-source transition at the successor final: a ready 4.0.7 row at the
-+// registered handle's offset skips the pre-mutation rejections, admits with
-+// no legacy CDC source below the frozen stage, and takes the single direct
-+// succession hop.
-+func TestV407ReadyFrozenSourceCreatesDirectRoute(t *testing.T) {
-+	runtime.RunTest("", func(runtime.Runtime) {
-+		frozen := v4_0_7.Handler.Metadata()
-+		var routes []string
-+		exec := executor.NewMemExecutor2(func(sql string) (executor.Result, error) {
-+			switch {
-+			case strings.HasPrefix(sql, "SELECT reldatabase, relname, account_id FROM mo_catalog.mo_tables"):
-+				return newBootstrapStringResult("mo_catalog"), nil
-+			case sql == versions.LatestVersionSQL:
-+				return recoveryVersionResult(t, versions.Version{Version: frozen.Version, VersionOffset: frozen.VersionOffset, State: versions.StateReady}), nil
-+			case strings.Contains(sql, "select version from mo_version"):
-+				return newBootstrapStringResult(frozen.Version), nil
-+			case strings.HasPrefix(sql, "insert into mo_upgrade"):
-+				routes = append(routes, sql)
-+				return executor.Result{}, nil
-+			case strings.Contains(sql, "from mo_catalog.mo_cdc_task"):
-+				return executor.Result{}, fmt.Errorf("a ready frozen identity is a post-4.0.7 source: %s", sql)
-+			default:
-+				return executor.Result{}, nil
-+			}
-+		}, &testTxnOperator{})
-+		s := newServiceForTest("", &memLocker{}, clock.NewHLCClock(func() int64 { return 0 }, 0), nil, exec, func(s *service) { s.initUpgrade() })
-+		t.Cleanup(s.stopper.Stop)
-+		require.NoError(t, s.doCheckUpgrade(t.Context()))
-+		require.Len(t, routes, 1, "the valid frozen identity takes the single direct succession hop")
-+		require.Contains(t, routes[0], fmt.Sprintf("'%s', '%s', '%s',", frozen.Version, v4_0_19.Handler.Metadata().Version, v4_0_19.Handler.Metadata().Version))
-+		require.False(t, s.upgrade.finalVersionCompleted.Load())
-+	})
-+}
+ 	attrs := []string{"tenant_id", "device_id", "metric_id", "event_ts", "value"}
 ```
 
-**File**: `pkg/bootstrap/service_upgrade_tenant_v407_test.go` (modified, +437/-6)
+**File**: `pkg/vm/engine/disttae/cluster_replay_test.go` (modified, +1/-1)
 ```diff
-@@ -17,18 +17,24 @@ package bootstrap
- import (
- 	"context"
- 	"fmt"
-+	"os"
- 	"strings"
- 	"testing"
+@@ -328,7 +328,7 @@ func readClusterReplay(
+ 	reader, err := readutil.NewReader(
+ 		qryCtx, mp, pool, nil, tableDef,
+ 		timestamp.Timestamp{PhysicalTime: time.Now().UnixNano()},
+-		expr, ls, engine.FilterHint{},
++		expr, ls, 0, engine.FilterHint{},
+ 	)
+ 	require.NoError(t, err)
  
- 	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions"
-+	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_18"
-+	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_19"
- 	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_7"
- 	"github.com/matrixorigin/matrixone/pkg/catalog"
-+	"github.com/matrixorigin/matrixone/pkg/common/moerr"
- 	"github.com/matrixorigin/matrixone/pkg/common/mpool"
- 	"github.com/matrixorigin/matrixone/pkg/common/runtime"
- 	"github.com/matrixorigin/matrixone/pkg/container/types"
- 	"github.com/matrixorigin/matrixone/pkg/defines"
-+	"github.com/matrixorigin/matrixone/pkg/pb/txn"
- 	"github.com/matrixorigin/matrixone/pkg/txn/clock"
- 	"github.com/matrixorigin/matrixone/pkg/util/executor"
-+	"github.com/matrixorigin/matrixone/pkg/util/sysview"
- 	"github.com/stretchr/testify/require"
- )
- 
-@@ -76,11 +82,11 @@ func TestV407TaskCompletionAfterLastAccountCommit(t *testing.T) {
- }
- 
- // A ready semantic version has no offset progress to replay. On the
--// integrated chain the final handle is 4.0.18, so the converged leg uses a
--// cluster READY at 4.0.18/1 with the account already at 4.0.18: the manual
-+// merged chain the final handle is 4.0.19, so the converged leg uses a
-+// cluster READY at 4.0.19/2 with the account already at 4.0.19: the manual
- // path reads its route state, runs no migration SQL, and caches the account.
- // The frozen-4.0.7 staging pins the other reachable branch of the same
--// boundary: a CN at final 4.0.18 refuses a manual tenant upgrade while the
-+// boundary: a CN at final 4.0.19 refuses a manual tenant upgrade while the
- // cluster still reports 4.0.7 as its latest version, because its own cluster
- // route has not been created yet. The final==4.0.7 arm inside
- // UpgradeOneTenant can no longer fire on this binary; the frozen offset-only
-@@ -90,8 +96,8 @@ func TestManualV407ReadyAccountDoesNotReplay(t *testing.T) {
- 	for _, midRoll := range []bool{false, true} {
- 		t.Run(fmt.Sprint(midRoll), func(t *testing.T) {
- 			runtime.RunTest("", func(runtime.Runtime) {
--				accountVersion := "4.0.18"
--				latest := versions.Version{Version: "4.0.18", VersionOffset: 1, State: versions.StateReady}
-+				accountVersion := "4.0.19"
-+				latest := versions.Version{Version: "4.0.19", VersionOffset: v4_0_19.Handler.Metadata().VersionOffset, State: versions.StateReady}
- 				wantReads := 3
- 				if midRoll {
- 					accountVersion = final.Version
-@@ -118,7 +124,7 @@ func TestManualV407ReadyAccountDoesNotReplay(t *testing.T) {
- 				err := s.UpgradeOneTenant(t.Context(), 7)
- 				if midRoll {
- 					require.ErrorContains(t, err,
--						"tenant upgrade requires current cn version 4.0.18 to match cluster latest version 4.0.7")
-+						"tenant upgrade requires current cn version 4.0.19 to match cluster latest version 4.0.7")
- 					require.Empty(t, s.mu.tenants)
- 				} else {
- 					require.NoError(t, err)
-@@ -131,6 +137,57 @@ func TestManualV407ReadyAccountDoesNotReplay(t *testing.T) {
- 	}
- }
- 
-+// An account at the cluster's final version has no migration to replay. A
-+// restarted CN must skip DDL rather than silently rebuilding existing objects
-+// and grants - including a differently stamped final row from another
-+// generation, which never reaches the tenant walk.
-+func TestManualFinalReadyAccountDoesNotReplay(t *testing.T) {
-+	for _, mismatch := range []bool{false, true} {
-+		t.Run(fmt.Sprint(mismatch), func(t *testing.T) {
-+			runtime.RunTest("", func(runtime.Runtime) {
-+				final := v4_0_19.Handler.Metadata()
-+				offset := final.VersionOffset
-+				if mismatch {
-+					offset++
-+				}
-+				reads := 0
-+				exec := executor.NewMemExecutor2(func(sql string) (executor.Result, error) {
-+					reads++
-+					switch {
-+					case sql == "select create_version from mo_account where account_id = 7":
-+						return newBootstrapStringResult(final.Version), nil
-+					case sql == versions.LatestVersionSQL:
-+						return statisticsLatestVersionResult(t, versions.Version{Version: final.Version, VersionOffset: offset}, versions.StateReady), nil
-+					case strings.Contains(sql, "from mo_upgrade"):
-+						return executor.Result{}, nil
-+					default:
-+						t.Fatalf("ready account must not run migrations: %s", sql)
-+						return executor.Result{}, nil
-+					}
-+				}, &testTxnOperator{})
-+				s := newServiceForTest("", &memLocker{}, clock.NewHLCClock(func() int64 { return 0 }, 0), nil, exec, func(s *service) { s.initUpgrade() })
-+				t.Cleanup(s.stopper.Stop)
-+				err := s.UpgradeOneTenant(t.Context(), 7)
-+				require.NoError(t, err)
-+				require.True(t, s.mu.tenants[7])
-+				// A differently stamped final row skips the walk entirely; the
-+				// matching row reads the retained route and replays nothing.
-+				if mismatch {
-+					require.Equal(t, 2, reads)
-+				} else {
-+					require.Equal(t, 3, reads)
-+				}
-+				require.NoError(t, s.UpgradeOneTenant(t.Context(), 7))
-+				if mismatc
+```
+
+**File**: `pkg/vm/engine/disttae/engine.go` (modified, +1/-0)
+```diff
+@@ -1327,6 +1327,7 @@ func (e *Engine) BuildBlockReaders(
+ 			ts,
+ 			expr,
+ 			ds,
++			readutil.GetThresholdForReader(newNum),
+ 			readerHint,
+ 		)
+ 		if err != nil {
+```
+
+**File**: `pkg/vm/engine/disttae/local_disttae_datasource_test.go` (modified, +1/-1)
+```diff
+@@ -440,7 +440,7 @@ func TestIvfWorkspaceReaderPreservesPhysicalPK(t *testing.T) {
+ 			}
+ 			// NewReader consumes source and the membership filter on all paths.
+ 			r, err := readutil.NewReader(ctx, mp, pool, nil, tableDef,
+-				types.MaxTs().ToTimestamp(), expr, source, hint)
++				types.MaxTs().ToTimestamp(), expr, source, 0, hint)
+ 			require.NoError(t, err)
+ 			defer r.Close()
+ 			end, err := r.Read(ctx, cols, nil, mp, out)
+```
+
+**File**: `pkg/vm/engine/disttae/txn_table.go` (modified, +1/-0)
+```diff
+@@ -2774,6 +2774,7 @@ func (tbl *txnTable) BuildReaders(
+ 			tbl.db.op.SnapshotTS(),
+ 			expr,
+ 			ds,
++			readutil.GetThresholdForReader(newNum),
+ 			hint,
+ 		)
+ 		if err != nil {
+```
+
+**File**: `pkg/vm/engine/disttae/txn_table_delegate.go` (modified, +1/-0)
+```diff
+@@ -706,6 +706,7 @@ func (tbl *txnTableDelegate) BuildShardingReaders(
+ 				tbl.origin.db.op.SnapshotTS(),
+ 				expr,
+ 				ds,
++				readutil.GetThresholdForReader(newNum),
+ 				engine.FilterHint{},
+ 			)
+ 			if err != nil {
+```
+
+**File**: `pkg/vm/engine/disttae/txn_table_sharding_handle.go` (modified, +1/-0)
+```diff
+@@ -325,6 +325,7 @@ func HandleShardingReadBuildReader(
+ 		tbl.db.op.SnapshotTS(),
+ 		param.ReaderBuildParam.Expr,
+ 		ds,
++		readutil.GetThresholdForReader(1),
+ 		engine.FilterHint{},
+ 	)
+ 	if err != nil {
 ```
 
 ---
 
-### Incident Patch 3: `91dfab21` (2026-10-30)
-**Commit Message**: fix(python-sdk): unify SQL, transaction and driver boundaries (#31889)
+### Incident Patch 3: `630d74c8` (2026-10-31)
+**Commit Message**: fix(frontend): allow the MySQL wait_timeout range (#31947)
 
 ## What type of PR is this?
 
-- [x] API-change
+- [ ] API-change
 - [x] BUG
-- [x] Improvement
-- [x] Documentation
+- [ ] Improvement
+- [ ] Documentation
 - [ ] Feature
-- [x] Test and CI
-- [x] Code Refactoring
+- [ ] Test and CI
+- [ ] Code Refactoring
 
 ## Which issue(s) this PR fixes:
 
-Closes #30242
-Closes #31149
-Closes #30059
-Closes #31845
-Closes #31840
-Closes #31404
-Closes #31403
-Closes #31400
-Closes #31399
-Closes #31394
+Fixes #31510
 
 ## What this PR does / why we need it:
 
-Repair the shared Python SDK boundaries behind the ten assigned reports
-in one change. A duplicate-key COMMIT reply now reports a rejected write
-with `committed=False`; a lost successful reply remains unknown. All
-search builders quote MATCH identifiers correctly, preserve explicit
-zero pagination, and share safe native mode rendering. Vector index
-creation and deletion share validation and execution instead of
-swallowing failures in repeated paths.
+`wait_timeout` is documented as an integer-seconds variable with a range
+up to one year, but the frontend admission bound rejected every
+configured/SET value above 86400 (one day), so `SET GLOBAL/SESSION
+wait_timeout = 86401` failed with the default-range error even though
+MySQL accepts it.
 
-- Repair async ORM bytes binding at the common
-dialect/physical-connection boundary. Install one instance-local
-hexadecimal binary encoder per connection, preserving the original
-nonbinary encoder and module globals. Move the existing pre-ping
-compatibility setting to the actual engine/pool owner so warmed 
+- Admission range raised to `1..31536000` seconds (one year); values are
+validated once by a shared `validateTimeoutLimits` consumed by both
+SESSION and GLOBAL before write/persistence.
+- Default stays `86400`; the server-configured min/max bounds remain a
+hard policy, and the interactive-handshake wait_timeout rule is
+unchanged.
+- The real idle consumer now applies the full int64 seconds value into
+`time.Duration` without overflow, so a long GLOBAL value actually
+reaches the connection idle deadline (verified for live GLOBAL change
+and new logins).
+- The stale 86401 error rows in the system_variables 
 
-**File**: `.github/ci/change-scope.test.cjs` (modified, +9/-5)
+**File**: `pkg/config/configuration.go` (modified, +3/-2)
 ```diff
-@@ -558,15 +558,19 @@ test('the reusable SDK owner preserves the matrix and isolates untrusted checkou
-   assert.match(offline, /flake8 matrixone --select=E9,F63,F7,F82/);
-   assert.match(offline, /if: \$\{\{ matrix.python == '3.12' && matrix.sqlalchemy == '>=2.0,<2.1' \}\}/);
-   assert.match(offline, /fail-fast: false/);
--  const pythons = ['3.10', '3.12'];
--  const sqlalchemy = ['>=1.4,<1.5', '>=2.0,<2.1', '>=2.1,<3'];
--  for (const python of pythons) assert.ok(offline.includes(`'${python}'`));
--  for (const range of sqlalchemy) assert.ok(offline.includes(`'${range}'`));
-+  assert.match(offline, /^        python: \['3\.10', '3\.12'\]$/m);
-+  assert.match(offline, /^        sqlalchemy: \['>=1\.4\.54,<1\.5', '>=2\.0,<2\.1', '>=2\.1,<3'\]$/m);
-   assert.match(offline, /exclude:\n          - python: '3.10'\n            sqlalchemy: '>=2.1,<3'/);
-+  assert.match(offline, /include:\n          - python: '3\.10'\n            sqlalchemy: '==1\.4\.54'/);
-   assert.match(offline, /include:[\s\S]*?- python: '3.11'\n            sqlalchemy: '>=2.1,<3'/);
-+  assert.match(offline, /SQLALCHEMY_RANGE: \$\{\{ matrix\.sqlalchemy \}\}/);
-+  assert.match(offline, /"SQLAlchemy\[asyncio\]\$\{SQLALCHEMY_RANGE\}"/);
-+  assert.match(offline, /- name: Assert exact supported SQLAlchemy floor\n        if: \$\{\{ matrix\.sqlalchemy == '==1\.4\.54' \}\}\n        run: python -c "import sqlalchemy; assert sqlalchemy\.__version__ == '1\.4\.54', sqlalchemy\.__version__"/);
-+  assert.ok(offline.indexOf('Assert exact supported SQLAlchemy floor') < offline.indexOf('Run required offline contracts without skips'));
-   assert.match(offline, /name: python-sdk-\$\{\{ github.event.pull_request.head.sha \|\| github.sha \}\}-\$\{\{ github.run_id \}\}-\$\{\{ github.run_attempt \}\}-\$\{\{ strategy.job-index \}\}/);
-   assert.match(offline, /if: \$\{\{ !cancelled\(\) \}\}/);
-   const core = checkoutSpec(sections['core-import']);
-+  assert.match(sections['core-import'], /include:\n          - python: '3\.8'\n            sqlalchemy: '==1\.4\.54'/);
-   assert.equal(core.repository, checkout.repository);
-   assert.equal(core.ref, checkout.ref);
-   assert.equal(core['persist-credentials'], 'false');
-@@ -587,7 +591,7 @@ test('the reusable SDK owner preserves the matrix and isolates untrusted checkou
-     assert.equal(result.status === 0, database !== '', result.stderr);
-     if (!database) assert.match(result.stderr, /Configure MATRIXONE_DATABASE/);
-   }
--  assert.match(offline, /python scripts\/run_contracts\.py --output offline-contracts/);
-+  assert.match(offline, /- name: Run required offline contracts without skips\n        run: python scripts\/run_contracts\.py --output offline-contracts/);
-   assert.match(sections.online, /python scripts\/run_contracts\.py --server "\$SDK_SERVER_TARGET" --output online-contracts/);
-   assert.ok(readFileSync(join(__dirname, '../../clients/python/scripts/run_contracts.py'), 'utf8').length > 0);
-   const group = sdk.match(/^  group: (.*)$/m)[1];
+@@ -131,8 +131,9 @@ var (
+ 
+ 	// defaultWaitTimeoutMin default: 1 second
+ 	defaultWaitTimeoutMin int64 = 1
+-	// defaultWaitTimeoutMax default: 24 hours (in seconds)
+-	defaultWaitTimeoutMax int64 = 24 * 60 * 60
++	// defaultWaitTimeoutMax default: 1 year (31536000 seconds), matching the
++	// MySQL documented non-Windows wait_timeout ceiling.
++	defaultWaitTimeoutMax int64 = 365 * 24 * 60 * 60
+ 
+ 	// defaultInteractiveTimeoutMin default: 1 second
+ 	defaultInteractiveTimeoutMin int64 = 1
 ```
 
-**File**: `.github/workflows/python-sdk.yml` (modified, +17/-2)
+**File**: `pkg/frontend/variables.go` (modified, +1/-1)
 ```diff
-@@ -29,11 +29,13 @@ jobs:
-       fail-fast: false
-       matrix:
-         python: ['3.10', '3.12']
--        sqlalchemy: ['>=1.4,<1.5', '>=2.0,<2.1', '>=2.1,<3']
-+        sqlalchemy: ['>=1.4.54,<1.5', '>=2.0,<2.1', '>=2.1,<3']
-         exclude:
-           - python: '3.10'
-             sqlalchemy: '>=2.1,<3'
-         include:
-+          - python: '3.10'
-+            sqlalchemy: '==1.4.54'
-           - python: '3.12'
-             sqlalchemy: '==2.0.43'
-           # SQLAlchemy 2.1 requires Python >=3.11.
-@@ -70,6 +72,19 @@ jobs:
-           SQLALCHEMY_RANGE: ${{ matrix.sqlalchemy }}
-         run: |
-           python -m pip install -e '.[test]' "SQLAlchemy[asyncio]${SQLALCHEMY_RANGE}" pytest-asyncio pytest-subtests
-+      - name: Assert exact supported SQLAlchemy floor
-+        if: ${{ matrix.sqlalchemy == '==1.4.54' }}
-+        run: python -c "import sqlalchemy; assert sqlalchemy.__version__ == '1.4.54', sqlalchemy.__version__"
-+      - name: Pin and verify the async driver regression tuple
-+        if: ${{ matrix.sqlalchemy == '==2.0.43' }}
-+        run: |
-+          python -m pip install 'PyMySQL==1.2.3' 'aiomysql==0.3.2'
-+          python - <<'PYDRIVERS'
-+          from importlib.metadata import version
-+          assert version('SQLAlchemy') == '2.0.43'
-+          assert version('PyMySQL') == '1.2.3'
-+          assert version('aiomysql') == '0.3.2'
-+          PYDRIVERS
-       - name: Check fatal Python errors
-         if: ${{ matrix.python == '3.12' && matrix.sqlalchemy == '>=2.0,<2.1' }}
-         run: |
-@@ -102,7 +117,7 @@ jobs:
-       matrix:
-         include:
-           - python: '3.8'
--            sqlalchemy: '>=1.4,<1.5'
-+            sqlalchemy: '==1.4.54'
-           - python: '3.9'
-             sqlalchemy: '>=2.0,<2.1'
-     defaults:
+@@ -1586,7 +1586,7 @@ var gSysVarsDefs = map[string]SystemVariable{
+ 		Scope:             ScopeBoth,
+ 		Dynamic:           true,
+ 		SetVarHintApplies: false,
+-		Type:              InitSystemVariableIntType("wait_timeout", 1, 2147483, false),
++		Type:              InitSystemVariableIntType("wait_timeout", 1, 31536000, false),
+ 		Default:           int64(86400),
+ 	},
+ 	warningCountSystemVariable: {
 ```
 
-**File**: `clients/python/SDK_CI.md` (modified, +7/-1)
+**File**: `pkg/frontend/wait_timeout_range_test.go` (added, +275/-0)
 ```diff
-@@ -9,9 +9,15 @@ The existing `CI Required` aggregate enforces the SDK call's result, including
- failures, cancellations and missing results. SDK-only skips do not provide kernel
- coverage or online SDK certification.
- 
-+The supported SQLAlchemy minimum is **1.4.54**. An exact 1.4.54 cell
-+runs the full offline contracts and asserts the installed version; the Python
-+3.8 installed-core cell also pins that minimum. SQLAlchemy 1.4.24 fails verified
-+escaped expanding-bind and cancelled-connection cleanup contracts.
+@@ -0,0 +1,275 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//      http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
- Offline contracts run on Python 3.10/3.12 with SQLAlchemy 1.4/2.0 and Python
- 3.11/3.12 with SQLAlchemy 2.1 (which requires Python >=3.11). An additional Python
--3.12 cell fixes SQLAlchemy at 2.0.43 for the pre-ping regression. Each cell runs
-+3.12 cell fixes SQLAlchemy at 2.0.43 with PyMySQL 1.2.3 and aiomysql 0.3.2
-+for pre-ping and binary binding, asserting all three distribution versions. Each cell runs
- `scripts/run_contracts.py`, which records source/dependency provenance and rejects
- failures, errors, skips, empty selections and source changes during execution.
- Analytics offline checks run separately; their online-only skips do not weaken
++package frontend
++
++import (
++	"context"
++	"testing"
++	"time"
++
++	"github.com/stretchr/testify/require"
++
++	"github.com/matrixorigin/matrixone/pkg/config"
++)
++
++// newDefaultLimitsTestServerWithRoutine mirrors newTestServerWithRoutine, but
++// keeps the real production limits filled by FrontendParameters.SetDefaultValues
++// instead of the 1..100 test overrides. Default wait_timeout ceiling changes are
++// only observable this way.
++func newDefaultLimitsTestServerWithRoutine(t *testing.T, cap uint32) (*MOServer, *Conn, *Session, *MysqlProtocolImpl) {
++	t.Helper()
++
++	ctx := context.Background()
++	sv := &config.FrontendParameters{}
++	sv.SetDefaultValues()
++	sv.KillRountinesInterval = 0
++
++	pu := config.NewParameterUnit(sv, nil, nil, nil)
++	setSessionAlloc("", NewLeakCheckAllocator())
++	setPu("", pu)
++
++	rm, err := NewRoutineManager(ctx, "")
++	require.NoError(t, err)
++
++	server := &MOServer{rm: rm}
++	tConn := &testConn{}
++	ioses, err := NewIOSession(tConn, pu, "")
++	require.NoError(t, err)
++
++	proto := NewMysqlClientProtocol("", 0, ioses, 1024, sv)
++	proto.SetCapability(cap)
++
++	ses := NewSession(ctx, "", proto, nil)
++	proto.ses = ses
++	ses.SetTenantInfo(getDefaultAccount())
++	initTestSessionSysVars(ses)
++
++	rt := &Routine{}
++	rt.protocol.Store(&holder[MysqlRrWr]{value: proto})
++	rt.ses = ses
++
++	rm.setRoutine(ioses, 0, rt)
++
++	return server, ioses, ses, proto
++}
++
++// newInheritedSession builds a fresh session whose global snapshot comes from the
++// current one, mirroring how production sessions inherit the live global values
++// at connection time (not the boot-time defaults).
++func newInheritedSession(t *testing.T, ses *Session, pu *config.ParameterUnit) *Session {
++	t.Helper()
++
++	ctx := context.Background()
++	tConn := &testConn{}
++	ioses, err := NewIOSession(tConn, pu, "")
++	require.NoError(t, err)
++
++	proto := NewMysqlClientProtocol("", 0, ioses, 1024, pu.SV)
++	fresh := NewSession(ctx, "", proto, nil)
++	proto.ses = fresh
++	fresh.SetTenantInfo(getDefaultAccount())
++	initTestSessionSysVars(fresh)
++	fresh.gSysVars = ses.gSysVars
++	fresh.sesSysVars = ses.gSysVars.Clone()
++	return fresh
++}
++
++// MySQL documents wait_timeout as 1..31536000 on non-Windows servers. With nothing
++// configured, the default policy admission gate and the system-variable type must
++// both accept that range on both setter scopes, while the default value stays
++// 86400.
++func TestWaitTimeoutDefaultSessionRange(t *testing.T) {
++	server, rs, ses, _ := newDefaultLimitsTestServerWithRoutine(t, 0)
++	ctx := context.Background()
++
++	// Default value is unchanged.
++	val, err := ses.GetSessionSysVar("wait_timeout")
++	require.NoError(t, err)
++	require.Equal(t, int64(86400), val)
++
++	for _, v := range []int64{86401, 1209600, 31536000} {
++		require.NoError(t, ses.SetSessionSysVar(ctx, "wait_timeout", v))
++		val, err = ses.GetSessionSysVar("wait_timeout")
++		require.NoError(t, err)
++		require.Equal(t, v, val, "wait_timeout=%d must be accepted by the session setter", v)
++
++		// The idle-deadline consumer receives the full duration without overflow.
++		server.applyIdleTimeout(rs)
++		require.Equal(t, time.Duration(v)*time.Second, rs.timeout,
++			"wait_timeout=%d must reach Conn.SetTimeout untruncated", v)
++	}
++
++	// Over the documented ceiling, malformed values and negatives are rejected
++	// and leave the previous value intact.
++	require.Error(t, ses.SetSessionSysVar(ctx, "wait_timeout", int64(31536001)))
++	val, err = ses.GetSessionSysVar("wait_timeout")
++	require.NoError(t, err)
++	require.Equal(t, int64(31536000), val)
++
++	require.Error(t, ses.SetSessionSysVar(ctx, "wait_timeout", int64(-1)))
++	require.Error(t, ses.SetSessionSysVar(ctx, "wait_timeout", "not-a-number"))
++	val, err = ses.GetSessionSysVar("wait_timeout")
++	require.NoError(t, err)
++	require.Equal(t, int64(31536000), val)
++
++	// The session stays usable after rejected assignments.
++	require.NoError(t, ses.SetSessionSysVar(ctx, "wait_timeout", int64(86401)))
++	val, err = ses.GetSessionSysVar("wait_timeout")
++	require.NoError(t, err)
++	require.Equal(t, int64(86401), val)
++}
++
++func TestWaitTimeoutDefaultGlobalRange(t *testing.T) {
++	_, _, ses, _ := newDefaultLimitsTestServerWithRoutine(t, 0)
++	ctx := context.Background()
++	pu := getPu("")
++
++	stubGlobalSysVarPersistence(t,
++		sysVarSet{"wait_timeout", int64(86401)},
++		sysVarSet{"wait_timeout", int64(1209600)},
++		sysVarS
 ```
 
-**File**: `clients/python/docs/async-analytics-and-execution.md` (modified, +99/-1)
+**File**: `test/distributed/cases/system_variable/system_variables.result` (modified, +1/-2)
 ```diff
-@@ -20,7 +20,9 @@ Shorthand table definitions preserve `datetime(6)`, `timestamp(3)` and `time(6)`
- creation and DROP. SQLAlchemy reflection also recognizes existing F16, BF16,
- INT8 and UINT8 vectors; Arrow support is qualified separately.
- 
--SQLAlchemy 1.4.24 or newer is required: projection inference uses
-+SQLAlchemy 1.4.54 or newer is required. SQLAlchemy 1.4.24 has verified
-+escaped expanding-bind and cancelled physical-connection cleanup failures. The
-+SDK also requires the following public APIs: projection inference uses
- `Select.get_final_froms()` (1.4.23), and native async streams use the public
- `driver_connection` accessor (1.4.24). SQLAlchemy 2.1 itself requires Python
- 3.11 or newer; Python 3.8/3.9 use a compatible 1.4/2.0 series.
-@@ -218,3 +220,99 @@ requests fail before any CREATE/ALTER mutation; equals signs in values work.
- 
- See [design revision 2.3](design/systemic-sdk-boundaries.md) for ownership,
- compatibility and failure-path decisions.
-+
-+
-+### Explicit snapshot support
-+
-+Importing `matrixone` or its SQLAlchemy extensions does not modify SQLAlchemy's
-+`Select` class. Prefer `select(User, snapshot='nightly')` from `matrixone`, or
-+annotate an existing statement with `with_snapshot(statement, 'nightly')`.
-+The same helpers and `compile_select` are exported by `matrixone.sqlalchemy_ext`.
-+Both forms return a new statement; the original remains a live query.
-+
-+Applications retaining the legacy `statement.with_snapshot('nightly')` spelling
-+must call `enable_snapshot_method()` once at startup. This is a process-wide
-+opt-in; it refuses to overwrite a method or attribute installed by another
-+library. Configure it before concurrent class modifications. Unsupported snapshot
-+sources continue to fail explicitly rather than silently reading live data.
-+
-+### Search and index boundaries
-+
-+`boolean_match()` defaults to Boolean mode. The higher-level
-+`FulltextSearchBuilder` defaults to natural-language mode; choose
-+`.with_mode(FulltextSearchMode.BOOLEAN)` when supplying Boolean operators.
-+Explicit `LIMIT 0` and `OFFSET 0` remain in generated SQL, including offsets
-+without a limit. MATCH identifier components are always backtick-quoted.
-+Strings may name `column`, `table.column` or `database.table.column`; SQLAlchemy
-+column objects retain atomic names, including dots and embedded backticks.
-+
-+The builders' `.where()`, projections, table and ordering fragments remain
-+caller-owned SQL. Do not interpolate untrusted values into these fragments;
-+use a parameterized SQLAlchemy statement for that purpose. Structured Boolean
-+terms retain MatrixOne grammar (`stop-fire` and `c++` are valid terms); phrase
-+contents with embedded quotes/backslashes cannot be represented and fail early.
-+Raw-mode builders also preserve `IN BM25 MODE` and natural-language query
-+expansion. Unsupported modes raise `ValueError`; the filter and legacy builder
-+retain their existing fallback for unknown modes. Query-expansion syntax is
-+rendered as `WITH QUERY EXPANSION`; execution still
-+depends on server support.
-+
-+Vector index numeric options accept positive signed 64-bit integers or `None`
-+to use the server default; booleans, strings, fractional values, zero and negative
-+values are rejected before DDL or setup SQL. The same validation applies to
-+later option assignments. Server algorithm-specific limits remain server-owned.
-+The five native metric names (L2, L2 squared, inner product, cosine and L1) are
-+recognized case-insensitively; empty `op_type` retains the server's L2 default.
-+The server decides which metrics each algorithm supports. Unknown safe index
-+keywords remain available for server plugins.
-+
-+Index class/instance `create` and `drop` return `True` on success and now raise
-+execution errors instead of printing them and returning `False`. Catch the
-+original SQLAlchemy/database exception to distinguish failure from success.
-+Names use the same quoting boundary for create and drop; no retry, capability
-+probe, or extra query is added to the execution path.
-+
-+
-+### Complete-SQL builder parameters
-+
-+`MatrixOneSQLBuilder.build_with_parameter_substitution()`, `str(builder)` and
-+its convenience helpers use the execution path's existing lexical renderer.
-+Only executable `?` markers are substituted, values are rendered by type, and
-+missing/extra values fail before execution. `build()` continues to return SQL
-+and its parameter list. The builder retains its historical qmark-only style;
-+modulo expressions using columns such as `s` or `scol` are left intact. The
-+Client/Session renderer's existing `%s` support is unchanged.
-+
-+Convenience helpers reject nonempty `where_params` when conditions are absent
-+or empty (including empty condition iterators), in both parameterized and
-+complete-SQL modes. Empty parameters remain valid without conditions. Vector distance
-+values use the existing string-token boundary; column names, expressions and
-+other raw SQL fragments remain caller-owned. Rendered values are
+@@ -148,10 +148,9 @@ show variables like 'wait_timeout';
+ ➤ Variable_name[12,0,0]  ¦  Value[12,0,0]  𝄀
+ wait_timeout  ¦  86400
+ set wait_timeout = 86401;
+-invalid input: wait_timeout must be <= 86400
+ show variables like 'wait_timeout';
+ ➤ Variable_name[12,0,0]  ¦  Value[12,0,0]  𝄀
+-wait_timeout  ¦  86400
++wait_timeout  ¦  86401
+ set wait_timeout = 10;
+ drop table if exists t;
+ create table t(
 ```
 
-**File**: `clients/python/docs/design/analytics-arrow-upload.md` (modified, +7/-1)
+**File**: `test/distributed/cases/system_variable/wait_timeout_range.result` (added, +58/-0)
 ```diff
-@@ -33,7 +33,13 @@ Create one owned unique IPC file in the caller's existing staging directory. Wri
- After staging completes, create a new table (`create=True`) or append (`create=False`) and execute native Arrow `LOAD DATA` in one transaction. Hold UTC, STRICT_ALL_TABLES and TN primary-key checks through COMMIT, then restore session settings.
- 
- - Before-commit errors: roll back creation/append; no partial rows.
--- Disconnection during COMMIT: `AnalyticsCommitUnknownError`, `committed=None`; reconcile rather than retry.
-+- An acknowledged, non-invalidated PyMySQL/aiomysql duplicate-key (1062)
-+  COMMIT reply: `AnalyticsCommitRejectedError`, `committed=False`, with
-+  original errno/cause and row count when known. The failed connection is
-+  still discarded. File imports share this transaction classification.
-+- Other COMMIT errors, cancellation or missing replies: `AnalyticsCommitUnknownError`, `committed=None`; reconcile rather than retry.
-+  Cancellation retains its cancellation exception with the same unknown state.
-+  The SDK does not infer rollback from arbitrary error codes or retry writes.
- - Acknowledged commit followed by session/staging cleanup failure: `AnalyticsCleanupError`, `committed=True`, with row count.
- - If a primary input/DB error is already active, attach `rollback_error`, `cleanup_error` or `staging_cleanup_error` instead of replacing it.
- 
+@@ -0,0 +1,58 @@
++set @sav_wt_global = @@global.wait_timeout;
++set @sav_wt_session = @@wait_timeout;
++set wait_timeout = 86401;
++select @@wait_timeout;
++➤ @@wait_timeout[-1,16383,0]  𝄀
++86401
++set wait_timeout = 1209600;
++select @@wait_timeout;
++➤ @@wait_timeout[-1,16383,0]  𝄀
++1209600
++set wait_timeout = 31536000;
++select @@wait_timeout;
++➤ @@wait_timeout[-1,16383,0]  𝄀
++31536000
++set wait_timeout = 31536001;
++internal error: convert to the system variable int type failed
++select @@wait_timeout;
++➤ @@wait_timeout[-1,16383,0]  𝄀
++31536000
++set wait_timeout = -1;
++internal error: convert to the system variable int type failed
++select @@wait_timeout;
++➤ @@wait_timeout[-1,16383,0]  𝄀
++31536000
++set wait_timeout = 'abc';
++internal error: convert to the system variable int type failed
++select @@wait_timeout;
++➤ @@wait_timeout[-1,16383,0]  𝄀
++31536000
++select 1;
++➤ 1[-5,64,0]  𝄀
++1
++set wait_timeout = 1209600;
++select @@wait_timeout;
++➤ @@wait_timeout[-1,16383,0]  𝄀
++1209600
++set global wait_timeout = 1209600;
++select @@global.wait_timeout;
++➤ @@global.wait_timeout[-1,16383,0]  𝄀
++1209600
++select @@wait_timeout;
++➤ @@wait_timeout[-1,16383,0]  𝄀
++1209600
++set global wait_timeout = default;
++select @@global.wait_timeout;
++➤ @@global.wait_timeout[-1,16383,0]  𝄀
++86400
++select @@wait_timeout;
++➤ @@wait_timeout[-1,16383,0]  𝄀
++1209600
++set global wait_timeout = @sav_wt_global;
++select @sav_wt_global = @@global.wait_timeout;
++➤ @sav_wt_global = @@global.wait_timeout[-6,8,0]  𝄀
++1
++set wait_timeout = @sav_wt_session;
++select @@wait_timeout = @sav_wt_session;
++➤ @@wait_timeout = @sav_wt_session[-6,8,0]  𝄀
++1
 ```
 
-**File**: `clients/python/docs/design/systemic-sdk-boundaries.md` (modified, +1/-1)
+**File**: `test/distributed/cases/system_variable/wait_timeout_range.sql` (added, +28/-0)
 ```diff
-@@ -162,7 +162,7 @@ qualified negative target for native Arrow LOAD and the new Stage literal cases.
- ## Validation and compatibility
- 
- Core Python 3.8 remains available without Arrow. Analytics requires Python 3.9+.
--SQLAlchemy >=1.4.24 is the supported floor; 2.1 requires Python >=3.11. Driver-bound
-+SQLAlchemy >=1.4.54 is the supported floor; 2.1 requires Python >=3.11. Driver-bound
- execution is explicit and does not reinterpret existing SDK text placeholders.
- 
- Validation maps shared compilation to real SQLAlchemy controls, async ownership
-```
-
-**File**: `clients/python/docs/installation.rst` (modified, +3/-3)
-```diff
-@@ -66,9 +66,9 @@ Requirements
- ------------
- 
- * Python 3.8 or higher
--* PyMySQL >= 1.0.0
--* aiomysql >= 0.1.0
--* SQLAlchemy >= 1.4.0
-+* PyMySQL >= 1.0.0, != 1.2.1, != 1.2.2, < 1.3
-+* aiomysql >= 0.2.0
-+* SQLAlchemy >= 1.4.54, < 3
- * typing-extensions >= 4.0.0
- * python-dateutil >= 2.8.0
- 
-```
-
-**File**: `clients/python/docs/requirements.txt` (modified, +2/-2)
-```diff
-@@ -7,9 +7,9 @@ sphinx-rtd-theme>=1.0,<3.0
- sphinx-autobuild>=2021.3.14
- 
- # Required for autodoc to work with the source code
--PyMySQL>=1.0.0
-+PyMySQL>=1.0.0,!=1.2.1,!=1.2.2,<1.3
- aiomysql>=0.2.0
--SQLAlchemy>=1.4.0,<3.0.0
-+SQLAlchemy>=1.4.54,<3.0.0
- typing-extensions>=4.0.0
- python-dateutil>=2.8.0
- numpy>=1.20.0,<2.0.0
+@@ -0,0 +1,28 @@
++-- issue 31510: wait_timeout accepts the MySQL documented non-Windows range (1..31536000)
++set @sav_wt_global = @@global.wait_timeout;
++set @sav_wt_session = @@wait_timeout;
++set wait_timeout = 86401;
++select @@wait_timeout;
++set wait_timeout = 1209600;
++select @@wait_timeout;
++set wait_timeout = 31536000;
++select @@wait_timeout;
++set wait_timeout = 31536001;
++select @@wait_timeout;
++set wait_timeout = -1;
++select @@wait_timeout;
++set wait_timeout = 'abc';
++select @@wait_timeout;
++select 1;
++set wait_timeout = 1209600;
++select @@wait_timeout;
++set global wait_timeout = 1209600;
++select @@global.wait_timeout;
++select @@wait_timeout;
++set global wait_timeout = default;
++select @@global.wait_timeout;
++select @@wait_timeout;
++set global wait_timeout = @sav_wt_global;
++select @sav_wt_global = @@global.wait_timeout;
++set wait_timeout = @sav_wt_session;
++select @@wait_timeout = @sav_wt_session;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #31935** (closed): plan: support DROP VIEW with multiple views (#31910) (@MatrixAdventurer)
-- **PR #31934** (2026-10-30): fix(ci): cancel obsolete PR runs and avoid post-merge main checks (@XuPeng-SH)
-- **PR #31933** (2026-10-30): fix(ci): repair shared UT lifecycle and trim redundant fixtures (@XuPeng-SH)
-- **PR #31932** (closed): Preserve borrowed vector snapshots and backing ownership (@iamlinjunhong)
-- **PR #31925** (closed): test(bvt): cover external CSV table read consistency and read-only rejections (@MatrixAdventurer)
-- **PR #31924** (closed): test(bvt): cover data branch table shapes, vector index metric consistency and multibyte charset parity (@MatrixAdventurer)
+- **PR #31947** (2026-10-31): fix(frontend): allow the MySQL wait_timeout range (@aptend)
+- **PR #31946** (closed): fix(colexec): release block-info batch when pipeline sinker close fails (#31626) (@MatrixAdventurer)
+- **PR #31943** (2026-10-31): Revert long-scan reader cache admission change (@XuPeng-SH)
+- **PR #31942** (2026-10-31): Fix daemon claim races and reduce redundant race-test work (@XuPeng-SH)
+- **PR #31941** (2026-10-31): feat(sql): add ewmMean/ewmVar/ewmStd/ewmCov/ewmCorr window functions (@gouhongshen)
+- **PR #31939** (2026-10-30): fix(tae): propagate forced flush queue admission errors (@XuPeng-SH)
 
 ---
 
@@ -3932,28 +3215,24 @@ compatibility setting to the actual engine/pool owner so warmed
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. plan): MySQL implicit boolean semantics for ENUM/SET, BIT literals and JSON cond
+## X. daemon claim races and reduce redundant race-test work (#31942)
 
 **RULE**:
-When implementing operations in `docs/design/20261027-implicit-boolean-semantics-enum-set-bit-json.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/cnservice/server_task_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d8c90c20`: plan): MySQL implicit boolean semantics for ENUM/SET, BIT literals and JSON conditions (#31492). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae40f12a`: daemon claim races and reduce redundant race-test work (#31942). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design/20261027-implicit-boolean-semantics-enum-set-bit-json.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/cnservice/server_task_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# Implicit boolean semantics for ENUM/SET, BIT literals, and JSON conditions
+func (ts *testTS) RequestDaemonTaskStatus(context.Context, task.DaemonTask, task.TaskStatus) (int, error) {
+	panic("unexpected RequestDaemonTaskStatus")
+}
 
-- Status: Review required
-- Tracking issue: [#30931](https://github.com/matrixorigin/matrixone/issues/30931) (consolidated group: #30930, #30932)
-- Implementation PR: [#31492](https://github.com/matrixorigin/matrixone/pull/31492) - implemented from revision 8; after the revision-9 deviation repair lands, the PR description and implementation review must link THIS revision and its hash
-- Design revision: 9
-- Last updated: 2026-10-30
-- Supersedes revision 8 (SHA256 15d933cf6ac0608423409fa31173d969cc8de16a01be3ee969e0c8678ad6d73a, the independently PASSed predecessor, returned with round-9 finding P2 - the minted per-feature MORPC slot and its version-gate wiring violate the repository's shutdown-only upgrade contract, `.agents/skills/mo-dev/references/upgrade-compatibility.md:13-40`), which superseded revision 7 (SHA256 ea470bd602e6209e383d96db1c1480f5e807a95b147230e48c9b96ac4ed3bb31, returned with finding F8 - exempt SET storage semantics from the boolean-condition contracts), which superseded revision 6 (SHA256 1cec7f6e700f2f3863aea39214475fce3bd3d73e33ef5d2e07608e85105ed1c1, returned with finding R2 - cl
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3963,4 +3242,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d8c90c20` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae40f12a` are properly handled with clean fallback behavior.

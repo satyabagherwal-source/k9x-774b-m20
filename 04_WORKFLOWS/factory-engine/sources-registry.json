@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T12:39:44.721Z",
-    "lastVerified": "2026-10-31T12:39:44.721Z",
+    "lastChecked": "2026-10-31T12:47:02.614Z",
+    "lastVerified": "2026-10-31T12:47:02.614Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -345,9 +345,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T12:15:51.714Z",
+    "lastChecked": "2026-10-31T12:46:56.833Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T12:15:51.714Z"
+    "lastVerified": "2026-10-31T12:46:56.833Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2163,22 +2163,21 @@
     "lastVerified": "2026-10-31T05:52:27.953Z"
   },
   "tailscale-tailscale": {
-    "name": "tailscale",
+    "name": "tailscale/tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T08:45:13.882Z",
-    "lastVerified": "2026-10-31T08:45:13.882Z",
+    "lastChecked": "2026-10-31T12:46:55.752Z",
+    "lastVerified": "2026-10-31T12:46:55.752Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "a2bf6f90a673603b4fc079dbd51ab263c323a4c1381143da7288da8cc26d2715",
+    "contentHash": "fae376171272a37b292a8f23d648c2a7f51d0094b1e29e0082f2a18df8fc9daf",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "13348998"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "oramasearch-orama": {
     "name": "orama",
@@ -3512,14 +3511,14 @@
     "officialUrl": "https://github.com/matrixorigin/matrixone",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T20:05:18.535Z",
-    "lastVerified": "2026-10-30T20:05:18.535Z",
+    "lastChecked": "2026-10-31T12:46:59.374Z",
+    "lastVerified": "2026-10-31T12:46:59.374Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "dc9eb7205aec62d31ec20750713ccabb8da844ee549c07afbd85bf7edc7c9f2c",
+    "contentHash": "e3c5f3aec9edf3050592f6b279d62e1d53121fa0e127e4ee961e7b291859afa5",
     "promotedRulesCount": 1,
-    "recentFixesCount": 26,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3679,13 +3678,13 @@
     "officialUrl": "https://huggingface.co/google-bert/bert-base-uncased",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T12:08:44.640Z",
-    "lastVerified": "2026-10-28T12:08:44.640Z",
+    "lastChecked": "2026-10-31T12:46:44.512Z",
+    "lastVerified": "2026-10-31T12:46:44.512Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-google-bert-bert-base-uncased",
-    "contentHash": "379e96a97eab1f0321a22171560af27f808a37a92cb3de7af70a17181958c9f4",
-    "promotedRulesCount": 3,
+    "contentHash": "4056da10b72511edfbf914c0682d6ea97cc91418b520526d0634ca797e40e475",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -4639,9 +4638,9 @@
   "vinceanalytics-vince": {
     "name": "vince",
     "officialUrl": "https://github.com/vinceanalytics/vince",
-    "lastChecked": "2026-10-30T21:06:18.746Z",
+    "lastChecked": "2026-10-31T12:46:49.366Z",
     "revisionIdentifier": "fc06f7a2",
-    "lastVerified": "2026-10-30T21:06:18.746Z"
+    "lastVerified": "2026-10-31T12:46:49.366Z"
   },
   "skyzh-mini-lsm": {
     "name": "mini-lsm",
@@ -6265,9 +6264,9 @@
   "resocoder-flutter-tdd-clean-architecture-course": {
     "name": "flutter-tdd-clean-architecture-course",
     "officialUrl": "https://github.com/ResoCoder/flutter-tdd-clean-architecture-course",
-    "lastChecked": "2026-10-28T17:20:38.697Z",
+    "lastChecked": "2026-10-31T12:46:46.907Z",
     "revisionIdentifier": "6c515614",
-    "lastVerified": "2026-10-28T17:20:38.697Z"
+    "lastVerified": "2026-10-31T12:46:46.907Z"
   },
   "someengineering-fixinventory": {
     "name": "fixinventory",
@@ -6638,9 +6637,9 @@
   "sachaos-viddy": {
     "name": "viddy",
     "officialUrl": "https://github.com/sachaos/viddy",
-    "lastChecked": "2026-10-30T15:36:55.560Z",
+    "lastChecked": "2026-10-31T12:46:41.840Z",
     "revisionIdentifier": "b56efe08",
-    "lastVerified": "2026-10-30T15:36:55.560Z"
+    "lastVerified": "2026-10-31T12:46:41.840Z"
   },
   "hf-bingsu-adetailer": {
     "name": "Bingsu/adetailer",

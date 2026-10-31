@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T12:39:42.175Z",
-  "total_cycles_completed": 6540,
-  "total_learnings_persisted": 6540,
-  "total_rules_promoted": 6191,
+  "last_updated": "2026-10-31T12:47:00.058Z",
+  "total_cycles_completed": 6543,
+  "total_learnings_persisted": 6543,
+  "total_rules_promoted": 6193,
   "history": [
-    {
-      "timestamp": "2026-10-30T23:51:40.309Z",
-      "repository": "laurent22/joplin",
-      "learningId": "learn-github-laurent22-joplin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T23:51:45.582Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T23:58:42.167Z",
-      "repository": "expo/expo",
-      "learningId": "learn-github-expo-expo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T23:58:47.399Z",
       "repository": "autogluon/chronos-2",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-31T12:39:42.175Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T12:46:45.603Z",
+      "repository": "google-bert/bert-base-uncased",
+      "learningId": "learn-huggingface-google-bert-bert-base-uncased",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T12:46:56.446Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T12:47:00.058Z",
+      "repository": "matrixorigin/matrixone",
+      "learningId": "learn-github-matrixorigin-matrixone",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

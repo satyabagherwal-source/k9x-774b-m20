@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T12:39:42.179Z",
+  "last_updated": "2026-10-31T12:47:00.062Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -905,14 +905,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-bert-bert-base-uncased",
-      "content_hash": "379e96a97eab1f0321a22171560af27f808a37a92cb3de7af70a17181958c9f4",
-      "verified_at": "2026-10-28T12:08:58.708Z",
+      "content_hash": "4056da10b72511edfbf914c0682d6ea97cc91418b520526d0634ca797e40e475",
+      "verified_at": "2026-10-31T12:46:45.606Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T12:08:58.708Z"
+      "last_updated": "2026-10-31T12:46:45.606Z"
     },
     "google/electra-base-discriminator": {
       "repository": "google/electra-base-discriminator",
@@ -4881,14 +4881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-matrixorigin-matrixone",
-      "content_hash": "dc9eb7205aec62d31ec20750713ccabb8da844ee549c07afbd85bf7edc7c9f2c",
-      "verified_at": "2026-10-30T20:05:20.624Z",
+      "content_hash": "e3c5f3aec9edf3050592f6b279d62e1d53121fa0e127e4ee961e7b291859afa5",
+      "verified_at": "2026-10-31T12:47:00.061Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T20:05:20.624Z"
+      "last_updated": "2026-10-31T12:47:00.061Z"
     },
     "fallow-rs/fallow": {
       "repository": "fallow-rs/fallow",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "a2bf6f90a673603b4fc079dbd51ab263c323a4c1381143da7288da8cc26d2715",
-      "verified_at": "2026-10-31T00:20:37.990Z",
+      "content_hash": "fae376171272a37b292a8f23d648c2a7f51d0094b1e29e0082f2a18df8fc9daf",
+      "verified_at": "2026-10-31T12:46:56.449Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T00:20:37.990Z"
+      "last_updated": "2026-10-31T12:46:56.449Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",

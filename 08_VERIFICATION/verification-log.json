@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261029-VLW7",
-    "timestamp": "2026-10-29T22:19:21.367Z",
-    "repository": "nolabs-ai/nono",
-    "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "dd1117eaa358836c8f551cea68a6d6ad633c71c57d82e17a58dfbc8c0c242430",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-VNJL",
-    "timestamp": "2026-10-29T22:19:23.505Z",
-    "repository": "MaterializeInc/materialize",
-    "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "2be09102bb4777b21b89fe57ee0525dc3354c5c02ac80e3c41f27a17c263508f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-4BUT",
-    "timestamp": "2026-10-29T22:26:08.261Z",
-    "repository": "hashicorp/terraform",
-    "learningId": "learn-github-hashicorp-terraform",
-    "contentHash": "e95c12fa64aab6b555cb40a3bf4266574eff017f7495a43fefa52dbbeff21722",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261029-4FBI",
     "timestamp": "2026-10-29T22:26:12.750Z",
     "repository": "HelixDB/helix-db",
@@ -7490,6 +7445,51 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "5050336d32555b2924ddf7648432a6be16a52a400bfc40df2211e1c4d77fea43",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-AY50",
+    "timestamp": "2026-10-31T12:46:45.588Z",
+    "repository": "google-bert/bert-base-uncased",
+    "learningId": "learn-huggingface-google-bert-bert-base-uncased",
+    "contentHash": "4056da10b72511edfbf914c0682d6ea97cc91418b520526d0634ca797e40e475",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-B6IC",
+    "timestamp": "2026-10-31T12:46:56.436Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "fae376171272a37b292a8f23d648c2a7f51d0094b1e29e0082f2a18df8fc9daf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-B9AP",
+    "timestamp": "2026-10-31T12:47:00.049Z",
+    "repository": "matrixorigin/matrixone",
+    "learningId": "learn-github-matrixorigin-matrixone",
+    "contentHash": "e3c5f3aec9edf3050592f6b279d62e1d53121fa0e127e4ee961e7b291859afa5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

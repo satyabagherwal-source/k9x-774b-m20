@@ -6563,3 +6563,6 @@
 | `CYCLE-20261031-P4M3` | `2026-10-31T12:29:47.547Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 354, Rule 355` | Yes (`d81ebe14...`) |
 | `CYCLE-20261031-1K5R` | `2026-10-31T12:39:27.567Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`d40b2089...`) |
 | `CYCLE-20261031-1VF9` | `2026-10-31T12:39:42.165Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3143` | Yes (`5050336d...`) |
+| `CYCLE-20261031-AY50` | `2026-10-31T12:46:45.588Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | Yes (`4056da10...`) |
+| `CYCLE-20261031-B6IC` | `2026-10-31T12:46:56.436Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6196` | Yes (`fae37617...`) |
+| `CYCLE-20261031-B9AP` | `2026-10-31T12:47:00.049Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6197` | Yes (`e3c5f3ae...`) |

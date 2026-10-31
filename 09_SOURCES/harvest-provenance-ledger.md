@@ -6572,3 +6572,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-31T12:29:47.550Z |
 | `learn-huggingface-google-electra-base-discriminator` | `https://huggingface.co/google/electra-base-discriminator` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-31T12:39:27.577Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `6fee7dae` | Multi-dimensional audit evidence | 2026-10-31T12:39:42.169Z |
+| `learn-huggingface-google-bert-bert-base-uncased` | `https://huggingface.co/google-bert/bert-base-uncased` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-31T12:46:45.597Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `6c6dd62b` | Multi-dimensional audit evidence | 2026-10-31T12:46:56.440Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `ae40f12a` | Multi-dimensional audit evidence | 2026-10-31T12:47:00.052Z |

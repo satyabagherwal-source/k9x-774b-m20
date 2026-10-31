@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T12:39:42.081Z",
+  "last_updated": "2026-10-31T12:46:59.971Z",
   "total_verified_learnings": 1183,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -23399,7 +23399,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
       "source_version": "hf-google-bert-bert-base-uncased",
-      "content_hash": "379e96a97eab1f0321a22171560af27f808a37a92cb3de7af70a17181958c9f4",
+      "content_hash": "4056da10b72511edfbf914c0682d6ea97cc91418b520526d0634ca797e40e475",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
       "promoted_rules": [
@@ -23502,7 +23502,7 @@
         "learn-huggingface-hf-google-bert-bert-base-uncased-mv48tc54",
         "learn-huggingface-hf-google-bert-bert-base-uncased-mv4m6lnc"
       ],
-      "verified_at": "2026-10-28T12:08:58.624Z",
+      "verified_at": "2026-10-31T12:46:45.483Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37794,8 +37794,8 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "91dfab21",
-      "content_hash": "dc9eb7205aec62d31ec20750713ccabb8da844ee549c07afbd85bf7edc7c9f2c",
+      "source_version": "ae40f12a",
+      "content_hash": "e3c5f3aec9edf3050592f6b279d62e1d53121fa0e127e4ee961e7b291859afa5",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
@@ -37833,6 +37833,11 @@
           "number": 5856,
           "title": "plan): MySQL implicit boolean semantics for ENUM/SET, BIT literals and JSON cond",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6197,
+          "title": "daemon claim races and reduce redundant race-test work (#31942)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37840,7 +37845,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T20:05:20.516Z",
+      "verified_at": "2026-10-31T12:46:59.951Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53596,8 +53601,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "13348998",
-      "content_hash": "a2bf6f90a673603b4fc079dbd51ab263c323a4c1381143da7288da8cc26d2715",
+      "source_version": "6c6dd62b",
+      "content_hash": "fae376171272a37b292a8f23d648c2a7f51d0094b1e29e0082f2a18df8fc9daf",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -53730,6 +53735,11 @@
           "number": 5953,
           "title": "ssh/tailssh: stop killing session processes on graceful disconnects",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6196,
+          "title": "ipn/store/kubestore: omit ARI replaces for unstamped shared certs (#22053)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53737,7 +53747,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T00:20:37.900Z",
+      "verified_at": "2026-10-31T12:46:56.337Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -161971,6 +161981,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T12:29:46.389Z"
+    },
+    "rule-6196": {
+      "learning_id": "rule-6196",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6196,
+      "title": "ipn/store/kubestore: omit ARI replaces for unstamped shared certs (#22053)",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "6c6dd62b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T12:46:56.337Z"
+    },
+    "rule-6197": {
+      "learning_id": "rule-6197",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6197,
+      "title": "daemon claim races and reduce redundant race-test work (#31942)",
+      "source_url": "https://github.com/matrixorigin/matrixone",
+      "source_version": "ae40f12a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T12:46:59.951Z"
     }
   },
   "aliases": {

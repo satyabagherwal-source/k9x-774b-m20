@@ -453629,3 +453629,112 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `f068d4c7` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6196. ipn/store/kubestore: omit ARI replaces for unstamped shared certs (#22053) (Harvested from tailscale/tailscale)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "ipn/store/kubestore: omit ARI replaces for unstamped shared certs (#22053)",
+  "source": "tailscale/tailscale",
+  "source_url": "https://github.com/tailscale/tailscale",
+  "source_version": "6c6dd62b",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-10-31T12:46:56.125Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tailscale-tailscale",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `6c6dd62b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `ipn/store/kubestore/store_kube.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6c6dd62b`: ipn/store/kubestore: omit ARI replaces for unstamped shared certs (#22053). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/store/kubestore/store_kube.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+		// A legacy cert has no record of its issuing account. With a
+		// shared account, the current key may have been created or adopted
+		// after this cert was issued, even without a prior local key.
+		// Omit replaces until a renewal stamps the issuing fingerprint.
+		if s.acmeAccountsSecretName != "" || len(s.preAdoptedLocalKey) > 0 {
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+		// Legacy cert, no fingerprint stamp. Assume misaligned only if
+		// we adopted a foreign shared key.
+		if len(s.preAdoptedLocalKey) > 0 {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6c6dd62b` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6197. daemon claim races and reduce redundant race-test work (#31942) (Harvested from matrixorigin/matrixone)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "daemon claim races and reduce redundant race-test work (#31942)",
+  "source": "matrixorigin/matrixone",
+  "source_url": "https://github.com/matrixorigin/matrixone",
+  "source_version": "ae40f12a",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-31T12:46:59.739Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-matrixorigin-matrixone",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [matrixorigin/matrixone](https://github.com/matrixorigin/matrixone) (Revision: `ae40f12a`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `pkg/cnservice/server_task_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ae40f12a`: daemon claim races and reduce redundant race-test work (#31942). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/cnservice/server_task_test.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+func (ts *testTS) RequestDaemonTaskStatus(context.Context, task.DaemonTask, task.TaskStatus) (int, error) {
+	panic("unexpected RequestDaemonTaskStatus")
+}
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ae40f12a` are properly handled with clean fallback behavior.
