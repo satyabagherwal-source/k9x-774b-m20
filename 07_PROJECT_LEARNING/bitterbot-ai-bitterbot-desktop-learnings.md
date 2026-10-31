@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `299269af`  
+> **Source Version**: `c8d414db`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T16:50:39.537Z  
+> **Timestamp**: 2026-10-31T17:50:24.757Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T16:50:39.529Z  
+> **Harvest Timestamp**: 2026-10-31T17:50:24.752Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,446 +1799,426 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `299269af` (2026-10-31)
-**Commit Message**: feat(gateway): explain disabled OpenAI-compatible endpoints instead of a bare 404 (#342)
+### Incident Patch 1: `c8d414db` (2026-10-31)
+**Commit Message**: feat(compute): land the beta recovery stack on main with Soapbox rc10 (#343)
 
-Both `/v1/chat/completions` and `/v1/responses` are off by default. A client
-that pointed an OpenAI SDK at the Gateway got `404 Not Found` with no hint,
-read it as "not an OpenAI-compatible API", and left. An external robotics
-integration documented exactly that in October 2026.
+Main has shipped 1.10.1 and 1.11.0 pinning Soapbox rc5 while every beta since
+1.10.1-beta.2 was cut from side branches carrying the compute recovery work.
+This brings that stack to main as one change: the contents of PRs #287 (rc8:
+revocation reconciliation, cancellation recovery without resubmission or
+regrant), #314 (rc9: P2P discovery recovery, installed sidecars preferred
+over stale checkout builds) and #319 (rc10: expiring quotes, saved
+buyer/operator profiles, runtime readiness, profile-transition guard).
 
-The disabled routes now answer 404 with an OpenAI-shaped JSON error
-(`code: endpoint_disabled`) whose message names the config key to flip, the
-CLI command, and the docs page. The gateway log carries the same line once
-per endpoint. Unknown paths keep the plain fallthrough, and enabled routes
-are untouched.
+Runtime pin moves to Soapbox v0.3.0-rc.10. rc8 and later migrate the
+coordinator database to schema 2 one way; rc7 and earlier refuse it.
 
-Docs: enable steps (CLI and Docker) and a troubleshooting entry on the
-endpoint pages, the Docker guide, and the gateway troubleshooting page; the
-README interoperability paragraph now mentions the endpoint.
+Release tooling learns explicit X.Y.Z-beta.N versions: prerelease flag on
+generated listings, pinned beta installs in the install test, beta-aware
+launcher manifest validation and version directory parsing, and the macOS
+release runner moves to macos-15 ahead of the macos-14 retirement.
 
-Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
+Version bumps from the beta branches are not carried; release-please owns
+versions on main. The Soapbox guide keeps the stable-channel install wording
+and notes which release b
 
-**File**: `README.md` (modified, +2/-2)
+**File**: `.github/workflows/ci.yml` (modified, +17/-6)
 ```diff
-@@ -239,13 +239,13 @@ There is no public feed or follower count. Expense tracking records a shared tab
- 
- The longer-term ambition is a network where agents turn experience into useful capabilities and share those capabilities with evidence attached.
- 
--Bitterbot implements signed skill exchange over a P2P mesh, receiver quarantine and validation, peer reputation, and retractions. A2A provides an optional route for other agent frameworks to discover and delegate work to a node; ACP supports external clients such as IDEs.
-+Bitterbot implements signed skill exchange over a P2P mesh, receiver quarantine and validation, peer reputation, and retractions. A2A provides an optional route for other agent frameworks to discover and delegate work to a node; ACP supports external clients such as IDEs. The Gateway can also serve an OpenAI-compatible `/v1/chat/completions` endpoint (off by default), so any tool that speaks the OpenAI API can use a Bitterbot agent as its model.
- 
- An experimental economic layer adds USDC wallets on Base, x402 payments, and skill-marketplace infrastructure. **The wallet, payments, A2A HTTP, marketplace, and bounties are opt-in.** The wallet starts on testnet. Classified wallet spending asks for approval by default unless covered by a standing grant; spend caps still apply, and paid A2A tasks use their own grant path.
- 
- The marketplace is early and has not carried meaningful paid volume. Payment functionality has not had a third-party audit. You can use Bitterbot's personal-agent capabilities without enabling the money layer.
- 
--[Skill marketplace](docs/marketplace/) · [A2A integration](docs/marketplace/a2a-integration.md) · [Wallet](docs/wallet/) · [Action review](docs/tools/action-review.md)
-+[Skill marketplace](docs/marketplace/) · [A2A integration](docs/marketplace/a2a-integration.md) · [OpenAI-compatible endpoint](docs/gateway/openai-http-api.md) · [Wallet](docs/wallet/) · [Action review](docs/tools/action-review.md)
- 
- ## Models
- 
+@@ -339,7 +339,7 @@ jobs:
+             const asset = (tag, n) => ({ name: n, browser_download_url: `https://github.com/Bitterbot-AI/bitterbot-desktop/releases/download/${tag}/${n}` });
+             const listing = [
+               { tag_name: "v99.0.0", draft: false, prerelease: false, assets: [asset("v99.0.0", "docker-compose.yml")] },
+-              { tag_name: `v${version}`, draft: false, prerelease: false, assets: fs.readdirSync(`${dir}/download/v${version}`).map((n) => asset(`v${version}`, n)) },
++              { tag_name: `v${version}`, draft: false, prerelease: version.includes("-"), assets: fs.readdirSync(`${dir}/download/v${version}`).map((n) => asset(`v${version}`, n)) },
+             ];
+             fs.writeFileSync(`${dir}/api/releases.json`, JSON.stringify(listing));
+           ' "$RUNNER_TEMP/releases" "$VERSION"
+@@ -395,8 +395,19 @@ jobs:
+         run: |
+           set -euo pipefail
+           export HOME="$RUNNER_TEMP/home" BITTERBOT_INSTALL_TEST_MODE=1             BITTERBOT_INSTALL_BASE_URL=http://127.0.0.1:8765 BITTERBOT_INSTALL_TEST_PUBKEY="$TEST_PUBKEY"
+-          curl -fsSL http://127.0.0.1:8765/install.sh | bash -s -- --yes --no-onboard | tee "$RUNNER_TEMP/install1.log"
+-          grep -q "Newest complete release: $VERSION" "$RUNNER_TEMP/install1.log"
++          version_args=()
++          if [[ "$VERSION" == *-* ]]; then
++            # A beta must never become the implicit stable-channel install.
++            if bash scripts/install.sh --yes --no-onboard > "$RUNNER_TEMP/beta-unpinned.log" 2>&1; then
++              echo "an unpinned install selected a prerelease"; exit 1
++            fi
++            grep -q "no published release carries a signed tarball" "$RUNNER_TEMP/beta-unpinned.log"
++            version_args=(--version "$VERSION")
++          fi
++          curl -fsSL http://127.0.0.1:8765/install.sh | bash -s -- --yes --no-onboard "${version_args[@]}" | tee "$RUNNER_TEMP/install1.log"
++          if [[ "$VERSION" != *-* ]]; then
++            grep -q "Newest complete release: $VERSION" "$RUNNER_TEMP/install1.log"
++          fi
+           grep -q "Verified: minisign signature (pinned key)" "$RUNNER_TEMP/install1.log"
+           # Same build again: every file is re-checked against manifest.json
+           # and the directory is kept in place.
+@@ -521,7 +532,7 @@ jobs:
+       - name: Derive version B (same code) and a broken B' (gateway exits 1), sign B
+         run: |
+           set -euo pipefail
+-          IFS=. read -r MA MI PA <<< "$VERSION"
++          IFS=. read -r MA MI PA <<< "${VERSION%%-*}"
+           VB="$MA.$MI.$((PA + 1))"
+           VC="$MA.$MI.$((PA + 2))"
+           A_TGZ="$RUNNER_TEMP/release-out/bitterbot-$VERSION-linux-x64.tar.gz"
+@@ -544,7 +555,7 @@ jobs:
+           const asset = (tag, n) => ({ name: n, browser_download_url: `https://github.com/Bitterbot-AI/bitterbot-desktop/releases/download/${tag}/${n}` });
+           const listing = [{ tag_name: "v99.0.0", draft: false, prerelease: false, assets: [asset("v99.0.0", "docker-compose.yml")] }];
+           for (const tag of fs.readdirSync(`${dir}/download`)) {
+-            listing.push({ tag_name: tag, draft: false, prerelease: false, assets: fs.readdirSync(`${dir}/download/${tag}`).map((n) => asset(tag, n)) });
++            listing.push({ tag_name: tag, draft: false, prerelease: tag.includes("-"), assets: fs.readdirSync(`${dir}/download/${tag}`).map((n) => asset(tag, n)) });
+           }
+           fs.writeFileSync(`${dir}/api/releases.json`, JSON.stringify(listing));
+           JS
+@@ -575,7 +586,7 @@ jobs:
+           # bundled node inside ~/.bitterbot/app/<version>/runtime).
+           gw_versions() {
+             for pid in $(pgrep -f "^bitterbot-gateway"); do
+-              readlink "/proc/$pid/exe" | sed -n 's#.*/app/\([0-9.]*\)/runtime/.*#\1#p'
++              readlink "/proc/$pid/exe" | sed -nE 's#.*/app/([0-9]+\.[0-9]+\.[0-9]+(-beta\.[1-9][0-9]*)?)/runtime/.*#\1#p'
+             done | sort -u
+           }
+           healthy() {
 ```
 
-**File**: `docs/gateway/openai-http-api.md` (modified, +42/-0)
+**File**: `.github/workflows/release-tarball.yml` (modified, +2/-1)
 ```diff
-@@ -59,6 +59,48 @@ Set `gateway.http.endpoints.chatCompletions.enabled` to `true`:
- }
- ```
- 
-+Or from the CLI, then restart the Gateway:
+@@ -145,7 +145,8 @@ jobs:
+           - platform: linux-arm64
+             runner: ubuntu-22.04-arm
+           - platform: darwin-arm64
+-            runner: macos-14
++            # macOS 14 retires November 2, 2026; reduced capacity can strand releases.
++            runner: macos-15
+           - platform: darwin-x64
+             runner: macos-15-intel
+             optional: true
+```
+
+**File**: `desktop/renderer/src/components/compute/ComputeProfiles.tsx` (added, +51/-0)
+```diff
+@@ -0,0 +1,51 @@
++import type { SoapboxSetupStatus } from "../../../../../src/infra/soapbox-setup-types";
 +
-+```bash
-+bitterbot config set gateway.http.endpoints.chatCompletions.enabled true --json
-+```
-+
-+In Docker, run the same command through the container:
-+
-+```bash
-+docker compose exec -u node bitterbot-gateway \
-+  node bitterbot.mjs config set gateway.http.endpoints.chatCompletions.enabled true --json
-+docker compose restart bitterbot-gateway
-+```
-+
-+## Troubleshooting
-+
-+### 404 with `"code": "endpoint_disabled"`
-+
-+The Gateway is reachable but the endpoint is switched off. Since 1.12 the
-+response is a JSON error in the OpenAI shape that names the config key:
-+
-+```json
-+{
-+  "error": {
-+    "message": "The OpenAI Chat Completions endpoint (/v1/chat/completions) is disabled on this Bitterbot Gateway. Set gateway.http.endpoints.chatCompletions.enabled to true in bitterbot.json (bitterbot config set gateway.http.endpoints.chatCompletions.enabled true --json) and restart the Gateway. Docs: https://docs.bitterbot.ai/gateway/openai-http-api",
-+    "type": "invalid_request_error",
-+    "param": null,
-+    "code": "endpoint_disabled"
-+  }
++export function ComputeProfiles({
++  status,
++  busy,
++  add,
++  select,
++}: {
++  status: SoapboxSetupStatus;
++  busy: boolean;
++  add: () => void;
++  select: (id: string) => void;
++}) {
++  return (
++    <div className="space-y-3">
++      <h3 className="font-medium">Buyer and operator profiles</h3>
++      <p className="text-sm text-muted-foreground">
++        One profile is active at a time. Switching reconnects Compute and preserves your saved
++        setup. Finish active jobs and pending payments first. Paid profiles use your separate Base
++        Sepolia wallet.
++      </p>
++      {status.profiles?.map((profile) => (
++        <div
++          key={profile.id}
++          className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border p-3"
++        >
++          <span className="text-sm">
++            {profile.name}
++            {profile.active ? " · Active" : ""}
++          </span>
++          {!profile.active && (
++            <button
++              className="text-sm underline disabled:opacity-40"
++              disabled={busy}
++              onClick={() => select(profile.id)}
++            >
++              Switch to {profile.name}
++            </button>
++          )}
++        </div>
++      ))}
++      <button
++        className="rounded-lg bg-brand px-4 py-2 text-sm text-white disabled:opacity-40"
++        disabled={busy}
++        onClick={add}
++      >
++        Add buyer or operator profile
++      </button>
++    </div>
++  );
 +}
-+```
-+
-+The gateway log carries the same line once per endpoint. Older Gateways
-+answered a plain `404 Not Found` with no hint, which read as "not an
-+OpenAI-compatible API". Enable the endpoint as shown above and retry.
-+
-+### 401 Unauthorized
-+
-+The endpoint is on but the request carried no (or the wrong) bearer token. Send
-+the Gateway token as `Authorization: Bearer <token>`; `bitterbot config get
-+gateway.auth.token` prints it.
-+
- ## Disabling the endpoint
- 
- Set `gateway.http.endpoints.chatCompletions.enabled` to `false`:
 ```
 
-**File**: `docs/gateway/openresponses-http-api.md` (modified, +8/-0)
+**File**: `desktop/renderer/src/components/compute/ComputeSetup.test.tsx` (modified, +16/-0)
 ```diff
-@@ -331,3 +331,11 @@ curl -N http://127.0.0.1:19001/v1/responses \
-     "input": "hi"
-   }'
- ```
+@@ -101,6 +101,22 @@ it("keeps configured gateways read only and explains where the tester runs setup
+   expect(screen.getByText(/tester’s own Bitterbot app/)).toBeTruthy();
+ });
+ 
++it("offers explicit saved-profile switching without funding or creating wallets", async () => {
++  status.configured = true;
++  status.configuredRole = "mesh-operator";
++  status.canManageProfiles = true;
++  status.profiles = [
++    { id: "operator", role: "mesh-operator", name: "Local P2P operator", active: true },
++    { id: "buyer", role: "buyer", name: "Buyer · tester", active: false },
++  ];
++  render(<ComputeSetup onClose={() => {}} />);
++  fireEvent.click(await screen.findByRole("button", { name: "Switch to Buyer · tester" }));
++  await waitFor(() =>
++    expect(fake.request).toHaveBeenCalledWith("soapbox.setup.profile.switch", { id: "buyer" }),
++  );
++  expect(fake.request.mock.calls.some(([method]) => /wallet|payment/.test(method))).toBe(false);
++});
 +
-+## Troubleshooting
-+
-+A `404` whose JSON body has `"code": "endpoint_disabled"` means the Gateway is
-+reachable but `gateway.http.endpoints.responses.enabled` is not set. Enable it
-+(`bitterbot config set gateway.http.endpoints.responses.enabled true --json`),
-+restart the Gateway, and retry. A plain `404 Not Found` without that body comes
-+from a Gateway older than 1.12, where the disabled endpoint gave no hint.
+ it("clears a transient status error after the gateway reconnects", async () => {
+   fake.request.mockRejectedValueOnce(new Error("Gateway restarting"));
+   render(<ComputeSetup onClose={() => {}} />);
 ```
 
-**File**: `docs/gateway/troubleshooting.md` (modified, +18/-0)
+**File**: `desktop/renderer/src/components/compute/ComputeSetup.tsx` (modified, +51/-6)
 ```diff
-@@ -187,6 +187,24 @@ Related:
- - [/gateway/authentication](/gateway/authentication)
- - [/gateway/remote](/gateway/remote)
+@@ -1,6 +1,7 @@
+-import { useCallback, useEffect, useState } from "react";
++import { useCallback, useEffect, useRef, useState } from "react";
+ import type { SoapboxSetupStatus } from "../../../../../src/infra/soapbox-setup-types";
+ import { useGatewayStore } from "../../stores/gateway-store";
++import { ComputeProfiles } from "./ComputeProfiles";
+ import { SoapboxLogo } from "./SoapboxLogo";
  
-+## 404 from `/v1/chat/completions` or `/v1/responses`
-+
-+The Gateway answers but an OpenAI-style client gets `404`. Both OpenAI-compatible
-+endpoints are **off by default**. Check the response body: a JSON error with
-+`"code": "endpoint_disabled"` names the setting to flip, and the gateway log
-+shows the same line once. Enable the one you need and restart:
-+
-+```bash
-+bitterbot config set gateway.http.endpoints.chatCompletions.enabled true --json
-+# or, for the OpenResponses API
-+bitterbot config set gateway.http.endpoints.responses.enabled true --json
-+```
-+
-+In Docker, prefix the command with
-+`docker compose exec -u node bitterbot-gateway node bitterbot.mjs`. A plain
-+`404 Not Found` with no JSON body means the Gateway is older than 1.12; the fix
-+is the same. See [OpenAI Chat Completions](/gateway/openai-http-api).
-+
- ## Gateway service not running
- 
- Use this when service is installed but process does not stay up.
-```
-
-**File**: `docs/platforms/docker.md` (modified, +28/-0)
-```diff
-@@ -192,6 +192,34 @@ it. Safer ways to reach it from elsewhere, in order:
-    past host firewalls such as ufw. Never publish the port to the internet
-    without HTTPS in front of it.
- 
-+## Using it as an OpenAI-compatible model server
-+
-+Tools that speak the OpenAI Chat Completions API (robotics bridges, Open WebUI,
-+LangChain, plain `curl`) can use a Bitterbot agent as their model. The
-+endpoint is **off by default**; a request to a Gateway that has not enabled it
-+gets a `404` whose JSON body says so and names the setting. Turn it on through
-+the container and restart:
-+
-+```bash
-+docker compose exec -u node bitterbot-gateway \
-+  node bitterbot.mjs config set gateway.http.endpoints.chatCompletions.enabled true --json
-+docker compose restart bitterbot-gateway
-+```
-+
-+Then point the client at `http://127.0.0.1:19001/v1/chat/completions` with the
-+Gateway token as the API key and `bitterbot:main` as the model:
-+
-+```bash
-+curl -s http://127.0.0.1:19001/v1/chat/completions \
-+  -H "Authorization: Bearer $BITTERBOT_GATEWAY_TOKEN" \
-+  -H "Content-Type: application/json" \
-+  -d '{"model":"bitterbot:main","messages":[{"role":"user","content":"hello"}]}'
-+```
-+
-+Each call runs a normal agent turn, with the agent's memory and tools, and
-+replies in the OpenAI response shape (streaming with `"stream": true`). Details
-+and the `/v1/responses` variant: [OpenAI Chat Completions](/gateway/openai-http-api).
-+
- ## The P2P port
- 
- By default the P2P port is published on `127.0.0.1` only. The node still joins
-```
-
-**File**: `src/gateway/openai-disabled-http.test.ts` (added, +110/-0)
-```diff
-@@ -0,0 +1,110 @@
-+import type { IncomingMessage, ServerResponse } from "node:http";
-+import { describe, expect, it, vi } from "vitest";
-+import {
-+  createDisabledOpenAiEndpointHandler,
-+  describeDisabledOpenAiEndpoint,
-+  OPENAI_ENDPOINT_DISABLED_CODE,
-+} from "./openai-disabled-http.js";
-+
-+function fakeReq(url: string, method = "POST"): IncomingMessage {
-+  return { url, method, headers: {} } as unknown as IncomingMessage;
-+}
-+
-+function fakeRes() {
-+  const headers: Record<string, string> = {};
-+  const state = { statusCode: 0, body: "", headers };
-+  const res = {
-+    get statusCode() {
-+      return state.statusCode;
-+    },
-+    set statusCode(value: number) {
-+      state.statusCode = value;
-+    },
-+    setHeader(name: string, value: string) {
-+      headers[name.toLowerCase()] = value;
-+    },
-+    end(chunk?: string) {
-+      state.body = chunk ?? "";
-+    },
-+  } as unknown as ServerResponse;
-+  return { res, state };
-+}
-+
-+describe("disabled OpenAI-style endpoints", () => {
-+  it("answers a disabled chat completions request with an OpenAI-shaped hint", () => {
-+    const warn = vi.fn();
-+    const handle = createDisabledOpenAiEndpointHandler({
-+      chatCompletionsEnabled: false,
-+      responsesEnabled: false,
-+      warn,
-+    });
-+    const { res, state } = fakeRes();
-+    expect(handle(fakeReq("/v1/chat/completions?x=1"), res)).toBe(true);
-+    expect(state.statusCode).toBe(404);
-+    expect(state.headers["content-type"]).toContain("application/json");
-+    const body = JSON.parse(state.body) as {
-+      error: { message: string; type: string; code: string; param: null };
-+    };
-+    expect(body.error.code).toBe(OPENAI_ENDPOINT_DISABLED_CODE);
-+    expect(body.error.type).toBe("invalid_request_error");
-+    expect(body.error.param).toBeNull();
-+    expect(body.error.message).toContain("gateway.http.endpoints.chatCompletions.enabled");
-+    expect(body.error.message).toContain("docs.bitterbot.ai/gateway/openai-http-api");
-+    expect(warn).toHaveBeenCalledTimes(1);
-+    expect(warn.mock.calls[0]?.[0]).toContain("/v1/chat/completions");
-+    expect(warn.mock.calls[0]?.[0]).toContain("chatCompletions.enabled=true");
-+  });
-+
-+  it("warns once per endpoint, not once per request", () => {
-+    const warn = vi.fn();
-+    const handle = createDisabledOpenAiEndpointHandler({
-+      chatCompletionsEnabled: false,
-+      responsesEnabled: false,
-+      warn,
-+    });
-+    for (let i = 0; i < 3; i += 1) {
-+      expect(handle(fakeReq("/v1/chat/completions"), fakeRes().res)).toBe(true);
+ const button = "rounded-lg bg-brand px-4 py-2 text-sm text-white disabled:opacity-40";
+@@ -19,6 +20,14 @@ export function ComputeSetup({ onClose }: { onClose: () => void }) {
+   const [connectionError, setConnectionError] = useState("");
+   const [upload, setUpload] = useState<number>();
+   const [activating, setActivating] = useState(false);
++  const reconnecting = useRef(false);
++  useEffect(() => {
++    if (!connected && activating) reconnecting.current = true;
++    if (connected && reconnecting.current) {
++      reconnecting.current = false;
++      setActivating(false);
 +    }
-+    expect(handle(fakeReq("/v1/responses"), fakeRes().res)).toBe(true);
-+    expect(warn).toHaveBeenCalledTimes(2);
++  }, [connected, activating]);
+   const [acknowledged, setAcknowledged] = useState(false);
+   const [remoteOperator, setRemoteOperator] = useState(false);
+   const refresh = useCallback(async () => {
+@@ -124,17 +133,53 @@ export function ComputeSetup({ onClose }: { onClose: () => void }) {
+         </p>
+       )}
+       {!status && <p role="status">Loading setup…</p>}
+-      {status?.configured ? (
++      {status?.addingProfile && (
++        <p className="text-sm">
++          Your current profile stays active until you activate this setup.{" "}
++          <button
++            className="underline"
++            disabled={locked}
++            onClick={() =>
++              void run(async () => {
++                await request("soapbox.setup.profile.cancel");
++              })
++            }
++          >
++            Cancel new profile
++          </button>
++        </p>
++      )}
++      {status?.configured && !status.addingProfile ? (
+         <div className="space-y-2">
+           <p role="status">
+             {status.configuredRole === "mesh-operator"
+               ? "This device is configured as a P2P GPU operator."
+               : `Compute is configured on this gateway (${status.configuredRole}).`}
+           </p>
+-          <p className="text-sm">
+-            Use the Compute dashboard to submit work or manage your operator. Run setup on the
+-            tester’s own Bitterbot app.
+-          </p>
++          {status.canManageProfiles ? (
++            <ComputeProfiles
++              status={status}
++              busy={locked}
++              add={() =>
++                void run(async () => {
++                  await request("soapbox.setup.profile.new");
++                  setAcknowledged(false);
++                  setActivating(false);
++                })
++              }
++              select={(id) =>
++                void run(async () => {
++                  await request("soapbox.setup.profile.switch", { id });
++                  setActivating(true);
++                })
++              }
++            />
++          ) : (
++            <p className="text-sm">
++              Use the Compute dashboard to submit work or manage your operator. Run setup on the
++              tester’s own Bitterbot app.
++            </p>
++          )}
+           <button className={button} onClick={onClose}>
+             Open Compute dashboard
+           </button>
+```
+
+**File**: `desktop/renderer/src/components/compute/ComputeView.test.tsx` (modified, +2/-0)
+```diff
+@@ -52,7 +52,9 @@ describe("Compute view", () => {
+     const job = {
+       id: "paid-job",
+       status: "awaiting_payment",
++      deadline: Math.floor(Date.now() / 1000) + 600,
+       payment: {
++        expires: Math.floor(Date.now() / 1000) + 3600,
+         amount_microusdc: 2000,
+         operator: `0x${"3".repeat(40)}`,
+         chain_id: 84532,
+```
+
+**File**: `desktop/renderer/src/components/compute/ComputeView.tsx` (modified, +6/-0)
+```diff
+@@ -531,6 +531,12 @@ export function ComputeView() {
+                 job={selected}
+                 busy={busy}
+                 canFund={!operatorOnly}
++                replaceQuote={() =>
++                  void run(async () => {
++                    setSelected(await request<SoapboxJob>("soapbox.requote", { id: selected.id }));
++                    await refresh();
++                  })
++                }
+                 fund={() =>
+                   void run(async () => {
+                     const response = await request<{ job: SoapboxJob }>(
+```
+
+**File**: `desktop/renderer/src/components/compute/MeshPanel.test.tsx` (modified, +86/-1)
+```diff
+@@ -1,4 +1,4 @@
+-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
++import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+ import { afterEach, expect, it, vi } from "vitest";
+ import { MeshPanel } from "./MeshPanel";
+ const fake = vi.hoisted(() => ({ status: "connected", request: vi.fn() }));
+@@ -7,6 +7,7 @@ vi.mock("../../stores/gateway-store", () => ({
+ }));
+ afterEach(() => {
+   cleanup();
++  vi.useRealTimers();
+   vi.clearAllMocks();
+ });
+ const peer = "12D3KooW" + "A".repeat(44);
+@@ -29,6 +30,44 @@ const snapshot = {
+   batches: [],
+   activity: [],
+ };
++it("clears a failed status poll after discovery reconnects", async () => {
++  vi.useFakeTimers();
++  fake.request
++    .mockReset()
++    .mockRejectedValueOnce(Error("gateway restarting"))
++    .mockResolvedValue(snapshot);
++  await act(async () => {
++    render(<MeshPanel />);
 +  });
++  expect(screen.getByRole("alert").textContent).toContain("connected gateway");
++  await act(async () => {
++    await vi.advanceTimersByTimeAsync(5000);
++  });
++  expect(screen.queryByRole("alert")).toBeNull();
++  expect(screen.getByText("Discovery active")).toBeTruthy();
++});
++it("keeps an action failure visible when background polling succeeds", async () => {
++  vi.useFakeTimers();
++  fake.request.mockReset().mockImplementation(async (method: string) => {
++    if (method === "soapbox.mesh.grant") throw Error("grant denied");
++    return snapshot;
++  });
++  await act(async () => {
++    render(<MeshPanel />);
++  });
++  fireEvent.click(screen.getByText("Peers and operator access"));
++  fireEvent.change(screen.getByLabelText("Scope to share"), {
++    target: { value: "private:circle" },
++  });
++  await act(async () => {
++    fireEvent.click(screen.getByText("Grant selected scope"));
++  });
++  expect(screen.getByRole("alert").textContent).toContain("Action failed");
++  await act(async () => {
++    await vi.advanceTimersByTimeAsync(5000);
++  });
++  expect(screen.getByRole("alert").textContent).toContain("Action failed");
++});
+ it("keeps approvals explicit and retries the same batch without accessing a wallet", async () => {
+   fake.request.mockImplementation(async (method: string) => {
+     if (method === "soapbox.mesh.submit") throw Error("response lost");
+@@ -88,3 +127,49 @@ it("grants only the selected operator scope and shows incoming work", async () =
+   fireEvent.click(screen.getByText("Recent mesh activity"));
+   expect(screen.getByText(/incoming succeeded/)).toBeTruthy();
+ });
 +
-+  it("names the responses config key for /v1/responses", () => {
-+    const handle = createDisabledOpenAiEndpointHandler({
-+      chatCompletionsEnabled: true,
-+      responsesEnabled: false,
-+      warn: () => {},
-+    });
-+    const { res, state } = fakeRes();
-+    expect(handle(fakeReq("/v1/responses"), res)).toBe(true);
-+    const body = JSON.parse(state.body) as { error: { message: string } };
-+    expect(body.error.message).toContain("gateway.http.endpoints.responses.enabled");
-+    expect(body.error.message).toContain("openresponses-http-api");
++it("shows remote cancellation pending without promising resubmission or requesting approval", async () => {
++  fake.request.mockResolvedValue({
++    ...snapshot,
++    batches: [
++      {
++        id: "cancel",
++        kind: "sha256",
++        items: 1,
++        status: "cancelling",
++        shards: [{ status: "queued", peerId: peer, error: "offline" }],
++      },
++    ],
 +  });
++  render(<MeshPanel />);
++  await screen.findByText(/Waiting for the operator to confirm/);
++  expect(screen.queryByText(/Retrying the same shard safely/)).toBeNull();
++  expect(screen.queryByRole("button", { name: "Cancel batch" })).toBeNull();
++  expect(fake.request.mock.calls.every(([method]) => method === "soapbox.mesh.status")).toBe(true);
++});
 +
-+  it("stays out of the way when the endpoint is enabled or the path is unknown", () => {
-+    const warn = vi.fn();
-+    const handle = createDisabledOpenAiEndpointHandler({
-+      chatCompletionsEnabled: true,
-+      responsesEnabled: true,
-+      warn,
-+    });
-+    expect(handle(fakeReq("/v1/chat/completions"), fakeRes().res)).toBe(false);
-+    expect(handle(fakeReq("/v1/responses"), fakeRes().res)).toBe(false);
-+    const disabledHandle = createDisabledOpenAiEndpointHandler({
-+      chatCompletionsEnabled: false,
-+      responsesEnabled: false,
-+      warn,
-+    });
-+    expect(disabledHandle(fakeReq("/v1/models", "GET"), fakeRes().res)).toBe(false);
-+    expect(disabledHandle(fakeReq("/healthz", "GET"), fakeRes().res)).toBe(false);
-+    expect(warn).not.toHaveBeenCalled();
++it("does not display a stale retry hint on a cancelled batch and discloses completed work", async () => {
++  fake.request.mockResolvedValue({
++    ...snapshot,
++    batches: [
++      {
++        id: "cancel",
++        kind: "sha256",
++        items: 1,
++        status: "cancelled",
++        shards: [
++          {
++            status: "cancelled",
++            cancelledRemoteStatus: "succeeded",
++            peerId: peer,
++            error: "old error",
++          },
++        ],
++      },
++    ],
 +  });
-+
-+  it("describes only the endpoints it knows", () => {
-+    expect(describeDisabledOpenAiEndpoint("/v1/chat/completions")?.configKey).toBe(
-+      "gateway.http.endpoints.chatCompletions.enabled",
-+    );
-+    expect(describeDisabledOpenAiEndpoint("/v1/embeddings")).toBeNull();
-+  });
++  render(<MeshPanel />);
++  await screen.findByText(/Some work completed before cancellation/);
++  expect(screen.queryByText(/Retrying the same shard safely/)).toBeNull();
++  expect(screen.queryByText(/Waiting for the operator to confirm/)).toBeNull();
 +});
 ```
 
-**File**: `src/gateway/openai-disabled-http.ts` (added, +112/-0)
-```diff
-@@ -0,0 +1,112 @@
-+import type { IncomingMessage, ServerResponse } from "node:http";
-+import { logWarn } from "../logger.js";
-+import { sendJson } from "./http-common.js";
-+
-+/**
-+ * Explains, instead of a bare 404, why an OpenAI-style HTTP endpoint that the
-+ * Gateway knows about is not being served.
-+ *
-+ * Both `/v1/chat/completions` and `/v1/responses` are off by default. An
-+ * integrator who points an OpenAI SDK at the Gateway otherwise sees only
-+ * `404 Not Found`, concludes the API is incompatible, and leaves (a robotics
-+ * project did exactly that in 2026-10). The response here keeps the 404 status,
-+ * since the route really is not mounted, but carries an OpenAI-shaped error
-+ * body that names the config key to flip and the docs page, and the gateway log
-+ * says the same thing once per endpoint so the operator sees it too.
-+ */
-+
-+export const OPENAI_ENDPOINT_DISABLED_CODE = "endpoint_disabled";
-+
-+export type DisabledOpenAiEndpointOptions = {
-+  chatCompletionsEnabled: boolean;
-+  responsesEnabled: boolean;
-+  /** Test seam; defaults to the gateway warn log. */
-+  warn?: (message: string) => void;
-+};
-+
-+type KnownEndpoint = {
-+  pathname: string;
-+  label: string;
-+  configKey: string;
-+  docsUrl: string;
-+  enabled: (opts: DisabledOpenAiEndpointOptions) => boolean;
-+};
-+
-+const KNOWN_ENDPOINTS: readonly KnownEndpoint[] = [
-+  {
-+    pathname: "/v1/chat/completions",
-+    label: "OpenAI Chat Completions",
-+    configKey: "gateway.http.endpoints.chatCompletions.enabled",
-+    docsUrl: "https://docs.bitterbot.ai/gateway/openai-http-api",
-+    enabled: (opts) => opts.chatCompletionsEnabled,
-+  },
-+  {
-+    pathname: "/v1/responses",
-+    label: "OpenResponses",
-+    configKey: "gateway.http.endpoints.responses.enabled",
-+    docsUrl: "https://docs.bitterbot.ai/gateway/openresponses-http-api",
-+    enabled: (opts) => opts.responsesEnabled,
-+  },
-+];
-+
-+export function describeDisabledOpenAiEndpoint(pathname: string): {
-+  label: string;
-+  configKey: string;
-+  docsUrl: string;
-+  message: string;
-+} | null {
-+  const endpoint = KNOWN_ENDPOINTS.find((candidate) => candidate.pathname === pathname);
-+  if (!endpoint) {
-+    return null;
-+  }
-+  const message =
-+    `The ${endpoint.label} endpoint (${endpoint.pathname}) is disabled on this Bitterbot Gateway. ` +
-+    `Set ${endpoint.configKey} to true in bitterbot.json ` +
-+    `(bitterbot config set ${endpoint.configKey} true --json) and restart the Gateway. ` +
-+    `Docs: ${endpoint.docsUrl}`;
-+  return {
-+    label: endpoint.label,
-+    configKey: endpoint.configKey,
-+    docsUrl: endpoint.docsUrl,
-+    message,
-+  };
-+}
-+
-+/**
-+ * Returns a request handler that answers requests for a known-but-disabled
-+ * OpenAI-style endpoint and returns `false` for everything else. Mount it after
-+ * the enabled handlers and before the generic 404 fallthrough.
-+ */
-+export function createDisabledOpenAiEndpointHandler(
-+  opts: DisabledOpenAiEndpointOptions,
-+): (req: IncomingMessage, res: ServerResponse) => boolean {
-+  const warn = opts.warn ?? logWarn;
-+  const warned = new Set<string>();
-+  return (req, res) => {
-+    const pathname = new URL(req.url ?? "/", "http://localhost").pathname;
-+    const endpoint = KNOWN_ENDPOINTS.find((candidate) => candidate.pathname === pathname);
-+    if (!endpoint || endpoint.enabled(opts)) {
-+      return false;
-+    }
-+    const described = describeDisabledOpenAiEndpoint(pathname);
-+    if (!described) {
-+      return false;
-+    }
-+    if (!warned.has(pathname)) {
-+      warned.add(pathname);
-+      warn(
-+        `[gateway/http] ${req.method ?? "GET"} ${pathname} refused: ${described.label} endpoint is disabled; ` +
-+          `set ${described.configKey}=true to serve it (${described.docsUrl})`,
-+      );
-+    }
-+    sendJson(res, 404, {
-+      error: {
-+        message: described.message,
-+        type: "invalid_request_error",
-+        param: null,
-+        code: OPENAI_ENDPOINT_DISABLED_CODE,
-+      },
-+    });
-+    return true;
-+  };
-+}
-```
-
-**File**: `src/gateway/openai-http.e2e.test.ts` (modified, +6/-0)
-```diff
-@@ -74,6 +74,9 @@ describe("OpenAI-compatible HTTP API (e2e)", () => {
-           messages: [{ role: "user", content: "hi" }],
-         });
-         expect(res.status).toBe(404);
-+        const body = (await res.json()) as { error?: { code?: string; message?: string } };
-+        expect(body.error?.code).toBe("endpoint_disabled");
-+        expect(body.error?.message).toContain("gateway.http.endpoints.chatCompletions.enabled");
-       } finally {
-         await server.close({ reason: "test done" });
-       }
-@@ -90,6 +93,9 @@ describe("OpenAI-compatible HTTP API (e2e)", () => {
-           messages: [{ role: "user", content: "hi" }],
-         });
-         expect(res.status).toBe(404);
-+        const body = (await res.json()) as { error?: { code?: string; message?: string } };
-+        expect(body.error?.code).toBe("endpoint_disabled");
-+        expect(body.error?.message).toContain("gateway.http.endpoints.chatCompletions.enabled");
-       } finally {
-         await server.close({ reason: "test done" });
-       }
-```
-
 #### Recent Merged Pull Requests:
+- **PR #343** (2026-10-31): feat(compute): land the beta recovery stack on main with Soapbox rc10 (@VGIL77)
 - **PR #342** (2026-10-31): feat(gateway): explain disabled OpenAI-compatible endpoints instead of a bare 404 (@VGIL77)
 - **PR #341** (2026-10-31): feat(gateway): attribute event-loop stalls with an on-demand sampling profiler (@VGIL77)
 - **PR #340** (2026-10-31): fix(acp): migrate to @agentclientprotocol/sdk 2.x and fix the stdio bridge (@VGIL77)
 - **PR #339** (2026-10-30): chore(deps): bump the npm-minor-patch group across 1 directory with 19 updates (@dependabot[bot])
 - **PR #336** (2026-10-30): fix(orchestrator): reconcile Cargo.lock after the ed25519-dalek and sha2 bumps (@VGIL77)
-- **PR #335** (2026-10-30): chore(deps-dev): bump the lint-format group (oxfmt 0.74.0, oxlint 1.90.0, oxlint-tsgolint 7.0.2005) (@VGIL77)
 
 ---
 
@@ -2258,30 +2238,49 @@ Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gateway): explain disabled OpenAI-compatible endpoints instead of a bare 404 (#3
+## X. compute): land the beta recovery stack on main with Soapbox rc10 (#343)
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `299269af`: gateway): explain disabled OpenAI-compatible endpoints instead of a bare 404 (#342). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c8d414db`: compute): land the beta recovery stack on main with Soapbox rc10 (#343). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-Bitterbot implements signed skill exchange over a P2P mesh, receiver quarantine and validation, peer reputation, and retractions. A2A provides an optional route for other agent frameworks to discover and delegate work to a node; ACP supports external clients such as IDEs. The Gateway can also serve an OpenAI-compatible `/v1/chat/completions` endpoint (off by default), so any tool that speaks the OpenAI API can use a Bitterbot agent as its model.
-[Skill marketplace](docs/marketplace/) · [A2A integration](docs/marketplace/a2a-integration.md) · [OpenAI-compatible endpoint](docs/gateway/openai-http-api.md) · [Wallet](docs/wallet/) · [Action review](docs/tools/action-review.md)
+              { tag_name: `v${version}`, draft: false, prerelease: version.includes("-"), assets: fs.readdirSync(`${dir}/download/v${version}`).map((n) => asset(`v${version}`, n)) },
+          version_args=()
+          if [[ "$VERSION" == *-* ]]; then
+            # A beta must never become the implicit stable-channel install.
+            if bash scripts/install.sh --yes --no-onboard > "$RUNNER_TEMP/beta-unpinned.log" 2>&1; then
+              echo "an unpinned install selected a prerelease"; exit 1
+            fi
+            grep -q "no published release carries a signed tarball" "$RUNNER_TEMP/beta-unpinned.log"
+            version_args=(--version "$VERSION")
+          fi
+          curl -fsSL http://127.0.0.1:8765/install.sh | bash -s -- --yes --no-onboard "${version_args[@]}" | tee "$RUNNER_TEMP/install1.log"
+          if [[ "$VERSION" != *-* ]]; then
+            grep -q "Newest complete release: $VERSION" "$RUNNER_TEMP/install1.log"
+          fi
+          IFS=. read -r MA MI PA <<< "${VERSION%%-*}"
+            listing.push({ tag_name: tag, draft: false, prerelease: tag.includes("-"), assets: fs.readdirSync(`${dir}/download/${tag}`).map((n) => asset(tag, n)) });
+              readl
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-Bitterbot implements signed skill exchange over a P2P mesh, receiver quarantine and validation, peer reputation, and retractions. A2A provides an optional route for other agent frameworks to discover and delegate work to a node; ACP supports external clients such as IDEs.
-[Skill marketplace](docs/marketplace/) · [A2A integration](docs/marketplace/a2a-integration.md) · [Wallet](docs/wallet/) · [Action review](docs/tools/action-review.md)
+              { tag_name: `v${version}`, draft: false, prerelease: false, assets: fs.readdirSync(`${dir}/download/v${version}`).map((n) => asset(`v${version}`, n)) },
+          curl -fsSL http://127.0.0.1:8765/install.sh | bash -s -- --yes --no-onboard | tee "$RUNNER_TEMP/install1.log"
+          grep -q "Newest complete release: $VERSION" "$RUNNER_TEMP/install1.log"
+          IFS=. read -r MA MI PA <<< "$VERSION"
+            listing.push({ tag_name: tag, draft: false, prerelease: false, assets: fs.readdirSync(`${dir}/download/${tag}`).map((n) => asset(tag, n)) });
+              readlink "/proc/$pid/exe" | sed -n 's#.*/app/\([0-9.]*\)/runtime/.*#\1#p'
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `299269af` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c8d414db` are properly handled with clean fallback behavior.

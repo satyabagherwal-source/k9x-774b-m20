@@ -6669,3 +6669,6 @@ Every entry in this ledger must capture:
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `6c1466ab` | Multi-dimensional audit evidence | 2026-10-31T17:37:11.408Z |
 | `learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese` | `https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | `hf-jonatas` | Multi-dimensional audit evidence | 2026-10-31T17:43:51.263Z |
 | `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `b2852d43` | Multi-dimensional audit evidence | 2026-10-31T17:43:56.517Z |
+| `learn-huggingface-facebookai-xlm-roberta-base` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-31T17:50:09.275Z |
+| `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `41e69122` | Multi-dimensional audit evidence | 2026-10-31T17:50:10.911Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `c8d414db` | Multi-dimensional audit evidence | 2026-10-31T17:50:25.218Z |

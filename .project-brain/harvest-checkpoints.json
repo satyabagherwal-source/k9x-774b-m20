@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T17:43:56.527Z",
+  "last_updated": "2026-10-31T17:50:25.246Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1505,14 +1505,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-facebookai-xlm-roberta-base",
-      "content_hash": "75d099df89bf2b9b757235feac407fccc25971128f1ff13a85b75efdcaad3f65",
-      "verified_at": "2026-10-28T16:45:14.831Z",
+      "content_hash": "d2d9510d55699eebfb571a059bdc2820aaad182cf6630b16899829c912611d33",
+      "verified_at": "2026-10-31T17:50:09.282Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T16:45:14.831Z"
+      "last_updated": "2026-10-31T17:50:09.282Z"
     },
     "openai-community/gpt2": {
       "repository": "openai-community/gpt2",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "259d2cc542f888f5c0f76453fbbe89b02de97d0f499be82da735a2522f4b9a51",
-      "verified_at": "2026-10-31T16:50:40.235Z",
+      "content_hash": "bd83119637c49d8ce7315206e5773a20e18aa453bbf634a896b3a2a958df7c54",
+      "verified_at": "2026-10-31T17:50:25.246Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T16:50:40.235Z"
+      "last_updated": "2026-10-31T17:50:25.246Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -11796,14 +11796,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rtk-ai-rtk",
-      "content_hash": "9775cb8e7eadd4bec1e4b47ab9756b2535a79d7278e36a3cbb3e1ca85a964f01",
-      "verified_at": "2026-10-30T22:13:47.417Z",
+      "content_hash": "5c0a210851fd1cb1f1f6c307ca97676c724f417dfbfde3364413c05613ba3d8d",
+      "verified_at": "2026-10-31T17:50:10.918Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T22:13:47.417Z"
+      "last_updated": "2026-10-31T17:50:10.918Z"
     },
     "gao-sun/eul": {
       "repository": "gao-sun/eul",
