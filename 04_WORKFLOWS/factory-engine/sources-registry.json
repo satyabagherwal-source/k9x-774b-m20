@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T19:34:06.493Z",
-    "lastVerified": "2026-10-31T19:34:06.493Z",
+    "lastChecked": "2026-10-31T19:41:05.192Z",
+    "lastVerified": "2026-10-31T19:41:05.192Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -141,22 +141,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "bitterbot-desktop",
+    "name": "Bitterbot-AI/bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T19:00:43.995Z",
-    "lastVerified": "2026-10-31T19:00:43.995Z",
+    "lastChecked": "2026-10-31T19:41:01.709Z",
+    "lastVerified": "2026-10-31T19:41:01.709Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "1162a8d807d1954a5ba055cb407a451989ea70b8a3ade05892872c184a615354",
+    "contentHash": "e5861136d21c074511af7b5ed96ed5468da046a5d6b11503c19708018e3d688f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "9cfd9db0"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1039,8 +1038,8 @@
     "officialUrl": "https://github.com/Kong/kubernetes-ingress-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T03:58:58.694Z",
-    "lastVerified": "2026-10-31T03:58:58.694Z",
+    "lastChecked": "2026-10-31T19:40:50.221Z",
+    "lastVerified": "2026-10-31T19:40:50.221Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kong-kubernetes-ingress-controller",
@@ -1353,14 +1352,14 @@
     "officialUrl": "https://github.com/Hmbown/Codewhale",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T23:51:36.478Z",
-    "lastVerified": "2026-10-30T23:51:36.478Z",
+    "lastChecked": "2026-10-31T19:40:48.630Z",
+    "lastVerified": "2026-10-31T19:40:48.630Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "21fb542fb4687a240a2cf048ff7dce2c1fd67bd96557287ca7a112686112d243",
+    "contentHash": "751c388b0c2e39067a5a8f31068c4cdbcb5f622c130a49e60d438a9f195a53d0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 16,
+    "recentFixesCount": 19,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1794,9 +1793,9 @@
   "sigstore-cosign": {
     "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
-    "lastChecked": "2026-10-31T15:42:47.216Z",
+    "lastChecked": "2026-10-31T19:40:52.652Z",
     "revisionIdentifier": "ef56e699",
-    "lastVerified": "2026-10-31T15:42:47.216Z"
+    "lastVerified": "2026-10-31T19:40:52.652Z"
   },
   "alibaba-zvec": {
     "name": "zvec",
@@ -6630,9 +6629,9 @@
   "activeloopai-deeplake": {
     "name": "deeplake",
     "officialUrl": "https://github.com/activeloopai/deeplake",
-    "lastChecked": "2026-10-31T03:12:34.634Z",
+    "lastChecked": "2026-10-31T19:40:55.141Z",
     "revisionIdentifier": "f432041f",
-    "lastVerified": "2026-10-31T03:12:34.634Z"
+    "lastVerified": "2026-10-31T19:40:55.141Z"
   },
   "pauljuliusmartinez-jless": {
     "name": "jless",
@@ -6723,13 +6722,13 @@
     "officialUrl": "https://huggingface.co/Bingsu/adetailer",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T18:13:52.984Z",
-    "lastVerified": "2026-10-28T18:13:52.984Z",
+    "lastChecked": "2026-10-31T19:40:45.255Z",
+    "lastVerified": "2026-10-31T19:40:45.255Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-bingsu-adetailer",
-    "contentHash": "9e7c5c4bc4081fc67e222d0c2c93a3f599fb65c7c34ddc8b25fe9c4aad0bc83f",
-    "promotedRulesCount": 0,
+    "contentHash": "5b337a87cbc53dc021f018ec0b50406da8dfdfa305f872af1754d8a4d0ff4db2",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -8660,9 +8659,9 @@
   "juanpe-about-swiftui": {
     "name": "About-SwiftUI",
     "officialUrl": "https://github.com/Juanpe/About-SwiftUI",
-    "lastChecked": "2026-10-29T00:22:51.734Z",
+    "lastChecked": "2026-10-31T19:40:47.530Z",
     "revisionIdentifier": "59a740fc",
-    "lastVerified": "2026-10-29T00:22:51.734Z"
+    "lastVerified": "2026-10-31T19:40:47.530Z"
   },
   "hf-openmoss-team-moss-image-sft": {
     "name": "OpenMOSS-Team/MOSS-Image-SFT",

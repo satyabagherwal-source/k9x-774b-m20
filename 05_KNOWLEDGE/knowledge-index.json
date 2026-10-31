@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T19:34:03.867Z",
+  "last_updated": "2026-10-31T19:41:02.548Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4930,8 +4930,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "9cfd9db0",
-      "content_hash": "1162a8d807d1954a5ba055cb407a451989ea70b8a3ade05892872c184a615354",
+      "source_version": "aa0953e9",
+      "content_hash": "e5861136d21c074511af7b5ed96ed5468da046a5d6b11503c19708018e3d688f",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -5109,6 +5109,11 @@
           "number": 6279,
           "title": "browser): teach reusable skills from reviewed demonstrations (#338)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6298,
+          "title": "memory): record evidence only for prompt-included facts, owner searches and on a",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5116,7 +5121,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T18:22:26.371Z",
+      "verified_at": "2026-10-31T19:41:02.528Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7786,13 +7791,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "785f7d0d",
-      "content_hash": "7d6b77560598b14e9b8fc0b797e4a0ba40d0cf4fa59b3f53d0fcf3c70acf2f1f",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "ecd256c9",
+      "content_hash": "751c388b0c2e39067a5a8f31068c4cdbcb5f622c130a49e60d438a9f195a53d0",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -7887,7 +7892,7 @@
         {
           "number": 6232,
           "title": "cli): remove the marked PATH block and Codewhale completions on uninstall",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7895,7 +7900,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T15:36:29.113Z",
+      "verified_at": "2026-10-31T19:40:49.239Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19667,7 +19672,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Bingsu/adetailer",
       "source_version": "hf-bingsu-adetailer",
-      "content_hash": "9e7c5c4bc4081fc67e222d0c2c93a3f599fb65c7c34ddc8b25fe9c4aad0bc83f",
+      "content_hash": "5b337a87cbc53dc021f018ec0b50406da8dfdfa305f872af1754d8a4d0ff4db2",
       "dossier_path": "07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md",
       "promoted_rules": [
@@ -19684,6 +19689,11 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-bingsu-adetailer-mv4eqnev",
           "verified_at": "2026-10-11T22:41:25.324Z"
+        },
+        {
+          "number": 614,
+          "title": "Model Artifact Versioning & Label Schema Integrity",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 975,
@@ -19734,6 +19744,11 @@
           "number": 4043,
           "title": "Inference Latency vs. Accuracy Trade-off Documentation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6297,
+          "title": "Segmentation Mask Resolution & Memory Safety",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -19753,7 +19768,7 @@
         "learn-huggingface-hf-bingsu-adetailer-mv40r96p",
         "learn-huggingface-hf-bingsu-adetailer-mv4eqnev"
       ],
-      "verified_at": "2026-10-28T18:13:58.735Z",
+      "verified_at": "2026-10-31T19:40:57.079Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -78413,15 +78428,15 @@
       "learning_id": "rule-614",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 614,
-      "title": "Model Artifact Versioning & Label Schema Integrity (Harvested from Bingsu/adetailer)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Model Artifact Versioning & Label Schema Integrity",
+      "source_url": "https://huggingface.co/Bingsu/adetailer",
+      "source_version": "hf-bingsu-adetailer",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.812Z"
+      "verified_at": "2026-10-31T19:40:57.079Z"
     },
     "rule-615": {
       "learning_id": "rule-615",
@@ -163034,14 +163049,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 6232,
       "title": "cli): remove the marked PATH block and Codewhale completions on uninstall",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "785f7d0d",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "ecd256c9",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-31T15:36:29.113Z"
+      "verified_at": "2026-10-31T19:40:49.239Z"
     },
     "rule-6233": {
       "learning_id": "rule-6233",
@@ -163965,6 +163980,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T19:34:03.847Z"
+    },
+    "rule-6297": {
+      "learning_id": "rule-6297",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6297,
+      "title": "Segmentation Mask Resolution & Memory Safety",
+      "source_url": "https://huggingface.co/Bingsu/adetailer",
+      "source_version": "hf-bingsu-adetailer",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T19:40:57.079Z"
+    },
+    "rule-6298": {
+      "learning_id": "rule-6298",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6298,
+      "title": "memory): record evidence only for prompt-included facts, owner searches and on a",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "aa0953e9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T19:41:02.528Z"
     }
   },
   "aliases": {

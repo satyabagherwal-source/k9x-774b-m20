@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
-> **Source Version**: `b92540d8`  
+> **Source Version**: `ecd256c9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T23:51:37.993Z  
+> **Timestamp**: 2026-10-31T19:40:48.895Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T23:51:36.478Z  
+> **Harvest Timestamp**: 2026-10-31T19:40:48.630Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source agent for the terminal written in Rust. Use any provider or model. Issues & PRs always welcome
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41153 stars
+- **Stars / Engagement**: 41159 stars
 
 ---
 
@@ -2040,427 +2040,821 @@ const TOOL_CATALOG_CACHE_CA
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4f97c761` (2026-10-30)
-**Commit Message**: fix(runtime): compare a prompt with its metadata envelope stripped from either end
+### Incident Patch 1: `20f091d6` (2026-10-31)
+**Commit Message**: fix(cli): remove the marked PATH block and Codewhale completions on uninstall
 
-`save_and_resume_keep_ownership_honest` failed deterministically, on clean
-main as well as with this session's work: `/undo` on a thread resumed from a
-saved document answered 400 "Cannot identify an exact saved-history boundary
-for this backtrack" where the case expects 409 `restore_point_unavailable`.
+A receipted release copy of `codewhale uninstall --yes` removed its program
+files but left the user to hand-delete the PATH lines and completion files the
+installer had told them to create. #7091 asks for a complete, verifiable
+uninstall; this completes the shell half of it.
 
-Cause, measured rather than inferred. `projected_user_text` splits a message
-into its text blocks and runs `extract_user_prompt` on each. That helper strips
-a *leading* `<turn_meta>…</turn_meta>`, which is the shape a saved document
-stores. A thread rebuilt from turn records via
-`reconstruct_messages_from_turns_with` keeps its metadata in the *trailing*
-shape, so nothing was stripped there. The same prompt therefore projected to
-272 bytes from the document and 609 from the records (measured), and
-`saved_history_boundary` — which walks one and compares against the other —
-could never match. The first comparison already failed, so every backtrack of a
-resumed thread refused.
+Uninstall now plans and applies two extra removals, both scoped to this
+install and gated on the same receipted copy that owns the program files:
 
-`strip_turn_metadata_envelope` now removes one complete envelope from either
-end after the per-block pass. The envelope is engi
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -124,6 +124,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Fixed
- 
-+- **A restored conversation can be undone again:** a saved document keeps each turn's `<turn_meta>` envelope before the prompt while a thread rebuilt from its turn records keeps it after, and only the leading shape was stripped before comparing the two. Every record-side prompt was therefore longer than its transcript twin, so the exact-boundary search never matched and `/undo` on a resumed thread refused with "Cannot identify an exact saved-history boundary" instead of answering. Both shapes are now stripped, so the comparison sees the prompt text alone.
- - **MCP servers that reject the modern probe now fall back to the legacy handshake:** a server answering `server/discover` with HTTP 400 and a JSON-RPC error (for example `-32600 Unsupported protocol version`) was treated as a hard failure instead of evidence that it speaks the older handshake, so such a server could not connect at all. Codewhale now reads a parsed JSON-RPC error on the probe as a transport refusal and negotiates the legacy `initialize` handshake, which is what a server that clearly answered in JSON-RPC means. Reproduced against `mcp.deepwiki.com` (three tools after the fix); Linear is unaffected.
- - **MCP servers reject requests that carried two framing headers:** Codewhale sent every Streamable HTTP request with a duplicated `Accept` and `Content-Type`, because the extension host forwarded the SDK's headers and the Rust send path added them again. A server that validates those headers answered `415`, which Codewhale read as "this endpoint is not Streamable HTTP" and answered by switching to the deprecated SSE transport; servers that refuse `GET` then returned `405` and the connection failed with only `SSE error: Non-200 status code (405)`. Linear was unreachable this way. The send path now collapses the framing headers to one value each. Verified against Linear: discovery, tool listing (77 tools) and connection succeed.
- - **One context window from planning to compaction (#7133):** the window a route resolves (from provider facts, your configuration or a fallback) and where it came from now travel together. Turn planning, automatic compaction, tool-output sizing, output caps, child agents, the context inspector and the model picker all use the same window. Previously a custom model with no context metadata was sent with a 128K fallback while compaction planned against 1M. A model switch or re-sync that keeps the same model and limits keeps that window. A restored Auto session uses the fallback window until its next turn picks a route. The original Windows report has not been reproduced.
-```
-
-**File**: `crates/tui/CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -124,6 +124,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Fixed
- 
-+- **A restored conversation can be undone again:** a saved document keeps each turn's `<turn_meta>` envelope before the prompt while a thread rebuilt from its turn records keeps it after, and only the leading shape was stripped before comparing the two. Every record-side prompt was therefore longer than its transcript twin, so the exact-boundary search never matched and `/undo` on a resumed thread refused with "Cannot identify an exact saved-history boundary" instead of answering. Both shapes are now stripped, so the comparison sees the prompt text alone.
- - **MCP servers that reject the modern probe now fall back to the legacy handshake:** a server answering `server/discover` with HTTP 400 and a JSON-RPC error (for example `-32600 Unsupported protocol version`) was treated as a hard failure instead of evidence that it speaks the older handshake, so such a server could not connect at all. Codewhale now reads a parsed JSON-RPC error on the probe as a transport refusal and negotiates the legacy `initialize` handshake, which is what a server that clearly answered in JSON-RPC means. Reproduced against `mcp.deepwiki.com` (three tools after the fix); Linear is unaffected.
- - **MCP servers reject requests that carried two framing headers:** Codewhale sent every Streamable HTTP request with a duplicated `Accept` and `Content-Type`, because the extension host forwarded the SDK's headers and the Rust send path added them again. A server that validates those headers answered `415`, which Codewhale read as "this endpoint is not Streamable HTTP" and answered by switching to the deprecated SSE transport; servers that refuse `GET` then returned `405` and the connection failed with only `SSE error: Non-200 status code (405)`. Linear was unreachable this way. The send path now collapses the framing headers to one value each. Verified against Linear: discovery, tool listing (77 tools) and connection succeed.
- - **One context window from planning to compaction (#7133):** the window a route resolves (from provider facts, your configuration or a fallback) and where it came from now travel together. Turn planning, automatic compaction, tool-output sizing, output caps, child agents, the context inspector and the model picker all use the same window. Previously a custom model with no context metadata was sent with a 128K fallback while compaction planned against 1M. A model switch or re-sync that keeps the same model and limits keeps that window. A restored Auto session uses the fallback window until its next turn picks a route. The original Windows report has not been reproduced.
-```
-
-**File**: `crates/tui/src/runtime_threads/manager.rs` (modified, +23/-1)
-```diff
-@@ -470,7 +470,29 @@ pub(super) fn projected_user_text(message: &Message) -> Option<String> {
-         .filter(|text| !text.is_empty())
-         .collect::<Vec<_>>()
-         .join("\n");
--    (!text.is_empty()).then_some(text)
-+    let text = strip_turn_metadata_envelope(&text);
-+    (!text.is_empty()).then_some(text.to_string())
-+}
-+
-+/// Remove one complete `<turn_meta>…</turn_meta>` envelope from either end.
-+///
-+/// The saved document and the record reconstruction reach the same prompt in
-+/// two shapes — `[<turn_meta>, prompt]` and `[prompt, <turn_meta>]` — and only
-+/// the leading shape is stripped per block above. Leaving the trailing envelope
-+/// in made every record-side prompt longer than its transcript twin, so the
-+/// boundary search that compares the two never matched and refused a restore it
-+/// could have placed exactly. The envelope is engine metadata, never prompt
-+/// text, so neither side may carry it into the comparison.
-+fn strip_turn_metadata_envelope(text: &str) -> &str {
-+    let text = crate::session_manager::extract_user_prompt(text);
-+    let trimmed = text.trim_end();
-+    if !trimmed.ends_with("</turn_meta>") {
-+        return text;
-+    }
-+    match trimmed.rfind("<turn_meta>") {
-+        Some(open) => text[..open].trim_end(),
-+        None => text,
-+    }
- }
- 
- pub(super) fn projected_user_texts(messages: &[Message]) -> Vec<String> {
-```
-
----
-
-### Incident Patch 2: `4b51a73c` (2026-10-30)
-**Commit Message**: fix(tui): name why a saved window re-rooted, and report an empty active path (#7142)
-
-`session.window.rerooted` said only "first_message_changed", so a re-root
-caused by restoring a session and one caused by the Engine replacing the
-projection looked identical in the audit trail. The snapshot now records a
-`cause`: `engine_projection` when the API projection replaced a non-empty
-transcript from an empty first message, `session_restore` when a restore
-installed the messages, and `unattributed` otherwise. The audit entry also
-fires when a journal with entries has no active path, which previously
-produced no record at all.
-
-`App` keeps the cause in `window_reroot_cause` until the next snapshot takes
-it, so the attribution survives the path from the writer to the snapshot.
-
-Verified on e5fa43aa82 with these five paths applied: `cargo check -p
-codewhale-tui --lib --locked` under RUSTFLAGS="-D warnings" passes, and the
-reroot/session_state/api_messages/journal filters pass (14 + 3 + 44 across
-session_state, api_messages and journal; `reroot` selects no case because no
-existing test names it). The `restore` filter is red on one unrelated case
-that also fails without this patch (`save_and_
+- This install's exact three-line `# >>> codewhale PATH >>>` block, in the
+  same profile list the old report walked. The block is only matched when its
+  middle line names this install directory, so another copy's block and a bare
+  `export PATH=…` line the user wrote are never touched. The profile is edited
+  by staging replacement bytes and renaming the original aside, so a failure
+  installing the replacement restores the user's own file by name; a symlinked,
+  unreadable or non-UTF-8 profile is reported and skipped. The profile's mode
+  is adopted before the guard captures it, since `GuardedFile` pins ctime.
+- The Codewhale-generated completion files at their documented paths, honour
 
 **File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- - **Compact approvals keep their authority visible:** cards show three choices and default to Deny. An exact saved rule requires its scope preview on screen. Shortcuts for additional actions require opening Details; a hidden saved-rule choice never falls back to granting the session.
- - **Quicker everyday navigation:** top-level help separates everyday and advanced commands, `doctor --all` expands path/backend details, and the launch screen labels how to resume recent work. Up selects the newest recent session. Whale cameos stay out of transcript text.
--- **Session-window diagnostics:** the audit log records when a saved window starts a new journal root while retaining the previous branch, helping distinguish window replacement from lost durable history.
-+- **Session-window diagnostics:** the audit log records when a saved window starts a new journal root while retaining the previous branch, helping distinguish window replacement from lost durable history. `session.window.rerooted` now names a `cause` (`engine_projection`, `session_restore` or `unattributed`) and also fires when a journal with entries has no active path. (#7142)
- - **Usage reporting counts models, tokens and tools:** when usage reporting is on, each session now also reports, per provider and model, its turns by outcome, input, output and prompt-cache tokens, and turn-time buckets, plus how many times each built-in tool ran and failed. A model is named only when it is in Codewhale's bundled public model catalog; custom, local and fine-tuned names are sent as `other`, and MCP and plugin tools as `mcp` or `other`. No prompts, outputs, tool arguments or paths are sent. Runs under CI or the GitHub Action report the `ci` session source. The first-run notice is shown once more to describe this. `DO_NOT_TRACK=1` now turns usage reporting off for that run, like `CODEWHALE_TELEMETRY=0`; `codewhale config set telemetry false` still turns it off for good. See `docs/TELEMETRY.md`.
+@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - **`exec` and `doctor` follow the TUI onto local Ollama:** with no cloud key and no explicit route, `codewhale exec` uses a running local Ollama chat model and says so, and `codewhale doctor --probe-local` checks that route. Nothing is saved. (#7115)
  - **Thinking starts at auto:** new configurations and the built-in default use `reasoning_effort = "auto"` instead of `max`; an effort you set is never changed.
+ - **DSH Git review scopes:** the extension host brokers bounded, read-only Git metadata to reviewed DSH plugins through a new `git_review_scope` action (extension-host policy v8).
+-- **Safer uninstall:** program removal never edits shell profiles; matching Codewhale PATH blocks are reported for manual cleanup. Data purge requires a receipted removal in the same confirmed run. Both Unix installers reject unsafe or managed destinations before creating them and keep shell profiles unchanged. Uninstall instructions now match the explicit-home purge scope in English and Chinese.
++- **Safer, more complete uninstall:** for a receipted release copy, `codewhale uninstall --yes` now also removes this install's exact three-line `# >>> codewhale PATH >>>` block from your shell profiles and the Codewhale-generated completion files at their documented paths (bash, zsh and fish, honouring `XDG_DATA_HOME` and `XDG_CONFIG_HOME`). It touches nothing else in a profile, leaves a symlinked or unreadable profile for you to edit, keeps the completion files while another Codewhale copy remains on PATH, and exits non-zero if that cleanup fails after the program is already gone. The `codewhale.net/install.sh` hint and the install guide now print the PATH line as that marked block, so there is something provably yours to remove; a bare `export PATH=…` line you added earlier is never touched. Data purge requires a receipted removal in the same confirmed run. Both Unix installers reject unsafe or managed destinations before creating them and still never edit shell profiles themselves. Uninstall instructions match the explicit-home purge scope in English and Chinese. Not yet observed on a real Windows host or an installed release artifact. (Refs #7091)
+ - **Nested and deletable threads (Runtime API):** a fork (including a backtrack fork) records `parent_thread_id`, `POST /v1/threads` accepts one naming an existing thread, and `GET /v1/threads/summary` returns it so clients can nest child conversations. `DELETE /v1/threads/{id}` removes an idle thread with its turns, items, events and goal, and its saved session unless another thread shares it or a terminal holds it open; a running thread answers 409.
+ - **Hunk actions in Review (Runtime API):** `POST /v1/git/stage`, `/v1/git/unstage` and `/v1/git/discard` take a `patch` holding hunks of the one path in `paths` and apply only those hunks through `git apply`, under the same `expect` preconditions as whole-path writes. A patch that no longer applies fails with git's message and writes nothing; renames, mode changes and binary patches are refused. The tasks tool can also `suggest` a task, shown as a Start/Hide card, without starting anything.
+ - **Live `/models` ceilings reach the route:** a provider that states per-model context and output limits in its own `/models` body now keeps them instead of falling back to the legacy 128K window. OpenAI `limit` blocks, flat `context_length` / `context_window` / `max_model_len` / `max_context_length` fields, `max_output_tokens` / `max_completion_tokens`, and a relay `metadata` block (`context_limit`, `context_budget`, `output_budget`) are read; `metadata.context_limit` outranks `context_budget` because the first is the model capability and the second the share one deployment accepts. Each field is parsed on its own, so an unreadable one costs only its own candidate instead of hiding the readable fields below it.
+```
+
+**File**: `crates/cli/src/update/uninstall.rs` (modified, +294/-13)
+```diff
+@@ -163,7 +163,7 @@ fn remove(yes: bool) -> Result<bool> {
+     let method = InstallMethod::detect(&identity.path);
+     println!("Selected executable: {}", identity.path.display());
+     println!(
+-        "Program removal preserves user state, credentials, sessions, workspaces and services. Uninstall never edits shell profiles; for a receipted release copy it reports recognizable Codewhale PATH blocks in accessible profiles for you to remove."
++        "Program removal preserves user state, credentials, sessions, workspaces and services. For a receipted release copy it also removes this install's exact Codewhale PATH block from your shell profiles and Codewhale-generated completion files at the documented paths; nothing else in a profile is touched."
+     );
+     if !method.supports_self_update() {
+         println!(
+@@ -275,7 +275,7 @@ fn remove(yes: bool) -> Result<bool> {
+             directory.join(file.name()).display()
+         );
+     }
+-    report_path_blocks(&directory);
++    let shell = ShellIntegration::plan(&directory, &identity.path, yes);
+     validate_primary_update_identity(&identity)?;
+     if !yes {
+         println!(
+@@ -359,6 +359,7 @@ fn remove(yes: bool) -> Result<bool> {
+             );
+         }
+     }
++    let shell_failures = shell.apply();
+     println!(
+         "Removed this receipted release installation. Other installations were not removed. {}",
+         if cfg!(windows) {
+@@ -367,17 +368,76 @@ fn remove(yes: bool) -> Result<bool> {
+             "Run hash -r in your shell."
+         }
+     );
++    if !shell_failures.is_empty() {
++        bail!(
++            "The program files were removed, but shell integration cleanup is incomplete: {}",
++            shell_failures.join("; ")
++        );
++    }
+     Ok(true)
+ }
+ 
+ const PATH_BLOCK_START: &str = "# >>> codewhale PATH >>>";
+ const PATH_BLOCK_END: &str = "# <<< codewhale PATH <<<";
+ const MAX_PROFILE: usize = 1024 * 1024;
++const MAX_COMPLETION: usize = 1024 * 1024;
+ 
+-fn report_path_blocks(directory: &Path) {
+-    let Some(home) = dirs::home_dir() else {
+-        return;
+-    };
++struct ProfileEdit {
++    profile: PathBuf,
++    file: GuardedFile,
++    updated: Vec<u8>,
++    #[cfg(unix)]
++    mode: u32,
++}
++
++#[derive(Default)]
++struct ShellIntegration {
++    edits: Vec<ProfileEdit>,
++    completions: Vec<(PathBuf, GuardedFile)>,
++}
++
++impl ShellIntegration {
++    fn plan(directory: &Path, selected: &Path, yes: bool) -> Self {
++        let Some(home) = dirs::home_dir() else {
++            return Self::default();
++        };
++        let verb = if yes { "Remove" } else { "Would remove" };
++        Self {
++            edits: plan_path_blocks(&home, directory, verb),
++            completions: plan_completions(&home, directory, selected, verb),
++        }
++    }
++
++    fn apply(self) -> Vec<String> {
++        let mut failures = Vec::new();
++        for edit in self.edits {
++            let profile = edit.profile.clone();
++            match apply_profile_edit(edit) {
++                Ok(()) => println!(
++                    "Removed the Codewhale PATH block from {}",
++                    profile.display()
++                ),
++                Err(error) => failures.push(format!(
++                    "{} was not changed ({error:#}); delete its Codewhale PATH block by hand",
++                    profile.display()
++                )),
++            }
++        }
++        for (path, mut file) in self.completions {
++            let mut unlinked = false;
++            match file.remove_checked(&mut unlinked) {
++                Ok(()) => println!("Removed completion file {}", path.display()),
++                Err(error) => failures.push(format!(
++                    "{} was not removed ({error}); delete it by hand",
++                    path.display()
++                )),
++            }
++        }
++        failures
++    }
++}
++
++fn plan_path_blocks(home: &Path, directory: &Path, verb: &str) -> Vec<ProfileEdit> {
+     let zdotdir = std::env::var_os("ZDOTDIR").map(PathBuf::from);
+     let mut profiles: Vec<PathBuf> = [
+         ".zshrc",
+@@ -419,6 +479,7 @@ fn report_path_blocks(directory: &Path) {
+                     rest == format!("{value}\" $PATH") && names_directory(value)
+                 })
+     };
++    let mut edits = Vec::new();
+     for profile in profiles {
+         let (Some(parent), Some(name)) = (
+             profile.parent(),
+@@ -438,27 +499,37 @@ fn report_path_blocks(directory: &Path) {
+                 continue;
+             }
+         };
+-        let text = match file.read_bounded(MAX_PROFILE).map(String::from_utf8) {
+-            Ok(Ok(text)) => text,
+-            _ => {
++        let bytes = match file.read_bounded(MAX_PROFILE) {
++            Ok(bytes) => bytes,
++            Err(error) => {
+                 println!(
+-                    "Not read: {} is not a UTF-8 file within the size limit.",
++                    "Not read: {} ({error}). If it holds a Codewhale PATH block, remove that block by hand.",
+                  
 ```
 
 **File**: `crates/tui/CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- - **Compact approvals keep their authority visible:** cards show three choices and default to Deny. An exact saved rule requires its scope preview on screen. Shortcuts for additional actions require opening Details; a hidden saved-rule choice never falls back to granting the session.
- - **Quicker everyday navigation:** top-level help separates everyday and advanced commands, `doctor --all` expands path/backend details, and the launch screen labels how to resume recent work. Up selects the newest recent session. Whale cameos stay out of transcript text.
--- **Session-window diagnostics:** the audit log records when a saved window starts a new journal root while retaining the previous branch, helping distinguish window replacement from lost durable history.
-+- **Session-window diagnostics:** the audit log records when a saved window starts a new journal root while retaining the previous branch, helping distinguish window replacement from lost durable history. `session.window.rerooted` now names a `cause` (`engine_projection`, `session_restore` or `unattributed`) and also fires when a journal with entries has no active path. (#7142)
- - **Usage reporting counts models, tokens and tools:** when usage reporting is on, each session now also reports, per provider and model, its turns by outcome, input, output and prompt-cache tokens, and turn-time buckets, plus how many times each built-in tool ran and failed. A model is named only when it is in Codewhale's bundled public model catalog; custom, local and fine-tuned names are sent as `other`, and MCP and plugin tools as `mcp` or `other`. No prompts, outputs, tool arguments or paths are sent. Runs under CI or the GitHub Action report the `ci` session source. The first-run notice is shown once more to describe this. `DO_NOT_TRACK=1` now turns usage reporting off for that run, like `CODEWHALE_TELEMETRY=0`; `codewhale config set telemetry false` still turns it off for good. See `docs/TELEMETRY.md`.
+@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - **`exec` and `doctor` follow the TUI onto local Ollama:** with no cloud key and no explicit route, `codewhale exec` uses a running local Ollama chat model and says so, and `codewhale doctor --probe-local` checks that route. Nothing is saved. (#7115)
  - **Thinking starts at auto:** new configurations and the built-in default use `reasoning_effort = "auto"` instead of `max`; an effort you set is never changed.
+ - **DSH Git review scopes:** the extension host brokers bounded, read-only Git metadata to reviewed DSH plugins through a new `git_review_scope` action (extension-host policy v8).
+-- **Safer uninstall:** program removal never edits shell profiles; matching Codewhale PATH blocks are reported for manual cleanup. Data purge requires a receipted removal in the same confirmed run. Both Unix installers reject unsafe or managed destinations before creating them and keep shell profiles unchanged. Uninstall instructions now match the explicit-home purge scope in English and Chinese.
++- **Safer, more complete uninstall:** for a receipted release copy, `codewhale uninstall --yes` now also removes this install's exact three-line `# >>> codewhale PATH >>>` block from your shell profiles and the Codewhale-generated completion files at their documented paths (bash, zsh and fish, honouring `XDG_DATA_HOME` and `XDG_CONFIG_HOME`). It touches nothing else in a profile, leaves a symlinked or unreadable profile for you to edit, keeps the completion files while another Codewhale copy remains on PATH, and exits non-zero if that cleanup fails after the program is already gone. The `codewhale.net/install.sh` hint and the install guide now print the PATH line as that marked block, so there is something provably yours to remove; a bare `export PATH=…` line you added earlier is never touched. Data purge requires a receipted removal in the same confirmed run. Both Unix installers reject unsafe or managed destinations before creating them and still never edit shell profiles themselves. Uninstall instructions match the explicit-home purge scope in English and Chinese. Not yet observed on a real Windows host or an installed release artifact. (Refs #7091)
+ - **Nested and deletable threads (Runtime API):** a fork (including a backtrack fork) records `parent_thread_id`, `POST /v1/threads` accepts one naming an existing thread, and `GET /v1/threads/summary` returns it so clients can nest child conversations. `DELETE /v1/threads/{id}` removes an idle thread with its turns, items, events and goal, and its saved session unless another thread shares it or a terminal holds it open; a running thread answers 409.
+ - **Hunk actions in Review (Runtime API):** `POST /v1/git/stage`, `/v1/git/unstage` and `/v1/git/discard` take a `patch` holding hunks of the one path in `paths` and apply only those hunks through `git apply`, under the same `expect` preconditions as whole-path writes. A patch that no longer applies fails with git's message and writes nothing; renames, mode changes and binary patches are refused. The tasks tool can also `suggest` a task, shown as a Start/Hide card, without starting anything.
+ - **Live `/models` ceilings reach the route:** a provider that states per-model context and output limits in its own `/models` body now keeps them instead of falling back to the legacy 128K window. OpenAI `limit` blocks, flat `context_length` / `context_window` / `max_model_len` / `max_context_length` fields, `max_output_tokens` / `max_completion_tokens`, and a relay `metadata` block (`context_limit`, `context_budget`, `output_budget`) are read; `metadata.context_limit` outranks `context_budget` because the first is the model capability and the second the share one deployment accepts. Each field is parsed on its own, so an unreadable one costs only its own candidate instead of hiding the readable fields below it.
 ```
 
-**File**: `crates/tui/src/tui/app.rs` (modified, +7/-0)
+**File**: `docs/INSTALL.md` (modified, +10/-6)
 ```diff
-@@ -1611,6 +1611,9 @@ pub struct App {
-     /// length-mismatched site degrades to save-time stamps, never to a
-     /// dropped message.
-     pub api_message_stamps: Vec<DateTime<Utc>>,
-+    /// Why the live window's first message last changed, kept until the next
-+    /// snapshot reports it in `session.window.rerooted`.
-+    pub(crate) window_reroot_cause: Option<&'static str>,
-     /// Full saved history, including inactive branches. API messages remain
-     /// the active projection; snapshots reconcile it without rebuilding IDs.
-     pub session_journal: codewhale_runtime::session_tree::SessionJournal,
-@@ -5473,6 +5476,9 @@ impl App {
-             .resize_with(messages.len(), Utc::now);
-         self.session_turn_outcomes
-             .retain(|outcome| outcome.after_message_count <= unchanged);
-+        if unchanged == 0 && !self.api_messages.is_empty() && !messages.is_empty() {
-+            self.window_reroot_cause = Some("engine_projection");
-+        }
-         self.api_messages = messages;
-         unchanged
-     }
-@@ -5530,6 +5536,7 @@ impl App {
-         self.api_message_stamps = stamps;
-         self.api_message_stamps
-             .resize_with(messages.len(), Utc::now);
-+        self.window_reroot_cause = Some("session_restore");
-         self.api_messages = Arc::new(messages);
-     }
+@@ -64,7 +64,7 @@ still need an available release asset source.
+ curl -fsSL https://codewhale.net/install.sh | sh
  
-```
-
-**File**: `crates/tui/src/tui/app/init.rs` (modified, +1/-0)
-```diff
-@@ -812,6 +812,7 @@ impl App {
-             next_history_revision: 1,
-             api_messages: Arc::new(Vec::new()),
-             api_message_stamps: Vec::new(),
-+            window_reroot_cause: None,
-             session_journal: codewhale_runtime::session_tree::SessionJournal::new(),
-             completed_assistant_outputs: Vec::new(),
-             pending_plan_handoff: None,
-```
-
-**File**: `crates/tui/src/tui/ui/frame.rs` (modified, +18/-2)
-```diff
-@@ -1219,13 +1219,16 @@ pub(crate) fn build_app_system_prompt_with_goal(
+ # 2. Make sure ~/.local/bin is on your PATH, now and in future terminals.
+-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc    # zsh: use ~/.zshrc
++printf '%s\n' '# >>> codewhale PATH >>>' 'export PATH="$HOME/.local/bin:$PATH"' '# <<< codewhale PATH <<<' >> ~/.bashrc    # zsh: use ~/.zshrc
+ export PATH="$HOME/.local/bin:$PATH"
+ codewhale --version          # -> codewhale 0.10.0 (1be1a703b975)
  
- fn record_window_reroot(
-     session_id: Option<&str>,
-+    reason: &str,
-+    cause: &str,
-     previous_window: usize,
-     window: usize,
-     journal_entries: usize,
- ) {
-     let details = serde_json::json!({
-         "session_id": session_id,
--        "reason": "first_message_changed",
-+        "reason": reason,
-+        "cause": cause,
-         "previous_window": previous_window,
-         "window": window,
-         "journal_entries": journal_entries,
-@@ -1261,12 +1264,25 @@ pub(crate) fn build_session_snapshot(
-             tracing::warn!(%error, "kept archived journal entries in memory");
-         }
-     }
-+    let journal_entries_before = app.session_journal.entries.len();
-+    let cause = app.window_reroot_cause.take();
-     let rebranch = app
-         .session_journal
-         .rebranch_active_messages_stamped(&app.api_messages, &app.api_message_stamps);
--    if rebranch.replaced_from_root() && !app.api_messages.is_empty() {
-+    let reroot_reason = if rebranch.replaced_from_root() {
-+        Some("first_message_changed")
-+    } else if rebranch.previous_active == 0 && journal_entries_before > 0 {
-+        Some("active_path_empty")
-+    } else {
-+        None
-+    };
-+    if let Some(reason) = reroot_reason
-+        && !app.api_messages.is_empty()
-+    {
-         record_window_reroot(
-             app.current_session_id.as_deref(),
-+            reason,
-+            cause.unwrap_or("unattributed"),
-             rebranch.previous_active,
-             app.api_messages.len(),
-             app.session_journal.entries.len(),
+@@ -194,7 +194,8 @@ Installed checksummed release commands:
+ PATH selects no codewhale command; this install is /home/you/.local/bin/codewhale
+ …
+ Put /home/you/.local/bin first on PATH in future shells (run once; this installer does not edit shell profiles):
+-  echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
++  printf '%s\n' '# >>> codewhale PATH >>>' 'export PATH="$HOME/.local/bin:$PATH"' '# <<< codewhale PATH <<<' >> ~/.bashrc
++The marker lines let codewhale uninstall remove exactly this block; a bare export line is yours and is never touched.
+ Then run: . ~/.bashrc   (or open a new terminal)
+ …
+ ```
+@@ -234,13 +235,16 @@ prints only the current-shell `export` line. On Ubuntu and Debian, `~/.profile`
+ Fix it once:
+ 
+ ```bash
+-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc   # bash (macOS login bash: ~/.bash_profile, or ~/.profile if only that exists)
+-# echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc  # zsh
++printf '%s\n' '# >>> codewhale PATH >>>' 'export PATH="$HOME/.local/bin:$PATH"' '# <<< codewhale PATH <<<' >> ~/.bashrc   # bash (macOS login bash: ~/.bash_profile, or ~/.profile if only that exists)
++# printf '%s\n' '# >>> codewhale PATH >>>' 'export PATH="$HOME/.local/bin:$PATH"' '# <<< codewhale PATH <<<' >> ~/.zshrc  # zsh
+ # fish_add_path ~/.local/bin                               # fish (untested on this VM)
+ export PATH="$HOME/.local/bin:$PATH"; hash -r
+ command -v codewhale codew
+ ```
+ 
++The three-line block is marked so `codewhale uninstall` can remove exactly it later. A bare
++`export PATH=…` line is yours: uninstall never touches it, because other tools share `~/.local/bin`.
++
+ ### Options
+ 
+ ```bash
+@@ -1038,7 +1042,7 @@ Not sure which one you have? Run `codewhale doctor --installs`: it lists every c
+ 
+ The Unix installers and the Windows archive installer write `.codewhale-install.sha256` beside the commands. Uninstall accepts only existing regular, single-link files whose bytes match that receipt. On Unix, receipts, selected files and their retained parent directory must belong to the current user and must not be writable by group or others. Optional compiled-host files use their existing release receipt. All selected files pass preflight before any removal; the executing command is removed last. Modified files, symlinks, ambiguous receipts, shared writable directories, legacy unreceipted installs and unrelated files are preserved. No recursive directory removal is performed. A failed removal reports which entries were unlinked, any remaining recovery paths, and any durability failure. If the command receipt was unlinked while the executable remains, recovery republishes it only to a vacant receipt name.
+ 
+-The command runs before configuration, credential migration and telemetry, so malformed config does not block it. It preserves data, credentials, workspaces, shell profiles, completions and services. It never edits a shell profile; for a receipted release copy, it reports recognizable Codewhale PATH blocks in accessible profiles so you can delete those lines yourself. Package-managed copies get removal guidance; custom Cargo roots with local Cargo metadata are recognized. Other command copies still on PATH are listed without running them. Refresh the shell command cache with `hash -r` and inspect the remaining entries.
++The command runs before configuration, credential migration and telemetry, so malformed config does not block it. It preserves data, credentials, workspaces and services. For a receipted release copy it also removes this install's exact three-line `# >>> codewhale PATH >>>` block from your shell profiles, and the Codewhale-generated completion files at the documented paths (`~/.local/share/bash-completion/completions/codewhale`, `~/.zfunc/_codewhale`, `~/.config/fish/completions/codewhale.fish`, honouring `XDG_DATA_HOME` and `XDG_CONFIG_HOME`). Nothing else in a profile is touched, a symlinked or unreadable profile is left for you to edit by hand, and the completion files are kept while another Codewhale copy remains on PATH. If any of that cleanup fails, the command says so and exits non-zero even though the program is already gone. Package-managed copies get removal guidance; custom Cargo roots with local Cargo metadata are recognized. Other command copies still on PATH are listed without running them. Refresh the shell command cache with `hash -r` and inspect the remaining entries.
+ 
+ Successful self-update renews an existing
+```
+
+**File**: `docs/zh_hans/INSTALL.md` (modified, +18/-9)
+```diff
+@@ -46,7 +46,7 @@ target/release/codewhale --version
+ curl -fsSL https://codewhale.net/install.sh | sh
+ 
+ # 2. Make sure ~/.local/bin is on your PATH, now and in future terminals.
+-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc    # zsh: use ~/.zshrc
++printf '%s\n' '# >>> codewhale PATH >>>' 'export PATH="$HOME/.local/bin:$PATH"' '# <<< codewhale PATH <<<' >> ~/.bashrc    # zsh: use ~/.zshrc
+ export PATH="$HOME/.local/bin:$PATH"
+ codewhale --version          # -> codewhale 0.10.0 (1be1a703b975)
+ 
+@@ -150,7 +150,8 @@ Installed checksummed release commands:
+ PATH selects no codewhale command; this install is /home/you/.local/bin/codewhale
+ …
+ Put /home/you/.local/bin first on PATH in future shells (run once; this installer does not edit shell profiles):
+-  echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
++  printf '%s\n' '# >>> codewhale PATH >>>' 'export PATH="$HOME/.local/bin:$PATH"' '# <<< codewhale PATH <<<' >> ~/.bashrc
++The marker lines let codewhale uninstall remove exactly this block; a bare export line is yours and is never touched.
+ Then run: . ~/.bashrc   (or open a new terminal)
+ …
+ ```
+@@ -173,13 +174,16 @@ Then run: . ~/.bashrc   (or open a new terminal)
+ 一次性修复：
+ 
+ ```bash
+-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc   # bash (macOS login bash: ~/.bash_profile, or ~/.profile if only that exists)
+-# echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc  # zsh
++printf '%s\n' '# >>> codewhale PATH >>>' 'export PATH="$HOME/.local/bin:$PATH"' '# <<< codewhale PATH <<<' >> ~/.bashrc   # bash (macOS login bash: ~/.bash_profile, or ~/.profile if only that exists)
++# printf '%s\n' '# >>> codewhale PATH >>>' 'export PATH="$HOME/.local/bin:$PATH"' '# <<< codewhale PATH <<<' >> ~/.zshrc  # zsh
+ # fish_add_path ~/.local/bin                               # fish (untested on this VM)
+ export PATH="$HOME/.local/bin:$PATH"; hash -r
+ command -v codewhale codew
+ ```
+ 
++这个三行块带有标记，`codewhale uninstall` 之后可以精确地移除它。你自己加的裸 `export PATH=…`
++行归你自己管理：卸载从不改动它，因为 `~/.local/bin` 也被其他工具共用。
++
+ ### 选项
+ 
+ ```bash
+@@ -690,9 +694,14 @@ codewhale auth clear --provider <id>
+ | Homebrew | `brew uninstall codewhale`；不再使用该 tap 时才执行 untap。 |
+ | 旧 curl 安装或其他手动副本 | 已知旧安装目录内、与当前程序字节完全一致且确属当前用户的文件可建立收据后移除；其他来源不明的文件会保留，需先核实具体路径和来源。 |
+ 
+-卸载只移除所选安装收据拥有的命令、宿主文件和收据。它不会修改 shell 配置；
+-匹配的 PATH 行会列出供手动核对。Windows 正在运行的程序会先改名，退出后由
+-辅助进程删除。Windows 分支已通过编译检查，仍需在真实 Windows 主机上验证。
++卸载移除所选安装收据拥有的命令、宿主文件和收据；对带收据的发布版安装，还会移除
++该安装在 shell 配置文件中的精确三行 `# >>> codewhale PATH >>>` 块，以及文档中
++约定路径上由 Codewhale 生成的补全文件（`~/.local/share/bash-completion/completions/codewhale`、
++`~/.zfunc/_codewhale`、`~/.config/fish/completions/codewhale.fish`，并遵循
++`XDG_DATA_HOME` 和 `XDG_CONFIG_HOME`）。配置文件中的其他内容一概不动；符号链接或
++无法读取的配置文件留给你手动修改；只要 PATH 上还有其他 Codewhale 副本，补全文件
++就会保留。这部分清理若有失败，命令会如实报告并以非零状态退出，即使程序本身已经删除。
++Windows 正在运行的程序会先改名，退出后由辅助进程删除。Windows 分支已通过编译检查，仍需在真实 Windows 主机上验证。
+ 重复卸载不会取得其他副本的所有权；重新安装会创建新的收据。
+ 
+ ### 第 3 步：可选的数据清理
+@@ -708,8 +717,8 @@ codewhale auth clear --provider <id>
+ 清理会删除这些目标内的会话、工作区快照和恢复副本；确认前应先核对预览并保留
+ 仍需使用的内容。重新安装程序不能恢复已清理的数据。
+ 
+-每个工作区的 `.codewhale`、系统钥匙串、shell PATH 行和补全文件不在自动清理
+-范围内。请逐项检查已知路径；卸载不会扫描整个主目录。远程服务和桌面应用也有
++每个工作区的 `.codewhale` 和系统钥匙串不在自动清理范围内；你自己加的裸 `export PATH=…`
++行，以及约定路径之外的补全文件，也由你自己检查。请逐项检查已知路径；卸载不会扫描整个主目录。远程服务和桌面应用也有
+ 各自的安装所有权，不由所选 CLI 安装的收据代管。
+ 
+ ---
+```
+
+**File**: `web/lib/public-installer-contract.test.ts` (modified, +9/-7)
+```diff
+@@ -182,11 +182,11 @@ describe.skipIf(process.platform === "win32")("public installer compatibility co
+   });
+ 
+   it.each([
+-    ["/bin/zsh", "Linux", `echo 'export PATH="INSTALL:$PATH"' >> ~/.zshrc`, ". ~/.zshrc"],
+-    ["/bin/bash", "Linux", `echo 'export PATH="INSTALL:$PATH"' >> ~/.bashrc`, ". ~/.bashrc"],
+-    ["/bin/bash", "Darwin", `echo 'export PATH="INSTALL:$PATH"' >> ~/.bash_profile`, ". ~/.bash_profile"],
++    ["/bin/zsh", "Linux", `printf '%s\\n' '# >>> codewhale PATH >>>' 'export PATH="INSTALL:$PATH"' '# <<< codewhale PATH <<<' >> ~/.zshrc`, ". ~/.zshrc"],
++    ["/bin/bash", "Linux", `printf '%s\\n' '# >>> codewhale PATH >>>' 'export PATH="INSTALL:$PATH"' '# <<< codewhale PATH <<<' >> ~/.bashrc`, ". ~/.bashrc"],
++    ["/bin/bash", "Darwin", `printf '%s\\n' '# >>> codewhale PATH >>>' 'export PATH="INSTALL:$PATH"' '# <<< codewhale PATH <<<' >> ~/.bash_profile`, ". ~/.bash_profile"],
+     ["/usr/bin/fish", "Linux", `fish_add_path "INSTALL"`, "this fish shell"],
+-    ["/bin/dash", "Linux", `echo 'export PATH="INSTALL:$PATH"' >> ~/.profile`, ". ~/.profile"],
++    ["/bin/dash", "Linux", `printf '%s\\n' '# >>> codewhale PATH >>>' 'export PATH="INSTALL:$PATH"' '# <<< codewhale PATH <<<' >> ~/.profile`, ". ~/.profile"],
+   ] as const)(
+     "prints the persistent PATH line for %s on %s without editing a profile",
+     (shell, os, persist, reload) => {
+@@ -204,7 +204,7 @@ describe.skipIf(process.platform === "win32")("public installer compatibility co
+ 
+   it.skipIf(!existsSync("/bin/dash"))("the printed profile and reload commands work in dash", () => {
+     const { installDir, result } = installFixture(false, { shell: "/bin/dash", os: "Linux" });
+-    const persist = result.stdout.split("\n").find((line) => line.trim().startsWith("echo 'export PATH="));
++    const persist = result.stdout.split("\n").find((line) => line.trim().startsWith("printf '%s\\n' '# >>> codewhale PATH >>>'"));
+     const reload = result.stdout.match(/Then run: (.+?)   \(or open a new terminal\)/)?.[1];
+     expect(persist).toBeDefined();
+     expect(reload).toBeDefined();
+@@ -221,7 +221,9 @@ describe.skipIf(process.platform === "win32")("public installer compatibility co
+   it("writes the default directory as $HOME/.local/bin in the persistent line", () => {
+     const { result } = installFixture(false, { installUnderHome: true });
+ 
+-    expect(result.stdout).toContain(`echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc`);
++    expect(result.stdout).toContain(
++      `printf '%s\\n' '# >>> codewhale PATH >>>' 'export PATH="$HOME/.local/bin:$PATH"' '# <<< codewhale PATH <<<' >> ~/.zshrc`,
++    );
+   });
+ 
+   it.each([
+@@ -231,7 +233,7 @@ describe.skipIf(process.platform === "win32")("public installer compatibility co
+   ] as const)("keeps macOS login bash reading %j by naming %s", (homeFiles, profile) => {
+     const { result } = installFixture(false, { shell: "/bin/bash", os: "Darwin", homeFiles: [...homeFiles] });
+ 
+-    expect(result.stdout).toContain(`:$PATH"' >> ${profile}\n`);
++    expect(result.stdout).toContain(`'# <<< codewhale PATH <<<' >> ${profile}\n`);
+   });
+ 
+   it.each(["/bin/tcsh", "/usr/bin/nu"])("prints no POSIX line for the unrecognised shell %s", (shell) => {
+```
+
+**File**: `web/public/install.sh` (modified, +2/-1)
+```diff
+@@ -567,7 +567,8 @@ if [ "$path_selected" -eq 0 ]; then
+         *) profile=".profile" ;;
+       esac
+       say "Put $install_dir first on PATH in future shells (run once; this installer does not edit shell profiles):"
+-      say "  echo 'export PATH=\"$path_dir:\$PATH\"' >> ~/$profile"
++      say "  printf '%s\\n' '# >>> codewhale PATH >>>' 'export PATH=\"$path_dir:\$PATH\"' '# <<< codewhale PATH <<<' >> ~/$profile"
++      say "The marker lines let codewhale uninstall remove exactly this block; a bare export line is yours and is never touched."
+       say "Then run: . ~/$profile   (or open a new terminal)"
+       say "Or for this shell only:"
+       say "  export PATH=\"$path_dir:\$PATH\"; hash -r"
 ```
 
 ---
 
-### Incident Patch 3: `7198de90` (2026-10-30)
-**Commit Message**: fix(tui): remove dead persistence clear request and test-only route wrappers so the lib builds under -D warnings [skip ci]
+### Incident Patch 2: `1a49316f` (2026-10-28)
+**Commit Message**: fix(settings): retry a settings write whose destination is held
 
-Main failed `cargo check -p codewhale-tui --lib` under -D warnings (the
-Lint job): PersistRequest::ClearCheckpoint lost its last production sender
-when the reset path started sending one CompletedCommit (c4a4f42e9c,
-6a08f03124), and four route-budget wrappers lost their last production
-caller when the resolved window replaced them (da026a2436).
+`/config pet_mode --save` answered "无法删除要被替换的文件。(os error 1175)":
+`ReplaceFileW` must delete the destination before it can publish the
+replacement, and a handle that holds that destination without
+`FILE_SHARE_DELETE` refuses the deletion. The previous fix covered
+`atomic_write`'s `MoveFileExW` and its three contention codes; `settings.toml`
+goes through `ReplaceFileW`, which reports its own fourth.
 
-- Delete PersistRequest::ClearCheckpoint, its coalescing branch, the
-  checkpoint_clears set and its flush loop. A completed commit still clears
-  its own checkpoint only after its snapshot save succeeds. Tests that only
-  exercised the standalone clear are removed or trimmed in the same slice;
-  the compound-commit, failed-save and reset-lifecycle cases remain.
-- Gate compact_tool_result_for_route, tool_result_context_view,
-  route_inline_char_budget_for_route and the route_context_budget_for_route
-  import behind cfg(test); production uses the *_with_window forms.
+Retry the same way, over one allow-list now shared by both calls:
 
-Refs #7148, #7133, #7095. Frozen 2,192 tracked inputs on b3f1e25ced plus
-these 5 paths, unchanged across the runs: `cargo check -p codewhale-tui
---lib --l
+- 5  `ERROR_ACCESS_DENIED`
+- 32 `ERROR_SHARING_VIOLATION`
+- 33 `ERROR_LOCK_VIOLATION`
+- 1175 `ERROR_UNABLE_TO_REMOVE_REPLACED`
 
-**File**: `crates/tui/src/core/engine.rs` (modified, +4/-1)
+Six attempts, `n * 50ms`, 750ms in total — up from 225ms, which a reviewer
+called short for the scanned or slow filesystem this exists for.
+
+Why 1175 belongs on the list and 1176/1177 do not: `ReplaceFileW` documents
+1175 as "the destination file is not modified, and the replacement file still
+exists under its original name", so a retry starts from the state it just read.
+1176 and 1177 can leave the replacement renamed away, or holding the old file's
+streams with its contents no longer guaranteed, so those surface at once.
+
+Also: `
+
+**File**: `CHANGELOG.md` (modified, +2/-1)
 ```diff
-@@ -11009,17 +11009,20 @@ pub mod preview;
- use crate::compaction::estimate_input_tokens_conservative;
- #[cfg(test)]
- pub(crate) use context::compact_tool_result_for_context;
-+#[cfg(test)]
- pub(crate) use context::compact_tool_result_for_route;
- pub(crate) use context::compact_tool_result_for_route_with_window;
- /// Public so external hosts/wrappers can reuse the engine's input-budget math
- /// (see `context_input_budget_for_route`'s doc) instead of re-deriving it.
- pub use context::context_input_budget_for_route;
- #[cfg(test)]
- use context::route_context_budget_for_provider;
-+#[cfg(test)]
-+use context::route_context_budget_for_route;
- use context::{
-     MAX_CONTEXT_RECOVERY_ATTEMPTS, context_overflow_exhausted_message,
-     extract_compaction_summary_prompt, is_context_length_error_message,
--    is_image_input_rejection_message, route_context_budget_for_route, summarize_text,
-+    is_image_input_rejection_message, summarize_text,
- };
- #[cfg(test)]
- use context::{
+@@ -125,8 +125,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ ### Fixed
+ 
+ - **Notes stop swallowing a backslash:** a transcript note is machine-generated and names paths, but it went through the markdown renderer, where CommonMark §2.4 reads a backslash before ASCII punctuation as an escape. A note naming `C:\Users\asus\.codewhale\setup_state.json` therefore printed as `C:\Users\asus.codewhale\setup_state.json` — a directory that does not exist, in the one line a user would copy to find the real one. Notes are now escaped where they are rendered. Fenced blocks, and lines carrying inline code, emphasis or a table row, are passed through untouched, because the renderer already copies those verbatim and doubling a backslash inside one would print it doubled.
+-- **Setup state survives a second instance:** two running Codewhale windows share one home, and both rewrite `setup_state.json` when the provider or model changes. The replacing rename is now retried briefly when the destination is held open for a read — Windows refuses it outright while that handle lives — instead of surfacing a write the caller could have made. The failure message also carries the underlying I/O error instead of only the outer context, so the next occurrence is diagnosable.
++- **Setup and settings writes survive a held destination:** two running Codewhale windows share one home, and both rewrite `setup_state.json` or `settings.toml` when the provider, model or pet mode changes. The replacing call is now retried briefly when the destination cannot be displaced — Windows refuses it outright while another handle holds the file — instead of reporting a write the caller could have made. `setup_state.json` goes through `MoveFileExW` and `settings.toml` through `ReplaceFileW`, so each retries its own call, over the same allow-list: `ERROR_ACCESS_DENIED` (5), `ERROR_SHARING_VIOLATION` (32), `ERROR_LOCK_VIOLATION` (33) and `ERROR_UNABLE_TO_REMOVE_REPLACED` (1175). Six attempts, `n * 50ms`, 750ms in total. Every other refusal — a missing directory, a full disk, a real permission bit — still surfaces at once, and `ReplaceFileW`'s other two failure codes (1176, 1177) are deliberately not retried because they can leave the replacement consumed or altered. The failure message also carries the underlying I/O error instead of only the outer context, so the next occurrence is diagnosable.
+ - **`doctor` stops flagging a user's own temp-named logs:** the `stale_setup_temp_files` check matched any file whose name starts with `.tmp`, so scratch files such as `.tmp-build-release.log` made a clean home report as half-applied. It now matches the shape a staged write leaves when it never lands (`.tmpXXXXXX`, no extension).
++- **Computer Use is installed, not bundled:** the Computer Use plugin is no longer vendored into the binary. Install it from the `codewhale` marketplace, which points at its independent release; its consent tools load on first use, and decisions still require a human approval card. (CW-6732)
+ 
+ - **Approval cards are translated in every locale (#7071):** the "Do you want to proceed?" question, the Why and Stop explanations on destructive actions, the Approve, Edit plan and Cancel choices on workflow plans, the Save row, the details pager's title and the card's impact lines (one sentence per tool category plus the Reads, Writes, Target, Connected app, Agent type and Primary input rows) came from English literals, or from Simplified Chinese only. They now use the shared message catalogs, so all 15 packs carry them. The 14 non-English translations were written without native-speaker review. Still English outside Simplified Chinese: a workflow plan's own impact lines and detail labels, and the delegated-authority rows.
+ - **Local vLLM models keep their own reasoning ladder (#7124):** a vLLM or SGLang route treated every model as low/medium/high and folded low and medium onto high. Reviewed model-template facts (`crates/config/src/local_reasoning.json`) now give Qwen3.8, Qwen3.6-35B-A3B, Ornith, GLM-5.3-Flash and DeepSeek-V4-Flash-Vision-Exp the controls their template accepts, and the effort picker offers exactly those tiers, so low stays low and medium stays medium where the model has them. Unreviewed models are unchanged. Not yet observed against a real vLLM or SGLang server. Thanks [@gannp](https://github.com/gannp).
 ```
 
-**File**: `crates/tui/src/core/engine/context.rs` (modified, +2/-0)
+**File**: `crates/config/src/persistence.rs` (modified, +13/-5)
 ```diff
-@@ -599,6 +599,7 @@ pub(crate) fn compact_tool_result_for_context(
-     compact_tool_result_for_route(ProviderKind::Deepseek, model, None, tool_name, output)
+@@ -95,17 +95,22 @@ pub fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
+ /// How many times the replacing rename is attempted before the error surfaces.
+ const PERSIST_ATTEMPTS: u32 = 6;
+ 
+-/// Backoff step; attempt *n* sleeps `n * step`, so the last wait is 75ms.
+-const PERSIST_RETRY_STEP_MS: u64 = 15;
++/// Backoff step; attempt *n* sleeps `n * step`, so the last wait is 250ms and the
++/// whole budget is 750ms. A setup checkpoint is written on a user action, so it
++/// can afford to outlast a scanner or a second instance holding the file for a
++/// moment; it cannot afford to hang.
++const PERSIST_RETRY_STEP_MS: u64 = 50;
+ 
+ /// Whether a failed rename is worth retrying: another process holds the
+ /// destination open, which is a momentary condition rather than a refusal the
+ /// caller should hear about.
+ #[cfg(windows)]
+ fn rename_is_retryable(error: &std::io::Error) -> bool {
+     // 5 = ERROR_ACCESS_DENIED, 32 = ERROR_SHARING_VIOLATION,
+-    // 33 = ERROR_LOCK_VIOLATION. A reader holding the file raises 5 or 32.
+-    matches!(error.raw_os_error(), Some(5 | 32 | 33))
++    // 33 = ERROR_LOCK_VIOLATION, 1175 = ERROR_UNABLE_TO_DELETE_FILE (what
++    // `ReplaceFileW` raises when it cannot displace the destination it must
++    // delete first). A reader holding the file raises 5 or 32.
++    matches!(error.raw_os_error(), Some(5 | 32 | 33 | 1175))
  }
  
-+#[cfg(test)]
- pub(crate) fn compact_tool_result_for_route(
-     provider: ProviderKind,
-     model: &str,
-@@ -641,6 +642,7 @@ pub(crate) fn compact_tool_result_for_route_with_window(
- /// Structured summaries (`run_tests`, `run_verifiers`, gate results,
- /// sub-agent snapshots) keep their shape, scale their detail with the same
- /// budget, and follow the same rule whenever they leave something out.
-+#[cfg(test)]
- pub(crate) fn tool_result_context_view(
-     provider: ProviderKind,
-     model: &str,
+ #[cfg(not(windows))]
+@@ -336,7 +341,10 @@ mod tests {
+         // being retried five more times.
+         #[cfg(windows)]
+         {
+-            for code in [5, 32, 33] {
++            // 1175 is the code `ReplaceFileW` raises when it cannot displace the
++            // destination it must delete first — the same contention as 32, one
++            // API further along. The pet-mode save hit it.
++            for code in [5, 32, 33, 1175] {
+                 assert!(
+                     rename_is_retryable(&std::io::Error::from_raw_os_error(code)),
+                     "os error {code}"
 ```
 
-**File**: `crates/tui/src/route_budget.rs` (modified, +1/-0)
+**File**: `crates/runtime/src/settings.rs` (modified, +81/-17)
 ```diff
-@@ -141,6 +141,7 @@ fn route_inline_char_budget_with_raise(window_tokens: Option<u32>, raise: Option
+@@ -2430,6 +2430,31 @@ fn atomically_replace_settings_file(path: &Path, body: &[u8]) -> Result<()> {
+     Ok(())
  }
  
- /// [`route_inline_char_budget`] for a resolved provider/model route.
-+#[cfg(test)]
- #[must_use]
- pub(crate) fn route_inline_char_budget_for_route(
-     provider: ProviderKind,
-```
-
-**File**: `crates/tui/src/tui/persistence_actor.rs` (modified, +2/-155)
-```diff
-@@ -29,7 +29,7 @@
- //!   are derived at the disk boundary instead of doubling every paused
- //!   request.
++/// How many times a refused replacement is attempted before the error surfaces.
++#[cfg(windows)]
++const SETTINGS_REPLACE_ATTEMPTS: u32 = 6;
++
++/// Backoff step; attempt *n* sleeps `n * step`, so the last wait is 250ms and
++/// the whole budget is 750ms. A `settings.toml` save is a user action (a mode
++/// toggle, a `/config ... --save`), so it can afford to outlast a scanner or a
++/// second instance holding the file for a moment; it cannot afford to hang.
++#[cfg(windows)]
++const SETTINGS_REPLACE_RETRY_STEP_MS: u64 = 50;
++
++/// Whether a refused `ReplaceFileW` is worth retrying.
++///
++/// The destination being held open — by another Codewhale instance's reader, a
++/// virus scanner, or an editor's preview pane — is momentary, and every code
++/// below says exactly that: 5 `ERROR_ACCESS_DENIED`, 32
++/// `ERROR_SHARING_VIOLATION`, 33 `ERROR_LOCK_VIOLATION` and 1175
++/// `ERROR_UNABLE_TO_DELETE_FILE`, the one `ReplaceFileW` raises when it cannot
++/// displace the destination it must delete first. A permission bit or a full
++/// disk is not momentary and must surface at once.
++#[cfg(windows)]
++fn settings_replace_is_transient(error: &std::io::Error) -> bool {
++    matches!(error.raw_os_error(), Some(5 | 32 | 33 | 1175))
++}
++
+ #[cfg(windows)]
+ fn replace_existing_settings_file(path: &Path, replacement: &Path) -> std::io::Result<()> {
+     use std::os::windows::ffi::OsStrExt as _;
+@@ -2443,31 +2468,45 @@ fn replace_existing_settings_file(path: &Path, replacement: &Path) -> std::io::R
  
--use std::collections::{BTreeMap, BTreeSet};
-+use std::collections::BTreeMap;
- use std::sync::{Arc, OnceLock};
- use std::time::Duration;
+     let path_wide = wide_path(path);
+     let replacement_wide = wide_path(replacement);
+-    // SAFETY: both paths are NUL-terminated and live; reserved params are null.
+-    unsafe {
+-        // NamedTempFile marks its source with the temporary caching hint.
+-        // Clear it before publication, matching tempfile's persistence path.
+-        if SetFileAttributesW(replacement_wide.as_ptr(), FILE_ATTRIBUTE_NORMAL) == 0 {
+-            return Err(std::io::Error::last_os_error());
+-        }
++    let mut attempt: u32 = 0;
++    loop {
++        // SAFETY: both paths are NUL-terminated and live; reserved params are null.
++        let error = unsafe {
++            // NamedTempFile marks its source with the temporary caching hint.
++            // Clear it before publication, matching tempfile's persistence path.
++            // A refusal here is about the *source*, so it is never retried: the
++            // retry below exists to outlast a held *destination*.
++            if SetFileAttributesW(replacement_wide.as_ptr(), FILE_ATTRIBUTE_NORMAL) == 0 {
++                return Err(std::io::Error::last_os_error());
++            }
++
++            if ReplaceFileW(
++                path_wide.as_ptr(),
++                replacement_wide.as_ptr(),
++                std::ptr::null(),
++                0,
++                std::ptr::null(),
++                std::ptr::null(),
++            ) != 0
++            {
++                return Ok(());
++            }
  
-@@ -60,7 +60,7 @@ pub enum PersistRequest {
-     /// checkpoint as the only surviving recovery record, and the clear is
-     /// scoped to the committed session's id — it can never remove another
-     /// session's checkpoint. Turn completion must send this instead of a
--    /// `SessionSnapshot` + `ClearCheckpoint` pair, which the actor could
-+    /// separate snapshot and checkpoint clear, which the actor could
-     /// otherwise apply with the clear first, erasing the recovery record
-     /// before the snapshot safely landed.
-     CompletedCommit { session: SavedSession },
-@@ -75,9 +75,6 @@ pub enum PersistRequest {
-         /// until the removal finishes. An unowned clear is unrepresentable.
-         lease: Arc<OfflineQueueLease>,
-     },
--    /// Remove one session's crash-recovery checkpoint file. Scoped: cannot
--    /// remove another session's checkpoint.
--    ClearCheckpoint { session_id: String },
-     /// Flush all pending work now and report durability results through
-     /// `reply`. The report aggregates every write/removal result since the
-     /// previous report (including background write cycles) — errors are
-@@ -433,7 +430,6 @@ fn request_label(request: &PersistRequest) -> &'static str {
-         PersistRequest::CompletedCommit { .. } => "CompletedCommit",
-         PersistRequest::OfflineQueue { .. } => "OfflineQueue",
-         PersistRequest::ClearOfflineQueue { .. } => "ClearOfflineQueue",
--        PersistRequest::ClearCheckpoint { .. } => "ClearCheckpoint",
-         PersistRequest::FlushAndReport { .. } => "FlushAndReport",
-         PersistRequest::Shutdown => "Shutdown",
+-        if ReplaceFileW(
+-            path_wide.as_ptr(),
+-            replacement_wide.as_ptr(),
+-            std::ptr::null(),
+-            0,
+-            std::ptr::null(),
+-            std::ptr::null(),
+-        ) == 0
+-        {
+             let error = std::io::Error::last_os_error();
+             // Restore the hint so TempPath retains its normal cleanup behavior
+             // when replacement fails and the source still exists.
+             let _ = SetFileAttributesW(replacement_wide.as_ptr(), FILE_ATTRIBUTE_TEMPORARY);
++            error
++        };
++
++        attempt += 1;
++        if attempt >= SETTINGS_REPLACE_ATTEMPTS || !settings_replace_is_transient(&error) {
+             return Err(error);
+         }
++        std::thread::sleep(std::time::Duration::from_millis(
++            u64::from(attempt) * SETTINGS_REPLACE_RETRY_STEP_MS,
++        ));
      }
-@@ -531,8 +527,6 @@ struct PendingState {
-     /// saves and clears without clobbering each other.
-     checkpoints: BTreeMap<String, SavedSession>,
-     checkpoint_replies: BTreeMap<String, oneshot::Sender<Result<(), String>>>,
--    /// Session ids whose checkpoint file should be removed.
--    checkpoint_clears: BTreeSet<String>,
-     /// Latest-wins per session id. Coalescing into one global slot can
-     /// drop session A when an immediate `/new` queues session B before
-     /// the actor drains.
-@@ -563,7 +557,6 @@ impl PendingState {
-     /// skipped instead of running a no-op flush cycle.
-     fn is_empty(&self) -> bool {
-         self.checkpoints.is_empty()
--            && self.checkpoint_clears.is_empty()
-             && self.sessions.is_empty()
-             && self.completed_commits.is_empty()
-             && self.offline_queue.is_empty()
-@@ -575,7 +568,6 @@ impl PendingState {
-             | PersistRequest::AcknowledgedCheckpoint { session, .. }
-             | PersistRequest::SessionSnapshot(session)
-             | PersistRequest::CompletedCommit { session } => Some(session.metadata.id.as_str()),
--            PersistRequest::ClearCheckpoint { session_id } => Some(session_id.as_str()),
-             _ => None,
-         };
-         if let Some(id) = replaced
-@@ -595,7 +587,6 @@ impl PendingState {
-                 // apply in one drain (which previously cleared then re-wrote
-                 // the stale checkpoint, undoing the clear).
-                 let id = session.metadata.id.clone();
--                self.checkpoint_clears.remove(&id);
-                 // A new in-flight checkpoint means newer turn work started
-                 // after the completion it would have cleared: the compound's
-                 // clear-on-success intent is stale now (it would erase the
-@@ -630,7 +621,6 @@ impl PendingState {
-                 // fails, and a pending checkpoint write would re-create the
-                 // record after the compound cleared it.
-                 self.sessions.remove(&id);
--                self.checkpoint_clears.remove(&id);
-                 self.checkpoints.remove(&id);
-                 self.completed_commits
-                     .insert(id, PendingSession::Completion(session));
-@@ -651,28 +641,6 @@ impl PendingState {
-                     PendingOfflineQueue::Clear { lease },
-                 );
-             }
--            PersistRequest::ClearCheckpoint { session_id } => {
--                // A clear supersedes a pending checkpoint write for the same
--                // session only — other sessions' pending work is untouched.
--                // An explicit clear is also a user-owned boundary (e.g.
--                // `/new`): it supersedes a pending completion while keeping
--                // a newer explicit snapshot and clearing only after its save.
--                self.checkpoints.remove(&session_id);
--                let completed = self.completed_commits.remove(&session_id);
--                let session = self.sessions.remove(&session_id);
--                let snapshot = match (session, completed) {
--                    (Some(Pending
+-    Ok(())
+ }
+ 
+ /// Per-settings-path transaction mutexes.
+@@ -3023,6 +3062,31 @@ fn env_truthy(name: &str) -> bool {
+ mod tests {
+     use super::*;
+ 
++    /// A refused `ReplaceFileW` is retried only when the destination is being
++    /// held, never when the platform is refusing the write itself.
++    ///
++    /// 1175 is the one this module was reported against: `ReplaceFileW` cannot
++    /// displace a destination that another handle has open without
++    /// `FILE_SHARE_DELETE`, so `/config pet_mode --save` answered
++    /// "无法删除要被替换的文件。(os error 1175)" for a write it could have made a
++    /// moment later.
++    #[cfg(windows)]
++    #[test]
++    fn only_a_held_destination_is_retried() {
++        for code in [5, 32, 33, 1175] {
++            assert!(
++                settings_replace_is_transient(&std::io::Error::from_raw_os_error(code)),
++                "os error {code} is contention and must be retried"
++            );
++        }
++        for code in [2, 3, 112, 87] {
++            assert!(
++                !sett
 ```
 
-**File**: `crates/tui/src/tui/persistence_actor/tests.rs` (modified, +0/-1)
+**File**: `crates/tui/CHANGELOG.md` (modified, +2/-1)
 ```diff
-@@ -151,7 +151,6 @@ fn drain_retained_requests(receiver: &mut PersistRequestReceiver) -> (usize, usi
-     let pending = receiver.take_pending();
-     assert!(
-         pending.checkpoints.is_empty()
--            && pending.checkpoint_clears.is_empty()
-             && pending.completed_commits.is_empty()
-             && pending.offline_queue.is_empty(),
-         "backlog fixture retained an unexpected request variant"
+@@ -125,8 +125,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ ### Fixed
+ 
+ - **Notes stop swallowing a backslash:** a transcript note is machine-generated and names paths, but it went through the markdown renderer, where CommonMark §2.4 reads a backslash before ASCII punctuation as an escape. A note naming `C:\Users\asus\.codewhale\setup_state.json` therefore printed as `C:\Users\asus.codewhale\setup_state.json` — a directory that does not exist, in the one line a user would copy to find the real one. Notes are now escaped where they are rendered. Fenced blocks, and lines carrying inline code, emphasis or a table row, are passed through untouched, because the renderer already copies those verbatim and doubling a backslash inside one would print it doubled.
+-- **Setup state survives a second instance:** two running Codewhale windows share one home, and both rewrite `setup_state.json` when the provider or model changes. The replacing rename is now retried briefly when the destination is held open for a read — Windows refuses it outright while that handle lives — instead of surfacing a write the caller could have made. The failure message also carries the underlying I/O error instead of only the outer context, so the next occurrence is diagnosable.
++- **Setup and settings writes survive a held destination:** two running Codewhale windows share one home, and both rewrite `setup_state.json` or `settings.toml` when the provider, model or pet mode changes. The replacing call is now retried briefly when the destination cannot be displaced — Windows refuses it outright while another handle holds the file — instead of reporting a write the caller could have made. `setup_state.json` goes through `MoveFileExW` and `settings.toml` through `ReplaceFileW`, so each retries its own call, over the same allow-list: `ERROR_ACCESS_DENIED` (5), `ERROR_SHARING_VIOLATION` (32), `ERROR_LOCK_VIOLATION` (33) and `ERROR_UNABLE_TO_REMOVE_REPLACED` (1175). Six attempts, `n * 50ms`, 750ms in total. Every other refusal — a missing directory, a full disk, a real permission bit — still surfaces at once, and `ReplaceFileW`'s other two failure codes (1176, 1177) are deliberately not retried because they can leave the replacement consumed or altered. The failure message also carries the underlying I/O error instead of only the outer context, so the next occurrence is diagnosable.
+ - **`doctor` stops flagging a user's own temp-named logs:** the `stale_setup_temp_files` check matched any file whose name starts with `.tmp`, so scratch files such as `.tmp-build-release.log` made a clean home report as half-applied. It now matches the shape a staged write leaves when it never lands (`.tmpXXXXXX`, no extension).
++- **Computer Use is installed, not bundled:** the Computer Use plugin is no longer vendored into the binary. Install it from the `codewhale` marketplace, which points at its independent release; its consent tools load on first use, and decisions still require a human approval card. (CW-6732)
+ 
+ - **Approval cards are translated in every locale (#7071):** the "Do you want to proceed?" question, the Why and Stop explanations on destructive actions, the Approve, Edit plan and Cancel choices on workflow plans, the Save row, the details pager's title and the card's impact lines (one sentence per tool category plus the Reads, Writes, Target, Connected app, Agent type and Primary input rows) came from English literals, or from Simplified Chinese only. They now use the shared message catalogs, so all 15 packs carry them. The 14 non-English translations were written without native-speaker review. Still English outside Simplified Chinese: a workflow plan's own impact lines and detail labels, and the delegated-authority rows.
+ - **Local vLLM models keep their own reasoning ladder (#7124):** a vLLM or SGLang route treated every model as low/medium/high and folded low and medium onto high. Reviewed model-template facts (`crates/config/src/local_reasoning.json`) now give Qwen3.8, Qwen3.6-35B-A3B, Ornith, GLM-5.3-Flash and DeepSeek-V4-Flash-Vision-Exp the controls their template accepts, and the effort picker offers exactly those tiers, so low stays low and medium stays medium where the model has them. Unreviewed models are unchanged. Not yet observed against a real vLLM or SGLang server. Thanks [@gannp](https://github.com/gannp).
+```
+
+---
+
+### Incident Patch 3: `2668c4bb` (2026-10-27)
+**Commit Message**: fix(setup): keep the setup checkpoint when a second instance is running
+
+Two Codewhale windows share one home and both rewrite `setup_state.json` when
+the provider or model changes. `atomic_write` staged the write correctly and
+then failed at the replacing rename, because the loser of that race finds the
+destination held open for a read and Windows refuses the rename outright while
+the reader's handle lives (no `FILE_SHARE_DELETE`). The user saw
+"Setup provider/model state was not saved" for a write that was momentary.
+
+Retry only that condition, briefly: six attempts, `n * 15ms`, giving up after
+75ms. A missing directory or a full disk still surfaces at once. On Windows the
+retryable codes are 5 (access denied), 32 (sharing violation) and 33 (lock
+violation); elsewhere it is `PermissionDenied`.
+
+Two related defects found in the same report:
+
+- The message used `{err}`, which prints only the outermost context and drops
+  the cause, so the path was the only thing left to look at. It now uses
+  `{err:#}`.
+- `doctor`'s `stale_setup_temp_files` check matched any name starting with
+  `.tmp`, so a user's own scratch logs (`.tmp-build-release.log`) made a clean
+  home report as half-appli
+
+**File**: `CHANGELOG.md` (modified, +3/-0)
+```diff
+@@ -124,6 +124,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ### Fixed
+ 
++- **Setup state survives a second instance:** two running Codewhale windows share one home, and both rewrite `setup_state.json` when the provider or model changes. The replacing rename is now retried briefly when the destination is held open for a read — Windows refuses it outright while that handle lives — instead of surfacing a write the caller could have made. The failure message also carries the underlying I/O error instead of only the outer context, so the next occurrence is diagnosable.
++- **`doctor` stops flagging a user's own temp-named logs:** the `stale_setup_temp_files` check matched any file whose name starts with `.tmp`, so scratch files such as `.tmp-build-release.log` made a clean home report as half-applied. It now matches the shape a staged write leaves when it never lands (`.tmpXXXXXX`, no extension).
++
+ - **Approval cards are translated in every locale (#7071):** the "Do you want to proceed?" question, the Why and Stop explanations on destructive actions, the Approve, Edit plan and Cancel choices on workflow plans, the Save row, the details pager's title and the card's impact lines (one sentence per tool category plus the Reads, Writes, Target, Connected app, Agent type and Primary input rows) came from English literals, or from Simplified Chinese only. They now use the shared message catalogs, so all 15 packs carry them. The 14 non-English translations were written without native-speaker review. Still English outside Simplified Chinese: a workflow plan's own impact lines and detail labels, and the delegated-authority rows.
+ - **Local vLLM models keep their own reasoning ladder (#7124):** a vLLM or SGLang route treated every model as low/medium/high and folded low and medium onto high. Reviewed model-template facts (`crates/config/src/local_reasoning.json`) now give Qwen3.8, Qwen3.6-35B-A3B, Ornith, GLM-5.3-Flash and DeepSeek-V4-Flash-Vision-Exp the controls their template accepts, and the effort picker offers exactly those tiers, so low stays low and medium stays medium where the model has them. Unreviewed models are unchanged. Not yet observed against a real vLLM or SGLang server. Thanks [@gannp](https://github.com/gannp).
+ - **`/undo`, retry and fork-at-turn work on large and attachment-heavy conversations again (#7147):** a fork was measured by the shape it is stored in (a saved session repeats its conversation while it carries a journal, so the file can be twice the history) against the 8 MiB bound the reader judges by what the conversation carries, so a conversation the runtime kept opening and extending could still refuse `/undo` with "full history exceeds byte transport bound". The saved-history boundary also counted MCP-server notices, shell-completion handoffs, the deferred-toolbox snapshot and `<image>` attachment tags as prompts you typed, so a conversation that had received one refused with "Cannot identify an exact saved-history boundary". Both now use what the conversation carries. Thanks [@gaord](https://github.com/gaord).
+```
+
+**File**: `crates/config/src/persistence.rs` (modified, +74/-4)
+```diff
+@@ -67,10 +67,50 @@ pub fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
+     tmp.as_file()
+         .sync_all()
+         .with_context(|| format!("failed to sync temp file for {}", path.display()))?;
+-    tmp.persist(path)
+-        .map_err(|e| e.error)
+-        .with_context(|| format!("failed to persist {}", path.display()))?;
+-    Ok(())
++
++    // Two Codewhale instances share one home. The loser of a race can find the
++    // destination held open for a read — Windows refuses the replacing rename
++    // for as long as that handle lives, because the reader does not pass
++    // `FILE_SHARE_DELETE`. That refusal is transient, so retry briefly instead
++    // of reporting a write the caller could have made.
++    let mut attempt: u32 = 0;
++    loop {
++        match tmp.persist(path) {
++            Ok(_) => return Ok(()),
++            Err(error) if attempt + 1 < PERSIST_ATTEMPTS && rename_is_retryable(&error.error) => {
++                attempt += 1;
++                tmp = error.file;
++                std::thread::sleep(std::time::Duration::from_millis(
++                    u64::from(attempt) * PERSIST_RETRY_STEP_MS,
++                ));
++            }
++            Err(error) => {
++                return Err(error.error)
++                    .with_context(|| format!("failed to persist {}", path.display()));
++            }
++        }
++    }
++}
++
++/// How many times the replacing rename is attempted before the error surfaces.
++const PERSIST_ATTEMPTS: u32 = 6;
++
++/// Backoff step; attempt *n* sleeps `n * step`, so the last wait is 75ms.
++const PERSIST_RETRY_STEP_MS: u64 = 15;
++
++/// Whether a failed rename is worth retrying: another process holds the
++/// destination open, which is a momentary condition rather than a refusal the
++/// caller should hear about.
++#[cfg(windows)]
++fn rename_is_retryable(error: &std::io::Error) -> bool {
++    // 5 = ERROR_ACCESS_DENIED, 32 = ERROR_SHARING_VIOLATION,
++    // 33 = ERROR_LOCK_VIOLATION. A reader holding the file raises 5 or 32.
++    matches!(error.raw_os_error(), Some(5 | 32 | 33))
++}
++
++#[cfg(not(windows))]
++fn rename_is_retryable(error: &std::io::Error) -> bool {
++    matches!(error.kind(), std::io::ErrorKind::PermissionDenied)
+ }
+ 
+ /// Atomically write `value` as pretty-printed JSON to `path`.
+@@ -288,6 +328,36 @@ mod tests {
+         assert!(leftovers.is_empty(), "stray temp files: {leftovers:?}");
+     }
+ 
++    #[test]
++    fn only_a_contended_rename_is_retried() {
++        // The retry exists for one situation: another instance holds the
++        // destination open while it reads the same sidecar. Anything else —
++        // a missing directory, a full disk — must surface at once instead of
++        // being retried five more times.
++        #[cfg(windows)]
++        {
++            for code in [5, 32, 33] {
++                assert!(
++                    rename_is_retryable(&std::io::Error::from_raw_os_error(code)),
++                    "os error {code}"
++                );
++            }
++            assert!(!rename_is_retryable(&std::io::Error::from_raw_os_error(2)));
++            assert!(!rename_is_retryable(&std::io::Error::from_raw_os_error(
++                112
++            )));
++        }
++        #[cfg(not(windows))]
++        {
++            assert!(rename_is_retryable(&std::io::Error::from(
++                std::io::ErrorKind::PermissionDenied
++            )));
++            assert!(!rename_is_retryable(&std::io::Error::from(
++                std::io::ErrorKind::NotFound
++            )));
++        }
++    }
++
+     #[test]
+     fn transaction_preview_writes_nothing() {
+         let tmp = tempfile::tempdir().unwrap();
+```
+
+**File**: `crates/tui/CHANGELOG.md` (modified, +3/-0)
+```diff
+@@ -124,6 +124,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ### Fixed
+ 
++- **Setup state survives a second instance:** two running Codewhale windows share one home, and both rewrite `setup_state.json` when the provider or model changes. The replacing rename is now retried briefly when the destination is held open for a read — Windows refuses it outright while that handle lives — instead of surfacing a write the caller could have made. The failure message also carries the underlying I/O error instead of only the outer context, so the next occurrence is diagnosable.
++- **`doctor` stops flagging a user's own temp-named logs:** the `stale_setup_temp_files` check matched any file whose name starts with `.tmp`, so scratch files such as `.tmp-build-release.log` made a clean home report as half-applied. It now matches the shape a staged write leaves when it never lands (`.tmpXXXXXX`, no extension).
++
+ - **Approval cards are translated in every locale (#7071):** the "Do you want to proceed?" question, the Why and Stop explanations on destructive actions, the Approve, Edit plan and Cancel choices on workflow plans, the Save row, the details pager's title and the card's impact lines (one sentence per tool category plus the Reads, Writes, Target, Connected app, Agent type and Primary input rows) came from English literals, or from Simplified Chinese only. They now use the shared message catalogs, so all 15 packs carry them. The 14 non-English translations were written without native-speaker review. Still English outside Simplified Chinese: a workflow plan's own impact lines and detail labels, and the delegated-authority rows.
+ - **Local vLLM models keep their own reasoning ladder (#7124):** a vLLM or SGLang route treated every model as low/medium/high and folded low and medium onto high. Reviewed model-template facts (`crates/config/src/local_reasoning.json`) now give Qwen3.8, Qwen3.6-35B-A3B, Ornith, GLM-5.3-Flash and DeepSeek-V4-Flash-Vision-Exp the controls their template accepts, and the effort picker offers exactly those tiers, so low stays low and medium stays medium where the model has them. Unreviewed models are unchanged. Not yet observed against a real vLLM or SGLang server. Thanks [@gannp](https://github.com/gannp).
+ - **`/undo`, retry and fork-at-turn work on large and attachment-heavy conversations again (#7147):** a fork was measured by the shape it is stored in (a saved session repeats its conversation while it carries a journal, so the file can be twice the history) against the 8 MiB bound the reader judges by what the conversation carries, so a conversation the runtime kept opening and extending could still refuse `/undo` with "full history exceeds byte transport bound". The saved-history boundary also counted MCP-server notices, shell-completion handoffs, the deferred-toolbox snapshot and `<image>` attachment tags as prompts you typed, so a conversation that had received one refused with "Cannot identify an exact saved-history boundary". Both now use what the conversation carries. Thanks [@gaord](https://github.com/gaord).
+```
+
+**File**: `crates/tui/src/lib.rs` (modified, +36/-1)
+```diff
+@@ -7471,7 +7471,16 @@ fn doctor_home_has_stale_setup_temp_files() -> bool {
+         return false;
+     };
+     entries.flatten().any(|entry| {
+-        entry.file_name().to_string_lossy().starts_with(".tmp")
++        let name = entry.file_name();
++        let Some(name) = name.to_str() else {
++            return false;
++        };
++        // `tempfile` stages a write as `.tmpXXXXXX` beside its target: no dot
++        // after the prefix because it is not an extension. Requiring that keeps
++        // a user's own `.tmp-build.log`-style scratch files out of the verdict,
++        // so only a staged write that never landed matches.
++        name.starts_with(".tmp")
++            && !name[4..].contains('.')
+             && entry.file_type().is_ok_and(|kind| kind.is_file())
+     })
+ }
+@@ -16092,6 +16101,32 @@ mod doctor_setup_state_tests {
+         );
+     }
+ 
++    #[test]
++    fn doctor_setup_consistency_ignores_the_user_own_tmp_named_logs() {
++        // The verdict is about a staged write that never landed, not about
++        // every file whose name starts with `.tmp`. User scratch logs such as
++        // `.tmp-build-release.log` carry an extension and are none of its
++        // business; flagging them made a clean home report as half-applied.
++        let _guard = crate::test_support::lock_test_env();
++        let tmp = TempDir::new().expect("tempdir");
++        let (_home_guard, codewhale_home) = prepare_env(&tmp);
++        let _key = crate::test_support::EnvVarGuard::remove("DEEPSEEK_API_KEY");
++        let _source = crate::test_support::EnvVarGuard::remove("DEEPSEEK_API_KEY_SOURCE");
++        let workspace = tmp.path().join("workspace");
++        fs::create_dir_all(&workspace).expect("workspace");
++        fs::write(codewhale_home.join(".tmp-build-release.log"), b"user log").expect("user log");
++        fs::write(codewhale_home.join(".tmp-wt-clippy.log"), b"user log").expect("user log");
++
++        let report = doctor_setup_report_json(&Config::default(), &workspace);
++
++        assert_eq!(report["consistency"]["status"], "consistent");
++        let issues = report["consistency"]["issues"].to_string();
++        assert!(
++            !issues.contains("stale_setup_temp_files_in_codewhale_home"),
++            "{issues}"
++        );
++    }
++
+     #[test]
+     fn doctor_setup_consistency_reports_consistent_for_clean_home() {
+         let _guard = crate::test_support::lock_test_env();
+```
+
+**File**: `crates/tui/src/tui/ui/provider_routes.rs` (modified, +1/-1)
+```diff
+@@ -1218,7 +1218,7 @@ pub(crate) fn clear_active_provider_api_key_from_memory(
+ 
+ pub(crate) fn record_provider_model_setup_progress(app: &mut App, config: &Config) {
+     if let Err(err) = crate::tui::setup::record_provider_model_setup_state_for_app(app, config) {
+-        let note = format!("Setup provider/model state was not saved: {err}");
++        let note = format!("Setup provider/model state was not saved: {err:#}");
+         if let Some(status) = app.status_message.as_mut() {
+             status.push_str(" · ");
+             status.push_str(&note);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7144** (2026-10-29): fix(tui): keep the quote rail on wrapped rows of a blockquote (@Lstarsky0)
-- **PR #7143** (2026-10-30): fix(tui): detach recalled history when removing an attachment or deleting in vim (@Lstarsky0)
-- **PR #7141** (2026-10-29): docs(i18n): translate the review-bot row and refresh README stamps (@Aboysky)
-- **PR #7140** (2026-10-29): fix(lsp): open TSX documents with typescriptreact language ID (@Ricardo-M-L)
-- **PR #7137** (2026-10-29): fix(tui): route a streamed reasoning delta to the reasoning cell (@SparkofSpike)
-- **PR #7135** (2026-10-29): fix(tui): keep the turn metadata block out of /tree and /export (@Lstarsky0)
+- **PR #7158** (2026-10-31): fix(tui): end a bare URL at full-width punctuation (@Lstarsky0)
+- **PR #7157** (2026-10-31): fix(tui): keep asterisks that don't open emphasis (@Lstarsky0)
+- **PR #7156** (2026-10-31): fix(tui): render ~~~ fences as code blocks (@Lstarsky0)
+- **PR #7155** (closed): test: repair three tests broken on main by catalog and context-window changes (@luochen211)
+- **PR #7152** (2026-10-31): fix(tui): drop the engine's status reply to a fleet roster refresh (@Lstarsky0)
+- **PR #7151** (2026-10-31): Native HarmonyOS: fix the documented build, and ship a signed arm64 release (@gaord)
 
 ---
 
@@ -2480,13 +2874,13 @@ these 5 paths, unchanged across the runs: `cargo check -p codewhale-tui
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. runtime): compare a prompt with its metadata envelope stripped from either end
+## X. cli): remove the marked PATH block and Codewhale completions on uninstall
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4f97c761`: runtime): compare a prompt with its metadata envelope stripped from either end. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `20f091d6`: cli): remove the marked PATH block and Codewhale completions on uninstall. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2494,14 +2888,14 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **A restored conversation can be undone again:** a saved document keeps each turn's `<turn_meta>` envelope before the prompt while a thread rebuilt from its turn records keeps it after, and only the leading shape was stripped before comparing the two. Every record-side prompt was therefore longer than its transcript twin, so the exact-boundary search never matched and `/undo` on a resumed thread refused with "Cannot identify an exact saved-history boundary" instead of answering. Both shapes are now stripped, so the comparison sees the prompt text alone.
+- **Safer, more complete uninstall:** for a receipted release copy, `codewhale uninstall --yes` now also removes this install's exact three-line `# >>> codewhale PATH >>>` block from your shell profiles and the Codewhale-generated completion files at their documented paths (bash, zsh and fish, honouring `XDG_DATA_HOME` and `XDG_CONFIG_HOME`). It touches nothing else in a profile, leaves a symlinked or unreadable profile for you to edit, keeps the completion files while another Codewhale copy remains on PATH, and exits non-zero if that cleanup fails after the program is already gone. The `codewhale.net/install.sh` hint and the install guide now print the PATH line as that marked block, so there is something provably yours to remove; a bare `export PATH=…` line you added earlier is never touched. Data purge requires a receipted removal in the same confirmed run. Both Unix installers reject unsafe or managed destinations before creating them and still never edit shell profiles themselves. Uninstall instructions match the explicit-home purge scope in English and Chinese. Not yet observed on a real Windows host or an installed release artifact. (Refs #7091)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+- **Safer uninstall:** program removal never edits shell profiles; matching Codewhale PATH blocks are reported for manual cleanup. Data purge requires a receipted removal in the same confirmed run. Both Unix installers reject unsafe or managed destinations before creating them and keep shell profiles unchanged. Uninstall instructions now match the explicit-home purge scope in English and Chinese.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4f97c761` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `20f091d6` are properly handled with clean fallback behavior.

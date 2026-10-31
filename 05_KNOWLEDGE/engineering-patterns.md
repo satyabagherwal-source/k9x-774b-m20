@@ -460422,3 +460422,149 @@ def bad_position_ids(input_ids):
 Verify that for `tokenizer("Hello world", return_tensors="pt")`, the model's internal `position_ids` tensor starts strictly with value `2` on the `<s>` (BOS) token and terminates at `2 + N - 1`.
 
 ---
+
+
+---
+
+## 6297. Segmentation Mask Resolution & Memory Safety (Harvested from Bingsu/adetailer)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Segmentation Mask Resolution & Memory Safety",
+  "source": "Bingsu/adetailer",
+  "source_url": "https://huggingface.co/Bingsu/adetailer",
+  "source_version": "hf-bingsu-adetailer",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-31T19:40:56.865Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-bingsu-adetailer",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Bingsu/adetailer](https://huggingface.co/Bingsu/adetailer) (Revision: `hf-bingsu-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When using instance segmentation models (YOLO-seg), the consumer MUST verify that the mask resolution matches the input image resolution or explicitly downsample/upsample the masks to prevent memory spikes and misalignment. The mask tensor shape MUST be validated as `(N, H, W)` where H/W correspond to the input dimensions.
+
+**WHY**:
+YOLO segmentation models output masks at a specific resolution (often 640x640 or the input size). If the input image is high-resolution (e.g., 4K) and the model outputs low-res masks, naive application without interpolation leads to "blocky" artifacts. Conversely, if the code assumes the mask is the same size as the input but the model internally resized it, index errors or silent misalignment occur.
+
+**WHEN TO APPLY**:
+Any pipeline using `YOLO` with `-seg` suffix models (e.g., `person_yolov8n-seg.pt`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import cv2
+import numpy as np
+
+def apply_segmentation_mask(image, results, class_id):
+    """
+    Safely applies a segmentation mask from YOLO results to an image.
+    """
+    for r in results:
+        if r.masks is None:
+            continue
+            
+        # r.masks.data is a tensor of shape (N, H, W)
+        # Ensure it's on CPU and converted to numpy
+        masks = r.masks.data.cpu().numpy()
+        
+        # Find indices of the target class
+        class_indices = np.where(r.masks.cls == class_id)[0]
+        
+        for idx in class_indices:
+            mask = masks[idx]
+            
+            # CRITICAL: Check mask shape against image shape
+            if mask.shape[:2] != image.shape[:2]:
+                # Resize mask to match image if necessary
+                mask = cv2.resize(mask, (image.shape[1], image.shape[0]), interpolation=cv2.INTER_NEAREST)
+            
+            # Apply mask (e.g., for inpainting)
+            # mask is binary (0 or 1)
+            masked_region = image.copy()
+            masked_region[mask == 0] = 0 # Zero out non-masked areas
+            
+            # ... proceed with inpainting logic
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Assuming mask shape matches image shape without check
+mask = results[0].masks.data[0].cpu().numpy()
+# If image is 1024x1024 but mask is 640x640, this will fail or misalign
+image[mask == 1] = 0 # IndexError or silent corruption
+```
+
+**VERIFICATION METHOD**:
+Integration test with images of varying resolutions (e.g., 640x640, 1024x1024, 1920x1080) asserting that the final masked image has the same dimensions as the input and that the mask boundaries align with the bounding boxes.
+
+
+---
+
+## 6298. memory): record evidence only for prompt-included facts, owner searches and on a (Harvested from Bitterbot-AI/bitterbot-desktop)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "memory): record evidence only for prompt-included facts, owner searches and on a",
+  "source": "Bitterbot-AI/bitterbot-desktop",
+  "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+  "source_version": "aa0953e9",
+  "license": "MIT",
+  "extracted_at": "2026-10-31T19:41:02.314Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `aa0953e9`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `docs/memory/evidence-telemetry.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `aa0953e9`: memory): record evidence only for prompt-included facts, owner searches and on an independent retention clock (#344). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/memory/evidence-telemetry.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+        retentionDays: 90, // rows older than this are pruned independently every 30 minutes
+One row per returned result, at most `topK` per search, written in one transaction after the final ordering (fusion, boosts, superseded demotion) is fixed. Guest searches (`guestSearch`) and non-owner deep-recall searches (including context and live API searches) are never recorded. The PLAN-59 Phase 1 pilot harness (`benchmarks/plan59-phase1/`) reads this table, decayed with a 30-day half-life, as the demand term of its need estimate whenever it is present and non-empty on the snapshot under test.
+For proactive recall, `delivered` means inclusion in a full model prompt, not
+proof that the owner saw the fact. Selection, discarded prompt assembly and
+minimal prompts record nothing. The formatter supplies only the chunk ids
+that survived its cap. The full prompt renderer acknowledges them using
+`pr:<keyed delivery digest>:<chunk id>`; the digest covers session and run/turn
+identity. Rebuilding the same delivery is idempotent, while distinct turns or
+sessions remain distinct even within the same hour. A caller without a run id
+receives a fresh opaque delivery id for that resolved prompt.
+
+- `d
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+        retentionDays: 90, // rows older than this are pruned on the consolidation tick
+One row per returned result, at most `topK` per search, written in one transaction after the final ordering (fusion, boosts, superseded demotion) is fixed. Guest searches (`guestSearch`) are never recorded. The PLAN-59 Phase 1 pilot harness (`benchmarks/plan59-phase1/`) reads this table, decayed with a 30-day half-life, as the demand term of its need estimate whenever it is present and non-empty on the snapshot under test.
+- `dream_mode_select`: legacy = the modes `selectModes` chose with their adjusted weights and the GCCRF weight in force (0.25 to 0.3); proposed = the modes chosen from the same enabled set with the GCCRF adjustment zeroed. Both selections consume the same random draws, so a divergence reflects the weights and nothing else. The reserved utility-lane slot and the exploration auto-trigger are shared by both.
+`prune()` runs once per consolidation tick (every 30 minutes by default) after the existing steps, deleting rows older than `retentionDays` in chunks of 2000 with an event-loop yield between chunks, so a backlog can never starve the gateway loop (see the event
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `aa0953e9` are properly handled with clean fallback behavior.

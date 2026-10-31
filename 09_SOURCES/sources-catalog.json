@@ -35,8 +35,8 @@
     "sourceUrl": "https://huggingface.co/Bingsu/adetailer",
     "sourceVersion": "hf-bingsu-adetailer",
     "license": "Open-Source",
-    "contentHash": "9e7c5c4bc4081fc67e222d0c2c93a3f599fb65c7c34ddc8b25fe9c4aad0bc83f",
-    "lastHarvestedAt": "2026-10-28T18:13:58.845Z",
+    "contentHash": "5b337a87cbc53dc021f018ec0b50406da8dfdfa305f872af1754d8a4d0ff4db2",
+    "lastHarvestedAt": "2026-10-31T19:40:57.183Z",
     "learningId": "learn-huggingface-bingsu-adetailer"
   },
   "hf-lilylilith-qi_2.1_anyangle": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "9cfd9db0",
+    "sourceVersion": "aa0953e9",
     "license": "MIT",
-    "contentHash": "1162a8d807d1954a5ba055cb407a451989ea70b8a3ade05892872c184a615354",
-    "lastHarvestedAt": "2026-10-31T18:22:26.458Z",
+    "contentHash": "e5861136d21c074511af7b5ed96ed5468da046a5d6b11503c19708018e3d688f",
+    "lastHarvestedAt": "2026-10-31T19:41:02.630Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "b92540d8",
+    "sourceVersion": "ecd256c9",
     "license": "MIT",
-    "contentHash": "21fb542fb4687a240a2cf048ff7dce2c1fd67bd96557287ca7a112686112d243",
-    "lastHarvestedAt": "2026-10-30T23:51:38.436Z",
+    "contentHash": "751c388b0c2e39067a5a8f31068c4cdbcb5f622c130a49e60d438a9f195a53d0",
+    "lastHarvestedAt": "2026-10-31T19:40:49.347Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `9cfd9db0`  
+> **Source Version**: `aa0953e9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T18:22:25.878Z  
+> **Timestamp**: 2026-10-31T19:41:01.941Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T18:22:25.872Z  
+> **Harvest Timestamp**: 2026-10-31T19:41:01.709Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,485 +1799,325 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9cfd9db0` (2026-10-31)
-**Commit Message**: feat(browser): teach reusable skills from reviewed demonstrations (#338)
+### Incident Patch 1: `aa0953e9` (2026-10-31)
+**Commit Message**: fix(memory): record evidence only for prompt-included facts, owner searches and on an independent retention clock (#344)
 
-**File**: `ATTRIBUTION.md` (modified, +8/-0)
+Rebases PR #330 onto current main. PLAN-59 Phase 0 could record a proactive
+fact as delivered when selection, not the prompt renderer, decided; merge
+separate deliveries inside one hour bucket; count a guest's deep-recall
+search as owner retrieval evidence; let the shadow dream-mode selection draw
+from the live random stream; and prune the evidence tables only inside the
+consolidation pass.
+
+Delivery is now acknowledged by the full prompt renderer through a callback,
+keyed by session and run id so a rebuilt turn deduplicates while distinct
+turns stay apart. The Phase 2 shadow trial (#331) logs eligible, assigned and
+delivered through that same path, so it too sees only facts the prompt
+included. Every deep-recall route passes the owner observation flag and the
+cached sandbox is split by owner versus guest. Shadow-only draws use their own
+source and the trace records both draw sequences. Evidence retention runs on
+its own 30-minute timer from startup and drains on shutdown.
+
+Docs: evidence-telemetry.md states that delivery means prompt inclusion and
+names the exc
+
+**File**: `docs/memory/evidence-telemetry.md` (modified, +22/-7)
 ```diff
-@@ -30,6 +30,14 @@ Code ported or vendored into the tree keeps a header naming its source:
+@@ -14,7 +14,7 @@ Code: `src/memory/evidence-telemetry.ts` (writer), `src/memory/surfacing-trial.t
+     curiosity: {
+       evidence: {
+         mode: "shadow", // "off" | "observe" | "shadow"; default "shadow"
+-        retentionDays: 90, // rows older than this are pruned on the consolidation tick
++        retentionDays: 90, // rows older than this are pruned independently every 30 minutes
+         topK: 10, // at most this many retrieval rows per search
+       },
+     },
+@@ -32,7 +32,7 @@ A mode that is not one of the three falls back to `shadow` with a warning; a non
  
- ## Original work provenance
+ ### `retrieval_hits`
  
-+The browser teaching workflow (`src/browser/teaching-*.ts` and the Control UI's
-+`BrowserTeaching` component) is independently implemented for Bitterbot's live
-+browser and skill gate. Its semantic demonstration, parameterized draft and
-+owner-review patterns were inspired by
-+[CopilotKit/OpenDuet](https://github.com/CopilotKit/OpenDuet) (MIT), particularly
-+`openbot/agent-computer/src/demonstration.ts` and
-+`openbot/server/src/demonstrations/draft.ts`.
+-One row per returned result, at most `topK` per search, written in one transaction after the final ordering (fusion, boosts, superseded demotion) is fixed. Guest searches (`guestSearch`) are never recorded. The PLAN-59 Phase 1 pilot harness (`benchmarks/plan59-phase1/`) reads this table, decayed with a 30-day half-life, as the demand term of its need estimate whenever it is present and non-empty on the snapshot under test.
++One row per returned result, at most `topK` per search, written in one transaction after the final ordering (fusion, boosts, superseded demotion) is fixed. Guest searches (`guestSearch`) and non-owner deep-recall searches (including context and live API searches) are never recorded. The PLAN-59 Phase 1 pilot harness (`benchmarks/plan59-phase1/`) reads this table, decayed with a 30-day half-life, as the demand term of its need estimate whenever it is present and non-empty on the snapshot under test.
+ 
+ | column               | meaning                                                                                             |
+ | -------------------- | --------------------------------------------------------------------------------------------------- |
+@@ -73,6 +73,15 @@ What the agent put in front of the owner, and separately what the owner did abou
+ 
+ Exposure and outcome are kept apart on purpose. A surfaced item is `delivered`; usefulness is only `explicit` when the owner acted. Silence is `unknown` (NULL outcome), never "ignored" or "disliked". A label that arrives for an item with no delivered row (for example a dismiss of a target whose finding was never voiced) creates a `responded` row so the action is kept.
+ 
++For proactive recall, `delivered` means inclusion in a full model prompt, not
++proof that the owner saw the fact. Selection, discarded prompt assembly and
++minimal prompts record nothing. The formatter supplies only the chunk ids
++that survived its cap. The full prompt renderer acknowledges them using
++`pr:<keyed delivery digest>:<chunk id>`; the digest covers session and run/turn
++identity. Rebuilding the same delivery is idempotent, while distinct turns or
++sessions remain distinct even within the same hour. A caller without a run id
++receives a fresh opaque delivery id for that resolved prompt.
 +
- The following components are original work by Victor Michael Gil and
- constitute the novel intellectual contributions of the Bitterbot project:
+ ### `decision_traces`
  
+ Shadow mode only. One row per decision the dream engine took where a GCCRF-as-diagnostic routing could have differed.
+@@ -86,7 +95,7 @@ Shadow mode only. One row per decision the dream engine took where a GCCRF-as-di
+ | `scoring_version` | `gccrf_state.scoring_version` at write time                                              |
+ 
+ - `dream_seed_rank`: legacy = the ids `selectSeeds` returned under `ORDER BY (importance_score + COALESCE(curiosity_reward, curiosity_boost, 0)) / (dream_count + 1)`; proposed = the same `WHERE` and `LIMIT` under `ORDER BY importance_score / (dream_count + 1)`. The dream-count penalty is kept on both sides because it is not a GCCRF signal.
+-- `dream_mode_select`: legacy = the modes `selectModes` chose with their adjusted weights and the GCCRF weight in force (0.25 to 0.3); proposed = the modes chosen from the same enabled set with the GCCRF adjustment zeroed. Both selections consume the same random draws, so a divergence reflects the weights and nothing else. The reserved utility-lane slot and the exploration auto-trigger are shared by both.
++- `dream_mode_select`: legacy = the modes `selectModes` chose with their adjusted weights and the GCCRF weight in force (0.25 to 0.3); proposed = the modes chosen from the same enabled set with the GCCRF adjustment zeroed. The counterfactual reuses the live selection's random-draw prefix. If last-mode avoidance requires extra counterfactual iterations, independent cryptographic draws extend that prefix without advancing the live `Math.random` stream. Both draw sequences are stored in the trace for replay. The reserved utility-lane slot and the exploration auto-trigger are shared by both.
+ 
+ ### `evidence_meta`
+ 
+@@ -103,7 +112,7 @@ Digests are HMAC-SHA256 under a key that exists only in this node's database, so
+ 
+ ## Retention and cost
+ 
+-`prune()` runs once per consolidation tick (every 30 minutes by default) after the existing steps, deleting rows older than `retentionDays` in chunks of 2000 with an event-loop yield between chunks, so a backlog can never starve the gateway loop (see the event
 ```
 
-**File**: `desktop/renderer/src/components/chat/BrowserLiveView.tsx` (modified, +3/-0)
+**File**: `docs/memory/plan59-phase1-independent-review.md` (added, +58/-0)
 ```diff
-@@ -10,6 +10,7 @@ import {
- } from "../../lib/browser-live-input";
- import { cn } from "../../lib/utils";
- import { useBrowserLiveStore, type BrowserLiveFrame } from "../../stores/browser-live-store";
-+import { BrowserTeaching } from "./BrowserTeaching";
- import { extractDomain } from "./tool-views/tool-view-utils";
- 
- /** Pointer moves are a stream; this many per second is plenty to hover and drag. */
-@@ -76,6 +77,8 @@ export function BrowserLiveView({ className }: { className?: string }) {
-         )}
-       </div>
- 
-+      <BrowserTeaching mine={showing && mine} />
-+
-       {showing && control === "user" && (
-         <div className="px-3 py-1.5 text-xs bg-warning/10 text-warning border-b border-warning/20">
-           {mine
-```
-
-**File**: `desktop/renderer/src/components/chat/BrowserTeaching.test.tsx` (added, +129/-0)
-```diff
-@@ -0,0 +1,129 @@
-+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-+import { beforeEach, describe, expect, it, vi } from "vitest";
-+import { BrowserTeaching } from "./BrowserTeaching";
-+
-+const gateway = vi.hoisted(() => ({ status: "connected", request: vi.fn() }));
-+vi.mock("../../stores/gateway-store", () => ({
-+  useGatewayStore: (select: (state: typeof gateway) => unknown) => select(gateway),
-+}));
-+const record = {
-+  id: "demo",
-+  title: "Find invoice",
-+  goal: "Find supplier invoice",
-+  outcome: "Matching invoice shown",
-+  status: "stopped",
-+  actionCount: 2,
-+};
-+const options = {
-+  name: "taught-find-invoice",
-+  description: "Use for supplier invoices; not for unrelated workflows.",
-+  parameters: {},
-+};
-+beforeEach(() => {
-+  gateway.status = "connected";
-+  gateway.request.mockReset();
-+  let status = "stopped";
-+  gateway.request.mockImplementation(async (method: string) => {
-+    if (method.endsWith(".list")) return { recordings: [{ ...record, status }] };
-+    if (method.endsWith(".start")) {
-+      status = "recording";
-+      return record;
-+    }
-+    if (method.endsWith(".stop")) {
-+      status = "stopped";
-+      return record;
-+    }
-+    if (method.endsWith(".draft"))
-+      return {
-+        record,
-+        options,
-+        parameters: [{ id: "input_1", label: "Supplier" }],
-+        content: "Initial instructions",
-+      };
-+    if (method.endsWith(".stage"))
-+      return {
-+        ok: true,
-+        content: "Checked {{supplier}} instructions",
-+        hash: "abc",
-+        summary: "Checks passed",
-+      };
-+    if (method.endsWith(".activate")) {
-+      status = "saved";
-+      return { name: options.name };
-+    }
-+    throw new Error(`Unexpected method: ${method}`);
-+  });
-+});
-+
-+async function open() {
-+  fireEvent.click(screen.getByRole("button", { name: "Teach this workflow" }));
-+  await screen.findByRole("button", { name: "Review" });
-+}
-+
-+describe("browser teaching", () => {
-+  it("records, names parameters, checks and saves only after explicit review", async () => {
-+    render(<BrowserTeaching mine />);
-+    await open();
-+    fireEvent.change(screen.getByLabelText("Workflow name"), { target: { value: record.title } });
-+    fireEvent.change(screen.getByLabelText("What are you trying to do?"), {
-+      target: { value: record.goal },
-+    });
-+    fireEvent.change(screen.getByLabelText("How will you know it worked?"), {
-+      target: { value: record.outcome },
-+    });
-+    fireEvent.click(screen.getByRole("button", { name: "Record demonstration" }));
-+    fireEvent.click(await screen.findByRole("button", { name: "Stop and review" }));
-+    await screen.findByLabelText("Name for input_1");
-+    fireEvent.change(screen.getByLabelText("Name for input_1"), { target: { value: "supplier" } });
-+    fireEvent.click(screen.getByRole("button", { name: "Check skill draft" }));
-+    const save = await screen.findByRole("button", { name: "Save local skill" });
-+    expect((save as HTMLButtonElement).disabled).toBe(true);
-+    expect(gateway.request).toHaveBeenCalledWith("browser.teaching.stage", {
-+      id: record.id,
-+      options: { ...options, parameters: { input_1: "supplier" } },
-+    });
-+    fireEvent.click(screen.getByRole("checkbox"));
-+    fireEvent.click(save);
-+    await screen.findByText(/Saved taught-find-invoice/);
-+    expect(gateway.request).toHaveBeenCalledWith("browser.teaching.activate", {
-+      id: record.id,
-+      hash: "abc",
-+      reviewed: true,
-+    });
-+  });
-+
-+  it("invalidates approval after an edit and surfaces a failed check", async () => {
-+    render(<BrowserTeaching mine />);
-+    await open();
-+    fireEvent.click(screen.getByRole("button", { name: "Review" }));
-+    fireEvent.click(await screen.findByRole("button", { name: "Check skill draft" }));
-+    fireEvent.click(await screen.findByRole("checkbox"));
-+    fireEvent.change(screen.getByLabelText("Skill name"), {
-+      target: { value: "taught-another-invoice" },
-+    });
-+    expect(screen.queryByRole("button", { name: "Save local skill" })).toBeNull();
-+    gateway.request.mockImplementation(async (method: string) =>
-+      method.endsWith(".stage")
-+        ? { ok: false, content: "Blocked draft", summary: "Unsafe recorded label" }
-+        : { recordings: [record] },
-+    );
-+    fireEvent.click(screen.getByRole("button", { name: "Check skill draft" }));
-+    await screen.findByText("Unsafe recorded label");
-+    expect(screen.queryByRole("checkbox")).toBeNull();
-+    expect(gateway.request.mock.calls.some(([method]) => method.endsWith(".activate"))).toBe(false);
-+  });
-+
-+  it("requires takeover and a connected gateway before recording", async () => {
-+    const { rerender } = render(<BrowserTeaching mine={false} />);
-+    await open();
-+    expect(
-+      (screen.getByRole("button", { name: "Record demonstration" }) as HTMLButtonElement).disabled,
-+    ).toBe(true);
-+    gateway.status = "disconnected";
-+    rerender(<BrowserTeaching m
-```
-
-**File**: `desktop/renderer/src/components/chat/BrowserTeaching.tsx` (added, +401/-0)
-```diff
-@@ -0,0 +1,401 @@
-+import { GraduationCap, X } from "lucide-react";
-+import { useCallback, useEffect, useState } from "react";
-+import { useGatewayStore } from "../../stores/gateway-store";
-+
-+type Recording = {
-+  id: string;
-+  title: string;
-+  goal: string;
-+  outcome: string;
-+  actionCount: number;
-+  status: "recording" | "stopped" | "failed" | "staged" | "saved";
-+  createdAt: number;
-+  reason?: string;
-+  skillName?: string;
-+};
-+type Options = { name: string; description: string; parameters: Record<string, string> };
-+type Draft = {
-+  record: Recording;
-+  options: Options;
-+  parameters: Array<{ id: string; label: string }>;
-+  content: string;
-+};
-+type Check = { ok: boolean; content: string; hash?: string; summary: string };
-+const inputClass = "w-full rounded border border-border bg-background px-2 py-1.5 text-xs";
-+const buttonClass =
-+  "rounded border border-border px-2.5 py-1.5 text-xs hover:bg-accent disabled:opacity-50";
-+
-+/** Owner-led teaching lives beside the actual browser, not in a separate editor. */
-+export function BrowserTeaching({ mine }: { mine: boolean }) {
-+  const request = useGatewayStore((s) => s.request);
-+  const connected = useGatewayStore((s) => s.status === "connected");
-+  const [open, setOpen] = useState(false);
-+  const [recordings, setRecordings] = useState<Recording[]>([]);
-+  const [title, setTitle] = useState("");
-+  const [goal, setGoal] = useState("");
-+  const [outcome, setOutcome] = useState("");
-+  const [draft, setDraft] = useState<Draft | null>(null);
-+  const [check, setCheck] = useState<Check | null>(null);
-+  const [reviewed, setReviewed] = useState(false);
-+  const [busy, setBusy] = useState(false);
-+  const [error, setError] = useState("");
-+  const [message, setMessage] = useState("");
-+  const active = recordings.find((r) => r.status === "recording");
-+
-+  const refresh = useCallback(async () => {
-+    const data = await request<{ recordings: Recording[] }>("browser.teaching.list", {});
-+    setRecordings(data.recordings);
-+  }, [request]);
-+  useEffect(() => {
-+    if (!open || !connected) return;
-+    let disposed = false;
-+    let pending = false;
-+    const poll = async () => {
-+      if (pending) return;
-+      pending = true;
-+      try {
-+        const data = await request<{ recordings: Recording[] }>("browser.teaching.list", {});
-+        if (!disposed) setRecordings(data.recordings);
-+      } catch (err) {
-+        if (!disposed) setError(err instanceof Error ? err.message : "Could not load recordings.");
-+      } finally {
-+        pending = false;
-+      }
-+    };
-+    void poll();
-+    const timer = setInterval(() => void poll(), 2_000);
-+    return () => {
-+      disposed = true;
-+      clearInterval(timer);
-+    };
-+  }, [open, connected, request]);
-+
-+  const run = async (work: () => Promise<void>) => {
-+    setBusy(true);
-+    setError("");
-+    setMessage("");
-+    try {
-+      await work();
-+      await refresh();
-+    } catch (err) {
-+      setError(err instanceof Error ? err.message : "The demonstration could not be saved.");
-+    } finally {
-+      setBusy(false);
-+    }
-+  };
-+  const edit = (options: Options) => {
-+    if (draft) setDraft({ ...draft, options });
-+    setCheck(null);
-+    setReviewed(false);
-+  };
-+  const review = (id: string) =>
-+    run(async () => {
-+      const next = await request<Draft>("browser.teaching.draft", { id });
-+      setDraft(next);
-+      setCheck(null);
-+      setReviewed(false);
-+    });
-+
-+  return (
-+    <div className="border-b border-border/40 shrink-0">
-+      <button
-+        type="button"
-+        className="flex items-center gap-2 px-3 py-2 text-xs text-brand"
-+        onClick={() => setOpen(!open)}
-+        aria-expanded={open}
-+      >
-+        <GraduationCap className="h-4 w-4" /> Teach this workflow
-+        {active && <span className="text-warning">Recording · {active.actionCount} steps</span>}
-+      </button>
-+      {open && (
-+        <section
-+          aria-label="Teach a browser workflow"
-+          className="max-h-96 overflow-auto space-y-3 px-3 pb-3"
-+        >
-+          <p className="text-xs text-muted-foreground">
-+            Demonstrate a workflow in this browser. Typed values and images are not recorded. Page
-+            labels and cleaned URLs stay on the gateway; review them before saving a skill. Using
-+            the skill sends its instructions to your configured model.
-+          </p>
-+          {!connected && (
-+            <p role="status" className="text-xs">
-+              Reconnect to the gateway to manage recordings.
-+            </p>
-+          )}
-+          {active ? (
-+            <div className="flex items-center justify-between gap-2 text-xs">
-+              <span>
-+                Recording {active.title} · {active.actionCount} steps · stops after 10 minutes
-+              </span>
-+              <button
-+                type="button"
-+                className={buttonClass}
-+                disabled={busy || !connected}
-+                
-```
-
-**File**: `docs/docs.json` (modified, +1/-0)
-```diff
-@@ -793,6 +793,7 @@
-                 "group": "Browser",
-                 "pages": [
-                   "tools/browser",
-+                  "tools/browser-teaching",
-                   "tools/browser-login",
-                   "tools/chrome-extension",
-                   "tools/browser-linux-troubleshooting"
-```
-
-**File**: `docs/tools/browser-teaching.md` (added, +97/-0)
-```diff
-@@ -0,0 +1,97 @@
+@@ -0,0 +1,58 @@
 +---
-+summary: "Teach a browser workflow by demonstration, then review and save a local skill"
-+read_when:
-+  - Turning a repeated browser task into a reusable skill
-+  - Reviewing what a browser demonstration records
-+title: "Teach a browser workflow"
++title: "Independent review of the PLAN-59 consolidation pilot"
++description: "What the stopped Phase 1 pilot establishes, and what needs strengthening before an efficacy comparison."
 +---
 +
-+# Teach a browser workflow
++Reviewed PR #329 at `17abd984d741754ff0538d4dc2ee997e728685ce` on 2026-10-29.
++This review inspects the submitted source, aggregate evidence and synthetic
++tests. It does not rerun private queries, acquire new model responses, or open
++the final evaluation partition. The independent workflow-practice retention
++study remains separate and unchanged.
 +
-+The Control UI's live-browser pane can turn a human demonstration into a
-+parameterized `SKILL.md`. The draft uses semantic controls and fresh browser
-+snapshots so the agent can find the current controls on its next run.
++All 12 reported CI checks are green at the reviewed head. Independently, all 35 synthetic tests in the five pilot test files pass when run from the submitted sources against the corrected Phase 0 checkout and pinned dependencies. This checks harness behavior; it does not reproduce the private-data pilot or resolve the experiment-design limits below.
 +
-+## Record and save
++The saved result supports the decision to stop: 130 candidate clusters, one
++qualifying at the fallback two-query bar, below the declared minimum of five.
++It explicitly records `armsRun: false`. The development baseline has 212
++questions, MRR 0.25444 and recall@5 0.34906. There is no policy contrast, task
++completion effect or retained-learning result to interpret. Reporting this
++qualification failure is appropriate.
 +
-+1. Open the live-browser pane while Bitterbot's browser is running. Choose
-+   **Take over** so this window controls the browser.
-+2. Open **Teach this workflow**. Enter a workflow name, your goal and the visible
-+   result that would demonstrate success. Choose **Record demonstration**.
-+3. Perform the workflow in the live-browser pane. Only interactions sent through
-+   this pane are captured; actions in a separate Chrome window are not captured.
-+4. Choose **Stop and review**. Name each input, such as `supplier` and `month`,
-+   and describe when the skill should and should not be used.
-+5. Choose **Check skill draft**. Review the generated instructions, destinations,
-+   parameters and manual handoff steps. Check the acknowledgement and choose
-+   **Save local skill**. Editing any field requires checking and reviewing again.
-+6. Hand browser control back to the agent. Ask it to use the saved skill with new
-+   inputs, for example: “Use taught-find-invoice for Acme and October.” Check the
-+   visible result on this first agent run.
++Several boundaries matter before using this harness for final collection:
 +
-+The saved skill is available in **Skills** and through normal skill discovery.
-+Saving does not execute the workflow or create a scheduled task.
++- Questions were generated from private passages; this is not the observed
++  owner query distribution. The result says the selected candidates rarely
++  co-surface under these generated queries. It does not establish that the
++  real user's consolidation opportunity is near zero.
++- The final gate validates a file hash and `status: frozen`. It does not bind
++  the actual CLI settings, model, source closure, snapshot and question hashes
++  to an executable frozen contract. Strengthen that check before enabling
++  final evaluation. The runner loads the complete question file but selects
++  only development/qualification questions for the pilot; say "final not
++  scored or used for selection," rather than "final never read."
++- Equal operation count K is not equal total cost. Prioritized selection pays
++  additional single-operation forks and development searches. Recording those
++  costs is useful, but a later equal-budget claim requires cumulative ceilings
++  and a baseline allowed to use the same budget for useful work. The current
++  scalar `1 + chunksTouched + 2 * embeddingCalls` is not provider dollars.
++- The published dollar figures are estimates from text lengths, not provider
++  receipts. The result names `ecc86c07+dirty`; an immutable tested source
++  manifest is needed for a publishable final comparison.
++- `needByFamily` describes counting development queries per family, but
++  increments once per matching top-five chunk. Several results from one file
++  count as several units of demand. Decide whether this is a redundancy
++  signal or query demand, then implement and document that estimand before
++  freezing a new experiment.
++- Path-based partitioning prevents the same path crossing partitions; it
++  does not prove that repeated facts or paraphrases stored under different
++  paths cannot cross them. Do not claim semantic leak prevention from a
++  path split alone.
 +
-+## Captured information
++These limits do not invalidate the observed stopping decision. They do mean
++the pilot is infrastructure and candidate qualification, not evidence that a
++curiosity selector works. The next candidate investigation should use corrected
++owner retrieval telemetry, preserve the negative result, and qualify on
++development data before any final collection.
 +
-+The recorder keeps the owner's goal and expected outcome, cleaned page URLs,
-+control roles and labels, and semantic actions such as click, type and scroll.
-+It does not store typed values, character counts, screenshots, clipboard contents,
-+raw keys or coordinates. Typing becomes a named input placeholder.
-+
-+URLs lose credentials, query strings, fragments and obvious private path
-+segments. Labels receive basic redaction. Labels and remaining URL paths can
-+still contain private information: review them before saving. These records
-+stay on the gateway machine; running a saved skill later exposes its instructions
-+to the agent's configured model like any other skill.
-+
-+Password and other recognized sensitive fields become browser handoffs.
-+Unsupported controls, including native select menus, file pickers, rich-text
-+editors and shortcuts, also become handoffs. No credential value is inferred or
-+embedded. If capture fails, the incomplete recording cannot become a skill.
-+
-+## Review and skill checks
-+
-+Checking uses Bitterbot's existing skill schema, injection scan, description
-+contract and live-skill overlap checks. A failed draft cannot be activated.
-+Activation rechecks the gate and requires approval of the exact checked content.
-+A demonstration cannot replace an existing live skill or another source's
-+staged candidate.
-+
-+These are static checks, not a task-success evaluation. The skill's provenance
-+explicitly says `human_demonstration` and `owner_demonstrated_not_task_validated`.
-+The workflow does not synthesize successful agent traces, bypass the evolution
-+validation gate, register a canary, grant new tools, or publish to the P2P network.
-+Normal browser policy and action approvals still apply when the agent uses it.
-+
-+## Limits and cleanup
-+
-+- Recording requires an `operator.admin` connection controlling a supported
-+  live-browser session. The existing live-view restrictions, including no paired
-+  node streaming, still apply.
-+- Recording stops after ten minutes, 300 semantic steps, loss of browser control
-+  or loss of the live-view lease. Interrupted recordings can be reviewed after
-+  reconnecting, but check that their steps cover the whole workflow.
-+- Up to 50 recordings are kept under `browser-teaching` in the gateway's state
-+  directory. Files are created with owner-only permissions where supported.
-+- **Delete recording** removes the source record and its own unsaved staged
-+  draft. It does not remove a saved skill; manage that separately in **Skills**.
-+- Checked names and parameters survive reopening the draft. Unchecked edits do
-+  not. Delete an unsaved staged recording if you need to start over with a new
-+  skill name.
-+
-+## Developer verification
-+
-+Unit, gateway and UI tests cover storage, parameterization, authorization,
-+review invalidation and activation. An opt-in Chromium test exercises actual CDP
-+input, semantic capture, privacy, installation and reuse after input/layout
-+changes. It tests the recorded recipe, not autonomous model performance:
-+
-+```bash
-+pnpm exec playwright install chromium --only-shell
-+BITTERBOT_TEACHING_BROWSER_TEST=1 pnpm exec vitest run \
-+  --config vitest.e2e.config.ts src/browser/teachi
++References: [PR #329](https://github.com/Bitterbot-AI/bitterbot-desktop/pull/329),
++[saved pilot result](https://github.com/Bitterbot-AI/bitterbot-desktop/blob/17abd984d741754ff0538d4dc2ee997e728685ce/benchmarks/plan59-phase1/results/2026-10-29T21-11-43-569Z.json).
 ```
 
-**File**: `docs/tools/browser.md` (modified, +3/-0)
+**File**: `src/agents/cli-runner.ts` (modified, +1/-0)
 ```diff
-@@ -651,6 +651,9 @@ These are useful for “make the site behave like X” workflows:
+@@ -131,6 +131,7 @@ export async function runCliAgent(params: {
+     sessionKey: params.sessionKey,
+     // PLAN-40 funnel: CLI turns are owner-driven full prompts.
+     promptMode: "full",
++    deliveryId: params.runId,
+   }).catch(() => undefined);
  
- ## Security & privacy
- 
-+To turn a repeated task into a reviewed local skill, see
-+[Teach a browser workflow](/tools/browser-teaching).
-+
- - The bitterbot browser profile may contain logged-in sessions; treat it as sensitive.
- - `browser act kind=evaluate` / `bitterbot browser evaluate` and `wait --fn`
-   execute arbitrary JavaScript in the page context. Prompt injection can steer
+   // PLAN-33: canonical facts resolve independently of endocrine state.
 ```
 
-**File**: `src/agents/skills/skill-promote.ts` (modified, +13/-0)
+**File**: `src/agents/embedded-runner/run/attempt.ts` (modified, +1/-0)
 ```diff
-@@ -49,6 +49,9 @@ export interface PromoteParams {
-   author?: string;
-   /** When true, promote even if the staging gate did not pass. */
-   forceGate?: boolean;
-+  /** Optional owner-review binding, checked again by the final storage read. */
-+  expectedContent?: string;
-+  createOnly?: boolean;
+@@ -584,6 +584,7 @@ export async function runEmbeddedAttempt(
+             // PLAN-40 funnel: dream-fact consumption stamps only in full mode
+             // (minimal assembly drops the proactive block after selection).
+             promptMode,
++            deliveryId: params.runId,
+             // Heartbeat ticks must not spend embeddings on proactive recall or
+             // drain the continuity gate (token-efficiency build, W2 contract).
+             isHeartbeat: params.isHeartbeat === true,
+```
+
+**File**: `src/agents/embedded-runner/system-prompt.ts` (modified, +1/-0)
+```diff
+@@ -61,6 +61,7 @@ export function buildEmbeddedSystemPrompt(params: {
+     maturity?: number;
+     /** Involuntary proactive-recall facts; rendered into the prompt body. */
+     proactiveMemories?: string;
++    onProactiveRecallInjected?: () => void;
+     lastSessionBrief?: string;
+     sessionCoherence?: string;
+   };
+```
+
+**File**: `src/agents/endocrine-state.ts` (modified, +31/-11)
+```diff
+@@ -4,6 +4,7 @@
+  * phenotype summary from MEMORY.md.
+  */
+ 
++import { randomUUID } from "node:crypto";
+ import type { BitterbotConfig } from "../config/config.js";
+ import { createSubsystemLogger } from "../logging/subsystem.js";
+ 
+@@ -27,6 +28,8 @@ export type EndocrineStateForPrompt = {
+   lastSessionBrief?: string;
+   /** Proactive memory facts for involuntary recall (Plan 7, Phase 1) */
+   proactiveMemories?: string;
++  /** Called only when the full prompt renderer includes proactiveMemories. */
++  onProactiveRecallInjected?: () => void;
+   /** Intra-session coherence context (Plan 7, Phase 2+9) */
+   sessionCoherence?: string;
    /**
-    * PLAN-44 Phase 3: content staged by the evolution pipeline (carrying
-    * `.evolution-meta.json`) is promoted ONLY by the validation gate, or by
-@@ -134,6 +137,14 @@ export async function promoteStaged(
-       detail: `gate status is "${staged.meta.gateStatus ?? "pending"}"; pass forceGate=true to override`,
-     };
+@@ -55,6 +58,8 @@ export async function resolveEndocrineState(params: {
+    * fresh conversation is not suppressed by the previous session's window.
+    */
+   sessionKey?: string;
++  /** Stable run/turn identity for retry-safe exposure accounting. */
++  deliveryId?: string;
+   /**
+    * PLAN-40 funnel: the caller's prompt mode. Dream-artifact consumption is
+    * stamped ONLY when "full" — minimal-mode assembly discards the proactive
+@@ -119,6 +124,7 @@ export async function resolveEndocrineState(params: {
+     // matched directive/world_fact/mental_model crystals. This is what lets the
+     // agent answer already knowing what it has stored about a topic.
+     let proactiveMemories: string | undefined;
++    let onProactiveRecallInjected: (() => void) | undefined;
+     let userMessageEmbedding: number[] | null = null;
+     const liveTurn = Boolean(params.userMessage) && !params.isHeartbeat;
+     try {
+@@ -130,26 +136,39 @@ export async function resolveEndocrineState(params: {
+           facts: string | undefined;
+           embedding: number[] | null;
+           renderedDreamChunkIds?: string[];
++          renderedChunkIds?: string[];
+         }>;
+         markDreamArtifactsConsumed?(ids: readonly string[], kind: "retrieved"): void;
++        recordProactiveRecallDelivery?(
++          ids: readonly string[],
++          delivery: { id: string; sessionKey?: string },
++        ): void;
+       };
+       if (liveTurn && typeof recallManager.recallForUserTurn === "function") {
+         const recall = await recallManager.recallForUserTurn(params.userMessage!, {
+           scopeKey: params.sessionKey,
+         });
+         proactiveMemories = recall.facts;
+         userMessageEmbedding = recall.embedding;
+-        // PLAN-40 funnel: these dream facts WILL render — buildEndocrine-
+-        // StateSection includes proactiveMemories only on the full-mode
+-        // branch, so the stamp is gated on the caller's declared mode.
+-        if (
+-          params.promptMode === "full" &&
+-          proactiveMemories &&
+-          recall.renderedDreamChunkIds &&
+-          recall.renderedDreamChunkIds.length > 0 &&
+-          typeof recallManager.markDreamArtifactsConsumed === "function"
+-        ) {
+-          recallManager.markDreamArtifactsConsumed(recall.renderedDreamChunkIds, "retrieved");
++        // Selection may be discarded. The renderer, not the resolver, acknowledges
++        // prompt inclusion. A stable id deduplicates rebuilds of the same turn.
++        if (params.promptMode === "full" && proactiveMemories) {
++          const delivery = { id: params.deliveryId ?? randomUUID(), sessionKey: params.sessionKey };
++          onProactiveRecallInjected = () => {
++            try {
++              if (recall.renderedDreamChunkIds?.length) {
++                recallManager.markDreamArtifactsConsumed?.(
++                  recall.renderedDreamChunkIds,
++                  "retrieved",
++                );
++              }
++              if (recall.renderedChunkIds?.length) {
++                recallManager.recordProactiveRecallDelivery?.(recall.renderedChunkIds, delivery);
++              }
++            } catch (err) {
++              log.debug(`proactive recall inclusion evidence skipped: ${String(err)}`);
++            }
++          };
+         }
+       } else {
+         // No live message (status/compaction) or a heartbeat — identity-only
+@@ -355,6 +374,7 @@ export async function resolveEndocrineState(params: {
+       maturity,
+       lastSessionBrief,
+       proactiveMemories,
++      onProactiveRecallInjected,
+       sessionCoherence,
+       budgetPressure,
+       budgetLabel,
+```
+
+**File**: `src/agents/rlm/context-builder.ts` (modified, +4/-0)
+```diff
+@@ -505,6 +505,8 @@ export async function buildDeepRecallContext(params: {
+   memoryManager?: MemorySearchManager | null;
+   /** PLAN-55: tag superseded memories with the ledger's current value (owner senders only). */
+   tagSuperseded?: boolean;
++  /** Only an explicitly owner-authored turn contributes owner retrieval evidence. */
++  observeEvidence?: boolean;
+ }): Promise<string> {
+   const { agentId, scope, sessionId, includeMemory = true, maxTokens = 500_000 } = params;
+   const includeToolResults = params.includeToolResults ?? scope === "current_session";
+@@ -631,6 +633,8 @@ export async function buildDeepRecallContext(params: {
+           maxResults: 20,
+           tagSuperseded: params.tagSuperseded === true,
+           caller: "rlm_context",
++          observe: params.observeEvidence === true,
++          sessionKey: params.sessionKey,
+         });
+         for (const r of results) {
+           const key = r.snippet.slice(0, 100);
+```
+
+**File**: `src/agents/system-prompt-endocrine.ts` (modified, +2/-0)
+```diff
+@@ -16,6 +16,7 @@ export type EndocrineStateInput = {
+   maturity?: number;
+   lastSessionBrief?: string;
+   proactiveMemories?: string;
++  onProactiveRecallInjected?: () => void;
+   sessionCoherence?: string;
+   budgetPressure?: number;
+   budgetLabel?: string;
+@@ -172,6 +173,7 @@ export function buildEndocrineStateSection(params: {
+   // Plan 7, Phase 1: Proactive memory surfacing — involuntary recall
+   if (proactiveMemories) {
+     lines.push("", proactiveMemories);
++    endocrineState.onProactiveRecallInjected?.();
    }
-+  if (params.expectedContent !== undefined && staged.content !== params.expectedContent) {
-+    return {
-+      ok: false,
-+      previousArchived: null,
-+      error: "storage-error",
-+      detail: "The staged skill changed. Review it again.",
-+    };
-+  }
  
-   // PLAN-44 Phase 3 (audit security finding 2): evolution-staged content
-   // used to be promotable by the agent's own skill_manage tool, and the
-@@ -238,6 +249,8 @@ export async function promoteStaged(
-       reason,
-       author,
-       ...(params.timestamp ? { timestamp: params.timestamp } : {}),
-+      expectedContent: params.expectedContent,
-+      createOnly: params.createOnly,
-     });
-     for (const file of EVOLUTION_SIDECARS) {
-       const content = sidecars.get(file);
+   // Plan 7, Phase 2+9: Intra-session coherence + intent tracking
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #344** (2026-10-31): fix(memory): record evidence only for prompt-included facts, owner searches and on an independent retention clock (@VGIL77)
 - **PR #343** (2026-10-31): feat(compute): land the beta recovery stack on main with Soapbox rc10 (@VGIL77)
 - **PR #342** (2026-10-31): feat(gateway): explain disabled OpenAI-compatible endpoints instead of a bare 404 (@VGIL77)
 - **PR #341** (2026-10-31): feat(gateway): attribute event-loop stalls with an on-demand sampling profiler (@VGIL77)
 - **PR #340** (2026-10-31): fix(acp): migrate to @agentclientprotocol/sdk 2.x and fix the stdio bridge (@VGIL77)
 - **PR #339** (2026-10-30): chore(deps): bump the npm-minor-patch group across 1 directory with 19 updates (@dependabot[bot])
-- **PR #338** (2026-10-31): feat(browser): teach reusable skills from reviewed demonstrations (@VGIL77)
 
 ---
 
@@ -2297,35 +2137,42 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. browser): teach reusable skills from reviewed demonstrations (#338)
+## X. memory): record evidence only for prompt-included facts, owner searches and on a
 
 **RULE**:
-When implementing operations in `ATTRIBUTION.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/memory/evidence-telemetry.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9cfd9db0`: browser): teach reusable skills from reviewed demonstrations (#338). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aa0953e9`: memory): record evidence only for prompt-included facts, owner searches and on an independent retention clock (#344). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `ATTRIBUTION.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/memory/evidence-telemetry.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-The browser teaching workflow (`src/browser/teaching-*.ts` and the Control UI's
-`BrowserTeaching` component) is independently implemented for Bitterbot's live
-browser and skill gate. Its semantic demonstration, parameterized draft and
-owner-review patterns were inspired by
-[CopilotKit/OpenDuet](https://github.com/CopilotKit/OpenDuet) (MIT), particularly
-`openbot/agent-computer/src/demonstration.ts` and
-`openbot/server/src/demonstrations/draft.ts`.
+        retentionDays: 90, // rows older than this are pruned independently every 30 minutes
+One row per returned result, at most `topK` per search, written in one transaction after the final ordering (fusion, boosts, superseded demotion) is fixed. Guest searches (`guestSearch`) and non-owner deep-recall searches (including context and live API searches) are never recorded. The PLAN-59 Phase 1 pilot harness (`benchmarks/plan59-phase1/`) reads this table, decayed with a 30-day half-life, as the demand term of its need estimate whenever it is present and non-empty on the snapshot under test.
+For proactive recall, `delivered` means inclusion in a full model prompt, not
+proof that the owner saw the fact. Selection, discarded prompt assembly and
+minimal prompts record nothing. The formatter supplies only the chunk ids
+that survived its cap. The full prompt renderer acknowledges them using
+`pr:<keyed delivery digest>:<chunk id>`; the digest covers session and run/turn
+identity. Rebuilding the same delivery is idempotent, while distinct turns or
+sessions remain distinct even within the same hour. A caller without a run id
+receives a fresh opaque delivery id for that resolved prompt.
 
+- `d
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        retentionDays: 90, // rows older than this are pruned on the consolidation tick
+One row per returned result, at most `topK` per search, written in one transaction after the final ordering (fusion, boosts, superseded demotion) is fixed. Guest searches (`guestSearch`) are never recorded. The PLAN-59 Phase 1 pilot harness (`benchmarks/plan59-phase1/`) reads this table, decayed with a 30-day half-life, as the demand term of its need estimate whenever it is present and non-empty on the snapshot under test.
+- `dream_mode_select`: legacy = the modes `selectModes` chose with their adjusted weights and the GCCRF weight in force (0.25 to 0.3); proposed = the modes chosen from the same enabled set with the GCCRF adjustment zeroed. Both selections consume the same random draws, so a divergence reflects the weights and nothing else. The reserved utility-lane slot and the exploration auto-trigger are shared by both.
+`prune()` runs once per consolidation tick (every 30 minutes by default) after the existing steps, deleting rows older than `retentionDays` in chunks of 2000 with an event-loop yield between chunks, so a backlog can never starve the gateway loop (see the event
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9cfd9db0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aa0953e9` are properly handled with clean fallback behavior.

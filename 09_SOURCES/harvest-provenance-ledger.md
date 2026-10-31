@@ -6699,3 +6699,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-gemma-4-31b-it` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-31T19:23:42.498Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `9c5c0eb9` | Multi-dimensional audit evidence | 2026-10-31T19:23:50.819Z |
 | `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-31T19:34:03.949Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `ecd256c9` | Multi-dimensional audit evidence | 2026-10-31T19:40:49.347Z |
+| `learn-huggingface-bingsu-adetailer` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-10-31T19:40:57.183Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `aa0953e9` | Multi-dimensional audit evidence | 2026-10-31T19:41:02.630Z |
