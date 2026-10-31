@@ -6736,3 +6736,6 @@
 | `CYCLE-20261031-HYKF` | `2026-10-31T22:12:05.055Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`afa55b32...`) |
 | `CYCLE-20261031-HZ3B` | `2026-10-31T22:12:05.735Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6346` | Yes (`44e91383...`) |
 | `CYCLE-20261031-X5OA` | `2026-10-31T22:23:54.106Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2640, Rule 1055, Rule 6347` | Yes (`f2c07409...`) |
+| `CYCLE-20261031-6VST` | `2026-10-31T22:31:27.869Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6348` | Yes (`0df77a61...`) |
+| `CYCLE-20261031-6VTN` | `2026-10-31T22:31:27.899Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md` | Yes (`36105e68...`) |
+| `CYCLE-20261031-8Z4Q` | `2026-10-31T22:33:05.498Z` | `nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6349, Rule 6350, Rule 6351` | Yes (`fe9f9ebc...`) |

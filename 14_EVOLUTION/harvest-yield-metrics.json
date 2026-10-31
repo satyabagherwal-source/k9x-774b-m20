@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T22:23:54.115Z",
-  "total_cycles_completed": 6713,
-  "total_learnings_persisted": 6713,
-  "total_rules_promoted": 6354,
+  "last_updated": "2026-10-31T22:33:05.507Z",
+  "total_cycles_completed": 6716,
+  "total_learnings_persisted": 6716,
+  "total_rules_promoted": 6358,
   "history": [
-    {
-      "timestamp": "2026-10-31T10:40:29.327Z",
-      "repository": "dosco/graphjin",
-      "learningId": "learn-github-dosco-graphjin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T10:47:12.245Z",
-      "repository": "unsloth/Qwen-Image-2.1-GGUF",
-      "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T10:47:13.903Z",
-      "repository": "u-root/u-root",
-      "learningId": "learn-github-u-root-u-root",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T11:02:41.742Z",
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-31T22:23:54.115Z",
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
       "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:31:27.878Z",
+      "repository": "milvus-io/milvus",
+      "learningId": "learn-github-milvus-io-milvus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:31:27.909Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:33:05.507Z",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

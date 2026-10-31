@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "e8618dbc",
+    "sourceVersion": "0c3f87a5",
     "license": "Apache-2.0",
-    "contentHash": "9b05e7410c8d68c9ac4a9db0e2f581464ce191382c2279b8f727b9f91ba2d272",
-    "lastHarvestedAt": "2026-10-30T18:32:38.480Z",
+    "contentHash": "36105e6866924f7eac356fa4601b2c8385d50944dc2da92ab82fab97a122f0f1",
+    "lastHarvestedAt": "2026-10-31T22:31:27.903Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "32e53bb3",
+    "sourceVersion": "5f7e1124",
     "license": "Apache-2.0",
-    "contentHash": "efac298a24bb094bb3683b992327cdcb37383e07bab4e60b76b010d8a2911918",
-    "lastHarvestedAt": "2026-10-31T05:52:39.581Z",
+    "contentHash": "0df77a610a203481c21b201dae4a649f8ac29fbaeb38d69b31707c21db54e17c",
+    "lastHarvestedAt": "2026-10-31T22:31:27.873Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {
@@ -11425,8 +11425,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
     "sourceVersion": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b",
     "license": "Open-Source",
-    "contentHash": "f3c5f7de3c9aced73076d2de6d58ec2309d6cd9a81e5973b1ef9573e3c8474b7",
-    "lastHarvestedAt": "2026-10-28T20:57:33.311Z",
+    "contentHash": "fe9f9ebc9bb3266809719fd7b9a03803fc42a429b47d0ede1065129696970275",
+    "lastHarvestedAt": "2026-10-31T22:33:05.502Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b"
   },
   "hf-liquidai-lfm3-omni-2b": {

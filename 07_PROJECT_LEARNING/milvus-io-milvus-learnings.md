@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source**: github ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
-> **Source Version**: `32e53bb3`  
+> **Source Version**: `5f7e1124`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T05:52:38.907Z  
+> **Timestamp**: 2026-10-31T22:31:27.104Z  
 > **Learning ID**: `learn-github-milvus-io-milvus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T05:52:38.143Z  
+> **Harvest Timestamp**: 2026-10-31T22:31:26.431Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46539 stars
+- **Stars / Engagement**: 46542 stars
 
 ---
 
@@ -1412,11 +1412,14 @@ BENCHMARK_MAIN();
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #54928** (2026-10-31): **fix: return typed empty columns from PresizeAppendFieldData so empty reduced results keep the primary field**
-  *Symptoms*: Fixes #54924  When a search result is empty and the QueryNode has to reduce several sub-results, `PresizeAppendFieldData` gets `rows <= 0` and returns a slice of nil `*schemapb.FieldData` entries. Downstream code walks that slice looking for the primary field to build the result, finds a nil entry instead, and reports `1100 can't find data for primary field`.  The function already has `PrepareResultFieldData`, which builds a typed but empty column from a single-row sample. With `rows <= 0` there is no row to append, but the column still has to carry `FieldId`/`FieldName`, so the fix uses that helper on each source sample instead of leaving the entries nil. Rows still are not appended, and the layout-mismatch behaviour is unchanged.  Regression test covers the empty result path with several sub-results. 
+- **Issue #54939** (2026-10-31): **feat: prototype independent MultiSearch requests through Proxy**
+  *Symptoms*: > Superseded by #54940, which implements the actual `MilvusService.MultiSearch` RPC and `MilvusClient.multi_search()` across databases, with v3.0.5 standalone/Kubernetes tests and CPU-contention measurements. This earlier separate-service/adapter prototype is retained for history and is no longer the proposed implementation.  ## What this prototype demonstrates  A retrieval stage can need dozens of independent searches across collections with different schemas, vector dimensions, metrics, filters, and topK values. Today the client has to orchestrate those calls. This prototype adds **MultiSearch**: one external RPC carrying a bag of complete `SearchRequest` messages, with Proxy executing each item through the ordinary Search entry path and returning separate outcomes.  The purpose of this draft is to demonstrate feasibility with running code and reproducible evidence, and to support an API/Proxy design discussion. It is not proposed as a production-ready API release.  issue: #41791  **[Design document](https://github.com/codingjaguar/milvus/blob/09ce1f9022bbe9eac7b2900047849b7e51eedfc9/docs/design-docs/multisearch.md) · [Engineering report (PDF)](https://github.com/codingjaguar/milvus/blob/09ce1f9022bbe9eac7b2900047849b7e51eedfc9/artifacts/multisearch-prototype-report.pdf) · [HTML report](https://github.com/codingjaguar/milvus/blob/09ce1f9022bbe9eac7b2900047849b7e51eedfc9/artifacts/multisearch-prototype-report.html) · [Build, test, and deployment instructions](https://github.
+  **Post-Mortem & Fix Analysis**:
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: To complete the [pull request process](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process), please assign **liliu-z** after the PR has been reviewed. You can assign the PR to them by writing `/assign @liliu-z` in a comment when ready.  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=milvus-io%2Fmilvus).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/milvus-io/milvus/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["liliu-z"]} -->
+  > @codingjaguar This is a feature PR (`feat:`). Please provide a design document.  **How to resolve:** Add a design document under `docs/design-docs/design_docs/` in this PR, or link an existing in-repo design document in the PR description: ``` design doc: docs/design-docs/design_docs/YYYYMMDD-your_design.md ``` 
 
-- **Issue #54927** (2026-10-31): **fix: keep typed empty columns when QueryNode reduce yields no rows**
-  *Symptoms*: <!-- team2-issuefix:54924 --> fix: #54924  ## What Auto-generated **draft** candidate fix for #54924, produced by the team2 pipeline (RCA -> minimal patch -> compile + affected tests pass -> **fail-to-pass regression test** -> adversarial review). **Not auto-merged; please review before considering.**  ## Root cause 1. When a search has more than one sub-result, QueryNode `ReduceSearchResults` (`internal/querynodev2/segments/result.go:56`) skips the single-result fast path and goes through `SearchCommonReduce.ReduceSearchResultData`. 2. `search_reduce.go:66` computes `rowCap = reduce.PresizeRows(...)`; with zero hits, `rowCap == 0`. 3. `reduceFieldsData` (`search_reduce.go:42`) calls `typeutil.PresizeAppendFieldData(rowCap, ...)`. For `rows <= 0`, `pkg/util/typeutil/schema.go:996-998` returns `make([]*schemapb.FieldData, len(sample))`, i.e. a slice of nil pointers (len=2 here). This is intentional per the comment ("every column stays nil"). 4. Normally each nil column is created lazily by `AppendFieldData` on the first appended row, which fills in Type, FieldId and FieldName. With zero rows nothing is appended, so the columns stay nil. This matches the log: `ids.len=0 fieldsData.len=2`. 5. After proto encoding, each nil element becomes an empty `FieldData{}` (FieldId=0, FieldName=""). In the proxy `searchWithRerank` pipeline, `organizeOperator.run` (`internal/proxy/dql/search_pipeline.go:1453-1459`) sees `len(fields)=2 != 0` and does not take the empty-result early return. `t
+- **Issue #54936** (2026-10-31): **fix(ci): stop macOS Conan recipe auto-updates**
+  *Symptoms*: ## Summary - Stop automatic Conan recipe updates on macOS, matching the Linux CI install policy. - Remove only the known-incompatible cached aws-c-event-stream/0.7.1 recipe revision left by the old update behavior.  ## Incident The master macOS checker failed from build #159 onward after Conan Center recipe revision 7efb08d7203c90891cc0a2a36d38f4ce introduced aws-c-common/0.14.5 while the SDK graph uses 0.14.0. The internal Conan remote carries a compatible revision.  ## Validation - bash -n scripts/3rdparty_build.sh - git diff --check - Isolated Conan 2.25.1 macOS arm64 graph: 134 nodes resolved with internal recipe revision 2cff773a69a926fe775dfe21f6c15650. - Importing the incompatible revision reproduces the exact 0.14.5 versus 0.14.0 conflict; removing only that revision restores graph resolution. - Production Jenkins Mac build remains to be verified after merge.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1433,1099 +1436,733 @@ BENCHMARK_MAIN();
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `421d9866` (2026-10-30)
-**Commit Message**: fix: stop a late import result from reviving segments that DropCollection already dropped (#54891)
+### Incident Patch 1: `059b8466` (2026-10-31)
+**Commit Message**: fix: map every available collection to its DB in QuotaCenter (#54890)
 
-issue: #54886
+issue: #54858
 
-## Problem
+## What
 
-`DropCollection` (and `DropPartition`) marks every segment of the
-channel `Dropped` through `DropVirtualChannel`, including the
-preallocated segments of an ImportTask that is still running on the
-DataNode. When that task finished, DataCoord wrote its result with
-`UpdateStatusOperator(Flushed)`. `updateSegmentPack.Get` no longer
-rejects unhealthy segments (#36799) and `UpdateStatusOperator` only
-rejects nil and same-state writes, so the segment went back to
-`Flushed`. It then belonged to a collection that no longer existed,
-nothing dropped it again, and GC never reclaimed it. A production
-instance carries 1.93 GB of such segments months after the drop.
+- Build the collection-to-database mapping from the same RootCoord
+metadata snapshot as the limiter tree, so WAL lag protection also
+reaches unloaded or unflushed collections.
+- Remove redundant `collectionIDToDBID` writes from `collectMetrics`,
+leaving metadata as the single source for this mapping.
+- Preserve collection identity in quota-state metrics by falling back to
+`collection_id_<id>` when node metrics do not provide a collection name.
 
-The import job itself kept going. For `DropCollection` it was failed by
-`checkCollection` up to two minutes later (the check runs on the 2 min
-GC loop and skips `Completed` jobs). For `DropPartition` nothing checks
-the partition, so the job reached `Completed` with none of its rows
-stored.
+This is an independent implementation and does not modify #54859.
 
-## Fix
+## Test
 
-1. `UpdateStatusOperator` treats `Dropped` as terminal: a write from
-`Dropped` to any other state is refused (lo
+- [x] Focused RED/GREEN RootCoord regression tests
+  - `TestQuotaCenterDeniesWritingToWALLaggingCollectionWithoutMetrics`
+  - `TestQuotaCenterRecordMetricsFallsBackToCollectionID`
+- [x] Formatting and diff checks
+- [ ] Full RootCoord package suite: the changed tests pass, but the
+suite is currently blocked by the unrelated existing
+`TestBroadcastCreateCollectionV1RollbackFileResourcesWhenTaskNotCreated`
+failure. The same test fails on master commit `822665400f` with the same
+unmet `DecFileResourceRefCnt` mock expectation.
 
-**File**: `internal/datacoord/import_task_import.go` (modified, +24/-1)
+Signed-off-by: MrPresent-Han <[REDACTED_EMAIL]>
+Co-
+
+**File**: `internal/rootcoord/quota_center.go` (modified, +15/-6)
 ```diff
-@@ -37,6 +37,7 @@ import (
- 	"github.com/milvus-io/milvus/pkg/v3/proto/datapb"
- 	"github.com/milvus-io/milvus/pkg/v3/proto/internalpb"
- 	"github.com/milvus-io/milvus/pkg/v3/taskcommon"
-+	"github.com/milvus-io/milvus/pkg/v3/util/merr"
- 	"github.com/milvus-io/milvus/pkg/v3/util/metricsinfo"
- 	"github.com/milvus-io/milvus/pkg/v3/util/timerecord"
- 	"github.com/milvus-io/milvus/pkg/v3/util/typeutil"
-@@ -293,6 +294,7 @@ func (t *importTask) QueryTaskOnWorker(cluster session.Cluster) {
- 				maxTs = importStats.GetTimestampTo()
+@@ -459,7 +459,6 @@ func (q *QuotaCenter) collectMetrics() error {
  			}
+ 			collIDToPartIDs[collectionID] = append(collIDToPartIDs[collectionID],
+ 				lo.Map(coll.Partitions, func(part *model.Partition, _ int) int64 { return part.PartitionID })...)
+-			q.collectionIDToDBID.Insert(collectionID, coll.DBID)
+ 			q.collections.Insert(FormatCollectionKey(coll.DBID, coll.Name), collectionID)
+ 			if numEntity, ok := numEntitiesLoaded[collectionID]; ok {
+ 				metrics.RootCoordNumEntities.WithLabelValues(coll.DBName, coll.Name, metrics.LoadedLabel).Set(float64(numEntity))
+@@ -516,7 +515,6 @@ func (q *QuotaCenter) collectMetrics() error {
+ 			}
+ 			collIDToPartIDs[collectionID] = append(collIDToPartIDs[collectionID],
+ 				lo.Map(coll.Partitions, func(part *model.Partition, _ int) int64 { return part.PartitionID })...)
+-			q.collectionIDToDBID.Insert(collectionID, coll.DBID)
+ 			q.collections.Insert(FormatCollectionKey(coll.DBID, coll.Name), collectionID)
+ 			if collectionMetrics == nil {
+ 				return true
+@@ -540,16 +538,14 @@ func (q *QuotaCenter) collectMetrics() error {
+ 		})
  
-+			opAccept := acceptImportSegmentOperator(info.GetSegmentID())
- 			opBinlog := UpdateBinlogsOperator(info.GetSegmentID(), info.GetBinlogs(), info.GetStatslogs(), info.GetDeltalogs(), info.GetBm25Logs())
- 			opManifest := UpdateManifest(info.GetSegmentID(), info.GetManifestPath())
- 			opState := UpdateStatusOperator(info.GetSegmentID(), commonpb.SegmentState_Flushed)
-@@ -301,7 +303,7 @@ func (t *importTask) QueryTaskOnWorker(cluster session.Cluster) {
- 			// UpdateBinlogsOperator so it wins over the array-derived value);
- 			// when nil it array-derives from the arrays just set above.
- 			opStats := UpdateSegmentStats(info.GetSegmentID(), info.GetStats())
--			err = t.meta.UpdateSegmentsInfo(context.TODO(), opBinlog, opManifest, opState, opPosition, opStats)
-+			err = t.meta.UpdateSegmentsInfo(context.TODO(), opAccept, opBinlog, opManifest, opState, opPosition, opStats)
- 			if err != nil {
- 				updateErr := t.importMeta.UpdateJob(context.TODO(), t.GetJobID(), UpdateJobState(internalpb.ImportJobState_Failed), UpdateJobReason(err.Error()))
- 				if updateErr != nil {
-@@ -374,3 +376,24 @@ func (t *importTask) MarshalJSON() ([]byte, error) {
- 	}
- 	return json.Marshal(importTask)
- }
-+
-+// acceptImportSegmentOperator checks that a preallocated import segment can
-+// still take the DataNode's result. The segment is Importing until the first
-+// acceptance and Flushed when the task is replayed after a crash. Any other
-+// state means DropCollection, DropPartition or a failed-job GC retired the
-+// segment while the task was running, and its result must not revive it.
-+func acceptImportSegmentOperator(segmentID int64) UpdateOperator {
-+	return func(pack *updateSegmentPack) bool {
-+		segment := pack.Get(segmentID)
-+		if segment == nil {
-+			return pack.fail(merr.WrapErrSegmentNotFound(segmentID, "import segment is missing"))
-+		}
-+		switch segment.GetState() {
-+		case commonpb.SegmentState_Importing, commonpb.SegmentState_Flushed:
-+			return true
-+		default:
-+			return pack.fail(merr.WrapErrSegmentNotFound(segmentID,
-+				"import segment is "+segment.GetState().String()+", its result is not accepted"))
-+		}
-+	}
-+}
-```
-
-**File**: `internal/datacoord/import_task_import_test.go` (modified, +73/-0)
-```diff
-@@ -610,12 +610,14 @@ func TestImportTask_QueryTaskOnWorker(t *testing.T) {
- 		task.meta.segments.SetSegment(5, &SegmentInfo{
- 			SegmentInfo: &datapb.SegmentInfo{
- 				ID:        5,
-+				State:     commonpb.SegmentState_Importing,
- 				NumOfRows: 100,
- 			},
- 		})
- 		task.meta.segments.SetSegment(6, &SegmentInfo{
- 			SegmentInfo: &datapb.SegmentInfo{
- 				ID:        6,
-+				State:     commonpb.SegmentState_Importing,
- 				NumOfRows: 100,
- 			},
- 		})
-@@ -648,6 +650,75 @@ func TestImportTask_QueryTaskOnWorker(t *testing.T) {
- 		assert.EqualValues(t, 333, seg6Stats.GetStatsBinlogSize())
- 	})
- 
-+	// DropCollection marks the preallocated import segments Dropped while the
-+	// task is still running on the DataNode. The late result must fail the
-+	// job instead of writing the segments back to Flushed.
-+	t.Run("completed result for dropped segments fails the job", func(t *testing.T) {
-+		catalog := mocks.NewDataCoordCatalog(t)
-+		catalog.EXPECT().ListReshardTasks(mock.Anything).Return(nil, nil).Maybe()
-+		catalog.EXPECT().ListImportTasksV3(mock.Anything).Return(nil, nil).Maybe()
-+		catalog.EXPECT().ListImportJobs(mock.Anything).Return(nil, nil)
-+		catalog.EXPECT().ListPreImportTasks(mock.Anything).Return(nil, nil)
-+		catalog.EXPECT().ListPreImportTasksV3(mock.Anything).Return(nil, nil).Maybe()
-+		catalog.EXPECT().ListImportTasks(mock.Anything).Return(nil, nil)
-+		catalog.EXPECT().SaveImportTask(mock.Anything, mock.Anything).Return(nil)
-+		catalog.EXPECT().SaveImportJob(mock.Anything, mock.Anything).Return(nil)
-+		catalog.EXPECT().AlterSegments(mock.Anything, mock.Anything, mock.Anything).Return(nil).Maybe()
-+
-+		im, err := NewImportMeta(context.TODO(), catalog, nil, nil)
-+		require.NoError(t, err)
-+		require.NoError(t, im.AddJob(context.TODO(), &importJob{
-+			ImportJob: &datapb.ImportJob{
-+				JobID: 1,
-+				State: internalpb.ImportJobState_Importing,
-+			},
-+		}))
-+
-+		taskProto := &datapb.ImportTaskV2{
-+			JobID:        1,
-+			TaskID:       2,
-+			CollectionID: 3,
-+			SegmentIDs:   []int64{5},
-+			NodeID:       7,
-+			State:        datapb.ImportTaskStateV2_InProgress,
-+		}
-+		importStore := metacache.NewMetaStore(catalog)
-+		task := &importTask{
-+			meta: &meta{
-+				catalog:   catalog,
-+				metaStore: importStore,
-+				segments:  NewSegmentsInfo(importStore),
-+			},
-+			importMeta: im,
-+			tr:         timerecord.NewTimeRecorder(""),
-+		}
-+		task.task.Store(taskProto)
-+		require.NoError(t, im.AddTask(context.TODO(), task))
-+
-+		task.meta.segments.SetSegment(5, &SegmentInfo{
-+			SegmentInfo: &datapb.SegmentInfo{
-+				ID:           5,
-+				CollectionID: 3,
-+				State:        commonpb.SegmentState_Dropped,
-+				IsImporting:  true,
-+			},
-+		})
-+
-+		cluster := session.NewMockCluster(t)
-+		cluster.EXPECT().QueryImport(mock.Anything, mock.Anything).Return(&datapb.QueryImportResponse{
-+			State: datapb.ImportTaskStateV2_Completed,
-+			ImportSegmentsInfo: []*datapb.ImportSegmentInfo{
-+				{SegmentID: 5, ImportedRows: 100},
-+			},
-+		}, nil)
-+
-+		task.QueryTaskOnWorker(cluster)
-+
-+		assert.Equal(t, datapb.ImportTaskStateV2_InProgress, task.GetState())
-+		assert.Equal(t, internalpb.ImportJobState_Failed, im.GetJob(context.TODO(), 1).GetState())
-+		assert.Equal(t, commonpb.SegmentState_Dropped, task.meta.segments.GetSegment(5).GetState())
-+	})
-+
- 	// Replaces the removed TestExtractTimestampFromBinlogs coverage. The
- 	// helper extractTimestampFromBinlogs was inlined into the Completed
- 	// branch and now reuses storage.BuildStatsFromFieldBinlogs. Verify
-@@ -702,6 +773,7 @@ func TestImportTask_QueryTaskOnWorker(t *testing.T) {
- 		task.meta.segments.SetSegment(42, &SegmentInfo{
- 			SegmentInfo: &datapb.SegmentInfo{
- 				ID:        42,
-+				State:     commonpb.SegmentState_Importing,
- 				NumOfRows: 0,
- 			},
- 		})
-@@ -790,6 +862,7 @@ func TestImportTask_QueryTaskOnWorker(t *testing.T) {
- 		task.meta.segments.SetSegment(43, &SegmentInfo{
- 			SegmentInfo: &datapb.SegmentInfo{
- 				ID:        43,
-+				State:     commonpb.SegmentState_Importing,
- 				NumOfRows: 0,
- 				Level:     datapb.SegmentLevel_L0,
- 			},
-```
-
-**File**: `internal/datacoord/meta.go` (modified, +9/-0)
-```diff
-@@ -972,6 +972,15 @@ func UpdateStatusOperator(segmentID int64, status commonpb.SegmentState) UpdateO
- 			return false
+ 		for _, collectionID := range datacoordQuotaCollections {
+-			_, ok := q.collectionIDToDBID.Get(collectionID)
+-			if ok {
++			if collections.Contain(collectionID) {
+ 				continue
+ 			}
+ 			coll, getErr := q.meta.GetCollectionByIDWithMaxTs(context.TODO(), collectionID)
+ 			if getErr != nil {
+ 				// skip limit check if the collection meta has been removed from rootcoord meta
+ 				continue
+ 			}
+-			q.collectionIDToDBID.Insert(collectionID, coll.DBID)
+ 			q.collections.Insert(FormatCollectionKey(coll.DBID, coll.Name), collectionID)
  		}
  
-+		// Dropped is terminal. A late writer (an import result, a flush
-+		// completion) that still holds the segment ID must not revive a
-+		// segment that DropVirtualChannel, compaction or GC already retired.
-+		if segment.GetState() == commonpb.SegmentState_Dropped {
-+			mlog.Warn(modPack.meta.ctx, "meta update: segment is dropped, refuse to change its state",
-+				mlog.Int64("segmentID", segmentID), mlog.String("status", status.String()))
-+			return false
-+		}
-+
- 		updateSegState(segment, status)
- 		return true
+@@ -1413,6 +1409,14 @@ func (q *QuotaCenter) resetAllCurrentRates() error {
+ 		}
  	}
+ 	partitions := q.meta.ListAllAvailPartitions(q.ctx)
++	// Build the collection-to-DB mapping from the same metadata snapshot as the
++	// limiter tree. Node metrics omit unloaded or unflushed collections, while
++	// WAL lag protection still covers every collection on a pchannel.
++	for dbID, collections := range partitions {
++		for collectionID := range collections {
++			q.collectionIDToDBID.Insert(collectionID, dbID)
++		}
++	}
+ 	initLimiters(partitions)
+ 	return nil
+ }
+@@ -1714,7 +1718,12 @@ func (q *QuotaCenter) recordMetrics() {
+ 				case internalpb.RateScope_Database:
+ 					name = "db_" + dbIDs[node.GetID()]
+ 				case internalpb.RateScope_Collection:
+-					name = "collection_" + collectionIDs[node.GetID()]
++					collectionID := node.GetID()
++					if collectionName, ok := collectionIDs[collectionID]; ok {
++						name = "collection_" + collectionName
++					} else {
++						name = "collection_id_" + strconv.FormatInt(collectionID, 10)
++					}
+ 				default:
+ 					return false
+ 				}
 ```
 
-**File**: `internal/datacoord/meta_test.go` (modified, +25/-0)
+**File**: `internal/rootcoord/quota_center_test.go` (modified, +89/-0)
 ```diff
-@@ -7142,3 +7142,28 @@ func TestMeta_CleanPartitionStatsInfo(t *testing.T) {
- 		assert.NotNil(t, psm.GetPartitionStats(1, 2, "ch-1", 100))
+@@ -25,21 +25,25 @@ import (
+ 	"time"
+ 
+ 	"github.com/cockroachdb/errors"
++	"github.com/prometheus/client_golang/prometheus/testutil"
+ 	"github.com/samber/lo"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/mock"
++	"github.com/stretchr/testify/require"
+ 	"github.com/stretchr/testify/suite"
+ 
+ 	"github.com/milvus-io/milvus-proto/go-api/v3/commonpb"
+ 	"github.com/milvus-io/milvus-proto/go-api/v3/milvuspb"
+ 	"github.com/milvus-io/milvus/internal/metastore/model"
+ 	"github.com/milvus-io/milvus/internal/mocks"
+ 	mockrootcoord "github.com/milvus-io/milvus/internal/rootcoord/mocks"
++	"github.com/milvus-io/milvus/internal/streamingcoord/server/balancer/channel"
+ 	"github.com/milvus-io/milvus/internal/util/proxyutil"
+ 	rlinternal "github.com/milvus-io/milvus/internal/util/ratelimitutil"
+ 	"github.com/milvus-io/milvus/pkg/v3/common"
+ 	"github.com/milvus-io/milvus/pkg/v3/metrics"
+ 	"github.com/milvus-io/milvus/pkg/v3/proto/internalpb"
++	"github.com/milvus-io/milvus/pkg/v3/streaming/util/types"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/merr"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/metricsinfo"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
+@@ -1074,6 +1078,91 @@ func TestQuotaCenter(t *testing.T) {
  	})
  }
-+
-+func TestUpdateStatusOperator_DroppedIsTerminal(t *testing.T) {
-+	meta, err := newMemoryMeta(t)
-+	require.NoError(t, err)
-+	require.NoError(t, meta.AddSegment(context.TODO(), NewSegmentInfo(&datapb.SegmentInfo{
-+		ID:        1,
-+		State:     commonpb.SegmentState_Dropped,
-+		DroppedAt: 42,
-+	})))
-+
-+	for _, target := range []commonpb.SegmentState{
-+		commonpb.SegmentState_Growing,
-+		commonpb.SegmentState_Sealed,
-+		commonpb.SegmentState_Flushing,
-+		commonpb.SegmentState_Flushed,
-+		commonpb.SegmentState_Importing,
+ 
++// A collection that is neither loaded nor has a healthy segment is named by no
++// node metric, but the WAL lag check still covers it through its pchannel. Its
++// DB must come from RootCoord meta, or the write deny is never applied to it.
++func TestQuotaCenterDeniesWritingToWALLaggingCollectionWithoutMetrics(t *testing.T) {
++	paramtable.Init()
++	for key, value := range map[string]string{
++		Params.QuotaConfig.DMLLimitEnabled.Key:     "true",
++		Params.QuotaConfig.TtProtectionEnabled.Key: "true",
++		Params.QuotaConfig.MaxTimeTickDelay.Key:    "10.0",
++		Params.QuotaConfig.ForceDenyWriting.Key:    "false",
 +	} {
-+		t.Run(target.String(), func(t *testing.T) {
-+			require.NoError(t, meta.UpdateSegmentsInfo(context.TODO(), UpdateStatusOperator(1, target)))
-+			segment := meta.GetSegment(context.TODO(), 1)
-+			require.Equal(t, commonpb.SegmentState_Dropped, segment.GetState())
-+			require.EqualValues(t, 42, segment.GetDroppedAt())
-+		})
++		paramtable.Get().Save(key, value)
++		defer paramtable.Get().Reset(key)
 +	}
++
++	const (
++		dbID         = int64(1)
++		collectionID = int64(100)
++		pchannel     = "quota-dml_0"
++	)
++	channel.ResetStaticPChannelStatsManager()
++	channel.RecoverPChannelStatsManager([]string{fmt.Sprintf("%s_%dv0", pchannel, collectionID)})
++	t.Cleanup(channel.ResetStaticPChannelStatsManager)
++
++	meta := mockrootcoord.NewIMetaTable(t)
++	meta.EXPECT().ListAllAvailPartitions(mock.Anything).Return(map[int64]map[int64][]int64{
++		dbID: {collectionID: {1000}},
++	})
++	meta.EXPECT().GetCollectionByIDWithMaxTs(mock.Anything, collectionID).
++		Return(&model.Collection{CollectionID: collectionID, DBID: dbID}, nil).Maybe()
++	meta.EXPECT().GetDatabaseByID(mock.Anything, mock.Anything, mock.Anything).Return(nil, merr.ErrDatabaseNotFound).Maybe()
++
++	alloc := newMockTsoAllocator()
++	walTimeTick := tsoutil.ComposeTSByTime(time.Now())
++	alloc.GenerateTSOF = func(count uint32) (typeutil.Timestamp, error) {
++		return tsoutil.ComposeTSByTime(time.Now().Add(time.Minute)), nil
++	}
++	quotaCenter := NewQuotaCenter(proxyutil.NewMockProxyClientManager(t), mocks.NewMixCoord(t), alloc, meta)
++	// Only a streaming node reports, and only its WAL lag: no collection IDs.
++	quotaCenter.queryNodeMetrics = map[UniqueID]*metricsinfo.QueryNodeQuotaMetrics{
++		1: {StreamingQuota: &metricsinfo.StreamingQuotaMetrics{WALs: []metricsinfo.WALMetrics{
++			{Channel: types.ChannelID{Name: pchannel}, RecoveryTimeTick: walTimeTick},
++		}}},
++	}
++
++	require.NoError(t, quotaCenter.resetAllCurrentRates())
++	gotDBID, ok := quotaCenter.collectionIDToDBID.Get(collectionID)
++	require.True(t, ok)
++	assert.Equal(t, dbID, gotDBID)
++
++	require.NoError(t, quotaCenter.calculateWriteRates())
++	limiter := quotaCenter.rateLimiter.GetCollectionLimiters(dbID, collectionID)
++	require.NotNil(t, limiter)
++	state, ok := limiter.GetQuotaStates().Get(milvuspb.QuotaState_DenyToWrite)
++	require.True(t, ok)
++	assert.Equal(t, commonpb.ErrorCode_TimeTickLongDelay, state.ErrorCode)
 +}
++
++func TestQuotaCenterRecordMetricsFallsBackToCollectionID(t *testing.T) {
++	paramtable.Init()
++
++	const (
++		dbID         = int64(1)
++		collectionID = int64(100)
++	)
++	meta := mockrootcoord.NewIMetaTable(t)
++	meta.EXPECT().ListAllAvailPartitions(mock.Anything).Return(map[int64]map[int64][]int64{
++		dbID: {collectionID: nil},
++	})
++	meta.EXPECT().GetCollectionByIDWithMaxTs(mock.Anything, collectionID).
++		Return(&model.Collection{CollectionID: collectionID, DBID: dbID}, nil).Maybe()
++
++	quotaCenter := NewQuotaCenter(proxyutil.NewMockProxyClientManager(t), mocks.NewMixCoord(t), newMockTsoAllocator(), meta)
++	require.NoError(t, quotaCenter.resetAllCurrentRates())
++	limiter := quotaCenter.rateLimiter.GetCollectionLimiters(dbID, collectionID)
++	require.NotNil(t, limiter)
++	limiter.GetQuotaStates().Insert(milvuspb.QuotaState_DenyToWrite, &rlinternal.QuotaStateInfo{
++		ErrorCode: commonpb.ErrorCode_TimeTickLongDelay,
++	})
++
++	quotaCenter.recordMetrics()
++	assert.Equal(t, 1.0, testutil.ToFloat64(metrics.RootCoordQuotaStates.WithLabelValues(
++		commonpb.ErrorCode_TimeTickLongDelay.String(), "col
 ```
 
 ---
 
-### Incident Patch 2: `c04226fe` (2026-10-30)
-**Commit Message**: fix: restore nullable embedding-list validity when loading disk indexes (#54899)
+### Incident Patch 2: `5f7e1124` (2026-10-31)
+**Commit Message**: fix: build JSON indexes over valid rows with empty bytes and reject invalid JSON on write (#54898)
 
-issue: #54861
+issue: #54868
 
-Pass the embedding-list field hint to Knowhere when loading nullable
-disk indexes, so ordinary metrics restore validity in the element ID
-domain without changing persisted valid_data. Cover both row/element
-count relationships and nullable mapping mmap modes.
+Takes over #54873 (its commit is kept) and fixes the crash it introduced
+in JSON ARRAY indexes on HYBRID / STL_SORT: rows whose path is absent or
+holds an empty array read an unset document, a SIGSEGV in
+`ArrayProjectedMaterializer::Add`. `Locate` now always returns the
+`dom_doc()` result; a valid row with empty bytes keeps its error, which
+`ExtractArray` treats as no array.
+`ArrayCastsSelectBitmapAndSortWithParentRows` gains an empty-bytes row.
 
-Update Knowhere to 8adf58d9, including zilliztech/knowhere#1940, and
-adapt the growing-index test node to the current Build interface.
-
-Signed-off-by: marcelo-cjl <[REDACTED_EMAIL]>
-
-**File**: `internal/core/src/index/growing/KnowhereGrowingVectorIndexTest.cpp` (modified, +3/-2)
-```diff
-@@ -109,8 +109,9 @@ class ControlledVectorNode final : public knowhere::IndexNode {
-     knowhere::Status
-     Build(const knowhere::DataSetPtr dataset,
-           std::shared_ptr<knowhere::Config> cfg,
--          bool use_pool) override {
--        return inner_.Node()->Build(dataset, std::move(cfg), use_pool);
-+          bool use_pool,
-+          milvus::OpContext* ctx) override {
-+        return inner_.Node()->Build(dataset, std::move(cfg), use_pool, ctx);
-     }
- 
-     knowhere::Status
-```
-
-**File**: `internal/core/src/index/vector/VectorDiskFamilyTest.cpp` (modified, +133/-5)
-```diff
-@@ -25,6 +25,8 @@
- #include <filesystem>
- #include <fstream>
- #include <memory>
-+#include <optional>
-+#include <random>
- #include <string>
- #include <type_traits>
- #include <utility>
-@@ -39,12 +41,14 @@
- #include "index/vector/KnowhereEngine.h"
- #include "index/vector/VectorDiskBuildFileManager.h"
- #include "index/vector/VectorDiskArtifact.h"
-+#include "index/vector/VectorIndexValidDataUtils.h"
- #include "knowhere/comp/index_param.h"
- #include "knowhere/version.h"
- #include "storage/FileManager.h"
- #include "storage/Types.h"
- #include "storage/Util.h"
- #include "storage/artifact/FileSink.h"
-+#include "storage/artifact/FileSource.h"
- #include "storage/artifact/LoadOptions.h"
- #include "storage/artifact/LocalDirectory.h"
- 
-@@ -109,6 +113,7 @@ MakeRows() {
- template <typename T>
- struct OpenedDiskIndex {
-     IIndexReaderBasePtr base;
-+    std::vector<uint8_t> persisted_validity;
- };
- 
- template <typename T>
-@@ -120,7 +125,9 @@ BuildDisk(const std::string& raw_path,
-           int64_t dim = kDim,
-           int64_t logical_rows = kRows,
-           const std::string& offsets_path = {},
--          bool mmap = false) {
-+          bool mmap = false,
-+          const std::string& validity_path = {},
-+          bool mmap_id_map = false) {
-     auto adapted = AdaptIndexType({
-         .index_type = knowhere::IndexEnum::INDEX_DISKANN,
-         .field_type =
-@@ -142,10 +149,15 @@ BuildDisk(const std::string& raw_path,
-         BuilderRegistry<PreparedVectorBuildFiles<T>>::Instance().Create(
-             adapted.family, adapted.params);
-     ASSERT_NE(builder, nullptr);
--    PreparedVectorBuildFiles<T> input{.raw_path = raw_path};
--    if (!offsets_path.empty()) {
--        input.embedding_offsets_path = offsets_path;
--    }
-+    PreparedVectorBuildFiles<T> input{
-+        .raw_path = raw_path,
-+        .validity_path = validity_path.empty()
-+                             ? std::nullopt
-+                             : std::make_optional(validity_path),
-+        .embedding_offsets_path = offsets_path.empty()
-+                                      ? std::nullopt
-+                                      : std::make_optional(offsets_path),
-+    };
-     auto artifact = std::move(*builder).Build(input);
-     ASSERT_NE(artifact, nullptr);
- 
-@@ -180,10 +192,23 @@ BuildDisk(const std::string& raw_path,
-     for (const auto& file : stats.Files()) {
-         paths.push_back(file.file_name);
-     }
-+    if (!validity_path.empty()) {
-+        storage::V1RemoteSource source(context,
-+                                       paths,
-+                                       {},
-+                                       storage::ArtifactStorageNamespace::Index,
-+                                       storage::V1SourceLayout::DiskFiles);
-+        opened.persisted_validity = source.ReadEntry(VALID_DATA_KEY);
-+    }
-     sink.ReleaseLocalStaging();
-     storage::LoadOptions options;
-     options.params = adapted.params;
-     options.params[INDEX_NUM_ROWS_KEY] = logical_rows;
-+    if (!validity_path.empty()) {
-+        options.params["nullable"] = true;
-+        options.params[ENABLE_MMAP_I2O_MAP] = mmap_id_map;
-+        options.params[ENABLE_MMAP_O2I_MAP] = mmap_id_map;
-+    }
-     options.params[DISK_ANN_LOAD_THREAD_NUM] = 2;
-     options.enable_mmap = mmap;
-     options.mmap_dir_path = staging_dir;
-@@ -508,6 +533,109 @@ TEST(VectorDiskFamilyTest, EmbeddingListsPreserveTrailingEmptyParents) {
-     EXPECT_EQ(result.distances_.size(), 8);
- }
- 
-+// Disk validity describes lists; ordinary-metric searches use element ids.
-+// Keep the persisted row bitmap and restore element validity during loading.
-+void
-+RunNullableElementLevelDiskSearch(bool more_rows_than_vectors,
-+                                  bool mmap_id_map) {
-+    auto files = storage::LocalDirectory::CreateOwned(
-+        "/tmp", "vector_disk_nullable_XXXXXX", "vector disk nullable test");
-+    // Both shapes need enough vectors for the disk index's PQ training.
-+    constexpr int64_t parents = kRows * 2;
-+    std::vector<uint8_t> bitmap((parents + 7) / 8, 0);
-+    std::vector<size_t> offsets{0};
-+    for (int64_t row = 0; row < parents; ++row) {
-+        if (row % 5 == 1) {
-+            continue;  // Null lists contribute neither vectors nor offsets.
-+        }
-+        bitmap[row / 8] |= static_cast<uint8_t>(1U << (row % 8));
-+        const size_t vectors = more_rows_than_vectors
-+                                   ? (row % 5 == 0 ? 1 : 0)
-+                                   : (row % 5 == 3 ? 0 : row % 4 + 1);
-+        offsets.push_back(offsets.back() + vectors);
-+    }
-+    const auto element_count = static_cast<int64_t>(offsets.back());
-+    ASSERT_EQ(more_rows_than_vectors, parents > element_count);
-+    std::default_random_engine rng(42);
-+    std::normal_distribution<float> dist(0.0F, 1.0F);
-+    std::vector<float> values(element_count * kDim);
-+    for (auto& value : values) {
-+        value = dist(rng);
-+    }
-+    std::vector<uint8_t> row_validity(sizeof(uint64_t) + bitmap.size()
-```
-
-**File**: `internal/core/src/index/vector/VectorDiskLoader.cpp` (modified, +4/-1)
-```diff
-@@ -222,7 +222,10 @@ ReadValidity(bool use_async,
-         CountValidDataBitmap(valid_data.count, valid_data.bitmap) == 0) {
-         mmap_flags = {};
-     }
--    co_return MakeNullableLoadInput(valid_data, mmap_flags, local_prefix);
-+    co_return MakeNullableLoadInput(valid_data,
-+                                    mmap_flags,
-+                                    local_prefix,
-+                                    params.elem_type != DataType::NONE);
- }
- 
- using detail::EmptyEmbeddingListState;
-```
-
-**File**: `internal/core/src/index/vector/VectorIndexValidDataUtils.h` (modified, +5/-3)
-```diff
-@@ -416,9 +416,10 @@ NullableMmapOptions(const IdMapMmapFlags& flags,
- inline knowhere::LoadOptions
- MakeNullableLoadInput(const ValidDataView& valid_data,
-                       const IdMapMmapFlags& mmap_flags = {},
--                      const std::string& mmap_path_prefix = {}) {
-+                      const std::string& mmap_path_prefix = {},
-+                      bool embedding_list = false) {
-     if (!valid_data.found) {
--        return {};
-+        return {.embedding_list = embedding_list};
-     }
-     ValidatePersistedValidDataCount(valid_data.count);
-     if (valid_data.count > 0 && valid_data.bitmap == nullptr) {
-@@ -429,7 +430,8 @@ MakeNullableLoadInput(const ValidDataView& valid_data,
-     return {knowhere::ValidityView{valid_data.bitmap,
-                                    GetValidDataBitmapSize(valid_data.count),
-                                    ToValidDataCount(valid_data.count)},
--            NullableMmapOptions(mmap_flags, mmap_path_prefix)};
-+            NullableMmapOptions(mmap_flags, mmap_path_prefix),
-+            embedding_list};
- }
- 
- inline ValidDataView
-```
-
-**File**: `internal/core/thirdparty/knowhere/CMakeLists.txt` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@
- # Update KNOWHERE_VERSION for the first occurrence
- milvus_add_pkg_config("knowhere")
- set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES "")
--set( KNOWHERE_VERSION d0a96c58 )
-+set( KNOWHERE_VERSION 8adf58d9 )
- set( GIT_REPOSITORY  "https://github.com/zilliztech/knowhere.git")
- 
- message(STATUS "Knowhere repo: ${GIT_REPOSITORY}")
-```
-
----
-
-### Incident Patch 3: `949f068b` (2026-10-30)
-**Commit Message**: fix: clean up DataCoord state of dropped collections (#54900)
-
-issue: #54870
-
-Clean up a dropped collection's DataCoord state (metacache entry,
-metrics, segment change groups, channel removal flag) once the
-collection is gone for good. Based on #54871, with its review comments
-applied.
+C++ unit tests were not run locally.
 
 ---------
 
 Signed-off-by: xiaofanluan <[REDACTED_EMAIL]>
 Signed-off-by: sunby <[REDACTED_EMAIL]>
+Signed-off-by: Li Liu <[REDACTED_EMAIL]>
 Co-authored-by: xiaofanluan <[REDACTED_EMAIL]>
+Co-authored-by: Li Liu <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `internal/datacoord/checkpoint_availability_test.go` (modified, +2/-0)
+**File**: `internal/core/src/common/JsonUtils.cpp` (modified, +9/-0)
 ```diff
-@@ -141,6 +141,8 @@ func TestCheckpointAvailabilityFallback(t *testing.T) {
- 					catalog.EXPECT().GcConfirm(mock.Anything, mock.Anything, int64(-1)).Return(tc.confirm).Twice()
- 				}
- 				if tc.dropped {
-+					// Each dropped collection's DataCoord meta goes before its checkpoints.
-+					catalog.EXPECT().DropSegmentChangeGroups(mock.Anything, mock.Anything).Return(nil).Twice()
- 					catalog.EXPECT().DropChannelCheckpoint(mock.Anything, mock.Anything).Return(nil).Times(3)
- 				}
- 				store := metacache.NewMetaStore(catalog)
+@@ -80,4 +80,13 @@ path_exists(const simdjson::dom::element& root,
+     }
+     return true;
+ }
++
++bool
++path_exists(const simdjson::simdjson_result<simdjson::dom::element>& root,
++            const std::vector<std::string>& tokens) {
++    if (root.error() != simdjson::SUCCESS) {
++        return false;
++    }
++    return path_exists(root.value_unsafe(), tokens);
++}
+ }  // namespace milvus
 ```
 
-**File**: `internal/datacoord/garbage_collector.go` (modified, +86/-27)
+**File**: `internal/core/src/common/JsonUtils.h` (modified, +8/-0)
 ```diff
-@@ -379,7 +379,7 @@ func (gc *garbageCollector) Resume(ctx context.Context, collectionID int64, tick
- func (gc *garbageCollector) work(ctx context.Context) {
- 	// TODO: fast cancel for gc when closing.
- 	// Run gc tasks in parallel.
--	gc.wg.Add(4)
-+	gc.wg.Add(5)
- 	go func() {
- 		defer gc.wg.Done()
- 		gc.runRecycleTaskWithPauser(ctx, "meta", gc.option.checkInterval, func(ctx context.Context, signal <-chan gcCmd) {
-@@ -413,6 +413,10 @@ func (gc *garbageCollector) work(ctx context.Context) {
- 			gc.recycleUnusedLOBFiles(ctx)
- 		})
- 	}()
-+	go func() {
-+		defer gc.wg.Done()
-+		gc.recycleDroppedChannelFlags(ctx)
-+	}()
- 	go func() {
- 		defer gc.wg.Done()
- 		gc.startControlLoop(ctx)
-@@ -1505,9 +1509,11 @@ func (gc *garbageCollector) recycleChannelCPMeta(ctx context.Context, signal <-c
- 		return
- 	}
+@@ -25,4 +25,12 @@ parse_json_pointer(const std::string& pointer);
+ bool
+ path_exists(const simdjson::dom::element& root,
+             const std::vector<std::string>& tokens);
++
++// Check if a JSON Pointer path exists in the result of Json::dom_doc(). A
++// valid row whose stored bytes are empty has no document (dom_doc() returns an
++// error result instead of throwing), so no path exists in it. Taking the result
++// keeps callers from converting it to an element, which would throw.
++bool
++path_exists(const simdjson::simdjson_result<simdjson::dom::element>& root,
++            const std::vector<std::string>& tokens);
+ }  // namespace milvus
+\ No newline at end of file
+```
+
+**File**: `internal/core/src/index/scalar/json/JsonFlatIndexBuilder.cpp` (modified, +3/-7)
+```diff
+@@ -244,11 +244,6 @@ JsonFlatIndexBuilder::AddBatch(
+         }
  
--	collectionID2GcStatus := make(map[int64]bool)
- 	availability, _ := gc.option.broker.(broker.CollectionAvailability)
- 	skippedCnt := 0
-+	// The checkpoints of collections that may be dropped, by collection: a
-+	// dropped collection's checkpoints go together, after the rest of its meta.
-+	candidates := make(map[int64][]string)
+         const auto raw = batch.values[i];
+-        if (raw.empty()) {
+-            ThrowInfo(DataFormatBroken,
+-                      "JSON flat input at offset {} is empty",
+-                      offset);
+-        }
+         if (raw.find('\0') != std::string_view::npos) {
+             ThrowInfo(DataFormatBroken,
+                       "JSON flat input at offset {} contains an embedded "
+@@ -260,9 +255,10 @@ JsonFlatIndexBuilder::AddBatch(
  
- 	mlog.Info(ctx, "start to GC channel cp", mlog.Int("vchannelCPCnt", len(channelCPs)))
- 	for vChannel := range channelCPs {
-@@ -1534,41 +1540,94 @@ func (gc *garbageCollector) recycleChannelCPMeta(ctx context.Context, signal <-c
- 			skippedCnt++
- 			continue
- 		}
-+		candidates[collectionID] = append(candidates[collectionID], vChannel)
-+	}
+         // Parsing happens before the writer sees this row. The reusable
+         // scratch owns the padded bytes; Json borrows them only across the
+-        // synchronous parse and FFI call. No caller view is retained.
++        // synchronous parse and FFI call. No caller view is retained. A valid
++        // row with empty bytes has no document, so no path exists in it.
+         auto dom = document.dom_doc();
+-        const bool exists = path_exists(dom.value(), path_tokens_) &&
++        const bool exists = path_exists(dom, path_tokens_) &&
+                             document.exist(params_.nested_path);
+         if (!exists) {
+             AddEmptyDocument(*engine_, offset);
+```
+
+**File**: `internal/core/src/index/scalar/json/JsonProjectedHybridIndexBuilderTest.cpp` (modified, +9/-4)
+```diff
+@@ -272,7 +272,7 @@ CheckProjectedArrayIndexes(std::string_view type_name,
+                         dynamic_cast<const INullReader*>(resolved.get());
+                     ASSERT_NE(nulls, nullptr);
+                     ExpectHits(nulls->IsNotNull(), raw.size(), {0, 1, 2, 6, 7});
+-                    ExpectHits(nulls->IsNull(), raw.size(), {3, 4, 5});
++                    ExpectHits(nulls->IsNull(), raw.size(), {3, 4, 5, 8});
+                     ExpectHits(
+                         predicate->NotIn(1, &first), raw.size(), {1, 2, 7});
+                 }
+@@ -283,6 +283,8 @@ CheckProjectedArrayIndexes(std::string_view type_name,
  
--		_, ok := collectionID2GcStatus[collectionID]
--		if !ok {
--			timeoutCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
--			has, err := gc.option.broker.HasCollection(timeoutCtx, collectionID)
--			cancel()
--			if err == nil && !has {
--				collectionID2GcStatus[collectionID] = gc.meta.metaStore.GcConfirm(ctx, collectionID, -1)
--			} else {
--				// skip checkpoints GC of this cycle if describe collection fails or the collection state is available.
--				mlog.Debug(ctx, "skip channel cp GC, the collection state is available",
--					mlog.Int64("collectionID", collectionID),
--					mlog.Bool("dropped", has), mlog.Err(err))
--				collectionID2GcStatus[collectionID] = false
--			}
-+	for collectionID, vChannels := range candidates {
-+		gc.ackSignal(signal)
-+		if ctx.Err() != nil {
-+			return
- 		}
--
--		// Skip to GC if all segments meta of the corresponding collection are not removed
--		if gcConfirmed := collectionID2GcStatus[collectionID]; !gcConfirmed {
--			skippedCnt++
-+		if gc.collectionGCPaused(collectionID) {
- 			continue
- 		}
--
--		err := gc.meta.DropChannelCheckpoint(vChannel)
--		if err != nil {
--			// Try to GC in the next gc cycle if drop channel cp meta fail.
--			mlog.Warn(ctx, "failed to drop channelcp check point during gc", mlog.String("vchannel", vChannel), mlog.Err(err))
--		} else {
--			mlog.Info(ctx, "GC channel cp", mlog.String("vchannel", vChannel))
-+		if !gc.collectionRecyclable(ctx, collectionID) {
-+			skippedCnt += len(vChannels)
-+			continue
-+		}
-+		if err := gc.recycleDroppedCollection(ctx, collectionID, vChannels); err != nil {
-+			mlog.Warn(ctx, "failed to recycle dropped collection meta, retry in next GC round",
-+				mlog.Int64("collectionID", collectionID), mlog.Err(err))
- 		}
- 	}
+ TEST(JsonProjectedHybridIndexBuilderTest,
+      ArrayCastsSelectBitmapAndSortWithParentRows) {
++    // The last row is valid but its stored bytes are empty: it has no
++    // document, so no array either.
+     CheckProjectedArrayIndexes<bool>("Bool",
+                                      DataType::BOOL,
+                                      "ARRAY_BOOL",
+@@ -293,7 +295,8 @@ TEST(JsonProjectedHybridIndexBuilderTest,
+                                       R"({"a":null})",
+                                       R"({"a":3})",
+                                       R"({"a":[false,3,"ignored",null,{}]})",
+-                                      R"({"a":[null,{},[]]})"},
++                                      R"({"a":[null,{},[]]})",
++                                      ""},
+                                      false,
+                                      true);
+     CheckProjectedArrayIndexes<double>(
+@@ -307,7 +310,8 @@ TEST(JsonProjectedHybridIndexBuilderTest,
+          R"({"a":null})",
+          R"({"a":true})",
+          R"({"a":[1.0,false,"ignored",null,{}]})",
+-         R"({"a":[null,{},[]]})"},
++         R"({"a":[null,{},[]]})",
++         ""},
+         1,
+         100);
+     CheckProjectedArrayIndexes<std::string_view>(
+@@ -321,7 +325,8 @@ TEST(JsonProjectedHybridIndexBuilderTest,
+          R"({"a":null})",
+          R"({"a":true})",
+          R"({"a":["a",false,3,null,{}]})",
+-         R"({"a":[null,{},[]]})"},
++         R"({"a":[null,{},[]]})",
++         ""},
+         "a",
+         "z");
+ }
+```
+
+**File**: `internal/core/src/indexbuilder/JsonBuildMaterializer.cpp` (modified, +7/-8)
+```diff
+@@ -238,14 +238,12 @@ RowPresence
+ Locate(const JsonBatch& batch,
+        size_t row,
+        const ProjectionParams& params,
+-       simdjson::dom::element& root) {
++       value_result<simdjson::dom::element>& root) {
+     if (!batch.IsValid(row))
+         return RowPresence::FieldNull;
+     const auto& document = batch.Document(row);
+-    AssertInfo(!document.data().empty(),
+-               "valid JSON row {} has an empty document",
+-               row);
+-    root = document.dom_doc().value();
++    // A valid row with empty bytes has no document, so no path exists in it.
++    root = document.dom_doc();
+     if (!path_exists(root, params.path_tokens) ||
+         !document.exist(params.json_path)) {
+         return RowPresence::NoValue;
+@@ -255,7 +253,7 @@ Locate(const JsonBatch& batch,
  
- 	mlog.Info(ctx, "GC channel cp done", mlog.Int("skippedChannelCP", skippedCnt))
+ RowPresence
+ Locate(const JsonBatch& batch, size_t row, const ProjectionParams& params) {
+-    simdjson::dom::element root;
++    value_result<simdjson::dom::element> root;
+     return Locate(batch, row, params, root);
  }
  
-+// collectionRecyclable reports whether RootCoord has dropped the collection and
-+// all its segments are recycled, the condition RootCoord uses to remove the
-+// collection meta.
-+func (gc *garbageCollector) collectionRecyclable(ctx context.Context, collectionID int64) bool {
-+	timeoutCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
-+	has, err := gc.option.broker.HasCollection(timeoutCtx, collectionID)
-+	cancel()
-+	if err != nil || has {
-+		// skip checkpoints GC of this cycle if describe collection fails or the collection state is available.
-+		mlog.Debug(ctx, "skip channel cp GC, the collection state is available",
-+			mlog.Int64("collectionID", collectionID),
-+			mlog.Bool("exists", has), mlog.Err(err))
-+		return false
-+	}
-+	// Skip to GC if all segments meta of the corresponding collection are not removed
-+	return gc.meta.metaStore.GcConfirm(ctx, collectionID, -1)
-+}
-+
-+// recycleDroppedCollection drops what DataCoord still keeps for a collection
-+// that RootCoord has dropped and whose segments are all recycled: its segment
-+// change groups, its cached collection info and metrics, and the checkpoints
-+// of its vChannels. The checkpoints go last: they are what brings GC back to
-+// the collection if an earlier step fails.
-+func (gc *garbageCollector) recycleDroppedCollection(ctx context.Context, collectionID int64, vChannels []string) error {
-+	if err := gc.meta.DropSegmentChangeGroupsOfCollection(ctx, collectionID); err != nil {
-+		return err
-+	}
-+	gc.meta.DropCollection(collectionID)
-+	var errs []error
-+	for _, vChannel := range vChannels {
-+		if err := gc.meta.DropChannelCheckpoint(vChannel); err != nil {
-+			errs = append(errs, merr.Wrapf(err, "failed to dr
+@@ -628,7 +626,7 @@ class ArrayProjectedMaterializer final : public ProjectedBase<ArrayView> {
+             std::vector<size_t> non_exist;
+             for (size_t i = 0; i < count; ++i) {
+                 const auto row = begin + i;
+-                simdjson::dom::element root;
++                value_result<simdjson::dom::element> root;
+                 const auto presence = Locate(source, row, Params(), root);
+                 batch->validity[i] = presence != RowPresence::FieldNull;
+                 if (presence != RowPresence::Present)
+@@ -664,7 +662,8 @@ class ArrayProjectedMaterializer final : public ProjectedBase<ArrayView> {
+ 
+  private:
+     bool
+-    ExtractArray(const simdjson::dom::element& root, Row& row) const {
++    ExtractArray(const value_result<simdjson::dom::element>& root,
++                 Row& row) const {
+         auto array = root.at_pointer(Params().json_path).get_array();
+         if (array.error() != simdjson::SUCCESS)
+             return false;
 ```
 
-**File**: `internal/datacoord/garbage_collector_test.go` (modified, +33/-4)
+**File**: `internal/core/src/indexbuilder/ScalarBuildSessionTest.cpp` (modified, +96/-3)
 ```diff
-@@ -2318,6 +2318,8 @@ func TestGarbageCollector_recycleChannelMeta(t *testing.T) {
- 		// has no coverage anywhere.
- 		"cluster-id-rootcoord-dm_0_invalidedCollectionIDv0": nil,
- 	})
-+	store.PutCollection(&metacache.CollectionInfo{ID: 123})
-+	store.PutCollection(&metacache.CollectionInfo{ID: 124})
+@@ -9,6 +9,7 @@
+ // is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ // or implied. See the License for the specific language governing permissions and limitations under the License
  
- 	broker := broker2.NewMockBroker(t)
- 	broker.EXPECT().HasCollection(mock.Anything, mock.Anything).Return(true, nil).Twice()
-@@ -2335,7 +2337,7 @@ func TestGarbageCollector_recycleChannelMeta(t *testing.T) {
- 	catalog.EXPECT().ListChannelCheckpoint(mock.Anything).
- 		RunAndReturn(func(ctx context.Context) (map[string]*msgpb.MsgPosition, error) {
- 			return store.GetChannelCheckpoints(), nil
--		}).Times(3)
-+		}).Times(4)
++#include <arrow/builder.h>
+ #include <gtest/gtest.h>
  
- 	catalog.EXPECT().GcConfirm(mock.Anything, mock.Anything, mock.Anything).
- 		RunAndReturn(func(ctx context.Context, collectionID int64, i2 int64) bool {
-@@ -2347,24 +2349,51 @@ func TestGarbageCollector_recycleChannelMeta(t *testing.T) {
- 		assert.Equal(t, 4, len(m.metaStore.GetChannelCheckpoints()))
- 	})
- 
--	broker.EXPECT().HasCollection(mock.Anything, mock.Anything).Return(false, nil).Times(4)
-+	broker.EXPECT().HasCollection(mock.Anything, mock.Anything).Return(false, nil).Times(6)
-+	t.Run("drop collection meta fail keeps channel cp", func(t *testing.T) {
-+		catalog.EXPECT().DropSegmentChangeGroups(mock.Anything, int64(123)).Return(errors.New("mock error")).Once()
-+		gc.recycleChannelCPMeta(context.TODO(), nil)
-+		assert.Equal(t, 4, len(m.metaStore.GetChannelCheckpoints()))
-+		_, cached := store.GetCollection(123)
-+		assert.True(t, cached)
-+	})
-+
- 	t.Run("drop channel cp fail", func(t *testing.T) {
-+		catalog.EXPECT().DropSegmentChangeGroups(mock.Anything, int64(123)).Return(nil).Once()
- 		catalog.EXPECT().DropChannelCheckpoint(mock.Anything, mock.Anything).Return(errors.New("mock error")).Twice()
- 		gc.recycleChannelCPMeta(context.TODO(), nil)
- 		assert.Equal(t, 4, len(m.metaStore.GetChannelCheckpoints()))
- 	})
- 
- 	t.Run("channel cp gc ok", func(t *testing.T) {
-+		catalog.EXPECT().DropSegmentChangeGroups(mock.Anything, int64(123)).Return(nil).Once()
- 		catalog.EXPECT().DropChannelCheckpoint(mock.Anything, mock.Anything).Return(nil).Twice()
- 		gc.recycleChannelCPMeta(context.TODO(), nil)
--		// 124's checkpoint is GC'd; 123's survives (collection still there) and
--		// so does the unparseable one, which must never be GC'd.
-+		// 123's checkpoints are GC'd (its segments are all recycled); 124's
-+		// survive (GcConfirm is false) and so does the unparseable one, which
-+		// must never be GC'd.
- 		assert.Equal(t, 2, len(m.metaStore.GetChannelCheckpoints()))
- 		_, stillThere := m.metaStore.GetChannelCheckpoints()["cluster-id-rootcoord-dm_0_invalidedCollectionIDv0"]
- 		assert.True(t, stillThere, "an unparseable vchannel must be skipped, not GC'd")
-+		// Only the collection whose segments are all recycled leaves the cache.
-+		_, cached := store.GetCollection(123)
-+		assert.False(t, cached)
-+		_, cached = store.GetCollection(124)
-+		assert.True(t, cached)
- 	})
+ #include <array>
+@@ -117,10 +118,14 @@ class ScalarBuildSessionTest : public ::testing::Test {
+         const auto resolved_family =
+             index::ResolvePackedLoadFamily(family, source.Metadata(), params);
+         // Cold-load planning annotates typed JSON completeness, as the sealed
+-        // index translator does before opening the reader.
++        // index translator does before opening the reader. A JSON flat index
++        // is not a typed projection, so the translator skips it.
+         storage::LoadOptions options;
+-        options.params = index::AnnotateJsonProjectionCompleteness(
+-            params, source.Directory(), source.Metadata());
++        options.params = params;
++        if (family != index::families::kJsonFlat) {
++            options.params = index::AnnotateJsonProjectionCompleteness(
++                params, source.Directory(), source.Metadata());
++        }
+         return index::LoaderRegistry::Instance()
+             .Lookup(resolved_family)
+             .Load({index::OpenedIndexSource{std::move(source)},
+@@ -513,5 +518,93 @@ TEST_F(ScalarBuildSessionTest, NgramJsonIndexOnFieldRoot) {
+     }
  }
  
-+func TestGarbageCollector_recycleDroppedChannelFlags(t *testing.T) {
-+	catalog := catalogmocks.NewDataCoordCatalog(t)
-+	m := &meta{catalog: catalog, metaStore: metacache.NewMetaStore(catalog)}
-+	gc := newGarbageCollector(m, newMockHandlerWithMeta(m), GcOption{checkInterval: time.Millisecond})
++// Older clients could store a valid nullable JSON row whose bytes are empty.
++// Such a row has no document: every JSON index must still build and treat it
++// as a row where no path exists, distinct from a null row.
++TEST_F(ScalarBuildSessionTest, JsonIndexBuildsWithEmptyValidDocument) {
++    constexpr int64_t rows = 12;
++    constexpr int64_t empty_row = 0;
++    constexpr int64_t null_row = 1;
++    arrow::BinaryBuilder builder;
++    for (int64_t row = 0; row < rows; ++row) {
++        arrow::Status status;
++        if (row == empty_row) {
++            status = builder.Append("");
++        } else if (row == null_row) {
++            status = builder.AppendNull();
++        } else if (row % 2 == 0) {
++            status = builder.Append("{\"a\":" + std::to_string(row) + "}");
++        } else {
++            status = builder.Append("\"apple " + std::to_string(row) + "\"");
++        }
++        ASSERT_TRUE(status.ok()) << status.ToString();
++    }
++    std::shared_ptr<arrow::Array> array;
++    ASSERT_TRUE(builder.Finish(&array).ok());
 +
-+	// A failed sweep is retried, and the first success ends the loop.
-+	catalog.EXPECT().RemoveDroppedChannelFlags(mock.Anything).Return(0, errors.New("mock error")).Once()
-+	catalog.EXPECT().RemoveDroppedChannelFlags(mock.Anything).Return(2, nil).Once()
-+	gc.recycleDroppedChannelFlags(context.TODO())
-+}
-+
- func TestGarbageCollector_removeObjectPool(t *testing.T) {
- 	paramtable.Init()
- 	cm := mocks.NewChunkManager(t)
++    struct Case {
++        const char* index_type;
++        const char* cast;
++        const char* path;
++    };
++    for (const auto& [index_type, cast, path] :
++         {Case{index::INVERTED_INDEX_TYPE, "JSON", ""},
++          Case{index::INVERTED_INDEX_TYPE, "DOUBLE", "/a"},
++          Case{index::ASCENDING_SORT, "DOUBLE", "/a"},
++          Case{index::NGRAM_INDEX_TYPE, "VARCHAR", ""}}) {
++        SCOPED_TRACE(::testing::Message()
++                     << index_type << "/" << cast << "/" << path);
++        auto info = Info(DataType::JSON, index_type);
++        info.set_num_rows(rows);
++        info.mutable_field_schema()->set_nullable(true);
++        std::vector<std::pair<std::string, std::string>> params{
++            {JSON_CAST_TYPE, cast}, {JSON_PATH, path}};
++        if (std::string_view(index_type) == index::NGRAM_INDEX_TYPE) {
++            params.emplace_back(index::MIN_GRAM, "2");
++            params.emplace_back(index::MAX_GRAM, "3");
++        }
++        for (const auto& [key, value] : params) {
++            auto* param = info.add_index_params();
++            param->set_key(key);
++            param->set_value(value);
++        }
++        auto prepared = AdaptBuildIndexInfo(info, BuildPurpose::ScalarIndex);
++        auto data = std::make_shared<FieldData<Json>>(DataType::JSON, true);
++        data->FillFieldData(array);
++        ASSERT_EQ(data->get_null_count(), 1);
++        info.add_insert_files(WriteBinlog(prepared.file_manager_context, data));
++        prepared = AdaptBuildIndexInfo(info, BuildPurpose::ScalarIndex);
++        auto reader = BuildAndLoad(std::move(prepared));
++        ASSERT_NE(reader, nullptr);
++        EXPECT_EQ(reader->Count(), rows);
++        const auto* json =
++            dynamic_cast<const index::IJsonIndexReader*>(reader.get());
++        ASSERT_NE(json, nullptr);
++        const auto exists = json->Exists(path);
++        ASSERT_EQ(exists.size(), rows);
++        EXPECT_FALSE(exists[empty_row]);
++        EXPECT_FALSE(exists[null_row]);
++        if (std::string_view(path) == "/a") {
++            // Only the even object rows from 2 on carry "a".
++            EXPECT_EQ(exists.count(), rows / 2 - 1);
++            const auto resolved =
++                json->Resolve(path, JsonCastType::FromString(cast));
++            ASSERT_TRUE(static_cast<bool>(resolved));
++            const auto* predicate =
++                dynamic_cast<const index::IScalarPredicateReader<double>*>(
++                    resolved.get());
++            ASSERT_NE(predicate
 ```
 
-**File**: `internal/datacoord/handler.go` (modified, +10/-33)
+**File**: `internal/proxy/dml/task_upsert.go` (modified, +19/-1)
 ```diff
-@@ -22,6 +22,7 @@ import (
- 	"strconv"
- 	"time"
+@@ -1877,7 +1877,25 @@ func (it *UpsertTask) insertPreExecute(ctx context.Context) error {
+ 		}
+ 	}
  
-+	"github.com/cockroachdb/errors"
- 	"github.com/samber/lo"
- 	"golang.org/x/time/rate"
- 	"google.golang.org/protobuf/proto"
-@@ -52,8 +53,6 @@ type Handler interface {
- 	GetQueryVChanPositions(ch RWChannel, partitionIDs ...UniqueID) *datapb.VchannelInfo
- 	// GetDataVChanPositions gets the information recovery needed of a channel for DataNode
- 	GetDataVChanPositions(ch RWChannel, partitionID UniqueID) *datapb.VchannelInfo
--	CheckShouldDropChannel(ch string) bool
--	FinishDropChannel(ch string, collectionID int64) error
- 	GetCollection(ctx context.Context, collectionID UniqueID) (*collectionInfo, error)
- 	GetCurrentSegmentsView(ctx context.Context, channel RWChannel, partitionIDs ...UniqueID) *SegmentsView
- 	ListLoadedSegments(ctx context.Context) ([]int64, error)
-@@ -810,6 +809,10 @@ func (h *ServerHandler) GetCollection(ctx context.Context, collectionID UniqueID
- 		err := h.s.loadCollectionFromRootCoord(ctx2, collectionID)
- 		if err != nil {
- 			mlog.Warn(ctx, "failed to load collection from rootcoord", mlog.FieldCollectionID(collectionID), mlog.Err(err))
-+			// A dropped collection never comes back, retrying only stalls the caller.
-+			if errors.Is(err, merr.ErrCollectionNotFound) {
-+				return retry.Unrecoverable(err)
+-	if err := fieldvalidator.NewValidateUtil(fieldvalidator.WithNANCheck(), fieldvalidator.WithOverflowCheck(), fieldvalidator.WithMaxLenCheck(), fieldvalidator.WithMaxCapCheck()).
++	validateOpts := []fieldvalidator.ValidateOption{fieldvalidator.WithNANCheck(), fieldvalidator.WithOverflowCheck(), fieldvalidator.WithMaxLenCheck(), fieldvalidator.WithMaxCapCheck()}
++	if it.req.GetPartialUpdate() {
++		// The merge filled the fields the request omits from the stored rows.
++		// A request may name the dynamic field "" (REST does); it is $meta here.
++		requested := typeutil.NewSet(lo.Map(it.partialUpdateOriginalFields, func(f *schemapb.FieldData, _ int) string {
++			if f.GetIsDynamic() {
++				return common.MetaFieldName
 +			}
- 			return err
- 		}
- 		return nil
-@@ -819,38 +822,12 @@ func (h *ServerHandler) GetCollection(ctx context.Context, collectionID UniqueID
- 			mlog.Err(err))
- 		return nil, err
- 	}
--	return h.s.meta.GetCollection(collectionID), nil
--}
--
--// CheckShouldDropChannel returns whether specified channel is marked to be removed
--func (h *ServerHandler) CheckShouldDropChannel(channel string) bool {
--	return h.s.meta.metaStore.ShouldDropChannel(h.s.ctx, channel)
--}
--
--// FinishDropChannel cleans up the remove flag for channels
--// this function is a wrapper of server.meta.FinishDropChannel
--func (h *ServerHandler) FinishDropChannel(channel string, collectionID int64) error {
--	err := h.s.meta.metaStore.DropChannel(h.s.ctx, channel)
--	if err != nil {
--		mlog.Warn(context.TODO(), "DropChannel failed", mlog.String("vChannel", channel), mlog.Err(err))
--		return err
--	}
--	mlog.Info(context.TODO(), "DropChannel succeeded", mlog.String("channel", channel))
--	// Channel checkpoints are cleaned up during garbage collection.
--
--	// clean collection info cache when meet drop collection info
--	h.s.meta.DropCollection(collectionID)
--
--	// tedxu: drop this collection's segment change group records together with
--	// its other metadata. Without this they would leak in etcd forever (and a
--	// reused collectionID could resurrect stale groups on recovery).
--	if err := h.s.meta.DropSegmentChangeGroupsOfCollection(h.s.ctx, collectionID); err != nil {
--		mlog.Warn(context.TODO(), "drop segment change groups of collection failed",
--			mlog.Int64("collectionID", collectionID), mlog.Err(err))
--		return err
-+	coll = h.s.meta.GetCollection(collectionID)
-+	if coll == nil {
-+		// Dropped and recycled by GC right after it was loaded.
-+		return nil, merr.WrapErrCollectionNotFound(collectionID)
- 	}
--
--	return nil
-+	return coll, nil
- }
- 
- func (h *ServerHandler) ListLoadedSegments(ctx context.Context) ([]int64, error) {
-```
-
-**File**: `internal/datacoord/handler_test.go` (modified, +49/-56)
-```diff
-@@ -3,7 +3,6 @@ package datacoord
- import (
- 	"context"
- 	"testing"
--	"time"
- 
- 	"github.com/bytedance/mockey"
- 	"github.com/samber/lo"
-@@ -15,7 +14,7 @@ import (
- 	"github.com/milvus-io/milvus-proto/go-api/v3/milvuspb"
- 	"github.com/milvus-io/milvus-proto/go-api/v3/msgpb"
- 	"github.com/milvus-io/milvus/internal/datacoord/broker"
--	"github.com/milvus-io/milvus/internal/metastore"
-+	"github.com/milvus-io/milvus/internal/metacache"
- 	"github.com/milvus-io/milvus/internal/metastore/kv/binlog"
- 	"github.com/milvus-io/milvus/internal/metastore/model"
- 	mocks2 "github.com/milvus-io/milvus/internal/mocks"
-@@ -25,11 +24,9 @@ import (
- 	"github.com/milvus-io/milvus/pkg/v3/objectstorage"
- 	"github.com/milvus-io/milvus/pkg/v3/proto/datapb"
- 	"github.com/milvus-io/milvus/pkg/v3/proto/indexpb"
--	"github.com/milvus-io/milvus/pkg/v3/proto/rootcoordpb"
- 	"github.com/milvus-io/milvus/pkg/v3/proto/workerpb"
- 	"github.com/milvus-io/milvus/pkg/v3/util/funcutil"
- 	"github.com/milvus-io/milvus/pkg/v3/util/merr"
--	"github.com/milvus-io/milvus/pkg/v3/util/tsoutil"
- 	"github.com/milvus-io/milvus/pkg/v3/util/typeutil"
- )
- 
-@@ -1639,58 +1636,6 @@ func TestGetCurrentSegmentsViewExternalCollection(t *testing.T) {
- 	assert.ElementsMatch(t, []int64{100, 101}, view.FlushedSegmentIDs)
- }
- 
--func TestShouldDropChannel(t *testing.T) {
--	type myRootCoord struct {
--		mocks2.MockRootCoordClient
--	}
--	myRoot := &myRootCoord{}
--	myRoot.EXPECT().AllocTimestamp(mock.Anything, mock.Anything).Return(&rootcoordpb.AllocTimestampResponse{
--		Status:    merr.Success(),
--		Timestamp: tsoutil.ComposeTSByTime(time.Now()),
--		Count:     1,
--	}, nil)
--
--	myRoot.EXPECT().AllocID(mock.Anything, mock.Anything).Return(&rootcoordpb.AllocIDResponse{
--		Status: merr.Success(),
--		ID:     int64(tsoutil.ComposeTSByTime(time.Now())),
--		Count:  1,
--	}, nil)
--
--	svr := newTestServer(t)
--	defer closeTestServer(t, svr)
--	schema := newTestSchema()
--	svr.meta.AddCollection(&collectionInfo{
--		ID:     0,
--		Schema: schema,
--		StartPositions: []*commonpb.KeyDataPair{
--			{
--				Key:  "ch1",
--				Data: []byte{8, 9, 10},
--			},
--		},
--	})
--	svr.meta.AddCollection(&collectionInfo{
--		ID:     1,
--		Schema: schema,
--		StartPositions: []*commonpb.KeyDataPair{
--			{
--				Key:  "ch0",
--				Data: []byte{8, 9, 10},
--			},
--		},
--	})
--
--	t.Run("channel name not in kv ", func(t *testing.T) {
--		assert.False(t, svr.handler.CheckShouldDropChannel("ch99"))
--	})
--
--	t.Run("channel in remove flag", func(t *testing.T) {
--		err := svr.meta.catalog.Update(context.TODO(), metastore.MarkChannelDropped("ch1"))
--		require.NoError(t, err)
--		assert.True(t, svr.handler.CheckShouldDropChannel("ch1"))
--	})
--}
--
- func TestGetDataVChanPositions(t *testing.T) {
- 	svr := newTestServer(t)
- 	defer closeTestServer(t, svr)
-@@ -2921,3 +2866,51 @@ func TestGenSnapshot_CommitTimestamp(t *testing.T) {
- 		assert.Equal(t, int64(999), snapshotData.Segments[0].SegmentId)
- 	})
- }
-+
-+func TestServerHandler_GetCollectionRetry(t *testing.T) {
-+	newHandler := func(b broker.Broker) *ServerHandler {
-+		m := &meta{metaStore: metacache.NewMetaStore(nil)}
-+		return newServerHandler(&Server{broker: b, meta: m})
++			return f.GetFieldName()
++		})...)
++		var stored []string
++		for _, f := range it.upsertMsg.InsertMsg.GetFieldsData() {
++			if !requested.Contain(f.GetFieldName()) {
++				stored = append(stored, f.GetFieldName())
++			}
++		}
++		validateOpts = append(validateOpts, fieldvalidator.WithStoredFields(stored...))
 +	}
-+
-+	t.Run("dropped collection is not retried", func(t *testing.T) {
-+		b := broker.NewMockBroker(t)
-+		b.EXPECT().HasCollection(mock.Anything, int64(1)).Return(false, nil).Once()
-+
-+		coll, err := newHandler(b).GetCollection(context.TODO(), 1)
-+		assert.ErrorIs(t, err, merr.ErrCollectionNotFound)
-+		assert.Nil(t, coll)
-+	})
-+
-+	t.Run("transient error is retried", func(t *testing.T) {
-+		b := broker.NewMockBroker(t)
-+		b.EXPECT().HasCollection(mock.Anything, int64(1)).Return(false, merr.ErrServiceUnavailable).Once()
-+		b.EXPECT().HasCollection(mock.Anything, int64(1)).Return(true, nil).Once()
-+		b.EXPECT().DescribeCollectionInternal(mock.Anything, int64(1)).Return(&milvuspb.DescribeCollectionResponse{
-+			Status:       merr.Success(),
-+			CollectionID: 1,
-+		}, nil).Once()
-+		b.EXPECT().ShowPartitionsInternal(mock.Anything, int64(1)).Return([]int64{10}, nil).Once()
-+
-+		coll, err := newHandler(b).GetCollection(context.TODO(), 1)
-+		assert.NoError(t, err)
-+		assert.Equal(t, int64(1), coll.ID)
-+	})
-+
-+	t.Run("collection gone from the cache after load", func(t *testing.T) {
-+		b := broker.NewMockBroker(t)
-+		b.EXPECT().HasCollection(mock.Anything, int64(1)).Return(true, nil).Once()
-+		b.EXPECT().DescribeCollectionInternal(mock.Anything, int64(1)).Return(&milvuspb.DescribeCollectionResponse{
-+			Status:       merr.Success(),
-+			CollectionID: 1,
-+		}, nil).Once()
-+		b.EXPECT().ShowPartitionsInternal(mock.Anything, int64(1)).Return([]int64{10}, nil).Once()
-+		// GC drops the collection between the load and the read.
-+		dropAfterAdd := mockey.Mock((*meta).AddCollection).Return().Build()
-+		defer dropAfterAdd.UnPatch()
-+
-+		coll, err := newHandler(b).GetCollection(context.TODO(), 1)
-+		assert.ErrorIs(t, err, merr.ErrCollectionNotFound)
-+		assert.Nil(t, coll)
-+	})
-+}
-```
-
-**File**: `internal/datacoord/meta.go` (modified, +9/-8)
-```diff
-@@ -2290,11 +2290,12 @@ func (m *meta) mergeDropSegment(seg2Drop *SegmentInfo) *SegmentInfo {
- 	return clonedSegment
- }
- 
--// batchSaveDropSegments saves drop segments info together with the channel
--// removal flag as a single composite catalog.Update call, so the dropped
--// segments and the channel tombstone commit atomically (or, when the op
--// count exceeds the txn size limit, via the caller-ordered chunked
--// fallback - see kv/txn.Commit for the exact atomicity contract).
-+// batchSaveDropSegments saves the dropped segments of a channel and deletes the
-+// channel's removal flag as a single composite catalog.Update call (or, when
-+// the op count exceeds the txn size limit, via the caller-ordered chunked
-+// fallback - see kv/txn.Commit for the exact atomicity contract). A missing
-+// flag reads as a dropped channel, so the flag is deleted instead of being
-+// rewritten to "removed" and leaking forever.
- func (m *meta) batchSaveDropSegments(ctx context.Context, channel string, modSegments map[int64]*SegmentInfo) error {
- 	var modSegIDs []int64
- 	for k := range modSegments {
-@@ -2311,9 +2312,9 @@ func (m *meta) batchSaveDropSegments(ctx context.Context, channel string, modSeg
- 		}
- 		actions = append(actions, metastore.UpdateSegment(seg.SegmentInfo))
- 	}
--	// The channel tombstone is the visibility marker; it commits last (see
--	// MarkChannelDropped -> CommitSave), after the dropped segments.
--	actions = append(actions, metastore.MarkChannelDropped(channel))
-+	// The flag delete is the visibility marker; it commits last (see
-+	// DropChannelFlag -> CommitRemove), after the dropped segments.
-+	actions = append(actions, metastore.DropChannelFlag(channel))
- 	if err := m.catalog.Update(ctx, actions...); err != nil {
++	if err := fieldvalidator.NewValidateUtil(validateOpts...).
+ 		Validate(it.upsertMsg.InsertMsg.GetFieldsData(), it.schema.SchemaHelper, it.upsertMsg.InsertMsg.NRows()); err != nil {
  		return err
  	}
 ```
 
-**File**: `internal/datacoord/meta_test.go` (modified, +6/-7)
+**File**: `internal/proxy/dml/task_upsert_json_stored_test.go` (added, +170/-0)
 ```diff
-@@ -1264,10 +1264,9 @@ func (suite *MetaBasicSuite) TestBatchSaveDropSegments_UsesCompositeUpdate() {
- 		}},
- 	}
- 
--	// catalog has no SaveDroppedSegmentsInBatch/MarkChannelDeleted
--	// expectation: if batchSaveDropSegments still called those directly (the
--	// old two-call path), mockery would fail the test with an
--	// unexpected-call panic.
-+	// catalog has no SaveDroppedSegmentsInBatch expectation: if
-+	// batchSaveDropSegments still called it directly (the old two-call path),
-+	// mockery would fail the test with an unexpected-call panic.
- 	catalog := mocks2.NewDataCoordCatalog(suite.T())
- 	catalog.EXPECT().ListSegmentChangeGroups(mock.Anything).Return(nil, nil).Maybe()
- 	var gotActions []metastore.UpdateAction
-@@ -1285,14 +1284,14 @@ func (suite *MetaBasicSuite) TestBatchSaveDropSegments_UsesCompositeUpdate() {
- 	err := m.batchSaveDropSegments(context.TODO(), "ch-1", modSegments)
- 	suite.NoError(err)
- 
--	// One UpdateSegment per dropped segment (2), then the channel tombstone.
-+	// One UpdateSegment per dropped segment (2), then the channel flag delete.
- 	// catalog.Update called exactly once (.Once()).
- 	suite.Require().Len(gotActions, 3, "expected two segment updates + one channel action")
- 
--	// The channel tombstone is last (the visibility marker).
-+	// The channel flag delete is last, after the dropped segments.
- 	channelEntry, ok := gotActions[2].Entry.(metastore.ChannelEntry)
- 	suite.Require().True(ok)
--	suite.Equal(metastore.ActionUpdate, gotActions[2].Type)
-+	suite.Equal(metastore.ActionDelete, gotActions[2].Type)
- 	suite.Require().Equal("ch-1", channelEntry.Channel)
- 
- 	var droppedIDs []int64
+@@ -0,0 +1,170 @@
++// Licensed to the LF AI & Data foundation under one
++// or more contributor license agreements. See the NOTICE file
++// distributed with this work for additional information
++// regarding copyright ownership. The ASF licenses this file
++// to you under the Apache License, Version 2.0 (the
++// "License"); you may not use this file except in compliance
++// with the License. You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package dml
++
++import (
++	"context"
++	"testing"
++
++	"github.com/bytedance/mockey"
++	"github.com/stretchr/testify/require"
++
++	"github.com/milvus-io/milvus-proto/go-api/v3/milvuspb"
++	"github.com/milvus-io/milvus-proto/go-api/v3/msgpb"
++	"github.com/milvus-io/milvus-proto/go-api/v3/schemapb"
++	"github.com/milvus-io/milvus/internal/allocator"
++	"github.com/milvus-io/milvus/internal/distributed/streaming"
++	"github.com/milvus-io/milvus/internal/util/segcore"
++	"github.com/milvus-io/milvus/pkg/v3/common"
++	"github.com/milvus-io/milvus/pkg/v3/mq/msgstream"
++	"github.com/milvus-io/milvus/pkg/v3/util/commonpbutil"
++	"github.com/milvus-io/milvus/pkg/v3/util/merr"
++	"github.com/milvus-io/milvus/pkg/v3/util/typeutil"
++)
++
++func partialUpdateJSONTestFieldData(rows [][]byte) *schemapb.FieldData {
++	return &schemapb.FieldData{
++		FieldName: "meta", FieldId: 102, Type: schemapb.DataType_JSON,
++		Field: &schemapb.FieldData_Scalars{Scalars: &schemapb.ScalarField{Data: &schemapb.ScalarField_JsonData{JsonData: &schemapb.JSONArray{Data: rows}}}},
++	}
++}
++
++func partialUpdateValueTestFieldData(rows []int32) *schemapb.FieldData {
++	return &schemapb.FieldData{
++		FieldName: "value", FieldId: 101, Type: schemapb.DataType_Int32,
++		Field: &schemapb.FieldData_Scalars{Scalars: &schemapb.ScalarField{Data: &schemapb.ScalarField_IntData{IntData: &schemapb.IntArray{Data: rows}}}},
++	}
++}
++
++// partialUpdateJSONTestTask builds a two-row partial upsert over a schema with
++// a non-nullable JSON field; requestFields are the fields after the PK that the
++// request itself carries.
++func partialUpdateJSONTestTask(t *testing.T, requestFields ...*schemapb.FieldData) *UpsertTask {
++	t.Helper()
++	pk := partialUpdateCASPKFieldData([]int64{1, 2})
++	pk.FieldName = "id"
++	pk.FieldId = 100
++	schema := mustNewSchemaInfo(&schemapb.CollectionSchema{
++		Name: "test_partial_update_stored_json",
++		Fields: []*schemapb.FieldSchema{
++			{FieldID: 100, Name: "id", IsPrimaryKey: true, DataType: schemapb.DataType_Int64},
++			{FieldID: 101, Name: "value", DataType: schemapb.DataType_Int32},
++			{FieldID: 102, Name: "meta", DataType: schemapb.DataType_JSON},
++		},
++	})
++	fields := append([]*schemapb.FieldData{pk}, requestFields...)
++	task := &UpsertTask{
++		baseTask: baseTask{MetaCache: newTestCache()},
++		ctx:      context.Background(), schema: schema, idAllocator: &allocator.IDAllocator{}, collectionID: 100,
++		req: &milvuspb.UpsertRequest{Base: commonpbutil.NewMsgBase(), FieldsData: fields, NumRows: 2, PartialUpdate: true, CollectionName: schema.GetName()},
++		upsertMsg: &msgstream.UpsertMsg{
++			InsertMsg: &msgstream.InsertMsg{InsertRequest: &msgpb.InsertRequest{
++				Base:           commonpbutil.NewMsgBase(),
++				CollectionName: schema.GetName(), CollectionID: 100, PartitionName: "_default",
++				FieldsData: fields, NumRows: 2, Version: msgpb.InsertDataVersion_ColumnBased,
++			}},
++			DeleteMsg: &msgstream.DeleteMsg{DeleteRequest: &msgpb.DeleteRequest{Base: commonpbutil.NewMsgBase(), CollectionName: schema.GetName(), CollectionID: 100, PartitionName: "_default"}},
++		},
++		node: &mockUpsertNode{}, result: &milvuspb.MutationResult{},
++		partialUpdateOriginalFields: cloneFieldDataList(fields),
++	}
++	task.SetTs(12345)
++	setPartialUpdateCASTestChannels(task, partialUpdateCASTestVChannels)
++	return task
++}
++
++// A row stored before the proxy validated JSON documents may hold empty bytes.
++// A partial upsert that leaves that JSON field out must still succeed (the
++// stored row is carried over, not re-judged), while a request that itself
++// supplies empty bytes for the JSON field must be rejected.
++func TestPartialUpdateStoredInvalidJSONIsNotRejudged(t *testing.T) {
++	storedMeta := [][]byte{[]byte(`{"a":1}`), {}}
++	for _, testCase := range []struct {
++		name        string
++		request     []*schemapb.FieldData
++		wantErr     bool
++		wantMetaOut [][]byte
++	}{
++		{
++			name:        "request omits the JSON field",
++			request:     []*schemapb.FieldData{partialUpdateValueTestFieldData([]int32{100, 200})},
++			wantMetaOut: storedMeta,
++		},
++		{
++			name: "request supplies a valid JSON document",
++			request: []*schemapb.FieldData{
++				partialUpdateValueTestFi
 ```
 
-**File**: `internal/datacoord/mock_handler.go` (modified, +0/-93)
+---
+
+### Incident Patch 3: `eb1bb266` (2026-10-31)
+**Commit Message**: fix(ci): stop macOS Conan recipe auto-updates (#54936)
+
+## Summary
+- Stop automatic Conan recipe updates on macOS, matching the Linux CI
+install policy.
+- Remove only the known-incompatible cached aws-c-event-stream/0.7.1
+recipe revision left by the old update behavior.
+
+## Incident
+The master macOS checker failed from build #159 onward after Conan
+Center recipe revision 7efb08d7203c90891cc0a2a36d38f4ce introduced
+aws-c-common/0.14.5 while the SDK graph uses 0.14.0. The internal Conan
+remote carries a compatible revision.
+
+## Validation
+- bash -n scripts/3rdparty_build.sh
+- git diff --check
+- Isolated Conan 2.25.1 macOS arm64 graph: 134 nodes resolved with
+internal recipe revision 2cff773a69a926fe775dfe21f6c15650.
+- Importing the incompatible revision reproduces the exact 0.14.5 versus
+0.14.0 conflict; removing only that revision restores graph resolution.
+- Production Jenkins Mac build remains to be verified after merge.
+
+Signed-off-by: Zhikun Yao <[REDACTED_EMAIL]>
+
+**File**: `scripts/3rdparty_build.sh` (modified, +15/-1)
 ```diff
-@@ -25,99 +25,6 @@ func (_m *NMockHandler) EXPECT() *NMockHandler_Expecter {
- 	return &NMockHandler_Expecter{mock: &_m.Mock}
- }
+@@ -214,7 +214,21 @@ case "${unameOut}" in
+     export CMAKE_CXX_COMPILER_LAUNCHER=ccache
+     echo "Using CXX: $CXX"
+     echo "Using CC: $CC"
+-    CONAN_ARGS="--output-folder conan --build=missing -s build_type=${BUILD_TYPE} -s compiler=clang -s compiler.version=${llvm_version} -s compiler.libcxx=libc++ -s compiler.cppstd=20 -u"
++    # Match Linux CI: do not refresh every recipe revision during a normal build.
++    # An upstream recipe revision can change transitive requirements without a
++    # Milvus source change, making a previously valid dependency graph fail.
++    CONAN_ARGS="--output-folder conan --build=missing -s build_type=${BUILD_TYPE} -s compiler=clang -s compiler.version=${llvm_version} -s compiler.libcxx=libc++ -s compiler.cppstd=20"
++
++    # Recover caches updated by the old -u behavior. This Conan Center recipe
++    # requires aws-c-common/0.14.5, conflicting with the SDK's 0.14.0 graph.
++    # Remove only the known-bad revision; the internal remote has a compatible
++    # revision, so no unrelated Conan packages or binaries are discarded.
++    bad_event_stream_revision=7efb08d7203c90891cc0a2a36d38f4ce
++    bad_event_stream_ref="aws-c-event-stream/0.7.1#${bad_event_stream_revision}"
++    if "$CONAN" list "$bad_event_stream_ref" -c -f json | grep -Fq "\"${bad_event_stream_revision}\":"; then
++        echo "Removing incompatible cached Conan recipe: ${bad_event_stream_ref}"
++        "$CONAN" remove "$bad_event_stream_ref" --confirm
++    fi
  
--// CheckShouldDropChannel provides a mock function with given fields: ch
--func (_m *NMockHandler) CheckShouldDropChannel(ch string) bool {
--	ret := _m.Called(ch)
--
--	if len(ret) == 0 {
--		panic("no return value specified for CheckShouldDropChannel")
--	}
--
--	var r0 bool
--	if rf, ok := ret.Get(0).(func(string) bool); ok {
--		r0 = rf(ch)
--	} else {
--		r0 = ret.Get(0).(bool)
--	}
--
--	return r0
--}
--
--// NMockHandler_CheckShouldDropChannel_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CheckShouldDropChannel'
--type NMockHandler_CheckShouldDropChannel_Call struct {
--	*mock.Call
--}
--
--// CheckShouldDropChannel is a helper method to define mock.On call
--//   - ch string
--func (_e *NMockHandler_Expecter) CheckShouldDropChannel(ch interface{}) *NMockHandler_CheckShouldDropChannel_Call {
--	return &NMockHandler_CheckShouldDropChannel_Call{Call: _e.mock.On("CheckShouldDropChannel", ch)}
--}
--
--func (_c *NMockHandler_CheckShouldDropChannel_Call) Run(run func(ch string)) *NMockHandler_CheckShouldDropChannel_Call {
--	_c.Call.Run(func(args mock.Arguments) {
--		run(args[0].(string))
--	})
--	return _c
--}
--
--func (_c *NMockHandler_CheckShouldDropChannel_Call) Return(_a0 bool) *NMockHandler_CheckShouldDropChannel_Call {
--	_c.Call.Return(_a0)
--	return _c
--}
--
--func (_c *NMockHandler_CheckShouldDropChannel_Call) RunAndReturn(run func(string) bool) *NMockHandler_CheckShouldDropChannel_Call {
--	_c.Call.Return(run)
--	return _c
--}
--
--// FinishDropChannel provides a mock function with given fields: ch, collectionID
--func (_m *NMockHandler) FinishDropChannel(ch string, collectionID int64) error {
--	ret := _m.Called(ch, collectionID)
--
--	if len(ret) == 0 {
--		panic("no return value specified for FinishDropChannel")
--	}
--
--	var r0 error
--	if rf, ok := ret.Get(0).(func(string, int64) error); ok {
--		r0 = rf(ch, collectionID)
--	} else {
--		r0 = ret.Error(0)
--	}
--
--	return r0
--}
--
--// NMockHandler_FinishDropChannel_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'FinishDropChannel'
--type NMockHandler_FinishDropChannel_Call struct {
--	*mock.Call
--}
--
--// FinishDropChannel is a helper method to define mock.On call
--//   - ch string
--//   - collectionID int64
--func (_e *NMockHandler_Expecter) FinishDropChannel(ch interface{}, collectionID interface{}) *NMockHandler_FinishDropChannel_Call {
--	return &NMockHandler_FinishDropChannel_Call{Call: _e.mock.On("FinishDropChannel", ch, collectionID)}
--}
--
--func (_c *NMockHandler_FinishDropChannel_Call) Run(run func(ch string, collectionID int64)) *NMockHandler_FinishDropChannel_Call {
--	_c.Call.Run(func(args mock.Arguments) {
--		run(args[0].(string), args[1].(int64))
--	})
--	return _c
--}
--
--func (_c *NMockHandler_FinishDropChannel_Call) Return(_a0 error) *NMockHandler_FinishDropChannel_Call {
--	_c.Call.Return(_a0)
--	return _c
--}
--
--func (_c *NMockHandler_FinishDropChannel_Call) RunAndReturn(run func(string, int64) error) *NMockHandler_FinishDropChannel_Call {
--	_c.Call.Return(run)
--	return _c
--}
--
- // GenSnapshot provides a mock function with given fields: ctx, collectionID, channelSeekPositions
- func (_m *NMockHandler) GenSnapshot(ctx context.Context, collectionID int64, channelSeekPositions []*msgpb.MsgPosition) (*storage.SnapshotData, error) {
- 	ret := _m.Called(ctx, collectionID, channelSeekPositions)
+     # On macOS, Conan packages with shared libraries (protobuf, grpc) produce
+     # binaries (protoc, grpc_cpp_plugin) whose install rpaths don't include
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #54939** (closed): feat: prototype independent MultiSearch requests through Proxy (@codingjaguar)
+- **PR #54936** (2026-10-31): fix(ci): stop macOS Conan recipe auto-updates (@zhikunyao)
+- **PR #54933** (closed): fix: return typed empty columns from PresizeAppendFieldData so empty reduced results keep the primary field (@xixi-box)
 - **PR #54928** (closed): fix: return typed empty columns from PresizeAppendFieldData so empty reduced results keep the primary field (@xixi-box)
 - **PR #54927** (closed): fix: keep typed empty columns when QueryNode reduce yields no rows (@czs007)
 - **PR #54926** (closed): fix: [Bug]: Search with rerank/function_chain fails with 1100 "can't find data for primary field" when the result is empty and QueryNode reduces multiple sub-results (@xixi-box)
-- **PR #54919** (2026-10-30): fix: [hotfix-3.0.5] build JSON indexes over valid rows with empty bytes (@zhengbuqian)
-- **PR #54900** (2026-10-30): fix: clean up DataCoord state of dropped collections (@sunby)
-- **PR #54899** (2026-10-30): fix: restore nullable embedding-list validity when loading disk indexes (@marcelo-cjl)
 
 ---
 
@@ -2545,51 +2182,47 @@ Co-authored-by: xiaofanluan <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. stop a late import result from reviving segments that DropCollection already dro
+## X. map every available collection to its DB in QuotaCenter (#54890)
 
 **RULE**:
-When implementing operations in `internal/datacoord/import_task_import.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/rootcoord/quota_center.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `421d9866`: stop a late import result from reviving segments that DropCollection already dropped (#54891). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `059b8466`: map every available collection to its DB in QuotaCenter (#54890). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/datacoord/import_task_import.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/rootcoord/quota_center.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/milvus-io/milvus/pkg/v3/util/merr"
-			opAccept := acceptImportSegmentOperator(info.GetSegmentID())
-			err = t.meta.UpdateSegmentsInfo(context.TODO(), opAccept, opBinlog, opManifest, opState, opPosition, opStats)
-
-// acceptImportSegmentOperator checks that a preallocated import segment can
-// still take the DataNode's result. The segment is Importing until the first
-// acceptance and Flushed when the task is replayed after a crash. Any other
-// state means DropCollection, DropPartition or a failed-job GC retired the
-// segment while the task was running, and its result must not revive it.
-func acceptImportSegmentOperator(segmentID int64) UpdateOperator {
-	return func(pack *updateSegmentPack) bool {
-		segment := pack.Get(segmentID)
-		if segment == nil {
-			return pack.fail(merr.WrapErrSegmentNotFound(segmentID, "import segment is missing"))
-		}
-		switch segment.GetState() {
-		case commonpb.SegmentState_Importing, commonpb.SegmentState_Flushed:
-			return true
-		default:
-			return pack.fail(merr.WrapErrSegmentNotFound(segmentID,
-				"import segment is "+segment.GetState().String()+", its result is not accepted"))
+			if collections.Contain(collectionID) {
+	// Build the collection-to-DB mapping from the same metadata snapshot as the
+	// limiter tree. Node metrics omit unloaded or unflushed collections, while
+	// WAL lag protection still covers every collection on a pchannel.
+	for dbID, collections := range partitions {
+		for collectionID := range collections {
+			q.collectionIDToDBID.Insert(collectionID, dbID)
 		}
 	}
-}
+					collectionID := node.GetID()
+					if collectionName, ok := collectionIDs[collectionID]; ok {
+						name = "collection_" + collectionName
+					} else {
+						name = "collection_id_" + strconv.FormatInt(collectionID, 10)
+					}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			err = t.meta.UpdateSegmentsInfo(context.TODO(), opBinlog, opManifest, opState, opPosition, opStats)
+			q.collectionIDToDBID.Insert(collectionID, coll.DBID)
+			q.collectionIDToDBID.Insert(collectionID, coll.DBID)
+			_, ok := q.collectionIDToDBID.Get(collectionID)
+			if ok {
+			q.collectionIDToDBID.Insert(collectionID, coll.DBID)
+					name = "collection_" + collectionIDs[node.GetID()]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `421d9866` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `059b8466` are properly handled with clean fallback behavior.

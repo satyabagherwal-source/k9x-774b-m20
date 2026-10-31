@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T22:23:54.022Z",
+  "last_updated": "2026-10-31T22:33:05.416Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -69329,13 +69329,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "0c3f87a5",
-      "content_hash": "12ed42b3e0e7b252eb382bf5f0464b66c8015bf206d7dfb778876ef6d90ab67b",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "content_hash": "36105e6866924f7eac356fa4601b2c8385d50944dc2da92ab82fab97a122f0f1",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -69428,7 +69428,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T20:38:56.576Z",
+      "verified_at": "2026-10-31T22:31:27.752Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -150807,16 +150807,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
       "source_version": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b",
-      "content_hash": "f3c5f7de3c9aced73076d2de6d58ec2309d6cd9a81e5973b1ef9573e3c8474b7",
+      "content_hash": "fe9f9ebc9bb3266809719fd7b9a03803fc42a429b47d0ede1065129696970275",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 6349,
+          "title": "Audio-to-LLM Temporal Decimation and Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6350,
+          "title": "Guarded Multi-Token Prediction (MTP) Speculative Execution Contract",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6351,
+          "title": "Fused MoE Dispatcher Asynchronous SM Partitioning Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T20:57:33.185Z",
+      "verified_at": "2026-10-31T22:33:05.394Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -164949,6 +164965,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T22:23:53.993Z"
+    },
+    "rule-6349": {
+      "learning_id": "rule-6349",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6349,
+      "title": "Audio-to-LLM Temporal Decimation and Alignment Invariant",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T22:33:05.394Z"
+    },
+    "rule-6350": {
+      "learning_id": "rule-6350",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6350,
+      "title": "Guarded Multi-Token Prediction (MTP) Speculative Execution Contract",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T22:33:05.394Z"
+    },
+    "rule-6351": {
+      "learning_id": "rule-6351",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6351,
+      "title": "Fused MoE Dispatcher Asynchronous SM Partitioning Invariant",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T22:33:05.394Z"
     }
   },
   "aliases": {

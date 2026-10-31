@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `e8618dbc`  
+> **Source Version**: `0c3f87a5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T18:32:38.041Z  
+> **Timestamp**: 2026-10-31T22:31:27.579Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T18:32:37.759Z  
+> **Harvest Timestamp**: 2026-10-31T22:31:24.258Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1989,35 +1989,29 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `576d2404` (2026-10-30)
-**Commit Message**: Bump crates with security advisories
+### Incident Patch 1: `0c3f87a5` (2026-10-31)
+**Commit Message**: Merge pull request #4609 from aleo-labs-protocol/ci/merge-mainnet-into-staging
 
-Fixes:
-- [RUSTSEC-2026-0418](https://rustsec.org/advisories/RUSTSEC-2026-0418.html) in `libz-sys 1.1.29`: libz-sys build script leaks environment variables in the build directory
 
-**File**: `Cargo.lock` (modified, +2/-2)
-```diff
-@@ -2886,9 +2886,9 @@ dependencies = [
- 
- [[package]]
- name = "libz-sys"
--version = "1.1.29"
-+version = "1.1.31"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "85bc9657773828b90eeb625adff10eeac83cc21bbfd8e23a03eaa8a33c9e28d9"
-+checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
- dependencies = [
-  "cc",
-  "libc",
-```
+
+---
+
+### Incident Patch 2: `dd8e2adc` (2026-10-31)
+**Commit Message**: Merge mainnet into staging
+
+Changed by `.github/merge-fixup.sh`:
+    Cargo.lock
+    Cargo.toml
+
+
 
 #### Recent Merged Pull Requests:
+- **PR #4609** (2026-10-31): Merge mainnet into staging (@aleo-labs-merge-bot[bot])
 - **PR #4606** (2026-10-30): Bump crates with security advisories (@aleo-labs-merge-bot[bot])
 - **PR #4595** (closed): Move fastsync into snarkOS as snarkos-ledger-distribution (@cbeck88-ai-dev)
 - **PR #4593** (closed): Move fastsync into snarkOS as snarkos-ledger-distribution (@cbeck88-ai-dev)
 - **PR #4592** (2026-10-29): Merge testnet into staging (@aleo-labs-merge-bot[bot])
 - **PR #4591** (closed): [testnet] Move past open advisories (@cbeck88)
-- **PR #4590** (closed): ci: check advisories on pull requests outside staging (@cbeck88)
 
 ---
 
@@ -2031,36 +2025,3 @@ Fixes:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Bump crates with security advisories
-
-**RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `576d2404`: Bump crates with security advisories. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-version = "1.1.31"
-checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-version = "1.1.29"
-checksum = "85bc9657773828b90eeb625adff10eeac83cc21bbfd8e23a03eaa8a33c9e28d9"
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `576d2404` are properly handled with clean fallback behavior.

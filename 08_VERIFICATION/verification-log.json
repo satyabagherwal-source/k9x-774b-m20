@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-KNMA",
-    "timestamp": "2026-10-30T16:22:35.410Z",
-    "repository": "mobile-next/mobile-mcp",
-    "learningId": "learn-github-mobile-next-mobile-mcp",
-    "contentHash": "c3d803148d7d6a448648038c8109a2ed0d99d36323071a820e809433dcef71c1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-U9D3",
-    "timestamp": "2026-10-30T16:30:03.495Z",
-    "repository": "lancedb/lancedb",
-    "learningId": "learn-github-lancedb-lancedb",
-    "contentHash": "5248660f00db245b41c977031c08902af0eb77dfe47ac5c45e8bbd4d7d4b6f60",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-XQRI",
-    "timestamp": "2026-10-30T16:32:46.014Z",
-    "repository": "beclab/Olares",
-    "learningId": "learn-github-beclab-olares",
-    "contentHash": "e1d403365c53f181ab8e4eec63b14b35828ed9d1fcbbbeb7d0966dd2245fcefb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-6J21",
     "timestamp": "2026-10-30T16:39:35.929Z",
     "repository": "RDFLib/rdflib",
@@ -7490,6 +7445,51 @@
     "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
     "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
     "contentHash": "f2c07409b39608a106d03ef29f2a3f06d3b92ea6399c972198e35bc7ca384776",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-6VST",
+    "timestamp": "2026-10-31T22:31:27.869Z",
+    "repository": "milvus-io/milvus",
+    "learningId": "learn-github-milvus-io-milvus",
+    "contentHash": "0df77a610a203481c21b201dae4a649f8ac29fbaeb38d69b31707c21db54e17c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-6VTN",
+    "timestamp": "2026-10-31T22:31:27.899Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "36105e6866924f7eac356fa4601b2c8385d50944dc2da92ab82fab97a122f0f1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-8Z4Q",
+    "timestamp": "2026-10-31T22:33:05.498Z",
+    "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
+    "contentHash": "fe9f9ebc9bb3266809719fd7b9a03803fc42a429b47d0ede1065129696970275",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {
