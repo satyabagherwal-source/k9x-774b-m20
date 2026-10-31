@@ -6401,3 +6401,4 @@
 | `CYCLE-20261031-TPU6` | `2026-10-31T01:21:30.894Z` | `lodestones/Kromoss` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5987, Rule 5988, Rule 5989` | Yes (`2a4ad9a5...`) |
 | `CYCLE-20261031-TS5K` | `2026-10-31T01:21:33.896Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5990` | Yes (`ce83b778...`) |
 | `CYCLE-20261031-TT0N` | `2026-10-31T01:21:35.015Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5991` | Yes (`1c77e86f...`) |
+| `CYCLE-20261031-2K1T` | `2026-10-31T01:28:23.297Z` | `nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5992, Rule 5993` | Yes (`707b9107...`) |

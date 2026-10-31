@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T01:21:35.023Z",
+  "last_updated": "2026-10-31T01:28:23.311Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -15651,14 +15651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
-      "content_hash": "523f0f76dfa9f3d23b1e8a65c0f631bce43cb74c75c2bf87152ecd9f78b4c78c",
-      "verified_at": "2026-10-25T20:43:05.913Z",
+      "content_hash": "707b9107c84077b9df8584416e55fd6a49796e689e1e57855106e5f8209ebd6b",
+      "verified_at": "2026-10-31T01:28:23.310Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T20:43:05.913Z"
+      "last_updated": "2026-10-31T01:28:23.310Z"
     },
     "mrjackwills/oxker": {
       "repository": "mrjackwills/oxker",

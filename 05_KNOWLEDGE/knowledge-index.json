@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T01:21:34.971Z",
+  "last_updated": "2026-10-31T01:28:23.219Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -118395,16 +118395,27 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
       "source_version": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16",
-      "content_hash": "523f0f76dfa9f3d23b1e8a65c0f631bce43cb74c75c2bf87152ecd9f78b4c78c",
+      "content_hash": "707b9107c84077b9df8584416e55fd6a49796e689e1e57855106e5f8209ebd6b",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 5992,
+          "title": "Looped Residual Reinjection Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5993,
+          "title": "Hybrid Attention KV Cache Segmentation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T20:43:05.835Z",
+      "verified_at": "2026-10-31T01:28:23.199Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -157994,6 +158005,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T01:21:34.960Z"
+    },
+    "rule-5992": {
+      "learning_id": "rule-5992",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5992,
+      "title": "Looped Residual Reinjection Invariant",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+      "source_version": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T01:28:23.199Z"
+    },
+    "rule-5993": {
+      "learning_id": "rule-5993",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5993,
+      "title": "Hybrid Attention KV Cache Segmentation",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+      "source_version": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T01:28:23.199Z"
     }
   },
   "aliases": {

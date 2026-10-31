@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T01:21:37.555Z",
-    "lastVerified": "2026-10-31T01:21:37.555Z",
+    "lastChecked": "2026-10-31T01:28:26.106Z",
+    "lastVerified": "2026-10-31T01:28:26.106Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -243,8 +243,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T00:53:02.859Z",
-    "lastVerified": "2026-10-31T00:53:02.859Z",
+    "lastChecked": "2026-10-31T01:28:26.095Z",
+    "lastVerified": "2026-10-31T01:28:26.095Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -500,8 +500,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T21:41:10.633Z",
-    "lastVerified": "2026-10-30T21:41:10.633Z",
+    "lastChecked": "2026-10-31T01:28:21.000Z",
+    "lastVerified": "2026-10-31T01:28:21.000Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -1516,9 +1516,9 @@
   "react-native-elements-react-native-elements": {
     "name": "react-native-elements",
     "officialUrl": "https://github.com/react-native-elements/react-native-elements",
-    "lastChecked": "2026-10-28T04:48:33.256Z",
+    "lastChecked": "2026-10-31T01:28:16.067Z",
     "revisionIdentifier": "32ae0eda",
-    "lastVerified": "2026-10-28T04:48:33.256Z"
+    "lastVerified": "2026-10-31T01:28:16.067Z"
   },
   "go-kratos-kratos": {
     "name": "kratos",
@@ -2133,9 +2133,9 @@
   "sayanarijit-xplr": {
     "name": "xplr",
     "officialUrl": "https://github.com/sayanarijit/xplr",
-    "lastChecked": "2026-10-29T16:13:26.387Z",
+    "lastChecked": "2026-10-31T01:28:10.943Z",
     "revisionIdentifier": "50824d0d",
-    "lastVerified": "2026-10-29T16:13:26.387Z"
+    "lastVerified": "2026-10-31T01:28:10.943Z"
   },
   "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
     "name": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -5654,9 +5654,9 @@
   "apache-zookeeper": {
     "name": "zookeeper",
     "officialUrl": "https://github.com/apache/zookeeper",
-    "lastChecked": "2026-10-30T05:01:21.531Z",
+    "lastChecked": "2026-10-31T01:28:23.613Z",
     "revisionIdentifier": "858c8d77",
-    "lastVerified": "2026-10-30T05:01:21.531Z"
+    "lastVerified": "2026-10-31T01:28:23.613Z"
   },
   "kubearmor-kubearmor": {
     "name": "KubeArmor",
@@ -6394,9 +6394,9 @@
   "databricks-click": {
     "name": "click",
     "officialUrl": "https://github.com/databricks/click",
-    "lastChecked": "2026-10-30T05:53:49.062Z",
+    "lastChecked": "2026-10-31T01:28:18.412Z",
     "revisionIdentifier": "47ff7d1b",
-    "lastVerified": "2026-10-30T05:53:49.062Z"
+    "lastVerified": "2026-10-31T01:28:18.412Z"
   },
   "activeloopai-deeplake": {
     "name": "deeplake",
@@ -11771,6 +11771,23 @@
     "learningId": "learn-huggingface-lodestones-kromoss",
     "contentHash": "2a4ad9a50f02e655f71629bc5e4463c4b4fdef8f6c7f159773730644512bf5cc",
     "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16": {
+    "name": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+    "officialUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-31T01:28:13.608Z",
+    "lastVerified": "2026-10-31T01:28:13.608Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
+    "contentHash": "707b9107c84077b9df8584416e55fd6a49796e689e1e57855106e5f8209ebd6b",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

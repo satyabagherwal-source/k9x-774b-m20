@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-GBL6",
-    "timestamp": "2026-10-28T19:31:50.058Z",
-    "repository": "necolas/react-native-web",
-    "learningId": "learn-github-necolas-react-native-web",
-    "contentHash": "ebc89de9d3d809ff18137ae87b4f38613b3fb24ad91a652c7aa1494d60125b7a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-GFSY",
     "timestamp": "2026-10-28T19:31:55.522Z",
     "repository": "google/embeddinggemma-2",
@@ -7492,6 +7477,21 @@
     "contentHash": "1c77e86f23829faf360fba59ffb50519e466c6cb4d732092513261bed6d09156",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-2K1T",
+    "timestamp": "2026-10-31T01:28:23.297Z",
+    "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
+    "contentHash": "707b9107c84077b9df8584416e55fd6a49796e689e1e57855106e5f8209ebd6b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

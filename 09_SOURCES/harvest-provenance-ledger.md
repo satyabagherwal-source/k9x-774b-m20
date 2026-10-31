@@ -6410,3 +6410,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-lodestones-kromoss` | `https://huggingface.co/lodestones/Kromoss` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-10-31T01:21:30.896Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `ef92bc17` | Multi-dimensional audit evidence | 2026-10-31T01:21:33.898Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `2f1bdadc` | Multi-dimensional audit evidence | 2026-10-31T01:21:35.017Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-31T01:28:23.301Z |

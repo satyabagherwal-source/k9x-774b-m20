@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T01:21:35.021Z",
-  "total_cycles_completed": 6378,
-  "total_learnings_persisted": 6378,
-  "total_rules_promoted": 5965,
+  "last_updated": "2026-10-31T01:28:23.307Z",
+  "total_cycles_completed": 6379,
+  "total_learnings_persisted": 6379,
+  "total_rules_promoted": 5967,
   "history": [
-    {
-      "timestamp": "2026-10-30T13:37:42.505Z",
-      "repository": "NirDiamant/RAG_Techniques",
-      "learningId": "learn-github-nirdiamant-rag_techniques",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T13:37:43.968Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -1403,6 +1396,13 @@
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T01:28:23.307Z",
+      "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
