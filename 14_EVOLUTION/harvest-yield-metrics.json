@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T07:56:36.372Z",
-  "total_cycles_completed": 6483,
-  "total_learnings_persisted": 6483,
-  "total_rules_promoted": 6118,
+  "last_updated": "2026-10-31T08:06:56.979Z",
+  "total_cycles_completed": 6484,
+  "total_learnings_persisted": 6484,
+  "total_rules_promoted": 6121,
   "history": [
-    {
-      "timestamp": "2026-10-30T20:59:20.215Z",
-      "repository": "astral-sh/uv",
-      "learningId": "learn-github-astral-sh-uv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T20:59:29.198Z",
       "repository": "rustls/rustls",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-31T07:56:36.372Z",
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
       "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T08:06:56.979Z",
+      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+      "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

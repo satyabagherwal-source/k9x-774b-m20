@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T07:56:38.917Z",
-    "lastVerified": "2026-10-31T07:56:38.917Z",
+    "lastChecked": "2026-10-31T08:06:59.525Z",
+    "lastVerified": "2026-10-31T08:06:59.525Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -145,8 +145,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T06:52:33.154Z",
-    "lastVerified": "2026-10-31T06:52:33.154Z",
+    "lastChecked": "2026-10-31T08:03:16.699Z",
+    "lastVerified": "2026-10-31T08:03:16.699Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1413,9 +1413,9 @@
   "neondatabase-neon": {
     "name": "neon",
     "officialUrl": "https://github.com/neondatabase/neon",
-    "lastChecked": "2026-10-30T14:40:27.366Z",
+    "lastChecked": "2026-10-31T08:03:14.379Z",
     "revisionIdentifier": "fa504217",
-    "lastVerified": "2026-10-30T14:40:27.366Z"
+    "lastVerified": "2026-10-31T08:03:14.379Z"
   },
   "ajeetdsouza-zoxide": {
     "name": "zoxide",
@@ -1657,13 +1657,13 @@
     "officialUrl": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T05:03:36.431Z",
-    "lastVerified": "2026-10-28T05:03:36.431Z",
+    "lastChecked": "2026-10-31T08:03:04.297Z",
+    "lastVerified": "2026-10-31T08:03:04.297Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-    "contentHash": "1b92b5f6499998e4e526164583c6462e2bb8f46cf5e836b2aa241aaa4eeba0f1",
-    "promotedRulesCount": 0,
+    "contentHash": "7d982a1d1baefa605d20e968e6a7664021581c4fa8be6ff27b7ecd6ac94cca8e",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -1874,8 +1874,8 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T03:34:12.010Z",
-    "lastVerified": "2026-10-31T03:34:12.010Z",
+    "lastChecked": "2026-10-31T08:03:12.004Z",
+    "lastVerified": "2026-10-31T08:03:12.004Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
@@ -2903,9 +2903,9 @@
   "litmuschaos-litmus": {
     "name": "litmus",
     "officialUrl": "https://github.com/litmuschaos/litmus",
-    "lastChecked": "2026-10-30T16:00:31.955Z",
+    "lastChecked": "2026-10-31T08:03:09.350Z",
     "revisionIdentifier": "97a397fb",
-    "lastVerified": "2026-10-30T16:00:31.955Z"
+    "lastVerified": "2026-10-31T08:03:09.350Z"
   },
   "pinecone-io-examples": {
     "name": "examples",
@@ -4345,9 +4345,9 @@
   "ptomasroos-react-native-scrollable-tab-view": {
     "name": "react-native-scrollable-tab-view",
     "officialUrl": "https://github.com/ptomasroos/react-native-scrollable-tab-view",
-    "lastChecked": "2026-10-28T13:43:33.826Z",
+    "lastChecked": "2026-10-31T08:03:06.688Z",
     "revisionIdentifier": "583a66f7",
-    "lastVerified": "2026-10-28T13:43:33.826Z"
+    "lastVerified": "2026-10-31T08:03:06.688Z"
   },
   "zarf-dev-zarf": {
     "name": "zarf-dev/zarf",
@@ -4880,9 +4880,9 @@
   "tokio-rs-console": {
     "name": "console",
     "officialUrl": "https://github.com/tokio-rs/console",
-    "lastChecked": "2026-10-30T07:29:47.513Z",
+    "lastChecked": "2026-10-31T08:03:01.695Z",
     "revisionIdentifier": "b59758e5",
-    "lastVerified": "2026-10-30T07:29:47.513Z"
+    "lastVerified": "2026-10-31T08:03:01.695Z"
   },
   "hf-stabilityai-stable-diffusion-3-medium": {
     "name": "stabilityai/stable-diffusion-3-medium",

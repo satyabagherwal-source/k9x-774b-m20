@@ -6515,3 +6515,4 @@ Every entry in this ledger must capture:
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `f7e474f7` | Multi-dimensional audit evidence | 2026-10-31T07:32:48.877Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `45aba0f1` | Multi-dimensional audit evidence | 2026-10-31T07:55:11.583Z |
 | `learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-10-31T07:56:36.367Z |
+| `learn-huggingface-viggle-qwen-image-2-1-viggle-turbo` | `https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-10-31T08:06:56.974Z |
