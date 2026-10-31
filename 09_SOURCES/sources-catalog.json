@@ -1095,8 +1095,8 @@
     "sourceUrl": "https://huggingface.co/openai/clip-vit-base-patch32",
     "sourceVersion": "hf-openai-clip-vit-base-patch32",
     "license": "Open-Source",
-    "contentHash": "d4580dd96e79e73a8d1235507b34a2a52c2365f861bc64c56af973f09a6f7c8b",
-    "lastHarvestedAt": "2026-10-28T16:12:19.013Z",
+    "contentHash": "3df7cad9dbdb197e751776ef4cd6289836559d9639d96868781b4177d0625109",
+    "lastHarvestedAt": "2026-10-31T17:22:54.794Z",
     "learningId": "learn-huggingface-openai-clip-vit-base-patch32"
   },
   "hf-sentence-transformers-all-mpnet-base-v2": {
@@ -7683,10 +7683,10 @@
     "repository": "google/tcmalloc",
     "platform": "github",
     "sourceUrl": "https://github.com/google/tcmalloc",
-    "sourceVersion": "02c67d98",
+    "sourceVersion": "ea99cfaf",
     "license": "Apache-2.0",
-    "contentHash": "eb092257778872858fcadd9ccd61594aad66386dd5045c716eb951d206d2fe9c",
-    "lastHarvestedAt": "2026-10-30T21:33:51.476Z",
+    "contentHash": "236ecbd4b744c789c90ab0c39d1b1cf49092afaef30465b312e93672f0916595",
+    "lastHarvestedAt": "2026-10-31T17:22:55.635Z",
     "learningId": "learn-github-google-tcmalloc"
   },
   "russhwolf-multiplatform-settings": {

@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T17:14:27.546Z",
-    "lastVerified": "2026-10-31T17:14:27.546Z",
+    "lastChecked": "2026-10-31T17:23:06.106Z",
+    "lastVerified": "2026-10-31T17:23:06.106Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -141,12 +141,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T16:50:39.529Z",
-    "lastVerified": "2026-10-31T16:50:39.529Z",
+    "lastChecked": "2026-10-31T17:23:06.097Z",
+    "lastVerified": "2026-10-31T17:23:06.097Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -155,7 +155,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "299269af"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -403,8 +404,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T13:34:03.904Z",
-    "lastVerified": "2026-10-31T13:34:03.904Z",
+    "lastChecked": "2026-10-31T17:23:01.166Z",
+    "lastVerified": "2026-10-31T17:23:01.166Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -5609,12 +5610,12 @@
     "lastVerified": "2026-10-31T14:32:33.680Z"
   },
   "apple-foundationdb": {
-    "name": "apple/foundationdb",
+    "name": "foundationdb",
     "officialUrl": "https://github.com/apple/foundationdb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-31T01:05:00.109Z",
-    "lastVerified": "2026-10-31T01:05:00.109Z",
+    "lastChecked": "2026-10-31T17:23:03.746Z",
+    "lastVerified": "2026-10-31T17:23:03.746Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apple-foundationdb",
@@ -5623,7 +5624,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "bcdefac9"
   },
   "gotham-rs-gotham": {
     "name": "gotham",
@@ -5703,12 +5705,12 @@
     "officialUrl": "https://huggingface.co/openai/clip-vit-base-patch32",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T16:12:17.851Z",
-    "lastVerified": "2026-10-28T16:12:17.851Z",
+    "lastChecked": "2026-10-31T17:22:53.781Z",
+    "lastVerified": "2026-10-31T17:22:53.781Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
-    "contentHash": "d4580dd96e79e73a8d1235507b34a2a52c2365f861bc64c56af973f09a6f7c8b",
+    "contentHash": "3df7cad9dbdb197e751776ef4cd6289836559d9639d96868781b4177d0625109",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6799,12 +6801,12 @@
     "lastVerified": "2026-10-31T13:40:36.331Z"
   },
   "linkerd-linkerd2": {
-    "name": "linkerd/linkerd2",
+    "name": "linkerd2",
     "officialUrl": "https://github.com/linkerd/linkerd2",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T01:53:49.907Z",
-    "lastVerified": "2026-10-31T01:53:49.907Z",
+    "lastChecked": "2026-10-31T17:22:58.669Z",
+    "lastVerified": "2026-10-31T17:22:58.669Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-linkerd-linkerd2",
@@ -6813,7 +6815,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1408ae4a"
   },
   "postgresml-postgresml": {
     "name": "postgresml",
@@ -8088,9 +8091,9 @@
   "codeeditapp-codeedit": {
     "name": "CodeEdit",
     "officialUrl": "https://github.com/CodeEditApp/CodeEdit",
-    "lastChecked": "2026-10-28T22:07:41.005Z",
+    "lastChecked": "2026-10-31T17:22:56.212Z",
     "revisionIdentifier": "fa2aebd8",
-    "lastVerified": "2026-10-28T22:07:41.005Z"
+    "lastVerified": "2026-10-31T17:22:56.212Z"
   },
   "oven-sh-bun": {
     "name": "oven-sh/bun",
@@ -8322,14 +8325,14 @@
     "officialUrl": "https://github.com/google/tcmalloc",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-30T21:29:53.039Z",
-    "lastVerified": "2026-10-30T21:29:53.039Z",
+    "lastChecked": "2026-10-31T17:22:54.936Z",
+    "lastVerified": "2026-10-31T17:22:54.936Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-google-tcmalloc",
-    "contentHash": "eb092257778872858fcadd9ccd61594aad66386dd5045c716eb951d206d2fe9c",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 3,
+    "contentHash": "236ecbd4b744c789c90ab0c39d1b1cf49092afaef30465b312e93672f0916595",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

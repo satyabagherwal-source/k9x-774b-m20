@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T17:14:24.944Z",
+  "last_updated": "2026-10-31T17:22:55.557Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15368,8 +15368,8 @@
       "slug": "google-tcmalloc",
       "platform": "github",
       "source_url": "https://github.com/google/tcmalloc",
-      "source_version": "02c67d98",
-      "content_hash": "eb092257778872858fcadd9ccd61594aad66386dd5045c716eb951d206d2fe9c",
+      "source_version": "ea99cfaf",
+      "content_hash": "236ecbd4b744c789c90ab0c39d1b1cf49092afaef30465b312e93672f0916595",
       "dossier_path": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "promoted_rules": [
@@ -15427,6 +15427,11 @@
           "number": 5892,
           "title": "Asynchronous Multi-State Allocation Reclamation Window Accounting",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6264,
+          "title": "Ignore invalid duration parameter updates and init tc_globals in hard-limit gett",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15434,7 +15439,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T21:33:51.393Z",
+      "verified_at": "2026-10-31T17:22:55.529Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26760,7 +26765,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/clip-vit-base-patch32",
       "source_version": "hf-openai-clip-vit-base-patch32",
-      "content_hash": "d4580dd96e79e73a8d1235507b34a2a52c2365f861bc64c56af973f09a6f7c8b",
+      "content_hash": "3df7cad9dbdb197e751776ef4cd6289836559d9639d96868781b4177d0625109",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md",
       "promoted_rules": [
@@ -26792,7 +26797,7 @@
         "learn-huggingface-hf-openai-clip-vit-base-patch32-mv3y5o08",
         "learn-huggingface-hf-openai-clip-vit-base-patch32-mv4cvq4q"
       ],
-      "verified_at": "2026-10-28T16:12:18.896Z",
+      "verified_at": "2026-10-31T17:22:54.689Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -163328,6 +163333,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T17:14:24.930Z"
+    },
+    "rule-6264": {
+      "learning_id": "rule-6264",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6264,
+      "title": "Ignore invalid duration parameter updates and init tc_globals in hard-limit gett",
+      "source_url": "https://github.com/google/tcmalloc",
+      "source_version": "ea99cfaf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T17:22:55.530Z"
     }
   },
   "aliases": {

@@ -6660,3 +6660,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-naiveai-naive-n0-5-flash` | `https://huggingface.co/NaiveAI/Naive-N0.5-Flash` | `hf-naiveai` | Multi-dimensional audit evidence | 2026-10-31T17:14:09.186Z |
 | `learn-github-meta-folly` | `https://github.com/facebook/folly` | `57ff303c` | Multi-dimensional audit evidence | 2026-10-31T17:14:12.165Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `229950e6` | Multi-dimensional audit evidence | 2026-10-31T17:14:24.998Z |
+| `learn-huggingface-openai-clip-vit-base-patch32` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-31T17:22:54.794Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `ea99cfaf` | Multi-dimensional audit evidence | 2026-10-31T17:22:55.635Z |
