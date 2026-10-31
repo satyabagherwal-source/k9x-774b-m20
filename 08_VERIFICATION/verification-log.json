@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-R7OR",
-    "timestamp": "2026-10-30T00:07:54.795Z",
-    "repository": "ClementTsang/bottom",
-    "learningId": "learn-github-clementtsang-bottom",
-    "contentHash": "5722a71203ad8a2b5565ca72232fb21bbd77a7ad36bf23ee01931ea5df3abc3a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-RD87",
-    "timestamp": "2026-10-30T00:08:01.975Z",
-    "repository": "crossplane/crossplane",
-    "learningId": "learn-github-crossplane-crossplane",
-    "contentHash": "f74a89586f2f682040831fd22a069dcccdd2d985f508ca27e3588ce02b0d86ee",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-5HSU",
     "timestamp": "2026-10-30T00:19:01.086Z",
     "repository": "meshery/meshery",
@@ -7490,6 +7460,36 @@
     "repository": "saltstack/salt",
     "learningId": "learn-github-saltstack-salt",
     "contentHash": "2fced27f956a1ae7e7685d29c6107d21720720c35dd370b103b9f7348eab202b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-QULW",
+    "timestamp": "2026-10-31T13:27:07.124Z",
+    "repository": "timm/mobilenetv3_small_100.lamb_in1k",
+    "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
+    "contentHash": "6e8dc0c36904e11435ed2ff6fbe3f914819c110dc71540dbe9a8d0a8b10913c9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-QYT3",
+    "timestamp": "2026-10-31T13:27:12.567Z",
+    "repository": "kotest/kotest",
+    "learningId": "learn-github-kotest-kotest",
+    "contentHash": "355ba4335c2549e1df3aa38d9fd385aa39e151aa70dd67f0416194e338bd9322",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

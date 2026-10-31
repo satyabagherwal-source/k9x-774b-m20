@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T13:20:59.309Z",
+  "last_updated": "2026-10-31T13:27:12.519Z",
   "total_verified_learnings": 1183,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -29799,7 +29799,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
       "source_version": "hf-timm-mobilenetv3_small_100.lamb_in1k",
-      "content_hash": "d41314434a7dc935e63879a9d3dfbb1165805fc30f0563969a01403ac6ed8983",
+      "content_hash": "6e8dc0c36904e11435ed2ff6fbe3f914819c110dc71540dbe9a8d0a8b10913c9",
       "dossier_path": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
       "promoted_rules": [
@@ -29857,7 +29857,7 @@
         "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv49kikk",
         "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv4mxoq2"
       ],
-      "verified_at": "2026-10-28T13:03:31.414Z",
+      "verified_at": "2026-10-31T13:27:07.061Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34889,8 +34889,8 @@
       "slug": "kotest-kotest",
       "platform": "github",
       "source_url": "https://github.com/kotest/kotest",
-      "source_version": "cde3ab9c",
-      "content_hash": "d6c72f84c36804f2852634acf85889325a1489168d1ab035719bb8a307901f84",
+      "source_version": "0397e47b",
+      "content_hash": "355ba4335c2549e1df3aa38d9fd385aa39e151aa70dd67f0416194e338bd9322",
       "dossier_path": "07_PROJECT_LEARNING/kotest-kotest-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kotest-kotest-learnings.md",
       "promoted_rules": [
@@ -34903,6 +34903,11 @@
           "number": 4248,
           "title": "Call PropTestListeners around every shrink run (#6252)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6209,
+          "title": "short-circuit the contain matcher pass/fail decision (#6106) (#6260)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34910,7 +34915,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T10:49:35.519Z",
+      "verified_at": "2026-10-31T13:27:12.507Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162223,6 +162228,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T13:20:59.289Z"
+    },
+    "rule-6209": {
+      "learning_id": "rule-6209",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6209,
+      "title": "short-circuit the contain matcher pass/fail decision (#6106) (#6260)",
+      "source_url": "https://github.com/kotest/kotest",
+      "source_version": "0397e47b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T13:27:12.507Z"
     }
   },
   "aliases": {

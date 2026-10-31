@@ -6591,3 +6591,5 @@ Every entry in this ledger must capture:
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `dd74aad1` | Multi-dimensional audit evidence | 2026-10-31T13:14:06.213Z |
 | `learn-huggingface-comfy-org-minimax-h3` | `https://huggingface.co/Comfy-Org/MiniMax-H3` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-31T13:20:51.654Z |
 | `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `0fa7bec6` | Multi-dimensional audit evidence | 2026-10-31T13:20:59.398Z |
+| `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-10-31T13:27:07.131Z |
+| `learn-github-kotest-kotest` | `https://github.com/kotest/kotest` | `0397e47b` | Multi-dimensional audit evidence | 2026-10-31T13:27:12.570Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T13:20:59.412Z",
+  "last_updated": "2026-10-31T13:27:12.580Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1010,14 +1010,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
-      "content_hash": "d41314434a7dc935e63879a9d3dfbb1165805fc30f0563969a01403ac6ed8983",
-      "verified_at": "2026-10-28T13:03:31.525Z",
+      "content_hash": "6e8dc0c36904e11435ed2ff6fbe3f914819c110dc71540dbe9a8d0a8b10913c9",
+      "verified_at": "2026-10-31T13:27:07.138Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T13:03:31.525Z"
+      "last_updated": "2026-10-31T13:27:07.138Z"
     },
     "amazon/chronos-2": {
       "repository": "amazon/chronos-2",
@@ -10236,14 +10236,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kotest-kotest",
-      "content_hash": "d6c72f84c36804f2852634acf85889325a1489168d1ab035719bb8a307901f84",
-      "verified_at": "2026-10-25T10:49:35.567Z",
+      "content_hash": "355ba4335c2549e1df3aa38d9fd385aa39e151aa70dd67f0416194e338bd9322",
+      "verified_at": "2026-10-31T13:27:12.579Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T10:49:35.567Z"
+      "last_updated": "2026-10-31T13:27:12.579Z"
     },
     "projectcontour/contour": {
       "repository": "projectcontour/contour",

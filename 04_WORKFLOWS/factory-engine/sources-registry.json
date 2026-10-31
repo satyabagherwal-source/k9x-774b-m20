@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T13:21:01.960Z",
-    "lastVerified": "2026-10-31T13:21:01.960Z",
+    "lastChecked": "2026-10-31T13:27:18.685Z",
+    "lastVerified": "2026-10-31T13:27:18.685Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T13:00:08.071Z",
-    "lastVerified": "2026-10-31T13:00:08.071Z",
+    "lastChecked": "2026-10-31T13:27:18.676Z",
+    "lastVerified": "2026-10-31T13:27:18.676Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -322,8 +322,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-31T10:00:34.279Z",
-    "lastVerified": "2026-10-31T10:00:34.279Z",
+    "lastChecked": "2026-10-31T13:27:13.777Z",
+    "lastVerified": "2026-10-31T13:27:13.777Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -3872,9 +3872,9 @@
   "llphant-llphant": {
     "name": "LLPhant",
     "officialUrl": "https://github.com/LLPhant/LLPhant",
-    "lastChecked": "2026-10-30T21:06:23.811Z",
+    "lastChecked": "2026-10-31T13:27:16.169Z",
     "revisionIdentifier": "6305ae46",
-    "lastVerified": "2026-10-30T21:06:23.811Z"
+    "lastVerified": "2026-10-31T13:27:16.169Z"
   },
   "mufeedvh-code2prompt": {
     "name": "code2prompt",
@@ -3988,12 +3988,12 @@
     "officialUrl": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T13:03:30.379Z",
-    "lastVerified": "2026-10-28T13:03:30.379Z",
+    "lastChecked": "2026-10-31T13:27:06.284Z",
+    "lastVerified": "2026-10-31T13:27:06.284Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
-    "contentHash": "d41314434a7dc935e63879a9d3dfbb1165805fc30f0563969a01403ac6ed8983",
+    "contentHash": "6e8dc0c36904e11435ed2ff6fbe3f914819c110dc71540dbe9a8d0a8b10913c9",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -5028,12 +5028,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "aws-aws-cdk": {
-    "name": "aws/aws-cdk",
+    "name": "aws-cdk",
     "officialUrl": "https://github.com/aws/aws-cdk",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T22:03:21.672Z",
-    "lastVerified": "2026-10-30T22:03:21.672Z",
+    "lastChecked": "2026-10-31T13:27:11.290Z",
+    "lastVerified": "2026-10-31T13:27:11.290Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aws-aws-cdk",
@@ -5042,7 +5042,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7a257031"
   },
   "gluesql-gluesql": {
     "name": "gluesql",
@@ -6635,11 +6636,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kotest-kotest": {
-    "name": "kotest",
+    "name": "kotest/kotest",
     "officialUrl": "https://github.com/kotest/kotest",
-    "lastChecked": "2026-10-28T18:04:36.353Z",
-    "revisionIdentifier": "cde3ab9c",
-    "lastVerified": "2026-10-28T18:04:36.353Z"
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-10-31T13:27:12.138Z",
+    "lastVerified": "2026-10-31T13:27:12.138Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-kotest-kotest",
+    "contentHash": "355ba4335c2549e1df3aa38d9fd385aa39e151aa70dd67f0416194e338bd9322",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "open-policy-agent-opa": {
     "name": "open-policy-agent/opa",
@@ -7100,9 +7111,9 @@
   "crate-ci-typos": {
     "name": "typos",
     "officialUrl": "https://github.com/crate-ci/typos",
-    "lastChecked": "2026-10-30T17:05:48.473Z",
+    "lastChecked": "2026-10-31T13:27:03.707Z",
     "revisionIdentifier": "7f9d0819",
-    "lastVerified": "2026-10-30T17:05:48.473Z"
+    "lastVerified": "2026-10-31T13:27:03.707Z"
   },
   "hf-autotrust-jev-27b-vl": {
     "name": "autotrust/JEV-27B-VL",

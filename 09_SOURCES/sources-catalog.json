@@ -785,8 +785,8 @@
     "sourceUrl": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
     "sourceVersion": "hf-timm-mobilenetv3_small_100.lamb_in1k",
     "license": "Open-Source",
-    "contentHash": "d41314434a7dc935e63879a9d3dfbb1165805fc30f0563969a01403ac6ed8983",
-    "lastHarvestedAt": "2026-10-28T13:03:31.518Z",
+    "contentHash": "6e8dc0c36904e11435ed2ff6fbe3f914819c110dc71540dbe9a8d0a8b10913c9",
+    "lastHarvestedAt": "2026-10-31T13:27:07.131Z",
     "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k"
   },
   "hf-amazon-chronos-2": {
@@ -6783,10 +6783,10 @@
     "repository": "kotest/kotest",
     "platform": "github",
     "sourceUrl": "https://github.com/kotest/kotest",
-    "sourceVersion": "cde3ab9c",
+    "sourceVersion": "0397e47b",
     "license": "Apache-2.0",
-    "contentHash": "d6c72f84c36804f2852634acf85889325a1489168d1ab035719bb8a307901f84",
-    "lastHarvestedAt": "2026-10-25T10:49:35.562Z",
+    "contentHash": "355ba4335c2549e1df3aa38d9fd385aa39e151aa70dd67f0416194e338bd9322",
+    "lastHarvestedAt": "2026-10-31T13:27:12.570Z",
     "learningId": "learn-github-kotest-kotest"
   },
   "projectcontour-contour": {
