@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T14:45:57.345Z",
-    "lastVerified": "2026-10-31T14:45:57.345Z",
+    "lastChecked": "2026-10-31T14:52:43.245Z",
+    "lastVerified": "2026-10-31T14:52:43.245Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T14:26:05.599Z",
-    "lastVerified": "2026-10-31T14:26:05.599Z",
+    "lastChecked": "2026-10-31T14:52:43.235Z",
+    "lastVerified": "2026-10-31T14:52:43.235Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1404,9 +1404,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-10-31T11:39:53.769Z",
+    "lastChecked": "2026-10-31T14:52:38.240Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-10-31T11:39:53.769Z"
+    "lastVerified": "2026-10-31T14:52:38.240Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -4600,9 +4600,9 @@
   "qovery-replibyte": {
     "name": "Replibyte",
     "officialUrl": "https://github.com/Qovery/Replibyte",
-    "lastChecked": "2026-10-30T22:49:59.971Z",
+    "lastChecked": "2026-10-31T14:52:40.737Z",
     "revisionIdentifier": "5504db91",
-    "lastVerified": "2026-10-30T22:49:59.971Z"
+    "lastVerified": "2026-10-31T14:52:40.737Z"
   },
   "grpc-grpc-rust": {
     "name": "grpc-rust",
@@ -4747,12 +4747,12 @@
     "officialUrl": "https://huggingface.co/zai-org/GLM-5.2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T14:29:04.674Z",
-    "lastVerified": "2026-10-28T14:29:04.674Z",
+    "lastChecked": "2026-10-31T14:52:30.839Z",
+    "lastVerified": "2026-10-31T14:52:30.839Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-zai-org-glm-5-2",
-    "contentHash": "0eb1304cbecfdaf6a32a32eeb9d30e4f61d7ef845ba692c9032741f4074ab165",
+    "contentHash": "7ec7c307fee253d1cfb2b4bb4aa6a84905aad37cd4ee82ff78a1fab642a16929",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -5792,8 +5792,8 @@
     "officialUrl": "https://github.com/DNSControl/dnscontrol",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T23:35:10.357Z",
-    "lastVerified": "2026-10-30T23:35:10.357Z",
+    "lastChecked": "2026-10-31T14:52:35.842Z",
+    "lastVerified": "2026-10-31T14:52:35.842Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dnscontrol-dnscontrol",
@@ -7414,9 +7414,9 @@
   "joreilly-peopleinspace": {
     "name": "PeopleInSpace",
     "officialUrl": "https://github.com/joreilly/PeopleInSpace",
-    "lastChecked": "2026-10-28T19:54:31.273Z",
+    "lastChecked": "2026-10-31T14:52:33.296Z",
     "revisionIdentifier": "8b77f91d",
-    "lastVerified": "2026-10-28T19:54:31.273Z"
+    "lastVerified": "2026-10-31T14:52:33.296Z"
   },
   "pathwaycom-serviette": {
     "name": "serviette",
@@ -7640,9 +7640,9 @@
   "pamburus-hl": {
     "name": "hl",
     "officialUrl": "https://github.com/pamburus/hl",
-    "lastChecked": "2026-10-30T19:05:26.090Z",
+    "lastChecked": "2026-10-31T14:52:28.330Z",
     "revisionIdentifier": "3aae7bc7",
-    "lastVerified": "2026-10-30T19:05:26.090Z"
+    "lastVerified": "2026-10-31T14:52:28.330Z"
   },
   "hf-qwen-qwen3-4b": {
     "name": "Qwen/Qwen3-4B",
