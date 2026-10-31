@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T06:18:09.593Z",
+  "last_updated": "2026-10-31T06:24:59.759Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -29075,7 +29075,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
       "source_version": "hf-stabilityai-stable-diffusion-xl-base-1.0",
-      "content_hash": "3b03c8864e4f11c295ad225ef0168479ba0062dbc7cb6bf36f86d9eaecd90fbc",
+      "content_hash": "8cb33b5f520cdbc0b43cb30c7639f4e26e0fd8e417f047cbd1699aaad1391bca",
       "dossier_path": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md",
       "promoted_rules": [
@@ -29142,16 +29142,21 @@
         {
           "number": 4242,
           "title": "Dual-Encoder Embedding Fusion Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 4243,
           "title": "Latent Space Resolution Scaling Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 4244,
           "title": "Watermarking Integrity Check",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6103,
+          "title": "Refiner Pipeline Boundary Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -29173,7 +29178,7 @@
         "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv446z5h",
         "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv4hg90r"
       ],
-      "verified_at": "2026-10-28T04:03:37.817Z",
+      "verified_at": "2026-10-31T06:24:59.746Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -130789,7 +130794,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-25T10:36:25.573Z"
+      "verified_at": "2026-10-31T06:24:59.746Z"
     },
     "rule-4243": {
       "learning_id": "rule-4243",
@@ -130803,7 +130808,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-25T10:36:25.573Z"
+      "verified_at": "2026-10-31T06:24:59.746Z"
     },
     "rule-4244": {
       "learning_id": "rule-4244",
@@ -160119,6 +160124,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T06:18:09.573Z"
+    },
+    "rule-6103": {
+      "learning_id": "rule-6103",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6103,
+      "title": "Refiner Pipeline Boundary Invariant",
+      "source_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
+      "source_version": "hf-stabilityai-stable-diffusion-xl-base-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T06:24:59.746Z"
     }
   },
   "aliases": {

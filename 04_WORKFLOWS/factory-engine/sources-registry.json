@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T06:18:12.221Z",
-    "lastVerified": "2026-10-31T06:18:12.221Z",
+    "lastChecked": "2026-10-31T06:25:02.371Z",
+    "lastVerified": "2026-10-31T06:25:02.371Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -145,8 +145,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T05:42:51.039Z",
-    "lastVerified": "2026-10-31T05:42:51.039Z",
+    "lastChecked": "2026-10-31T06:24:55.210Z",
+    "lastVerified": "2026-10-31T06:24:55.210Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -698,9 +698,9 @@
   "qdrant-qdrant": {
     "name": "qdrant",
     "officialUrl": "https://github.com/qdrant/qdrant",
-    "lastChecked": "2026-10-30T13:22:21.195Z",
+    "lastChecked": "2026-10-31T06:24:52.835Z",
     "revisionIdentifier": "222b2e44",
-    "lastVerified": "2026-10-30T13:22:21.195Z"
+    "lastVerified": "2026-10-31T06:24:52.835Z"
   },
   "hf-black-forest-labs-flux.1-dev": {
     "name": "black-forest-labs/FLUX.1-dev",
@@ -1002,13 +1002,13 @@
     "officialUrl": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T04:03:36.873Z",
-    "lastVerified": "2026-10-28T04:03:36.873Z",
+    "lastChecked": "2026-10-31T06:24:42.853Z",
+    "lastVerified": "2026-10-31T06:24:42.853Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-    "contentHash": "3b03c8864e4f11c295ad225ef0168479ba0062dbc7cb6bf36f86d9eaecd90fbc",
-    "promotedRulesCount": 0,
+    "contentHash": "8cb33b5f520cdbc0b43cb30c7639f4e26e0fd8e417f047cbd1699aaad1391bca",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -1211,8 +1211,8 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T02:27:57.171Z",
-    "lastVerified": "2026-10-31T02:27:57.171Z",
+    "lastChecked": "2026-10-31T06:24:50.301Z",
+    "lastVerified": "2026-10-31T06:24:50.301Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
@@ -2387,9 +2387,9 @@
   "alexellis-k3sup": {
     "name": "k3sup",
     "officialUrl": "https://github.com/alexellis/k3sup",
-    "lastChecked": "2026-10-30T14:18:29.686Z",
+    "lastChecked": "2026-10-31T06:24:47.686Z",
     "revisionIdentifier": "07ee3911",
-    "lastVerified": "2026-10-30T14:18:29.686Z"
+    "lastVerified": "2026-10-31T06:24:47.686Z"
   },
   "paradedb-paradedb": {
     "name": "paradedb/paradedb",
@@ -3870,9 +3870,9 @@
   "react-native-image-picker-react-native-image-picker": {
     "name": "react-native-image-picker",
     "officialUrl": "https://github.com/react-native-image-picker/react-native-image-picker",
-    "lastChecked": "2026-10-28T12:46:31.829Z",
+    "lastChecked": "2026-10-31T06:24:45.245Z",
     "revisionIdentifier": "61c0cd41",
-    "lastVerified": "2026-10-28T12:46:31.829Z"
+    "lastVerified": "2026-10-31T06:24:45.245Z"
   },
   "go-chassis-go-chassis": {
     "name": "go-chassis",
@@ -4380,12 +4380,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "actix-actix-web": {
-    "name": "actix/actix-web",
+    "name": "actix-web",
     "officialUrl": "https://github.com/actix/actix-web",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T06:23:16.005Z",
-    "lastVerified": "2026-10-30T06:23:16.005Z",
+    "lastChecked": "2026-10-31T06:24:40.278Z",
+    "lastVerified": "2026-10-31T06:24:40.278Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-actix-actix-web",
@@ -4394,7 +4394,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5f4d2090"
   },
   "hf-qwen-qwen3.8-flash-next": {
     "name": "Qwen/Qwen3.8-Flash-Next",
