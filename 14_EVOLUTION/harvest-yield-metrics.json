@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T11:26:00.756Z",
-  "total_cycles_completed": 6523,
-  "total_learnings_persisted": 6523,
+  "last_updated": "2026-10-31T11:32:51.927Z",
+  "total_cycles_completed": 6524,
+  "total_learnings_persisted": 6524,
   "total_rules_promoted": 6174,
   "history": [
-    {
-      "timestamp": "2026-10-30T22:41:01.478Z",
-      "repository": "makecindy/cindy",
-      "learningId": "learn-github-makecindy-cindy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T22:50:03.552Z",
       "repository": "freenet/freenet-core",
@@ -1403,6 +1396,13 @@
       "repository": "yvgude/lean-ctx",
       "learningId": "learn-github-yvgude-lean-ctx",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T11:32:51.927Z",
+      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

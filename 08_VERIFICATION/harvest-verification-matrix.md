@@ -6546,3 +6546,4 @@
 | `CYCLE-20261031-6D2R` | `2026-10-31T11:19:12.819Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md` | Yes (`385c45f8...`) |
 | `CYCLE-20261031-F3DV` | `2026-10-31T11:26:00.163Z` | `Alissonerdx/BFS-Best-Face-Swap` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md` | Yes (`d61be63f...`) |
 | `CYCLE-20261031-F3U2` | `2026-10-31T11:26:00.746Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6181` | Yes (`5e6328f4...`) |
+| `CYCLE-20261031-NX3B` | `2026-10-31T11:32:51.911Z` | `ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`21b167d7...`) |

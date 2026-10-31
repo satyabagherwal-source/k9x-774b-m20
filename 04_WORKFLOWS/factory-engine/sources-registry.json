@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T11:26:11.465Z",
-    "lastVerified": "2026-10-31T11:26:11.465Z",
+    "lastChecked": "2026-10-31T11:33:03.302Z",
+    "lastVerified": "2026-10-31T11:33:03.302Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -145,8 +145,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T10:58:52.334Z",
-    "lastVerified": "2026-10-31T10:58:52.334Z",
+    "lastChecked": "2026-10-31T11:33:03.290Z",
+    "lastVerified": "2026-10-31T11:33:03.290Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1315,8 +1315,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T06:32:04.478Z",
-    "lastVerified": "2026-10-31T06:32:04.478Z",
+    "lastChecked": "2026-10-31T11:32:58.284Z",
+    "lastVerified": "2026-10-31T11:32:58.284Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -2925,9 +2925,9 @@
   "pinecone-io-examples": {
     "name": "examples",
     "officialUrl": "https://github.com/pinecone-io/examples",
-    "lastChecked": "2026-10-30T18:32:33.102Z",
+    "lastChecked": "2026-10-31T11:33:00.847Z",
     "revisionIdentifier": "db002421",
-    "lastVerified": "2026-10-30T18:32:33.102Z"
+    "lastVerified": "2026-10-31T11:33:00.847Z"
   },
   "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf": {
     "name": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -3072,13 +3072,13 @@
     "officialUrl": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T09:57:56.442Z",
-    "lastVerified": "2026-10-28T09:57:56.442Z",
+    "lastChecked": "2026-10-31T11:32:50.946Z",
+    "lastVerified": "2026-10-31T11:32:50.946Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "6e1a1a1b546d1d9454ac4b20609bc0451215b2f71c8b99d48a9c2e5963e51a04",
-    "promotedRulesCount": 2,
+    "contentHash": "21b167d749b9807f0780ac6a9999c6a0cb84befa186b1d5ffcb77918ebb963f8",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -3998,12 +3998,12 @@
     "lastVerified": "2026-10-31T06:38:24.422Z"
   },
   "krakend-krakend-ce": {
-    "name": "krakend/krakend-ce",
+    "name": "krakend-ce",
     "officialUrl": "https://github.com/krakend/krakend-ce",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T19:28:10.060Z",
-    "lastVerified": "2026-10-30T19:28:10.060Z",
+    "lastChecked": "2026-10-31T11:32:55.793Z",
+    "lastVerified": "2026-10-31T11:32:55.793Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-krakend-krakend-ce",
@@ -4012,7 +4012,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a1fcff90"
   },
   "pixeltable-pixeltable": {
     "name": "pixeltable/pixeltable",
@@ -5626,9 +5627,9 @@
   "tiajinsha-jkvideo": {
     "name": "JKVideo",
     "officialUrl": "https://github.com/tiajinsha/JKVideo",
-    "lastChecked": "2026-10-28T16:05:11.250Z",
+    "lastChecked": "2026-10-31T11:32:53.296Z",
     "revisionIdentifier": "3592d036",
-    "lastVerified": "2026-10-28T16:05:11.250Z"
+    "lastVerified": "2026-10-31T11:32:53.296Z"
   },
   "diggerhq-digger": {
     "name": "digger",
@@ -6041,9 +6042,9 @@
   "graykode-abtop": {
     "name": "abtop",
     "officialUrl": "https://github.com/graykode/abtop",
-    "lastChecked": "2026-10-30T13:37:21.825Z",
+    "lastChecked": "2026-10-31T11:32:48.286Z",
     "revisionIdentifier": "4b965686",
-    "lastVerified": "2026-10-30T13:37:21.825Z"
+    "lastVerified": "2026-10-31T11:32:48.286Z"
   },
   "hf-qwen-qwen3-vl-8b-instruct": {
     "name": "Qwen/Qwen3-VL-8B-Instruct",

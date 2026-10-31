@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261029-N25A",
-    "timestamp": "2026-10-29T16:36:47.134Z",
-    "repository": "mistralai/Mistral-Large-4-1T-A52B",
-    "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
-    "contentHash": "cbd4bc23066f9da24561958bad582c88a3e9ceb1f2bf0a9eda39ea9409285ce4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261029-21F9",
     "timestamp": "2026-10-29T16:48:26.037Z",
     "repository": "dathere/qsv",
@@ -7492,6 +7477,21 @@
     "contentHash": "5e6328f438e084bc8a9bfc99cbf4748ad31d1977dd207f2fd6002b705eab3e77",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-NX3B",
+    "timestamp": "2026-10-31T11:32:51.911Z",
+    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+    "contentHash": "21b167d749b9807f0780ac6a9999c6a0cb84befa186b1d5ffcb77918ebb963f8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
