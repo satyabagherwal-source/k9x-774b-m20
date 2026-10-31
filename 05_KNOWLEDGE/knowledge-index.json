@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T13:27:12.519Z",
+  "last_updated": "2026-10-31T13:34:06.574Z",
   "total_verified_learnings": 1183,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20974,7 +20974,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
       "source_version": "hf-compvis-stable-diffusion-v1-4",
-      "content_hash": "897f8b51d96fa2becd0662212561c088965367ef1960c25d0034964535ad5a0b",
+      "content_hash": "86cafee22cbfeda5d482ba7763a58862667d79c248d11d15fba97356f9ab5e03",
       "dossier_path": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
       "promoted_rules": [
@@ -21038,6 +21038,16 @@
           "number": 5288,
           "title": "Binary Artifact Serialization Security & Performance Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6210,
+          "title": "Model Artifact Schema Versioning & Compatibility Contract",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6211,
+          "title": "License-Gated Access Enforcement at the Artifact Level",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -21058,7 +21068,7 @@
         "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv49semm",
         "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv4n5mw6"
       ],
-      "verified_at": "2026-10-28T13:10:03.254Z",
+      "verified_at": "2026-10-31T13:34:06.554Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162242,6 +162252,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T13:27:12.507Z"
+    },
+    "rule-6210": {
+      "learning_id": "rule-6210",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6210,
+      "title": "Model Artifact Schema Versioning & Compatibility Contract",
+      "source_url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
+      "source_version": "hf-compvis-stable-diffusion-v1-4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T13:34:06.554Z"
+    },
+    "rule-6211": {
+      "learning_id": "rule-6211",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6211,
+      "title": "License-Gated Access Enforcement at the Artifact Level",
+      "source_url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
+      "source_version": "hf-compvis-stable-diffusion-v1-4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T13:34:06.554Z"
     }
   },
   "aliases": {

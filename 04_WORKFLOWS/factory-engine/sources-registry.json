@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T13:27:18.685Z",
-    "lastVerified": "2026-10-31T13:27:18.685Z",
+    "lastChecked": "2026-10-31T13:34:09.199Z",
+    "lastVerified": "2026-10-31T13:34:09.199Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -246,8 +246,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T13:06:48.546Z",
-    "lastVerified": "2026-10-31T13:06:48.546Z",
+    "lastChecked": "2026-10-31T13:34:09.003Z",
+    "lastVerified": "2026-10-31T13:34:09.003Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -403,8 +403,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T10:07:27.953Z",
-    "lastVerified": "2026-10-31T10:07:27.953Z",
+    "lastChecked": "2026-10-31T13:34:03.904Z",
+    "lastVerified": "2026-10-31T13:34:03.904Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -3917,9 +3917,9 @@
   "dingodb-dingo": {
     "name": "dingo",
     "officialUrl": "https://github.com/dingodb/dingo",
-    "lastChecked": "2026-10-30T21:13:09.735Z",
+    "lastChecked": "2026-10-31T13:34:06.418Z",
     "revisionIdentifier": "bb96a741",
-    "lastVerified": "2026-10-30T21:13:09.735Z"
+    "lastVerified": "2026-10-31T13:34:06.418Z"
   },
   "timvisee-ffsend": {
     "name": "ffsend",
@@ -4065,13 +4065,13 @@
     "officialUrl": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T13:09:53.316Z",
-    "lastVerified": "2026-10-28T13:09:53.316Z",
+    "lastChecked": "2026-10-31T13:33:56.607Z",
+    "lastVerified": "2026-10-31T13:33:56.607Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
-    "contentHash": "897f8b51d96fa2becd0662212561c088965367ef1960c25d0034964535ad5a0b",
-    "promotedRulesCount": 1,
+    "contentHash": "86cafee22cbfeda5d482ba7763a58862667d79c248d11d15fba97356f9ab5e03",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -5086,9 +5086,9 @@
   "infracost-infracost": {
     "name": "infracost",
     "officialUrl": "https://github.com/infracost/infracost",
-    "lastChecked": "2026-10-30T22:10:22.263Z",
+    "lastChecked": "2026-10-31T13:34:01.410Z",
     "revisionIdentifier": "98c9711f",
-    "lastVerified": "2026-10-30T22:10:22.263Z"
+    "lastVerified": "2026-10-31T13:34:01.410Z"
   },
   "orbitinghail-sqlsync": {
     "name": "sqlsync",
@@ -6714,9 +6714,9 @@
   "futurice-pepperoni-app-kit": {
     "name": "pepperoni-app-kit",
     "officialUrl": "https://github.com/futurice/pepperoni-app-kit",
-    "lastChecked": "2026-10-28T18:13:55.910Z",
+    "lastChecked": "2026-10-31T13:33:58.869Z",
     "revisionIdentifier": "f58c1410",
-    "lastVerified": "2026-10-28T18:13:55.910Z"
+    "lastVerified": "2026-10-31T13:33:58.869Z"
   },
   "kubeshark-kubeshark": {
     "name": "kubeshark",
@@ -7176,9 +7176,9 @@
   "arxanas-git-branchless": {
     "name": "git-branchless",
     "officialUrl": "https://github.com/arxanas/git-branchless",
-    "lastChecked": "2026-10-30T17:14:22.234Z",
+    "lastChecked": "2026-10-31T13:33:53.897Z",
     "revisionIdentifier": "f37244cb",
-    "lastVerified": "2026-10-30T17:14:22.234Z"
+    "lastVerified": "2026-10-31T13:33:53.897Z"
   },
   "hf-autotrust-gev-26b-decide": {
     "name": "autotrust/GEV-26B-Decide",

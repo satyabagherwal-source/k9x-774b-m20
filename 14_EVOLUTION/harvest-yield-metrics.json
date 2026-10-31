@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T13:27:12.575Z",
-  "total_cycles_completed": 6561,
-  "total_learnings_persisted": 6561,
-  "total_rules_promoted": 6206,
+  "last_updated": "2026-10-31T13:34:06.660Z",
+  "total_cycles_completed": 6562,
+  "total_learnings_persisted": 6562,
+  "total_rules_promoted": 6208,
   "history": [
-    {
-      "timestamp": "2026-10-31T00:52:52.263Z",
-      "repository": "krishhgg/Insomnia",
-      "learningId": "learn-github-krishhgg-insomnia",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T00:53:04.881Z",
       "repository": "reflection/Beam-1.0-501B-A23B",
@@ -1403,6 +1396,13 @@
       "repository": "kotest/kotest",
       "learningId": "learn-github-kotest-kotest",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T13:34:06.660Z",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

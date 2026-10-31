@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-5HSU",
-    "timestamp": "2026-10-30T00:19:01.086Z",
-    "repository": "meshery/meshery",
-    "learningId": "learn-github-meshery-meshery",
-    "contentHash": "48ec877ee8008ca008567c10afde96c298348bd18579e3304b6d6d4ba2e32ba9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-E7X5",
     "timestamp": "2026-10-30T00:25:48.185Z",
     "repository": "bridgecrewio/checkov",
@@ -7492,6 +7477,21 @@
     "contentHash": "355ba4335c2549e1df3aa38d9fd385aa39e151aa70dd67f0416194e338bd9322",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-ZUBF",
+    "timestamp": "2026-10-31T13:34:06.651Z",
+    "repository": "CompVis/stable-diffusion-v1-4",
+    "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
+    "contentHash": "86cafee22cbfeda5d482ba7763a58862667d79c248d11d15fba97356f9ab5e03",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

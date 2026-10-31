@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T13:27:12.580Z",
+  "last_updated": "2026-10-31T13:34:06.664Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1040,14 +1040,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-compvis-stable-diffusion-v1-4",
-      "content_hash": "897f8b51d96fa2becd0662212561c088965367ef1960c25d0034964535ad5a0b",
-      "verified_at": "2026-10-28T13:10:03.323Z",
+      "content_hash": "86cafee22cbfeda5d482ba7763a58862667d79c248d11d15fba97356f9ab5e03",
+      "verified_at": "2026-10-31T13:34:06.663Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T13:10:03.323Z"
+      "last_updated": "2026-10-31T13:34:06.663Z"
     },
     "meta-llama/Meta-Llama-3-8B": {
       "repository": "meta-llama/Meta-Llama-3-8B",
