@@ -6738,3 +6738,5 @@ Every entry in this ledger must capture:
 | `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `0a153df5` | Multi-dimensional audit evidence | 2026-10-31T21:46:01.859Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `012e1f0c` | Multi-dimensional audit evidence | 2026-10-31T21:46:13.164Z |
 | `learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-31T21:46:14.152Z |
+| `learn-huggingface-autotrust-gev-26b-decide-nvfp4` | `https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-31T21:55:13.831Z |
+| `learn-github-vanniktech-gradle-maven-publish-plugin` | `https://github.com/vanniktech/gradle-maven-publish-plugin` | `04ea2405` | Multi-dimensional audit evidence | 2026-10-31T21:56:56.950Z |

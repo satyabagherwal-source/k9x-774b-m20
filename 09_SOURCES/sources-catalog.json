@@ -245,8 +245,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
     "sourceVersion": "hf-autotrust-gev-26b-decide-nvfp4",
     "license": "Open-Source",
-    "contentHash": "b866f2ecf9f32adaf299dedd9429f7bb9199b2d9942456150f4fb10ac391c75b",
-    "lastHarvestedAt": "2026-10-28T20:22:10.593Z",
+    "contentHash": "e678fc1c528d486f91128ead5eca61f6003843db0630a68ac8d79fadc65593c6",
+    "lastHarvestedAt": "2026-10-31T21:55:13.831Z",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4"
   },
   "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf": {
@@ -8123,10 +8123,10 @@
     "repository": "vanniktech/gradle-maven-publish-plugin",
     "platform": "github",
     "sourceUrl": "https://github.com/vanniktech/gradle-maven-publish-plugin",
-    "sourceVersion": "6ba9aead",
+    "sourceVersion": "04ea2405",
     "license": "Apache-2.0",
-    "contentHash": "bf72827bc9b9f1730e5ffb95b0e254e2fb72d43b4122d8ace944d4392ca2aa60",
-    "lastHarvestedAt": "2026-10-19T13:55:51.614Z",
+    "contentHash": "921cae95cff0ef55936602f441a0f0e51cfdfa9822e47f439db2641c579251c2",
+    "lastHarvestedAt": "2026-10-31T21:56:56.950Z",
     "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin"
   },
   "mohamedrejeb-calf": {

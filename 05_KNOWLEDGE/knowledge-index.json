@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T21:46:14.084Z",
+  "last_updated": "2026-10-31T21:56:56.876Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18500,7 +18500,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
       "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
-      "content_hash": "b866f2ecf9f32adaf299dedd9429f7bb9199b2d9942456150f4fb10ac391c75b",
+      "content_hash": "e678fc1c528d486f91128ead5eca61f6003843db0630a68ac8d79fadc65593c6",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
       "promoted_rules": [
@@ -18533,6 +18533,16 @@
           "number": 4184,
           "title": "Dual-Sequence Multi-EOS Token Termination Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6338,
+          "title": "Grouped-Block Micro-Floating-Point Scale Co-Design (NVFP4 Invariant)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6339,
+          "title": "Multi-Token EOS Sequence and Prefix Soft-Capping Synchronization",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -18553,7 +18563,7 @@
         "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv43rd7n",
         "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv4h0go4"
       ],
-      "verified_at": "2026-10-28T20:22:10.528Z",
+      "verified_at": "2026-10-31T21:55:13.740Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57350,14 +57360,29 @@
       "slug": "vanniktech-gradle-maven-publish-plugin",
       "platform": "github",
       "source_url": "https://github.com/vanniktech/gradle-maven-publish-plugin",
-      "source_version": "6ba9aead",
-      "content_hash": "bf72827bc9b9f1730e5ffb95b0e254e2fb72d43b4122d8ace944d4392ca2aa60",
+      "source_version": "04ea2405",
+      "content_hash": "921cae95cff0ef55936602f441a0f0e51cfdfa9822e47f439db2641c579251c2",
       "dossier_path": "07_PROJECT_LEARNING/vanniktech-gradle-maven-publish-plugin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vanniktech-gradle-maven-publish-plugin-learnings.md",
       "promoted_rules": [
         {
           "number": 2616,
           "title": "Update plugin buildconfig to v6.1.2 (#1452)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6340,
+          "title": "BuildService Context Barrier Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6341,
+          "title": "Monotonic Clock Polling with Exponential State Verification",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6342,
+          "title": "Defensive Classpath Reflection Gate for Upstream Binary Breakages",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -57366,7 +57391,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T13:55:51.559Z",
+      "verified_at": "2026-10-31T21:56:56.864Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -164759,6 +164784,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T21:46:14.067Z"
+    },
+    "rule-6338": {
+      "learning_id": "rule-6338",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6338,
+      "title": "Grouped-Block Micro-Floating-Point Scale Co-Design (NVFP4 Invariant)",
+      "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
+      "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T21:55:13.740Z"
+    },
+    "rule-6339": {
+      "learning_id": "rule-6339",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6339,
+      "title": "Multi-Token EOS Sequence and Prefix Soft-Capping Synchronization",
+      "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
+      "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T21:55:13.740Z"
+    },
+    "rule-6340": {
+      "learning_id": "rule-6340",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6340,
+      "title": "BuildService Context Barrier Invariant",
+      "source_url": "https://github.com/vanniktech/gradle-maven-publish-plugin",
+      "source_version": "04ea2405",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T21:56:56.864Z"
+    },
+    "rule-6341": {
+      "learning_id": "rule-6341",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6341,
+      "title": "Monotonic Clock Polling with Exponential State Verification",
+      "source_url": "https://github.com/vanniktech/gradle-maven-publish-plugin",
+      "source_version": "04ea2405",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T21:56:56.864Z"
+    },
+    "rule-6342": {
+      "learning_id": "rule-6342",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6342,
+      "title": "Defensive Classpath Reflection Gate for Upstream Binary Breakages",
+      "source_url": "https://github.com/vanniktech/gradle-maven-publish-plugin",
+      "source_version": "04ea2405",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T21:56:56.864Z"
     }
   },
   "aliases": {

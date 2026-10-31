@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T21:46:14.160Z",
+  "last_updated": "2026-10-31T21:56:56.956Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -260,14 +260,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
-      "content_hash": "b866f2ecf9f32adaf299dedd9429f7bb9199b2d9942456150f4fb10ac391c75b",
-      "verified_at": "2026-10-28T20:22:10.604Z",
+      "content_hash": "e678fc1c528d486f91128ead5eca61f6003843db0630a68ac8d79fadc65593c6",
+      "verified_at": "2026-10-31T21:55:13.839Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T20:22:10.604Z"
+      "last_updated": "2026-10-31T21:55:13.839Z"
     },
     "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF": {
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -12216,14 +12216,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vanniktech-gradle-maven-publish-plugin",
-      "content_hash": "bf72827bc9b9f1730e5ffb95b0e254e2fb72d43b4122d8ace944d4392ca2aa60",
-      "verified_at": "2026-10-19T13:55:51.620Z",
+      "content_hash": "921cae95cff0ef55936602f441a0f0e51cfdfa9822e47f439db2641c579251c2",
+      "verified_at": "2026-10-31T21:56:56.956Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T13:55:51.620Z"
+      "last_updated": "2026-10-31T21:56:56.956Z"
     },
     "MohamedRejeb/Calf": {
       "repository": "MohamedRejeb/Calf",
