@@ -515,8 +515,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4.1-flash",
     "license": "Open-Source",
-    "contentHash": "a0497ef37b2f4a78dc1de2cc23b1fa368de508d1bc9a78d965e3f120f5eb3b85",
-    "lastHarvestedAt": "2026-10-28T07:23:17.077Z",
+    "contentHash": "a29ccc111d9d1546d54da772f13eb61631d061b8f6d58e82c1ac8e666d7e1f87",
+    "lastHarvestedAt": "2026-10-31T10:33:48.747Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash"
   },
   "hf-akatz-ai-minimax-h3-character-swap-lora": {
@@ -11443,10 +11443,10 @@
     "repository": "fabio-rovai/open-ontologies",
     "platform": "github",
     "sourceUrl": "https://github.com/fabio-rovai/open-ontologies",
-    "sourceVersion": "2ecb50c2",
+    "sourceVersion": "cefe5997",
     "license": "MIT",
-    "contentHash": "c8f921755d9731df7233374b7534ed9f651be64d9b7caf47326920d494a49662",
-    "lastHarvestedAt": "2026-10-29T11:01:47.998Z",
+    "contentHash": "8a56c9ccf347ddbe1c596729f2f97e67cbb4752f424a644357f421b4b67f6864",
+    "lastHarvestedAt": "2026-10-31T10:33:57.402Z",
     "learningId": "learn-github-fabio-rovai-open-ontologies"
   },
   "hf-liquidai-lfm3-vl-2b": {

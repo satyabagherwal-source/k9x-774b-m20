@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T10:27:16.838Z",
+  "last_updated": "2026-10-31T10:33:57.333Z",
   "total_verified_learnings": 1182,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -22422,7 +22422,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
       "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
-      "content_hash": "a0497ef37b2f4a78dc1de2cc23b1fa368de508d1bc9a78d965e3f120f5eb3b85",
+      "content_hash": "a29ccc111d9d1546d54da772f13eb61631d061b8f6d58e82c1ac8e666d7e1f87",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
       "promoted_rules": [
@@ -22527,7 +22527,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv46mzeq",
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv4jxf1e"
       ],
-      "verified_at": "2026-10-28T07:23:16.983Z",
+      "verified_at": "2026-10-31T10:33:48.650Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -151254,8 +151254,8 @@
       "slug": "fabio-rovai-open-ontologies",
       "platform": "github",
       "source_url": "https://github.com/fabio-rovai/open-ontologies",
-      "source_version": "2ecb50c2",
-      "content_hash": "c8f921755d9731df7233374b7534ed9f651be64d9b7caf47326920d494a49662",
+      "source_version": "cefe5997",
+      "content_hash": "8a56c9ccf347ddbe1c596729f2f97e67cbb4752f424a644357f421b4b67f6864",
       "dossier_path": "07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
       "promoted_rules": [
@@ -151273,6 +151273,11 @@
           "number": 5495,
           "title": "Isolation of Schema-Only vs Instance-Loaded Execution Stores",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6168,
+          "title": "Merge branch 'feat/346-weighted-repair' into integrate/fix-all-343-350",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -151280,7 +151285,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T11:01:47.903Z",
+      "verified_at": "2026-10-31T10:33:57.315Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -161415,6 +161420,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T10:27:16.817Z"
+    },
+    "rule-6168": {
+      "learning_id": "rule-6168",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6168,
+      "title": "Merge branch 'feat/346-weighted-repair' into integrate/fix-all-343-350",
+      "source_url": "https://github.com/fabio-rovai/open-ontologies",
+      "source_version": "cefe5997",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T10:33:57.315Z"
     }
   },
   "aliases": {

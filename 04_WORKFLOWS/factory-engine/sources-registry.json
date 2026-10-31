@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T10:27:19.482Z",
-    "lastVerified": "2026-10-31T10:27:19.482Z",
+    "lastChecked": "2026-10-31T10:34:00.227Z",
+    "lastVerified": "2026-10-31T10:34:00.227Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -247,8 +247,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T10:00:39.312Z",
-    "lastVerified": "2026-10-31T10:00:39.312Z",
+    "lastChecked": "2026-10-31T10:34:00.217Z",
+    "lastVerified": "2026-10-31T10:34:00.217Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -691,9 +691,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-10-31T05:29:30.928Z",
+    "lastChecked": "2026-10-31T10:33:55.182Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-10-31T05:29:30.928Z"
+    "lastVerified": "2026-10-31T10:33:55.182Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -2494,9 +2494,9 @@
   "volcengine-minecontext": {
     "name": "MineContext",
     "officialUrl": "https://github.com/volcengine/MineContext",
-    "lastChecked": "2026-10-30T17:21:00.900Z",
+    "lastChecked": "2026-10-31T10:33:57.624Z",
     "revisionIdentifier": "171c7a9e",
-    "lastVerified": "2026-10-30T17:21:00.900Z"
+    "lastVerified": "2026-10-31T10:33:57.624Z"
   },
   "zeronsh-zeron": {
     "name": "zeronsh/zeron",
@@ -2708,13 +2708,13 @@
     "officialUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T07:17:53.140Z",
-    "lastVerified": "2026-10-28T07:17:53.140Z",
+    "lastChecked": "2026-10-31T10:33:47.766Z",
+    "lastVerified": "2026-10-31T10:33:47.766Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-    "contentHash": "a0497ef37b2f4a78dc1de2cc23b1fa368de508d1bc9a78d965e3f120f5eb3b85",
-    "promotedRulesCount": 3,
+    "contentHash": "a29ccc111d9d1546d54da772f13eb61631d061b8f6d58e82c1ac8e666d7e1f87",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -5164,9 +5164,9 @@
   "lingodotdev-lingo.dev": {
     "name": "lingo.dev",
     "officialUrl": "https://github.com/lingodotdev/lingo.dev",
-    "lastChecked": "2026-10-28T15:16:28.550Z",
+    "lastChecked": "2026-10-31T10:33:50.283Z",
     "revisionIdentifier": "28435298",
-    "lastVerified": "2026-10-28T15:16:28.550Z"
+    "lastVerified": "2026-10-31T10:33:50.283Z"
   },
   "crossplane-crossplane": {
     "name": "crossplane/crossplane",
@@ -5654,12 +5654,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nezhahq-nezha": {
-    "name": "nezhahq/nezha",
+    "name": "nezha",
     "officialUrl": "https://github.com/nezhahq/nezha",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T11:12:19.576Z",
-    "lastVerified": "2026-10-30T11:12:19.576Z",
+    "lastChecked": "2026-10-31T10:33:45.169Z",
+    "lastVerified": "2026-10-31T10:33:45.169Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nezhahq-nezha",
@@ -5668,7 +5668,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3e7d9ba6"
   },
   "hf-openai-clip-vit-base-patch32": {
     "name": "openai/clip-vit-base-patch32",
@@ -8788,22 +8789,21 @@
     "lastVerified": "2026-10-29T10:58:58.043Z"
   },
   "fabio-rovai-open-ontologies": {
-    "name": "open-ontologies",
+    "name": "fabio-rovai/open-ontologies",
     "officialUrl": "https://github.com/fabio-rovai/open-ontologies",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T18:25:29.502Z",
-    "lastVerified": "2026-10-30T18:25:29.502Z",
+    "lastChecked": "2026-10-31T10:33:56.795Z",
+    "lastVerified": "2026-10-31T10:33:56.795Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fabio-rovai-open-ontologies",
-    "contentHash": "c8f921755d9731df7233374b7534ed9f651be64d9b7caf47326920d494a49662",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 7,
+    "contentHash": "8a56c9ccf347ddbe1c596729f2f97e67cbb4752f424a644357f421b4b67f6864",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "2ecb50c2"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "serpapi-google-search-results-nodejs": {
     "name": "google-search-results-nodejs",

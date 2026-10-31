@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T10:27:16.926Z",
-  "total_cycles_completed": 6509,
-  "total_learnings_persisted": 6509,
-  "total_rules_promoted": 6160,
+  "last_updated": "2026-10-31T10:33:57.407Z",
+  "total_cycles_completed": 6511,
+  "total_learnings_persisted": 6511,
+  "total_rules_promoted": 6161,
   "history": [
-    {
-      "timestamp": "2026-10-30T22:03:30.444Z",
-      "repository": "rmax/scrapy-redis",
-      "learningId": "learn-github-rmax-scrapy-redis",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T22:03:36.500Z",
-      "repository": "maxrave-dev/kotlin-footguns",
-      "learningId": "learn-github-maxrave-dev-kotlin-footguns",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T22:10:24.961Z",
       "repository": "iliyami/MacSai",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-31T10:27:16.926Z",
       "repository": "paradedb/paradedb",
       "learningId": "learn-github-paradedb-paradedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T10:33:48.752Z",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T10:33:57.407Z",
+      "repository": "fabio-rovai/open-ontologies",
+      "learningId": "learn-github-fabio-rovai-open-ontologies",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
