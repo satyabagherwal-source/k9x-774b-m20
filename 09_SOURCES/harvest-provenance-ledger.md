@@ -6628,3 +6628,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-llama-llama-2-7b-chat-hf` | `https://huggingface.co/meta-llama/Llama-2-7b-chat-hf` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-31T15:36:23.731Z |
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `785f7d0d` | Multi-dimensional audit evidence | 2026-10-31T15:36:29.221Z |
 | `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `85162c24` | Multi-dimensional audit evidence | 2026-10-31T15:36:32.880Z |
+| `learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1` | `https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1` | `hf-mistral` | Multi-dimensional audit evidence | 2026-10-31T15:42:40.873Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `c3dc5575` | Multi-dimensional audit evidence | 2026-10-31T15:42:43.269Z |
+| `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `0c22c032` | Multi-dimensional audit evidence | 2026-10-31T15:42:53.841Z |

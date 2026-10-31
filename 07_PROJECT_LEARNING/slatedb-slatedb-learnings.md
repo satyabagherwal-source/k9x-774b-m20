@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source**: github ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
-> **Source Version**: `b3ea6f99`  
+> **Source Version**: `0c22c032`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T23:28:46.330Z  
+> **Timestamp**: 2026-10-31T15:42:53.388Z  
 > **Learning ID**: `learn-github-slatedb-slatedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T23:28:45.310Z  
+> **Harvest Timestamp**: 2026-10-31T15:42:53.384Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cloud native embedded storage engine built on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3603 stars
+- **Stars / Engagement**: 3604 stars
 
 ---
 
@@ -2347,475 +2347,139 @@ func uniffiCheckChecksums() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b3ea6f99` (2026-10-30)
-**Commit Message**: Drop versions a memtable shadows at flush when the WAL is enabled (#2208)
+### Incident Patch 1: `8e62aeeb` (2026-10-30)
+**Commit Message**: Bug fix for issue causing database corruption through panic (#2181)
 
-**File**: `slatedb/src/flush.rs` (modified, +29/-4)
+**File**: `README.md` (modified, +1/-0)
 ```diff
-@@ -313,12 +313,37 @@ impl DbInner {
-     /// close between the reads of the three inputs. Taking the minimum
-     /// still yields a safe boundary, so the race is acceptable.
-     ///
--    /// Call this once per flush attempt. Reuse the same value on every
--    /// retry of that attempt. The three inputs can change between
--    /// retries; reading a fresh value on each retry could make each
--    /// retry keep a different set of entries.
-+    /// Flushes of a memtable use [`DbInner::compute_flush_retention_seq`].
-+    #[cfg(test)]
-     pub(crate) fn compute_min_retention_seq(&self) -> Option<u64> {
-+        self.min_retention_seq_above(self.oracle.last_remote_persisted_seq())
-+    }
-+
-+    /// Compute the retention boundary for a memtable ending at `last_seq`.
-+    ///
-+    /// With the WAL enabled, the L0 is published only after the WAL is
-+    /// durable through `last_seq` (#1255). A [`crate::DbReader`] also raises
-+    /// its durable watermark to the manifest's `last_l0_seq`. A reader
-+    /// cannot therefore see this L0 with a durable watermark below `last_seq`.
-+    /// Use the greater of `last_seq` and the current durable watermark as
-+    /// the durable input to the boundary.
-+    ///
-+    /// Without the WAL, use the current durable watermark. In either case,
-+    /// an open snapshot or transaction may lower the boundary.
-+    ///
-+    /// Compute the boundary once per upload and reuse it across retries so
-+    /// each attempt retains the same entries.
-+    pub(crate) fn compute_flush_retention_seq(&self, last_seq: u64) -> Option<u64> {
-         let durable_seq = self.oracle.last_remote_persisted_seq();
-+        if self.wal_enabled {
-+            self.min_retention_seq_above(durable_seq.max(last_seq))
-+        } else {
-+            self.min_retention_seq_above(durable_seq)
-+        }
-+    }
-+
-+    /// The retention boundary with `durable_seq` as its durable input.
-+    fn min_retention_seq_above(&self, durable_seq: u64) -> Option<u64> {
-         [
-             Some(durable_seq),
-             self.snapshot_manager.min_active_seq(),
-```
-
-**File**: `slatedb/src/memtable_flusher/uploader.rs` (modified, +135/-4)
-```diff
-@@ -191,10 +191,6 @@ impl UploadHandler {
-     }
+@@ -150,6 +150,7 @@ See who's using SlateDB.
  
-     async fn upload_with_retry(&self, job: &UploadJob) -> Result<UploadedMemtable, SlateDBError> {
--        // Read the retention boundary once, before the first attempt
--        // below. Every retry reuses this same value, so every attempt
--        // keeps the same entries.
--        let min_retention_seq = self.db.compute_min_retention_seq();
-         let first_seq = job
-             .imm_memtable
-             .table()
-@@ -205,6 +201,10 @@ impl UploadHandler {
-             .table()
-             .last_seq()
-             .expect("flush of l0 with no entries");
-+        // Read the retention boundary once, before the first attempt
-+        // below. Every retry reuses this same value, so every attempt
-+        // keeps the same entries.
-+        let min_retention_seq = self.db.compute_flush_retention_seq(last_seq);
+ - [4og.io](https://4og.io)
+ - [Atomix](https://www.atomix.com)
++- [Cloudmersive](https://cloudmersive.com)
+ - [Dropbox](https://www.dropbox.com)
+ - [Embucket](https://www.embucket.com)
+ - [Gadget](https://gadget.dev)
+```
+
+**File**: `slatedb/src/seq_tracker.rs` (modified, +276/-62)
+```diff
+@@ -10,8 +10,16 @@ const DEFAULT_CAPACITY: u32 = 8192;
+ /// Default reporting interval in seconds (60 seconds)
+ const DEFAULT_INTERVAL_SECS: u64 = 60;
  
-         let segments = loop {
-             match self
-@@ -286,6 +286,7 @@ mod tests {
-     use crate::iter::RowEntryIterator;
-     use crate::manifest::ManifestCore;
-     use crate::mem_table::ImmutableMemtable;
-+    use crate::oracle::Oracle;
-     use crate::paths::PathResolver;
-     use crate::retrying_object_store::MAX_RETRY_DELAY;
-     use crate::sst_iter::{SstIterator, SstIteratorOptions};
-@@ -964,6 +965,136 @@ mod tests {
-         test.shutdown().await;
-     }
+-/// Version number for the serialization format
+-const SERIALIZATION_VERSION: u8 = 1;
++/// Serialization format version 1. The Gorilla fallback slot holds 32 bits, so this
++/// version can only store a delta-of-delta in the `i32` range.
++const SERIALIZATION_VERSION_V1: u8 = 1;
++
++/// Serialization format version 2. The Gorilla fallback slot holds 64 bits.
++///
++/// The encoder writes version 2 only when a delta-of-delta is outside the `i32` range.
++/// Version 1 cannot store that data correctly. All other trackers stay in version 1, so
++/// older readers can still read them.
++const SERIALIZATION_VERSION_V2: u8 = 2;
  
-+    /// Freezes one memtable holding `entries`, in order, as an upload job.
-+    fn upload_job_of(db: &DbInner, entries: &[(&[u8], &[u8], u64)]) -> UploadJob {
-+        let imm_memtable = {
-+            let mut guard = db.state.write();
-+            for (key, value, seq) in entries {
-+                guard.memtable().put(RowEntry::new_value(key, value, *seq));
-+            }
-+            guard.freeze_memtable(0);
-+            guard.state().imm_memtable.front().cloned().unwrap()
-+        };
-+        let segment_sst_ids = preallocate_ids(&imm_memtable);
-+        UploadJob::new(imm_memtable, segment_sst_ids)
-+    }
+ #[derive(PartialEq, Clone, Copy)]
+ pub(crate) struct TrackedSeq {
+@@ -219,20 +227,31 @@ impl<'de> Deserialize<'de> for SequenceTracker {
+ fn encode_sequence_tracker(tracker: &SequenceTracker) -> Vec<u8> {
+     let mut result = Vec::new();
+ 
++    // Each series is walked once: the delta-of-deltas both choose the format version and feed
++    // the encoder. The sequence numbers are bit-cast to i64 as they stream through, so no
++    // converted copy of the array is made.
++    let sequences = DeltaSeries::new(tracker.sequence_numbers.iter().map(|&x| x as i64));
++    let timestamps = DeltaSeries::new(tracker.timestamps.iter().copied());
 +
-+    /// Uploads `job` and returns the (key, seq, value) entries of its SST.
-+    async fn uploaded_entries(
-+        db: &Arc<DbInner>,
-+        job: UploadJob,
-+    ) -> Vec<(Bytes, u64, ValueDeletable)> {
-+        let test = start_test_uploader(db);
-+        test.submit(job).unwrap();
-+        let msg = timeout(Duration::from_secs(5), test.tracker_rx.recv())
-+            .await
-+            .unwrap()
-+            .unwrap();
-+        let TrackerMessage::UploadComplete(event) = msg else {
-+            panic!("expected UploadComplete");
-+        };
-+        assert_eq!(event.segments.len(), 1);
-+        let segment = &event.segments[0];
-+        let sst_view = SsTableView::identity(
-+            db.table_store
-+                .open_sst(&segment.sst_handle.id, Some(segment.prefix.clone()))
-+                .await
-+                .unwrap(),
-+        );
-+        let mut iter = SstIterator::new_owned_initialized(
-+            ..,
-+            sst_view,
-+            Arc::clone(&db.table_store),
-+            SstIteratorOptions::default(),
-+        )
-+        .await
-+        .unwrap()
-+        .expect("expected non-empty SST");
-+        let mut entries = Vec::new();
-+        while let Some(entry) = iter.next().await.unwrap() {
-+            entries.push((entry.key, entry.seq, entry.value));
-+        }
-+        test.shutdown().await;
-+        entries
-+    }
++    // Use version 2 only when version 1 cannot store a delta-of-delta.
++    let wide_fallback = sequences.needs_wide_fallback() || timestamps.needs_wide_fallback();
 +
-+    #[tokio::test]
-+    async fn should_drop_versions_shadowed_in_the_memtable_before_its_wal_is_durable() {
-+        // The WAL has made nothing durable yet (the durable watermark is 0)
-+        // when the memtable is frozen and uploaded. The manifest writer
-+        // publishes the L0 only once the WAL is durable through seq 2, so
-+        // the shadowed version at seq 1 is never readable from it.
-+        let db = setup_db(
-+            "/tmp/test_l0_flush_uploader_shadowed_before_wal_durable",
-+            Arc::new(FailPointRegistry::new()),
-+        )
-+        .await;
-+        assert!(db.wal_enabled);
-+        assert_eq!(db.oracle.last_remote_persisted_seq(), 0);
-+        let job = upload_job_of(&db, &[(b"key", b"value1", 1), (b"key", b"value2", 2)]);
-+
-+        let entries = uploaded_entries(&db, job).await;
-+
-+        assert_eq!(
-+            entries,
-+            vec![(
-+                Bytes::from("key"),
-+                2,
-+                ValueDeletable::Value(Bytes::from("value2"))
-+            )]
-+        );
-+    }
-+
-+    #[tokio::test]
-+    async fn should_keep_a_shadowed_version_an_open_snapshot_reads() {
-+        let db = setup_db(
-+            "/tmp/test_l0_flush_uploader_shadowed_snapshot",
-+            Arc::new(FailPointRegistry::new()),
-+        )
-+        .await;
-+        let (_, snapshot_seq) = db.snapshot_manager.new_snapshot(Some(1));
-+        assert_eq!(snapshot_seq, 1);
-+        let job = upload_job_of(&db, &[(b"key", b"value1", 1), (b"key", b"value2", 2)]);
-+
-+        let entries = uploaded_entries(&db, job).await;
-+
-+        assert_eq!(
-+            entries,
-+            vec![
-+          
-```
-
----
-
-### Incident Patch 2: `65514581` (2026-10-30)
-**Commit Message**: RFC 0035 Incremental compaction impl (2/2) (#2205)
-
-**File**: `bindings/uniffi/src/config.rs` (modified, +1/-0)
-```diff
-@@ -774,6 +774,7 @@ impl TryFrom<CompactorOptions> for slatedb::config::CompactorOptions {
-             worker: value.worker.map(TryInto::try_into).transpose()?,
-             metric_level: None,
-             commit_compacted_interval: Duration::from_millis(value.commit_compacted_interval_ms),
-+            enable_experimental_incremental_compaction: false,
-             checkpoint_lifetime: Duration::from_millis(value.checkpoint_lifetime_ms),
-             worker_heartbeat_timeout: Duration::from_millis(value.worker_heartbeat_timeout_ms),
-             object_store_max_retries: value.object_store_max_retries,
-```
-
-**File**: `slatedb-dst/src/utils.rs` (modified, +1/-0)
-```diff
-@@ -146,6 +146,7 @@ pub fn build_settings_compactor(rng: &mut impl Rng) -> CompactorOptions {
-         metric_level: None,
-         commit_compacted_interval: rng
-             .random_range(Duration::from_millis(1)..Duration::from_secs(5)),
-+        enable_experimental_incremental_compaction: rng.random_bool(0.5),
-         checkpoint_lifetime: CompactorOptions::default().checkpoint_lifetime,
-         worker_heartbeat_timeout,
-         object_store_max_retries: None,
-```
-
-**File**: `slatedb/src/compactor.rs` (modified, +191/-19)
-```diff
-@@ -76,7 +76,7 @@ use crate::compactions_store::{CompactionsStore, StoredCompactions};
- use crate::compactor::stats::CompactionStats;
- use crate::compactor_state_protocols::CompactorStateWriter;
- use crate::config::CompactorOptions;
--use crate::db_state::{SortedRun, SsTableView};
-+use crate::db_state::{SortedRun, SsTableId, SsTableView};
- use crate::db_status::ClosedResultWriter;
- use crate::dispatcher::{MessageHandler, MessageHandlerExecutor, MessageTickerDef};
- use crate::error::{Error, SlateDBError};
-@@ -542,8 +542,6 @@ pub(crate) struct CompactorEventHandler {
-     /// The value lives only in memory, so a restarted coordinator can make an
-     /// incremental commit on its first poll.
-     last_incremental_commit: Option<chrono::DateTime<chrono::Utc>>,
--    /// Turns on incremental commits. Only tests set it for now.
--    enable_incremental_compaction: bool,
+     // Write version (u8)
+-    result.push(SERIALIZATION_VERSION);
++    result.push(if wide_fallback {
++        SERIALIZATION_VERSION_V2
++    } else {
++        SERIALIZATION_VERSION_V1
++    });
+ 
+     // Write length (as u32, little-endian)
+     let len = tracker.sequence_numbers.len() as u32;
+     result.extend_from_slice(&len.to_le_bytes());
+ 
+     // Encode sequence numbers using Gorilla encoding
+-    let encoded_seqs = encode_sequence_numbers(&tracker.sequence_numbers);
+-    result.extend_from_slice(&encoded_seqs);
++    result.extend_from_slice(&encode_gorilla_i64(&sequences, wide_fallback));
+ 
+     // Encode timestamps using Gorilla encoding
+-    let encoded_timestamps = encode_timestamps(&tracker.timestamps);
+-    result.extend_from_slice(&encoded_timestamps);
++    result.extend_from_slice(&encode_gorilla_i64(&timestamps, wide_fallback));
+ 
+     result
+ }
+@@ -247,9 +266,11 @@ fn decode_sequence_tracker(buf: &[u8]) -> Result<SequenceTracker, String> {
+ 
+     // Read version
+     let version = buf[offset];
+-    if version != SERIALIZATION_VERSION {
+-        return Err(format!("Unsupported version: {}", version));
+-    }
++    let wide_fallback = match version {
++        SERIALIZATION_VERSION_V1 => false,
++        SERIALIZATION_VERSION_V2 => true,
++        _ => return Err(format!("Unsupported version: {}", version)),
++    };
+     offset += 1;
+ 
+     // Read length
+@@ -263,7 +284,8 @@ fn decode_sequence_tracker(buf: &[u8]) -> Result<SequenceTracker, String> {
+     offset += 4;
+ 
+     // Decode sequence numbers
+-    let (encoded_seq_len, sequence_numbers) = decode_sequence_numbers_with_length(&buf[offset..])?;
++    let (encoded_seq_len, sequence_numbers) =
++        decode_sequence_numbers_with_length(&buf[offset..], wide_fallback)?;
+     if sequence_numbers.len() != len {
+         return Err(format!(
+             "Expected {} sequence numbers, got {}",
+@@ -274,7 +296,7 @@ fn decode_sequence_tracker(buf: &[u8]) -> Result<SequenceTracker, String> {
+     offset += encoded_seq_len;
+ 
+     // Decode timestamps
+-    let timestamps = decode_timestamps(&buf[offset..])?;
++    let timestamps = decode_timestamps(&buf[offset..], wide_fallback)?;
+     if timestamps.len() != len {
+         return Err(format!(
+             "Expected {} timestamps, got {}",
+@@ -294,23 +316,74 @@ fn decode_sequence_tracker(buf: &[u8]) -> Result<SequenceTracker, String> {
+     Ok(tracker)
  }
  
- #[async_trait]
-@@ -627,7 +625,6 @@ impl CompactorEventHandler {
-             prev_claimed: HashSet::new(),
-             worker_heartbeat_gauges: HashMap::new(),
-             last_incremental_commit: None,
--            enable_incremental_compaction: false,
-         })
-     }
- 
-@@ -899,11 +896,18 @@ impl CompactorEventHandler {
-         }
- 
-         let final_changed = self.apply_final_commits(&finished_jobs);
-+        // Collect the inputs before the incremental commits change the views of the
-+        // input runs to count the released bytes. Collect them after the final commits,
-+        // so the count leaves out input runs that a final commit removed.
-+        let incremental_inputs = self.incremental_input_ssts(&incremental_jobs);
-         let incremental_changed = self.apply_incremental_commits(&incremental_jobs);
-         self.log_compaction_state();
- 
-         if final_changed || incremental_changed {
-             self.state_writer.write_manifest_safely().await?;
-+            self.stats
-+                .incremental_released_bytes
-+                .increment(self.released_bytes(&incremental_inputs));
-             if incremental_changed {
-                 self.last_incremental_commit = Some(self.system_clock.now());
-             }
-@@ -974,10 +978,12 @@ impl CompactorEventHandler {
-     ///   goes into that run.
-     /// - It has a context, which holds the range plan and stored output.
-     ///
--    /// The list is empty when incremental compaction is off or when less than
--    /// `INCREMENTAL_COMMIT_INTERVAL` passed since the last incremental commit.
-+    /// The list is empty when
-+    /// [`CompactorOptions::enable_experimental_incremental_compaction`] is false or
-+    /// when less than `INCREMENTAL_COMMIT_INTERVAL` passed since the last incremental
-+    /// commit.
-     fn jobs_due_for_incremental_commit(&self) -> Vec<Compaction> {
--        let due = self.enable_incremental_compaction
-+        let due = self.options.enable_experimental_incremental_compaction
-             && self.last_incremental_commit.is_none_or(|last| {
-                 (self.system_clock.now() - last)
-                     .to_std()
-@@ -999,6 +1005,52 @@ impl CompactorEventHandler {
-             .collect()
-     }
- 
-+    /// Returns the estimated size of each SST in the input runs of `jobs`, by SST ID.
-+    /// The recorded output SSTs of `jobs` are not included.
-+    fn incremental_input_ssts(&self, jobs: &[Compaction]) -> HashMap<SsTableId, u64> {
-+        let mut inputs = HashMap::new();
-+        for job in jobs {
-+            let output_ids: HashSet<SsTableId> = job
-+                .subcompactions()
-+                .iter()
-+                .flat_map(|sub| sub.output_ssts().iter().map(|sst| sst.id))
-+                .collect();
-+            for run in job.get_sorted_runs(self.state().db_state()) {
-+                inputs.extend(
-+                    run.sst_views()
-+                        .iter()
-+                        .filter(|view| !output_ids.contains(&view.sst.id))
-+                        .map(|view| (view.sst.id, view.sst.estimate_size())),
-+                );
-+            }
-+        }
-+        inputs
-+    }
++/// A series prepared for Gorilla encoding: its first value, stored in full, and the
++/// delta-of-delta of every later value. Built once per series, because the delta-of-deltas both
++/// choose the format version and feed the encoder.
++///
++/// The arithmetic wraps. Sequence numbers are `u64` values cast to `i64`, so a delta can be
++/// outside the `i64` range. Wrapping keeps the encode and decode round trip exact.
++struct DeltaSeries {
++    first: Option<i64>,
++    dods: Vec<i64>,
++    /// True when a delta-of-delta is outside the range of the 32-bit fallback slot. Decided
++    /// while the delta-of-deltas are produced, so no second pass over them is needed.
++    needs_wide_fallback: bool,
++}
 +
-+    /// Returns the total estimated size of the SSTs in `ssts` that no view in the
-+    /// in-memory manifest uses anymore.
-+    ///
-+    /// `ssts` maps the ID of each SST to its estimated size in bytes. The caller
-+    /// gets it before the input runs are changed by the incremental commit.
-+    ///
-+    /// This method is called after a successful manifest write. The in-memory
-+    /// manifest is then the written manifest.
-+    fn released_bytes(&self, ssts: &HashMap<SsTableId, u64>) -> u64 {
-+        if ssts.is_empty() {
-+            return 0;
-+        }
-+        let retained: HashSet<SsTableId> = self
-+            .state()
-+            .db_state()
-+            .all_sst_views()
-+            .map(|view| view.sst.id)
-+            .collect();
-+        ssts.iter()
-+            .filter(|(id, _)| !retained.contains(id))
-+            .map(|(_, size)| size)
-+            .sum()
-+    }
-+
-     /// Applies the stored progress of `jobs` to the in-mem
-```
-
-**File**: `slatedb/src/config.rs` (modified, +45/-0)
-```diff
-@@ -1281,6 +1281,26 @@ pub struct CompactorOptions {
-     #[serde(serialize_with = "serialize_duration")]
-     pub commit_compacted_interval: Duration,
- 
-+    /// Whether a running compaction publishes the output that it already wrote before
-+    /// the compaction finishes. Defaults to false.
-+    ///
-+    /// This option is experimental. Incremental compaction is not stable yet, and a
-+    /// later release can change or remove this option.
-+    ///
-+    /// When this option is false, readers use the input SSTs of a compaction until the
-+    /// compaction finishes. When this option is true, the compactor publishes the
-+    /// written output at most once a minute, and readers use that output for its keys.
-+    /// During a long compaction, this frees storage earlier, and reads of those keys
-+    /// search fewer SSTs.
-+    ///
-+    /// Garbage collection deletes an input SST only after readers need none of its
-+    /// keys and the compactor checkpoint expires. See [`Self::checkpoint_lifetime`].
-+    ///
-+    /// This option applies to compactions that merge sorted runs. A compaction with L0
-+    /// SSTs in its inputs publishes its output only when it finishes.
-+    #[serde(default)]
-+    pub enable_experimental_incremental_compaction: bool,
-+
-     /// How long the compactor checkpoint protects input SSTs while publishing a
-     /// manifest that replaces them with compacted output.
-     ///
-@@ -1328,6 +1348,7 @@ impl Default for CompactorOptions {
-             worker: Some(CompactionWorkerOptions::default()),
-             metric_level: None,
-             commit_compacted_interval: Duration::from_secs(1),
-+            enable_experimental_incremental_compaction: false,
-             checkpoint_lifetime: default_compactor_checkpoint_lifetime(),
-             worker_heartbeat_timeout: Duration::from_secs(30),
-             object_store_max_retries: None,
-@@ -1350,6 +1371,10 @@ impl std::fmt::Debug for CompactorOptions {
-             .field("worker", &self.worker)
-             .field("metric_level", &self.metric_level)
-             .field("commit_compacted_interval", &self.commit_compacted_interval)
-+            .field(
-+                "enable_experimental_incremental_compaction",
-+                &self.enable_experimental_incremental_compaction,
-+            )
-             .field("checkpoint_lifetime", &self.checkpoint_lifetime)
-             .field("worker_heartbeat_timeout", &self.worker_heartbeat_timeout)
-             .field("object_store_max_retries", &self.object_store_max_retries)
-@@ -1939,6 +1964,26 @@ mod tests {
-         assert_eq!(MetricLevel::default(), options.metric_level);
-     }
- 
-+    #[test]
-+    fn test_compactor_enable_experimental_incremental_compaction_config() {
-+        assert!(!CompactorOptions::default().enable_experimental_incremental_compaction);
-+
-+        let mut value = serde_json::to_value(CompactorOptions::default()).unwrap();
-+        value.as_object_mut().unwrap().insert(
-+            "enable_experimental_incremental_compaction".to_string(),
-+            serde_json::Value::Bool(true),
-+        );
-+        let configured: CompactorOptions = serde_json::from_value(value.clone()).unwrap();
-+        assert!(configured.enable_experimental_incremental_compaction);
-+
-+        value
-+            .as_object_mut()
-+            .unwrap()
-+            .remove("enable_experimental_incremental_compaction");
-+        let omitted: CompactorOptions = serde_json::from_value(value).unwrap();
-+        assert!(!omitted.enable_experimental_incremental_compaction);
-+    }
-+
-     #[test]
-     fn test_compactor_checkpoint_lifetime_config() {
-         let default_lifetime = Duration::from_mins(15);
-```
-
-**File**: `website/src/content/docs/docs/design/compaction.mdx` (modified, +45/-0)
-```diff
-@@ -43,3 +43,48 @@ to enable them.
- To split data with different read/write profiles into independent LSM trees — each with its own
- compaction policy — and to retire whole key ranges cheaply, see
- [Segmented Compaction](/docs/design/segmented-compaction).
-+
-+## Incremental compaction
-+
-+A large compaction can run for a long time. Without incremental compaction, readers keep using the
-+input SSTs until the compaction finishes, and garbage collection keeps those SSTs in storage. With
-+incremental compaction, the compactor publishes the output that a running compaction already wrote.
-+Readers then use that output for its keys. Storage can be freed earlier, and reads of those keys
-+search fewer SSTs.
-+
-+:::caution
-+Incremental compaction is experimental. It is not stable yet, and a later release can change or
-+remove its option.
-+:::
-+
-+Incremental compaction is disabled by default. Set
-+`CompactorOptions::enable_experimental_incremental_compaction` to `true` to enable it:
-+
-+```rust
-+let options = slatedb::config::CompactorOptions {
-+    enable_experimental_incremental_compaction: true,
-+    ..Default::default()
-+};
-+```
-+
-+The compactor publishes this output in incremental commits, at most once a minute. The commit of a
-+finished compaction does not wait. Incremental commits apply to compactions that merge sorted runs.
-+A compaction with L0 SSTs in its inputs publishes its output only when it finishes.
-+
-+Each incremental commit is a manifest update. An SST can have several views, and a view limits the
-+keys that readers can see in an SST. The commit replaces the input views for the keys that the
-+written output covers with views of the output SSTs. The input keys that the output does not cover
-+yet stay in the input views.
-+
-+Before each manifest update, the compactor writes a checkpoint, a reference that keeps an older
-+manifest available. Garbage collection deletes an input SST only after no view uses it and the
-+checkpoint expires, so reads that started before the commit can still finish.
-+`CompactorOptions::checkpoint_lifetime` sets how long the checkpoint lasts.
-+
-+The counter `slatedb.compactor.incremental_released_bytes` estimates the bytes of the input SSTs
-+that incremental commits release. It counts an SST once, after a successful commit removes its last
-+view from all trees. A released SST is not deleted yet. It stays until garbage
-+collection deletes it, so storage use goes down later than this counter goes up.
-+
-+If a worker stops, the next worker resumes the compaction from its progress. Key ranges that are
-+already complete do not run again.
-```
-
-**File**: `website/src/content/docs/docs/operations/metrics.mdx` (modified, +1/-0)
-```diff
-@@ -129,6 +129,7 @@ All metric names use dot-separated notation: `slatedb.<subsystem>.<metric>`.
- |------|------|--------|-------------|
- | `slatedb.compactor.bytes_compacted` | counter | | Total bytes compacted |
- | `slatedb.compactor.epoch` | gauge | | Current compactor epoch |
-+| `slatedb.compactor.incremental_released_bytes` | counter | | Estimated bytes of input SSTs that incremental compaction released (stays at zero unless incremental compaction is on) |
- | `slatedb.compactor.last_compaction_timestamp_sec` | gauge | | Last compaction time (epoch seconds) |
- | `slatedb.compactor.running_compactions` | up_down_counter | | Currently running compactions |
- | `slatedb.compactor.total_bytes_being_compacted` | gauge | | Bytes in active compactions |
++impl DeltaSeries {
++    fn new(values: impl IntoIterator<Item = i64>) -> Self {
++        let mut values = values.into_iter();
++        let Some(first) = values.next() else {
++            return Self {
++                first: None,
++                dods: Vec::new(),
++                needs_wide_fa
 ```
 
 #### Recent Merged Pull Requests:
@@ -2844,54 +2508,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Drop versions a memtable shadows at flush when the WAL is enabled (#2208)
+## X. fix for issue causing database corruption through panic (#2181)
 
 **RULE**:
-When implementing operations in `slatedb/src/flush.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b3ea6f99`: Drop versions a memtable shadows at flush when the WAL is enabled (#2208). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8e62aeeb`: fix for issue causing database corruption through panic (#2181). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `slatedb/src/flush.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Flushes of a memtable use [`DbInner::compute_flush_retention_seq`].
-    #[cfg(test)]
-        self.min_retention_seq_above(self.oracle.last_remote_persisted_seq())
-    }
-
-    /// Compute the retention boundary for a memtable ending at `last_seq`.
-    ///
-    /// With the WAL enabled, the L0 is published only after the WAL is
-    /// durable through `last_seq` (#1255). A [`crate::DbReader`] also raises
-    /// its durable watermark to the manifest's `last_l0_seq`. A reader
-    /// cannot therefore see this L0 with a durable watermark below `last_seq`.
-    /// Use the greater of `last_seq` and the current durable watermark as
-    /// the durable input to the boundary.
-    ///
-    /// Without the WAL, use the current durable watermark. In either case,
-    /// an open snapshot or transaction may lower the boundary.
-    ///
-    /// Compute the boundary once per upload and reuse it across retries so
-    /// each attempt retains the same entries.
-    pub(crate) fn compute_flush_retention_seq(&self, last_seq: u64) -> Option<u64> {
-        if self.wal_enabled {
-            self.min_retention_seq_above(durable_seq.max(last_seq))
-        } else {
-            self.min_retention_seq_abov
+- [Cloudmersive](https://cloudmersive.com)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    /// Call this once per flush attempt. Reuse the same value on every
-    /// retry of that attempt. The three inputs can change between
-    /// retries; reading a fresh value on each retry could make each
-    /// retry keep a different set of entries.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b3ea6f99` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8e62aeeb` are properly handled with clean fallback behavior.

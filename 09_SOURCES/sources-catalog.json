@@ -985,8 +985,8 @@
     "sourceUrl": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
     "sourceVersion": "hf-mistralai-mixtral-8x7b-instruct-v0.1",
     "license": "Open-Source",
-    "contentHash": "41d3dc17502bd9979ff911af4162533c554bbe144b9f3ebd0781cdef34408f7b",
-    "lastHarvestedAt": "2026-10-28T15:03:19.461Z",
+    "contentHash": "94cc5a24c2705b956f4688d2c9577893c96a1a6cf85ed0e09890e1262bd41772",
+    "lastHarvestedAt": "2026-10-31T15:42:40.873Z",
     "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1"
   },
   "hf-deepseek-ai-deepseek-v3": {
@@ -4573,10 +4573,10 @@
     "repository": "slatedb/slatedb",
     "platform": "github",
     "sourceUrl": "https://github.com/slatedb/slatedb",
-    "sourceVersion": "b3ea6f99",
+    "sourceVersion": "0c22c032",
     "license": "Apache-2.0",
-    "contentHash": "3f1656d8940776a2c6587f13effa8976594ebb822b5b09d58e3c12f631713cd9",
-    "lastHarvestedAt": "2026-10-30T23:28:46.975Z",
+    "contentHash": "c76a9e4d43f855a0a3eb1107b3cf285332a7cc194fd7646fe6db5e019e996d5f",
+    "lastHarvestedAt": "2026-10-31T15:42:53.841Z",
     "learningId": "learn-github-slatedb-slatedb"
   },
   "react-component-slider": {
@@ -7643,10 +7643,10 @@
     "repository": "biomejs/biome",
     "platform": "github",
     "sourceUrl": "https://github.com/biomejs/biome",
-    "sourceVersion": "10db33df",
+    "sourceVersion": "c3dc5575",
     "license": "Apache-2.0",
-    "contentHash": "af85799f5df6859f0fe92d37d7a4bb84f2f10d056ffaa153e76868f2150edd5e",
-    "lastHarvestedAt": "2026-10-30T19:58:26.659Z",
+    "contentHash": "566e8d1271671257322b42355cf9b8c7670de2f8df241abdce7639acc12812e0",
+    "lastHarvestedAt": "2026-10-31T15:42:43.269Z",
     "learningId": "learn-github-biomejs-biome"
   },
   "msasikanth-twine": {

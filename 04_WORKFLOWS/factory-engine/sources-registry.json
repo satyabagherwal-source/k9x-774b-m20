@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T15:36:35.428Z",
-    "lastVerified": "2026-10-31T15:36:35.428Z",
+    "lastChecked": "2026-10-31T15:42:56.393Z",
+    "lastVerified": "2026-10-31T15:42:56.393Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -246,8 +246,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T14:59:41.048Z",
-    "lastVerified": "2026-10-31T14:59:41.048Z",
+    "lastChecked": "2026-10-31T15:42:52.198Z",
+    "lastVerified": "2026-10-31T15:42:52.198Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1788,9 +1788,9 @@
   "sigstore-cosign": {
     "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
-    "lastChecked": "2026-10-31T12:15:46.793Z",
+    "lastChecked": "2026-10-31T15:42:47.216Z",
     "revisionIdentifier": "ef56e699",
-    "lastVerified": "2026-10-31T12:15:46.793Z"
+    "lastVerified": "2026-10-31T15:42:47.216Z"
   },
   "alibaba-zvec": {
     "name": "zvec",
@@ -4909,14 +4909,14 @@
     "officialUrl": "https://github.com/slatedb/slatedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T23:28:45.310Z",
-    "lastVerified": "2026-10-30T23:28:45.310Z",
+    "lastChecked": "2026-10-31T15:42:53.384Z",
+    "lastVerified": "2026-10-31T15:42:53.384Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-slatedb-slatedb",
-    "contentHash": "3f1656d8940776a2c6587f13effa8976594ebb822b5b09d58e3c12f631713cd9",
+    "contentHash": "c76a9e4d43f855a0a3eb1107b3cf285332a7cc194fd7646fe6db5e019e996d5f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5064,12 +5064,12 @@
     "officialUrl": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T15:03:18.474Z",
-    "lastVerified": "2026-10-28T15:03:18.474Z",
+    "lastChecked": "2026-10-31T15:42:39.757Z",
+    "lastVerified": "2026-10-31T15:42:39.757Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
-    "contentHash": "41d3dc17502bd9979ff911af4162533c554bbe144b9f3ebd0781cdef34408f7b",
+    "contentHash": "94cc5a24c2705b956f4688d2c9577893c96a1a6cf85ed0e09890e1262bd41772",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6107,9 +6107,9 @@
   "pytest-dev-pytest-testinfra": {
     "name": "pytest-testinfra",
     "officialUrl": "https://github.com/pytest-dev/pytest-testinfra",
-    "lastChecked": "2026-10-31T00:20:29.938Z",
+    "lastChecked": "2026-10-31T15:42:44.634Z",
     "revisionIdentifier": "04cccc39",
-    "lastVerified": "2026-10-31T00:20:29.938Z"
+    "lastVerified": "2026-10-31T15:42:44.634Z"
   },
   "greptimeteam-greptimedb": {
     "name": "GreptimeTeam/greptimedb",
@@ -7615,9 +7615,9 @@
   "jordanbaird-ice": {
     "name": "Ice",
     "officialUrl": "https://github.com/jordanbaird/Ice",
-    "lastChecked": "2026-10-28T20:37:43.124Z",
+    "lastChecked": "2026-10-31T15:42:42.144Z",
     "revisionIdentifier": "11edd391",
-    "lastVerified": "2026-10-28T20:37:43.124Z"
+    "lastVerified": "2026-10-31T15:42:42.144Z"
   },
   "agent-of-empires-agent-of-empires": {
     "name": "agent-of-empires/agent-of-empires",
@@ -7877,14 +7877,14 @@
     "officialUrl": "https://github.com/biomejs/biome",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T19:54:07.713Z",
-    "lastVerified": "2026-10-30T19:54:07.713Z",
+    "lastChecked": "2026-10-31T15:42:42.837Z",
+    "lastVerified": "2026-10-31T15:42:42.837Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-biomejs-biome",
-    "contentHash": "af85799f5df6859f0fe92d37d7a4bb84f2f10d056ffaa153e76868f2150edd5e",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 10,
+    "contentHash": "566e8d1271671257322b42355cf9b8c7670de2f8df241abdce7639acc12812e0",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

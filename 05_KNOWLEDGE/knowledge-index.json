@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T15:36:32.812Z",
+  "last_updated": "2026-10-31T15:42:53.786Z",
   "total_verified_learnings": 1184,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4759,8 +4759,8 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "10db33df",
-      "content_hash": "af85799f5df6859f0fe92d37d7a4bb84f2f10d056ffaa153e76868f2150edd5e",
+      "source_version": "c3dc5575",
+      "content_hash": "566e8d1271671257322b42355cf9b8c7670de2f8df241abdce7639acc12812e0",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
@@ -4818,6 +4818,11 @@
           "number": 5852,
           "title": "Container-Prefix State Invariant in Indented Prose Wrapping",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6234,
+          "title": "lint): add noMissingScssInterpolation (#12342)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4825,7 +4830,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T19:58:26.573Z",
+      "verified_at": "2026-10-31T15:42:43.209Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26237,7 +26242,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
       "source_version": "hf-mistralai-mixtral-8x7b-instruct-v0.1",
-      "content_hash": "41d3dc17502bd9979ff911af4162533c554bbe144b9f3ebd0781cdef34408f7b",
+      "content_hash": "94cc5a24c2705b956f4688d2c9577893c96a1a6cf85ed0e09890e1262bd41772",
       "dossier_path": "07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md",
       "promoted_rules": [],
@@ -26258,7 +26263,7 @@
         "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv3wzmkj",
         "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv4bppvo"
       ],
-      "verified_at": "2026-10-28T15:03:19.358Z",
+      "verified_at": "2026-10-31T15:42:40.796Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51494,8 +51499,8 @@
       "slug": "slatedb-slatedb",
       "platform": "github",
       "source_url": "https://github.com/slatedb/slatedb",
-      "source_version": "b3ea6f99",
-      "content_hash": "3f1656d8940776a2c6587f13effa8976594ebb822b5b09d58e3c12f631713cd9",
+      "source_version": "0c22c032",
+      "content_hash": "c76a9e4d43f855a0a3eb1107b3cf285332a7cc194fd7646fe6db5e019e996d5f",
       "dossier_path": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "promoted_rules": [
@@ -51523,6 +51528,11 @@
           "number": 5938,
           "title": "Drop versions a memtable shadows at flush when the WAL is enabled (#2208)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6235,
+          "title": "fix for issue causing database corruption through panic (#2181)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51530,7 +51540,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T23:28:46.864Z",
+      "verified_at": "2026-10-31T15:42:53.774Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162726,6 +162736,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T15:36:32.795Z"
+    },
+    "rule-6234": {
+      "learning_id": "rule-6234",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6234,
+      "title": "lint): add noMissingScssInterpolation (#12342)",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "c3dc5575",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T15:42:43.209Z"
+    },
+    "rule-6235": {
+      "learning_id": "rule-6235",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6235,
+      "title": "fix for issue causing database corruption through panic (#2181)",
+      "source_url": "https://github.com/slatedb/slatedb",
+      "source_version": "0c22c032",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T15:42:53.774Z"
     }
   },
   "aliases": {

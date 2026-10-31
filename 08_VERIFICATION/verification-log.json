@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-LMJ9",
-    "timestamp": "2026-10-30T05:39:29.493Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "801df97a169325087389ccbbe499594f3ca778ea7cf72d4caafe31fc3cac3dd2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-TXUJ",
-    "timestamp": "2026-10-30T05:45:57.403Z",
-    "repository": "wasm-bindgen/wasm-pack",
-    "learningId": "learn-github-wasm-bindgen-wasm-pack",
-    "contentHash": "433068903230fa48a0ffc5981373fce84168193208334dbe261ffb373f325471",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-U1N7",
-    "timestamp": "2026-10-30T05:46:02.323Z",
-    "repository": "rook/rook",
-    "learningId": "learn-github-rook-rook",
-    "contentHash": "b91784086871d12370847c05f7b8827672856c467aaf0449c8f723c1fc6edd53",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-U82X",
     "timestamp": "2026-10-30T05:46:10.665Z",
     "repository": "GreptimeTeam/greptimedb",
@@ -7490,6 +7445,51 @@
     "repository": "tw93/Mole",
     "learningId": "learn-github-tw93-mole",
     "contentHash": "2858af8e0275a70f697ce2e91afcb4549edb5adf6d811db28970e6f23785e03d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-L6N3",
+    "timestamp": "2026-10-31T15:42:40.863Z",
+    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+    "contentHash": "94cc5a24c2705b956f4688d2c9577893c96a1a6cf85ed0e09890e1262bd41772",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-L8HU",
+    "timestamp": "2026-10-31T15:42:43.266Z",
+    "repository": "biomejs/biome",
+    "learningId": "learn-github-biomejs-biome",
+    "contentHash": "566e8d1271671257322b42355cf9b8c7670de2f8df241abdce7639acc12812e0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-LGNG",
+    "timestamp": "2026-10-31T15:42:53.836Z",
+    "repository": "slatedb/slatedb",
+    "learningId": "learn-github-slatedb-slatedb",
+    "contentHash": "c76a9e4d43f855a0a3eb1107b3cf285332a7cc194fd7646fe6db5e019e996d5f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
