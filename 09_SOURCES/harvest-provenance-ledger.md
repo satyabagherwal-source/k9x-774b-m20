@@ -6625,3 +6625,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-bigscience-bloom` | `https://huggingface.co/bigscience/bloom` | `hf-bigscie` | Multi-dimensional audit evidence | 2026-10-31T15:14:42.216Z |
 | `learn-huggingface-stabilityai-stable-diffusion-3-medium` | `https://huggingface.co/stabilityai/stable-diffusion-3-medium` | `hf-stabili` | Multi-dimensional audit evidence | 2026-10-31T15:29:40.544Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `5fdfe09e` | Multi-dimensional audit evidence | 2026-10-31T15:29:56.746Z |
+| `learn-huggingface-meta-llama-llama-2-7b-chat-hf` | `https://huggingface.co/meta-llama/Llama-2-7b-chat-hf` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-31T15:36:23.731Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `785f7d0d` | Multi-dimensional audit evidence | 2026-10-31T15:36:29.221Z |
+| `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `85162c24` | Multi-dimensional audit evidence | 2026-10-31T15:36:32.880Z |

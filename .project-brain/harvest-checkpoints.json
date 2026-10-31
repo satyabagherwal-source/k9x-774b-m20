@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T15:29:56.752Z",
+  "last_updated": "2026-10-31T15:36:32.888Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1265,14 +1265,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
-      "content_hash": "8b0c11704806dc4bbf8015994cdfacd9199bec278139e93cdb7b6814b8cc4160",
-      "verified_at": "2026-10-28T14:56:28.657Z",
+      "content_hash": "0b7c6ef6501f76cd6ed543976e228478988770b5d14e09f212c003851fbf0767",
+      "verified_at": "2026-10-31T15:36:23.740Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T14:56:28.657Z"
+      "last_updated": "2026-10-31T15:36:23.740Z"
     },
     "meta-llama/Llama-2-7b": {
       "repository": "meta-llama/Llama-2-7b",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "21fb542fb4687a240a2cf048ff7dce2c1fd67bd96557287ca7a112686112d243",
-      "verified_at": "2026-10-30T23:51:38.445Z",
+      "content_hash": "7d6b77560598b14e9b8fc0b797e4a0ba40d0cf4fa59b3f53d0fcf3c70acf2f1f",
+      "verified_at": "2026-10-31T15:36:29.246Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T23:51:38.445Z"
+      "last_updated": "2026-10-31T15:36:29.246Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -11106,14 +11106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tw93-mole",
-      "content_hash": "d5550a887ce68f11fc2b7ee732f382304e15a37752cea2547ce9bf19250fa633",
-      "verified_at": "2026-10-28T20:22:16.695Z",
+      "content_hash": "2858af8e0275a70f697ce2e91afcb4549edb5adf6d811db28970e6f23785e03d",
+      "verified_at": "2026-10-31T15:36:32.887Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T20:22:16.695Z"
+      "last_updated": "2026-10-31T15:36:32.887Z"
     },
     "siderolabs/talos": {
       "repository": "siderolabs/talos",

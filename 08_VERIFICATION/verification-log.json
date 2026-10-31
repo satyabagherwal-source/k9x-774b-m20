@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-L99U",
-    "timestamp": "2026-10-30T05:39:12.306Z",
-    "repository": "reason-machines/reason-network",
-    "learningId": "learn-github-reason-machines-reason-network",
-    "contentHash": "0f2c7e21f3f8728dd00bf9b17ca7d00f5b253155df2a06dec81c5f894f13021d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-LFTQ",
-    "timestamp": "2026-10-30T05:39:20.798Z",
-    "repository": "prof18/feed-flow",
-    "learningId": "learn-github-prof18-feed-flow",
-    "contentHash": "1695e7860d91d9fa31b3c5edf5dd3170d423978b0c45991f5cbf7e5ae9247963",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-LHYE",
-    "timestamp": "2026-10-30T05:39:23.558Z",
-    "repository": "juicedata/juicefs",
-    "learningId": "learn-github-juicedata-juicefs",
-    "contentHash": "6c4e9dfc5144a3c6b112e2bd181ac3a5ae65ea49feaf5d76e06f319297ffb5e2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-LMJ9",
     "timestamp": "2026-10-30T05:39:29.493Z",
     "repository": "yugabyte/yugabyte-db",
@@ -7490,6 +7445,51 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "e5a68e3168583c917cb634c5da9dd4daa8f76360a15bbbc26006d7e8353c0fff",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-D3MY",
+    "timestamp": "2026-10-31T15:36:23.722Z",
+    "repository": "meta-llama/Llama-2-7b-chat-hf",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
+    "contentHash": "0b7c6ef6501f76cd6ed543976e228478988770b5d14e09f212c003851fbf0767",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-D7VM",
+    "timestamp": "2026-10-31T15:36:29.218Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "7d6b77560598b14e9b8fc0b797e4a0ba40d0cf4fa59b3f53d0fcf3c70acf2f1f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-DAP9",
+    "timestamp": "2026-10-31T15:36:32.877Z",
+    "repository": "tw93/Mole",
+    "learningId": "learn-github-tw93-mole",
+    "contentHash": "2858af8e0275a70f697ce2e91afcb4549edb5adf6d811db28970e6f23785e03d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

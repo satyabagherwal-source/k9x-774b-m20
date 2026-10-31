@@ -965,8 +965,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
     "sourceVersion": "hf-meta-llama-llama-2-7b-chat-hf",
     "license": "Open-Source",
-    "contentHash": "8b0c11704806dc4bbf8015994cdfacd9199bec278139e93cdb7b6814b8cc4160",
-    "lastHarvestedAt": "2026-10-28T14:56:28.648Z",
+    "contentHash": "0b7c6ef6501f76cd6ed543976e228478988770b5d14e09f212c003851fbf0767",
+    "lastHarvestedAt": "2026-10-31T15:36:23.731Z",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf"
   },
   "hf-meta-llama-llama-2-7b": {
@@ -7373,10 +7373,10 @@
     "repository": "tw93/Mole",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Mole",
-    "sourceVersion": "45ee88cb",
+    "sourceVersion": "85162c24",
     "license": "GPL-3.0",
-    "contentHash": "d5550a887ce68f11fc2b7ee732f382304e15a37752cea2547ce9bf19250fa633",
-    "lastHarvestedAt": "2026-10-28T20:22:16.689Z",
+    "contentHash": "2858af8e0275a70f697ce2e91afcb4549edb5adf6d811db28970e6f23785e03d",
+    "lastHarvestedAt": "2026-10-31T15:36:32.880Z",
     "learningId": "learn-github-tw93-mole"
   },
   "siderolabs-talos": {
@@ -7803,10 +7803,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/codewhale-hq/Codewhale",
-    "sourceVersion": "b92540d8",
+    "sourceVersion": "785f7d0d",
     "license": "MIT",
-    "contentHash": "cfedc6d9f729ce7a7409caf41731783b593248ed90bc740c73dd5b7d58bc39cb",
-    "lastHarvestedAt": "2026-10-30T19:47:42.256Z",
+    "contentHash": "7d6b77560598b14e9b8fc0b797e4a0ba40d0cf4fa59b3f53d0fcf3c70acf2f1f",
+    "lastHarvestedAt": "2026-10-31T15:36:29.221Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "meshtastic-meshtastic-android": {

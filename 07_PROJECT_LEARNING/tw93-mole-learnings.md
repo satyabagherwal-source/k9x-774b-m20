@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tw93-mole-learnings.md`  
 > **Source**: github ([https://github.com/tw93/Mole](https://github.com/tw93/Mole))  
-> **Source Version**: `45ee88cb`  
+> **Source Version**: `85162c24`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T20:22:16.263Z  
+> **Timestamp**: 2026-10-31T15:36:32.271Z  
 > **Learning ID**: `learn-github-tw93-mole`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tw93-mole-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tw93/Mole](https://github.com/tw93/Mole))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T20:22:16.258Z  
+> **Harvest Timestamp**: 2026-10-31T15:36:32.265Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🐹 Keep your Mac and PC clean, light, and running like new. Fast open-source CLI, plus native Mac and Windows apps.
 - **Primary Language / Ecosystem**: Shell
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 73187 stars
+- **Stars / Engagement**: 73431 stars
 
 ---
 
@@ -1993,11 +1993,11 @@ func jsonFileEntriesFromFileEntries(files []fileEntry) []jsonFileEntry {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1878** (2026-10-29): **[Mac App Bug] In**
+  *Symptoms*: ### Mole Mac app version  1.18.0 (343)  ### macOS version  27.2.0  ### Mac model  MacBookPro18,1 (Apple M1 Pro)  ### Affected area  Optimize  ### What happened?  After optimizing, in Spotlight the switch „Show Related Content“ is turned on, I keep it always turned off.  ### Steps to reproduce  1. Open Mole 2. Go to "Optimize" 3. Klick in Optimize  4. Mole is working and finishing  5. When I open System Settings on MacOS in the Menu in the upper left corner of MacOS, the switch „Show Related Content“ is turned on, although it is always set to off.  ### Expected behavior  <img width="1480" height="2014" alt="Image" src="https://github.com/user-attachments/assets/be4dd83e-706b-47eb-82fd-b12ffc275245" />  ### Screenshots or safe logs  <img width="1480" height="2014" alt="Image" src="https://github.com/user-attachments/assets/0b1c4ecc-58f6-4d9b-8a7f-670ddd041463" />  ### Before submitting  - [x] I updated to the latest stable Mole Mac app, reopened it, and reproduced this problem (or this report explains why I cannot update). - [x] I did not include license keys, order numbers, or private data.
+
 - **Issue #1877** (2026-10-28): **[Mac App Bug]**
   *Symptoms*: ### Mole Mac app version  v1.18.0  ### macOS version  macOS 27.0.1  ### Mac model  MacBook Pro M2  ### Affected area  Clean  ### What happened?  在 **清理** 页面（Clean）中央出现了一个大面积的亮粉色方块，覆盖了原本应该显示的图标和文案区域，导致页面内容严重错乱。方块旁边还能看到一个小小的圆形图标，页面文字"山雨涤尘垢，潮退万象新"也被粉色方块遮挡了一部分。  **切换到其他 Tab（如「软件」）再切回「清理」页面后，粉色方块消失，页面恢复正常显示。**  这种现象看起来像是图片/纹理首次加载失败、SwiftUI/AppKit Canvas 未正确绘制、或是 Metal/Shader 层在首次渲染时的占位异常（品红色 placeholder）。   ### Steps to reproduce  1. 打开 Mole，进入 **清理** 页面。 2. 观察页面中央是否出现大面积亮粉色方块，覆盖图标和文案。 3. 切换到 **软件**（或其他）Tab。 4. 再切回 **清理** 页面 —— 粉色方块消失，显示正常。  ### Expected behavior  清理页面首次进入时应直接正确渲染出图标，不应出现任何颜色异常的占位方块。  ### Screenshots or safe logs  <img width="1100" height="772" alt="Image" src="https://github.com/user-attachments/assets/ab239a2f-3fa8-4ed8-a1b7-a566c034eb37" />  <img width="1100" height="772" alt="Image" src="https://github.com/user-attachments/assets/e3ad38a6-c627-4558-bd92-3a9cfc72b071" />  ### Before submitting  - [x] I updated to the latest stable Mole Mac app, reopened it, and reproduced this problem (or this report explains why I cannot update). - [x] I did not include license keys, order numbers, or private data.
-
-- **Issue #1863** (2026-10-27): **[Mac App Bug]**
-  *Symptoms*: ### Mole Mac app version  v1.18.0  ### macOS version  27.0.1  ### Mac model  Mac mini M4  ### Affected area  Other  ### What happened?  应用主内容区域的左右两侧内边距在不同页面之间不统一。在 **清理**、**软件**、**分析**、**状态** 四个页面之间切换时，内容左右两侧内边距不一致，导致界面看起来不平衡、视觉上不统一。    ### Steps to reproduce  1. 打开 Mole。 2. 进入 **清理** 页面，扫描结束后观察分类列表的左右侧内边距。 3. 切换到 **软件** 页面，观察软件列表的左侧内边距。 4. 切换到 **分析** 页面，观察分析结果左右侧内边距。 5. 切换到 **状态** 页面，观察状态左右侧内边距。 6. 对比四个页面的左右侧留白 —— 四者没有对齐。  ### Expected behavior  所有主页面的内容内边距应当统一，整体界面更精致、一致。  ### Screenshots or safe logs  <img width="5500" height="4039" alt="Image" src="https://github.com/user-attachments/assets/8ecbfc3d-0f9c-4ad2-9a33-fb6767ecba8b" />  ### Before submitting  - [x] I updated to the latest stable Mole Mac app, reopened it, and reproduced this problem (or this report explains why I cannot update). - [x] I did not include license keys, order numbers, or private data.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2014,232 +2014,515 @@ func jsonFileEntriesFromFileEntries(files []fileEntry) []jsonFileEntry {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f954e2fd` (2026-10-28)
-**Commit Message**: fix(clean): preserve installed npx packages (#1872)
+### Incident Patch 1: `21d44166` (2026-10-31)
+**Commit Message**: fix(clean): clean the yarn berry global cache instead of ~/.yarn/cache
 
-* fix(clean): preserve installed npx packages
+The "Yarn cache" row cleaned ~/.yarn/cache/*, which Yarn never writes:
+Berry keeps .yarn/cache inside each project and its shared global cache
+in ~/.yarn/berry/cache, and Classic on macOS uses ~/Library/Caches/Yarn,
+which the next row already cleans. So the row was always empty and the
+Berry global cache was never offered.
 
-* docs: record npx package cleanup incident
+The row now cleans ~/.yarn/berry/cache/* as "Yarn Berry cache", same
+tier and plain safe_clean as before. The whitelist catalog row follows
+it ("Yarn Berry package cache"), and ~/.yarn/cache joins the list of
+rows no cleanup consults, so a protected entry still keeps the cache
+the cleaner deletes. A saved ~/.yarn/cache line keeps working as a
+custom pattern. Mole Mac made the same change.
 
-* docs: leave the npx incident row for the merged fix commit
+Verified: the new "clean_dev_npm cleans the Yarn Berry global cache,
+not the unused ~/.yarn/cache" case and the two updated
+manage_whitelist.bats cases were red on the old code and are green;
+manage_whitelist.bats 51/51 ok; scripts/check.sh --no-format passes.
+clean_dev_caches.bats has five owner-root failures that fail the same
+way on untouched origin/main. Revert: git revert this commit.
 
-The row named c258c52, a commit on the contributor branch. Mole squash-merges, so that hash never reaches main and scripts/audit_incidents.py fails it on a full clone (CI's shallow clone only shape-checks it). The row is recorded right after the merge with the squash commit.
-
----------
-
-Co-authored-by: r266-tech <[REDACTED_EMAIL]>
-Co-authored-by: youxi798 <[REDACTED_EMAIL]>
-
-**File**: `lib/clean/dev.sh` (modified, +3/-3)
+**File**: `lib/clean/dev.sh` (modified, +4/-1)
 ```diff
-@@ -554,9 +554,9 @@ clean_dev_npm() {
-         fi
-     fi
- 
--    # These residual directories are not removed by `npm cache clean --force`
--    local -a npm_residual_dirs=("_cacache" "_npx" "_logs" "_prebuilds")
--    local -a npm_descriptions=("npm cache directory" "npm npx cache" "npm logs" "npm prebuilds")
-+    # Keep _npx: running commands can still read its installed packages.
-+    local -a npm_residual_dirs=("_cacache" "_logs" "_prebuilds")
-+    local -a npm_descriptions=("npm cache directory" "npm logs" "npm prebuilds")
- 
-     # Clean default npm cache path
-     local i
+@@ -717,7 +717,10 @@ clean_dev_npm() {
+     note_activity
+     safe_clean ~/.tnpm/_cacache/* "tnpm cache directory"
+     safe_clean ~/.tnpm/_logs/* "tnpm logs"
+-    safe_clean ~/.yarn/cache/* "Yarn cache"
++    # Yarn Berry keeps .yarn/cache inside each project and its shared global
++    # cache in ~/.yarn/berry/cache; ~/.yarn/cache is never written. Yarn
++    # Classic on macOS uses ~/Library/Caches/Yarn.
++    safe_clean ~/.yarn/berry/cache/* "Yarn Berry cache"
+     safe_clean ~/Library/Caches/Yarn/* "Yarn v1 cache"
+ }
+ # Resolve a cache root to its physical location and prove that it remains a
 ```
 
-**File**: `tests/clean_dev_caches.bats` (modified, +43/-2)
+**File**: `lib/manage/whitelist.sh` (modified, +1/-1)
 ```diff
-@@ -677,7 +677,7 @@ EOF
- 
-     [ "$status" -eq 0 ]
-     [[ "$output" == *"npm cache directory|$HOME/.npm/_cacache/*"* ]] || return 1
--    [[ "$output" == *"npm npx cache|$HOME/.npm/_npx/*"* ]] || return 1
-+    [[ "$output" != *"$HOME/.npm/_npx/"* ]] || return 1
-     [[ "$output" == *"npm logs|$HOME/.npm/_logs/*"* ]] || return 1
+@@ -138,7 +138,7 @@ pip Python package cache|$HOME/Library/Caches/pip/*|package_manager
+ uv Python package cache|$HOME/.cache/uv/*|package_manager
+ tealdeer tldr pages cache|$HOME/Library/Caches/tealdeer/tldr-pages|package_manager
+ Homebrew downloaded packages|$HOME/Library/Caches/Homebrew/*|package_manager
+-Yarn package manager cache|$HOME/.yarn/cache/*|package_manager
++Yarn Berry package cache|$HOME/.yarn/berry/cache/*|package_manager
+ Yarn v1 package cache|$HOME/Library/Caches/Yarn/*|package_manager
+ pnpm package store|$HOME/Library/pnpm/store/*|package_manager
+ Bun package cache|$HOME/.bun/install/cache/*|package_manager
+```
+
+**File**: `tests/clean_dev_caches.bats` (modified, +25/-0)
+```diff
+@@ -682,6 +682,31 @@ EOF
      [[ "$output" == *"npm prebuilds|$HOME/.npm/_prebuilds/*"* ]]
  }
-@@ -1100,11 +1100,52 @@ EOF
-     [ "$status" -eq 0 ]
-     [[ "$output" == *"npm cache directory|$HOME/.npm/_cacache/*"* ]] || return 1
-     [[ "$output" == *"npm cache directory (custom path)|/tmp/mole-custom-npm-cache/_cacache/*"* ]] || return 1
--    [[ "$output" == *"npm npx cache (custom path)|/tmp/mole-custom-npm-cache/_npx/*"* ]] || return 1
-+    [[ "$output" != *"/_npx/"* ]] || return 1
-     [[ "$output" == *"npm logs (custom path)|/tmp/mole-custom-npm-cache/_logs/*"* ]] || return 1
-     [[ "$output" == *"npm prebuilds (custom path)|/tmp/mole-custom-npm-cache/_prebuilds/*"* ]]
- }
  
-+@test "clean_dev_npm preserves installed npx packages in default and custom caches (#1870)" {
-+    run env HOME="$BATS_TEST_TMPDIR/home" PROJECT_ROOT="$PROJECT_ROOT" PATH="/usr/bin:/bin" \
-+        MOLE_TEST_NO_AUTH=1 /bin/bash --noprofile --norc <<'EOF'
++# Yarn Berry writes .yarn/cache inside each project and its global cache in
++# ~/.yarn/berry/cache; ~/.yarn/cache was a row that never held anything.
++@test "clean_dev_npm cleans the Yarn Berry global cache, not the unused ~/.yarn/cache" {
++    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc << 'EOF'
 +set -euo pipefail
-+mkdir -p "$HOME"
-+source "$PROJECT_ROOT/bin/clean.sh"
++source "$PROJECT_ROOT/lib/core/common.sh"
++source "$PROJECT_ROOT/lib/clean/dev.sh"
++start_section_spinner() { :; }
++stop_section_spinner() { :; }
++clean_tool_cache() { :; }
 +clean_pnpm_stores() { :; }
 +clean_corepack_cache() { :; }
-+bun() { return 1; }
-+run_with_timeout() { shift; "$@"; }
-+npm() {
-+    case "$*" in
-+        'config get cache') printf '%s\n' "$npm_test_cache" ;;
-+        'cache clean --force') return 0 ;;
-+        *) return 1 ;;
-+    esac
-+}
-+for npm_test_cache in "$HOME/.npm" "$HOME/custom-npm-cache"; do
-+    for DRY_RUN in true false; do
-+        export DRY_RUN
-+        for cache in "$HOME/.npm" "$npm_test_cache"; do
-+            mkdir -p "$cache/_npx/fixture/node_modules/fixture" "$cache/_cacache/fixture"
-+            printf 'RESOURCE_OK' > "$cache/_npx/fixture/node_modules/fixture/resource.txt"
-+            printf 'CACHE' > "$cache/_cacache/fixture/data"
-+        done
-+        clean_dev_npm
-+        for cache in "$HOME/.npm" "$npm_test_cache"; do
-+            [[ "$(cat "$cache/_npx/fixture/node_modules/fixture/resource.txt")" == RESOURCE_OK ]] || exit 1
-+            if [[ "$DRY_RUN" == false ]]; then
-+                [[ ! -e "$cache/_cacache/fixture" ]] || exit 1
-+            else
-+                [[ -f "$cache/_cacache/fixture/data" ]] || exit 1
-+            fi
-+        done
-+    done
-+done
++clean_bun_cache() { :; }
++safe_clean() { echo "$2|$1"; }
++note_activity() { :; }
++npm() { return 1; }
++clean_dev_npm
 +EOF
 +
-+    [ "$status" -eq 0 ]
++    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
++    [[ "$output" == *"Yarn Berry cache|$HOME/.yarn/berry/cache/*"* ]] || { echo "$output"; return 1; }
++    [[ "$output" == *"Yarn v1 cache|$HOME/Library/Caches/Yarn/*"* ]] || { echo "$output"; return 1; }
++    [[ "$output" != *"|$HOME/.yarn/cache/"* ]]
 +}
 +
- @test "clean_dev_npm falls back to default cache when npm path is invalid" {
+ @test "clean_dev_jvm never enters daemon cleanup while Gradle is running" {
      run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc << 'EOF'
  set -euo pipefail
 ```
 
----
-
-### Incident Patch 2: `257bdace` (2026-10-28)
-**Commit Message**: fix: prevent spinner collision with Homebrew output (#1874)
-
-Co-authored-by: r266-tech <[REDACTED_EMAIL]>
-
-**File**: `lib/uninstall/batch.sh` (modified, +7/-0)
+**File**: `tests/manage_whitelist.bats` (modified, +5/-5)
 ```diff
-@@ -2732,6 +2732,13 @@ _batch_execute_removals() {
-         fi
-         if [[ -z "$reason" ]]; then
-             if [[ "$is_brew_cask" == "true" && -n "$cask_name" ]]; then
-+                # Homebrew and sudo write directly to the terminal. Stop the
-+                # spinner before they do so neither can overwrite the other.
-+                if [[ -t 1 ]]; then
-+                    stop_inline_spinner
-+                    [[ -t 2 ]] && printf '\r\033[2K' >&2
-+                    printf '%s\n' "${_phase_prefix}Removing $(_uninstall_display_text "$app_name") (${_phase_size})..." >&2
-+                fi
-                 # Mole removes only the reviewed paths below. A cask zap can
-                 # reach data that was not selected or even discovered.
-                 # Use brew_uninstall_cask helper (handles env vars, timeout, verification)
-```
-
-**File**: `tests/uninstall.bats` (modified, +5/-0)
-```diff
-@@ -5941,6 +5941,11 @@ EOF
-     }
+@@ -849,11 +849,11 @@ EOF
+     local test_home="$HOME/rows-delete-paths"
+     rm -rf "$test_home"
+     mkdir -p "$test_home/Library/Caches/pip/http" \
+-        "$test_home/.yarn/cache" "$test_home/Library/Caches/Yarn/v6" \
++        "$test_home/.yarn/berry/cache" "$test_home/Library/Caches/Yarn/v6" \
+         "$test_home/.gem/specs" "$test_home/.gem/ruby/3.2.0/cache" \
+         "$test_home/.local/share/containers/storage/tmp"
+     touch "$test_home/Library/Caches/pip/http/a" \
+-        "$test_home/.yarn/cache/a.zip" "$test_home/Library/Caches/Yarn/v6/a" \
++        "$test_home/.yarn/berry/cache/a.zip" "$test_home/Library/Caches/Yarn/v6/a" \
+         "$test_home/.gem/specs/a" "$test_home/.gem/ruby/3.2.0/cache/a.gem" \
+         "$test_home/.local/share/containers/storage/tmp/a"
+ 
+@@ -916,7 +916,7 @@ pattern_for_row() {
+ 
+ rows=(
+     "pip Python package cache|pip cache"
+-    "Yarn package manager cache|Yarn cache"
++    "Yarn Berry package cache|Yarn Berry cache"
+     "Yarn v1 package cache|Yarn v1 cache"
+     "RubyGems package cache|gem package cache"
+     "RubyGems spec cache|gem spec cache"
+@@ -976,7 +976,7 @@ EOF
+     local dead
+     # shellcheck disable=SC2016  # Literal $HOME spellings, as the inventory prints them.
+     for dead in \
+-        '$HOME/.cache/pip/' '$HOME/.cache/yarn/' '$HOME/.gem/cache/' \
++        '$HOME/.cache/pip/' '$HOME/.cache/yarn/' '$HOME/.yarn/cache/' '$HOME/.gem/cache/' \
+         '$HOME/.local/share/containers/cache/' \
+         '$HOME/.rustup/toolchains/' '$HOME/.ccache/' '$HOME/.cache/sccache/' \
+         '$HOME/.cache/flutter/' '$HOME/.cache/selenium/' '$HOME/.ollama/'; do
+@@ -987,7 +987,7 @@ EOF
+     # shellcheck disable=SC2016  # Literal $HOME spelling, as the inventory prints it.
+     [[ "$output" == *'|$HOME/Library/Caches/pip/*|'* ]] || return 1
+     # shellcheck disable=SC2016  # Literal $HOME spelling, as the inventory prints it.
+-    [[ "$output" == *'|$HOME/.yarn/cache/*|'* ]] || return 1
++    [[ "$output" == *'|$HOME/.yarn/berry/cache/*|'* ]] || return 1
  }
  
-+@test "Homebrew output does not interleave with the uninstall spinner" {
-+    run python3 "$PROJECT_ROOT/tests/uninstall_brew_output_pty.py"
-+    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+}
-+
- @test "match_apps_by_name joins multi-word args into one exact app name (#1365)" {
-     # `mo uninstall Tor Browser` arrives as two words; "Tor" alone
-     # substring-matched WebSTORm. The joined words exactly name an
+ # The Toolbox cleaner only strips whitelist patterns that start at its own apps
 ```
 
-**File**: `tests/uninstall_brew_output_pty.py` (added, +73/-0)
+---
+
+### Incident Patch 2: `3b0f94df` (2026-10-30)
+**Commit Message**: fix(clean): never treat the llama.cpp model store as a cache
+
+llama.cpp downloads -hf model weights, multi-GB GGUF files, into its
+default LLAMA_CACHE at ~/Library/Caches/llama.cpp, which the generic
+~/Library/Caches sweep reached, so mo clean deleted downloaded models.
+The folder joins SAFETY_WHITELIST_PATTERNS, which stays merged in even
+when the user saved a custom whitelist. Mole Mac blocks the same folder.
+The custom-whitelist test that now also covers it was renamed, so the
+I-13 incident row follows the new name.
+
+Verified: the renamed clean_user_core.bats case fails without the pattern
+and passes now; audit_incidents.py, check.sh --no-format and the full
+test.sh suite pass.
+Rollback: git revert this commit.
+
+**File**: `docs/incidents.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,73 @@
-+#!/usr/bin/env python3
-+"""Check that foreground Homebrew output does not collide with the spinner."""
-+import errno
-+import os
-+import pty
-+import select
-+import subprocess
-+import tempfile
-+import time
-+from pathlib import Path
-+
-+root = Path(__file__).resolve().parents[1]
-+script = r'''
-+set -euo pipefail
-+source "$TEST_ROOT/lib/core/common.sh"
-+source "$TEST_ROOT/lib/uninstall/batch.sh"
-+app="$HOME/Applications/Example.app"
-+mkdir -p "$app"
-+_batch_selected_app_plan_matches() { return 0; }
-+uninstall_live_bundle_has_other_install() { return 1; }
-+stop_launch_services() { :; }
-+unregister_app_bundle() { :; }
-+remove_login_item() { :; }
-+force_kill_app() { :; }
-+brew_uninstall_cask() {
-+    [[ -t 0 && -t 1 ]] || return 99
-+    printf 'BREW_FIRST\n'
-+    sleep .3
-+    printf 'BREW_SECOND\n'
-+    return "$TEST_RC"
-+}
-+app_details=("Example|$app|unknown|1|||false|false|true|example||||guard_login|x|unknown||missing")
-+success_count=0 failed_count=0 brew_apps_removed=0
-+failed_items=() success_items=() success_dock_targets=()
-+system_extension_warning_apps=() review_only_system_leftovers=()
-+review_only_system_leftover_keys=() running_at_uninstall_apps=()
-+total_size_freed=0 files_cleaned=0 total_items=0
-+rc=0
-+_batch_execute_removals || rc=$?
-+printf 'RESULT:%s\n' "$rc"
-+'''
-+
-+for expected in (124, 130):
-+    with tempfile.TemporaryDirectory(prefix='mole-brew-output-') as home:
-+        master, slave = pty.openpty()
-+        env = dict(os.environ, HOME=home, TEST_ROOT=str(root), TEST_RC=str(expected), TERM='xterm')
-+        process = subprocess.Popen(['/bin/bash', '--noprofile', '--norc', '-c', script],
-+                                   stdin=slave, stdout=slave, stderr=slave, env=env)
-+        os.close(slave)
-+        output = b''
-+        deadline = time.monotonic() + 15
-+        try:
-+            while time.monotonic() < deadline:
-+                if select.select([master], [], [], .1)[0]:
-+                    try:
-+                        output += os.read(master, 65536)
-+                    except OSError as exc:
-+                        if exc.errno == errno.EIO:
-+                            break
-+                        raise
-+                if process.poll() is not None and not select.select([master], [], [], 0)[0]:
-+                    break
-+            process.wait(timeout=2)
-+            assert process.returncode == 0, output
-+            assert b'Removing Example (1KB)...\r\nBREW_FIRST\r\n' in output, output
-+            assert b'BREW_FIRST\r\nBREW_SECOND\r\n' in output, output
-+            assert f'RESULT:{expected}'.encode() in output, output
-+        finally:
-+            if process.poll() is None:
-+                process.kill()
-+                process.wait()
-+            os.close(master)
-+    print(f'PASS: brew output and status {expected}')
+@@ -47,7 +47,7 @@ when it was confirmed by reading the history, otherwise `unknown`.
+ | I-10 | 2026-10-27 | Dry-run find scans sized and recorded each candidate twice and returned 1 when no preview ledger was set up (#1865) | 70eed1b0 | a703eddc | review | `safe_find_delete dry run records each target once without removal fallthrough (#1865)`, `safe_sudo_find_delete dry run records targets once and tracks count (#1865)` |
+ | I-11 | 2026-10-27 | `mo clean` removed installed npx packages while running commands still needed their resources and modules (#1870) | unknown | f954e2fd | unit | `clean_dev_npm preserves installed npx packages in default and custom caches (#1870)` |
+ | I-12 | 2026-10-30 | `mo purge --debug` kept every node_modules as "Could not inspect" and exited 1, because `run_with_timeout`'s debug notice landed in the captured lsof output; found by the V1.66.0 release e2e | unknown | e4686b6e | unit | `run_with_timeout keeps its debug notice out of captured command output`, `purge node project process check reads an idle project as idle under --debug` |
+-| I-13 | 2026-10-26 | Cleaning Kitty's graphics-protocol cache broke image transfers in a running terminal session (#1856) | unknown | e7b15113 | review | `a custom whitelist still protects system caches, Kitty, Poetry virtualenvs, the renv cache and pnpm dlx` |
++| I-13 | 2026-10-26 | Cleaning Kitty's graphics-protocol cache broke image transfers in a running terminal session (#1856) | unknown | e7b15113 | review | `a custom whitelist still protects system caches, Kitty, Poetry virtualenvs, the renv cache, pnpm dlx and llama.cpp models` |
+ | I-14 | 2026-10-26 | Users whose network needed the macOS system proxy did not receive background update notices because curl connected directly | unknown | 2748db02 | field | `background update lookup waits longer and follows the system proxy while foreground lookups do not` |
+ | I-15 | 2026-10-26 | Old flat Analyze cache files remained for users who no longer ran Analyze, and a large accumulated directory froze tools that listed it | unknown | a152d651 | review | `legacy analyzer cache sweep removes only flat analyzer files from ~/.cache/mole`, `legacy analyzer cache sweep skips dry runs and a symlinked cache root`, `clean starts the legacy analyzer cache sweep in the background` |
+ | I-16 | 2026-10-30 | Simulator cleanup could treat failed optional metadata reads as an absent key and suppress cancellation, allowing a device leaf to be removed after an incomplete probe | 437227e1 | f8950db2 | unit | `simulator device metadata timeouts retain the device and signals stop later devices` |
+```
+
+**File**: `lib/core/base.sh` (modified, +4/-0)
+```diff
+@@ -221,6 +221,10 @@ declare -a SAFETY_WHITELIST_PATTERNS=(
+     "$HOME/Library/Caches/pypoetry/virtualenvs*"
+     "$HOME/Library/Caches/org.R-project.R/R/renv/*"
+     "$HOME/Library/Caches/pnpm/dlx*"
++    # llama.cpp downloads `-hf` model weights (multi-GB GGUF files) into its
++    # default LLAMA_CACHE here; they are user-chosen models, not a cache that
++    # rebuilds on its own. Mole Mac blocks the same folder (2026-10-29).
++    "$HOME/Library/Caches/llama.cpp"
+ )
+ 
+ # Resolve the cache root used by GitHub CLI without following filesystem
+```
+
+**File**: `tests/clean_user_core.bats` (modified, +6/-1)
+```diff
+@@ -711,7 +711,7 @@ EOF
+     done
+ }
+ 
+-@test "a custom whitelist still protects system caches, Kitty, Poetry virtualenvs, the renv cache and pnpm dlx" {
++@test "a custom whitelist still protects system caches, Kitty, Poetry virtualenvs, the renv cache, pnpm dlx and llama.cpp models" {
+     # clean_user_essentials sweeps every child of ~/Library/Caches, and
+     # load_mole_whitelist replaces DEFAULT_WHITELIST_PATTERNS wholesale once a
+     # user saves one entry of their own. Anything that breaks macOS search,
+@@ -726,6 +726,7 @@ EOF
+         "$test_home/Library/Caches/pypoetry/virtualenvs/proj-abc123" \
+         "$test_home/Library/Caches/org.R-project.R/R/renv/cache/v5/pkg" \
+         "$test_home/Library/Caches/pnpm/dlx/abc123" \
++        "$test_home/Library/Caches/llama.cpp" \
+         "$test_home/Library/Caches/com.example.unprotected"
+     printf '%s\n' "$test_home/.cache/keep-my-own-thing/*" > "$test_home/.config/mole/whitelist"
+ 
+@@ -745,6 +746,8 @@ for probe in \
+     "$HOME/Library/Caches/org.R-project.R" \
+     "$HOME/Library/Caches/pnpm/dlx/abc123" \
+     "$HOME/Library/Caches/pnpm" \
++    "$HOME/Library/Caches/llama.cpp" \
++    "$HOME/Library/Caches/llama.cpp/model-Q4_K_M.gguf" \
+     "$HOME/Library/Caches/com.example.unprotected"; do
+     if is_path_whitelisted "$probe"; then
+         printf 'PROTECTED=%s\n' "${probe#"$HOME"/}"
+@@ -777,6 +780,8 @@ EOF
+     [[ "$output" == *"PROTECTED=Library/Caches/org.R-project.R"$'\n'* ]] || return 1
+     [[ "$output" == *"PROTECTED=Library/Caches/pnpm/dlx/abc123"* ]] || return 1
+     [[ "$output" == *"PROTECTED=Library/Caches/pnpm"$'\n'* ]] || return 1
++    [[ "$output" == *"PROTECTED=Library/Caches/llama.cpp"$'\n'* ]] || return 1
++    [[ "$output" == *"PROTECTED=Library/Caches/llama.cpp/model-Q4_K_M.gguf"* ]] || return 1
+     [[ "$output" == *"CUSTOM_KEPT"* ]] || return 1
+     rm -rf "$test_home"
+ }
+```
+
+---
+
+### Incident Patch 3: `1bc5f1d5` (2026-10-31)
+**Commit Message**: feat(clean): quieter rows, visible waits and a clearer result
+
+Three problems in `mo clean` output: rows asking the user to run a
+command themselves were unclear, some waits had no loading, and the
+result did not show how much was done.
+
+- Review rows (DerivedData, archives, simulators, pnpm store, AI
+  worktrees, Docker, Time Machine, Rust and NDK versions) go through
+  mole_review_row: label linked to its folder, size, one fact Mole works
+  out itself ("8 builds, May to Aug", "4 simulators", "v10 and v11
+  stores", "1.95.0 and nightly besides stable"). No command to copy.
+- DerivedData already cleaned under Developer tools is not listed again
+  under Large files.
+- Scanning, DerivedData filtering and Trash measuring show a spinner;
+  first output of a dry run goes from 2.31s to 0.22s.
+- A 0B row is hidden only when its sizing completed; WeChat and Feishu
+  containers print one row per kind; plurals read "1 item".
+- The whitelist line no longer lists every pattern. Summary is
+  "Removed: X · N items" (dry run "Potential space"), plus the list or
+  free space.
+- Glyphs: dry-run rows use a circle, info uses the gear, follow-up
+  arrows in slim and uninstall use the review glyph, tou
+
+**File**: `.claude/rules/clean.md` (modified, +2/-0)
+```diff
+@@ -36,6 +36,8 @@ Developer and toolchain caches in `lib/clean/dev.sh` also follow `.claude/rules/
+ 
+ - `bin/clean.sh` owns clean command orchestration, section output, and safe cleanup execution. Run `MOLE_TEST_NO_AUTH=1 bats tests/clean_core.bats tests/clean_apps.bats tests/cli.bats tests/clean_summary_cancel.bats tests/clean_developer_state.bats`.
+ - Section output follows one fixed rhythm: title, then loading state, then content, then one trailing blank line, for every section. When touching any step of it, re-run the command and read the whole rendered output (column alignment, block spacing, icon consistency) instead of patching the one step that was reported.
++- **Rows report what Mole did, once.** A `safe_clean` row that measured 0B still removes and counts its items but prints nothing, unless a sizing timeout made the 0B unknown; roots that share a label clean in one call so per-profile caches read as one row; Large files skips the DerivedData row once developer tools covered every project (`_MOLE_DERIVED_DATA_COVERED`); counts go through `mole_count_label` (`1 item`). The summary box holds two lines: `Removed: X · N items` plus the free-space line, or `Potential space: X · N items` plus the file list. Locked by `safe_clean removes a 0B target without printing a row for it` (`tests/clean_core.bats`), `clean_wechat_container_caches cleans every web profile in one row per cache kind` and `large files leaves out DerivedData that developer tools already covered`.
++- **Review rows go through `mole_review_row`: `⊙ label · value · fact`.** On a terminal the label is an OSC 8 link to the path, so the row carries no path or command field; plain output keeps the path last. The fact is worked out read-only and bounded (`_large_dir_fact`: simulator count, archive builds and month range, pnpm store versions, project count; version folders besides the default for Rust and NDK) and is dropped, never guessed, when its probe fails. Do not add a command for the user to run where Mole can state the fact itself; two of three suggested commands freed nothing on the maintainer's Mac (2026-10-31). Locked by `large files links each review label to its full path` and `large files names what the simulator and pnpm rows hold` in `tests/clean_user_core.bats`.
+ - `_safe_clean_impl` skips targets that do not currently exist before expensive policy probes, then filters protected, whitelisted, and compiled-model targets before consulting the dry-run guard or registering previews. Every surviving target is revalidated at its action boundary, so preview and real cleanup keep the same eligible set. A delete guard that refuses only the path it was handed names it in `_MOLE_SAFE_CLEAN_SKIP_PATH`, which skips that target and continues the batch; any other nonzero guard status stops with 75 and a timeout or signal cancels. `safe_clean_guarded skips only the path its guard names and keeps going` in `tests/clean_core.bats` locks it.
+ - `normalize_paths_for_cleanup` collapses a Gradle DSL path only in the `<version>/groovy-dsl|kotlin-dsl/<hash>` layout, because the `*` in its case glob spans slashes and a deeper directory that merely contains `groovy-dsl` would otherwise widen to its parent.
+ - **A `declare -f` probe into `bin/` is a shared shim, never a per-file copy.** Asking whether `safe_clean_guarded` or `defer_cleanup_family` exists is asking whether `bin/clean.sh` is loaded: always in production, never in a standalone Bats case. Use `mole_defer_cleanup_family`, or call `safe_clean_guarded` directly and let the test supply it. The audited fallback cap may decrease after consolidation but needs an explicit reason to increase. Do not hoist `_safe_clean_impl` into `lib/core/`; many tests intentionally replace `safe_clean`, and bypassing that seam turns assertions into real deletion attempts under their fixture `HOME`.
+```
+
+**File**: `README.md` (modified, +5/-5)
+```diff
+@@ -189,7 +189,7 @@ Clean Your Mac
+ 
+ ======================================================================
+ Cleanup complete
+-Tracked cleanup: 4.5GB | Items cleaned: 97 | Categories: 4
++Removed: 4.5GB · 97 items
+ Free space: 223.5GB (+4.5GB)
+ ======================================================================
+ ```
+@@ -241,17 +241,17 @@ PERFORMANCE DIAGNOSIS
+   ✓ No sustained high-CPU bottleneck detected
+ 
+ ➤ Finder Cache Refresh
+-  → QuickLook thumbnails refreshed
+-  → Icon services cache rebuilt
++  ✓ QuickLook thumbnails refreshed
++  ✓ Icon services cache rebuilt
+ 
+ ➤ Network Cache Refresh
+-  → DNS cache refreshed
++  ✓ DNS cache refreshed
+ 
+ ➤ Database Optimization
+   ◎ Close these apps before database optimization: Safari
+ 
+ ➤ Disk Health
+-  → Disk verify skipped
++  ✓ Disk verify skipped
+ 
+ ======================================================================
+ Optimization Complete
+```
+
+**File**: `README_CN.md` (modified, +5/-5)
+```diff
+@@ -189,7 +189,7 @@ Clean Your Mac
+ 
+ ======================================================================
+ Cleanup complete
+-Tracked cleanup: 4.5GB | Items cleaned: 97 | Categories: 4
++Removed: 4.5GB · 97 items
+ Free space: 223.5GB (+4.5GB)
+ ======================================================================
+ ```
+@@ -241,17 +241,17 @@ PERFORMANCE DIAGNOSIS
+   ✓ No sustained high-CPU bottleneck detected
+ 
+ ➤ Finder Cache Refresh
+-  → QuickLook thumbnails refreshed
+-  → Icon services cache rebuilt
++  ✓ QuickLook thumbnails refreshed
++  ✓ Icon services cache rebuilt
+ 
+ ➤ Network Cache Refresh
+-  → DNS cache refreshed
++  ✓ DNS cache refreshed
+ 
+ ➤ Database Optimization
+   ◎ Close these apps before database optimization: Safari
+ 
+ ➤ Disk Health
+-  → Disk verify skipped
++  ✓ Disk verify skipped
+ 
+ ======================================================================
+ Optimization Complete
+```
+
+**File**: `README_DE.md` (modified, +5/-5)
+```diff
+@@ -189,7 +189,7 @@ Clean Your Mac
+ 
+ ======================================================================
+ Cleanup complete
+-Tracked cleanup: 4.5GB | Items cleaned: 97 | Categories: 4
++Removed: 4.5GB · 97 items
+ Free space: 223.5GB (+4.5GB)
+ ======================================================================
+ ```
+@@ -241,17 +241,17 @@ PERFORMANCE DIAGNOSIS
+   ✓ No sustained high-CPU bottleneck detected
+ 
+ ➤ Finder Cache Refresh
+-  → QuickLook thumbnails refreshed
+-  → Icon services cache rebuilt
++  ✓ QuickLook thumbnails refreshed
++  ✓ Icon services cache rebuilt
+ 
+ ➤ Network Cache Refresh
+-  → DNS cache refreshed
++  ✓ DNS cache refreshed
+ 
+ ➤ Database Optimization
+   ◎ Close these apps before database optimization: Safari
+ 
+ ➤ Disk Health
+-  → Disk verify skipped
++  ✓ Disk verify skipped
+ 
+ ======================================================================
+ Optimization Complete
+```
+
+**File**: `README_FR.md` (modified, +5/-5)
+```diff
+@@ -189,7 +189,7 @@ Clean Your Mac
+ 
+ ======================================================================
+ Cleanup complete
+-Tracked cleanup: 4.5GB | Items cleaned: 97 | Categories: 4
++Removed: 4.5GB · 97 items
+ Free space: 223.5GB (+4.5GB)
+ ======================================================================
+ ```
+@@ -241,17 +241,17 @@ PERFORMANCE DIAGNOSIS
+   ✓ No sustained high-CPU bottleneck detected
+ 
+ ➤ Finder Cache Refresh
+-  → QuickLook thumbnails refreshed
+-  → Icon services cache rebuilt
++  ✓ QuickLook thumbnails refreshed
++  ✓ Icon services cache rebuilt
+ 
+ ➤ Network Cache Refresh
+-  → DNS cache refreshed
++  ✓ DNS cache refreshed
+ 
+ ➤ Database Optimization
+   ◎ Close these apps before database optimization: Safari
+ 
+ ➤ Disk Health
+-  → Disk verify skipped
++  ✓ Disk verify skipped
+ 
+ ======================================================================
+ Optimization Complete
+```
+
+**File**: `README_JA.md` (modified, +5/-5)
+```diff
+@@ -189,7 +189,7 @@ Clean Your Mac
+ 
+ ======================================================================
+ Cleanup complete
+-Tracked cleanup: 4.5GB | Items cleaned: 97 | Categories: 4
++Removed: 4.5GB · 97 items
+ Free space: 223.5GB (+4.5GB)
+ ======================================================================
+ ```
+@@ -241,17 +241,17 @@ PERFORMANCE DIAGNOSIS
+   ✓ No sustained high-CPU bottleneck detected
+ 
+ ➤ Finder Cache Refresh
+-  → QuickLook thumbnails refreshed
+-  → Icon services cache rebuilt
++  ✓ QuickLook thumbnails refreshed
++  ✓ Icon services cache rebuilt
+ 
+ ➤ Network Cache Refresh
+-  → DNS cache refreshed
++  ✓ DNS cache refreshed
+ 
+ ➤ Database Optimization
+   ◎ Close these apps before database optimization: Safari
+ 
+ ➤ Disk Health
+-  → Disk verify skipped
++  ✓ Disk verify skipped
+ 
+ ======================================================================
+ Optimization Complete
+```
+
+**File**: `README_KR.md` (modified, +5/-5)
+```diff
+@@ -189,7 +189,7 @@ Clean Your Mac
+ 
+ ======================================================================
+ Cleanup complete
+-Tracked cleanup: 4.5GB | Items cleaned: 97 | Categories: 4
++Removed: 4.5GB · 97 items
+ Free space: 223.5GB (+4.5GB)
+ ======================================================================
+ ```
+@@ -241,17 +241,17 @@ PERFORMANCE DIAGNOSIS
+   ✓ No sustained high-CPU bottleneck detected
+ 
+ ➤ Finder Cache Refresh
+-  → QuickLook thumbnails refreshed
+-  → Icon services cache rebuilt
++  ✓ QuickLook thumbnails refreshed
++  ✓ Icon services cache rebuilt
+ 
+ ➤ Network Cache Refresh
+-  → DNS cache refreshed
++  ✓ DNS cache refreshed
+ 
+ ➤ Database Optimization
+   ◎ Close these apps before database optimization: Safari
+ 
+ ➤ Disk Health
+-  → Disk verify skipped
++  ✓ Disk verify skipped
+ 
+ ======================================================================
+ Optimization Complete
+```
+
+**File**: `README_RU.md` (modified, +5/-5)
+```diff
+@@ -189,7 +189,7 @@ Clean Your Mac
+ 
+ ======================================================================
+ Cleanup complete
+-Tracked cleanup: 4.5GB | Items cleaned: 97 | Categories: 4
++Removed: 4.5GB · 97 items
+ Free space: 223.5GB (+4.5GB)
+ ======================================================================
+ ```
+@@ -241,17 +241,17 @@ PERFORMANCE DIAGNOSIS
+   ✓ No sustained high-CPU bottleneck detected
+ 
+ ➤ Finder Cache Refresh
+-  → QuickLook thumbnails refreshed
+-  → Icon services cache rebuilt
++  ✓ QuickLook thumbnails refreshed
++  ✓ Icon services cache rebuilt
+ 
+ ➤ Network Cache Refresh
+-  → DNS cache refreshed
++  ✓ DNS cache refreshed
+ 
+ ➤ Database Optimization
+   ◎ Close these apps before database optimization: Safari
+ 
+ ➤ Disk Health
+-  → Disk verify skipped
++  ✓ Disk verify skipped
+ 
+ ======================================================================
+ Optimization Complete
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1875** (2026-10-28): feat(clean): reach Vesktop session caches (@hawkff)
-- **PR #1874** (2026-10-28): fix: prevent spinner collision with Homebrew output (@r266-tech)
-- **PR #1872** (2026-10-28): fix(clean): preserve installed npx packages (@r266-tech)
-- **PR #1868** (2026-10-27): feat(clean): reach idle Brave signing clones (@hawkff)
-- **PR #1866** (2026-10-27): fix(core): avoid removal fallthrough during dry run find scans (@viniciusdsandrade)
-- **PR #1864** (2026-10-27): build(deps): bump the github-actions group with 4 updates (@dependabot[bot])
+- **PR #1890** (2026-10-30): feat(clean): add BrowserOS cache cleanup support (@thecoldblooded)
+- **PR #1889** (2026-10-30): fix(clean): show verbose Docker usage hint (@r266-tech)
+- **PR #1887** (closed): fix(whitelist): include Bun package cache in cache catalog (@viniciusdsandrade)
+- **PR #1881** (closed): perf(clean): measure Large files rows while the sections before it run (@sebastianbreguel)
+- **PR #1880** (2026-10-29): perf(clean): start the project cache scan before the first section (@sebastianbreguel)
+- **PR #1879** (2026-10-29): perf(clean): stop waiting on a held uv cache lock (@sebastianbreguel)
 
 ---
 
@@ -2259,13 +2542,13 @@ Co-authored-by: r266-tech <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. clean): preserve installed npx packages (#1872)
+## X. clean): clean the yarn berry global cache instead of ~/.yarn/cache
 
 **RULE**:
 When implementing operations in `lib/clean/dev.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Mole. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f954e2fd`: clean): preserve installed npx packages (#1872). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `21d44166`: clean): clean the yarn berry global cache instead of ~/.yarn/cache. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Shell data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/clean/dev.sh`.
@@ -2273,18 +2556,17 @@ Subsystems managing Shell data structures, boundary deserialization, API parsing
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```shell
 // Verified production-grade fix pattern:
-    # Keep _npx: running commands can still read its installed packages.
-    local -a npm_residual_dirs=("_cacache" "_logs" "_prebuilds")
-    local -a npm_descriptions=("npm cache directory" "npm logs" "npm prebuilds")
+    # Yarn Berry keeps .yarn/cache inside each project and its shared global
+    # cache in ~/.yarn/berry/cache; ~/.yarn/cache is never written. Yarn
+    # Classic on macOS uses ~/Library/Caches/Yarn.
+    safe_clean ~/.yarn/berry/cache/* "Yarn Berry cache"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```shell
 // Anti-pattern to NEVER write (induced failure mode):
-    # These residual directories are not removed by `npm cache clean --force`
-    local -a npm_residual_dirs=("_cacache" "_npx" "_logs" "_prebuilds")
-    local -a npm_descriptions=("npm cache directory" "npm npx cache" "npm logs" "npm prebuilds")
+    safe_clean ~/.yarn/cache/* "Yarn cache"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f954e2fd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `21d44166` are properly handled with clean fallback behavior.

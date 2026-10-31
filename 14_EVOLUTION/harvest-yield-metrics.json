@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T15:29:56.749Z",
-  "total_cycles_completed": 6593,
-  "total_learnings_persisted": 6593,
-  "total_rules_promoted": 6229,
+  "last_updated": "2026-10-31T15:36:32.884Z",
+  "total_cycles_completed": 6596,
+  "total_learnings_persisted": 6596,
+  "total_rules_promoted": 6231,
   "history": [
-    {
-      "timestamp": "2026-10-31T02:07:26.640Z",
-      "repository": "streetwriters/notesnook",
-      "learningId": "learn-github-streetwriters-notesnook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T02:07:29.587Z",
-      "repository": "temporalio/temporal",
-      "learningId": "learn-github-temporalio-temporal",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T02:07:33.151Z",
-      "repository": "Qwen/Qwen3-14B",
-      "learningId": "learn-huggingface-qwen-qwen3-14b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T02:07:35.420Z",
       "repository": "GreptimeTeam/greptimedb",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-31T15:29:56.749Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T15:36:23.737Z",
+      "repository": "meta-llama/Llama-2-7b-chat-hf",
+      "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T15:36:29.225Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T15:36:32.884Z",
+      "repository": "tw93/Mole",
+      "learningId": "learn-github-tw93-mole",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

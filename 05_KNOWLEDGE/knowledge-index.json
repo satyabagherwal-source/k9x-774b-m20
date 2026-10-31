@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T15:29:56.698Z",
+  "last_updated": "2026-10-31T15:36:32.812Z",
   "total_verified_learnings": 1184,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7741,13 +7741,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "hmbown-codewhale",
+      "slug": "codewhale-hq-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "b92540d8",
-      "content_hash": "21fb542fb4687a240a2cf048ff7dce2c1fd67bd96557287ca7a112686112d243",
-      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "785f7d0d",
+      "content_hash": "7d6b77560598b14e9b8fc0b797e4a0ba40d0cf4fa59b3f53d0fcf3c70acf2f1f",
+      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -7838,6 +7838,11 @@
           "number": 5846,
           "title": "runtime): compare a prompt with its metadata envelope stripped from either end",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 6232,
+          "title": "cli): remove the marked PATH block and Codewhale completions on uninstall",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7845,7 +7850,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T23:51:38.328Z",
+      "verified_at": "2026-10-31T15:36:29.113Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25121,7 +25126,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
       "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
-      "content_hash": "8b0c11704806dc4bbf8015994cdfacd9199bec278139e93cdb7b6814b8cc4160",
+      "content_hash": "0b7c6ef6501f76cd6ed543976e228478988770b5d14e09f212c003851fbf0767",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "promoted_rules": [
@@ -25243,7 +25248,7 @@
         "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv3wsd49",
         "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv4bhyss"
       ],
-      "verified_at": "2026-10-28T14:56:28.539Z",
+      "verified_at": "2026-10-31T15:36:23.630Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56242,8 +56247,8 @@
       "slug": "tw93-mole",
       "platform": "github",
       "source_url": "https://github.com/tw93/Mole",
-      "source_version": "45ee88cb",
-      "content_hash": "d5550a887ce68f11fc2b7ee732f382304e15a37752cea2547ce9bf19250fa633",
+      "source_version": "85162c24",
+      "content_hash": "2858af8e0275a70f697ce2e91afcb4549edb5adf6d811db28970e6f23785e03d",
       "dossier_path": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
       "promoted_rules": [
@@ -56271,6 +56276,11 @@
           "number": 5395,
           "title": "clean): preserve installed npx packages (#1872)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6233,
+          "title": "clean): clean the yarn berry global cache instead of ~/.yarn/cache",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56278,7 +56288,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T20:22:16.631Z",
+      "verified_at": "2026-10-31T15:36:32.795Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162688,6 +162698,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T15:29:56.686Z"
+    },
+    "rule-6232": {
+      "learning_id": "rule-6232",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6232,
+      "title": "cli): remove the marked PATH block and Codewhale completions on uninstall",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "785f7d0d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T15:36:29.113Z"
+    },
+    "rule-6233": {
+      "learning_id": "rule-6233",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6233,
+      "title": "clean): clean the yarn berry global cache instead of ~/.yarn/cache",
+      "source_url": "https://github.com/tw93/Mole",
+      "source_version": "85162c24",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T15:36:32.795Z"
     }
   },
   "aliases": {
