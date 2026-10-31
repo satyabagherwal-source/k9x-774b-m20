@@ -385,8 +385,8 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
     "sourceVersion": "hf-xingchen-agi-xing4.0-29b-a4b",
     "license": "Open-Source",
-    "contentHash": "2562a60d95155c11cb472bb37daf5a4cfe2623d1e935db20d6ab6ba31d7afbc3",
-    "lastHarvestedAt": "2026-10-28T05:17:51.707Z",
+    "contentHash": "e43843c09f787719fe49d605d58ce93c95c35130f308af9c67117a72f4069dad",
+    "lastHarvestedAt": "2026-10-31T08:14:03.269Z",
     "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b"
   },
   "hf-supersoniclabs-julia-1": {
@@ -5483,10 +5483,10 @@
     "repository": "salvo-rs/salvo",
     "platform": "github",
     "sourceUrl": "https://github.com/salvo-rs/salvo",
-    "sourceVersion": "1620e723",
+    "sourceVersion": "80808bad",
     "license": "Apache-2.0",
-    "contentHash": "171f3d5494bb1f9cad4b62b98d3ca2808b5047df856dcd1b183b6fc454332102",
-    "lastHarvestedAt": "2026-10-30T07:48:07.515Z",
+    "contentHash": "6c3f5fb1b7a5a7a3796a72c4ee870052abbe602fdef4b1eaa03c1f8acad98d96",
+    "lastHarvestedAt": "2026-10-31T08:13:59.696Z",
     "learningId": "learn-github-salvo-rs-salvo"
   },
   "react-metro": {
@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "9e248553",
+    "sourceVersion": "3cdf8de9",
     "license": "Apache-2.0",
-    "contentHash": "772aebdd1b79f5c06c0fc6dd9a02eca265e1b0a3bbb69783b4662553c05ea929",
-    "lastHarvestedAt": "2026-10-30T15:08:26.179Z",
+    "contentHash": "6ebd2dd81b6d674a2d77f697a4177636613812a649581938beb42e5cc8115f54",
+    "lastHarvestedAt": "2026-10-31T08:14:03.687Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {

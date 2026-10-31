@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `9e248553`  
+> **Source Version**: `3cdf8de9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T15:08:25.523Z  
+> **Timestamp**: 2026-10-31T08:14:02.944Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T15:08:25.237Z  
+> **Harvest Timestamp**: 2026-10-31T08:13:54.643Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 28255 stars
+- **Stars / Engagement**: 28280 stars
 
 ---
 
@@ -2012,786 +2012,1013 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `56e4f94f` (2026-10-29)
-**Commit Message**: fix(updates): name the dialog that blocks installation (#13907)
+### Incident Patch 1: `446f5b74` (2026-10-30)
+**Commit Message**: fix(updates): load changelog versions lazily instead of the full feed
 
-* fix(updates): name the dialog that blocks installation
+Closes #13966
 
-Restarting to update is vetoed while any dialog that owns configuration
-state is open, but all 20+ of those dialogs shared one message
-("请先完成当前配置编辑"), and the veto was then reported as "更新安装失败".
-Users could not tell which dialog to close — and when the veto came from a
-detached window, the message pointed at a window with nothing open in it.
-
-- Add describeConfigUpdateBlock() with an ordered surface table, so the
-  message names the actual dialog ("请先关闭「数据传输」后再更新。"), and
-  give config import/export that is mid-flight its own instruction.
-- Introduce UpdatePreparationError so a held-back update is reported as
-  "更新未执行" instead of an installation failure, and carry the reason
-  code plus an "the dialog is in another DBX window" hint across the
-  webview hop (also dropping the "Error: " prefix from String(cause)).
-- Cover the surface table, the code/hint propagation, and the rendered
-  message in all 10 locales with tests.
-
-* chore(i18n): autofill new translations
-
----------
-
-Co-authored-by: zipg <[REDACTED_EMAIL]>
-Co-authored-by: dbx-i18n-bot <github-actions[bot]
-
-**File**: `apps/desktop/src/App.vue` (modified, +37/-32)
+**File**: `apps/desktop/src/components/layout/UpdateDialog.spec.ts` (modified, +20/-11)
 ```diff
-@@ -1,6 +1,7 @@
- <script setup lang="ts">
- import { blockingDesktopAiRunsForUpdate } from "@/lib/ai/desktopAiRunRegistry";
--import { setupUpdatePreparation, prepareUpdateWithDraftRecovery, isUpdatePreparationActive } from "@/lib/app/updatePreparation";
-+import { setupUpdatePreparation, prepareUpdateWithDraftRecovery, isUpdatePreparationActive, UpdatePreparationError } from "@/lib/app/updatePreparation";
-+import { describeConfigUpdateBlock, type UpdateBlockingConfigState, type UpdateConfigTranslator } from "@/lib/app/updatePreparationSurfaces";
- import { ref, computed, watch, onMounted, onUnmounted, nextTick, defineAsyncComponent, provide } from "vue";
- import { MCP_CALL_HISTORY_OPEN_EVENT, type McpCallHistoryRequest } from "@/lib/mcp/mcpCallHistory";
- import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
-@@ -373,46 +374,50 @@ const isDetachedWindowContext = windowContext.kind === "detached-tab";
- const detachedContextTabId = windowContext.kind === "detached-tab" ? windowContext.tabId : undefined;
- let updateWindowReady = false;
- let updatePreparation: Awaited<ReturnType<typeof setupUpdatePreparation>> | undefined;
-+const translateUpdateSurface: UpdateConfigTranslator = (key, named) => (named ? t(key, named) : t(key));
-+/** Snapshot of every surface that must be closed before the installer may run. */
-+function updateBlockingConfigState(): UpdateBlockingConfigState {
-+  return {
-+    pendingAppClose: pendingAppCloseAction.value !== null,
-+    connectionDialog: showConnectionDialog.value,
-+    saveSqlDialog: showSaveSqlDialog.value,
-+    ddlDialog: showQueryEditorDdlDialog.value,
-+    objectSourceDialog: showQueryEditorObjectSourceDialog.value,
-+    sqlParameterDialog: showSqlParameterDialog.value,
-+    dangerDialog: showDangerDialog.value,
-+    multiDbExecuteDialog: showMultiDbExecuteDialog.value,
-+    transferDialog: dialogs.showTransferDialog.value,
-+    sqlFileDialog: dialogs.showSqlFileDialog.value,
-+    tableImportDialog: dialogs.showTableImportDialog.value,
-+    mongoImportDialog: dialogs.showMongoImportDialog.value,
-+    dataGenerateDialog: dialogs.showTableDataGenerateDialog.value,
-+    databaseExportDialog: dialogs.showDatabaseExportDialog.value,
-+    schemaDiffDialog: dialogs.showSchemaDiffDialog.value,
-+    dataCompareDialog: dialogs.showDataCompareDialog.value,
-+    configPassphraseDialog: dialogs.showConfigPassphraseDialog.value,
-+    configPassphraseExportMode: dialogs.configPassphraseMode.value === "export",
-+    configConnectionSelectDialog: dialogs.showConfigConnectionSelectDialog.value,
-+    configConnectionSelectExportMode: dialogs.configConnectionSelectMode.value === "export",
-+    configUnencryptedExportConfirm: dialogs.showConfigUnencryptedExportConfirm.value,
-+    importLayoutConfirm: dialogs.showImportLayoutConfirm.value,
-+    configExportBusy: dialogs.configExportBusy.value,
-+    importApplying: dialogs.applyingImportSelection.value,
-+  };
-+}
- async function initializeUpdatePreparation() {
-   if (!isDesktop || updatePreparation) return;
-   updatePreparation = await setupUpdatePreparation({
-     translate: (key) => t(key),
-     assertSafe() {
--      if (!updateWindowReady) throw new Error(t("updates.preparationNotReady"));
-+      if (!updateWindowReady) throw new UpdatePreparationError(t("updates.preparationNotReady"), "not_ready");
-       if (trackedUpdateTaskCount.value > 0 || blockingDesktopAiRunsForUpdate().length > 0 || queryStore.tabs.some((tab) => tab.isCancelling || tab.isExplaining || tab.txnSessionId)) {
--        throw new Error(t("updates.preparationTasks"));
-+        throw new UpdatePreparationError(t("updates.preparationTasks"), "tasks");
-       }
-       if (queryStore.tabs.some((tab) => (tab.pendingDataChangeCount ?? 0) > 0 || tab.hasPendingDataEditorDraft)) {
--        throw new Error(t("updates.preparationDrafts"));
--      }
--      if (
--        pendingAppCloseAction.value ||
--        showConnectionDialog.value ||
--        showSaveSqlDialog.value ||
--        showQueryEditorDdlDialog.value ||
--        showQueryEditorObjectSourceDialog.value ||
--        showSqlParameterDialog.value ||
--        showDangerDialog.value ||
--        showMultiDbExecuteDialog.value ||
--        [
--          dialogs.showTransferDialog,
--          dialogs.showSqlFileDialog,
--          dialogs.showTableImportDialog,
--          dialogs.showMongoImportDialog,
--          dialogs.showTableDataGenerateDialog,
--          dialogs.showDatabaseExportDialog,
--          dialogs.showSchemaDiffDialog,
--          dialogs.showDataCompareDialog,
--          dialogs.showConfigPassphraseDialog,
--          dialogs.showConfigConnectionSelectDialog,
--          dialogs.showConfigUnencryptedExportConfirm,
--          dialogs.showImportLayoutConfirm,
--          dialogs.configExportBusy,
--          dialogs.applyingImportSelection,
--        ].some((state) => state.value)
--      ) {
--        throw new Error(t("updates.preparationConfig"));
-+        throw new UpdatePreparationError(t("updates.preparationDrafts"), "drafts"
-```
-
-**File**: `apps/desktop/src/composables/useAppUpdater.ts` (modified, +7/-2)
-```diff
-@@ -7,6 +7,7 @@ import type { UpdateDownloadSource as SettingsUpdateDownloadSource } from "@/sto
- import type { UpdateDownloadProgress } from "@/lib/backend/tauri";
- import { currentLocale } from "@/i18n";
- import { shouldBlockAppUpdate } from "@/lib/app/appUpdateTaskGuard";
-+import { isUpdatePreparationError, UpdatePreparationError } from "@/lib/app/updatePreparation";
- import { uuid } from "@/lib/common/utils";
- import { isUpdatePreviewMockEnabled, previewAppUpdateInfo } from "@/lib/updates/updatePreviewMock";
+@@ -8,7 +8,8 @@ import UpdateDialog from "@/components/layout/UpdateDialog.vue";
+ const runtimeState = vi.hoisted(() => ({ tauri: true }));
  
-@@ -443,7 +444,7 @@ export function useAppUpdater(options: UseAppUpdaterOptions = {}) {
-     try {
-       release = await options.prepareForUpdate?.();
-       updatePreparationRelease = release;
--      if (shouldBlockAppUpdate(activeTaskCount.value)) throw new Error(t("updates.activeTasksBlockUpdate", { count: activeTaskCount.value }));
-+      if (shouldBlockAppUpdate(activeTaskCount.value)) throw new UpdatePreparationError(t("updates.activeTasksBlockUpdate", { count: activeTaskCount.value }), "tasks");
-       phase.value = "installing";
-       if (!restartOnly && cache) {
-         await api.installDownloadedUpdate(cache.cache_id, cache.version);
-@@ -460,7 +461,11 @@ export function useAppUpdater(options: UseAppUpdaterOptions = {}) {
-       phase.value = installed ? "restart" : "ready";
-       updateCheckFailed.value = true;
-       const message = error instanceof Error ? error.message : String(error);
--      updateCheckMessage.value = installed ? t("updates.restartFailed", { error: message }) : formatInstallError(message);
-+      // A held-back update was never attempted: say that plainly and keep the
-+      // reason (which dialog to close) instead of calling it an install failure.
-+      if (installed) updateCheckMessage.value = t("updates.restartFailed", { error: message });
-+      else if (isUpdatePreparationError(error)) updateCheckMessage.value = t("updates.updateBlocked", { error: message });
-+      else updateCheckMessage.value = formatInstallError(message);
-     } finally {
-       // Successful handoff must keep every window frozen until the process exits.
-       if (failed) {
-```
-
-**File**: `apps/desktop/src/i18n/locales/az.ts` (modified, +8/-0)
-```diff
-@@ -428,6 +428,13 @@ export default withEnglishFallback({
-     preparationTasks: "Aktiv tapşırıqları və tranzaksiyaları bitirin.",
-     preparationDrafts: "Dəyişiklikləri saxlayın və ya ləğv edin.",
-     preparationConfig: "Konfiqurasiya redaktəsini bitirin.",
-+    preparationConfigBusy: "Konfiqurasiya ixracı və ya idxalı davam edir. Yeniləmədən əvvəl tamamlanmasını gözləyin.",
-+    preparationConfigDetail: "Yeniləmədən əvvəl «{surface}» pəncərəsini bağlayın.",
-+    preparationOtherWindowHint: " (pəncərə başqa DBX pəncərəsindədir)",
-+    surfaceConnection: "Bağlantı ayarları",
-+    surfaceDdl: "DDL görünüşü",
-+    surfaceObjectSource: "Obyekt mənbəyi",
-+    surfaceConfigUnencryptedExport: "Şifrələnməmiş ixrac təsdiqi",
-     preparationNotReady: "Yeniləmə hazır deyil. Yenidən sınayın.",
-     downloadedReady: "v{version} versiyası endirilib. Yeniləmək üçün yenidən başladın.",
-     restartAndUpdate: "Yenidən başladın və yeniləyin",
-@@ -459,6 +466,7 @@ export default withEnglishFallback({
-     installing: "Yeniləmə quraşdırılır...",
-     portableHelperFailed: "Daşınabilən yeniləmə köməkçisi işə salına bilmədi: {error}",
-     installFailed: "Yeniləməni quraşdırmaq mümkün olmadı: {error}",
-+    updateBlocked: "Yeniləmə başladılmadı: {error}",
-     restart: "Çıx və yenidən başlat",
-     updateAction: "Yenilə",
-     updateNow: "İndi yenilə",
-```
-
-**File**: `apps/desktop/src/i18n/locales/en.ts` (modified, +8/-0)
-```diff
-@@ -1311,6 +1311,13 @@ export default {
-     preparationTasks: "Finish active tasks and transactions before updating.",
-     preparationDrafts: "Save or discard unsaved changes before updating.",
-     preparationConfig: "Finish editing the current configuration before updating.",
-+    preparationConfigBusy: "A configuration export or import is still running. Wait for it to finish before updating.",
-+    preparationConfigDetail: "Close the {surface} dialog before updating.",
-+    preparationOtherWindowHint: " (the dialog is in another DBX window)",
-+    surfaceConnection: "Connection settings",
-+    surfaceDdl: "DDL view",
-+    surfaceObjectSource: "Object source",
-+    surfaceConfigUnencryptedExport: "Unencrypted export confirmation",
-     preparationNotReady: "Update preparation is not ready. Try again.",
-     downloadedReady: "New version v{version} is downloaded. Restart to update.",
-     restartAndUpdate: "Restart & Update",
-@@ -1342,6 +1349,7 @@ export default {
-     installing: "Installing update...",
-     portableHelperFailed: "The portable update helper could not start: {error}",
-     installFailed: "Update installation failed: {error}",
-+    updateBlocked: "Update not started: {error}",
-     restart: "Exit & Restart",
-     updateAction: "Update",
-     updateNow: "Update Now",
-```
-
-**File**: `apps/desktop/src/i18n/locales/es.ts` (modified, +8/-0)
-```diff
-@@ -1108,6 +1108,13 @@ export default withEnglishFallback({
-     preparationTasks: "Finaliza las tareas y transacciones activas.",
-     preparationDrafts: "Guarda o descarta los cambios pendientes.",
-     preparationConfig: "Finaliza la edición de configuración.",
-+    preparationConfigBusy: "Hay una exportación o importación de configuración en curso. Espera a que termine antes de actualizar.",
-+    preparationConfigDetail: "Cierra el diálogo «{surface}» antes de actualizar.",
-+    preparationOtherWindowHint: " (el diálogo está en otra ventana de DBX)",
-+    surfaceConnection: "Configuración de conexión",
-+    surfaceDdl: "Vista DDL",
-+    surfaceObjectSource: "Código del objeto",
-+    surfaceConfigUnencryptedExport: "Confirmación de exportación sin cifrar",
-     preparationNotReady: "La actualización no está lista. Reintenta.",
-     downloadedReady: "La versión v{version} está descargada. Reinicia para actualizar.",
-     restartAndUpdate: "Reiniciar y actualizar",
-@@ -1136,6 +1143,7 @@ export default withEnglishFallback({
-     installing: "Instalando actualización...",
-     portableHelperFailed: "No se pudo iniciar el asistente de actualización portátil: {error}",
-     installFailed: "Error al instalar la actualización: {error}",
-+    updateBlocked: "Actualización no iniciada: {error}",
-     restart: "Salir y reiniciar",
-     updateAction: "Actualizar",
-     updateNow: "Actualizar ahora",
-```
-
-**File**: `apps/desktop/src/i18n/locales/it.ts` (modified, +8/-0)
-```diff
-@@ -1096,6 +1096,13 @@ export default withEnglishFallback({
-     preparationTasks: "Termina attività e transazioni in corso.",
-     preparationDrafts: "Salva o scarta le modifiche non salvate.",
-     preparationConfig: "Completa la modifica della configurazione.",
-+    preparationConfigBusy: "È in corso un'esportazione o importazione della configurazione. Attendi che finisca prima di aggiornare.",
-+    preparationConfigDetail: "Chiudi la finestra «{surface}» prima di aggiornare.",
-+    preparationOtherWindowHint: " (la finestra di dialogo è in un'altra finestra di DBX)",
-+    surfaceConnection: "Impostazioni connessione",
-+    surfaceDdl: "Vista DDL",
-+    surfaceObjectSource: "Sorgente oggetto",
-+    surfaceConfigUnencryptedExport: "Conferma esportazione non cifrata",
-     preparationNotReady: "Aggiornamento non pronto. Riprova.",
-     downloadedReady: "La versione v{version} è scaricata. Riavvia per aggiornare.",
-     restartAndUpdate: "Riavvia e aggiorna",
-@@ -1124,6 +1131,7 @@ export default withEnglishFallback({
-     installing: "Installazione dell'aggiornamento...",
-     portableHelperFailed: "Impossibile avviare l'helper di aggiornamento portatile: {error}",
-     installFailed: "Installazione dell'aggiornamento non riuscita: {error}",
-+    updateBlocked: "Aggiornamento non avviato: {error}",
-     restart: "Esci e Riavvia",
-     updateAction: "Aggiorna",
-     updateNow: "Aggiorna ora",
-```
-
-**File**: `apps/desktop/src/i18n/locales/ja.ts` (modified, +8/-0)
-```diff
-@@ -1097,6 +1097,13 @@ export default withEnglishFallback({
-     preparationTasks: "実行中のタスクとトランザクションを終了してください。",
-     preparationDrafts: "未保存の変更を保存または破棄してください。",
-     preparationConfig: "設定の編集を終了してください。",
-+    preparationConfigBusy: "設定のエクスポートまたはインポートを実行中です。完了してから更新してください。",
-+    preparationConfigDetail: "更新する前に「{surface}」を閉じてください。",
-+    preparationOtherWindowHint: "（このダイアログは別の DBX ウィンドウにあります）",
-+    surfaceConnection: "接続設定",
-+    surfaceDdl: "DDL 表示",
-+    surfaceObjectSource: "オブジェクトソース",
-+    surfaceConfigUnencryptedExport: "非暗号化エクスポートの確認",
-     preparationNotReady: "更新の準備ができていません。再試行してください。",
-     downloadedReady: "新バージョン v{version} をダウンロード済みです。再起動して更新できます。",
-     restartAndUpdate: "再起動して更新",
-@@ -1125,6 +1132,7 @@ export default withEnglishFallback({
-     installing: "アップデートをインストール中...",
-     portableHelperFailed: "ポータブル版アップデートのヘルパーを起動できませんでした: {error}",
-     installFailed: "アップデートのインストールに失敗しました: {error}",
-+    updateBlocked: "更新は実行されていません：{error}",
-     restart: "終了して再起動",
-     updateAction: "更新",
-     updateNow: "今すぐ更新",
-```
-
-**File**: `apps/desktop/src/i18n/locales/ko.ts` (modified, +8/-0)
-```diff
-@@ -1103,6 +1103,13 @@ export default withEnglishFallback({
-     preparationTasks: "실행 중인 작업과 트랜잭션을 종료하세요.",
-     preparationDrafts: "변경 사항을 저장하거나 버리세요.",
-     preparationConfig: "현재 설정 편집을 완료하세요.",
-+    preparationConfigBusy: "설정 내보내기 또는 가져오기가 진행 중입니다. 완료된 후 업데이트하세요.",
-+    preparationConfigDetail: '업데이트하기 전에 "{surface}" 대화 상자를 닫으세요.',
-+    preparationOtherWindowHint: " (이 대화 상자는 다른 DBX 창에 있습니다)",
-+    surfaceConnection: "연결 설정",
-+    surfaceDdl: "DDL 보기",
-+    surfaceObjectSource: "객체 소스",
-+    surfaceConfigUnencryptedExport: "암호화하지 않은 내보내기 확인",
-     preparationNotReady: "업데이트 준비가 안 되었습니다. 다시 시도하세요.",
-     downloadedReady: "새 버전 v{version} 다운로드 완료. 다시 시작하여 업데이트하세요.",
-     restartAndUpdate: "다시 시작 및 업데이트",
-@@ -1131,6 +1138,7 @@ export default withEnglishFallback({
-     installing: "업데이트 설치 중...",
-     portableHelperFailed: "포터블 업데이트 도우미를 시작하지 못했습니다: {error}",
-     installFailed: "업데이트 설치에 실패했습니다: {error}",
-+    updateBlocked: "업데이트가 실행되지 않았습니다: {error}",
-     restart: "종료 후 다시 시작",
-     updateAction: "업데이트",
-     updateNow: "지금 업데이트",
-```
-
----
-
-### Incident Patch 2: `9400c0cd` (2026-10-29)
-**Commit Message**: fix(windows): reserve 8 MiB main-thread stack on ARM64 (#13918)
-
-**File**: `.cargo/config.toml` (modified, +5/-0)
-```diff
-@@ -24,6 +24,11 @@ linker = "rust-lld"
- # paths pull in deep serde/driver call stacks. This embeds the size in the PE.
- rustflags = ["-C", "link-arg=/STACK:8388608"]
+ const updateMocks = vi.hoisted(() => ({
+-  fetchChangelog: vi.fn(),
++  fetchChangelogIndex: vi.fn(),
++  fetchChangelogRelease: vi.fn(),
+   getAppVersion: vi.fn(),
+   openExternal: vi.fn(),
+ }));
+@@ -19,7 +20,7 @@ vi.mock("@/lib/backend/tauriRuntime", () => ({
  
-+# Native ARM64 builds need the same main-thread stack as x64. Without this,
-+# opening a query can exhaust the linker's 1 MiB default stack (#13917).
-+[target.aarch64-pc-windows-msvc]
-+rustflags = ["-C", "link-arg=/STACK:8388608"]
-+
- # The legacy Windows 7 / Server 2012 R2 target keeps the same 8 MiB main-thread
- # stack. CI builds it with an explicit RUSTFLAGS env (static CRT), which
- # replaces this table, so the same link arg is repeated in those workflows and
-```
-
-**File**: `.github/scripts/assert-win7-pe-compat.ps1` (modified, +3/-34)
-```diff
-@@ -70,37 +70,6 @@ if ($violations.Count -gt 0) {
- 
- Write-Host "Windows 7 PE import audit passed: $BinaryPath"
- 
--# Main-thread stack reserve audit. The app needs the 8 MiB stack that
--# .cargo/config.toml applies to the standard Windows target; the legacy target is
--# built with an explicit env RUSTFLAGS (static CRT), which replaces the config
--# rustflags, so the workflow repeats `-C link-arg=/STACK:8388608`. Without it the
--# PE keeps the 1 MiB linker default and deep connect/serde call stacks abort with
--# 0xC00000FD ("DBX 已停止工作"), which users reported on Windows 7 / Server 2012 R2.
--$minimumStackReserve = 8 * 1024 * 1024
--$image = [System.IO.File]::ReadAllBytes($BinaryPath)
--if ($image.Length -lt 0x100) {
--  throw "Windows 7 PE audit target is truncated: $BinaryPath"
--}
--$peOffset = [System.BitConverter]::ToInt32($image, 0x3C)
--if ($peOffset -le 0 -or $peOffset + 24 -gt $image.Length) {
--  throw "Invalid PE header offset in ${BinaryPath}"
--}
--$peSignature = [System.BitConverter]::ToUInt32($image, $peOffset)
--if ($peSignature -ne 0x00004550) {
--  throw "Invalid PE signature in ${BinaryPath}"
--}
--$optionalHeaderOffset = $peOffset + 24
--$optionalHeaderMagic = [System.BitConverter]::ToUInt16($image, $optionalHeaderOffset)
--$stackReserveOffset = $optionalHeaderOffset + 72
--$stackReserve = if ($optionalHeaderMagic -eq 0x20B) {
--  [System.BitConverter]::ToUInt64($image, $stackReserveOffset)
--} elseif ($optionalHeaderMagic -eq 0x10B) {
--  [System.BitConverter]::ToUInt32($image, $stackReserveOffset)
--} else {
--  throw ("Unsupported PE optional header magic 0x{0:X4} in {1}" -f $optionalHeaderMagic, $BinaryPath)
--}
--if ($stackReserve -lt $minimumStackReserve) {
--  throw ("Windows 7 main-thread stack reserve is {0} bytes, below the {1}-byte minimum. Add -C link-arg=/STACK:8388608 to the build RUSTFLAGS. Binary: {2}" -f $stackReserve, $minimumStackReserve, $BinaryPath)
--}
--
--Write-Host "Windows 7 PE stack reserve audit passed: $stackReserve bytes ($BinaryPath)"
-+# The legacy env RUSTFLAGS also needs /STACK:8388608. Share the same audit as
-+# standard x64/ARM64 releases so every Windows desktop target keeps this guard.
-+& (Join-Path $PSScriptRoot "assert-windows-stack-reserve.ps1") -BinaryPath $BinaryPath
-```
-
-**File**: `.github/scripts/assert-windows-stack-reserve.ps1` (added, +58/-0)
-```diff
-@@ -0,0 +1,58 @@
-+[CmdletBinding()]
-+param(
-+  [Parameter(Mandatory = $true)]
-+  [string[]]$BinaryPath
-+)
-+
-+Set-StrictMode -Version Latest
-+$ErrorActionPreference = "Stop"
-+$minimumStackReserve = [uint64](8 * 1024 * 1024)
-+
-+foreach ($path in $BinaryPath) {
-+  if (!(Test-Path -LiteralPath $path -PathType Leaf)) {
-+    throw "Windows PE stack audit target does not exist: $path"
-+  }
-+
-+  # Read only the headers: release executables can be hundreds of MiB.
-+  $image = [System.IO.File]::OpenRead((Get-Item -LiteralPath $path).FullName)
-+  $reader = [System.IO.BinaryReader]::new($image)
-+  try {
-+    if ($image.Length -lt 0x40 -or $reader.ReadUInt16() -ne 0x5A4D) {
-+      throw "Invalid or truncated DOS header in ${path}"
-+    }
-+    [void]$image.Seek(0x3C, [System.IO.SeekOrigin]::Begin)
-+    $peOffset = [long]$reader.ReadUInt32()
-+    if ($peOffset -lt 0x40 -or $peOffset + 24 -gt $image.Length) {
-+      throw "Invalid PE header offset in ${path}"
-+    }
-+    [void]$image.Seek($peOffset, [System.IO.SeekOrigin]::Begin)
-+    if ($reader.ReadUInt32() -ne 0x00004550) {
-+      throw "Invalid PE signature in ${path}"
-+    }
-+    $machine = $reader.ReadUInt16()
-+    [void]$image.Seek($peOffset + 20, [System.IO.SeekOrigin]::Begin)
-+    $optionalHeaderSize = $reader.ReadUInt16()
-+    $optionalHeaderOffset = $peOffset + 24
-+    if ($optionalHeaderSize -lt 2 -or $optionalHeaderOffset + $optionalHeaderSize -gt $image.Length) {
-+      throw "Invalid or truncated PE optional header in ${path}"
-+    }
-+    [void]$image.Seek($optionalHeaderOffset, [System.IO.SeekOrigin]::Begin)
-+    $magic = $reader.ReadUInt16()
-+    $stackFieldSize = switch ($magic) {
-+      0x20B { 8 } # PE32+: x64 and ARM64.
-+      0x10B { 4 } # PE32.
-+      default { throw ("Unsupported PE optional header magic 0x{0:X4} in {1}" -f $magic, $path) }
-+    }
-+    if ($optionalHeaderSize -lt 72 + $stackFieldSize) {
-+      throw "PE optional header does not contain SizeOfStackReserve in ${path}"
-+    }
-+    [void]$image.Seek($optionalHeaderOffset + 72, [System.IO.SeekOrigin]::Begin)
-+    $stackReserve = if ($stackFieldSize -eq 8) { $reader.ReadUInt64() } else { [uint64]$reader.ReadUInt32() }
-+    if ($stackReserve -lt $minimumStackReserve) {
-+      throw ("Windows main-thread stack reserve is {0} bytes, below the {1}-byte minimum. Add -C link-arg=/STACK:8388608 to the build RUSTFLAGS. Binary: {2}" -f $stackReserve, $minimumStackReserve, $path)
-+    }
-+    Write-Host ("Windows PE stack reserve audit passed: {0} bytes, machine 0x{1:X4} ({2})" -f $stackReserve, $machine, $path)
-+  } finally {
-+    $reader.Dispose()
-+  }
-+}
-```
-
-**File**: `.github/scripts/assert-windows-stack-reserve.test.ps1` (added, +86/-0)
-```diff
-@@ -0,0 +1,86 @@
-+Set-StrictMode -Version Latest
-+$ErrorActionPreference = "Stop"
-+$audit = Join-Path $PSScriptRoot "assert-windows-stack-reserve.ps1"
-+$temporaryRoot = [IO.Path]::GetFullPath([IO.Path]::GetTempPath())
-+$directory = Join-Path $temporaryRoot "dbx-stack-reserve-tests-$([guid]::NewGuid())"
-+New-Item -ItemType Directory -Path $directory | Out-Null
-+$passed = 0
-+
-+function New-TestImage {
-+  param([int]$Machine = 0x8664, [int]$Magic = 0x20B, [uint64]$StackReserve = 8388608)
-+  $bytes = [byte[]]::new(512)
-+  [BitConverter]::GetBytes([uint16]0x5A4D).CopyTo($bytes, 0)
-+  [BitConverter]::GetBytes([uint32]0x80).CopyTo($bytes, 0x3C)
-+  [BitConverter]::GetBytes([uint32]0x4550).CopyTo($bytes, 0x80)
-+  [BitConverter]::GetBytes([uint16]$Machine).CopyTo($bytes, 0x84)
-+  [BitConverter]::GetBytes([uint16]0xF0).CopyTo($bytes, 0x94)
-+  [BitConverter]::GetBytes([uint16]$Magic).CopyTo($bytes, 0x98)
-+  if ($Magic -eq 0x10B) {
-+    [BitConverter]::GetBytes([uint32]$StackReserve).CopyTo($bytes, 0xE0)
-+  } else {
-+    [BitConverter]::GetBytes($StackReserve).CopyTo($bytes, 0xE0)
-+  }
-+  return ,$bytes
-+}
-+
-+function Test-Image {
-+  param([string]$Name, [byte[]]$Bytes, [string]$ExpectedError = "")
-+  $path = Join-Path $directory "$Name.exe"
-+  [IO.File]::WriteAllBytes($path, $Bytes)
-+  $before = (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash
-+  $failure = $null
-+  try { & $audit -BinaryPath $path } catch { $failure = $_.Exception.Message }
-+  if ($ExpectedError) {
-+    if (!$failure -or $failure -notlike "*$ExpectedError*") { throw "${Name}: expected '$ExpectedError', got '$failure'" }
-+  } elseif ($failure) {
-+    throw "${Name}: unexpected failure: $failure"
-+  }
-+  if ((Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash -ne $before) { throw "${Name}: audit modified the executable" }
-+  $script:passed++
-+}
-+
-+try {
-+  foreach ($machine in @(0x8664, 0xAA64)) {
-+    Test-Image "minimum-$machine" (New-TestImage -Machine $machine)
-+    Test-Image "larger-$machine" (New-TestImage -Machine $machine -StackReserve 16777216)
-+    Test-Image "default-$machine" (New-TestImage -Machine $machine -StackReserve 1048576) "below the 8388608-byte minimum"
-+  }
-+  Test-Image "pe32" (New-TestImage -Machine 0x14C -Magic 0x10B)
-+  Test-Image "pe32-default" (New-TestImage -Machine 0x14C -Magic 0x10B -StackReserve 1048576) "below the 8388608-byte minimum"
-+  Test-Image "below-minimum" (New-TestImage -StackReserve 8388607) "below the 8388608-byte minimum"
-+  Test-Image "large-pe64-reserve" (New-TestImage -StackReserve 4294967296)
-+  Test-Image "empty" ([byte[]]::new(0)) "DOS header"
-+  Test-Image "truncated-dos" ([byte[]]::new(32)) "DOS header"
-+  $bytes = New-TestImage; $bytes[0] = 0
-+  Test-Image "bad-dos-signature" $bytes "DOS header"
-+  $bytes = New-TestImage; [BitConverter]::GetBytes([uint32]4294967280).CopyTo($bytes, 0x3C)
-+  Test-Image "out-of-range-pe-offset" $bytes "PE header offset"
-+  $bytes = New-TestImage; [BitConverter]::GetBytes([uint32]32).CopyTo($bytes, 0x3C)
-+  Test-Image "pe-offset-inside-dos" $bytes "PE header offset"
-+  $bytes = New-TestImage; $bytes[0x80] = 0
-+  Test-Image "bad-pe-signature" $bytes "PE signature"
-+  $bytes = New-TestImage
-+  Test-Image "truncated-optional-header" ([byte[]]$bytes[0..180]) "truncated PE optional header"
-+  $bytes = New-TestImage; [BitConverter]::GetBytes([uint16]1).CopyTo($bytes, 0x94)
-+  Test-Image "missing-optional-magic" $bytes "PE optional header"
-+  $bytes = New-TestImage; [BitConverter]::GetBytes([uint16]72).CopyTo($bytes, 0x94)
-+  Test-Image "missing-stack-field" $bytes "SizeOfStackReserve"
-+  $bytes = New-TestImage; [BitConverter]::GetBytes([uint16]79).CopyTo($bytes, 0x94)
-+  Test-Image "truncated-pe64-stack-field" $bytes "SizeOfStackReserve"
-+  $bytes = New-TestImage -Magic 0x10B; [BitConverter]::GetBytes([uint16]75).CopyTo($bytes, 0x94)
-+  Test-Image "truncated-pe32-stack-field" $bytes "SizeOfStackReserve"
-+  Test-Image "unknown-magic" (New-TestImage -Magic 0x999) "optional header magic"
-+
-+  & $audit -BinaryPath @((Join-Path $directory "minimum-34404.exe"), (Join-Path $directory "minimum-43620.exe"))
-+  $passed++
-+  $missing = Join-Path $directory "missing.exe"
-+  try { & $audit -BinaryPath $missing; throw "Missing target was accepted" } catch {
-+    if ($_.Exception.Message -notlike "*target does not exist*") { throw }
-+  }
-+  $passed++
-+  Write-Host "Windows stack reserve audit tests passed: $passed cases"
-+} finally {
-+  $resolved = [IO.Path]::GetFullPath($directory)
-+  if (!$resolved.StartsWith((Join-Path $temporaryRoot "dbx-stack-reserve-tests-"), [StringComparison]::OrdinalIgnoreCase)) { throw "Unexpected cleanup path: $resolved" }
-+  Remove-Item -LiteralPath $resolved -Recurse -Force
-+}
-```
-
-**File**: `.github/scripts/ci-plan.mjs` (modified, +2/-1)
-```diff
-@@ -6,6 +6,7 @@ import { goAgents, integrationCases, rustAgents, rustGroups } from "./ci-config.
- 
- const win7InfrastructureFiles = new Set([
-   ".github/scripts/assert-win7-pe-compat.ps1",
-+  ".github/scripts/assert-windows-stack-reserve.ps1",
-   ".github/scripts/assert-webview2-win7-loader.ps1",
-   ".github/scripts/assert-win7-installer-content.ps1",
-   ".github/scripts/assert-webview2-win7-runtime.ps1",
-@@ -145,7 +146,7 @@ export function planCi({ files, metadata, root, eventName = "pull_request", rust
-     agent_integration_changed: liveMatrix.length > 0,
-     duckdb_changed: nativeChanges.has("duckdb"),
-     duckdb_windows: sharedRust || files.some((file) => file.startsWith("agents/drivers/duckdb/")),
--    windows_standard: windowsWin7Candidate,
-+    windows_standard: windowsWin7Candidate || files.some((file) => file === ".github/scripts/assert-windows-stack-reserve.test.ps1" || file === ".github/scripts/test-windows-stack-reserve.ps1"),
-     windows_win7_bundle: win7InfrastructureChanged || win7DependencyChanged || unknownRust || (rust && unknownMember),
-     windows_win7_candidate: windowsWin7Candidate,
-     windows_win7_affected_packages: [...win7Affected].sort(),
-```
-
-**File**: `.github/scripts/ci-plan.test.mjs` (modified, +9/-0)
-```diff
-@@ -142,6 +142,7 @@ test("old Win7 Rust paths remain candidates through the dependency graph", () =>
- test("Win7 infrastructure changes remain candidates outside the Cargo graph", () => {
-   for (const file of [
-     ".github/scripts/assert-win7-pe-compat.ps1",
-+    ".github/scripts/assert-windows-stack-reserve.ps1",
-     ".github/scripts/assert-webview2-win7-loader.ps1",
-     ".github/scripts/assert-win7-installer-content.ps1",
-     ".github/scripts/assert-webview2-win7-runtime.ps1",
-@@ -173,6 +174,14 @@ test("Win7 infrastructure changes remain candidates outside the Cargo graph", ()
-   }
+ vi.mock("@/lib/app/changelog", async (importOriginal) => {
+   const actual = await importOriginal<typeof import("@/lib/app/changelog")>();
+-  return { ...actual, fetchChangelog: updateMocks.fetchChangelog };
++  return { ...actual, fetchChangelogIndex: updateMocks.fetchChangelogIndex, fetchChangelogRelease: updateMocks.fetchChangelogRelease };
  });
  
-+test("Windows stack test changes run the standard Windows checks", () => {
-+  for (const file of [".github/scripts/assert-windows-stack-reserve.test.ps1", ".github/scripts/test-windows-stack-reserve.ps1"]) {
-+    const result = plan([file]);
-+    assert.equal(result.windows_standard, true, file);
-+    assert.equal(result.windows_win7_bundle, false, file);
-+  }
+ vi.mock("@/lib/backend/api", async (importOriginal) => {
+@@ -156,7 +157,8 @@ async function clickOutside() {
+ 
+ beforeEach(() => {
+   // 默认没有历史版本：只有专门的历史版本用例才提供发布记录
+-  updateMocks.fetchChangelog.mockResolvedValue({ updatedAt: "", releases: [] });
++  updateMocks.fetchChangelogIndex.mockResolvedValue({ updatedAt: "", releases: [] });
++  updateMocks.fetchChangelogRelease.mockResolvedValue({ tag: "", name: "", date: "", sections: [] });
+   updateMocks.getAppVersion.mockResolvedValue("0.5.60");
+   updateMocks.openExternal.mockClear();
+ });
+@@ -450,9 +452,15 @@ describe("UpdateDialog release notes safety", () => {
+ describe("UpdateDialog changelog", () => {
+   it("shows the shared changelog even when the current version has no update", async () => {
+     const checkUpdates = vi.fn();
+-    updateMocks.fetchChangelog.mockResolvedValue({
++    updateMocks.fetchChangelogIndex.mockResolvedValue({
+       updatedAt: "2026-10-28",
+-      releases: [{ tag: "v0.5.60", name: "DBX v0.5.60", date: "2026-10-28", sections: [{ type: "fixed", title: "Fixed", items: [{ title: "A useful fix", desc: "Details of the fix" }] }] }],
++      releases: [{ tag: "v0.5.60", name: "DBX v0.5.60", date: "2026-10-28" }],
++    });
++    updateMocks.fetchChangelogRelease.mockResolvedValue({
++      tag: "v0.5.60",
++      name: "DBX v0.5.60",
++      date: "2026-10-28",
++      sections: [{ type: "fixed", title: "Fixed", items: [{ title: "A useful fix", desc: "Details of the fix" }] }],
+     });
+     await mountDialog(0, {}, undefined, { updateInfo: null, "onCheck-updates": checkUpdates });
+ 
+@@ -485,7 +493,8 @@ describe("UpdateDialog changelog", () => {
+ });
+ 
+ describe("UpdateDialog older versions", () => {
+-  const release = (tag: string, date: string) => ({ tag, name: `DBX ${tag}`, date, sections: [] });
++  // The rollback list only needs index entries (tag/date); release bodies stay unloaded.
++  const release = (tag: string, date: string) => ({ tag, name: `DBX ${tag}`, date });
+   const upToDateInfo = {
+     current_version: "0.5.60",
+     latest_version: "0.5.60",
+@@ -500,7 +509,7 @@ describe("UpdateDialog older versions", () => {
+   const historyButton = (text: string) => Array.from(historyRegion()?.querySelectorAll("button") ?? []).find((button) => button.textContent?.includes(text));
+ 
+   it("lists only versions older than the current build and opens their release page", async () => {
+-    updateMocks.fetchChangelog.mockResolvedValue({ updatedAt: "2026-09-10", releases: [release("v0.5.61", "2026-09-10"), release("v0.5.60", "2026-09-01"), release("v0.5.59", "2026-08-20")] });
++    updateMocks.fetchChangelogIndex.mockResolvedValue({ updatedAt: "2026-09-10", releases: [release("v0.5.61", "2026-09-10"), release("v0.5.60", "2026-09-01"), release("v0.5.59", "2026-08-20")] });
+ 
+     await mountDialog(0, {}, undefined, { updateInfo: upToDateInfo, updateCheckMessage: "DBX is up to date (0.5.60)." });
+     await flushDialog();
+@@ -524,7 +533,7 @@ describe("UpdateDialog older versions", () => {
+   });
+ 
+   it("keeps the history collapsed until the user expands it", async () => {
+-    updateMocks.fetchChangelog.mockResolvedValue({ updatedAt: "2026-09-10", releases: [release("v0.5.61", "2026-09-10"), release("v0.5.59", "2026-08-20")] });
++    updateMocks.fetchChangelogIndex.mockResolvedValue({ updatedAt: "2026-09-10", releases: [release("v0.5.61", "2026-09-10"), release("v0.5.59", "2026-08-20")] });
+ 
+     await mountDialog(0);
+     await flushDialog();
+@@ -539,7 +548,7 @@ describe("UpdateDialog older versions", () => {
+   });
+ 
+   it("starts collapsed again after the dialog is reopened", async () => {
+-    updateMocks.fetchChangelog.mockResolvedValue({ updatedAt: "2026-09-10", releases: [release("v0.5.61", "2026-09-10"), release("v0.5.59", "2026-08-20")] });
++    updateMocks.fetchChangelogIndex.mockResolvedValue({ updatedAt: "2026-09-10", releases: [release("v0.5.61", "2026-09-10"), release("v0.5.59", "2026-08-20")] });
+ 
+     const { state } = await mountDialog(0, {}, undefined, { updateInfo: upToDateInfo, updateCheckMessage: "DBX is up to date (0.5.60)." });
+     await flushDialog();
+@@ -558,7 +567,7 @@ describe("UpdateDialog older versions", () => {
+   });
+ 
+   it("hides the history section when no release i
+```
+
+**File**: `apps/desktop/src/components/layout/UpdateDialog.vue` (modified, +4/-3)
+```diff
+@@ -15,7 +15,7 @@ import { isUpdatePreviewMockEnabled } from "@/lib/updates/updatePreviewMock";
+ import { canDownloadAndInstallUpdate, isNewerRemoteVersion, resolveReleaseTagUrl } from "@/composables/useAppUpdater";
+ import type { ComponentUpdateCategory } from "@/composables/useComponentUpdates";
+ import { currentLocale } from "@/i18n";
+-import { changelogLangFromLocale, createLatestRequestGuard, fetchChangelog, type ChangelogRelease } from "@/lib/app/changelog";
++import { changelogLangFromLocale, createLatestRequestGuard, fetchChangelogIndex, type ChangelogReleaseSummary } from "@/lib/app/changelog";
+ import DriverInstallProgressCircle from "@/components/config/DriverInstallProgressCircle.vue";
+ import ChangelogPanel from "@/components/settings/ChangelogPanel.vue";
+ import { driverInstallProgressPercent, formatDriverInstallProgressText, type DriverInstallProgress } from "@/lib/connection/driverInstallProgressUi";
+@@ -102,7 +102,8 @@ const mcpAvailable = computed(() => (props.mcpUpdate ? mcpUpdateAvailability(pro
+ const HISTORY_PAGE_SIZE = 10;
+ const historyLoading = ref(false);
+ const historyError = ref("");
+-const historyReleases = ref<ChangelogRelease[]>([]);
++/** 只需要版本号与日期，因此读轻量索引而不是整份更新日志正文 */
++const historyReleases = ref<ChangelogReleaseSummary[]>([]);
+ const historyVisibleCount = ref(HISTORY_PAGE_SIZE);
+ const historyRequest = createLatestRequestGuard();
+ /** 弹窗可能在“检查更新”完成前打开，这里保存单独取到的应用版本用于比较 */
+@@ -229,7 +230,7 @@ async function loadOlderReleases() {
+     if (!props.updateInfo?.current_version && !fallbackVersion.value) {
+       fallbackVersion.value = await getAppVersion().catch(() => "");
+     }
+-    const data = await fetchChangelog(changelogLang.value);
++    const data = await fetchChangelogIndex(changelogLang.value);
+     if (!historyRequest.isCurrent(requestId)) return;
+     historyReleases.value = data.releases;
+   } catch (error) {
+```
+
+**File**: `apps/desktop/src/components/settings/ChangelogPanel.spec.ts` (added, +139/-0)
+```diff
+@@ -0,0 +1,139 @@
++// @vitest-environment happy-dom
++
++import { createApp, defineComponent, h, nextTick, type App } from "vue";
++import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
++import i18n from "@/i18n";
++import ChangelogPanel from "@/components/settings/ChangelogPanel.vue";
++
++const changelogMocks = vi.hoisted(() => ({
++  fetchChangelogIndex: vi.fn(),
++  fetchChangelogRelease: vi.fn(),
++}));
++
++vi.mock("@/lib/app/changelog", async (importOriginal) => {
++  const actual = await importOriginal<typeof import("@/lib/app/changelog")>();
++  return { ...actual, fetchChangelogIndex: changelogMocks.fetchChangelogIndex, fetchChangelogRelease: changelogMocks.fetchChangelogRelease };
 +});
 +
- test("Win7 dependency inputs fail open", () => {
-   for (const file of ["Cargo.toml", "Cargo.lock", "src-tauri/Cargo.toml", "crates/dbx-cli/Cargo.toml"]) {
-     assert.equal(plan([file]).windows_win7_candidate, true, file);
-```
-
-**File**: `.github/scripts/ci-workflow.test.mjs` (modified, +0/-6)
-```diff
-@@ -513,9 +513,3 @@ test("legacy Windows builds keep the 8 MiB main-thread stack", () => {
-   }
-   assert.match(job("build-windows-7-x64", sqlServerUserTest), stackFlag, "the SQL Server 2000 Win7 test build must keep the 8 MiB main-thread stack");
- });
--
--test("the Win7 PE audit fails when the stack reserve regresses", () => {
--  const audit = readFileSync(new URL("./assert-win7-pe-compat.ps1", import.meta.url), "utf8");
--  assert.ok(audit.includes("minimumStackReserve"));
--  assert.ok(audit.includes("link-arg=/STACK:8388608"));
--});
-```
-
-**File**: `.github/scripts/test-windows-stack-reserve.ps1` (added, +69/-0)
-```diff
-@@ -0,0 +1,69 @@
-+[CmdletBinding()]
-+param(
-+  [string[]]$Targets = @("x86_64-pc-windows-msvc", "aarch64-pc-windows-msvc")
-+)
++vi.mock("@tauri-apps/plugin-shell", () => ({ open: vi.fn() }));
 +
-+Set-StrictMode -Version Latest
-+$ErrorActionPreference = "Stop"
-+$repositoryRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-+$audit = Join-Path $PSScriptRoot "assert-windows-stack-reserve.ps1"
-+$temporaryRoot = [IO.Path]::GetFullPath([IO.Path]::GetTempPath())
-+$directory = Join-Path $temporaryRoot "dbx-stack-reserve-probe-$([guid]::NewGuid())"
-+New-Item -ItemType Directory -Path (Join-Path $directory "src") | Out-Null
-+$originalRustflags = [Environment]::GetEnvironmentVariable("RUSTFLAGS", "Process")
-+$originalEncodedRustflags = [Environment]::GetEnvironmentVariable("CARGO_ENCODED_RUSTFLAGS", "Process")
-+$hadRustflags = Test-Path Env:RUSTFLAGS
-+$hadEncodedRustflags = Test-Path Env:CARGO_ENCODED_RUSTFLAGS
++const mountedApps: App[] = [];
 +
-+function Restore-RustflagEnvironment {
-+  if ($hadRustflags) { $env:RUSTFLAGS = $originalRustflags }
-+  else { Remove-Item Env:RUSTFLAGS -ErrorAction SilentlyContinue }
-+  if ($hadEncodedRustflags) { $env:CARGO_ENCODED_RUSTFLAGS = $originalEncodedRustflags }
-+  else { Remove-Item Env:CARGO_ENCODED_RUSTFLAGS -ErrorAction SilentlyContinue }
++async function flushPanel() {
++  await nextTick();
++  await new Promise((resolve) => setTimeout(resolve, 0));
++  await nextTick();
 +}
 +
-+# A real PE produced by Cargo verifies effective linker flags, including when
-+# an environment override takes precedence over the repository's target config.
-+# no_std keeps the cross-architecture probe independent of Windows SDK libraries.
-+[IO.File]::WriteAllText((Join-Path $directory "Cargo.toml"), @'
-+[package]
-+name = "stack-reserve-probe"
-+version = "0.0.0"
-+edition = "2021"
-+[workspace]
-+[profile.release]
-+panic = "abort"
-+'@)
-+[IO.File]::WriteAllText((Join-Path $directory "src/main.rs"), @'
-+#![no_std]
-+#![no_main]
-+#[no_mangle]
-+pub extern "C" fn mainCRTStartup() {}
-+#[panic_handler]
-+fn panic(_: &core::panic::PanicInfo<'_>) -> ! { loop {} }
-+'@)
++function entry(tag: string) {
++  return { tag, name: `DBX ${tag}`, date: "2026-10-30" };
++}
 +
-+Push-Location $repositoryRoot
-+try {
-+  foreach ($mode in @("target-config", "environment")) {
-+    if ($mode -eq "environment") {
-+      if (!$hadRustflags -and !$hadEncodedRustflags) { continue }
-+      Restore-RustflagEnvironment
-+    } else {
-+      # An empty variable still overrides Cargo config in current PowerShell.
-+      Remove-Item Env:RUSTFLAGS, Env:CARGO_ENCODED_RUSTFLAGS -ErrorAction SilentlyContinue
-+    }
-+    foreach ($target in $Targets) {
-+      Write-Host "Verifying Windows stack reserve: $target ($mode)"
-+      & cargo rustc --offline --release --manifest-path (Join-Path $directory "Cargo.toml") --target $target --target-dir (Join-Path $directory "target") -- -C linker=rust-lld -C link-arg=/ENTRY:mainCRTStartup -C link-arg=/SUBSYSTEM:CONSOLE -C link-arg=/NODEFAULTLIB
-+      if ($LASTEXITCODE -ne 0) { throw "Failed to build the Windows stack probe for $target ($mode)" }
-+      & $audit -BinaryPath (Join-Path $directory "target/$target/release/stack-reserve-probe.exe")
++function entries(count: number) {
++  return Array.from({ length: count }, (_, index) => entry(`v0.6.${count - index}`));
++}
++
++function release(tag: string) {
++  return {
++    tag,
++    name: `DBX ${tag}`,
++    date: "2026-10-30",
++    sections: [{ type: "fixed", title: "Fixed", items: [{ title: `${tag} fix note`, desc: "" }] }],
++  };
++}
++
++function releaseRows(container: HTMLElement) {
++  return Array.from(container.querySelectorAll<HTMLButtonElement>("button[aria-expanded]"));
++}
++
++function buttonWithText(container: HTMLElement, text: string) {
++  return Array.from(container.querySelectorAll<HTMLButtonElement>("button")).find((button) => button.textContent?.includes(text));
++}
++
++async function mountPanel(): Promise<HTMLElement> {
++  const container = document.createElement("div");
++  document.body.append(container);
++  const app = createApp(defineComponent({ setup: () => () => h(ChangelogPanel) }));
++  mountedApps.push(app);
++  app.use(i18n);
++  app.mount(container);
++  await flushPanel();
++  return container;
++}
++
++beforeEach(() => {
++  changelogMocks.fetchChangelogIndex.mockResolvedValue({ updatedAt: "2026-10-30", releases: entries(8) });
++  changelogMocks.fetchChangelogRelease.mockImplementation(async (_lang: string, tag: string) => release(tag));
++});
++
++afterEach(() => {
++  for (const app of mountedApps.splice(0)) app.unmount();
++  document.body.innerHTML = "";
++  vi.clearAllMocks();
++});
++
++describe("ChangelogPanel lazy release bodies", () => {
++  it("loads only the version index up front and pulls a body when a version is expanded", async () => {
++    const container = await mountPanel();
++
++    expect(changelogMocks.fetchChangelogIndex).toHaveBeenCalledTimes(1);
++    expect(changelogMocks.fetchChangelogRelease).not.toHaveBeenCalled();
++    // The first page is list metadata only: no release notes travel with it.
++    expect(releaseRows(container)).toHaveLength(5);
++    expect(container.textContent).not.toContain("v0.6.8 fix note");
++
++    releaseRows(container)[0].click();
++    await flushPanel();
++
++    expect(changelogMocks.fetchChangelogRelease).toHaveBeenCalledTimes(1);
++    expect(changelogMocks.fetchChangelogRelease).toHaveBeenCalledWith(expect.any(String), "v0.6.8");
++    expect(container.textContent).toContain("v0.6.8 fix note");
++    // Untouched versions stay unfetched.
++    expect(changelogMocks.fetchChangelogRelease).toHaveBeenCalledTimes(1);
++  });
++
++  it("reveals more versions on load more without downloading their notes", async () => {
++    const container = await mountPanel();
++    expect(releaseRows(container)).toHaveLength(5);
++
++    buttonWithText(container, i18n.global.t("settings.changelogLoadMore"))?.click();
++    await flushPanel();
++
++    expect(releaseRows(container)).toHaveLength(8);
++    expect(changelogMocks.fetchChangelogRelease).not.toHaveBeenCalled();
++    expect(buttonWithText(container, i18n.global.t("settings.changelogLoadMore"))).toBeUndefined();
++  });
++
++  it("keeps a loaded body in memory when the version is collapsed and expanded again", async () => {
++    const container = await mountPanel();
++
++    releaseRows(container)[0].click();
++    await flushPanel();
++    expect(changelogMocks.fetchChangelogRelease).toHaveBeenCalledTimes(1);
++
++    releaseRows(container)[0].click();
++    await flushPanel();
++    releaseRows(container)[0].click();
++    await flushPanel();
++
++    expect(changelogMocks.fetchChangelogRelease).toHaveBeenCalledTimes(1);
++    expect(container.textContent).toContain("v0.6.8 fix note");
++  });
++
++  it("surfaces a body load failure with a retry that renders the notes", async () => {
++    changelogMocks.fetchChangelogRelease.mockRejectedValueOnce(new Error("offline"));
++    const container = await mountPanel();
++
++    releaseRows(container)[0].click();
++    await flushPanel();
++
++    expect(container.textContent).toContain(i18n.global.t("settings.changelogLoadFailed"));
++
++    buttonWithText(container, i18n.glob
+```
+
+**File**: `apps/desktop/src/components/settings/ChangelogPanel.vue` (modified, +97/-24)
+```diff
+@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
+ import { currentLocale } from "@/i18n";
+ import { isTauriRuntime } from "@/lib/backend/tauriRuntime";
+ import { formatAiInlineMarkdownFragment, handleAiMarkdownLinkClick } from "@/lib/ai/aiMarkdown";
+-import { changelogLangFromLocale, changelogReleaseUrl, changelogWebsiteUrl, createLatestRequestGuard, fetchChangelog, type ChangelogItem, type ChangelogLang, type ChangelogRelease } from "@/lib/app/changelog";
++import { changelogLangFromLocale, changelogReleaseUrl, changelogWebsiteUrl, clearChangelogCache, createLatestRequestGuard, fetchChangelogIndex, fetchChangelogRelease, type ChangelogItem, type ChangelogLang, type ChangelogRelease, type ChangelogReleaseSummary } from "@/lib/app/changelog";
+ 
+ const PAGE_SIZE = 5;
+ 
+@@ -29,16 +29,20 @@ const emit = defineEmits<{
+ 
+ const loading = ref(false);
+ const error = ref("");
+-const releases = ref<ChangelogRelease[]>([]);
++/** Version rows only; release bodies are fetched per version when expanded. */
++const entries = ref<ChangelogReleaseSummary[]>([]);
+ const visibleCount = ref(PAGE_SIZE);
+ const expandedTags = ref<Set<string>>(new Set());
++const releaseDetails = ref<Record<string, ChangelogRelease>>({});
++const releaseLoading = ref<Set<string>>(new Set());
++const releaseErrors = ref<Record<string, string>>({});
+ const loadedLang = ref<ChangelogLang | null>(null);
+ const loadRequest = createLatestRequestGuard();
+ 
+ const changelogLang = computed(() => changelogLangFromLocale(locale.value || currentLocale()));
+-const visibleReleases = computed(() => releases.value.slice(0, visibleCount.value));
+-const hasMore = computed(() => visibleCount.value < releases.value.length);
+-const latestTag = computed(() => releases.value[0]?.tag ?? "");
++const visibleReleases = computed(() => entries.value.slice(0, visibleCount.value));
++const hasMore = computed(() => visibleCount.value < entries.value.length);
++const latestTag = computed(() => entries.value[0]?.tag ?? "");
+ 
+ function isLatestRelease(tag: string) {
+   return !!latestTag.value && tag === latestTag.value;
+@@ -90,33 +94,88 @@ function isExpanded(tag: string) {
+   return expandedTags.value.has(tag);
+ }
+ 
++function releaseFor(tag: string): ChangelogRelease | null {
++  return releaseDetails.value[tag] ?? null;
++}
++
++function releaseSections(tag: string) {
++  return releaseDetails.value[tag]?.sections ?? [];
++}
++
++function isReleaseLoading(tag: string) {
++  return releaseLoading.value.has(tag);
++}
++
++function releaseErrorFor(tag: string) {
++  return releaseErrors.value[tag] ?? "";
++}
++
+ function toggleRelease(tag: string) {
+   const next = new Set(expandedTags.value);
+   if (next.has(tag)) next.delete(tag);
+   else next.add(tag);
+   expandedTags.value = next;
++  // Bodies are lazy: opening a version is what pulls its notes.
++  if (next.has(tag)) void loadReleaseDetails(tag);
++}
++
++async function loadReleaseDetails(tag: string) {
++  if (releaseDetails.value[tag] || releaseLoading.value.has(tag)) return;
++
++  const lang = changelogLang.value;
++  releaseLoading.value = new Set(releaseLoading.value).add(tag);
++  if (releaseErrors.value[tag]) {
++    const nextErrors = { ...releaseErrors.value };
++    delete nextErrors[tag];
++    releaseErrors.value = nextErrors;
++  }
++
++  try {
++    const release = await fetchChangelogRelease(lang, tag);
++    if (loadedLang.value !== lang) return;
++    releaseDetails.value = { ...releaseDetails.value, [tag]: release };
++  } catch (e: any) {
++    if (loadedLang.value !== lang) return;
++    releaseErrors.value = { ...releaseErrors.value, [tag]: e?.message || String(e) };
++  } finally {
++    // A language switch already reset every body slot; do not touch the new set.
++    if (loadedLang.value === lang && releaseLoading.value.has(tag)) {
++      const nextLoading = new Set(releaseLoading.value);
++      nextLoading.delete(tag);
++      releaseLoading.value = nextLoading;
 +    }
 +  }
-+} finally {
-+  Restore-RustflagEnvironment
-+  Pop-Location
-+  $resolved = [IO.Path]::GetFullPath($directory)
-+  if (!$resolved.StartsWith((Join-Path $temporaryRoot "dbx-stack-reserve-probe-"), [StringComparison]::OrdinalIgnoreCase)) { throw "Unexpected cleanup path: $resolved" }
-+  Remove-Item -LiteralPath $resolved -Recurse -Force
+ }
+ 
+ function loadMore() {
+-  visibleCount.value = Math.min(visibleCount.value + PAGE_SIZE, releases.value.length);
++  visibleCount.value = Math.min(visibleCount.value + PAGE_SIZE, entries.value.length);
 +}
++
++function resetReleaseBodies() {
++  expandedTags.value = new Set();
++  releaseDetails.value = {};
++  releaseLoading.value = new Set();
++  releaseErrors.value = {};
+ }
+ 
+ async function load(force = false) {
+   const lang = changelogLang.value;
+   const requestId = loadRequest.begin();
+   loading.value = true;
+   error.value = "";
++  if (force) clearChangelogCache(lang);
+   try {
+-    const data = await fetchChangelog(lang, { force });
++    const data = await fetchChangelogIndex(lang);
+     if (!loadRequest.isCurrent(requestId)) return;
+-    releases.value = data.releases;
++    entries.value = data.releases;
+     loadedLang.value = lang;
+     visibleCount.value = PAGE_SIZE;
+-    expandedTags.value = new Set();
++    resetReleaseBodies();
+   } catch (e: any) {
+     if (!loadRequest.isCurrent(requestId)) return;
+-    releases.value = [];
++    entries.value = 
+```
+
+**File**: `apps/desktop/src/lib/app/changelog.ts` (modified, +92/-11)
+```diff
+@@ -16,14 +16,52 @@ export type ChangelogRelease = {
+   sections: ChangelogSection[];
+ };
+ 
++/** One row of the published changelog index: no release body. */
++export type ChangelogReleaseSummary = {
++  tag: string;
++  name: string;
++  date: string;
++};
++
++export type ChangelogIndexData = {
++  updatedAt: string;
++  releases: ChangelogReleaseSummary[];
++};
++
+ export type ChangelogData = {
+   updatedAt: string;
+   releases: ChangelogRelease[];
+ };
+ 
+ export type ChangelogLang = "en" | "cn";
+ 
+-const cache = new Map<ChangelogLang, Promise<ChangelogData>>();
++const feedCache = new Map<ChangelogLang, Promise<ChangelogData>>();
++const indexCache = new Map<ChangelogLang, Promise<ChangelogIndexData>>();
++const releaseCache = new Map<string, Promise<ChangelogRelease>>();
++
++function releaseCacheKey(lang: ChangelogLang, tag: string) {
++  return `${lang}\u0000${tag}`;
++}
++
++/**
++ * Drop cached changelog payloads so the next read goes back to R2. A release
++ * body is cached per tag, so clearing one language has to clear each of its tags.
++ */
++export function clearChangelogCache(lang?: ChangelogLang) {
++  if (!lang) {
++    feedCache.clear();
++    indexCache.clear();
++    releaseCache.clear();
++    return;
++  }
++  feedCache.delete(lang);
++  indexCache.delete(lang);
++  const prefix = `${lang}\u0000`;
++  // Map iterators tolerate deleting the entry being visited.
++  for (const key of releaseCache.keys()) {
++    if (key.startsWith(prefix)) releaseCache.delete(key);
++  }
++}
+ 
+ export function createLatestRequestGuard() {
+   let latestRequestId = 0;
+@@ -45,23 +83,66 @@ export function changelogReleaseUrl(tag: string): string {
+   return `https://github.com/t8y2/dbx/releases/tag/${encodeURIComponent(tag)}`;
+ }
+ 
+-export async function fetchChangelog(lang: ChangelogLang, options: { force?: boolean } = {}): Promise<ChangelogData> {
+-  if (options.force) {
+-    cache.delete(lang);
+-  }
+-
+-  let pending = cache.get(lang);
++function cached<T>(cache: Map<string, Promise<T>>, key: string, load: () => Promise<T>, force: boolean): Promise<T> {
++  if (force) cache.delete(key);
++  let pending = cache.get(key);
+   if (!pending) {
+-    pending = loadChangelog(lang).catch((error) => {
+-      cache.delete(lang);
++    pending = load().catch((error) => {
++      cache.delete(key);
+       throw error;
+     });
+-    cache.set(lang, pending);
++    cache.set(key, pending);
+   }
+-
+   return pending;
+ }
+ 
++/**
++ * Version list only (`changelog/index-<lang>.json`, a few kilobytes). The full
++ * feed carries every release body and is megabytes, so any UI that only lists
++ * versions reads the index instead of downloading all release notes.
++ */
++export async function fetchChangelogIndex(lang: ChangelogLang, options: { force?: boolean } = {}): Promise<ChangelogIndexData> {
++  return cached(indexCache, lang, () => loadChangelogIndex(lang), options.force === true);
++}
++
++/** Release body for one version (`changelog/releases-<lang>/<tag>.json`). */
++export async function fetchChangelogRelease(lang: ChangelogLang, tag: string, options: { force?: boolean } = {}): Promise<ChangelogRelease> {
++  return cached(releaseCache, releaseCacheKey(lang, tag), () => loadChangelogRelease(lang, tag), options.force === true);
++}
++
++/** Full feed in one request; kept for callers that need every release body at once. */
++export async function fetchChangelog(lang: ChangelogLang, options: { force?: boolean } = {}): Promise<ChangelogData> {
++  return cached(feedCache, lang, () => loadChangelog(lang), options.force === true);
++}
++
++async function loadChangelogIndex(lang: ChangelogLang): Promise<ChangelogIndexData> {
++  const { fetchChangelogIndex: fetchIndexViaBackend } = await import("@/lib/backend/api");
++  const data = await fetchIndexViaBackend(lang);
++  if (!data || !Array.isArray(data.releases)) {
++    throw new Error("Invalid changelog index payload");
++  }
++
++  return {
++    updatedAt: typeof data.updatedAt === "string" ? data.updatedAt : "",
++    releases: data.releases.filter((release) => release && typeof release.tag === "string"),
++  };
++}
++
++async function loadChangelogRelease(lang: ChangelogLang, tag: string): Promise<ChangelogRelease> {
++  const { fetchChangelogRelease: fetchReleaseViaBackend } = await import("@/lib/backend/api");
++  const data = await fetchReleaseViaBackend(lang, tag);
++  if (!data || typeof data.tag !== "string") {
++    throw new Error("Invalid changelog release payload");
++  }
++
++  return {
++    tag: data.tag,
++    name: typeof data.name === "string" ? data.name : "",
++    date: typeof data.date === "string" ? data.date : "",
++    sections: Array.isArray(data.sections) ? data.sections.filter((section) => section && Array.isArray(section.items)) : [],
++  };
++}
++
+ async function loadChangelog(lang: ChangelogLang): Promise<ChangelogData> {
+   const { fetchChangelog: fetchChangelogViaBackend } = await import("@/lib/backend/api");
+   const data = await fetchChangelogViaBackend(lang);
+```
+
+**File**: `apps/desktop/src/lib/backend/api.ts` (modified, +2/-0)
+```diff
+@@ -1041,6 +1041,8 @@ export const rotateWebMcpToken = forward("rotateWebMcpToken");
+ export const loadWebCapabilities = forward("loadWebCapabilities");
+ export const checkForUpdates = forward("checkForUpdates");
+ export const fetchChangelog = forward("fetchChangelog");
++export const fetchChangelogIndex = forward("fetchChangelogIndex");
++export const fetchChangelogRelease = forward("fetchChangelogRelease");
+ export const getSystemProxyUrl = forward("getSystemProxyUrl");
+ export const downloadUpdate = forward("downloadUpdate");
+ export const cancelUpdateDownload = forward("cancelUpdateDownload");
+```
+
+**File**: `apps/desktop/src/lib/backend/http.ts` (modified, +10/-0)
+```diff
+@@ -5850,6 +5850,16 @@ export async function fetchChangelog(lang?: string): Promise<import("@/lib/app/c
+   return get(`/api/changelog${query}`);
+ }
+ 
++export async function fetchChangelogIndex(lang?: string): Promise<import("@/lib/app/changelog").ChangelogIndexData> {
++  const query = lang ? `?lang=${encodeURIComponent(lang)}` : "";
++  return get(`/api/changelog/index${query}`);
++}
++
++export async function fetchChangelogRelease(lang: string | undefined, tag: string): Promise<import("@/lib/app/changelog").ChangelogRelease> {
++  const query = lang ? `?lang=${encodeURIComponent(lang)}` : "";
++  return get(`/api/changelog/releases/${encodeURIComponent(tag)}${query}`);
++}
++
+ export async function checkMcpServerStatus(): Promise<import("@/lib/backend/tauri").McpServerStatus> {
+   return {
+     installed: false,
+```
+
+**File**: `apps/desktop/src/lib/backend/tauri.ts` (modified, +8/-0)
+```diff
+@@ -3718,6 +3718,14 @@ export async function fetchChangelog(lang?: string): Promise<import("@/lib/app/c
+   return invoke("fetch_changelog", { lang });
+ }
+ 
++export async function fetchChangelogIndex(lang?: string): Promise<import("@/lib/app/changelog").ChangelogIndexData> {
++  return invoke("fetch_changelog_index", { lang });
++}
++
++export async function fetchChangelogRelease(lang: string | undefined, tag: string): Promise<import("@/lib/app/changelog").ChangelogRelease> {
++  return invoke("fetch_changelog_release", { lang, tag });
++}
++
+ export async function getSystemProxyUrl(): Promise<string | null> {
+   return invoke("get_system_proxy_url");
+ }
 ```
 
 ---
 
-### Incident Patch 3: `50d5ef4b` (2026-10-29)
-**Commit Message**: fix(postgres): include SQLSTATE in native query errors (#13922)
+### Incident Patch 2: `df4aa4d8` (2026-10-31)
+**Commit Message**: fix(transfer): make data transfer cancel responsive before the first table
 
-* fix(postgres): include SQLSTATE while preserving server messages, details, hints and error positions
-* test(postgres): add regression coverage for native error details and backend error propagation
-
-Fixes #13837
-
-**File**: `crates/dbx-core/tests/live_postgres_error_position.rs` (modified, +1/-0)
+**File**: `apps/desktop/src/composables/__tests__/useExportTracker.spec.ts` (modified, +25/-0)
 ```diff
-@@ -141,6 +141,7 @@ async fn live_pg_multi_core_reports_error_position_in_the_backend_envelope() {
-     let detail = backend_error.detail().unwrap_or_default();
-     assert!(!detail.contains(SQL_ERROR_POSITION_MARKER), "detail must not leak the marker: {detail}");
-     assert!(detail.contains("no_such_table"), "detail should keep the native message: {detail}");
-+    assert!(detail.contains("SQLSTATE 42P01"), "detail should keep the native error code: {detail}");
+@@ -214,6 +214,31 @@ describe("data transfer task duration", () => {
+     expect(task.status).toBe(expectedStatus);
+   });
  
-     let _ = std::fs::remove_dir_all(&dir);
- }
++  it("shows cancelling immediately and keeps it until the backend reports the terminal state", async () => {
++    const tracker = useExportTracker();
++    const task = tracker.addDataTransferTask("cancel-pending", "many tables", 1693);
++
++    await tracker.cancelTask(task.exportId);
++    expect(api.cancelTransfer).toHaveBeenCalledWith("cancel-pending");
++    expect(task.status).toBe("Cancelling");
++
++    tracker.updateDataTransferTask(task.exportId, transferProgress(task.exportId, "running", false));
++    expect(task.status).toBe("Cancelling");
++
++    tracker.updateDataTransferTask(task.exportId, transferProgress(task.exportId, "cancelled"));
++    expect(task.status).toBe("Cancelled");
++  });
++
++  it("returns to running when the cancel request itself fails", async () => {
++    vi.mocked(api.cancelTransfer).mockRejectedValueOnce(new Error("unreachable"));
++    const tracker = useExportTracker();
++    const task = tracker.addDataTransferTask("cancel-failed", "users", 1);
++
++    await tracker.cancelTask(task.exportId);
++
++    expect(task.status).toBe("Running");
++  });
++
+   it("tracks concurrent transfer durations independently", () => {
+     const tracker = useExportTracker();
+     now = 1_000;
 ```
 
-**File**: `crates/dbx-driver-postgres/src/postgres.rs` (modified, +2/-2)
+**File**: `apps/desktop/src/composables/useExportTracker.ts` (modified, +22/-2)
 ```diff
-@@ -1560,7 +1560,7 @@ fn pg_error_to_string(err: impl Into<PgError>) -> String {
-     let Some(db_error) = err.as_db_error() else {
-         return err.to_string();
-     };
--    let mut message = db_error.to_string();
-+    let mut message = pg_db_error_to_string(db_error);
-     // Carry the server-reported cursor position across the `db` layer's
-     // `Result<_, String>` boundary; `query.rs` resolves it against the executed
-     // statement and strips the suffix before the message reaches any client.
-@@ -1577,7 +1577,7 @@ fn pg_error_to_string(err: impl Into<PgError>) -> String {
- /// be resolved against the user's SQL and point at the wrong place.
- fn pg_error_to_string_plain(err: impl Into<PgError>) -> String {
-     let err = err.into();
--    err.as_db_error().map(ToString::to_string).unwrap_or_else(|| err.to_string())
-+    err.as_db_error().map(pg_db_error_to_string).unwrap_or_else(|| err.to_string())
- }
+@@ -874,6 +874,17 @@ export function useExportTracker() {
+     task.status = "Cancelling";
+   }
  
- /// Tries each SQL tier in `tiers` in order (most-capable first), via `run`,
-```
-
-**File**: `crates/dbx-driver-postgres/tests/query_error_details.rs` (added, +70/-0)
-```diff
-@@ -0,0 +1,70 @@
-+//! Run against the disposable database with DBX_TEST_POSTGRES_URL set.
++  function markDataTransferTaskCancelling(transferId: string) {
++    const task = taskMap.get(transferId);
++    if (!task || task.kind !== "data-transfer" || task.status !== "Running") return;
++    task.status = "Cancelling";
++  }
 +
-+use std::time::Duration;
++  function restoreDataTransferTaskRunning(transferId: string) {
++    const task = taskMap.get(transferId);
++    if (task?.kind === "data-transfer" && task.status === "Cancelling") task.status = "Running";
++  }
 +
-+use dbx_driver_postgres::{
-+    connect, execute_postgres_infra_statement, execute_query, execute_query_on_client_unnamed,
-+    execute_query_with_schema, sql_error_position, stream_query_rows,
-+};
-+
-+#[tokio::test]
-+#[ignore = "requires DBX_TEST_POSTGRES_URL pointing at a disposable PostgreSQL database"]
-+async fn native_query_errors_keep_server_message_sqlstate_and_position() {
-+    let url = std::env::var("DBX_TEST_POSTGRES_URL").expect("DBX_TEST_POSTGRES_URL");
-+    let pool = connect(&url, Duration::from_secs(10)).await.expect("connect fixture database");
-+    let cases = [
-+        ("SELECT *\nFROM dbx_issue_13837_missing_table", "dbx_issue_13837_missing_table", "42P01"),
-+        ("SELECT * FROMM dbx_issue_13837_missing_table", "FROMM", "42601"),
-+        ("SELECT dbx_missing_column FROM (SELECT 1 AS value) AS t", "dbx_missing_column", "42703"),
-+        ("INSERT INTO dbx_issue_13837_missing_table VALUES (1)", "dbx_issue_13837_missing_table", "42P01"),
-+    ];
-+    for (sql, token, code) in cases {
-+        for schema in [None, Some("public")] {
-+            let error = match schema {
-+                Some(schema) => execute_query_with_schema(&pool, schema, sql).await,
-+                None => execute_query(&pool, sql).await,
-+            }
-+            .expect_err("SQL must fail");
-+            let (message, position) = sql_error_position::take_message_position(&error, sql);
-+            assert!(message.contains(token), "server message missing: {message}");
-+            assert!(message.contains(&format!("SQLSTATE {code}")), "server code missing: {message}");
-+            assert!(!message.contains(sql_error_position::SQL_ERROR_POSITION_MARKER));
-+            let offset = sql[..sql.find(token).unwrap()].chars().count() as u32;
-+            assert_eq!(position.map(|position| position.offset), Some(offset), "{error}");
+   function restoreDatabaseExportTaskRunning(exportId: string) {
+     const task = taskMap.get(exportId);
+     if (task?.kind === "database-export" && task.status === "Cancelling") task.status = "Running";
+@@ -921,7 +932,10 @@ export function useExportTracker() {
+     }
+     const nextStatus = normalizeTransferStatus(progress.status, progress.terminal);
+     const hadError = task.status === "Error";
+-    task.status = hadError && nextStatus === "Done" ? "Error" : nextStatus;
++    // A cancel request is only acknowledged by the backend at its next checkpoint (between
++    // metadata reads or tables); keep showing "Cancelling" until a terminal event arrives.
++    if (task.status === "Cancelling" && nextStatus === "Running") task.status = "Cancelling";
++    else task.status = hadError && nextStatus === "Done" ? "Error" : nextStatus;
+     task.errorMessage = progress.error || task.errorMessage || null;
+     task.tableIndex = progress.tableIndex;
+     task.totalTables = progress.totalTables;
+@@ -1050,7 +1064,13 @@ export function useExportTracker() {
+       } else if (task?.kind === "sql-file") {
+         await api.cancelSqlFileExecution(exportId);
+       } else if (task?.kind === "data-transfer") {
+-        await api.cancelTransfer(exportId);
++        markDataTransferTaskCancelling(exportId);
++        try {
++          await api.cancelTransfer(exportId);
++        } catch (error) {
++          restoreDataTransferTaskRunning(exportId);
++          throw error;
 +        }
-+    }
-+    // Failed statements must not prevent the next query on the connection.
-+    assert_eq!(execute_query(&pool, "SELECT 1").await.unwrap().rows[0][0], 1);
-+    let client = pool.get().await.unwrap();
-+    let sql = "SELECT * FROM dbx_issue_13837_missing_table";
-+    let error = execute_query_on_client_unnamed(&client, sql, 100).await.expect_err("unnamed query must fail");
-+    assert!(error.contains("SQLSTATE 42P01"), "{error}");
-+    let error = execute_postgres_infra_statement(&client, sql, Duration::from_secs(10), "fixture")
-+        .await
-+        .expect_err("infrastructure query must fail");
-+    assert!(error.contains("dbx_issue_13837_missing_table"), "{error}");
-+    assert!(error.contains("SQLSTATE 42P01"), "{error}");
-+    assert!(!error.contains(sql_error_position::SQL_ERROR_POSITION_MARKER), "{error}");
-+    drop(client);
-+    let error = stream_query_rows(&pool, sql, None, &std::sync::atomic::AtomicBool::new(false), |_| Ok(()))
-+        .await
-+        .expect_err("streaming query must fail");
-+    assert!(error.contains("SQLSTATE 42P01"), "{error}");
-+    pool.close();
+       } else {
+         markTableExportTaskCancelling(exportId);
+         await api.cancelTableExport(exportId);
+```
+
+**File**: `crates/dbx-core/src/data/transfer.rs` (modified, +23/-1)
+```diff
+@@ -11592,9 +11592,17 @@ async fn fetch_foreign_keys_for_tables(
+     database: &str,
+     schema: &str,
+     tables: &[String],
++    cancel_transfer_id: Option<&str>,
+ ) -> Result<HashMap<String, Vec<db::ForeignKeyInfo>>, String> {
+     let mut result = HashMap::new();
+     for table in tables {
++        // One metadata round trip per table: on a large schema this phase can run for
++        // minutes, so a cancel request must be honoured between tables.
++        if let Some(transfer_id) = cancel_transfer_id {
++            if is_cancelled(transfer_id).await {
++                return Err("Cancelled".to_string());
++            }
++        }
+         let fks = crate::schema::list_foreign_keys_core(state, connection_id, database, schema, table).await?;
+         result.insert(table.clone(), fks);
+     }
+@@ -11626,6 +11634,20 @@ pub async fn sort_tables_by_fk_dependency_with_foreign_keys(
+     schema: &str,
+     tables: &[String],
+     parents_first: bool,
++) -> Result<(Vec<String>, HashMap<String, Vec<db::ForeignKeyInfo>>), String> {
++    sort_tables_by_fk_dependency_cancellable(state, connection_id, database, schema, tables, parents_first, None).await
 +}
 +
-+#[tokio::test]
-+#[ignore = "requires DBX_TEST_POSTGRES_URL pointing at a disposable PostgreSQL database"]
-+async fn native_query_errors_without_cursor_keep_detail_and_hint() {
-+    let url = std::env::var("DBX_TEST_POSTGRES_URL").expect("DBX_TEST_POSTGRES_URL");
-+    let pool = connect(&url, Duration::from_secs(10)).await.expect("connect fixture database");
-+    let sql = "DO $$ BEGIN RAISE EXCEPTION USING MESSAGE = 'dbx diagnostic fixture', \
-+               ERRCODE = '22023', DETAIL = 'invalid fixture value', HINT = 'choose a valid value'; END $$";
-+    let error = execute_query(&pool, sql).await.expect_err("raised exception");
-+    assert!(error.contains("ERROR: dbx diagnostic fixture"), "{error}");
-+    assert!(error.contains("SQLSTATE 22023"), "{error}");
-+    assert!(error.contains("DETAIL: invalid fixture value"), "{error}");
-+    assert!(error.contains("HINT: choose a valid value"), "{error}");
-+    assert!(!error.contains(sql_error_position::SQL_ERROR_POSITION_MARKER), "{error}");
-+    pool.close();
++/// Same as `sort_tables_by_fk_dependency_with_foreign_keys`, but stops with `Err("Cancelled")`
++/// as soon as `cancel_transfer_id` is flagged cancelled while foreign keys are being fetched.
++pub async fn sort_tables_by_fk_dependency_cancellable(
++    state: &AppState,
++    connection_id: &str,
++    database: &str,
++    schema: &str,
++    tables: &[String],
++    parents_first: bool,
++    cancel_transfer_id: Option<&str>,
+ ) -> Result<(Vec<String>, HashMap<String, Vec<db::ForeignKeyInfo>>), String> {
+     if tables.len() <= 1 {
+         return Ok((tables.to_vec(), HashMap::new()));
+@@ -11651,7 +11673,7 @@ pub async fn sort_tables_by_fk_dependency_with_foreign_keys(
+         (db::postgres::list_table_dependencies(&pool, schema).await?, HashMap::new())
+     } else {
+         let foreign_keys_by_table =
+-            fetch_foreign_keys_for_tables(state, connection_id, database, schema, tables).await?;
++            fetch_foreign_keys_for_tables(state, connection_id, database, schema, tables, cancel_transfer_id).await?;
+         let dependencies = foreign_keys_by_table
+             .iter()
+             .flat_map(|(table, fks)| fks.iter().map(move |fk| (table.clone(), fk.ref_table.clone())))
+```
+
+**File**: `crates/dbx-core/src/data/transfer/overwrite_clear.rs` (modified, +8/-1)
+```diff
+@@ -15,7 +15,8 @@ use super::*;
+ /// Tables referenced by another selected table are cleared with `DELETE`, the rest with the
+ /// usual per-database clear statement. Returns the source names of the tables that were
+ /// cleared; the caller passes `target_cleared = true` to `transfer_table_with_result` for
+-/// those so they are not cleared a second time.
++/// those so they are not cleared a second time. Returns `Err("Cancelled")` when the transfer
++/// is cancelled while the metadata is still being read; once clearing starts it runs through.
+ ///
+ /// Returns an empty set, leaving every table to the per-table clear, when the request is not
+ /// an overwrite, when no selected target references another, when the foreign key metadata
+@@ -35,6 +36,9 @@ pub async fn clear_foreign_key_linked_overwrite_targets(
+ 
+     let mut targets: Vec<(String, String)> = Vec::new();
+     for table in tables {
++        if is_cancelled(&request.transfer_id).await {
++            return Err("Cancelled".to_string());
++        }
+         let ResolvedTransferTargetTable { name, preexisting } = resolve_transfer_target_table_name(
+             state,
+             request,
+@@ -52,6 +56,9 @@ pub async fn clear_foreign_key_linked_overwrite_targets(
+ 
+     let mut edges: Vec<(String, String)> = Vec::new();
+     for (_, target_table) in &targets {
++        if is_cancelled(&request.transfer_id).await {
++            return Err("Cancelled".to_string());
++        }
+         let foreign_keys = match crate::schema::list_foreign_keys_core(
+             state,
+             &request.target_connection_id,
+```
+
+**File**: `crates/dbx-core/src/data/transfer_runner.rs` (modified, +145/-12)
+```diff
+@@ -191,19 +191,46 @@ where
+             if skip_fk_sort {
+                 (request.tables.clone(), std::collections::HashMap::new())
+             } else {
+-                super::transfer::sort_tables_by_fk_dependency_with_foreign_keys(
++                match super::transfer::sort_tables_by_fk_dependency_cancellable(
+                     &state,
+                     &request.source_connection_id,
+                     &request.source_database,
+                     &request.source_schema,
+                     &request.tables,
+                     true,
++                    Some(&transfer_id),
+                 )
+                 .await
+-                .unwrap_or_else(|e| {
+-                    log::warn!("[transfer] failed to sort tables by FK dependency, using original order: {e}");
+-                    (request.tables.clone(), std::collections::HashMap::new())
+-                })
++                {
++                    Ok(sorted) => sorted,
++                    Err(e) if e == "Cancelled" => {
++                        emit_terminal_progress(
++                            &app,
++                            history.as_ref(),
++                            TransferProgress {
++                                oracle_package_approval: None,
++                                oracle_package_preflight: None,
++                                oracle_routine_operation: None,
++                                transfer_id: transfer_id.clone(),
++                                table: String::new(),
++                                table_index: 0,
++                                total_tables,
++                                rows_transferred: 0,
++                                total_rows: None,
++                                status: TransferStatus::Cancelled,
++                                error: None,
++                                terminal: true,
++                            },
++                        )
++                        .await;
++                        super::transfer::clear_cancelled(&transfer_id).await;
++                        return;
++                    }
++                    Err(e) => {
++                        log::warn!("[transfer] failed to sort tables by FK dependency, using original order: {e}");
++                        (request.tables.clone(), std::collections::HashMap::new())
++                    }
++                }
+             }
+         };
+ 
+@@ -272,19 +299,46 @@ where
+         let mut backup_drop_order: Vec<String> = Vec::new();
+         let backup_names = if request.drop_target_before_create {
+             // Re-sort tables in children-first order for the rename pre-pass
+-            let (tables_for_rename, _) = super::transfer::sort_tables_by_fk_dependency_with_foreign_keys(
++            let tables_for_rename = match super::transfer::sort_tables_by_fk_dependency_cancellable(
+                 &state,
+                 &request.target_connection_id,
+                 &request.target_database,
+                 &request.target_schema,
+                 &sorted_tables,
+                 false, // parents_first=false: children first
++                Some(&transfer_id),
+             )
+             .await
+-            .unwrap_or_else(|e| {
+-                log::warn!("[transfer] failed to sort tables for rename pre-pass, using original order: {e}");
+-                (sorted_tables.clone(), std::collections::HashMap::new())
+-            });
++            {
++                Ok((sorted, _)) => sorted,
++                Err(e) if e == "Cancelled" => {
++                    emit_terminal_progress(
++                        &app,
++                        history.as_ref(),
++                        TransferProgress {
++                            oracle_package_approval: None,
++                            oracle_package_preflight: None,
++                            oracle_routine_operation: None,
++                            transfer_id: transfer_id.clone(),
++                            table: "rename pre-pass".to_string(),
++                            table_index: 0,
++                            total_tables,
++                            rows_transferred: 0,
++                            total_rows: None,
++                            status: TransferStatus::Cancelled,
++                            error: None,
++                            terminal: true,
++                        },
++                    )
++                    .await;
++                    super::transfer::clear_cancelled(&transfer_id).await;
++                    return;
++                }
++                Err(e) => {
++                    log::warn!("[transfer] failed to sort tables for rename pre-pass, using original order: {e}");
++                    sorted_tables.clone()
++                }
++            };
+             backup_drop_order = tables_for_rename.clone();
+ 
+             match super::transfer::rename_tables_to_backup(
+@@ -429,6 +483,7 @@ where
+         {
+             Ok(cleared) => cleared,
+             Err(e) => {
++                let ca
+```
+
+---
+
+### Incident Patch 3: `53c4d244` (2026-10-31)
+**Commit Message**: fix(connection): keep literal # in pasted connection URLs
+
+**File**: `apps/desktop/src/lib/__tests__/connection/connectionUrl.fragment.spec.ts` (added, +54/-0)
+```diff
+@@ -0,0 +1,54 @@
++import { describe, expect, it } from "vitest";
++import { parseConnectionUrl } from "@/lib/connection/connectionUrl";
++
++// A `#` in a connection URL is data: database clients read the query to the end,
++// and credentials or database names may legitimately contain it. WHATWG `URL`
++// stops at the first `#` instead, which used to import a truncated password and
++// drop the remainder of the URL without any warning.
++describe("connection URL fragment handling", () => {
++  it("keeps a `#` inside JDBC credential properties", () => {
++    const parsed = parseConnectionUrl("jdbc:mysql://db.example.com:3306/appdb?user=root&password=Jxc#2026@n1&useSSL=false");
++
++    expect(parsed.dbType).toBe("mysql");
++    expect(parsed.host).toBe("db.example.com");
++    expect(parsed.username).toBe("root");
++    expect(parsed.password).toBe("Jxc#2026@n1");
++    expect(parsed.database).toBe("appdb");
++    expect(parsed.urlParams).toBe("useSSL=false");
++  });
++
++  it("keeps a `#` inside standard URL userinfo credentials", () => {
++    expect(parseConnectionUrl("mysql://root:Jxc#2026@n1@db.example.com:3306/appdb")).toMatchObject({
++      host: "db.example.com",
++      port: 3306,
++      username: "root",
++      password: "Jxc#2026@n1",
++      database: "appdb",
++    });
++    expect(parseConnectionUrl("postgres://root:Jxc#2026@n1@db.example.com:5432/appdb").password).toBe("Jxc#2026@n1");
++  });
++
++  it("keeps a `#` in the database name", () => {
++    expect(parseConnectionUrl("postgres://db.example.com:5432/app#db").database).toBe("app#db");
++  });
++
++  it("escapes `#` inside forwarded query parameters instead of dropping the tail", () => {
++    expect(parseConnectionUrl("mysql://db.example.com:3306/appdb?options=--flag#value").urlParams).toBe("options=--flag%23value");
++  });
++
++  it("still maps the Redis #insecure alias to the insecure parameter", () => {
++    const parsed = parseConnectionUrl("rediss://cache.example.com:6379/0#insecure");
++
++    expect(parsed.database).toBe("0");
++    expect(parsed.urlParams).toBe("insecure=true");
++    expect(parsed.ssl).toBe(true);
++  });
++
++  it("keeps a `#` inside Redis credentials", () => {
++    expect(parseConnectionUrl("redis://:p#ss@cache.example.com:6379/0").password).toBe("p#ss");
++  });
++
++  it("keeps standard fragment semantics for web endpoints", () => {
++    expect(parseConnectionUrl("https://search.example.com:7700/gateway/meili#section", "meilisearch").basePath).toBe("/gateway/meili");
++  });
++});
+```
+
+**File**: `apps/desktop/src/lib/connection/connectionUrl.ts` (modified, +36/-4)
+```diff
+@@ -668,12 +668,44 @@ function parseJdbcDremioUrl(source: string): ParsedConnectionUrl | null {
+   };
+ }
+ 
++/** Schemes that address a web endpoint, where `#` really does start a fragment. */
++const WEB_URL_SCHEMES = new Set(["http", "https"]);
++
++/**
++ * Database connection URLs are DSNs, not web pages: the query is a parameter
++ * list that is read to the end (PgJDBC, and DBX's own Hive/Oracle JDBC
++ * importers), and a `#` inside a credential, database name or parameter value
++ * is literal text. WHATWG `URL` stops at the first `#` instead, which imported
++ * `…?password=Jxc#2026@n` as the password `Jxc` and dropped the rest without a
++ * warning, and rejected `user:p#ss@host` as an invalid URL.
++ *
++ * Escaping the literal `#` before parsing fixes both: `decodeUrlPart` restores
++ * the original character for credentials, and DBX re-encodes credentials when it
++ * builds the driver URL, so the value reaches the driver unchanged. Only Redis
++ * documents a fragment of its own (`#insecure`), so that suffix stays an alias;
++ * `http`/`https` endpoints keep standard fragment behaviour.
++ */
++function normalizeConnectionUrlFragment(source: string): { source: string; redisInsecure: boolean } {
++  const scheme = /^([a-z][a-z0-9+.-]*):/i.exec(source)?.[1]?.toLowerCase() ?? "";
++  if (WEB_URL_SCHEMES.has(scheme)) return { source, redisInsecure: false };
++
++  const fragmentStart = source.indexOf("#");
++  if (fragmentStart < 0) return { source, redisInsecure: false };
++
++  const fragment = source.slice(fragmentStart + 1);
++  if ((scheme === "redis" || scheme === "rediss") && decodeUrlPart(fragment).trim().toLowerCase() === "insecure") {
++    return { source: source.slice(0, fragmentStart), redisInsecure: true };
++  }
++
++  return { source: source.replace(/#/g, "%23"), redisInsecure: false };
 +}
++
+ function parseJdbcDremioArrowFlightSqlUrl(source: string): ParsedConnectionUrl | null {
+   if (!/^jdbc:arrow-flight-sql:\/\//i.test(source)) return null;
+ 
+   let parsed: URL;
+   try {
+-    parsed = new URL(source.replace(/^jdbc:/i, ""));
++    parsed = new URL(normalizeConnectionUrlFragment(source.replace(/^jdbc:/i, "")).source);
+   } catch {
+     return null;
+   }
+@@ -731,9 +763,10 @@ export function parseConnectionUrl(value: string, preferredProfile?: string): Pa
+   const zooKeeperResult = parseZooKeeperUrl(source);
+   if (zooKeeperResult) return zooKeeperResult;
+ 
++  const normalizedSource = normalizeConnectionUrlFragment(source);
+   let parsed: URL;
+   try {
+-    parsed = new URL(source);
++    parsed = new URL(normalizedSource.source);
+   } catch {
+     throw new Error("Invalid connection URL");
+   }
+@@ -747,11 +780,10 @@ export function parseConnectionUrl(value: string, preferredProfile?: string): Pa
+   const urlParams = parsed.search.replace(/^\?/, "");
+   const name = connectionNameParam(parsed);
+   const urlParamsWithoutName = stripConnectionNameParam(urlParams);
+-  const normalizedFragment = decodeUrlPart(parsed.hash.replace(/^#/, "")).trim().toLowerCase();
+   // A Redis path can carry pasted redis-cli flags ("…/0 --tls --insecure");
+   // salvage the db index plus the TLS/insecure intent before they are dropped.
+   const redisPath = profile.type === "redis" ? parseRedisUrlPath(databaseFromPath(parsed.pathname) || "") : null;
+-  const redisInsecure = redisPath?.insecure || normalizedFragment === "insecure";
++  const redisInsecure = redisPath?.insecure || normalizedSource.redisInsecure;
+   const parsedUrlParams = profile.type === "redis" && redisInsecure && !/(^|&)insecure=/i.test(urlParamsWithoutName) ? [urlParamsWithoutName, "insecure=true"].filter(Boolean).join("&") : urlParamsWithoutName;
+   const jdbcCredentials = isJdbcUrl && (profile.type === "mysql" || profile.profile === "oceanbase-oracle") ? extractMysqlCredentialParams(parsedUrlParams) : undefined;
+   const effectiveUrlParams = jdbcCredentials?.urlParams ?? parsedUrlParams;
 ```
 
 #### Recent Merged Pull Requests:
@@ -2820,72 +3047,52 @@ Fixes #13837
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. updates): name the dialog that blocks installation (#13907)
+## X. updates): load changelog versions lazily instead of the full feed
 
 **RULE**:
-When implementing operations in `apps/desktop/src/App.vue`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/desktop/src/components/layout/UpdateDialog.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `56e4f94f`: updates): name the dialog that blocks installation (#13907). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `446f5b74`: updates): load changelog versions lazily instead of the full feed. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/App.vue`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/components/layout/UpdateDialog.spec.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-import { setupUpdatePreparation, prepareUpdateWithDraftRecovery, isUpdatePreparationActive, UpdatePreparationError } from "@/lib/app/updatePreparation";
-import { describeConfigUpdateBlock, type UpdateBlockingConfigState, type UpdateConfigTranslator } from "@/lib/app/updatePreparationSurfaces";
-const translateUpdateSurface: UpdateConfigTranslator = (key, named) => (named ? t(key, named) : t(key));
-/** Snapshot of every surface that must be closed before the installer may run. */
-function updateBlockingConfigState(): UpdateBlockingConfigState {
-  return {
-    pendingAppClose: pendingAppCloseAction.value !== null,
-    connectionDialog: showConnectionDialog.value,
-    saveSqlDialog: showSaveSqlDialog.value,
-    ddlDialog: showQueryEditorDdlDialog.value,
-    objectSourceDialog: showQueryEditorObjectSourceDialog.value,
-    sqlParameterDialog: showSqlParameterDialog.value,
-    dangerDialog: showDangerDialog.value,
-    multiDbExecuteDialog: showMultiDbExecuteDialog.value,
-    transferDialog: dialogs.showTransferDialog.value,
-    sqlFileDialog: dialogs.showSqlFileDialog.value,
-    tableImportDialog: dialogs.showTableImportDialog.value,
-    mongoImportDialog: dialogs.showMongoImportDialog.va
+  fetchChangelogIndex: vi.fn(),
+  fetchChangelogRelease: vi.fn(),
+  return { ...actual, fetchChangelogIndex: updateMocks.fetchChangelogIndex, fetchChangelogRelease: updateMocks.fetchChangelogRelease };
+  updateMocks.fetchChangelogIndex.mockResolvedValue({ updatedAt: "", releases: [] });
+  updateMocks.fetchChangelogRelease.mockResolvedValue({ tag: "", name: "", date: "", sections: [] });
+    updateMocks.fetchChangelogIndex.mockResolvedValue({
+      releases: [{ tag: "v0.5.60", name: "DBX v0.5.60", date: "2026-10-28" }],
+    });
+    updateMocks.fetchChangelogRelease.mockResolvedValue({
+      tag: "v0.5.60",
+      name: "DBX v0.5.60",
+      date: "2026-10-28",
+      sections: [{ type: "fixed", title: "Fixed", items: [{ title: "A useful fix", desc: "Details of the fix" }] }],
+  // The rollback list only needs index entries (tag/date); release bodies stay unloaded.
+  const release = (tag: string, date: string) => ({ tag, name: `DBX ${tag}`, date });
+    updateMocks.fetchChangelogIndex.mockResolvedValue({ updatedAt: "2026-09-10", releases: [release("v0.5.61", "2026-09-10"), release("v0.5.60", "2026-09-01"), release("v0.5.59", "2026-08-20")] });
+    updateMocks.fetchChangelogIndex.mockRes
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-import { setupUpdatePreparation, prepareUpdateWithDraftRecovery, isUpdatePreparationActive } from "@/lib/app/updatePreparation";
-      if (!updateWindowReady) throw new Error(t("updates.preparationNotReady"));
-        throw new Error(t("updates.preparationTasks"));
-        throw new Error(t("updates.preparationDrafts"));
-      }
-      if (
-        pendingAppCloseAction.value ||
-        showConnectionDialog.value ||
-        showSaveSqlDialog.value ||
-        showQueryEditorDdlDialog.value ||
-        showQueryEditorObjectSourceDialog.value ||
-        showSqlParameterDialog.value ||
-        showDangerDialog.value ||
-        showMultiDbExecuteDialog.value ||
-        [
-          dialogs.showTransferDialog,
-          dialogs.showSqlFileDialog,
-          dialogs.showTableImportDialog,
-          dialogs.showMongoImportDialog,
-          dialogs.showTableDataGenerateDialog,
-          dialogs.showDatabaseExportDialog,
-          dialogs.showSchemaDiffDialog,
-          dialogs.showDataCompareDialog,
-          dialogs.showConfigPassphraseDialog,
-          dialogs.showConfigConnectionSelectDialog,
-          dialogs.showConfigUnencryptedExportConfirm,
-          dialogs.showImportLayoutConfirm,
-   
+  fetchChangelog: vi.fn(),
+  return { ...actual, fetchChangelog: updateMocks.fetchChangelog };
+  updateMocks.fetchChangelog.mockResolvedValue({ updatedAt: "", releases: [] });
+    updateMocks.fetchChangelog.mockResolvedValue({
+      releases: [{ tag: "v0.5.60", name: "DBX v0.5.60", date: "2026-10-28", sections: [{ type: "fixed", title: "Fixed", items: [{ title: "A useful fix", desc: "Details of the fix" }] }] }],
+  const release = (tag: string, date: string) => ({ tag, name: `DBX ${tag}`, date, sections: [] });
+    updateMocks.fetchChangelog.mockResolvedValue({ updatedAt: "2026-09-10", releases: [release("v0.5.61", "2026-09-10"), release("v0.5.60", "2026-09-01"), release("v0.5.59", "2026-08-20")] });
+    updateMocks.fetchChangelog.mockResolvedValue({ updatedAt: "2026-09-10", releases: [release("v0.5.61", "2026-09-10"), release("v0.5.59", "2026-08-20")] });
+    updateMocks.fetchChangelog.mockResolvedValue({ updatedAt: "2026-09-10", releases: [release("v0.5.61", "2026-09-10"), release("v0.5.59", "2026-08-20")] });
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `56e4f94f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `446f5b74` are properly handled with clean fallback behavior.

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T08:06:56.979Z",
-  "total_cycles_completed": 6484,
-  "total_learnings_persisted": 6484,
-  "total_rules_promoted": 6121,
+  "last_updated": "2026-10-31T08:14:03.692Z",
+  "total_cycles_completed": 6487,
+  "total_learnings_persisted": 6487,
+  "total_rules_promoted": 6123,
   "history": [
-    {
-      "timestamp": "2026-10-30T20:59:29.198Z",
-      "repository": "rustls/rustls",
-      "learningId": "learn-github-rustls-rustls",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T21:06:23.313Z",
-      "repository": "sweetpad-dev/sweetpad",
-      "learningId": "learn-github-sweetpad-dev-sweetpad",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T21:06:26.211Z",
-      "repository": "pola-rs/polars",
-      "learningId": "learn-github-pola-rs-polars",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T21:13:04.508Z",
       "repository": "apache/arrow",
@@ -1403,6 +1382,27 @@
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
       "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T08:13:59.701Z",
+      "repository": "salvo-rs/salvo",
+      "learningId": "learn-github-salvo-rs-salvo",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T08:14:03.275Z",
+      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+      "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T08:14:03.692Z",
+      "repository": "t8y2/dbx",
+      "learningId": "learn-github-t8y2-dbx",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

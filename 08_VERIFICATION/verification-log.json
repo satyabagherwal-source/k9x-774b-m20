@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261029-IELU",
-    "timestamp": "2026-10-29T00:41:23.058Z",
-    "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-    "contentHash": "d7d19825ef8ad4c7e1902b368cde8c3c5565937c3563efa7b0d3283f7414fdc8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-IQ6D",
-    "timestamp": "2026-10-29T00:41:38.053Z",
-    "repository": "Ontos-AI/knowhere",
-    "learningId": "learn-github-ontos-ai-knowhere",
-    "contentHash": "37d18e9c08967cd76e0fb7720e42fdccb5e9b8199773661989964ca46ce70090",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-HVWN",
-    "timestamp": "2026-10-29T01:08:58.439Z",
-    "repository": "momenbasel/PureMac",
-    "learningId": "learn-github-momenbasel-puremac",
-    "contentHash": "6c791711449d949592f27959aa806fcb88fe760988e8c86dd1d2893da33094cc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261029-I0X7",
     "timestamp": "2026-10-29T01:09:04.939Z",
     "repository": "datalab-to/indra-ocr",
@@ -7492,6 +7447,51 @@
     "contentHash": "7d982a1d1baefa605d20e968e6a7664021581c4fa8be6ff27b7ecd6ac94cca8e",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-K64S",
+    "timestamp": "2026-10-31T08:13:59.692Z",
+    "repository": "salvo-rs/salvo",
+    "learningId": "learn-github-salvo-rs-salvo",
+    "contentHash": "6c3f5fb1b7a5a7a3796a72c4ee870052abbe602fdef4b1eaa03c1f8acad98d96",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-K8VV",
+    "timestamp": "2026-10-31T08:14:03.259Z",
+    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+    "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
+    "contentHash": "e43843c09f787719fe49d605d58ce93c95c35130f308af9c67117a72f4069dad",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-K97N",
+    "timestamp": "2026-10-31T08:14:03.683Z",
+    "repository": "t8y2/dbx",
+    "learningId": "learn-github-t8y2-dbx",
+    "contentHash": "6ebd2dd81b6d674a2d77f697a4177636613812a649581938beb42e5cc8115f54",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

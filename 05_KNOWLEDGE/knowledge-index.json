@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T08:06:56.881Z",
+  "last_updated": "2026-10-31T08:14:03.603Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -30738,7 +30738,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
       "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
-      "content_hash": "2562a60d95155c11cb472bb37daf5a4cfe2623d1e935db20d6ab6ba31d7afbc3",
+      "content_hash": "e43843c09f787719fe49d605d58ce93c95c35130f308af9c67117a72f4069dad",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
       "promoted_rules": [
@@ -30801,7 +30801,7 @@
         "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv459bwg",
         "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv4ij129"
       ],
-      "verified_at": "2026-10-28T05:17:51.652Z",
+      "verified_at": "2026-10-31T08:14:03.147Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49125,8 +49125,8 @@
       "slug": "salvo-rs-salvo",
       "platform": "github",
       "source_url": "https://github.com/salvo-rs/salvo",
-      "source_version": "1620e723",
-      "content_hash": "171f3d5494bb1f9cad4b62b98d3ca2808b5047df856dcd1b183b6fc454332102",
+      "source_version": "80808bad",
+      "content_hash": "6c3f5fb1b7a5a7a3796a72c4ee870052abbe602fdef4b1eaa03c1f8acad98d96",
       "dossier_path": "07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
       "promoted_rules": [
@@ -49159,6 +49159,11 @@
           "number": 5666,
           "title": "State-Check Race Elimination via Pre-Registration on Async Notifiers",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6131,
+          "title": "Update Chris Young contact information",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49166,7 +49171,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T07:48:07.421Z",
+      "verified_at": "2026-10-31T08:13:59.591Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53015,8 +53020,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "9e248553",
-      "content_hash": "772aebdd1b79f5c06c0fc6dd9a02eca265e1b0a3bbb69783b4662553c05ea929",
+      "source_version": "3cdf8de9",
+      "content_hash": "6ebd2dd81b6d674a2d77f697a4177636613812a649581938beb42e5cc8115f54",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -53084,6 +53089,11 @@
           "number": 5782,
           "title": "updates): name the dialog that blocks installation (#13907)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6132,
+          "title": "updates): load changelog versions lazily instead of the full feed",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53091,7 +53101,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T15:08:26.076Z",
+      "verified_at": "2026-10-31T08:14:03.582Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -160651,6 +160661,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T08:06:56.864Z"
+    },
+    "rule-6131": {
+      "learning_id": "rule-6131",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6131,
+      "title": "Update Chris Young contact information",
+      "source_url": "https://github.com/salvo-rs/salvo",
+      "source_version": "80808bad",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T08:13:59.591Z"
+    },
+    "rule-6132": {
+      "learning_id": "rule-6132",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6132,
+      "title": "updates): load changelog versions lazily instead of the full feed",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "3cdf8de9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T08:14:03.582Z"
     }
   },
   "aliases": {
