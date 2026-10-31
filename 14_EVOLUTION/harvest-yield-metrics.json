@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T03:34:16.037Z",
-  "total_cycles_completed": 6424,
-  "total_learnings_persisted": 6424,
-  "total_rules_promoted": 6028,
+  "last_updated": "2026-10-31T03:45:34.920Z",
+  "total_cycles_completed": 6427,
+  "total_learnings_persisted": 6427,
+  "total_rules_promoted": 6030,
   "history": [
-    {
-      "timestamp": "2026-10-30T17:21:00.229Z",
-      "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
-      "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T17:21:02.007Z",
-      "repository": "kumahq/kuma",
-      "learningId": "learn-github-kumahq-kuma",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T17:21:09.146Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T17:40:48.175Z",
       "repository": "skyhook-io/radar",
@@ -1403,6 +1382,27 @@
       "repository": "briaai/Fibo-2.0-dev",
       "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T03:45:21.569Z",
+      "repository": "XHToken/Spark-X2.6-4B-GGUF",
+      "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T03:45:30.240Z",
+      "repository": "gardener/gardener",
+      "learningId": "learn-github-gardener-gardener",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T03:45:34.920Z",
+      "repository": "genkit-ai/genkit",
+      "learningId": "learn-github-genkit-ai-genkit",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

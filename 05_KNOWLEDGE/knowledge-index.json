@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T03:34:15.951Z",
+  "last_updated": "2026-10-31T03:45:34.833Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13894,8 +13894,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "9072454f",
-      "content_hash": "e04cb5e95ea97271e3ab4da9c13b1e20990220c5d4587643804522f443915ca9",
+      "source_version": "df9dc86a",
+      "content_hash": "5f39742c0783f066247a239c2fdd728ad9a4f874aa57400b38890215074a06a5",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -13978,6 +13978,11 @@
           "number": 5693,
           "title": "Machine-Controller Health Check State Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6050,
+          "title": "Add a Quota usage guide (#15957)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13985,7 +13990,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T08:55:22.666Z",
+      "verified_at": "2026-10-31T03:45:30.119Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14115,8 +14120,8 @@
       "slug": "genkit-ai-genkit",
       "platform": "github",
       "source_url": "https://github.com/genkit-ai/genkit",
-      "source_version": "ed850f42",
-      "content_hash": "e9d0e0a7e741ec159d5ab232279023cb3e5f56aaf1676a626d52f96db2f3602e",
+      "source_version": "7f44e2c3",
+      "content_hash": "38edc13efc9e41da1d61fd821048c0450775aed5bc5add98d51e9241db9d7406",
       "dossier_path": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "promoted_rules": [
@@ -14174,6 +14179,11 @@
           "number": 5649,
           "title": "Pydantic v2 Class Namespace Collision Avoidance",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6051,
+          "title": "py)!: rename GenkitError.original_message to message (#6639)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14181,7 +14191,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T07:18:07.728Z",
+      "verified_at": "2026-10-31T03:45:34.813Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -136917,7 +136927,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF",
       "source_version": "hf-xhtoken-spark-x2.6-4b-gguf",
-      "content_hash": "e7971e132c532ba511a7901f67f96dae5e691b79a090b2e99b4703a4641fcdd9",
+      "content_hash": "b325c14b5e3b4a04e23da4ad3e162e59d2a85b104dfe8f64cff277e95b82c059",
       "dossier_path": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md",
       "promoted_rules": [
@@ -136937,7 +136947,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T08:12:55.939Z",
+      "verified_at": "2026-10-31T03:45:21.448Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -159107,6 +159117,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T03:34:15.932Z"
+    },
+    "rule-6050": {
+      "learning_id": "rule-6050",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6050,
+      "title": "Add a Quota usage guide (#15957)",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "df9dc86a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T03:45:30.119Z"
+    },
+    "rule-6051": {
+      "learning_id": "rule-6051",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6051,
+      "title": "py)!: rename GenkitError.original_message to message (#6639)",
+      "source_url": "https://github.com/genkit-ai/genkit",
+      "source_version": "7f44e2c3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T03:45:34.813Z"
     }
   },
   "aliases": {

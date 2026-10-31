@@ -5973,10 +5973,10 @@
     "repository": "genkit-ai/genkit",
     "platform": "github",
     "sourceUrl": "https://github.com/genkit-ai/genkit",
-    "sourceVersion": "ed850f42",
+    "sourceVersion": "7f44e2c3",
     "license": "Apache-2.0",
-    "contentHash": "e9d0e0a7e741ec159d5ab232279023cb3e5f56aaf1676a626d52f96db2f3602e",
-    "lastHarvestedAt": "2026-10-30T07:18:07.932Z",
+    "contentHash": "38edc13efc9e41da1d61fd821048c0450775aed5bc5add98d51e9241db9d7406",
+    "lastHarvestedAt": "2026-10-31T03:45:34.914Z",
     "learningId": "learn-github-genkit-ai-genkit"
   },
   "guokaigdg-animal-island-ui": {
@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "9072454f",
+    "sourceVersion": "df9dc86a",
     "license": "Apache-2.0",
-    "contentHash": "e04cb5e95ea97271e3ab4da9c13b1e20990220c5d4587643804522f443915ca9",
-    "lastHarvestedAt": "2026-10-30T08:55:22.763Z",
+    "contentHash": "5f39742c0783f066247a239c2fdd728ad9a4f874aa57400b38890215074a06a5",
+    "lastHarvestedAt": "2026-10-31T03:45:30.234Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {
@@ -10815,8 +10815,8 @@
     "sourceUrl": "https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF",
     "sourceVersion": "hf-xhtoken-spark-x2.6-4b-gguf",
     "license": "Open-Source",
-    "contentHash": "e7971e132c532ba511a7901f67f96dae5e691b79a090b2e99b4703a4641fcdd9",
-    "lastHarvestedAt": "2026-10-27T08:12:55.997Z",
+    "contentHash": "b325c14b5e3b4a04e23da4ad3e162e59d2a85b104dfe8f64cff277e95b82c059",
+    "lastHarvestedAt": "2026-10-31T03:45:21.563Z",
     "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf"
   },
   "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb": {

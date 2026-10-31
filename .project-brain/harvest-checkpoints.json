@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T03:34:16.041Z",
+  "last_updated": "2026-10-31T03:45:34.924Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9081,14 +9081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-genkit-ai-genkit",
-      "content_hash": "e9d0e0a7e741ec159d5ab232279023cb3e5f56aaf1676a626d52f96db2f3602e",
-      "verified_at": "2026-10-30T07:18:07.940Z",
+      "content_hash": "38edc13efc9e41da1d61fd821048c0450775aed5bc5add98d51e9241db9d7406",
+      "verified_at": "2026-10-31T03:45:34.923Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T07:18:07.940Z"
+      "last_updated": "2026-10-31T03:45:34.923Z"
     },
     "guokaigdg/animal-island-ui": {
       "repository": "guokaigdg/animal-island-ui",
@@ -10401,14 +10401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gardener-gardener",
-      "content_hash": "e04cb5e95ea97271e3ab4da9c13b1e20990220c5d4587643804522f443915ca9",
-      "verified_at": "2026-10-30T08:55:22.772Z",
+      "content_hash": "5f39742c0783f066247a239c2fdd728ad9a4f874aa57400b38890215074a06a5",
+      "verified_at": "2026-10-31T03:45:30.243Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T08:55:22.772Z"
+      "last_updated": "2026-10-31T03:45:30.243Z"
     },
     "NirDiamant/RAG_Techniques": {
       "repository": "NirDiamant/RAG_Techniques",
@@ -16251,14 +16251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
-      "content_hash": "e7971e132c532ba511a7901f67f96dae5e691b79a090b2e99b4703a4641fcdd9",
-      "verified_at": "2026-10-27T08:12:56.007Z",
+      "content_hash": "b325c14b5e3b4a04e23da4ad3e162e59d2a85b104dfe8f64cff277e95b82c059",
+      "verified_at": "2026-10-31T03:45:21.573Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T08:12:56.007Z"
+      "last_updated": "2026-10-31T03:45:21.573Z"
     },
     "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB": {
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",

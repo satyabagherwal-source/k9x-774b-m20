@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-5UK3",
-    "timestamp": "2026-10-28T21:43:39.507Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "222bdfd8e1be1fc906adee54d255bf56a1333993da22b880fef60a46ce29f50b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-E9QW",
-    "timestamp": "2026-10-28T21:50:12.440Z",
-    "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
-    "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
-    "contentHash": "52b538d4678be50c0e6aefb20ed84b0b0103b23f913dc4603851510394befd29",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-EBZU",
-    "timestamp": "2026-10-28T21:50:15.354Z",
-    "repository": "zed-industries/zed",
-    "learningId": "learn-github-zed-industries-zed",
-    "contentHash": "7568108dc1b0ff55f538f5280ef423c2fcfb5a26b251ade2387ea9ed35fb3bd0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-MKY9",
     "timestamp": "2026-10-28T21:56:40.209Z",
     "repository": "loft-sh/vcluster",
@@ -7492,6 +7447,51 @@
     "contentHash": "a84a89d238982f262ee26214c3e44e1b7782c62c063ebfaf61f260b806f924fd",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-YPAP",
+    "timestamp": "2026-10-31T03:45:21.553Z",
+    "repository": "XHToken/Spark-X2.6-4B-GGUF",
+    "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
+    "contentHash": "b325c14b5e3b4a04e23da4ad3e162e59d2a85b104dfe8f64cff277e95b82c059",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-YVZR",
+    "timestamp": "2026-10-31T03:45:30.231Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "5f39742c0783f066247a239c2fdd728ad9a4f874aa57400b38890215074a06a5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-YZLR",
+    "timestamp": "2026-10-31T03:45:34.911Z",
+    "repository": "genkit-ai/genkit",
+    "learningId": "learn-github-genkit-ai-genkit",
+    "contentHash": "38edc13efc9e41da1d61fd821048c0450775aed5bc5add98d51e9241db9d7406",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

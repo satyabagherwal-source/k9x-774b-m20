@@ -6456,3 +6456,6 @@ Every entry in this ledger must capture:
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `a64d2d98` | Multi-dimensional audit evidence | 2026-10-31T03:26:17.373Z |
 | `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `1f316bb7` | Multi-dimensional audit evidence | 2026-10-31T03:34:13.928Z |
 | `learn-huggingface-briaai-fibo-2-0-dev` | `https://huggingface.co/briaai/Fibo-2.0-dev` | `hf-briaai-` | Multi-dimensional audit evidence | 2026-10-31T03:34:16.031Z |
+| `learn-huggingface-xhtoken-spark-x2-6-4b-gguf` | `https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-10-31T03:45:21.563Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `df9dc86a` | Multi-dimensional audit evidence | 2026-10-31T03:45:30.234Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `7f44e2c3` | Multi-dimensional audit evidence | 2026-10-31T03:45:34.914Z |
