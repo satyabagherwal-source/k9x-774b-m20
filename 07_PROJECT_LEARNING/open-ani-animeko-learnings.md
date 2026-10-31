@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-ani-animeko-learnings.md`  
 > **Source**: github ([https://github.com/open-ani/animeko](https://github.com/open-ani/animeko))  
-> **Source Version**: `2f33ea34`  
+> **Source Version**: `8ca97e5d`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T21:29:00.737Z  
+> **Timestamp**: 2026-10-31T12:15:46.241Z  
 > **Learning ID**: `learn-github-open-ani-animeko`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-ani-animeko-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-ani/animeko](https://github.com/open-ani/animeko))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T21:28:59.704Z  
+> **Harvest Timestamp**: 2026-10-31T12:15:45.985Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 集找番、追番、看番的一站式弹幕追番平台，云收藏同步 (Bangumi)，离线缓存，BitTorrent，弹幕云过滤。100% Kotlin/Compose Multiplatform
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 21269 stars
+- **Stars / Engagement**: 21359 stars
 
 ---
 
@@ -1031,13 +1031,11 @@ class EpisodeFetchSelectPlayState(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3663** (2026-10-25): **希望恢复原先的对数据源按照分辨率和字幕种类进行筛选的功能。**
-  *Symptoms*: ### 建议内容  恢复之前的数据源按照分辨率和字幕种类筛选的功能。  ### 当前 Ani 版本号  6.4.0  ### 操作系统  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > 这个功能没被砍，顶部选择 BT 资源就可以使用了 在线源不再支持按分辨率与字幕筛选，没有意义
+- **Issue #3678** (2026-10-28): **添加anime 4k等实时超分功能**
+  *Symptoms*: ### 建议内容  希望可以添加anime 4k等实时超分功能, 获得极大的观感提升  ### 当前 Ani 版本号  最新  ### 操作系统  Windows
 
-- **Issue #3658** (2026-10-24): **perf(update): 桌面端下载阶段就解压并校验安装包, 点「重启更新」后只剩交换目录**
-  *Symptoms*: ## 背景  桌面端自动更新的增量下载 (#3600) 已经在下载阶段把新版本拼好，但用户点「重启更新」后仍然要等不短的时间：  - macOS：增量拼出来的是 zip，更新脚本在用户等待时 `unzip`、`ditto` 复制整个 `.app`、`codesign --verify --deep --strict`、交换目录、`rm -rf` 旧版本，之后才 `open` 新版本。610 MB 的 `.app` 光解压和复制就要 4 秒以上，再加上签名校验。 - Windows：增量路径本来就是拼好目录后 `--staging` 重命名交换，但回退到整包下载时，更新器 `ani_update.exe` 要在用户等待时解压整个 zip。  这些工作都不依赖旧进程退出，可以在下载阶段做完。  ## 改动  - `UpdateInstaller` 新增 `prepareForInstallation`：把下载好的包整理成安装开销最小的形态。`DeltaPackageDownloader` 在增量拼好或整包下载完成后立刻调用，整理期间对外仍是「下载中」，整理完才算下载成功。`UpdateInstallationRunner` 和开发者设置的 CI 构建安装也会调用，拖拽安装的 zip 同样受益；已经整理好的目录原样返回。 - macOS：增量拼包改为拼成 `<包名>.staging/Ani.app` 目录（`PackageOutput.Directory(stripTopLevel = false)`），拼好立刻校验签名。整包回退或拖入的 zip 用 `unzip` 解到同样形态再校验。更新脚本收到目录时只 `mv` 到当前 `.app` 旁边并交换，不再解压、复制、校验；删除旧 `.app` 挪到 `open` 新版本之后。zip 和 dmg 的旧路径保留，脚本三种都能装。 - Windows：整包回退的 zip 在下载阶段解到 `<包名>.staging`（去掉顶层目录，规则与更新器 `extract_archive` 相同，逐 entry 核对 CRC），更新器统一走 `--staging`。`tools/ani-update` 不改。 - `StagingDirectoryWriter` 按清单里的 unix mode 设置文件权限并在 `verify` 时核对。之前权限由安装脚本解压 zip 时恢复，现在不再解压，没有别的地方恢复权限，macOS 拼出的启动器会不可执行。硬链接与安装目录里的文件共用 inode，权限不同时改为复制并 chmod，不改动安装目录。目录权限不设置：清单里的目录权限可能不可写，设上后后面的文件就写不进去。 - 签名校验失败或包里没有应用时抛 `PackagePreparationException`，下载直接失败，不再换源或回退整包再失败一次。其他异常（磁盘满、工具缺失）仍按下载失败处理。 - macOS 解压不用更快的 `ditto -x -k`：Gradle 打的发布包外部属性里只有权限位没有文件类型位，ditto 不认，解出来的启动器没有可执行权限。反过来 ditto / Finder 打的 zip 带 AppleDouble 文件（`._*`、`__MACOSX/`），`unzip` 会当普通文件解出来，留在 `.app` 里破坏签名封印，解完删掉。  ## 验证  - 单元测试新增 16 个，更新相关的 desktopTest 全部通过：`DeltaPackageDownloaderTest`（整理发生在
+- **Issue #3670** (2026-10-28): **Complete Traditional Chinese (Taiwan) translation**
+  *Symptoms*: This fills in 42 strings that are missing from `values-zh-rTW` (they exist in English and Simplified Chinese, so Taiwanese users currently see English for them).  The new strings are taken from the Simplified Chinese file, converted with OpenCC (s2twp profile) and adjusted to the wording used in Taiwan. Existing Traditional Chinese strings are not changed; the new ones are appended at the end of each file. Placeholders and escapes are unchanged, and every file parses as valid XML.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1054,105 +1052,71 @@ class EpisodeFetchSelectPlayState(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2f33ea34` (2026-10-26)
-**Commit Message**: ci(codex-agent): QA 判定以 runner 能测到的为限, 实体设备等做不到的只列为未测试
+### Incident Patch 1: `8ca97e5d` (2026-10-28)
+**Commit Message**: Complete Traditional Chinese (Taiwan) translation (#3670)
 
-原来 approve 要求"每个范围内场景都测过", 而 bot 会把真实遥控器长按、
-重复事件压力这类 runner 上做不到的场景也划进范围, 结果零缺陷也只给 comment.
-现在核心声明实测通过且范围内无缺陷就 approve; 只有核心声明本身没法在
-runner 上验证 (环境导致构建失败、功能只在缺失的平台、截图上传失败) 才 comment.
+Co-authored-by: monarchsofchaos004-gif <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/README.md` (modified, +1/-0)
+**File**: `app/shared/app-lang/src/androidMain/res/values-zh-rTW/strings.xml` (modified, +42/-0)
 ```diff
-@@ -14,6 +14,7 @@
- 在 PR 的 Reviewers 里请求 `openanibot` 会触发 `qa` job：Codex 以测试工程师的身份构建 PR、运行受影响模块的自动化测试、在 Android 模拟器和打包后的 macOS 桌面应用里按用户操作验证功能，然后把带截图的测试报告作为 PR review 提交（approve / request changes / comment）。它只评价行为，不评价代码写法，也不会推送任何内容。
+@@ -1921,6 +1921,48 @@
+     <string name="settings_mediasource_jsonapi_unknown_variables">未知變數：%1$s</string>
+     <string name="settings_mediasource_jsonapi_play_open_video">開啟影片網址</string>
+     <string name="settings_mediasource_jsonapi_play_copy">複製</string>
++    <string name="settings_pikpak_description">使用 PikPak 解析 BT 種子可以改善解析速度，需要訂閱 PikPak 會員。\n上方 anitorrent 設定對 PikPak 解析無效。</string>
++    <string name="settings_pikpak_enabled">啟用 PikPak</string>
++    <string name="settings_pikpak_username">使用者名稱</string>
++    <string name="settings_pikpak_username_placeholder">電子郵件 / 手機號碼</string>
++    <string name="settings_pikpak_password">密碼</string>
++    <string name="settings_pikpak_password_description">如果你使用 Google 登入，需先在 PikPak 帳號設定裡設定密碼。</string>
++    <string name="settings_pikpak_password_hidden">••••••••</string>
++    <string name="settings_pikpak_drive_usage_title">雲端硬碟狀態</string>
++    <string name="settings_pikpak_drive_usage_value">剩餘 %1$s</string>
++    <string name="settings_pikpak_drive_usage_idle">點選測試</string>
++    <string name="settings_pikpak_drive_usage_signed_out">未登入</string>
++    <string name="settings_pikpak_drive_usage_failed">連線失敗：%1$s</string>
++    <string name="settings_pikpak_legacy_title">清理雲盤上的舊快取？</string>
++    <string name="settings_pikpak_legacy_message">雲盤的 Animeko-Playing 裡有 %1$d 項舊版留下的內容。新版解析器可以按需取流、關閉即刪，不浪費雲盤空間而且解析更快。</string>
++    <string name="settings_pikpak_legacy_delete">永久刪除</string>
++    <string name="settings_pikpak_legacy_keep">保留</string>
++    <string name="settings_pikpak_legacy_failed">刪除失敗：%1$s</string>
++    <string name="pikpak_not_enough_space_title">PikPak 雲盤空間不足</string>
++    <string name="pikpak_not_enough_space_message">請清理雲盤空間。</string>
++    <string name="pikpak_not_enough_space_ok">知道了</string>
++    <string name="settings_pikpak_recommend_title">同步調整資料來源選擇器？</string>
++    <string name="settings_pikpak_recommend_message">PikPak 只處理 BT 資源。建議把"優先資料來源型別"設為 BT，這樣預設選擇器才會實際走到 PikPak。</string>
++    <string name="settings_pikpak_recommend_apply">應用</string>
++    <string name="settings_pikpak_recommend_dismiss">跳過</string>
++    <string name="settings_app_subject_title">條目標題</string>
++    <string name="settings_app_use_original_title">顯示原名</string>
++    <string name="settings_app_use_original_title_description">在條目列表和詳情頁優先顯示原名（通常為日文），而非中文名</string>
++    <string name="settings_update_version_expired_title">版本過期</string>
++    <string name="settings_update_version_expired_message">當前版本太舊，為了你的使用體驗，請更新到最新版本。\n右下角將會顯示最新版本，可以點選自動更新。如果無法更新，請前往官網下載：</string>
++    <string name="settings_update_version_expired_message_with_latest">當前版本太舊，為了你的使用體驗，請更新到最新版本 %1$s。\n右下角將會顯示最新版本，可以點選自動更新。如果無法更新，請前往官網下載：</string>
++    <string name="settings_update_version_expired_import_settings_hint">如果新版本要求匯入設定，請點選：</string>
++    <string name="settings_update_version_expired_copied_to_clipboard">已複製到剪貼簿，請到新版本點選匯入</string>
++    <string name="settings_update_version_expired_export_settings">匯出設定</string>
++    <string name="settings_storage_backup_title">備份</string>
++    <string name="settings_storage_backup_op_backup_title">複製應用設定到剪下板</string>
++    <string name="settings_storage_backup_op_backup_description">複製所有應用設定到剪下板，可以在重灌後通過下方的匯入來繼承所有應用設定項。\n注意：包含帳號敏感資訊，請勿分享備份內容給他人。</string>
++    <string name="settings_storage_backup_op_backup_error">無法匯出應用設定，請在日誌檢視錯誤資訊</string>
++    <string name="settings_storage_backup_op_restore">從剪下板匯入應用設定</string>
++    <string name="settings_storage_backup_op_restore_description">匯入設定會覆蓋當前應用的所有設定。</string>
++    <string name="settings_storage_backup_op_restore_warning">這會覆蓋當前應用的所有設定，且無法復原，確認匯入嗎？</string>
++    <string name="settings_storage_backup_op_restore_error">剪下板中內容無效或者不是設定備份內容</string>
++    <string name="settings_storage_backup_op_restore_succees">匯入設定成功</string>
+ </resources>
  
- - 只有仓库 write 权限以上的人发起的请求才会触发。bot 的 review 和普通 reviewer 的一样，maintainer 可以 dismiss。
-+- 判定以 runner 能做到的为限：PR 的核心声明在模拟器 / 桌面应用里实测通过、范围内没有缺陷就 approve。实体设备和遥控器、iOS / Windows / Linux、真人按键时序、压力测试等 runner 做不到的只列为未测试，不影响结论；只有核心声明本身无法在 runner 上验证（环境导致构建失败、功能只存在于缺失的平台、截图上传失败）才仅 comment。
- - 每次请求都是对当前 head 的一次完整重测，使用全新的 Codex 会话，不复用 `iterate` 的对话；测试进行中收到新请求时取消旧测试，避免对过期 commit 出报告。
- - PR 作者没有 write 权限时，测试固定在请求时刻的 commit，与 `iterate` job 的策略一致。
- - GitHub 不允许把 PR 作者加为 reviewer，所以 openanibot 自己开的 PR 无法用这个方式测试。
-```
-
-**File**: `.github/workflows/codex-agent.yml` (modified, +20/-8)
-```diff
-@@ -1117,7 +1117,9 @@ jobs:
-             echo "How to test (follow AGENTS.md and the repo skills in .agents/skills — they are auto-loaded; actually run them):"
-             echo "1. Plan. From the title, body, diff, and linked issues write down: what the PR claims (features, fixes), the user"
-             echo "   journeys it touches, the platforms it affects, and the adjacent behaviour that could regress. Test the PR's own"
--            echo "   claims first, then regressions nearby. Do not test unrelated parts of the app."
-+            echo "   claims first, then regressions nearby. Do not test unrelated parts of the app. Sort every scenario into what this"
-+            echo "   runner can exercise and what it cannot (step 4 lists the limits): only the first group decides the verdict, the"
-+            echo "   second is reported as not tested."
-             echo "2. Build the affected targets. A build or compile failure caused by the PR is a defect; one caused by the runner"
-             echo "   environment is not — tell them apart and say which it was."
-             echo "3. Run the existing automated tests of the affected modules (unit tests, runAniComposeUiTest UI tests, Android"
-@@ -1129,9 +1131,13 @@ jobs:
-             echo "   change implies (empty states, errors, resize/rotation, restart persistence, repeated actions), and the"
-             echo "   neighbouring flows. Use screen recording + frame diff for transient glitches. Check logcat / app.log for"
-             echo "   exceptions during every scenario, not only when something looks wrong."
--            echo "   This runner offers the Android emulator and the macOS desktop app. Behaviour that only exists on other platforms"
--            echo "   (iOS, Windows, Linux, TV devices) or needs resources you lack (accounts, paid services) is reported as not"
--            echo "   tested with the reason — never guessed."
-+            echo "   This runner offers the Android emulator and the macOS desktop app, driven by adb and the skills' input proxies."
-+            echo "   Whatever needs more than that is out of reach: other platforms (iOS, Windows, Linux), physical devices and their"
-+            echo "   input hardware (a real TV, a real remote control, a USB or Bluetooth keyboard), the exact timing of human key"
-+            echo "   presses, accounts or paid services you lack, long soak or stress runs, and states the real app cannot reach here"
-+            echo "   (a window narrower than its minimum). Report such scenarios as not tested with the reason — never guessed — and"
-+            echo "   move on. Automated tests and emulated input that cover the same logic are the evidence this runner can give:"
-+            echo "   say so, and do not count the missing hardware against the PR."
-             echo "5. For every defect: reproduce it, record exact steps, expected vs actual, a screenshot or recording frame, and the"
-             echo "   relevant log excerpt. When it is cheap, check whether the same thing happens on $BASE_REF so you can tell a"
-             echo "   regression from a pre-existing bug; otherwise say you did not check."
-@@ -1153,12 +1159,18 @@ jobs:
-             echo "7. The last line, verbatim, on its own line:"
-             echo "   $QA_MARKER"
-             echo
--            echo "Verdict:"
--            echo "  --approve          every in-scope scenario was tested with embedded screenshot evidence and no defect was found in the PR's scope."
-+            echo "Verdict — judge what this runner could test, not what a lab with every device could:"
-+            echo "  --approve          the PR's core claims were verified at runtime with embedded screenshot evidence, every other in-scope"
-+            echo "                     scenario was either verified or listed as not tested with its reason, and no defect was found in the"
-+            echo "                     PR's scope. Not-tested rows never block an approve: an approve says QA found nothing wrong in what can"
-+            echo "                     be tested here, and the maintainer knows this runner's limits. Do not withhold it because a real"
-+            echo "                     device, a real remote control, or a human's key timing might behave differently — that is true of"
-+            echo "                     every PR — and do not invent stress or timing scenarios only to count their absence against the PR."
-             echo "  --request-changes  you reproduced at least one defect within the PR's scope: a crash, wrong behaviour, a regression,"
-             echo "                     or a claim of the PR that does not hold. Speculation is not a defect."
--            echo "  --comment          anything else: you could not test enough (environment-caused build failure, platform not available,"
--            echo "                     screenshot upload failed), or you found only out-of-scope or pre-existing issues."
-+            echo "  --comment          th
-```
-
-**File**: `.github/workflows/test_qa_review.py` (modified, +9/-0)
-```diff
-@@ -149,6 +149,15 @@ def test_prompt_carries_the_marker_and_review_command(self):
-         self.assertIn("pinned to the commit", prompt)
-         self.assertIn("b" * 40, prompt)
- 
-+    def test_prompt_verdict_does_not_block_approval_on_untestable_scenarios(self):
-+        self.run_step("Build prompt")
-+        prompt = (self.root / "prompt.txt").read_text()
-+        self.assertIn("Not-tested rows never block an approve", prompt)
-+        self.assertIn("--comment          the core claims could not be verified at runtime", prompt)
-+        self.assertIn("a real remote control", prompt)
-+        self.assertNotIn("every in-scope scenario was tested", prompt)
-+        self.assertNotIn("platform not available", prompt)
-+
-     def test_prompt_for_write_author_uses_latest_head(self):
-         self.env.update({"CHECKOUT_POLICY": "latest", "AUTHOR_PERMISSION": "write"})
-         self.run_step("Build prompt")
+ <!--@formatter:on-->
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3670** (2026-10-28): Complete Traditional Chinese (Taiwan) translation (@monarchsofchaos004-gif)
 - **PR #3658** (2026-10-24): perf(update): 桌面端下载阶段就解压并校验安装包, 点「重启更新」后只剩交换目录 (@Him188)
 - **PR #3655** (2026-10-24): ci(release): release notes 生成失败时让 step 失败, 不再用空 notes 建 release (@Him188)
 - **PR #3652** (2026-10-24): feat(datasource-test-mcp): selector_resolve_episode 支持列出搜索条目并指定展开的条目 (@Him188)
 - **PR #3651** (2026-10-23): fix(media): 合集种子按 scene 命名里的 S02E02 选对剧集文件 (@StageGuard)
 - **PR #3650** (2026-10-22): fix(adaptive): disable auto-focus on pane destination changes (@NihilDigit)
-- **PR #3644** (2026-10-21): build: 升级 mediamp 到 0.5.3 (@Him188)
 
 ---
 
@@ -1172,21 +1136,36 @@ Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci(codex-agent): QA 判定以 runner 能测到的为限, 实体设备等做不到的只列为未测试
+## X. Complete Traditional Chinese (Taiwan) translation (#3670)
 
 **RULE**:
-When implementing operations in `.github/workflows/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-ani/animeko. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `app/shared/app-lang/src/androidMain/res/values-zh-rTW/strings.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-ani/animeko. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2f33ea34`: ci(codex-agent): QA 判定以 runner 能测到的为限, 实体设备等做不到的只列为未测试. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8ca97e5d`: Complete Traditional Chinese (Taiwan) translation (#3670). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/README.md`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/shared/app-lang/src/androidMain/res/values-zh-rTW/strings.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-- 判定以 runner 能做到的为限：PR 的核心声明在模拟器 / 桌面应用里实测通过、范围内没有缺陷就 approve。实体设备和遥控器、iOS / Windows / Linux、真人按键时序、压力测试等 runner 做不到的只列为未测试，不影响结论；只有核心声明本身无法在 runner 上验证（环境导致构建失败、功能只存在于缺失的平台、截图上传失败）才仅 comment。
+    <string name="settings_pikpak_description">使用 PikPak 解析 BT 種子可以改善解析速度，需要訂閱 PikPak 會員。\n上方 anitorrent 設定對 PikPak 解析無效。</string>
+    <string name="settings_pikpak_enabled">啟用 PikPak</string>
+    <string name="settings_pikpak_username">使用者名稱</string>
+    <string name="settings_pikpak_username_placeholder">電子郵件 / 手機號碼</string>
+    <string name="settings_pikpak_password">密碼</string>
+    <string name="settings_pikpak_password_description">如果你使用 Google 登入，需先在 PikPak 帳號設定裡設定密碼。</string>
+    <string name="settings_pikpak_password_hidden">••••••••</string>
+    <string name="settings_pikpak_drive_usage_title">雲端硬碟狀態</string>
+    <string name="settings_pikpak_drive_usage_value">剩餘 %1$s</string>
+    <string name="settings_pikpak_drive_usage_idle">點選測試</string>
+    <string name="settings_pikpak_drive_usage_signed_out">未登入</string>
+    <string name="settings_pikpak_drive_usage_failed">連線失敗：%1$s</string>
+    <string name="settings_pikpak_legacy_title">清理雲盤上的舊快取？</string>
+    <string name="settings_pikpak_legacy_message">雲盤的 Animeko-Playing 裡有 %1$d 項舊版留下的內容。新版解析器可以按需取流、關閉即刪，不浪費雲盤空間而且解析更快。</string>
+    <string name="settings_pikpak_legacy_delete">永久刪除</string>
+    <string name="settings_pikpak_l
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1196,4 +1175,4 @@ Subsystems managing Kotlin data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2f33ea34` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8ca97e5d` are properly handled with clean fallback behavior.

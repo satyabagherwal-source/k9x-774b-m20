@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T12:09:03.563Z",
-    "lastVerified": "2026-10-31T12:09:03.563Z",
+    "lastChecked": "2026-10-31T12:15:52.615Z",
+    "lastVerified": "2026-10-31T12:15:52.615Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -346,9 +346,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T11:46:50.436Z",
+    "lastChecked": "2026-10-31T12:15:51.714Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T11:46:50.436Z"
+    "lastVerified": "2026-10-31T12:15:51.714Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1791,9 +1791,9 @@
   "sigstore-cosign": {
     "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
-    "lastChecked": "2026-10-31T07:53:43.821Z",
+    "lastChecked": "2026-10-31T12:15:46.793Z",
     "revisionIdentifier": "ef56e699",
-    "lastVerified": "2026-10-31T07:53:43.821Z"
+    "lastVerified": "2026-10-31T12:15:46.793Z"
   },
   "alibaba-zvec": {
     "name": "zvec",
@@ -3278,9 +3278,9 @@
   "vearch-vearch": {
     "name": "vearch",
     "officialUrl": "https://github.com/vearch/vearch",
-    "lastChecked": "2026-10-30T19:28:09.416Z",
+    "lastChecked": "2026-10-31T12:15:49.252Z",
     "revisionIdentifier": "bae78b18",
-    "lastVerified": "2026-10-30T19:28:09.416Z"
+    "lastVerified": "2026-10-31T12:15:49.252Z"
   },
   "imsnif-bandwhich": {
     "name": "bandwhich",
@@ -3405,12 +3405,12 @@
     "officialUrl": "https://huggingface.co/Cloudflare/clef",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T11:32:13.157Z",
-    "lastVerified": "2026-10-28T11:32:13.157Z",
+    "lastChecked": "2026-10-31T12:15:39.299Z",
+    "lastVerified": "2026-10-31T12:15:39.299Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-cloudflare-clef",
-    "contentHash": "3318a21943a9ec24a2677c642acaad65153f19fe4cc01393032dfdba8f3f26ab",
+    "contentHash": "54247053fccdbdfdcc93271a24a767135d44a771cdd56af52c366dbf0d037c84",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -4376,14 +4376,14 @@
     "officialUrl": "https://github.com/zarf-dev/zarf",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T20:22:05.477Z",
-    "lastVerified": "2026-10-30T20:22:05.477Z",
+    "lastChecked": "2026-10-31T12:15:49.384Z",
+    "lastVerified": "2026-10-31T12:15:49.384Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zarf-dev-zarf",
-    "contentHash": "57ea9fa07664732b8215581f2b48032afbc5346575d314af52f5483e8c58d051",
+    "contentHash": "cff7edd890e5a2aa2d27746d683ab487a59b2b594be7df122306d80c22b5b081",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6021,11 +6021,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "open-ani-animeko": {
-    "name": "animeko",
+    "name": "open-ani/animeko",
     "officialUrl": "https://github.com/open-ani/animeko",
-    "lastChecked": "2026-10-28T16:51:50.253Z",
-    "revisionIdentifier": "2f33ea34",
-    "lastVerified": "2026-10-28T16:51:50.253Z"
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-10-31T12:15:45.985Z",
+    "lastVerified": "2026-10-31T12:15:45.985Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-open-ani-animeko",
+    "contentHash": "f5f4a199374d084a531a83461c84aed2403c30fefcae7fee1bdea6f484869250",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "architect-architect": {
     "name": "architect",
@@ -6384,12 +6394,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "alexpasmantier-television": {
-    "name": "alexpasmantier/television",
+    "name": "television",
     "officialUrl": "https://github.com/alexpasmantier/television",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T14:40:19.166Z",
-    "lastVerified": "2026-10-30T14:40:19.166Z",
+    "lastChecked": "2026-10-31T12:15:36.698Z",
+    "lastVerified": "2026-10-31T12:15:36.698Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-alexpasmantier-television",
@@ -6398,7 +6408,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "48eeeef3"
   },
   "hf-google-vit-base-patch16-224": {
     "name": "google/vit-base-patch16-224",

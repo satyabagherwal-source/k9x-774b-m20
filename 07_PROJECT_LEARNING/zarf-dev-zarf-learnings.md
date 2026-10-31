@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source**: github ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
-> **Source Version**: `f0861e2a`  
+> **Source Version**: `8ae29a1f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T20:22:05.660Z  
+> **Timestamp**: 2026-10-31T12:15:49.391Z  
 > **Learning ID**: `learn-github-zarf-dev-zarf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T20:22:05.477Z  
+> **Harvest Timestamp**: 2026-10-31T12:15:49.384Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1480,341 +1480,61 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3d4529c7` (2026-10-30)
-**Commit Message**: chore(deps): bump github.com/fluxcd/source-controller/api from 1.9.5 to 1.9.6 (#5468)
+### Incident Patch 1: `8ae29a1f` (2026-10-30)
+**Commit Message**: chore(deps): bump fast-uri from 3.1.8 to 3.1.9 in /site (#5536)
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `go.mod` (modified, +1/-1)
+**File**: `site/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -23,7 +23,7 @@ require (
- 	github.com/fatih/color v1.19.0
- 	github.com/fluxcd/gitkit v0.6.0
- 	github.com/fluxcd/pkg/apis/meta v1.31.0
--	github.com/fluxcd/source-controller/api v1.9.5
-+	github.com/fluxcd/source-controller/api v1.9.6
- 	github.com/go-git/go-git/v5 v5.19.2
- 	github.com/goccy/go-yaml v1.19.2
- 	github.com/golang-cz/devslog v0.0.17
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -685,8 +685,8 @@ github.com/fluxcd/pkg/apis/acl v0.10.0 h1:KPfAmELNvtvaz8wixnm/MYXqa+MJf7ntVVMUU9
- github.com/fluxcd/pkg/apis/acl v0.10.0/go.mod h1:a87i2A7AlFO5N2J8CxtzaUCCDmuLLWOHwkKu3eJF5fY=
- github.com/fluxcd/pkg/apis/meta v1.31.0 h1:5niQvTirK0wTE0TfRjnUSdmu6GTSbAFzrdnovtZ9rJ8=
- github.com/fluxcd/pkg/apis/meta v1.31.0/go.mod h1:Gx+YRq26a+mTbCjotSXC7/6kSSyo0zXQ8JnsEXf2vVk=
--github.com/fluxcd/source-controller/api v1.9.5 h1:QwOqmw6/NqOXUR+kGmBJ18CEvthD8DNrSRTtjQG+bHQ=
--github.com/fluxcd/source-controller/api v1.9.5/go.mod h1:Y5mcHYzML/mJYjvSJRcIo7eLLjd+cZjnKR6WeIGrouE=
-+github.com/fluxcd/source-controller/api v1.9.6 h1:h9+CsJVw4CNbMEsnEb11SGEhLfKzVTkWC0w7M8VX4Hk=
-+github.com/fluxcd/source-controller/api v1.9.6/go.mod h1:Y5mcHYzML/mJYjvSJRcIo7eLLjd+cZjnKR6WeIGrouE=
- github.com/fortytw2/leaktest v1.3.0 h1:u8491cBMTQ8ft8aeV+adlcytMZylmA5nnwwkRZjI8vw=
- github.com/fortytw2/leaktest v1.3.0/go.mod h1:jDsjWgpAGjm2CA7WthBh/CdZYEPF31XHquHwclZch5g=
- github.com/foxcpp/go-mockdns v1.2.0 h1:omK3OrHRD1IWJz1FuFBCFquhXslXoF17OvBS6JPzZF0=
-```
-
-**File**: `vendor/modules.txt` (modified, +1/-1)
-```diff
-@@ -1566,7 +1566,7 @@ github.com/fluxcd/pkg/apis/acl
- # github.com/fluxcd/pkg/apis/meta v1.31.0
- ## explicit; go 1.26.0
- github.com/fluxcd/pkg/apis/meta
--# github.com/fluxcd/source-controller/api v1.9.5
-+# github.com/fluxcd/source-controller/api v1.9.6
- ## explicit; go 1.26.0
- github.com/fluxcd/source-controller/api/v1
- # github.com/fsnotify/fsnotify v1.10.1
+@@ -4580,9 +4580,9 @@
+       }
+     },
+     "node_modules/fast-uri": {
+-      "version": "3.1.8",
+-      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.8.tgz",
+-      "integrity": "sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg==",
++      "version": "3.1.9",
++      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.9.tgz",
++      "integrity": "sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==",
+       "funding": [
+         {
+           "type": "github",
 ```
 
 ---
 
-### Incident Patch 2: `a9d5dd5e` (2026-10-30)
-**Commit Message**: fix: print a valid skeleton import example from the CLI (#5530)
+### Incident Patch 2: `fa5c77ab` (2026-10-30)
+**Commit Message**: chore(deps): bump zod from 4.6.2 to 4.6.7 in /site (#5537)
 
-Signed-off-by: Igor de Beijer <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `src/cmd/package.go` (modified, +49/-2)
+**File**: `site/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -44,6 +44,7 @@ import (
- 	"github.com/zarf-dev/zarf/src/pkg/state"
- 	"github.com/zarf-dev/zarf/src/pkg/utils"
- 	"github.com/zarf-dev/zarf/src/pkg/zoci"
-+	"github.com/zarf-dev/zarf/src/types"
- )
- 
- func newPackageCommand() *cobra.Command {
-@@ -1788,8 +1789,15 @@ func (o *packagePublishOptions) run(cmd *cobra.Command, args []string) error {
- 			WithBuildMachineInfo: o.withBuildMachineInfo,
- 			Tag:                  o.tag,
- 		}
--		_, err = packager.PublishSkeleton(ctx, packageSource, dstRef, skeletonOpts)
--		return err
-+		pkgRef, err := packager.PublishSkeleton(ctx, packageSource, dstRef, skeletonOpts)
-+		if err != nil {
-+			return err
-+		}
-+		// The skeleton is already published, so failing to show the example should not fail the command.
-+		if err := printSkeletonImportExample(ctx, pkgRef, skeletonOpts.RemoteOptions); err != nil {
-+			l.Warn("unable to print the skeleton import example", "error", err)
-+		}
-+		return nil
- 	}
- 
- 	if helpers.IsOCIURL(packageSource) && o.signingKeyPath == "" {
-@@ -1884,6 +1892,45 @@ func (o *packagePublishOptions) run(cmd *cobra.Command, args []string) error {
- 	return err
- }
- 
-+// printSkeletonImportExample prints components that import each component from the published skeleton.
-+// It reads the definition back from the registry so it matches what was published without resolving imports again.
-+func printSkeletonImportExample(ctx context.Context, pkgRef registry.Reference, remoteOpts types.RemoteOptions) error {
-+	l := logger.From(ctx)
-+	remote, err := zoci.NewRemoteWithOptions(ctx, pkgRef.String(), zoci.PlatformForSkeleton(), zoci.RemoteClientOptions{
-+		RemoteOptions: remoteOpts,
-+	})
-+	if err != nil {
-+		return fmt.Errorf("unable to create remote for %s: %w", pkgRef, err)
-+	}
-+	pkg, err := remote.FetchZarfYAML(ctx)
-+	if err != nil {
-+		return fmt.Errorf("unable to fetch the published package definition: %w", err)
-+	}
-+	l.Info("skeleton packages contain metadata and local resources to allow for remote component imports")
-+	if err := utils.ColorPrintYAML(skeletonImportExample(pkg, pkgRef), nil, false); err != nil {
-+		return fmt.Errorf("unable to print the import example: %w", err)
-+	}
-+	l.Info("find more info on skeleton packages at https://docs.zarf.dev/faq/#what-is-a-skeleton-zarf-package")
-+	return nil
-+}
-+
-+// skeletonImportExample returns components that import each component of pkg from the skeleton published at ref,
-+// converted to v1alpha1 for user-facing serialization. Skeletons are v1alpha1-only, so this does not branch on
-+// apiVersion like packageForDisplay.
-+func skeletonImportExample(pkg api.Package, ref registry.Reference) []v1alpha1.ZarfComponent {
-+	ex := api.Package{Components: make([]api.Component, 0, len(pkg.Components))}
-+	for _, c := range pkg.Components {
-+		ex.Components = append(ex.Components, api.Component{
-+			Name: fmt.Sprintf("import-%s", c.Name),
-+			Import: api.ComponentImport{
-+				Name:   c.Name,
-+				Remote: []api.ComponentImportRemote{{URL: helpers.OCIURLPrefix + ref.String()}},
-+			},
-+		})
-+	}
-+	return convert.PackageToV1alpha1(ex).Components
-+}
-+
- type packagePullOptions struct {
- 	shasum          string
- 	outputDirectory string
-```
-
-**File**: `src/cmd/package_test.go` (modified, +25/-0)
-```diff
-@@ -16,9 +16,11 @@ import (
- 	"strings"
- 	"testing"
- 
-+	goyaml "github.com/goccy/go-yaml"
- 	"github.com/spf13/cobra"
- 	"github.com/spf13/viper"
- 	"github.com/stretchr/testify/require"
-+	"github.com/zarf-dev/zarf/src/api"
- 	"github.com/zarf-dev/zarf/src/api/v1alpha1"
- 	"github.com/zarf-dev/zarf/src/config"
- 	"github.com/zarf-dev/zarf/src/pkg/cluster"
-@@ -30,6 +32,7 @@ import (
- 	corev1 "k8s.io/api/core/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/client-go/kubernetes/fake"
-+	"oras.land/oras-go/v2/registry"
- )
- 
- func TestPackageList(t *testing.T) {
-@@ -995,3 +998,25 @@ func TestBuildVerifyBlobOptions(t *testing.T) {
- 		})
- 	}
- }
-+
-+func TestSkeletonImportExample(t *testing.T) {
-+	t.Parallel()
-+	ref := registry.Reference{Registry: "localhost:5000", Repository: "skeletons/test", Reference: "0.0.1"}
-+	pkg := api.Package{Components: []api.Component{{Name: "first"}, {Name: "second", Description: "not copied"}}}
-+
-+	data, err := goyaml.Marshal(skeletonImportExample(pkg, ref))
-+	require.NoError(t, err)
-+
-+	expected := `- name: import-first
-+  required: true
-+  import:
-+    name: first
-+    url: oci://localhost:5000/skeletons/test:0.0.1
-+- name: import-second
-+  required: true
-+  import:
-+    name: second
-+    url: oci://localhost:5000/skeletons/test:0.0.1
-+`
-+	require.Equal(t, expected, string(data))
-+}
-```
-
-**File**: `src/pkg/packager/publish.go` (modified, +0/-18)
-```diff
-@@ -10,15 +10,13 @@ import (
- 	"strings"
- 	"time"
- 
--	"github.com/zarf-dev/zarf/src/api"
- 	"github.com/zarf-dev/zarf/src/config"
- 	"github.com/zarf-dev/zarf/src/pkg/logger"
- 	"github.com/zarf-dev/zarf/src/pkg/signing"
- 	"github.com/zarf-dev/zarf/src/pkg/utils"
- 	"github.com/zarf-dev/zarf/src/pkg/zoci"
- 	"github.com/zarf-dev/zarf/src/types"
- 
--	"github.com/zarf-dev/zarf/src/pkg/helpers"
- 	"github.com/zarf-dev/zarf/src/pkg/oci"
- 	"github.com/zarf-dev/zarf/src/pkg/packager/assemble"
- 	"github.com/zarf-dev/zarf/src/pkg/packager/layout"
-@@ -282,22 +280,6 @@ func PublishSkeleton(ctx context.Context, path string, ref registry.Reference, o
- 	if err != nil {
- 		return registry.Reference{}, err
- 	}
--	l.Info("skeleton packages contain metadata and local resources to allow for remote component imports")
--	ex := []api.Component{}
--	for _, c := range pkgLayout.Definition().Components {
--		ex = append(ex, api.Component{
--			Name: fmt.Sprintf("import-%s", c.Name),
--			Import: api.ComponentImport{
--				Name:   c.Name,
--				Remote: []api.ComponentImportRemote{{URL: helpers.OCIURLPrefix + pkgRef.String()}},
--			},
--		})
--	}
--	err = utils.ColorPrintYAML(ex, nil, false)
--	if err != nil {
--		return registry.Reference{}, err
--	}
--	l.Info("find more info on skeleton packages at https://docs.zarf.dev/faq/#what-is-a-skeleton-zarf-package")
- 	return pkgRef, nil
- }
- 
-```
-
----
-
-### Incident Patch 3: `0c2b3c83` (2026-10-29)
-**Commit Message**: fix: initialize cluster state before recording init status (#5566)
-
-Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
-
-**File**: `src/pkg/packager/deploy.go` (modified, +37/-31)
-```diff
-@@ -309,17 +309,23 @@ func (d *deployer) deployComponents(ctx context.Context, pkgLayout *layout.Packa
- 
- 		deployedComponents = append(deployedComponents, deployedComponent)
- 		idx := len(deployedComponents) - 1
-+		var charts []state.InstalledChart
-+		var deployErr error
-+		// Initialize at the first cluster component so deployment status has a namespace to be saved in.
-+		if pkg.IsInitConfig() && component.RequiresCluster() && d.s == nil {
-+			deployErr = d.initState(ctx, pkg, opts)
-+		}
- 		if d.isConnectedToCluster() {
- 			if _, err := d.c.RecordPackageDeployment(ctx, pkgLayout.Definition(), pkgLayout.Digest(), deployedComponents, packageGeneration, state.WithPackageConnectivity(opts.Connected), state.WithPackageNamespaceOverride(opts.NamespaceOverride)); err != nil {
- 				l.Error("unable to record package deployment", "component", component.Name, "error", err.Error())
- 			}
- 		}
--		var charts []state.InstalledChart
--		var deployErr error
--		if pkg.IsInitConfig() {
--			charts, deployErr = d.deployInitComponent(ctx, pkgLayout, component, opts)
--		} else {
--			charts, deployErr = d.deployComponent(ctx, pkgLayout, component, false, false, opts)
-+		if deployErr == nil {
-+			if pkg.IsInitConfig() {
-+				charts, deployErr = d.deployInitComponent(ctx, pkgLayout, component, opts)
-+			} else {
-+				charts, deployErr = d.deployComponent(ctx, pkgLayout, component, false, false, opts)
-+			}
- 		}
- 
- 		onDeploy := component.Actions.OnDeploy
-@@ -415,6 +421,31 @@ func internalServicesFor(components []api.Component, opts DeployOptions) state.S
- 	return services
- }
- 
-+func (d *deployer) initState(ctx context.Context, pkg api.Package, opts DeployOptions) error {
-+	applianceMode := false
-+	for _, component := range pkg.Components {
-+		if component.Name == "k3s" {
-+			applianceMode = true
-+		}
-+	}
-+	var err error
-+	d.s, err = d.c.InitState(ctx, cluster.InitStateOptions{
-+		GitServer:           opts.GitServer,
-+		RegistryInfo:        opts.RegistryInfo,
-+		ArtifactServer:      opts.ArtifactServer,
-+		ApplianceMode:       applianceMode,
-+		StorageClass:        opts.StorageClass,
-+		InjectorPort:        opts.InjectorPort,
-+		AgentTLS:            opts.AgentTLS,
-+		AgentMutationPolicy: opts.AgentMutationPolicy,
-+		InternalServices:    internalServicesFor(pkg.Components, opts),
-+	})
-+	if err != nil {
-+		return fmt.Errorf("unable to initialize Zarf state: %w", err)
-+	}
-+	return nil
-+}
-+
- func (d *deployer) deployInitComponent(ctx context.Context, pkgLayout *layout.PackageLayout, component api.Component, opts DeployOptions) ([]state.InstalledChart, error) {
- 	l := logger.From(ctx)
- 	pkg := pkgLayout.Definition()
-@@ -423,31 +454,6 @@ func (d *deployer) deployInitComponent(ctx context.Context, pkgLayout *layout.Pa
- 	isInjector := component.Service.Name == api.ServiceInjector
- 	isAgent := component.Service.Name == api.ServiceAgent
- 
--	// Always init the state before the first component that requires the cluster (on most deployments, the zarf-seed-registry)
--	if component.RequiresCluster() && d.s == nil {
--		applianceMode := false
--		for _, component := range pkg.Components {
--			if component.Name == "k3s" {
--				applianceMode = true
--			}
--		}
--		var err error
--		d.s, err = d.c.InitState(ctx, cluster.InitStateOptions{
--			GitServer:           opts.GitServer,
--			RegistryInfo:        opts.RegistryInfo,
--			ArtifactServer:      opts.ArtifactServer,
--			ApplianceMode:       applianceMode,
--			StorageClass:        opts.StorageClass,
--			InjectorPort:        opts.InjectorPort,
--			AgentTLS:            opts.AgentTLS,
--			AgentMutationPolicy: opts.AgentMutationPolicy,
--			InternalServices:    internalServicesFor(pkg.Components, opts),
--		})
--		if err != nil {
--			return nil, fmt.Errorf("unable to initialize Zarf state: %w", err)
--		}
--	}
--
- 	if d.s != nil {
- 		if !d.s.RegistryInfo.IsInternal() && (isSeedRegistry || isInjector || isRegistry) {
- 			l.Info("skipping init package component since external registry information was provided", "component", component.Name)
+@@ -10283,9 +10283,9 @@
+       }
+     },
+     "node_modules/zod": {
+-      "version": "4.6.2",
+-      "resolved": "https://registry.npmjs.org/zod/-/zod-4.6.2.tgz",
+-      "integrity": "sha512-lh5RCAGFa1Cm2hjtNwLQhSs/AsqdWnTQaBER9fEwN/88pSh7KOtJavtBx/0VlkN/uFd61SwYmljLMDAsHlvzBQ==",
++      "version": "4.6.7",
++      "resolved": "https://registry.npmjs.org/zod/-/zod-4.6.7.tgz",
++      "integrity": "sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==",
+       "license": "MIT",
+       "funding": {
+         "url": "https://github.com/sponsors/colinhacks"
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #5566** (2026-10-29): fix: initialize cluster state before recording init status (@AustinAbro321)
 - **PR #5565** (2026-10-29): fix: component publish values schema (@AustinAbro321)
+- **PR #5561** (2026-10-30): feat!: delete artifact server (@AustinAbro321)
 - **PR #5558** (2026-10-29): feat!: explit opt in to kustomize plugins on read only dev commands (@AustinAbro321)
 - **PR #5555** (2026-10-29): chore(deps): bump github.com/go-jose/go-jose/v4 from 4.1.4 to 4.1.6 (@dependabot[bot])
 - **PR #5551** (2026-10-29): feat: release v1beta1 (@AustinAbro321)
-- **PR #5545** (2026-10-29): fix: use canonical reference for sbom source (@brandtkeller)
 
 ---
 
@@ -1834,28 +1554,32 @@ Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump github.com/fluxcd/source-controller/api from 1.9.5 to 1.9.6 (#5468)
+## X. deps): bump fast-uri from 3.1.8 to 3.1.9 in /site (#5536)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `site/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3d4529c7`: deps): bump github.com/fluxcd/source-controller/api from 1.9.5 to 1.9.6 (#5468). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8ae29a1f`: deps): bump fast-uri from 3.1.8 to 3.1.9 in /site (#5536). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `site/package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/fluxcd/source-controller/api v1.9.6
+      "version": "3.1.9",
+      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.9.tgz",
+      "integrity": "sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/fluxcd/source-controller/api v1.9.5
+      "version": "3.1.8",
+      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.8.tgz",
+      "integrity": "sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg==",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3d4529c7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8ae29a1f` are properly handled with clean fallback behavior.

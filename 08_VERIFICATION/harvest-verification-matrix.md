@@ -6555,3 +6555,6 @@
 | `CYCLE-20261031-NCSO` | `2026-10-31T12:00:25.224Z` | `unsloth/Qwen3.8-27B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md` | Yes (`82179009...`) |
 | `CYCLE-20261031-YCTF` | `2026-10-31T12:08:58.467Z` | `gkd-kit/gkd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6186` | Yes (`aaa4b525...`) |
 | `CYCLE-20261031-YESC` | `2026-10-31T12:09:01.020Z` | `DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md` | Yes (`117ed840...`) |
+| `CYCLE-20261031-7354` | `2026-10-31T12:15:45.832Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6187, Rule 6188, Rule 6189` | Yes (`54247053...`) |
+| `CYCLE-20261031-73ZU` | `2026-10-31T12:15:46.938Z` | `open-ani/animeko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6190` | Yes (`f5f4a199...`) |
+| `CYCLE-20261031-76EB` | `2026-10-31T12:15:50.051Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6191` | Yes (`cff7edd8...`) |

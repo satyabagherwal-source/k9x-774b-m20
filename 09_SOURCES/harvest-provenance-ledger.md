@@ -6564,3 +6564,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-unsloth-qwen3-8-27b-gguf` | `https://huggingface.co/unsloth/Qwen3.8-27B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-31T12:00:25.234Z |
 | `learn-github-gkd-kit-gkd` | `https://github.com/gkd-kit/gkd` | `c45a1241` | Multi-dimensional audit evidence | 2026-10-31T12:08:58.471Z |
 | `learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-10-31T12:09:01.027Z |
+| `learn-huggingface-cloudflare-clef` | `https://huggingface.co/Cloudflare/clef` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-10-31T12:15:45.836Z |
+| `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `8ca97e5d` | Multi-dimensional audit evidence | 2026-10-31T12:15:46.941Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `8ae29a1f` | Multi-dimensional audit evidence | 2026-10-31T12:15:50.055Z |

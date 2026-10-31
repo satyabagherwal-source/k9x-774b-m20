@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261029-2K7I",
-    "timestamp": "2026-10-29T17:16:49.998Z",
-    "repository": "pixeltable/pixeltable",
-    "learningId": "learn-github-pixeltable-pixeltable",
-    "contentHash": "cff5d829548d8e0e8d388732cef157791e2cbe56246d398596b2ba010adbfe2c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-B6AA",
-    "timestamp": "2026-10-29T17:23:31.858Z",
-    "repository": "Kuddev/pebrel",
-    "learningId": "learn-github-kuddev-pebrel",
-    "contentHash": "cdf93f8a20dfd632d648f68990ab7f18267983372a731da35a77d9d89fed0f05",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-BDVJ",
-    "timestamp": "2026-10-29T17:23:41.695Z",
-    "repository": "microsoft/agent-governance-toolkit",
-    "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "a0193d8ee2e08cdb6d941002171f97c270897fa067f39cac56aeba954da0c84e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261029-BGUI",
     "timestamp": "2026-10-29T17:23:45.546Z",
     "repository": "risingwavelabs/risingwave",
@@ -7492,6 +7447,51 @@
     "contentHash": "117ed8402a3c311b578825640b9f0b627ed38d4e0525e0b0cb528c114847e89a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-7354",
+    "timestamp": "2026-10-31T12:15:45.832Z",
+    "repository": "Cloudflare/clef",
+    "learningId": "learn-huggingface-cloudflare-clef",
+    "contentHash": "54247053fccdbdfdcc93271a24a767135d44a771cdd56af52c366dbf0d037c84",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-73ZU",
+    "timestamp": "2026-10-31T12:15:46.938Z",
+    "repository": "open-ani/animeko",
+    "learningId": "learn-github-open-ani-animeko",
+    "contentHash": "f5f4a199374d084a531a83461c84aed2403c30fefcae7fee1bdea6f484869250",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-76EB",
+    "timestamp": "2026-10-31T12:15:50.051Z",
+    "repository": "zarf-dev/zarf",
+    "learningId": "learn-github-zarf-dev-zarf",
+    "contentHash": "cff7edd890e5a2aa2d27746d683ab487a59b2b594be7df122306d80c22b5b081",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -685,8 +685,8 @@
     "sourceUrl": "https://huggingface.co/Cloudflare/clef",
     "sourceVersion": "hf-cloudflare-clef",
     "license": "Open-Source",
-    "contentHash": "3318a21943a9ec24a2677c642acaad65153f19fe4cc01393032dfdba8f3f26ab",
-    "lastHarvestedAt": "2026-10-28T11:36:17.951Z",
+    "contentHash": "54247053fccdbdfdcc93271a24a767135d44a771cdd56af52c366dbf0d037c84",
+    "lastHarvestedAt": "2026-10-31T12:15:45.836Z",
     "learningId": "learn-huggingface-cloudflare-clef"
   },
   "hf-cloudflare-clef-flash": {
@@ -4463,10 +4463,10 @@
     "repository": "zarf-dev/zarf",
     "platform": "github",
     "sourceUrl": "https://github.com/zarf-dev/zarf",
-    "sourceVersion": "f0861e2a",
+    "sourceVersion": "8ae29a1f",
     "license": "Apache-2.0",
-    "contentHash": "57ea9fa07664732b8215581f2b48032afbc5346575d314af52f5483e8c58d051",
-    "lastHarvestedAt": "2026-10-30T20:22:06.377Z",
+    "contentHash": "cff7edd890e5a2aa2d27746d683ab487a59b2b594be7df122306d80c22b5b081",
+    "lastHarvestedAt": "2026-10-31T12:15:50.055Z",
     "learningId": "learn-github-zarf-dev-zarf"
   },
   "vlcn-io-cr-sqlite": {
@@ -6303,10 +6303,10 @@
     "repository": "open-ani/animeko",
     "platform": "github",
     "sourceUrl": "https://github.com/open-ani/animeko",
-    "sourceVersion": "2f33ea34",
+    "sourceVersion": "8ca97e5d",
     "license": "AGPL-3.0",
-    "contentHash": "db219afde42961d75b3f7f06240141fc7ddb0494547bd2a950aae396f9628127",
-    "lastHarvestedAt": "2026-10-27T21:29:01.290Z",
+    "contentHash": "f5f4a199374d084a531a83461c84aed2403c30fefcae7fee1bdea6f484869250",
+    "lastHarvestedAt": "2026-10-31T12:15:46.941Z",
     "learningId": "learn-github-open-ani-animeko"
   },
   "k3s-io-k3s": {
