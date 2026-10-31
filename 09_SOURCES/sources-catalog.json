@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "bfd8142c",
+    "sourceVersion": "33e27ca4",
     "license": "MIT",
-    "contentHash": "0ea49685dfab461fdf31cb065d4d8f061f0854ce74b8099d79dc5e14df796e10",
-    "lastHarvestedAt": "2026-10-29T23:13:49.763Z",
+    "contentHash": "23857cc10e82df05040b4b60da192074fcd29a33df4874e150ca0941befdfeb7",
+    "lastHarvestedAt": "2026-10-31T02:21:20.014Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {
@@ -6313,10 +6313,10 @@
     "repository": "k3s-io/k3s",
     "platform": "github",
     "sourceUrl": "https://github.com/k3s-io/k3s",
-    "sourceVersion": "f2aea320",
+    "sourceVersion": "3461a87f",
     "license": "Apache-2.0",
-    "contentHash": "f7d1afd7108b254bdcab209352c5db4d516e05d2085492b7872dbfde568d3f28",
-    "lastHarvestedAt": "2026-10-30T06:43:22.635Z",
+    "contentHash": "374c0f5bfd8ce21161d436d8bc96a001d949476a489fac731e8b274c4f4baa23",
+    "lastHarvestedAt": "2026-10-31T02:21:24.972Z",
     "learningId": "learn-github-k3s-io-k3s"
   },
   "open-source-legal-opencontracts": {
@@ -10555,8 +10555,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/flint-GGUF",
     "sourceVersion": "hf-unsloth-flint-gguf",
     "license": "Open-Source",
-    "contentHash": "e8c47cce3ad0baa87dfa6ba860d1516c4c629687369db486578812bf812f4de7",
-    "lastHarvestedAt": "2026-10-27T14:36:28.538Z",
+    "contentHash": "a8dabe2b85b94cab9a0e3e07b512d3bca81a3040d84be0ce6ef177e83df4345c",
+    "lastHarvestedAt": "2026-10-31T02:21:18.421Z",
     "learningId": "learn-huggingface-unsloth-flint-gguf"
   },
   "gauthierpiarrette-highball": {

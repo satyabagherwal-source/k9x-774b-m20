@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-T85B",
-    "timestamp": "2026-10-28T20:37:51.359Z",
-    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-    "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-    "contentHash": "e121d93db0747f24e2f1a65c66e0fcfc6e7c9bd829c9e9f964611118b21c1717",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-TDAV",
-    "timestamp": "2026-10-28T20:37:58.039Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "981acf093888bf86ed8fffaebf578eba6636fab8ac8d24d75f6e1febee19b4d4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-1KGJ",
-    "timestamp": "2026-10-28T20:44:20.563Z",
-    "repository": "Qwen/Qwen3-4B",
-    "learningId": "learn-huggingface-qwen-qwen3-4b",
-    "contentHash": "3549507ba0c96fb4706760486f5a4eb0a92bb86cca0d39e7af9e92b1871c4ca1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-1QYA",
     "timestamp": "2026-10-28T20:44:28.978Z",
     "repository": "NativeScript/NativeScript",
@@ -7490,6 +7445,51 @@
     "repository": "ydb-platform/ydb",
     "learningId": "learn-github-ydb-platform-ydb",
     "contentHash": "8d44c0a20aa209ab5ace2a818e7caab05c37b6c1683081a846220f242cf19893",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-YLZL",
+    "timestamp": "2026-10-31T02:21:18.417Z",
+    "repository": "unsloth/flint-GGUF",
+    "learningId": "learn-huggingface-unsloth-flint-gguf",
+    "contentHash": "a8dabe2b85b94cab9a0e3e07b512d3bca81a3040d84be0ce6ef177e83df4345c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-YN7V",
+    "timestamp": "2026-10-31T02:21:20.011Z",
+    "repository": "1jehuang/jcode",
+    "learningId": "learn-github-1jehuang-jcode",
+    "contentHash": "23857cc10e82df05040b4b60da192074fcd29a33df4874e150ca0941befdfeb7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-YR1K",
+    "timestamp": "2026-10-31T02:21:24.968Z",
+    "repository": "k3s-io/k3s",
+    "learningId": "learn-github-k3s-io-k3s",
+    "contentHash": "374c0f5bfd8ce21161d436d8bc96a001d949476a489fac731e8b274c4f4baa23",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

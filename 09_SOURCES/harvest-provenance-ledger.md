@@ -6433,3 +6433,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-comfy-org-z-image-turbo` | `https://huggingface.co/Comfy-Org/Z-Image-Turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-31T02:14:25.835Z |
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `4ab32131` | Multi-dimensional audit evidence | 2026-10-31T02:14:28.157Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `41cf0fa6` | Multi-dimensional audit evidence | 2026-10-31T02:14:33.761Z |
+| `learn-huggingface-unsloth-flint-gguf` | `https://huggingface.co/unsloth/flint-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-31T02:21:18.421Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `33e27ca4` | Multi-dimensional audit evidence | 2026-10-31T02:21:20.014Z |
+| `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `3461a87f` | Multi-dimensional audit evidence | 2026-10-31T02:21:24.972Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T02:14:33.770Z",
+  "last_updated": "2026-10-31T02:21:24.982Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5541,14 +5541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-1jehuang-jcode",
-      "content_hash": "0ea49685dfab461fdf31cb065d4d8f061f0854ce74b8099d79dc5e14df796e10",
-      "verified_at": "2026-10-29T23:13:49.771Z",
+      "content_hash": "23857cc10e82df05040b4b60da192074fcd29a33df4874e150ca0941befdfeb7",
+      "verified_at": "2026-10-31T02:21:20.024Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T23:13:49.771Z"
+      "last_updated": "2026-10-31T02:21:20.024Z"
     },
     "wix/Detox": {
       "repository": "wix/Detox",
@@ -9591,14 +9591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-k3s-io-k3s",
-      "content_hash": "f7d1afd7108b254bdcab209352c5db4d516e05d2085492b7872dbfde568d3f28",
-      "verified_at": "2026-10-30T06:43:22.643Z",
+      "content_hash": "374c0f5bfd8ce21161d436d8bc96a001d949476a489fac731e8b274c4f4baa23",
+      "verified_at": "2026-10-31T02:21:24.981Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T06:43:22.643Z"
+      "last_updated": "2026-10-31T02:21:24.981Z"
     },
     "Ataraxy-Labs/sem": {
       "repository": "Ataraxy-Labs/sem",
@@ -15861,14 +15861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-flint-gguf",
-      "content_hash": "e8c47cce3ad0baa87dfa6ba860d1516c4c629687369db486578812bf812f4de7",
-      "verified_at": "2026-10-27T14:36:28.551Z",
+      "content_hash": "a8dabe2b85b94cab9a0e3e07b512d3bca81a3040d84be0ce6ef177e83df4345c",
+      "verified_at": "2026-10-31T02:21:18.436Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T14:36:28.551Z"
+      "last_updated": "2026-10-31T02:21:18.436Z"
     },
     "gauthierpiarrette/highball": {
       "repository": "gauthierpiarrette/highball",

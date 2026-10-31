@@ -3,7 +3,7 @@
 > **Source Version**: `hf-unsloth-f`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T14:36:28.374Z  
+> **Timestamp**: 2026-10-31T02:21:18.124Z  
 > **Learning ID**: `learn-huggingface-unsloth-flint-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/unsloth/flint-GGUF](https://huggingface.co/unsloth/flint-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T14:36:27.670Z  
+> **Harvest Timestamp**: 2026-10-31T02:21:16.144Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 149888 downloads | 279 likes
+- **Stars / Engagement**: 221711 downloads | 344 likes
 
 ---
 

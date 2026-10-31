@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T02:14:33.682Z",
+  "last_updated": "2026-10-31T02:21:24.888Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -107,8 +107,8 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "bfd8142c",
-      "content_hash": "0ea49685dfab461fdf31cb065d4d8f061f0854ce74b8099d79dc5e14df796e10",
+      "source_version": "33e27ca4",
+      "content_hash": "23857cc10e82df05040b4b60da192074fcd29a33df4874e150ca0941befdfeb7",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
@@ -191,6 +191,11 @@
           "number": 5552,
           "title": "Cross-Platform Directory Isolation for Integration Test Harnesses",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6014,
+          "title": "voice): Make `ioctl` compatible with musl",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -198,7 +203,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T23:13:49.666Z",
+      "verified_at": "2026-10-31T02:21:19.911Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33331,8 +33336,8 @@
       "slug": "k3s-io-k3s",
       "platform": "github",
       "source_url": "https://github.com/k3s-io/k3s",
-      "source_version": "f2aea320",
-      "content_hash": "f7d1afd7108b254bdcab209352c5db4d516e05d2085492b7872dbfde568d3f28",
+      "source_version": "3461a87f",
+      "content_hash": "374c0f5bfd8ce21161d436d8bc96a001d949476a489fac731e8b274c4f4baa23",
       "dossier_path": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "promoted_rules": [
@@ -33375,6 +33380,11 @@
           "number": 5636,
           "title": "Update AI guidance",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6015,
+          "title": "dead community meeting and shell style guide links",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33382,7 +33392,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T06:43:22.541Z",
+      "verified_at": "2026-10-31T02:21:24.868Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -123055,7 +123065,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/flint-GGUF",
       "source_version": "hf-unsloth-flint-gguf",
-      "content_hash": "e8c47cce3ad0baa87dfa6ba860d1516c4c629687369db486578812bf812f4de7",
+      "content_hash": "a8dabe2b85b94cab9a0e3e07b512d3bca81a3040d84be0ce6ef177e83df4345c",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md",
       "promoted_rules": [
@@ -123075,7 +123085,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T14:36:28.478Z",
+      "verified_at": "2026-10-31T02:21:18.309Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -158418,6 +158428,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T02:14:33.662Z"
+    },
+    "rule-6014": {
+      "learning_id": "rule-6014",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6014,
+      "title": "voice): Make `ioctl` compatible with musl",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "33e27ca4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:21:19.911Z"
+    },
+    "rule-6015": {
+      "learning_id": "rule-6015",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6015,
+      "title": "dead community meeting and shell style guide links",
+      "source_url": "https://github.com/k3s-io/k3s",
+      "source_version": "3461a87f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:21:24.868Z"
     }
   },
   "aliases": {

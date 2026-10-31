@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T02:14:33.766Z",
-  "total_cycles_completed": 6401,
-  "total_learnings_persisted": 6401,
-  "total_rules_promoted": 5990,
+  "last_updated": "2026-10-31T02:21:24.978Z",
+  "total_cycles_completed": 6404,
+  "total_learnings_persisted": 6404,
+  "total_rules_promoted": 5992,
   "history": [
-    {
-      "timestamp": "2026-10-30T15:37:05.037Z",
-      "repository": "urllib3/urllib3",
-      "learningId": "learn-github-urllib3-urllib3",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T15:37:10.132Z",
-      "repository": "karmada-io/karmada",
-      "learningId": "learn-github-karmada-io-karmada",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T15:37:11.633Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T15:49:19.735Z",
       "repository": "kgateway-dev/kgateway",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-31T02:14:33.766Z",
       "repository": "ydb-platform/ydb",
       "learningId": "learn-github-ydb-platform-ydb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T02:21:18.433Z",
+      "repository": "unsloth/flint-GGUF",
+      "learningId": "learn-huggingface-unsloth-flint-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T02:21:20.020Z",
+      "repository": "1jehuang/jcode",
+      "learningId": "learn-github-1jehuang-jcode",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T02:21:24.978Z",
+      "repository": "k3s-io/k3s",
+      "learningId": "learn-github-k3s-io-k3s",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
