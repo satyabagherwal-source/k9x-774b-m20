@@ -75,8 +75,8 @@
     "sourceUrl": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
     "sourceVersion": "hf-mudler-locate-anything.cpp-gguf",
     "license": "Open-Source",
-    "contentHash": "273c5e57fbbf8c9aa13b8251145d8decb017644177a0395c07e7ac47b123b532",
-    "lastHarvestedAt": "2026-10-28T18:48:40.287Z",
+    "contentHash": "c2c27e227605cfd24e8d53b39ea90bc0e0267982fd2cb817ff654633ba5c9650",
+    "lastHarvestedAt": "2026-10-31T20:23:13.185Z",
     "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf"
   },
   "hf-jialinyyzz-humanizer": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "6c6dd62b",
+    "sourceVersion": "49aa9c85",
     "license": "BSD-3-Clause",
-    "contentHash": "fae376171272a37b292a8f23d648c2a7f51d0094b1e29e0082f2a18df8fc9daf",
-    "lastHarvestedAt": "2026-10-31T12:46:56.440Z",
+    "contentHash": "508a41d242219a8541d4a67901411f4d5374e23abb0e95cde77b4be300bd1a25",
+    "lastHarvestedAt": "2026-10-31T20:23:15.527Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -5973,10 +5973,10 @@
     "repository": "genkit-ai/genkit",
     "platform": "github",
     "sourceUrl": "https://github.com/genkit-ai/genkit",
-    "sourceVersion": "7f44e2c3",
+    "sourceVersion": "1eb9489f",
     "license": "Apache-2.0",
-    "contentHash": "38edc13efc9e41da1d61fd821048c0450775aed5bc5add98d51e9241db9d7406",
-    "lastHarvestedAt": "2026-10-31T03:45:34.914Z",
+    "contentHash": "877eace18dafe06ee9427dd0a6775e13a6c46edeaa2c0055e7c08a18078d662f",
+    "lastHarvestedAt": "2026-10-31T20:23:17.532Z",
     "learningId": "learn-github-genkit-ai-genkit"
   },
   "guokaigdg-animal-island-ui": {
@@ -7153,10 +7153,10 @@
     "repository": "zeromicro/go-zero",
     "platform": "github",
     "sourceUrl": "https://github.com/zeromicro/go-zero",
-    "sourceVersion": "f753a411",
+    "sourceVersion": "f3be7b00",
     "license": "MIT",
-    "contentHash": "7b3dab45360738bed725c2c397eb6b6a063ce8c72379025a5908c31619dd2cc3",
-    "lastHarvestedAt": "2026-10-31T04:43:44.238Z",
+    "contentHash": "684cab988fceb93b29ef291472a02c19fc67a21fb67d5af076c9c61c787d90b2",
+    "lastHarvestedAt": "2026-10-31T20:23:14.282Z",
     "learningId": "learn-github-zeromicro-go-zero"
   },
   "t8y2-dbx": {

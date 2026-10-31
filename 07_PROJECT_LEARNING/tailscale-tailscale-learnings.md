@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `6c6dd62b`  
+> **Source Version**: `49aa9c85`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T12:46:55.758Z  
+> **Timestamp**: 2026-10-31T20:23:14.821Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T12:46:55.752Z  
+> **Harvest Timestamp**: 2026-10-31T20:23:14.814Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38412 stars
+- **Stars / Engagement**: 38427 stars
 
 ---
 
@@ -803,8 +803,8 @@ export const sessionStateStorage: IPNStateStorage = {
 - **Issue #22041** (2026-10-31): **k8s-operator: renewals fail for unstamped certs with a shared ACME account**
   *Symptoms*: With a shared ACME account (#20493), kubestore only puts the ARI `replaces` field on a renewal when the current account key matches the `acme-account-fingerprint` stamped on the cert Secret. Cert Secrets from before v1.104 have no stamp. For those, kubestore assumes the current key issued the cert unless the Pod started with a per-pod key that differs from the shared one.  If an ingress ProxyGroup is recreated while an older Ingress cert Secret is kept, and that ProxyGroup then fills `tailscale-acme-accounts` with its new key or adopts a shared key that didn't issue the cert, the renewal still names the old cert in `replaces`. Let's Encrypt then rejects every renewal until the cert is deleted:  ``` 403 urn:ietf:params:acme:error:unauthorized: Could not validate ARI 'replaces' field :: requester account did not request the certificate being replaced by this order ```  It reproduces on main against Let's Encrypt staging. Issue a cert for an HA Ingress, remove `acme-account-fingerprint` from its Secret, recreate the ProxyGroup, set `tailscale.com/share-acme-account: "true"` on it, then renew.  This is the shared-account case of #18251.
 
-- **Issue #22007** (2026-10-29): **cmd/tsconnect: SSH output splits UTF-8 characters across chunks**
-  *Symptoms*: ### What is the issue?  The browser SSH console on Tailscale garbles multi-byte characters when they land on a read boundary. It looks like `termWriter.Write` in `cmd/tsconnect/wasm/wasm_js.go` converts each chunk of the SSH output into a JS string own its own, so a character that's split across two of those chunks will turn into replacement characters.  This matters because programs like `btop`/`htop` (which is where I first noticed it) tend to do lots of boxed redrawing and will mess up their layout eventually if this bug is encountered. It's rare in non full screen terminal applications but still possible.  I was able to patch `tsconnect` myself in a library that consumes it by having `termWriter` hold back unfinished UTF-8 sequences in a chunk and prepend it into the next one. I'd love to contribute this myself and open a PR if this issue is accepted ([patch here](https://github.com/tale/headplane/blob/main/patches/tsconnect-utf8-chunks.patch)).  ### Steps to reproduce  1. Open the SSH console to any machine from the Tailscale web console. 2. Run: `yes '─' | head -n 50000 | tr -d '\n'` 3. The solid line has scattered "���" in it, does not happen on normal SSH in my own terminal  ### Are there any recent changes that introduced the issue?  Unknown  ### OS  macOS, Linux  ### OS version  Oracle Linux 9  ### Tailscale version  1.104.2  ### Other software  N/A  ### Bug report  BUG-a9a3b6e4d78aa5f90f2de1b791de8bdcdfa2e73c479fb316ebb58ed88eb03a8f-20261027230348Z-aab4e3571547a146
+- **Issue #22020** (2026-10-31): **Funnel: no public DNS record for renamed node (NXDOMAIN), persists after re-creating the node**
+  *Symptoms*: ### What is the issue?  Funnel is enabled on a Linux node and works locally, but no public DNS record is ever published for the node's name. `titan.tail9b66b7.ts.net` returns NXDOMAIN from Google (8.8.8.8) and Cloudflare (1.1.1.1) DoH, so Funnel is unreachable from the internet. The name resolves normally inside the tailnet. This looks like the same problem as #21698 and #21502 (still on 1.104.2), with one extra detail: it started with a node rename, and it persists after re-creating the node from scratch.  Timeline (UTC): - 2026-10-27: node renamed from `compute` to `titan` (OS hostname changed too). Until then `compute.tail9b66b7.ts.net` resolved publicly to Funnel ingress IPs (176.58.88.82, 176.58.88.108, 176.58.92.199). - 2026-10-27 20:17: Funnel restarted on the node. `tailscaled` logged an ACME dns-01 flow (`did SetDNS for _acme-challenge.titan...`, `got cert`), so the certificate was issued fine. - By 2026-10-28 06:37: `compute.tail9b66b7.ts.net` also returns NXDOMAIN. The old record was removed, but no record was created for `titan`. - 2026-10-28: tried the `nodeAttrs` policy toggle, `tailscale funnel reset` (several times), Funnel off/on, `tailscale up --force-reauth --hostname=titan`, and finally logout, deleting the machine in the admin console, wiping the local state and registering again as a brand-new node (`tailscale up` without `--hostname`). New Tailscale IP 100.70.196.92. Still NXDOMAIN about 1 hour after the re-registration, and about 22 hours after the fir
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -821,93 +821,646 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6c6dd62b` (2026-10-31)
-**Commit Message**: ipn/store/kubestore: omit ARI replaces for unstamped shared certs (#22053)
+### Incident Patch 1: `49aa9c85` (2026-09-22)
+**Commit Message**: feature/conn25: store tokens from DNS response and pass them back in
+TransitIPRequest to connector
 
-A retained legacy cert may have been issued by a different account even when no pre-adoption local key is available. Require a matching fingerprint before claiming a shared-account renewal replaces it.
+Parse the tokens from the HTTP headers in the response. Determine which
+node responded to the DNS request from the RequestURL passed in as
+metadata to (*extension).mapDNSResponse. Store the token and connector
+node alongside the TransitIP in the addrs struct. Then populate the new
+Token field in TransitIPRequest with the stored token.
 
-Fixes #22041
+Updates tailscale/corp#46169
 
-Signed-off-by: Jaron Kramer <[REDACTED_EMAIL]>
+Signed-off-by: Michael Ben-Ami <[REDACTED_EMAIL]>
 
-**File**: `ipn/store/kubestore/store_kube.go` (modified, +5/-3)
+**File**: `feature/conn25/addrAssignments.go` (modified, +3/-3)
 ```diff
-@@ -284,9 +284,11 @@ func (s *Store) ShouldUseARIReplacesForRenewal(domain string) (bool, error) {
+@@ -66,12 +66,12 @@ func (a *addrAssignments) insertWithExpiry(as *addrs, d time.Duration) error {
+ 	if _, ok := a.byDomainDst[ddst]; ok {
+ 		return errors.New("byDomainDst key exists")
  	}
- 	certFP := sec.Data[keyACMEAcctFP]
- 	if len(certFP) == 0 {
--		// Legacy cert, no fingerprint stamp. Assume misaligned only if
--		// we adopted a foreign shared key.
--		if len(s.preAdoptedLocalKey) > 0 {
-+		// A legacy cert has no record of its issuing account. With a
-+		// shared account, the current key may have been created or adopted
-+		// after this cert was issued, even without a prior local key.
-+		// Omit replaces until a renewal stamps the issuing fingerprint.
-+		if s.acmeAccountsSecretName != "" || len(s.preAdoptedLocalKey) > 0 {
- 			return false, nil
- 		}
- 		return true, nil
+-	if _, ok := a.byTransitIP[as.transit]; ok {
++	if _, ok := a.byTransitIP[as.connectorAddr.transit]; ok {
+ 		return errors.New("byTransitIP key exists")
+ 	}
+ 	as.expiresAt = now.Add(d)
+ 	mak.Set(&a.byMagicIP, as.magic, as)
+-	mak.Set(&a.byTransitIP, as.transit, as)
++	mak.Set(&a.byTransitIP, as.connectorAddr.transit, as)
+ 	mak.Set(&a.byDomainDst, ddst, as)
+ 	heap.Push(&a.byExpiresAt, as)
+ 	return nil
+@@ -146,7 +146,7 @@ func (a *addrAssignments) popExpired(now time.Time) *addrs {
+ 		heap.Push(&a.byExpiresAt, candidate)
+ 	}
+ 	delete(a.byMagicIP, v.magic)
+-	delete(a.byTransitIP, v.transit)
++	delete(a.byTransitIP, v.connectorAddr.transit)
+ 	dd := domainDst{domain: v.domain, dst: v.dst}
+ 	delete(a.byDomainDst, dd)
+ 	return v
 ```
 
-**File**: `ipn/store/kubestore/store_kube_test.go` (modified, +31/-5)
+**File**: `feature/conn25/addrAssignments_test.go` (modified, +17/-16)
 ```diff
-@@ -1107,6 +1107,7 @@ func TestShouldUseARIReplacesForRenewal(t *testing.T) {
- 	tests := []struct {
- 		name          string
- 		certShareMode string
-+		sharedSecret  string
- 		acmeInMemory  []byte // per-pod ACME key present in memory
- 		preAdopted    []byte // sha256 of pre-adoption local key (foreign-key path)
- 		certSecret    map[string][]byte
-@@ -1173,6 +1174,30 @@ func TestShouldUseARIReplacesForRenewal(t *testing.T) {
- 			certSecret:    map[string][]byte{}, // no fingerprint field
- 			want:          false,
+@@ -18,11 +18,11 @@ func TestAssignmentsExpire(t *testing.T) {
+ 	clock := tstest.NewClock(tstest.ClockOpts{Start: time.Now()})
+ 	assignments := addrAssignments{clock: clock}
+ 	as := &addrs{
+-		dst:     netip.MustParseAddr("0.0.0.1"),
+-		magic:   netip.MustParseAddr("0.0.0.2"),
+-		transit: netip.MustParseAddr("0.0.0.3"),
+-		app:     "a",
+-		domain:  "example.com.",
++		dst:           netip.MustParseAddr("0.0.0.1"),
++		magic:         netip.MustParseAddr("0.0.0.2"),
++		connectorAddr: connectorAddr{transit: netip.MustParseAddr("0.0.0.3")},
++		app:           "a",
++		domain:        "example.com.",
+ 	}
+ 	err := assignments.insert(as)
+ 	if err != nil {
+@@ -55,11 +55,11 @@ func TestPopExpired(t *testing.T) {
+ 	makeAndAddAddrs := func(n int) *addrs {
+ 		t.Helper()
+ 		as := &addrs{
+-			dst:     netip.MustParseAddr(fmt.Sprintf("0.0.1.%d", n)),
+-			magic:   netip.MustParseAddr(fmt.Sprintf("0.0.2.%d", n)),
+-			transit: netip.MustParseAddr(fmt.Sprintf("0.0.3.%d", n)),
+-			app:     "a",
+-			domain:  "example.com.",
++			dst:           netip.MustParseAddr(fmt.Sprintf("0.0.1.%d", n)),
++			magic:         netip.MustParseAddr(fmt.Sprintf("0.0.2.%d", n)),
++			connectorAddr: connectorAddr{transit: netip.MustParseAddr(fmt.Sprintf("0.0.3.%d", n))},
++			app:           "a",
++			domain:        "example.com.",
+ 		}
+ 		err := assignments.insert(as)
+ 		if err != nil {
+@@ -73,9 +73,10 @@ func TestPopExpired(t *testing.T) {
+ 		return cmp.Diff(
+ 			want,
+ 			got,
+-			cmp.AllowUnexported(addrs{}),
++			cmp.AllowUnexported(addrs{}, connectorAddr{}),
+ 			cmpopts.EquateComparable(netip.Addr{}),
+ 			cmpopts.IgnoreFields(addrs{}, "expiresAt"),
++			nodeViewComparer,
+ 		)
+ 	}
+ 	testAddrs := []*addrs{}
+@@ -131,11 +132,11 @@ func TestPopExpiredHandlesExpiresAtChanges(t *testing.T) {
+ 	makeAndAddAddrs := func(n int) *addrs {
+ 		t.Helper()
+ 		as := &addrs{
+-			dst:     netip.MustParseAddr(fmt.Sprintf("0.0.1.%d", n)),
+-			magic:   netip.MustParseAddr(fmt.Sprintf("0.0.2.%d", n)),
+-			transit: netip.MustParseAddr(fmt.Sprintf("0.0.3.%d", n)),
+-			app:     "a",
+-			domain:  "example.com.",
++			dst:           netip.MustParseAddr(fmt.Sprintf("0.0.1.%d", n)),
++			magic:         netip.MustParseAddr(fmt.Sprintf("0.0.2.%d", n)),
++			connectorAddr: connectorAddr{transit: netip.MustParseAddr(fmt.Sprintf("0.0.3.%d", n))},
++			app:           "a",
++			domain:        "example.com.",
+ 		}
+ 		err := assignments.insertWithExpiry(as, expiryInterval)
+ 		if err != nil {
+```
+
+**File**: `feature/conn25/api.go` (modified, +1/-1)
+```diff
+@@ -100,7 +100,7 @@ func (c *client) getActiveState() appctype.Conn25ClientState {
+ 			ActiveFlowCount: assignment.activeFlowCount,
+ 			DestinationIP:   assignment.dst.String(),
+ 			MagicIP:         assignment.magic.String(),
+-			TransitIP:       assignment.transit.String(),
++			TransitIP:       assignment.connectorAddr.transit.String(),
+ 			ExpiresAt:       assignment.expiresAt,
+ 		})
+ 
+```
+
+**File**: `feature/conn25/api_test.go` (modified, +1/-1)
+```diff
+@@ -40,7 +40,7 @@ func TestGetActiveState(t *testing.T) {
+ 				domain:          mustFQDN(domain),
+ 				dst:             netip.MustParseAddr(dst),
+ 				magic:           netip.MustParseAddr(magic),
+-				transit:         netip.MustParseAddr(transit),
++				connectorAddr:   connectorAddr{transit: netip.MustParseAddr(transit)},
+ 				activeFlowCount: flows,
+ 				expiresAt:       expires,
+ 			}
+```
+
+**File**: `feature/conn25/client.go` (modified, +43/-11)
+```diff
+@@ -47,7 +47,7 @@ func (c *client) transitIPForMagicIP(magicIP netip.Addr) (netip.Addr, bool) {
+ 	defer c.mu.Unlock()
+ 	v, ok := c.assignments.lookupByMagicIP(magicIP)
+ 	if ok {
+-		return v.transit, true
++		return v.connectorAddr.transit, true
+ 	}
+ 	return netip.Addr{}, false
+ }
+@@ -105,13 +105,38 @@ func (c *client) reset() {
+ // the app name refers to a configured app.
+ // It checks that this domain should be routed and that this client is not itself a connector for the domain
+ // and generally if it is valid to make the assignment.
+-func (c *client) reserveAddresses(appName string, domain dnsname.FQDN, dst netip.Addr, ttl time.Duration) (*addrs, error) {
++func (c *client) reserveAddresses(appName string, domain dnsname.FQDN, dst netip.Addr, ttl time.Duration, connectorNode tailcfg.NodeView, token string) (*addrs, error) {
+ 	if !dst.IsValid() {
+ 		return nil, errors.New("dst is not valid")
+ 	}
++	if !connectorNode.Valid() {
++		return nil, errors.New("connector node is not valid")
++	}
+ 	c.mu.Lock()
+ 	defer c.mu.Unlock()
+ 	if existing, ok := c.assignments.lookupByDomainDst(domain, dst); ok {
++		// We have the domain/dst, but it's possible this came from another connector
++		// and the original connector is dead, in which case we currently don't
++		// call enqueueAddressAssignment and register the TransitIP with the other
++		// connector. And we don't install the new connector's node key in WireGuard.
++		//
++		// The correct action would be to allocate a new TransitIP associated
++		// with that new connector, and then register the TransitIP address, and
++		// install the node key.
++		// But as of 2026-10-01, the data model doesn't support multiple TransitIPs
++		// per domain/dst/magic.
++		//
++		// For now, try to use the old connector, even if this new DNS request came from
++		// a new connector.
++		//
++		// Token management. If it came from the old connector, token should be updated,
++		// because it is what the connector will expect. If it came from a different
++		// connector, don't modify the token for the original connector.
++		//
++		// TODO(tailscale/corp#50318): support multiple TransitIPs/connectors per domain/dst/magic.
++		if existing.connectorAddr.node.ID() == connectorNode.ID() {
++			existing.connectorAddr.token = token
++		}
+ 		c.assignments.updateFromTTL(existing, ttl)
+ 		return existing, nil
+ 	}
+@@ -129,10 +154,10 @@ func (c *client) reserveAddresses(appName string, domain dnsname.FQDN, dst netip
+ 		}
+ 		if a.is4() {
+ 			c.v4MagicIPPool.returnAddr(a.magic)
+-			c.v4TransitIPPool.returnAddr(a.transit)
++			c.v4TransitIPPool.returnAddr(a.connectorAddr.transit)
+ 		} else if a.is6() {
+ 			c.v6MagicIPPool.returnAddr(a.magic)
+-			c.v6TransitIPPool.returnAddr(a.transit)
++			c.v6TransitIPPool.returnAddr(a.connectorAddr.transit)
+ 		} else {
+ 			return nil, errors.New("unexpected neither 4 nor 6")
+ 		}
+@@ -160,11 +185,15 @@ func (c *client) reserveAddresses(appName string, domain dnsname.FQDN, dst netip
+ 		return nil, err
+ 	}
+ 	as := &addrs{
+-		dst:     dst,
+-		magic:   mip,
+-		transit: tip,
+-		app:     appName,
+-		domain:  domain,
++		dst:   dst,
++		magic: mip,
++		connectorAddr: connectorAddr{
++			transit: tip,
++			node:    connectorNode,
++			token:   token,
++		},
++		app:    appName,
++		domain: domain,
+ 	}
+ 	if err := c.assignments.insertFromTTL(as, ttl); err != nil {
+ 		magicPool.returnAddr(mip)
+@@ -179,6 +208,9 @@ func (c *client) reserveAddresses(appName string, domain dnsname.FQDN, dst netip
+ }
+ 
+ func (c *client) addTransitIPForConnector(tip netip.Addr, conn tailcfg.NodeView) error {
++	if !conn.Valid() {
++		return fmt.Errorf("unexpectedly received invalid connector node")
++	}
+ 	if conn.Key().IsZero() {
+ 		return fmt.Errorf("node with stable ID %q does not have a key", conn.StableID())
+ 	}
+@@ -249,7 +281,7 @@ func (c *client) rewriteDNSResponse(appName string, hdr dnsmessage.Header, quest
+ 
+ 	// make an answer for each rewrite
+ 	for _, rw := range answers {
+-		as, err := c.reserveAddresses(appName, rw.domain, rw.dst, time.Duration(rw.ttlSeconds)*time.Second)
++		as, err := c.reserveAddresses(appName, rw.domain, rw.dst, time.Duration(rw.ttlSeconds)*time.Second, rw.connectorNode, rw.token)
+ 		if err != nil {
+ 			return nil, err
+ 		}
+@@ -286,7 +318,7 @@ func (c *client) rewriteDNSResponse(appName string, hdr dnsmessage.Header, quest
+ type addrs struct {
+ 	dst             netip.Addr
+ 	magic           netip.Addr
+-	transit         netip.Addr
++	connectorAddr   connectorAddr
+ 	domain          dnsname.FQDN
+ 	app             string
+ 	expiresAt       time.Time
+```
+
+**File**: `feature/conn25/client_test.go` (modified, +44/-33)
+```diff
+@@ -64,7 +64,7 @@ func TestReserveIPs(t *testing.T) {
  		},
-+		{
-+			name:          "legacy_cert_with_shared_account_returns_false",
-+			certShareMode: "rw",
-+			sharedSecret:  "tailscale-acme-accounts",
-+			acmeInMemory:  acmeKey,
-+			certSecret:    map[string][]byte{},
-+			want:          false,
-+		},
-+		{
-+			name:          "shared_account_fingerprint_matches",
-+			certShareMode: "rw",
-+			sharedSecret:  "tailscale-acme-accounts",
-+			acmeInMemory:  acmeKey,
-+			certSecret:    map[string][]byte{keyACMEAcctFP: curFP},
-+			want:          true,
-+		},
-+		{
-+			name:          "shared_account_fingerprint_differs",
-+			certShareMode: "rw",
-+			sharedSecret:  "tailscale-acme-accounts",
-+			acmeInMemory:  acmeKey,
-+			certSecret:    map[string][]byte{keyACMEAcctFP: otherFP},
-+			want:          false,
-+		},
+ 	} {
+ 		t.Run(tt.name, func(t *testing.T) {
+-			addrs, err := c.client.reserveAddresses(appName, domain, tt.dst, 10)
++			addrs, err := c.client.reserveAddresses(appName, domain, tt.dst, 10, testConnectorPeer, "")
+ 			if err != nil {
+ 				t.Fatal(err)
+ 			}
+@@ -74,8 +74,8 @@ func TestReserveIPs(t *testing.T) {
+ 			if tt.wantMagic != addrs.magic {
+ 				t.Errorf("want %v, got %v", tt.wantMagic, addrs.magic)
+ 			}
+-			if tt.wantTransit != addrs.transit {
+-				t.Errorf("want %v, got %v", tt.wantTransit, addrs.transit)
++			if tt.wantTransit != addrs.connectorAddr.transit {
++				t.Errorf("want %v, got %v", tt.wantTransit, addrs.connectorAddr.transit)
+ 			}
+ 			if appName != addrs.app {
+ 				t.Errorf("want %s, got %s", appName, addrs.app)
+@@ -110,12 +110,12 @@ func TestReserveAddressesDeduplicated(t *testing.T) {
+ 			c.v4TransitIPPool = newIPPool(mustIPSetFromPrefix("169.254.0.0/24"))
+ 			c.v6TransitIPPool = newIPPool(mustIPSetFromPrefix("fd7a:115c:a1e0:a99c:0200::/80"))
+ 
+-			first, err := c.reserveAddresses(appName, "example.com.", tt.dst, 10)
++			first, err := c.reserveAddresses(appName, "example.com.", tt.dst, 10, testConnectorPeer, "")
+ 			if err != nil {
+ 				t.Fatal(err)
+ 			}
+ 
+-			second, err := c.reserveAddresses(appName, "example.com.", tt.dst, 10)
++			second, err := c.reserveAddresses(appName, "example.com.", tt.dst, 10, testConnectorPeer, "")
+ 			if err != nil {
+ 				t.Fatal(err)
+ 			}
+@@ -193,7 +193,7 @@ func TestReserveAddressesNoLeakOnFailure(t *testing.T) {
+ 					dst = netip.MustParseAddr(fmt.Sprintf("::%d", i+1))
+ 				}
+ 				domain := must.Get(dnsname.ToFQDN(fmt.Sprintf("e%d.example.com.", i)))
+-				if _, err := c.reserveAddresses(appName, domain, dst, 10); err != nil {
++				if _, err := c.reserveAddresses(appName, domain, dst, 10, testConnectorPeer, ""); err != nil {
+ 					gotErr = err
+ 				} else {
+ 					reserved++
+@@ -216,11 +216,11 @@ func TestTransitIPConnMapping(t *testing.T) {
+ 	conn25 := newConn25(t.Logf)
+ 
+ 	as := &addrs{
+-		dst:     netip.MustParseAddr("1.2.3.1"),
+-		magic:   netip.MustParseAddr("100.64.0.1"),
+-		transit: netip.MustParseAddr("169.254.0.1"),
+-		domain:  "woo.example.com.",
+-		app:     "app1",
++		dst:           netip.MustParseAddr("1.2.3.1"),
++		magic:         netip.MustParseAddr("100.64.0.1"),
++		connectorAddr: connectorAddr{transit: netip.MustParseAddr("169.254.0.1")},
++		domain:        "woo.example.com.",
++		app:           "app1",
  	}
  
- 	for _, tt := range tests {
-@@ -1186,11 +1211,12 @@ func TestShouldUseARIReplacesForRenewal(t *testing.T) {
+ 	connectorPeers := []tailcfg.NodeView{
+@@ -239,24 +239,24 @@ func TestTransitIPConnMapping(t *testing.T) {
+ 	}
+ 
+ 	// Adding a transit IP that isn't known should fail
+-	if err := conn25.client.addTransitIPForConnector(as.transit, connectorPeers[1]); err == nil {
++	if err := conn25.client.addTransitIPForConnector(as.connectorAddr.transit, connectorPeers[1]); err == nil {
+ 		t.Error("adding an unknown transit IP should fail")
+ 	}
+ 
+ 	// Insert the address assignments
+ 	conn25.client.assignments.insert(as)
+ 
+ 	// Adding a transit IP for a node with an unset key should fail
+-	if err := conn25.client.addTransitIPForConnector(as.transit, connectorPeers[0]); err == nil {
++	if err := conn25.client.addTransitIPForConnector(as.connectorAddr.transit, connectorPeers[0]); err == nil {
+ 		t.Error("adding an transit IP mapping for a connector with a zero key should fail")
+ 	}
+ 	// Adding a transit IP that is known should succeed
+-	if err := conn25.client.addTransitIPForConnector(as.transit, connectorPeers[1]); err != nil {
++	if err := conn25.client.addTransitIPForConnector(as.connectorAddr.transit, connectorPeers[1]); err != nil {
+ 		t.Errorf("unexpected error for first time add: %v", err)
+ 	}
+ 	// And doing it again shouldn't fail (this is done when resending mappings
+ 	// to a restarted connector)
+-	if err := conn25.client.addTransitIPForConnector(as.transit, connectorPeers[1]); err != nil {
++	if err := conn25.client.addTransitIPForConnector(as.connectorAddr.transit, connectorPeers[1]); err != nil {
+ 		t.Errorf("error adding duplicate transitIP for a connector: %v", err)
+ 	}
+ }
+@@ -267,7 +267,9 @@ func TestIsKnownTransitIP(t *testing.T) {
+ 
+ 	c := newConn25(t.Logf)
+ 	err := c.client.assignments.insert(&addrs{
+-		transit: knownTip,
++		connectorAddr: connectorAddr{
++			transit: knownTip,
++		},
+ 	})
+ 	if err != nil {
+ 		t.Errorf("error inserting address assignment: %v", err)
+@@ -287,7 +289,9 @@ func TestLinkLocalAllow(t *testing.T) {
+ 
+ 	c := newConn25(t.Logf)
+ 	err := c.client.assignments.insert(&addrs{
+-		transit: knownTip,
++		connectorAddr: connectorAddr{
++			transit: knownTip,
++		},
+ 	})
+ 	if err != nil {
+ 		t.Fatalf("error inserting address assignment: %v", err)
+@@ -351,18 +355,18 @@ func TestReconfigDoesNotReissueInUseAddresses(t *testing.T) {
+ 				conn25: c,
+ 			}
+ 
+-			_, err := c.client.reserveAddresses(appName, domain, tt.dstOne, 10)
++			_, err := c.client.reserveAddresses(appName, domain, tt.dstOne, 10, testConnectorPeer, "")
+ 			if !errors.Is(err, errUninitializedIPPool) {
+ 				t.
+```
+
+**File**: `feature/conn25/conn25.go` (modified, +135/-32)
+```diff
+@@ -185,7 +185,7 @@ func (e *extension) installHooks(dph *datapathHandler) error {
+ 		if !ok {
+ 			return "", errors.New("no app found for app name")
+ 		}
+-		_, urlBase := e.pickConnectorURLBase(app)
++		urlBase := e.pickConnectorURLBase(app)
+ 		if urlBase == "" {
+ 			return "", nil
+ 		}
+@@ -200,7 +200,7 @@ func (e *extension) installHooks(dph *datapathHandler) error {
+ 		if !e.conn25.isConfigured() {
+ 			return res.Bs
+ 		}
+-		return e.conn25.mapDNSResponse(res)
++		return e.mapDNSResponse(res)
+ 	})
+ 
+ 	// Intercept packets from the tun device and from WireGuard
+@@ -315,6 +315,10 @@ func (c *Conn25) ClientTransitIPForMagicIP(m netip.Addr) (netip.Addr, error) {
+ 	if !cfg.ipSets.v4Magic.Contains(m) && !cfg.ipSets.v6Magic.Contains(m) {
+ 		return netip.Addr{}, nil
+ 	}
++	// TODO(tailscale/corp#50405): Just because there is a TransitIP associated with the MagicIP,
++	// that doesn't mean the TransitIP is ready to use. We should also make sure that the TransitIP
++	// is installed in WireGuard for the correct node, which happens after it is registered with the
++	// connector. Perhaps a different error message to represent that.
+ 	return netip.Addr{}, ErrUnmappedMagicIP
+ }
+ 
+@@ -664,6 +668,12 @@ type TransitIPRequest struct {
+ 	// App is the name of the connector application from the tailnet
+ 	// configuration.
+ 	App string `json:"app,omitzero"`
++
++	// Token is supplied by the connector in its PeerAPI DoH response. It should
++	// not be modified, and shouldn't need to be inspected. It should be
++	// sent back to the connector in this request for the DestinationIP
++	// and App for which it was originally received.
++	Token string `json:"token,omitzero"`
+ }
+ 
+ // ConnectorTransitIPRequest is the request body for a PeerAPI request to
+@@ -887,11 +897,11 @@ func (e *extension) sendLoop(ctx context.Context) {
+ }
+ 
+ func (e *extension) handleAddressAssignment(ctx context.Context, as addrs) error {
+-	conn, err := e.sendAddressAssignment(ctx, as)
++	err := e.sendAddressAssignment(ctx, as)
+ 	if err != nil {
+ 		return err
+ 	}
+-	err = e.conn25.client.addTransitIPForConnector(as.transit, conn)
++	err = e.conn25.client.addTransitIPForConnector(as.connectorAddr.transit, as.connectorAddr.node)
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -905,9 +915,10 @@ func makePeerAPIReq(ctx context.Context, httpClient *http.Client, urlBase string
+ 
+ 	reqBody := ConnectorTransitIPRequest{
+ 		TransitIPs: []TransitIPRequest{{
+-			TransitIP:     as.transit,
++			TransitIP:     as.connectorAddr.transit,
+ 			DestinationIP: as.dst,
+ 			App:           as.app,
++			Token:         as.connectorAddr.token,
+ 		}},
+ 	}
+ 	bs, err := json.Marshal(reqBody)
+@@ -941,43 +952,34 @@ func makePeerAPIReq(ctx context.Context, httpClient *http.Client, urlBase string
+ 	return nil
+ }
+ 
+-func (e *extension) pickConnectorURLBase(app appctype.Conn25Attr) (tailcfg.NodeView, string) {
++func (e *extension) pickConnectorURLBase(app appctype.Conn25Attr) string {
+ 	nb := e.host.NodeBackend()
+ 	peers := pickConnector(nb, app)
+-	var urlBase string
+-	var conn tailcfg.NodeView
+ 	for _, p := range peers {
+-		urlBase = nb.PeerAPIBase(p)
+-		if urlBase != "" {
+-			conn = p
+-			break
++		if urlBase := nb.PeerAPIBase(p); urlBase != "" {
++			return urlBase
+ 		}
+ 	}
+-	return conn, urlBase
++	return ""
+ }
+ 
+-func (e *extension) sendAddressAssignment(ctx context.Context, as addrs) (tailcfg.NodeView, error) {
+-	cfg, ok := e.conn25.getConfig()
+-	if !ok {
+-		return tailcfg.NodeView{}, errors.New("not configured")
+-	}
+-	app, ok := cfg.appsByName[as.app]
+-	if !ok {
+-		e.conn25.client.logf("App not found for app: %s (domain: %s)", as.app, as.domain)
+-		return tailcfg.NodeView{}, errors.New("app not found")
+-	}
+-	conn, urlBase := e.pickConnectorURLBase(app)
++// sendAddressAssignment registers the TransitIP in as with the connector in as,
++// which is the connector that sent the DNS response with the destination IP in as.
++func (e *extension) sendAddressAssignment(ctx context.Context, as addrs) error {
++	urlBase := e.host.NodeBackend().PeerAPIBase(as.connectorAddr.node)
+ 	if urlBase == "" {
+-		return tailcfg.NodeView{}, errors.New("no connector peer found to handle address assignment")
++		return fmt.Errorf("no PeerAPI URL base found for node stable ID %q", as.connectorAddr.node.StableID())
+ 	}
+ 	client := e.backend.Sys().Dialer.Get().PeerAPIHTTPClient()
+-	return conn, makePeerAPIReq(ctx, client, urlBase, as)
++	return makePeerAPIReq(ctx, client, urlBase, as)
+ }
+ 
+ type dnsResponseRewrite struct {
+-	domain     dnsname.FQDN
+-	dst        netip.Addr
+-	ttlSeconds uint32
++	domain        dnsname.FQDN
++	dst           netip.Addr
++	ttlSeconds    uint32
++	connectorNode tailcfg.NodeView
++	token         string
+ }
+ 
+ func makeServFail(logf logger.Logf, h dnsmessage.Header, q dnsmessage.Question) []byte {
+@@ -1036,12 +1038,32 @@ var passThroughQuestionTypes = set.Of(
+ 	dnsmessage.Type(35), // NAPTR
+ )
+ 
++// connectorAddr is everything an [addrs] needs in order to register itself
++// with a connector: the transit address allocated fo
+```
+
+**File**: `feature/conn25/conn25_test.go` (modified, +502/-104)
+```diff
+@@ -1168,7 +1168,44 @@ func makeDNSResponseForAllSections(
+ 	if err != nil {
+ 		t.Fatal(err)
+ 	}
+-	return &resolver.Response{Bs: outbs}
++	return &resolver.Response{Bs: outbs, DoHMeta: testPeerAPIDoHMeta(t, testConnectorAddr, testAppName, nil)}
++}
++
++const testAppName = "app1"
++
++var testConnectorAddr = netip.MustParseAddr("100.64.1.99")
++
++var testConnectorPeer = (&tailcfg.Node{
++	ID:        tailcfg.NodeID(99),
++	StableID:  tailcfg.StableNodeID("testConnectorStableID"),
++	Addresses: []netip.Prefix{netip.PrefixFrom(testConnectorAddr, testConnectorAddr.BitLen())},
++	Hostinfo:  (&tailcfg.Hostinfo{AppConnector: opt.NewBool(true)}).View(),
++	Online:    new(true),
++}).View()
++
++var nodeViewComparer = cmp.Comparer(func(a, b tailcfg.NodeView) bool {
++	if a.Valid() != b.Valid() {
++		return false
++	}
++	return !a.Valid() || a.StableID() == b.StableID()
++})
++
++func testPeerAPIDoHMeta(t *testing.T, connectorAddr netip.Addr, appName string, tokens map[netip.Addr]string) *resolver.DoHMetadata {
++	t.Helper()
++	u, err := url.Parse(fmt.Sprintf(
++		"http://%s/dns-query?app=%s",
++		netip.AddrPortFrom(connectorAddr, 1234),
++		url.QueryEscape(appName),
++	),
++	)
++	if err != nil {
++		t.Fatal(err)
++	}
++	hdr := http.Header{}
++	for addr, token := range tokens {
++		hdr.Add(TokenHeader, addr.String()+" "+token)
++	}
++	return &resolver.DoHMetadata{RequestURL: u, ResponseHeader: hdr}
+ }
+ 
+ // buildResource writes r into whichever section b is currently building.
+@@ -1243,11 +1280,11 @@ func TestMapDNSResponseAssignsAddrs(t *testing.T) {
+ 			// these are 'expected' because they are the beginning of the provided pools
+ 			wantByMagicIP: map[netip.Addr]*addrs{
+ 				netip.MustParseAddr("100.64.0.0"): {
+-					domain:  "example.com.",
+-					dst:     netip.MustParseAddr("1.0.0.0"),
+-					magic:   netip.MustParseAddr("100.64.0.0"),
+-					transit: netip.MustParseAddr("100.64.0.40"),
+-					app:     "app1",
++					domain:        "example.com.",
++					dst:           netip.MustParseAddr("1.0.0.0"),
++					magic:         netip.MustParseAddr("100.64.0.0"),
++					connectorAddr: connectorAddr{transit: netip.MustParseAddr("100.64.0.40"), node: testConnectorPeer},
++					app:           "app1",
  				},
- 			}
- 			s := &Store{
--				client:             client,
--				certShareMode:      tt.certShareMode,
--				memory:             mem.Store{},
--				preAdoptedLocalKey: tt.preAdopted,
--				logf:               t.Logf,
-+				client:                 client,
-+				certShareMode:          tt.certShareMode,
-+				acmeAccountsSecretName: tt.sharedSecret,
-+				memory:                 mem.Store{},
-+				preAdoptedLocalKey:     tt.preAdopted,
-+				logf:                   t.Logf,
- 			}
- 			if len(tt.acmeInMemory) > 0 {
- 				s.memory.WriteState(ipn.StateKey(acmeAccountStateKey), tt.acmeInMemory)
+ 			},
+ 		},
+@@ -1261,18 +1298,18 @@ func TestMapDNSResponseAssignsAddrs(t *testing.T) {
+ 			},
+ 			wantByMagicIP: map[netip.Addr]*addrs{
+ 				netip.MustParseAddr("fd7a:115c:a1e0:a99c::"): {
+-					domain:  "example.com.",
+-					dst:     netip.MustParseAddr("::1"),
+-					magic:   netip.MustParseAddr("fd7a:115c:a1e0:a99c:0::"),
+-					transit: netip.MustParseAddr("fd7a:115c:a1e0:a99c:40::"),
+-					app:     "app1",
++					domain:        "example.com.",
++					dst:           netip.MustParseAddr("::1"),
++					magic:         netip.MustParseAddr("fd7a:115c:a1e0:a99c:0::"),
++					connectorAddr: connectorAddr{transit: netip.MustParseAddr("fd7a:115c:a1e0:a99c:40::"), node: testConnectorPeer},
++					app:           "app1",
+ 				},
+ 				netip.MustParseAddr("fd7a:115c:a1e0:a99c::1"): {
+-					domain:  "example.com.",
+-					dst:     netip.MustParseAddr("::2"),
+-					magic:   netip.MustParseAddr("fd7a:115c:a1e0:a99c:0::1"),
+-					transit: netip.MustParseAddr("fd7a:115c:a1e0:a99c:40::1"),
+-					app:     "app1",
++					domain:        "example.com.",
++					dst:           netip.MustParseAddr("::2"),
++					magic:         netip.MustParseAddr("fd7a:115c:a1e0:a99c:0::1"),
++					connectorAddr: connectorAddr{transit: netip.MustParseAddr("fd7a:115c:a1e0:a99c:40::1"), node: testConnectorPeer},
++					app:           "app1",
+ 				},
+ 			},
+ 		},
+@@ -1286,11 +1323,11 @@ func TestMapDNSResponseAssignsAddrs(t *testing.T) {
+ 			},
+ 			wantByMagicIP: map[netip.Addr]*addrs{
+ 				netip.MustParseAddr("fd7a:115c:a1e0:a99c::"): {
+-					domain:  "example.com.",
+-					dst:     netip.MustParseAddr("::1"),
+-					magic:   netip.MustParseAddr("fd7a:115c:a1e0:a99c:0::"),
+-					transit: netip.MustParseAddr("fd7a:115c:a1e0:a99c:40::"),
+-					app:     "app1",
++					domain:        "example.com.",
++					dst:           netip.MustParseAddr("::1"),
++					magic:         netip.MustParseAddr("fd7a:115c:a1e0:a99c:0::"),
++					connectorAddr: connectorAddr{transit: netip.MustParseAddr("fd7a:115c:a1e0:a99c:40::"), node: testConnectorPeer},
++					app:           "app1",
+ 				},
+ 			},
+ 		},
+@@ -1304,18 +1341,18 @@ func TestMapDNSResponseAssignsAddrs(t *testing.T) {
+ 			},
+ 			wantByMagicIP: map[netip.Addr]*addrs{
+ 				netip.MustParseAddr("100.64.0.0"): {
+-					domain:  "example.com.",
+-					dst:     netip.MustParseAddr("1.0.0.0"),
+-					magic:   netip.MustParseAddr("100.64.0.0"),
+-					transit: netip.MustParseAddr("100.64.0.40"),
+-					app:     "app1",
++					domain:        "example.com.",
++					dst:           netip.MustParseAddr("1.0.0.0"),
++					magic:         netip.MustParseAddr("100.64.0.0"),
++					connectorAddr: connectorAddr{transit: netip.MustParseAddr("100.64.0.40"), node: testConnectorPeer},
++					app:           "app1",
+ 				},
+ 				netip.MustParseAddr("100.64.0.1"): {
+-					domain:  "example.com.",
+-					dst:     netip.Mus
 ```
 
 #### Recent Merged Pull Requests:
@@ -936,34 +1489,32 @@ Signed-off-by: Jaron Kramer <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ipn/store/kubestore: omit ARI replaces for unstamped shared certs (#22053)
+## X. feature/conn25: store tokens from DNS response and pass them back in
 
 **RULE**:
-When implementing operations in `ipn/store/kubestore/store_kube.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `feature/conn25/addrAssignments.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6c6dd62b`: ipn/store/kubestore: omit ARI replaces for unstamped shared certs (#22053). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `49aa9c85`: feature/conn25: store tokens from DNS response and pass them back in. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/store/kubestore/store_kube.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `feature/conn25/addrAssignments.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// A legacy cert has no record of its issuing account. With a
-		// shared account, the current key may have been created or adopted
-		// after this cert was issued, even without a prior local key.
-		// Omit replaces until a renewal stamps the issuing fingerprint.
-		if s.acmeAccountsSecretName != "" || len(s.preAdoptedLocalKey) > 0 {
+	if _, ok := a.byTransitIP[as.connectorAddr.transit]; ok {
+	mak.Set(&a.byTransitIP, as.connectorAddr.transit, as)
+	delete(a.byTransitIP, v.connectorAddr.transit)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		// Legacy cert, no fingerprint stamp. Assume misaligned only if
-		// we adopted a foreign shared key.
-		if len(s.preAdoptedLocalKey) > 0 {
+	if _, ok := a.byTransitIP[as.transit]; ok {
+	mak.Set(&a.byTransitIP, as.transit, as)
+	delete(a.byTransitIP, v.transit)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6c6dd62b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `49aa9c85` are properly handled with clean fallback behavior.

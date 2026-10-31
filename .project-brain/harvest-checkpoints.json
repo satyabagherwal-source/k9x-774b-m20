@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T20:11:52.119Z",
+  "last_updated": "2026-10-31T20:23:17.543Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1745,14 +1745,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-      "content_hash": "273c5e57fbbf8c9aa13b8251145d8decb017644177a0395c07e7ac47b123b532",
-      "verified_at": "2026-10-28T18:48:40.295Z",
+      "content_hash": "c2c27e227605cfd24e8d53b39ea90bc0e0267982fd2cb817ff654633ba5c9650",
+      "verified_at": "2026-10-31T20:23:13.194Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T18:48:40.295Z"
+      "last_updated": "2026-10-31T20:23:13.194Z"
     },
     "jialinyyzz/humanizer": {
       "repository": "jialinyyzz/humanizer",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "fae376171272a37b292a8f23d648c2a7f51d0094b1e29e0082f2a18df8fc9daf",
-      "verified_at": "2026-10-31T12:46:56.449Z",
+      "content_hash": "508a41d242219a8541d4a67901411f4d5374e23abb0e95cde77b4be300bd1a25",
+      "verified_at": "2026-10-31T20:23:15.536Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T12:46:56.449Z"
+      "last_updated": "2026-10-31T20:23:15.536Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -9081,14 +9081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-genkit-ai-genkit",
-      "content_hash": "38edc13efc9e41da1d61fd821048c0450775aed5bc5add98d51e9241db9d7406",
-      "verified_at": "2026-10-31T03:45:34.923Z",
+      "content_hash": "877eace18dafe06ee9427dd0a6775e13a6c46edeaa2c0055e7c08a18078d662f",
+      "verified_at": "2026-10-31T20:23:17.542Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T03:45:34.923Z"
+      "last_updated": "2026-10-31T20:23:17.542Z"
     },
     "guokaigdg/animal-island-ui": {
       "repository": "guokaigdg/animal-island-ui",
@@ -10776,14 +10776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeromicro-go-zero",
-      "content_hash": "7b3dab45360738bed725c2c397eb6b6a063ce8c72379025a5908c31619dd2cc3",
-      "verified_at": "2026-10-31T04:43:44.249Z",
+      "content_hash": "684cab988fceb93b29ef291472a02c19fc67a21fb67d5af076c9c61c787d90b2",
+      "verified_at": "2026-10-31T20:23:14.292Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T04:43:44.249Z"
+      "last_updated": "2026-10-31T20:23:14.292Z"
     },
     "t8y2/dbx": {
       "repository": "t8y2/dbx",

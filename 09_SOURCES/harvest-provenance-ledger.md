@@ -6709,3 +6709,7 @@ Every entry in this ledger must capture:
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `44bcb956` | Multi-dimensional audit evidence | 2026-10-31T20:05:00.955Z |
 | `learn-huggingface-zai-org-glm-5-3` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-31T20:11:46.071Z |
 | `learn-github-momenbasel-puremac` | `https://github.com/momenbasel/PureMac` | `8872099c` | Multi-dimensional audit evidence | 2026-10-31T20:11:52.110Z |
+| `learn-huggingface-mudler-locate-anything-cpp-gguf` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-10-31T20:23:13.185Z |
+| `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `f3be7b00` | Multi-dimensional audit evidence | 2026-10-31T20:23:14.282Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `49aa9c85` | Multi-dimensional audit evidence | 2026-10-31T20:23:15.527Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `1eb9489f` | Multi-dimensional audit evidence | 2026-10-31T20:23:17.532Z |

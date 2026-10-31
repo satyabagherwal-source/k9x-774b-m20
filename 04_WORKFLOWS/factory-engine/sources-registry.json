@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T20:11:56.987Z",
-    "lastVerified": "2026-10-31T20:11:56.987Z",
+    "lastChecked": "2026-10-31T20:23:20.072Z",
+    "lastVerified": "2026-10-31T20:23:20.072Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -141,12 +141,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T19:41:01.709Z",
-    "lastVerified": "2026-10-31T19:41:01.709Z",
+    "lastChecked": "2026-10-31T20:23:15.032Z",
+    "lastVerified": "2026-10-31T20:23:15.032Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -155,7 +155,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "aa0953e9"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1394,14 +1395,14 @@
     "officialUrl": "https://github.com/zeromicro/go-zero",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T04:38:40.968Z",
-    "lastVerified": "2026-10-31T04:38:40.968Z",
+    "lastChecked": "2026-10-31T20:23:13.456Z",
+    "lastVerified": "2026-10-31T20:23:13.456Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zeromicro-go-zero",
-    "contentHash": "7b3dab45360738bed725c2c397eb6b6a063ce8c72379025a5908c31619dd2cc3",
+    "contentHash": "684cab988fceb93b29ef291472a02c19fc67a21fb67d5af076c9c61c787d90b2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1663,9 +1664,9 @@
   "watchexec-watchexec": {
     "name": "watchexec",
     "officialUrl": "https://github.com/watchexec/watchexec",
-    "lastChecked": "2026-10-31T00:27:27.444Z",
+    "lastChecked": "2026-10-31T20:22:59.997Z",
     "revisionIdentifier": "a7170667",
-    "lastVerified": "2026-10-31T00:27:27.444Z"
+    "lastVerified": "2026-10-31T20:22:59.997Z"
   },
   "hf-viggle-qwen-image-2.1-viggle-turbo": {
     "name": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -2168,22 +2169,21 @@
     "lastVerified": "2026-10-31T05:52:27.953Z"
   },
   "tailscale-tailscale": {
-    "name": "tailscale",
+    "name": "tailscale/tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T16:20:25.623Z",
-    "lastVerified": "2026-10-31T16:20:25.623Z",
+    "lastChecked": "2026-10-31T20:23:14.814Z",
+    "lastVerified": "2026-10-31T20:23:14.814Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "fae376171272a37b292a8f23d648c2a7f51d0094b1e29e0082f2a18df8fc9daf",
+    "contentHash": "508a41d242219a8541d4a67901411f4d5374e23abb0e95cde77b4be300bd1a25",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "6c6dd62b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "oramasearch-orama": {
     "name": "orama",
@@ -6906,14 +6906,14 @@
     "officialUrl": "https://github.com/genkit-ai/genkit",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T03:45:34.222Z",
-    "lastVerified": "2026-10-31T03:45:34.222Z",
+    "lastChecked": "2026-10-31T20:23:17.246Z",
+    "lastVerified": "2026-10-31T20:23:17.246Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-genkit-ai-genkit",
-    "contentHash": "38edc13efc9e41da1d61fd821048c0450775aed5bc5add98d51e9241db9d7406",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "contentHash": "877eace18dafe06ee9427dd0a6775e13a6c46edeaa2c0055e7c08a18078d662f",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7005,12 +7005,12 @@
     "officialUrl": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T18:48:27.835Z",
-    "lastVerified": "2026-10-28T18:48:27.835Z",
+    "lastChecked": "2026-10-31T20:23:02.955Z",
+    "lastVerified": "2026-10-31T20:23:02.955Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-    "contentHash": "273c5e57fbbf8c9aa13b8251145d8decb017644177a0395c07e7ac47b123b532",
+    "contentHash": "c2c27e227605cfd24e8d53b39ea90bc0e0267982fd2cb817ff654633ba5c9650",
     "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -8783,9 +8783,9 @@
   "nalexn-clean-architecture-swiftui": {
     "name": "clean-architecture-swiftui",
     "officialUrl": "https://github.com/nalexn/clean-architecture-swiftui",
-    "lastChecked": "2026-10-29T01:17:48.631Z",
+    "lastChecked": "2026-10-31T20:23:04.970Z",
     "revisionIdentifier": "9eca97b8",
-    "lastVerified": "2026-10-29T01:17:48.631Z"
+    "lastVerified": "2026-10-31T20:23:04.970Z"
   },
   "addy0-com-free-open-technical-seo-crawler": {
     "name": "free-open-technical-SEO-crawler",

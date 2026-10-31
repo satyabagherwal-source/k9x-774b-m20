@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-OHAK",
-    "timestamp": "2026-10-30T13:37:36.140Z",
-    "repository": "higress-group/higress",
-    "learningId": "learn-github-higress-group-higress",
-    "contentHash": "789cb42c670414453e4cdc7049d9fabfd79d5d8f4ba80cc8701d877655e3c7d7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-OK53",
-    "timestamp": "2026-10-30T13:37:39.831Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "a375a812a0a069ea53055d0af301b02953a05b6805b3aef6ec2ef8211200fe19",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-OM74",
-    "timestamp": "2026-10-30T13:37:42.496Z",
-    "repository": "NirDiamant/RAG_Techniques",
-    "learningId": "learn-github-nirdiamant-rag_techniques",
-    "contentHash": "3896a9b482418fc433f120bae366160bedbba047dc229b3e6561e758f5f063cd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-ONBR",
-    "timestamp": "2026-10-30T13:37:43.959Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "95173f3ede33a2d7f7d7d7117242f7e6ee98ec17c75a033533ea7e205bdcb3cb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-ZQN1",
     "timestamp": "2026-10-30T13:46:21.469Z",
     "repository": "Ataraxy-Labs/sem",
@@ -7490,6 +7430,66 @@
     "repository": "momenbasel/PureMac",
     "learningId": "learn-github-momenbasel-puremac",
     "contentHash": "a35d38628bfaab2455114ee88a874a08dd78b31fd8504313d0c56cf7c252addf",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-LYJI",
+    "timestamp": "2026-10-31T20:23:13.182Z",
+    "repository": "mudler/locate-anything.cpp-gguf",
+    "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
+    "contentHash": "c2c27e227605cfd24e8d53b39ea90bc0e0267982fd2cb817ff654633ba5c9650",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-LZDY",
+    "timestamp": "2026-10-31T20:23:14.278Z",
+    "repository": "zeromicro/go-zero",
+    "learningId": "learn-github-zeromicro-go-zero",
+    "contentHash": "684cab988fceb93b29ef291472a02c19fc67a21fb67d5af076c9c61c787d90b2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-M0CJ",
+    "timestamp": "2026-10-31T20:23:15.523Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "508a41d242219a8541d4a67901411f4d5374e23abb0e95cde77b4be300bd1a25",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-M1W5",
+    "timestamp": "2026-10-31T20:23:17.525Z",
+    "repository": "genkit-ai/genkit",
+    "learningId": "learn-github-genkit-ai-genkit",
+    "contentHash": "877eace18dafe06ee9427dd0a6775e13a6c46edeaa2c0055e7c08a18078d662f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

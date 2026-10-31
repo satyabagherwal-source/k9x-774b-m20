@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T20:11:52.115Z",
-  "total_cycles_completed": 6677,
-  "total_learnings_persisted": 6677,
-  "total_rules_promoted": 6310,
+  "last_updated": "2026-10-31T20:23:17.538Z",
+  "total_cycles_completed": 6681,
+  "total_learnings_persisted": 6681,
+  "total_rules_promoted": 6314,
   "history": [
-    {
-      "timestamp": "2026-10-31T06:59:11.948Z",
-      "repository": "telemt/telemt",
-      "learningId": "learn-github-telemt-telemt",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T07:30:30.858Z",
-      "repository": "karmada-io/karmada",
-      "learningId": "learn-github-karmada-io-karmada",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T07:32:04.149Z",
-      "repository": "Lightricks/LTX-2.5",
-      "learningId": "learn-huggingface-lightricks-ltx-2-5",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T07:32:48.883Z",
-      "repository": "clockworklabs/SpacetimeDB",
-      "learningId": "learn-github-clockworklabs-spacetimedb",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T07:55:11.588Z",
       "repository": "tursodatabase/turso",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-31T20:11:52.115Z",
       "repository": "momenbasel/PureMac",
       "learningId": "learn-github-momenbasel-puremac",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:23:13.191Z",
+      "repository": "mudler/locate-anything.cpp-gguf",
+      "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:23:14.288Z",
+      "repository": "zeromicro/go-zero",
+      "learningId": "learn-github-zeromicro-go-zero",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:23:15.533Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:23:17.538Z",
+      "repository": "genkit-ai/genkit",
+      "learningId": "learn-github-genkit-ai-genkit",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

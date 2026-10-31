@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source**: github ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
-> **Source Version**: `7f44e2c3`  
+> **Source Version**: `1eb9489f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T03:45:34.230Z  
+> **Timestamp**: 2026-10-31T20:23:17.253Z  
 > **Learning ID**: `learn-github-genkit-ai-genkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T03:45:34.222Z  
+> **Harvest Timestamp**: 2026-10-31T20:23:17.246Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source framework for building agentic apps in JavaScript, Go, Dart, and Python, built and used in production by Google
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6559 stars
+- **Stars / Engagement**: 6561 stars
 
 ---
 
@@ -2020,1196 +2020,659 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7f44e2c3` (2026-10-31)
-**Commit Message**: fix(py)!: rename GenkitError.original_message to message (#6639)
+### Incident Patch 1: `1eb9489f` (2026-10-31)
+**Commit Message**: chore(py): enforce linked TODOs with Ruff (#6949)
 
-**File**: `py/packages/genkit-amazon-bedrock/src/genkit_amazon_bedrock/_embedders.py` (modified, +2/-2)
+**File**: `.github/workflows/todo-lint.yml` (removed, +0/-83)
 ```diff
-@@ -432,7 +432,7 @@ async def _embed_titan_multimodal(self, documents: list[Document]) -> list[list[
-                 mime, image = image_from_document(document)
-             except GenkitError as error:
-                 raise GenkitError(
--                    message=f'bedrock embed: document {index}: {_without_own_prefix(error.original_message)}',
-+                    message=f'bedrock embed: document {index}: {_without_own_prefix(error.message)}',
-                     status=error.status,
-                     response_metadata=error.response_metadata,
-                 ) from error
-@@ -526,7 +526,7 @@ async def _bounded(index: int, call: Coroutine[Any, Any, _T]) -> _T:
-                         # but the inner message already names the plugin. Keep
-                         # response_metadata so retry still honours Retry-After.
-                         # Everything in here is the Bedrock call or its reply.
--                        detail = _without_own_prefix(error.original_message)
-+                        detail = _without_own_prefix(error.message)
-                         # Wrap the provider's own error, not the inner GenkitError,
-                         # whose str() would repeat the whole message as the cause.
-                         raise provider_error(
+@@ -1,83 +0,0 @@
+-# Copyright 2026 Google LLC
+-#
+-# Licensed under the Apache License, Version 2.0 (the "License");
+-# you may not use this file except in compliance with the License.
+-# You may obtain a copy of the License at
+-#
+-#     http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-#
+-# SPDX-License-Identifier: Apache-2.0
+-
+-name: TODO Lint
+-
+-on:
+-  pull_request:
+-    branches: [main, next]
+-  push:
+-    branches: [main, next]
+-
+-jobs:
+-  todo-lint:
+-    name: Check TODO Format
+-    runs-on: ubuntu-latest
+-    steps:
+-      - name: Checkout
+-        uses: actions/checkout@v4
+-
+-      - name: Check for plain TODOs without issue links
+-        run: |
+-          #!/usr/bin/env bash
+-          set -euo pipefail
+-
+-          echo "Checking for TODO comments without issue links..."
+-          echo "=============================================="
+-
+-          # Find all TODOs without proper issue references
+-          # Proper formats:
+-          #   # TODO(https://github.com/genkit-ai/genkit/issues/1234): Description
+-          #   # TODO(#1234): Description
+-          # Invalid format:
+-          #   # TODO: Description
+-          
+-          # First, find all TODOs
+-          ALL_TODOS=$(grep -rn '#[[:space:]]*TODO' \
+-            --include="*.py" \
+-            --exclude-dir=".venv" \
+-            --exclude-dir=".tox" \
+-            --exclude-dir="node_modules" \
+-            --exclude-dir=".mypy_cache" \
+-            --exclude-dir="__pycache__" \
+-            --exclude-dir="dist" \
+-            --exclude-dir="build" \
+-            py/ 2>/dev/null || true)
+-
+-          # Filter out valid TODOs (those with issue references)
+-          # Valid: TODO(#NNN) or TODO(https://...)
+-          BAD_TODOS=$(echo "$ALL_TODOS" | grep -v 'TODO(#[0-9]\+)' | grep -v 'TODO(https://' || true)
+-
+-          if [ -n "$BAD_TODOS" ]; then
+-            echo "❌ Found TODO comments without issue links:"
+-            echo ""
+-            echo "$BAD_TODOS"
+-            echo ""
+-            echo "=============================================="
+-            echo "TODOs must include a GitHub issue reference for tracking."
+-            echo ""
+-            echo "Correct formats:"
+-            echo "  # TODO(#1234): Description"
+-            echo "  # TODO(https://github.com/genkit-ai/genkit/issues/1234): Description"
+-            echo ""
+-            echo "Wrong format:"
+-            echo "  # TODO: Description"
+-            echo ""
+-            echo "Please create GitHub issues for each TODO and update the format."
+-            exit 1
+-          fi
+-
+-          echo "✅ All TODOs have proper issue links!"
 ```
 
-**File**: `py/packages/genkit-amazon-bedrock/tests/models_test.py` (modified, +8/-8)
+**File**: `py/pyproject.toml` (modified, +1/-0)
 ```diff
-@@ -198,7 +198,7 @@ async def test_botocore_errors_map_to_genkit_statuses(error: BotoCoreError, expe
-         await model.generate(text_request())
+@@ -236,6 +236,7 @@ select = [
+   "S",     # flake8-bandit (security)
+   "ASYNC", # flake8-async (async best practices)
+   "T20",   # flake8-print (no print statements)
++  "TD",    # flake8-todos (TODO comment formatting and issue links)
+   "TID251", # banned-api (see flake8-tidy-imports.banned-api below)
+ ]
  
-     assert excinfo.value.status == expected_status
--    assert 'bedrock converse failed' in excinfo.value.original_message
-+    assert 'bedrock converse failed' in excinfo.value.message
-     assert excinfo.value.__cause__ is error
-     assert excinfo.value.cause is error
- 
-@@ -214,7 +214,7 @@ async def test_timeout_is_deadline_exceeded(error: BotoCoreError) -> None:
-     genkit_error = await generate_error(error)
- 
-     assert genkit_error.status == 'DEADLINE_EXCEEDED'
--    assert 'bedrock converse failed' in genkit_error.original_message
-+    assert 'bedrock converse failed' in genkit_error.message
-     assert genkit_error.__cause__ is error
- 
- 
-@@ -272,7 +272,7 @@ async def test_connection_refused_is_unavailable(error: BotoCoreError) -> None:
-     genkit_error = await generate_error(error)
- 
-     assert genkit_error.status == 'UNAVAILABLE'
--    assert 'bedrock converse failed' in genkit_error.original_message
-+    assert 'bedrock converse failed' in genkit_error.message
-     assert genkit_error.__cause__ is error
- 
- 
-@@ -303,7 +303,7 @@ async def test_client_errors_map_to_genkit_statuses(code: str, expected_status:
-         await model.generate(text_request())
- 
-     assert excinfo.value.status == expected_status
--    assert 'bedrock converse failed' in excinfo.value.original_message
-+    assert 'bedrock converse failed' in excinfo.value.message
-     assert excinfo.value.__cause__ is error
- 
- 
-@@ -352,7 +352,7 @@ async def test_unmapped_4xx_is_unknown_genkit_error(http_status: int) -> None:
-     genkit_error = await generate_error(error)
- 
-     assert genkit_error.status == 'UNKNOWN'
--    assert genkit_error.original_message == (
-+    assert genkit_error.message == (
-         'bedrock converse failed: An error occurred (SomeFutureException) when calling the Converse operation: teapot'
-     )
-     assert str(genkit_error).count('teapot') == 1
-@@ -460,7 +460,7 @@ async def test_mid_stream_errors_map_to_genkit_statuses(code: str, expected_stat
-         await model.generate(text_request(), ModelContext(streaming_callback=chunks.append))
- 
-     assert excinfo.value.status == expected_status
--    assert 'bedrock converse stream failed' in excinfo.value.original_message
-+    assert 'bedrock converse stream failed' in excinfo.value.message
-     assert excinfo.value.__cause__ is error
-     # Chunks already delivered stand; the stream is closed on the way out.
-     assert len(chunks) == 1
-@@ -481,7 +481,7 @@ async def test_mid_stream_connection_drop_is_unavailable() -> None:
-         await model.generate(text_request(), ModelContext(streaming_callback=lambda _chunk: None))
- 
-     assert excinfo.value.status == 'UNAVAILABLE'
--    assert 'bedrock converse stream failed' in excinfo.value.original_message
-+    assert 'bedrock converse stream failed' in excinfo.value.message
-     assert excinfo.value.__cause__ is error
-     assert transport.stream_closed
- 
-@@ -496,7 +496,7 @@ async def test_stream_botocore_errors_map_to_genkit_statuses() -> None:
-         await model.generate(text_request(), ModelContext(streaming_callback=lambda _chunk: None))
- 
-     assert excinfo.value.status == 'DEADLINE_EXCEEDED'
--    assert 'bedrock converse stream failed' in excinfo.value.original_message
-+    assert 'bedrock converse stream failed' in excinfo.value.message
-     assert transport.stream_closed
- 
- 
-```
-
-**File**: `py/packages/genkit-amazon-bedrock/tests/stream_test.py` (modified, +2/-2)
-```diff
-@@ -257,7 +257,7 @@ async def test_malformed_tool_input_raises() -> None:
-             ctx,
-         )
- 
--    assert 'stream tool block 0' in excinfo.value.original_message
-+    assert 'stream tool block 0' in excinfo.value.message
-     assert chunks == []
- 
- 
-@@ -268,7 +268,7 @@ async def test_trailing_data_after_tool_input_raises() -> None:
-             text_request(),
-         )
- 
--    assert 'stream tool block 0' in excinfo.value.original_message
-+    assert 'stream tool block 0' in excinfo.value.message
- 
- 
- async def test_content_block_stop_for_unknown_index_is_a_noop() -> None:
-```
-
-**File**: `py/packages/genkit-anthropic/tests/anthropic_error_handling_test.py` (modified, +7/-7)
-```diff
-@@ -92,7 +92,7 @@ async def test_generate_maps_anthropic_status_errors(status_code: int, expected_
- 
-     error = exc_info.value
-     assert error.status == expected_status
--    assert error.original_message == _ERROR_MESSAGE
-+    assert error.message == _ERROR_MESSAGE
-     assert error.cause is api_error
-     assert error.__cause__ is api_error
-     assert error.response_metadata is None
-@@ -165,7 +165,7 @@ async def test_generate_marks_status_less_sdk_error_unknown() -> None:
-         await _model_failing_with(api_error).generate(_request())
- 
-     assert exc_info.value.status == 'UNKNOWN'
--    assert exc_info.value.original_message == _ERROR_MESSAGE
-+    assert exc_info.value.message == _ERROR_MESSAGE
-     assert exc_info.value.cause is api_error
- 
- 
-@@ -184,7 +184,7 @@ async def test_generate_reads_error_type_when_http_status_is_unmapped() -> None:
-         await _model_failing_with(api_error).generate(_request())
- 
-     assert exc_info.value.status == 'INVALID_ARGUMENT'
--    assert exc_info.value.original_message == _ERROR_MESSAGE
-+    assert exc_info.value.message == _ERROR_MESSAGE
-     assert exc_info.value.cause is api_error
- 
- 
-@@ -215,7 +215,7 @@ async def test_unmapped_4xx_is_unknown_genkit_error() -> None:
-         await _model_failing_with(api_error).generate(_request())
- 
-     assert exc_info.value.status == 'UNKNOWN'
--    assert exc_info.value.original_message == _ERROR_MESSAGE
-+    assert exc_info.value.message == _ERROR_MESSAGE
-     assert exc_info.value.cause is api_error
-     assert exc_info.value.__cause__ is api_error
- 
-@@ -384,7 +384,7 @@ async def test_streaming_in_band_error_event_maps_its_type(error_type: str, expe
-     assert chunks == ['Smoked']
-     assert isinstance(error, GenkitError)
-     assert error.status == expected_status
--    assert error.original_message == 'Overloaded'
-+    assert error.message == 'Overloaded'
-     assert isinstance(error.cause, APIStatusError)
-     assert error.cause.status_code == 200
- 
-@@ -396,7 +396,7 @@ async def test_streaming_in_band_error_event_with_unknown_type_is_unknown() -> N
- 
-     assert isinstance(error, GenkitError)
-     assert error.status == 'UNKNOWN'
--    assert error.original_message == 'x'
-+    assert error.message == 'x'
-     assert isinstance(error.cause, APIStatusError)
- 
- 
-@@ -429,7 +429,7 @@ async def test_generate_marks_unsendable_history_invalid_argument(part: Part, me
-         await model.generate(request)
- 
-     assert exc_info.value.status == 'INVALID_ARGUMENT'
--    assert message_fragment in exc_info.value.original_message
-+    assert message_fragment in exc_info.value.message
-     assert isinstance(exc_info.value.cause, ValueError)
-     assert exc_info.value.__cause__ is exc_info.value.cause
-     client.messages.create.assert_not_called()
-```
-
-**File**: `py/packages/genkit-google-cloud/tests/firestore_session_store_test.py` (modified, +20/-20)
-```diff
-@@ -422,8 +422,8 @@ async def test_firestore_get_slash_session_id_raises_invalid_session_id() -> Non
-         await store.get_snapshot(session_id='a/b')
-     assert raised.value.status == 'INVALID_ARGUMENT'
-     assert raised.value.reason is RuntimeErrorReason.INVALID_SESSION_ID
--    assert "invalid session_id 'a/b'" in raised.value.original_message
--    assert 'INVALID_SESSION_ID' not in raised.value.original_message
-+    assert "invalid session_id 'a/b'" in raised.value.message
-+    assert 'INVALID_SESSION_ID' not in raised.value.message
- 
- 
- @pytest.mark.asyncio
-@@ -440,8 +440,8 @@ async def test_firestore_get_empty_session_id_raises_session_id_required() -> No
-         await store.get_snapshot(session_id='')
-     assert raised.value.status == 'INVALID_ARGUMENT'
-     assert raised.value.reason is RuntimeErrorReason.SESSION_ID_REQUIRED
--    assert 'session_id must not be empty' in raised.value.original_message
--    assert 'SESSION_ID_REQUIRED' not in raised.value.original_message
-+    assert 'session_id must not be empty' in raised.value.message
-+    assert 'SESSION_ID_REQUIRED' not in raised.value.message
- 
- 
- @pytest.mark.asyncio
-@@ -454,8 +454,8 @@ async def test_firestore_get_slash_snapshot_id_raises_invalid_snapshot_id() -> N
-         await store.get_snapshot(snapshot_id='a/b')
-     assert raised.value.status == 'INVALID_ARGUMENT'
-     assert raised.value.reason is RuntimeErrorReason.INVALID_SNAPSHOT_ID
--    assert "invalid snapshot_id 'a/b'" in raised.value.original_message
--    assert 'INVALID_SNAPSHOT_ID' not in raised.value.original_message
-+    assert "invalid snapshot_id 'a/b'" in raised.value.message
-+    assert 'INVALID_SNAPSHOT_ID' not in raised.value.message
- 
- 
- @pytest.mark.asyncio
-@@ -1435,8 +1435,8 @@ async def test_firestore_save_without_session_id_raises_session_id_required() ->
-         )
-     assert raised.value.status == 'INVALID_ARGUMENT'
-     assert raised.value.reason is RuntimeErrorReason.SESSION_ID_REQUIRED
--    assert "requires 'sessionId'" in raised.value.original_message
--    assert 'SESSION_ID_REQUIRED' not in raised.value.original_message
-+    assert "requires 'sessionId'" in raised.value.message
-+    assert 'SESSION_ID_REQUIRED' not in raised.value.message
-     assert _snap_path('snap-1') not in h.docs
-     assert _pointer_path('') not in h.docs
- 
-@@ -1489,8 +1489,8 @@ async def test_firestore_save_empty_session_id_raises_session_id_required() -> N
-         )
-     assert raised.value.status == 'INVALID_ARGUMENT'
-     assert raised.value.reason is RuntimeErrorReason.SESSION_ID_REQUIRED
--    assert "requires 'sessionId'" in raised.value.original_message
--    assert 'SESSION_ID_REQUIRED' not in raised.value.original_message
-+    assert "requires 'sessionId'" in raised.value.message
-+    assert 'SESSION_ID_REQUIRED' not in raised.value.message
-     assert _snap_path('snap-1') not in h.docs
-     assert _pointer_path('sess-1') not in h.docs
- 
-@@ -1514,8 +1514,8 @@ async def test_firestore_save_slash_session_id_raises_invalid_session_id() -> No
-         )
-     assert raised.value.status == 'INVALID_ARGUMENT'
-     assert raised.value.reason is RuntimeErrorReason.INVALID_SESSION_ID
--    assert "invalid session_id 'a/b'" in raised.value.original_message
--    assert 'INVALID_SESSION_ID' not in raised.value.original_message
-+    assert "invalid session_id 'a/b'" in raised.value.message
-+    assert 'INVALID_SESSION_ID' not in raised.value.message
-     assert _snap_path('snap-1') not in h.docs
- 
- 
-@@ -1542,8 +1542,8 @@ async def test_firestore_save_state_empty_session_id_raises_session_id_required(
-         )
-     assert raised.value.status == 'INVALID_ARGUMENT'
-     assert raised.value.reason is RuntimeErrorReason.SESSION_ID_REQUIRED
--    assert "requires 'sessionId'" in raised.value.original_message
--    assert 'SESSION_ID_REQUIRED' not in raised.value.original_message
-+    assert "requires 'sessionId'" in raised.value.message
-+    assert 'SESSION_ID_REQUIRED' not in raised.value.message
-     assert _snap_path('snap-1') not in h.docs
- 
- 
-@@ -1566,8 +1566,8 @@ async def test_firestore_save_state_slash_session_id_raises_invalid_session_id()
-         )
-     assert raised.value.status == 'INVALID_ARGUMENT'
-     assert raised.value.reason is RuntimeErrorReason.INVALID_SESSION_ID
--    assert "invalid session_id 'a/b'" in raised.value.original_message
--    assert 'INVALID_SESSION_ID' not in raised.value.original_message
-+    assert "invalid session_id 'a/b'" in raised.value.message
-+    assert 'INVALID_SESSION_ID' not in raised.value.message
-     assert _snap_path('snap-1') not in h.docs
- 
- 
-@@ -1590,8 +1590,8 @@ async def test_firestore_save_empty_snapshot_id_raises_invalid_snapshot_id() ->
-         )
-     assert raised.value.status == 'INVALID_ARGUMENT'
-     assert raised.value.reason is RuntimeErrorReason.INVALID_SNAPSHOT_ID
--    assert "invalid snapshot_id ''" in raised.value.original_message
--    assert 'INVALID_SNAPSHOT_ID' not in raised.value.original_message
-+    assert "invalid sn
-```
-
-**File**: `py/packages/genkit-google-genai/tests/models/googlegenai_embedder_test.py` (modified, +2/-2)
-```diff
-@@ -223,7 +223,7 @@ async def test_unknown_option_keys_are_rejected(mocker: MockerFixture) -> None:
-         )
- 
-     assert exc_info.value.status == 'INVALID_ARGUMENT'
--    assert exc_info.value.original_message == 'gemini-embedding-001: invalid config field someFutureFlag'
-+    assert exc_info.value.message == 'gemini-embedding-001: invalid config field someFutureFlag'
-     client.aio.models.embed_content.assert_not_called()
- 
- 
-@@ -279,7 +279,7 @@ async def test_invalid_options_are_rejected(mocker: MockerFixture, options: dict
-         await embedder.generate(EmbedRequest(input=[Document.from_text('text')], options=options))
- 
-     assert exc_info.value.status == 'INVALID_ARGUMENT'
--    assert exc_info.value.original_message == f'gemini-embedding-001: invalid config field {field}'
-+    assert exc_info.value.message == f'gemini-embedding-001: invalid config field {field}'
-     client.aio.models.embed_content.assert_not_called()
- 
- 
-```
-
-**File**: `py/packages/genkit-google-genai/tests/models/googlegenai_gemini_test.py` (modified, +17/-17)
-```diff
-@@ -1099,7 +1099,7 @@ def test_gemini_model__convert_schema_property_raises_exception(
-         gemini_model_instance._convert_schema_property(input_schema, defs)
- 
-     assert exc_info.value.status == 'INVALID_ARGUMENT'
--    assert 'cannot be resolved' in exc_info.value.original_message
-+    assert 'cannot be resolved' in exc_info.value.message
- 
- 
- class _LinkedList(BaseModel):
-@@ -1187,7 +1187,7 @@ def test_gemini_model__convert_schema_property_strict_rejects_required_recursive
-         gemini_model_instance._convert_schema_property(to_json_schema(_RequiredTree), strict=True)
- 
-     assert exc_info.value.status == 'INVALID_ARGUMENT'
--    assert 'children' in exc_info.value.original_message
-+    assert 'children' in exc_info.value.message
- 
- 
- def test_gemini_model__convert_schema_property_strict_leaves_out_recursive_property(
-@@ -1207,7 +1207,7 @@ def test_gemini_model__convert_schema_property_strict_rejects_required_recursive
-         gemini_model_instance._convert_schema_property(to_json_schema(_RequiredLinkedList), strict=True)
- 
-     assert exc_info.value.status == 'INVALID_ARGUMENT'
--    assert 'next' in exc_info.value.original_message
-+    assert 'next' in exc_info.value.message
- 
- 
- @pytest.mark.parametrize(
-@@ -1230,7 +1230,7 @@ def test_gemini_model__convert_schema_property_strict_rejects_union_losing_a_bra
-         gemini_model_instance._convert_schema_property(input_schema, strict=True)
- 
-     assert exc_info.value.status == 'INVALID_ARGUMENT'
--    assert needle in exc_info.value.original_message
-+    assert needle in exc_info.value.message
- 
- 
- @pytest.mark.parametrize(
-@@ -1385,7 +1385,7 @@ def test_gemini_model__convert_schema_property_rejects_bad_keyword_value(
-         gemini_model_instance._convert_schema_property(input_schema, strict=True)
- 
-     assert exc_info.value.status == 'INVALID_ARGUMENT'
--    assert keyword in exc_info.value.original_message
-+    assert keyword in exc_info.value.message
- 
- 
- @pytest.mark.parametrize(
-@@ -1426,7 +1426,7 @@ def test_gemini_model__convert_schema_property_non_object_property(gemini_model_
-     )
-     with pytest.raises(GenkitError) as exc_info:
-         gemini_model_instance._convert_schema_property(schema, strict=True)
--    assert 'required property x' in exc_info.value.original_message
-+    assert 'required property x' in exc_info.value.message
- 
- 
- @pytest.mark.parametrize('raw_type', ['bogus', None, 123])
-@@ -1439,7 +1439,7 @@ def test_gemini_model__convert_schema_property_rejects_unsupported_type(
-         gemini_model_instance._convert_schema_property({'type': raw_type})
- 
-     assert exc_info.value.status == 'INVALID_ARGUMENT'
--    assert 'is not supported' in exc_info.value.original_message
-+    assert 'is not supported' in exc_info.value.message
- 
- 
- def test_gemini_model__convert_schema_property_discriminated_union(gemini_model_instance: GeminiModel) -> None:
-@@ -1542,7 +1542,7 @@ class Payload(BaseModel):
-         gemini_model_instance._convert_schema_property(to_json_schema(Payload), strict=True)
- 
-     assert exc_info.value.status == 'INVALID_ARGUMENT'
--    assert 'data' in exc_info.value.original_message
-+    assert 'data' in exc_info.value.message
- 
- 
- class _RequiredAny(BaseModel):
-@@ -1705,7 +1705,7 @@ def test_gemini_model__convert_schema_property_rejects_untyped_constraint(
-         gemini_model_instance._convert_schema_property(input_schema, strict=True)
- 
-     assert exc_info.value.status == 'INVALID_ARGUMENT'
--    assert 'no type' in exc_info.value.original_message
-+    assert 'no type' in exc_info.value.message
- 
- 
- @pytest.mark.parametrize(
-@@ -1767,7 +1767,7 @@ def test_gemini_model__convert_schema_property_strict_map(
-     )
-     with pytest.raises(GenkitError) as exc_info:
-         gemini_model_instance._convert_schema_property({**schema, 'required': ['scores']}, strict=True)
--    assert 'required property scores' in exc_info.value.original_message
-+    assert 'required property scores' in exc_info.value.message
- 
- 
- @pytest.mark.parametrize(
-@@ -2081,7 +2081,7 @@ async def test_gemini_model__legacy_unconvertible_output_schema_raises(
-         await model._genkit_to_googleai_cfg(request)
- 
-     assert exc_info.value.status == 'INVALID_ARGUMENT'
--    assert needle in exc_info.value.original_message
-+    assert needle in exc_info.value.message
- 
- 
- @pytest.mark.asyncio
-@@ -2846,7 +2846,7 @@ async def test_unmapped_4xx_is_unknown_genkit_error(mocker: MockerFixture, code:
- 
-     assert error.status == 'UNKNOWN'
-     assert error.cause is api_error
--    assert error.original_message == 'Request payload too large'
-+    assert error.message == 'Request payload too large'
- 
- 
- @pytest.mark.asyncio
-@@ -2922,7 +2922,7 @@ async def test_rejected_api_key_is_unauthenticated(mocker: MockerFixture) -> Non
-     error = await _generate_failure(mocker, rejected)
- 
-     assert error.status == 'UNAUTHENTICATED'
--    assert error.original_message == message
-+    assert error.message == message
-     assert error.cause is rejected
- 
- 
-@@ -3083,
-```
-
-**File**: `py/packages/genkit-google-genai/tests/models/model_refs_test.py` (modified, +1/-1)
-```diff
-@@ -328,7 +328,7 @@ def test_embedding_rejects_an_invalid_dict_config(self, config: dict[str, object
-         with pytest.raises(GenkitError) as exc_info:
-             GoogleAI.embedding('gemini-embedding-001', config=config)
-         assert exc_info.value.status == 'INVALID_ARGUMENT'
--        assert exc_info.value.original_message == f'GoogleAI.embedding: invalid config field {key}'
-+        assert exc_info.value.message == f'GoogleAI.embedding: invalid config field {key}'
- 
-     def test_embedding_strips_and_prefixes(self) -> None:
-         """Pasted embedder prefixes are stripped before namespacing."""
 ```
 
 ---
 
-### Incident Patch 2: `3c3c7280` (2026-10-30)
-**Commit Message**: chore(ci): decouple js and genkit-tools builds/tests and clean up workflow configs (#6946)
+### Incident Patch 2: `3121f326` (2026-10-31)
+**Commit Message**: feat(py)!: Interrupt is a BaseException so tool catch-alls can't skip approval (#6763)
 
-**File**: `.github/workflows/builder.yml` (modified, +3/-8)
+**File**: `py/packages/genkit-fastapi/tests/fastapi_test.py` (modified, +29/-3)
 ```diff
-@@ -14,7 +14,7 @@
- #
- # SPDX-License-Identifier: Apache-2.0
+@@ -28,7 +28,7 @@
+ from pydantic import BaseModel, field_validator
+ from starlette.exceptions import HTTPException as StarletteHTTPException
  
--name: Build Check (Run npm run build everywhere locally if this fails)
-+name: Build Check
+-from genkit import FlowContext, Genkit, GenkitError, PublicError
++from genkit import FlowContext, Genkit, GenkitError, Interrupt, PublicError
+ from genkit.plugin_api import provider_error
+ from genkit.web import RequestData
  
- on: pull_request
+@@ -386,6 +386,32 @@ async def boom(_: str) -> None:
+     assert 'stack' not in error
  
-@@ -25,10 +25,6 @@ concurrency:
- permissions:
-   contents: read
  
--env:
--  GITHUB_PULL_REQUEST_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
--  GITHUB_PULL_REQUEST_BASE_SHA: ${{ github.event.pull_request.base.sha }}
--
- jobs:
-   changes:
-     uses: ./.github/workflows/changes.yml
-@@ -38,12 +34,11 @@ jobs:
-   build:
-     name: Run build tasks
-     needs: changes
--    # Builds js/ and genkit-tools/, then runs the JS tests (which read tests/specs).
-+    # Builds js/ and runs the JS tests (which read tests/specs).
-     # A failed detection still runs the build; see changes.yml.
-     if: >-
-       ${{ !cancelled() && (needs.changes.result != 'success' ||
-       needs.changes.outputs.js == 'true' ||
--      needs.changes.outputs.tools == 'true' ||
-       needs.changes.outputs.specs == 'true' ||
-       needs.changes.outputs.other == 'true') }}
-     runs-on: ubuntu-latest
-@@ -60,7 +55,7 @@ jobs:
-     - name: Install dependencies
-       run: pnpm install
-     - name: Run build script
--      run: pnpm build
-+      run: pnpm build:js
-     - name: Run js tests
-       run: pnpm test:js
-     - name: Validate working directory is clean
++def test_fastapi_flow_raising_interrupt_returns_500_and_sse_internal_error() -> None:
++    """A flow raising Interrupt (a BaseException) still gets the Genkit 500 body and SSE error frame.
++
++    The action boundary turns it into GenkitError INTERNAL, so the adapter's
++    `except Exception` sees it; without that the run is a bare 500 and the
++    stream a 200 with no error event.
++    """
++    ai = Genkit()
++
++    @ai.flow()
++    async def refund(order_id: str) -> str:
++        raise Interrupt({'reason': 'needs approval', 'order_id': order_id})
++
++    app = FastAPI()
++    app.include_router(serve_flow(refund, base_path='/refund'))
++    client = TestClient(app, raise_server_exceptions=False)
++
++    response = client.post('/refund', json={'data': 'A-17'})
++    assert response.status_code == 500
++    assert response.json() == {'message': 'Internal Error', 'status': 'INTERNAL'}
++
++    response = client.post('/refund', json={'data': 'A-17'}, headers={'Accept': 'text/event-stream'})
++    assert sse_error_event(response.text) == {'message': 'Internal Error', 'status': 'INTERNAL'}
++    assert 'A-17' not in response.text
++
++
+ def test_fastapi_context_provider_sees_method_lowercase_headers_and_input() -> None:
+     """FastAPI context_provider sees method, lowercase headers, and input."""
+     ai = Genkit()
+@@ -731,7 +757,7 @@ async def chat(_: str) -> str:
+     app = FastAPI()
+ 
+     @app.post('/chat', response_model=None)
+-    @genkit_fastapi_handler(ai)
++    @genkit_fastapi_handler(ai)  # pyright: ignore[reportArgumentType]
+     def chat_route():
+         return chat
+ 
+@@ -747,7 +773,7 @@ def test_fastapi_handler_wrapper_returning_non_action_returns_json_internal_erro
+     app = FastAPI()
+ 
+     @app.post('/chat', response_model=None)
+-    @genkit_fastapi_handler(ai)
++    @genkit_fastapi_handler(ai)  # pyright: ignore[reportArgumentType]
+     async def chat_route():
+         return 'not an action'
+ 
 ```
 
-**File**: `.github/workflows/formatter.yml` (modified, +3/-5)
+**File**: `py/packages/genkit-middleware/src/genkit_middleware/_filesystem.py` (modified, +0/-3)
 ```diff
-@@ -14,7 +14,7 @@
- #
- # SPDX-License-Identifier: Apache-2.0
+@@ -41,7 +41,6 @@
+ from pydantic import AliasChoices, BaseModel as PydanticBaseModel, Field
  
--name: Formatting Check (Run npm run format locally if this fails)
-+name: Formatting Check
+ from genkit import (
+-    Interrupt,
+     Message,
+     ModelResponse,
+     ModelResponseChunk,
+@@ -370,8 +369,6 @@ async def wrap_tool(
  
- on: pull_request
- 
-@@ -25,16 +25,14 @@ concurrency:
- permissions:
-   contents: read
- 
--env:
--  GITHUB_PULL_REQUEST_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
--  GITHUB_PULL_REQUEST_BASE_SHA: ${{ github.event.pull_request.base.sha }}
--
- jobs:
-   format:
-     name: Run formatting/linting tasks
-     runs-on: ubuntu-latest
-     steps:
-     - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
-+      with:
-+        persist-credentials: false
-     - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
-     - name: Set up node v20
-       uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+         try:
+             return await next_fn(params, ctx)
+-        except Interrupt:
+-            raise
+         except Exception as exc:
+             error_msg = f'Tool "{params.tool.name}" failed: {exc}'
+             self._enqueue_parts([Part.from_text(error_msg)])
 ```
 
-**File**: `.github/workflows/samples.yml` (modified, +3/-5)
+**File**: `py/packages/genkit-middleware/tests/filesystem_test.py` (modified, +25/-0)
 ```diff
-@@ -14,7 +14,7 @@
- #
- # SPDX-License-Identifier: Apache-2.0
+@@ -22,6 +22,10 @@
+ import pytest
+ from genkit_middleware import Filesystem
  
--name: Build Samples (only runs if /samples/** is changed)
-+name: Build Samples
- 
- on:
-   pull_request:
-@@ -27,16 +27,14 @@ concurrency:
- permissions:
-   contents: read
- 
--env:
--  GITHUB_PULL_REQUEST_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
--  GITHUB_PULL_REQUEST_BASE_SHA: ${{ github.event.pull_request.base.sha }}
--
- jobs:
-   build:
-     name: Build Samples
-     runs-on: ubuntu-latest
-     steps:
-     - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
-+      with:
-+        persist-credentials: false
-     - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
-     - name: Set up node v20
-       uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
++from genkit import Interrupt, MultipartToolResponse, Part
++from genkit.middleware import MiddlewareContext, ToolHookParams
++from genkit.model import ToolRequest
++
+ # ---------------------------------------------------------------------------
+ # Construction / validation
+ # ---------------------------------------------------------------------------
+@@ -190,3 +194,24 @@ async def test_tools_have_nonempty_descriptions(ctx) -> None:
+         fs = Filesystem(root_dir=tmpdir, allow_write_access=True)
+         for t in fs.tools(ctx):
+             assert t.description, f'{t.name} has empty description'
++
++
++@pytest.mark.asyncio
++async def test_wrap_tool_lets_interrupt_through_without_queueing_an_error(ctx) -> None:
++    """A filesystem tool that pauses still pauses; the error catch-all can't turn it into a message."""
++    with tempfile.TemporaryDirectory() as tmpdir:
++        fs = Filesystem(root_dir=tmpdir, allow_write_access=True)
++        write_file = next(t for t in fs.tools(ctx) if t.name == 'write_file')
++        params = ToolHookParams(
++            tool_request_part=Part(tool_request=ToolRequest(name='write_file', input={'path': 'menu.md'})),
++            tool=write_file.action(),
++        )
++
++        async def needs_approval(_params: ToolHookParams, _ctx: MiddlewareContext) -> MultipartToolResponse:
++            raise Interrupt({'reason': 'confirm overwrite', 'path': 'menu.md'})
++
++        with pytest.raises(Interrupt) as raised:
++            await fs.wrap_tool(params, ctx, needs_approval)
++
++        assert raised.value.metadata == {'reason': 'confirm overwrite', 'path': 'menu.md'}
++        assert fs._message_queue == []  # noqa: SLF001
 ```
 
-**File**: `.github/workflows/tests.yml` (modified, +3/-4)
+**File**: `py/packages/genkit/src/genkit/_ai/_agents/_runtime.py` (modified, +38/-6)
 ```diff
-@@ -25,17 +25,14 @@ concurrency:
- permissions:
-   contents: read
- 
--env:
--  GITHUB_PULL_REQUEST_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
--  GITHUB_PULL_REQUEST_BASE_SHA: ${{ github.event.pull_request.base.sha }}
--
- jobs:
-   changes:
-     uses: ./.github/workflows/changes.yml
-     permissions:
-       pull-requests: read
- 
-   build:
-+    # Job name is pinned in main branch protection required_status_checks.
-     name: Run Tests (just DevUI tests for now)
-     needs: changes
-     # Builds and tests genkit-tools/ only.
-@@ -59,3 +56,5 @@ jobs:
-       run: pnpm build:genkit-tools
-     - name: Run tests
-       run: pnpm test:genkit-tools
-+    - name: Validate working directory is clean
-+      run: .github/workflows/scripts/ensure-clean-working-tree.sh
-```
-
-**File**: `package.json` (modified, +2/-1)
-```diff
-@@ -20,9 +20,10 @@
-     "dist:zip": "cd dist && zip genkit-dist.zip *.tgz",
-     "test:all": "npm-run-all test:js test:genkit-tools",
-     "test:js": "cd js && pnpm i && pnpm test:all",
--    "test:genkit-tools": "pnpm test:genkit-tools-cli && pnpm test:genkit-tools-common",
-+    "test:genkit-tools": "pnpm test:genkit-tools-cli && pnpm test:genkit-tools-common && pnpm test:genkit-tools-telemetry-server",
-     "test:genkit-tools-cli": "cd genkit-tools/cli && pnpm i && pnpm test",
-     "test:genkit-tools-common": "cd genkit-tools/common && pnpm i && pnpm test",
-+    "test:genkit-tools-telemetry-server": "cd genkit-tools/telemetry-server && pnpm i && pnpm test",
-     "test:e2e-local": "pnpm build && pnpm pack:all && cd tests && pnpm install && pnpm test",
-     "test:e2e": "cd tests && pnpm install && pnpm test",
-     "postinstall": "simple-git-hooks"
-```
-
-**File**: `scripts/copyright.ts` (modified, +1/-1)
-```diff
-@@ -110,7 +110,7 @@ console.log('Checking copyright in sources...');
-       console.error(
-         `Copyright header missing in ${missing.map(({ path }) => path).join(', ')}`
-       );
--      console.error('Run `npm run format` at root to update');
-+      console.error('Run `pnpm format` at root to update');
-       process.exit(1);
-     }
-     console.log('Copyright headers okay');
-```
-
----
-
-### Incident Patch 3: `11993bd8` (2026-10-30)
-**Commit Message**: fix(py/ollama)!: per-request key comes from context.secrets; OllamaConfig declares all sampler options (#6643)
-
-**File**: `py/packages/genkit-ollama/README.md` (modified, +50/-2)
-```diff
-@@ -114,8 +114,11 @@ print(response.output)
- 
- ### Ollama-specific config (`OllamaConfig`)
- 
--`OllamaConfig` extends the common Genkit `ModelConfig` with Ollama-only
--knobs (`think`, `keep_alive`, `num_ctx`, `min_p`, `seed`, `num_predict`):
-+`OllamaConfig` extends the common Genkit `ModelConfig` with `think`,
-+`keep_alive`, and every sampler option the installed `ollama` client knows
-+(`num_ctx`, `min_p`, `seed`, `num_predict`, `repeat_penalty`, `mirostat`, ...).
-+Unknown keys raise `INVALID_ARGUMENT`, so a misspelled `num_ctx` fails instead
-+of running with the default context window.
- 
- ```python
- from genkit_ollama import OllamaConfig
-@@ -133,6 +136,18 @@ response = await ai.generate(
- )
- ```
- 
-+A sampler option this class doesn't declare yet goes in `extra`. It is merged
-+into the request's `options` as written and wins over a declared field with the
-+same name:
-+
-+```python
-+config={'temperature': 0.2, 'extra': {'new_sampler_option': 0.5}}
-+# => options={'temperature': 0.2, 'new_sampler_option': 0.5}
-+```
-+
-+`stop_sequences` maps to Ollama's `stop`. When both are set, `stop` wins, the
-+same way `num_predict` wins over `max_output_tokens`.
-+
- ### Remote server, headers, and timeouts
- 
- `Ollama()` reads `OLLAMA_HOST`, then falls back to `http://127.0.0.1:11434`.
-@@ -169,6 +184,39 @@ A dict is sent as-is. A callable takes no arguments, may be sync or async, and
- runs before every HTTP request on the plugin's shared connection pool, so it
- should cache its token and only refresh when it expires.
- 
-+### Per-request API key (hosted Ollama)
-+
-+A multi-tenant app can bill each call to the caller's own key. Pass it on the
-+call's context, not the config, so it never lands in a trace:
-+
-+```python
-+# 1. Plugin runs on OLLAMA_API_KEY (or no key) by default
-+ai = Genkit(plugins=[Ollama(base_url='https://ollama.com')])
-+
-+# 2. This call authenticates as the tenant
-+response = await ai.generate(
-+    model='ollama/gpt-oss:120b',
-+    prompt='Summarize the order history.',
-+    context={'secrets': {'api_key': tenant_key}},
+@@ -44,7 +44,16 @@
+ from genkit._ai._json_patch import diff_json
+ from genkit._core._action import ActionRunContext, get_current_context
+ from genkit._core._channel import CloseableQueue, QueueShutDown
+-from genkit._core._error import GenkitError, GenkitRuntimeError, PublicError, RuntimeErrorReason, StatusName
++from genkit._core._error import (
++    GenkitError,
++    GenkitRuntimeError,
++    Interrupt,
++    PublicError,
++    RuntimeErrorReason,
++    StatusName,
++    TaskGroupError,
++    interrupt_escape_error,
 +)
-+# => sent with Authorization: Bearer <tenant_key>
-+```
-+
-+- **Slot**: `context.secrets.api_key` (`apiKey` works too). It applies to that
-+  call only; concurrent tenants each send their own key.
-+- **No key in secrets**: `secrets` without `api_key`, or keys elsewhere in the
-+  context (an auth provider's `context['api_key']`, another provider's key),
-+  are ignored and the call runs on the plugin's headers.
-+- **Bad key**: a key that is blank, not a string, or contains whitespace fails
-+  the call with `INVALID_ARGUMENT`.
-+- **Config**: `config={'api_key': ...}` or `config.extra.api_key` raises
-+  `INVALID_ARGUMENT` before anything is sent.
-+- **Proxy auth**: if `request_headers` sets `Authorization` (a dict, or a
-+  callable that returns one), a per-request key fails with
-+  `FAILED_PRECONDITION` rather than replacing the proxy's token.
-+- **Embedders**: `embed()` takes no context, so embedders always run on the
-+  plugin's headers.
-+
- ### Model capabilities
+ from genkit._core._logger import get_logger
+ from genkit._core._model import (
+     AgentInit,
+@@ -163,7 +172,15 @@ async def run(
+             try:
  
- There is nothing to configure. The Dev UI lists the models the server has pulled
+                 async def body(span: SpanContext, turn_input: AgentInput = inp, ctx: TurnContext = turn_ctx) -> object:
+-                    turn_result = await fn(turn_input, ctx)
++                    try:
++                        turn_result = await fn(turn_input, ctx)
++                    except (Interrupt, TaskGroupError) as exc:
++                        # No generate loop here to pause. Convert inside the
++                        # span so runTurn-N records the failure.
++                        failure = interrupt_escape_error(exc)
++                        if failure is None:
++                            raise
++                        raise failure from exc
+                     finish_reason = turn_result.finish_reason if turn_result else None
+                     self.last_turn_finish_reason = finish_reason
+                     self.last_turn_error = None
+@@ -191,9 +208,18 @@ async def body(span: SpanContext, turn_input: AgentInput = inp, ctx: TurnContext
+                 self.last_good_state_version = self.session.version
+                 self.last_good_finish_reason = self.last_turn_finish_reason
+                 self.turn_index += 1
+-            except Exception as exc:
++            except (Exception, Interrupt, TaskGroupError) as exc:
++                # body converts the turn's own Interrupt; this covers one
++                # raised from a hook outside it.
++                failure = interrupt_escape_error(exc)
++                if failure is not None:
++                    turn_error: Exception = failure
++                elif isinstance(exc, Exception):
++                    turn_error = exc
++                else:
++                    raise
+                 self.last_turn_finish_reason = AgentFinishReason.FAILED
+-                self.last_turn_error = to_error_details(exc)
++                self.last_turn_error = to_error_details(turn_error)
+ 
+                 if self.on_end_turn is not None:
+                     await self.on_end_turn(AgentFinishReason.FAILED)
+@@ -878,8 +904,14 @@ async def run_agent_loop() -> None:
+                     coro=fn(self.session_runner, action_ctx),
+                 )
+                 result_holder.append(result)
+-            except Exception as e:  # noqa: BLE001
+-                err_holder.append(e)
++            except (Exception, Interrupt, TaskGroupError) as e:  # noqa: BLE001
++                failure = interrupt_escape_error(e)
++                if failure is not None:
++                    err_holder.append(failure)
++                elif isinstance(e, Exception):
++                    err_holder.append(e)
++                else:
++                    raise
+             finally:
+                 # Synchronously close self.turn_inputs to signal turn completion,
+                 # letting SessionRunner stop waiting for more inputs.
 ```
 
-**File**: `py/packages/genkit-ollama/src/genkit_ollama/_models.py` (modified, +51/-12)
+**File**: `py/packages/genkit/src/genkit/_ai/_generate.py` (modified, +24/-17)
 ```diff
-@@ -217,19 +217,54 @@ def _parse_thinking(content: str) -> tuple[str, str]:
- class OllamaConfig(ModelConfig):
-     """Configuration schema for Ollama models.
- 
--    Extends the shared :class:`ModelConfig` with Ollama-specific sampler
--    knobs and the ``think`` chain-of-thought control. Unknown keys raise. A
--    sampler option this class doesn't declare (``repeat_penalty``,
--    ``mirostat``, ...) goes in ``extra`` and is merged into the request's
--    ``options`` as-is, so newer sampler parameters work without an SDK bump.
-+    Extends the shared :class:`ModelConfig` with every sampler option the
-+    installed ``ollama`` client knows, plus ``think`` and ``keep_alive``.
-+    Unknown keys raise, so a misspelled ``num_ctx`` fails instead of quietly
-+    running with the default context window. A sampler option this class
-+    doesn't declare yet goes in ``extra``, which is merged into the request's
-+    ``options`` as-is and wins over a declared value with the same name.
-     """
- 
-     think: bool | Literal['low', 'medium', 'high'] | None = None
-     keep_alive: float | str | None = None
--    num_ctx: int | None = None
-     min_p: float | None = None
-+
-+    # Sampler options from the installed ollama client. temperature, top_k and
-+    # top_p come from ModelConfig.
-+    numa: bool | None = None
-+    num_ctx: int | None = None
-+    num_batch: int | None = None
-+    num_gpu: int | None = None
-+    main_gpu: int | None = None
-+    low_vram: bool | None = None
-+    f16_kv: bool | None = None
-+    logits_all: bool | None = None
-+    vocab_only: bool | None = None
-+    use_mmap: bool | None = None
-+    use_mlock: bool | None = None
-+    embedding_only: bool | None = None
-+    num_thread: int | None = None
-+    num_keep: int | None = None
-     seed: int | None = None
-     num_predict: int | None = None
-+    tfs_z: float | None = None
-+    typical_p: float | None = None
-+    repeat_last_n: int | None = None
-+    repeat_penalty: float | None = None
-+    presence_penalty: float | None = None
-+    frequency_penalty: float | None = None
-+    mirostat: int | None = None
-+    mirostat_tau: float | None = None
-+    mirostat_eta: float | None = None
-+    penalize_newline: bool | None = None
-+    stop: list[str] | None = None
-+
-+
-+# Declared names, in either spelling. A generic snake-case pass turns
-+# ``f16_kv`` into ``f_16_kv``, which the server would ignore.
-+_CONFIG_FIELD_NAMES: dict[str, str] = {
-+    key: name for name, info in OllamaConfig.model_fields.items() for key in (name, info.alias) if key is not None
-+}
- 
- 
- @dataclass(frozen=True)
-@@ -559,8 +594,10 @@ def build_request_options(
-           kwargs, not sampler options (Ollama rejects them inside ``options``).
-         - Genkit's ``max_output_tokens`` maps to Ollama's ``num_predict``; an
-           explicit ``num_predict`` wins when both are present.
--        - ``stop_sequences`` maps to ``stop``; ``version`` (genkit
--          bookkeeping) is dropped.
-+        - ``stop_sequences`` maps to ``stop``; an explicit ``stop`` wins when
-+          both are present. ``version`` (genkit bookkeeping) is dropped.
-+        - camelCase keys are snake-cased onto the Ollama field. Declared
-+          names are looked up first so ``f16_kv`` is not rewritten.
-         - ``extra`` (e.g. ``{'repeat_penalty': 1.1}``) is merged in last,
-           keys unchanged, so a colliding key wins over a declared field.
- 
-@@ -593,17 +630,19 @@ def build_request_options(
-         extra = raw.pop('extra', None)
- 
-         # Snake-case so camelCase knobs (e.g. ``topP``) hit the server field
--        # instead of being silently dropped.
--        knobs = {to_snake(k): v for k, v in raw.items()}
-+        # instead of being silently dropped. Declared names win first:
-+        # a generic snake-case pass rewrites ``f16_kv``.
-+        knobs = {_CONFIG_FIELD_NAMES.get(k) or to_snake(k): v for k, v in raw.items()}
- 
-         # Top-level request kwargs, not sampler options.
-         knobs.pop('think', None)
-         knobs.pop('keep_alive', None)
-         # Genkit bookkeeping that Ollama does not understand.
-         knobs.pop('version', None)
- 
--        if 'stop_sequences' in knobs:
--            knobs['stop'] = knobs.pop('stop_sequences')
-+        stop_sequences = knobs.pop('stop_sequences', None)
-+        if stop_sequences is not None and knobs.get('stop') is None:
-+            knobs['stop'] = stop_sequences
- 
-         max_tokens = knobs.pop('max_output_tokens', None)
-         if max_tokens is not None and knobs.get('num_predict') is None:
-```
-
-**File**: `py/packages/genkit-ollama/src/genkit_ollama/_plugin.py` (modified, +69/-6)
-```diff
-@@ -20,15 +20,16 @@
- import inspect
- import os
- import time
--from collections.abc import AsyncGenerator, Awaitable, Callable
-+from collections.abc import AsyncGenerator, AsyncIterator, Awaitable, Callable, Mapping
-+from contextlib import asynccontextmanager
- from dataclasses import dataclass, replace
- from typing import Any, cast
- from urllib.parse import urlsplit
- 
- import httpx
- import ollama as ollama_api
- 
--from genkit import ModelResponse, get_logger
-+from genkit import GenkitError, ModelResponse, get_logger
- from genkit.embedder import (
-     Embedder,
-     EmbedderInfo,
-@@ -59,6 +60,7 @@
-     OllamaModel,
-     _ResolvedModel,
+@@ -53,6 +53,7 @@
+     normalize_pending_content,
+     parts_to_wire,
+     restart_interrupt_error,
++    run_restarted_tool,
+     run_tool_after_restart,
+     run_tool_request,
  )
-+from genkit_ollama._secrets import context_api_key
+@@ -112,6 +113,13 @@
  
- OLLAMA_PLUGIN_NAME = 'ollama'
+ DEFAULT_MAX_TURNS = 50
+ 
++# Interrupt is a BaseException so a tool's `except Exception` can't swallow it.
++# The engine still catches it wherever a raise becomes a result.
++TOOL_RAISES = (Exception, Interrupt)
++# What a hook or model can raise that becomes a FAILED turn (#6255). A
++# foreign CancelledError is re-raised by raise_if_foreign_cancel.
++TURN_FAILURES = (Exception, Interrupt, asyncio.CancelledError)
++
  logger = get_logger(__name__)
-@@ -166,18 +168,40 @@ class _CallableHeaders(httpx.Auth):
-     token refresh on every call.
+ 
+ T = TypeVar('T')
+@@ -1415,7 +1423,7 @@ def remember_response(result: object) -> None:
+             ),
+             name=resolved.model.name,
+         )
+-    except (Exception, asyncio.CancelledError) as exc:
++    except TURN_FAILURES as exc:
+         raise_if_foreign_cancel(exc=exc, abort_signal=ctx.abort_signal)
+         # A hook can raise before the model ever built a request. Build it here
+         # so the caller still gets back what they asked for; the cost is only
+@@ -1503,7 +1511,7 @@ async def generate_turn(
+             mw_pipeline=mw_pipeline,
+             current_turn=current_turn,
+         )
+-    except (Exception, asyncio.CancelledError) as exc:
++    except TURN_FAILURES as exc:
+         raise_if_foreign_cancel(exc=exc, abort_signal=ctx.abort_signal)
+         return box_from_exc(
+             response=call.earned(),
+@@ -1785,7 +1793,7 @@ async def run_tools_or_stop(
+             mw_pipeline=mw_pipeline,
+             tools=resolved.tools,
+         )
+-    except (Exception, asyncio.CancelledError) as exc:
++    except TURN_FAILURES as exc:
+         raise_if_foreign_cancel(exc=exc, abort_signal=ctx.abort_signal)
+         return box_from_exc(
+             response=response,
+@@ -2174,7 +2182,7 @@ async def next_fn(p: ToolHookParams, c: MiddlewareContext) -> MultipartToolRespo
+             else:
+                 multipart = as_multipart_tool_response(await next_fn(params, ctx), tool_name=trp.tool_request.name)
+             return (multipart, None)
+-        except Exception as e:
++        except TOOL_RAISES as e:
+             # Interrupts (raised by the tool body or by middleware) become a
+             # tool-request Part with interrupt metadata.  Any tracing span is the
+             # middleware's responsibility (e.g. ToolApproval wraps its raise in
+@@ -2239,7 +2247,7 @@ def to_pending_response(request: Part, response: Part) -> Part:
+     )
+ 
+ 
+-def interrupt_from_exc(exc: Exception) -> Interrupt | None:
++def interrupt_from_exc(exc: BaseException) -> Interrupt | None:
+     """If ``exc`` is an Interrupt, or was raised from one, return it.
+ 
+     A tool that pauses again on restart is still an interrupt the caller
+@@ -2545,7 +2553,7 @@ async def resolve_resumed_tool(
+                 restart_trp=restart_trp,
+                 mw_pipeline=mw_pipeline,
+             )
+-        except Exception as e:
++        except TOOL_RAISES as e:
+             intr = interrupt_from_exc(e)
+             if intr is not None:
+                 return (interrupt_request_part(tool_req_root, intr), None)
+@@ -2605,7 +2613,9 @@ async def run_restart(
+     )
+ 
+     async def next_fn(p: ToolHookParams, ctx: MiddlewareContext) -> MultipartToolResponse:
+-        executed = await run_tool_after_restart(tool=p.tool, restart_trp=p.tool_request_part, ctx=ctx)
++        # A second Interrupt stays raw through the chain so a middleware
++        # `except Exception` can't swallow it; converted below.
++        executed = await run_restarted_tool(tool=p.tool, restart_trp=p.tool_request_part, ctx=ctx)
+         if executed.tool_response is None:
+             raise GenkitError(status='INTERNAL', message='Expected a tool response part')
+         raw_content = executed.tool_response.content or []
+@@ -2625,18 +2635,15 @@ async def next_fn(p: ToolHookParams, ctx: MiddlewareContext) -> MultipartToolRes
+             ),
+             tool_name=tool_req.name,
+         )
+-    except Exception as e:
++    except TOOL_RAISES as e:
+         intr = interrupt_from_exc(e)
+         if intr is not None:
+-            # run_tool_after_restart already logged when the tool body interrupted.
+-            # wrap_tool can raise Interrupt itself; that's the only interrupt path.
+-            if not isinstance(e, GenkitError):
+-                logger.debug(
+-                    'restarted tool triggered an interrupt',
+-                    tool=tool_req.name,
+-                )
+-            # wrap_tool paused again. generate turns this into the same
+-            # INTERRUPTED they already know how to answer.
++            # The tool body or wrap_tool paused again. generate turns this
++            # into the same INTERRUPTED they already know how to answer.
++            logger.debug(
++                'restarted tool triggered an interrupt',
++                tool=tool_req.name,
++            )
+             raise restart_interrupt_error(intr) 
+```
+
+**File**: `py/packages/genkit/src/genkit/_ai/_tools.py` (modified, +19/-5)
+```diff
+@@ -364,18 +364,32 @@ async def run_tool_after_restart(
+     Sets the same context variables as the tool wrapper so ToolContext reflects
+     a resumed run. A tool cannot raise another interrupt while it is being restarted.
+     """
+-    tool_req = restart_trp.tool_request
+-    if tool_req is None:
+-        raise ValueError('run_tool_after_restart needs a tool request part')
+     try:
+-        raw = await run_tool_request(tool=tool, tool_request_part=restart_trp, ctx=ctx)
++        return await run_restarted_tool(tool=tool, restart_trp=restart_trp, ctx=ctx)
+     except Interrupt as e:
+         logger.debug(
+             'restarted tool triggered an interrupt',
+-            tool=tool_req.name,
++            tool=restart_trp.tool_request.name if restart_trp.tool_request else tool.name,
+         )
+         raise restart_interrupt_error(e) from e
+ 
++
++async def run_restarted_tool(
++    *,
++    tool: Action,
++    restart_trp: Part,
++    ctx: MiddlewareContext | None = None,
++) -> Part:
++    """Like ``run_tool_after_restart``, but a second Interrupt propagates as is.
++
++    run_restart calls this inside the wrap_tool chain. Converting the Interrupt
++    there would hand middleware an Exception its catch-all could swallow,
++    skipping the approval the restart is asking for.
++    """
++    tool_req = restart_trp.tool_request
++    if tool_req is None:
++        raise ValueError('run_tool_after_restart needs a tool request part')
++    raw = await run_tool_request(tool=tool, tool_request_part=restart_trp, ctx=ctx)
+     envelope = as_multipart_tool_response(raw, tool_name=tool_req.name)
+     return Part(
+         tool_response=ToolResponse(
+```
+
+**File**: `py/packages/genkit/src/genkit/_core/_action.py` (modified, +33/-1)
+```diff
+@@ -46,7 +46,15 @@
+ 
+ from genkit._core._channel import CloseableQueue, mirror_result, start_stream
+ from genkit._core._compat import StrEnum
+-from genkit._core._error import GenkitError, Interrupt, RuntimeErrorReason, mark_request_error
++from genkit._core._error import (
++    GenkitError,
++    Interrupt,
++    RuntimeErrorReason,
++    TaskGroupError,
++    interrupt_escape_error,
++    interrupt_outside_tool_error,
++    mark_request_error,
++)
+ from genkit._core._model import (
+     EmbedRequest,
+     ModelRequest,
+@@ -804,6 +812,11 @@ def create_action_key(kind: ActionKind | str, name: str) -> str:
+ # server calling a nested action wrong, not the HTTP caller's request.
+ _inside_action: ContextVar[bool] = ContextVar('inside_action', default=False)
+ 
++# True while a tool body runs, including actions it calls. An Interrupt from a
++# flow the tool calls has to reach generate's tool loop as an Interrupt, so only
++# an action with no tool above it turns one into an error.
++_inside_tool: ContextVar[bool] = ContextVar('inside_tool', default=False)
++
+ 
+ def _request_error(error: GenkitError) -> GenkitError:
+     """Mark an input/init failure as the caller's request only on the outermost action."""
+@@ -1401,6 +1414,7 @@ async def body(span: SpanContext) -> OutputT:
+             if on_trace_start:
+                 await on_trace_start(trace_id, span_id)
+ 
++            tool_token = _inside_tool.set(True) if self._kind == ActionKind.TOOL else None
+             try:
+                 if execute is not None:
+                     output = await execute()
+@@ -1409,7 +1423,25 @@ async def body(span: SpanContext) -> OutputT:
+             except Interrupt as e:
+                 if e.metadata:
+                     span.set_metadata({'interrupt': e.metadata})
++                # Only generate's tool loop turns an Interrupt into a pause.
++                # With no tool above, it is a BaseException that `except
++                # Exception` handlers (web adapters, agent transports) would
++                # miss, so it becomes an error. Under a tool (a flow the tool
++                # calls) it stays raw, so the tool's own catch-all can't
++                # swallow the approval.
++                if self._kind != ActionKind.TOOL and not _inside_tool.get():
++                    raise interrupt_outside_tool_error(e) from e
+                 raise
++            except TaskGroupError as e:
++                # asyncio.TaskGroup / anyio wrap a child's Interrupt in a
++                # BaseExceptionGroup, which every `except Exception` misses.
++                failure = interrupt_escape_error(e)
++                if failure is None:
++                    raise
++                raise failure from e
++            finally:
++                if tool_token is not None:
++                    _inside_tool.reset(tool_token)
+             if self._strict_io:
+                 output = self._validate_output(output)
+             latency_ms = (time.perf_counter() - start_time) * 1000
+```
+
+**File**: `py/packages/genkit/src/genkit/_core/_error.py` (modified, +79/-5)
+```diff
+@@ -16,6 +16,8 @@
+ 
+ """Error classes and utilities for the Genkit framework."""
+ 
++import builtins
++import importlib
+ import math
+ import reprlib
+ import time
+@@ -349,15 +351,24 @@ class ErrorResponseMetadata(TypedDict, total=False):
+     headers: dict[str, str]
+ 
+ 
+-class Interrupt(Exception):  # noqa: N818 - public Genkit name; not renamed *Error for style
+-    """Pause a tool or generate so the caller can approve, reply, or restart.
++class Interrupt(BaseException):
++    """Pause a tool so the caller can approve, reply, or restart.
+ 
+     Raise ``Interrupt(metadata)`` from a tool or from tool middleware.
+-    Tracing treats this as control flow, not a failed span.
++    It is a control-flow signal like ``asyncio.CancelledError``, so it
++    subclasses ``BaseException``: an ``except Exception`` in tool code can't
++    swallow it and skip the approval. Catch ``Interrupt`` by name if a tool
++    needs to clean up, then re-raise. Raised anywhere else (a flow, an
++    agent turn body), the action fails with ``GenkitError`` INTERNAL.
++    Tracing treats it as control flow, not a failed span.
      """
  
--    def __init__(self, source: _HeaderSource) -> None:
-+    def __init__(self, source: _HeaderSource, *, api_key: str | None = None) -> None:
-         self._source = source
-+        self._api_key = api_key
- 
-     async def async_auth_flow(self, request: httpx.Request) -> AsyncGenerator[httpx.Request, httpx.Response]:
-         result = self._source()
-         if inspect.isawaitable(result):
-             result = await result
-         if result:
-+            if self._api_key is not None and _pins_authorization(result):
-+                raise _pinned_authorization_error('returned')
-             request.headers.update(result)
-         yield request
+     def __init__(self, metadata: dict[str, Any] | None = None) -> None:
+-        super().__init__()
++        # Metadata goes in args so str(interrupt) and tracebacks show it.
++        if metadata is None:
++            super().__init__()
++        else:
++            super().__init__(metadata)
+         self.metadata: dict[str, Any] = {} if metadata is None else metadata
  
  
-+def _pins_authorization(headers: Mapping[str, str]) -> bool:
-+    return any(k.lower() == 'authorization' for k in headers)
+@@ -604,6 +615,69 @@ def provider_error(
+     return mark_provider_error(error=result)
+ 
+ 
++def interrupt_outside_tool_error(interrupt: Interrupt) -> GenkitError:
++    """The error an Interrupt becomes when it escapes something that isn't a tool.
 +
-+
-+def _pinned_authorization_error(verb: str) -> GenkitError:
-+    """A ``context.secrets`` key would replace proxy auth the plugin was given.
-+
-+    Sending a tenant's key to a proxy that expects the plugin's token either
-+    fails at the proxy or hands that proxy a key meant for someone else.
++    Only generate's tool loop can turn an Interrupt into a pause. Anywhere
++    else it would escape ``except Exception`` handlers as a bare
++    BaseException, so the action boundary and the agent turn loop report it
++    as a failed run instead. ``cause`` keeps the metadata for debugging.
 +    """
-+    return GenkitError(
-+        status='FAILED_PRECONDITION',
-+        message=(
-+            f'Ollama(request_headers=...) {verb} an Authorization header, which the context.secrets key '
-+            'would replace. Drop that header to serve per-request keys.'
-+        ),
-+    )
++    error = GenkitError(status='INTERNAL', message='Interrupt raised outside a tool', cause=interrupt)
++    error.__cause__ = interrupt
++    return error
 +
 +
- def _reject_api_path_suffix(base_url: str, *, source: str) -> None:
-     """Requests go to ``{base_url}/api/chat``, so a ``/v1`` or ``/api`` suffix becomes a path prefix and 404s."""
-     # The SDK accepts host:port with no scheme; add one so the path parses.
-@@ -233,11 +257,13 @@ def __init__(
- 
-         # A dict is baked into the cached client; a callable runs per request via httpx auth.
-         self.request_headers: dict[str, str] = {}
-+        self._header_source: _HeaderSource | None = None
-         self._auth: _CallableHeaders | None = None
-         if isinstance(request_headers, dict):
-             self.request_headers = dict(request_headers)
-         elif request_headers is not None:
-             _require_no_arg_callable(request_headers)
-+            self._header_source = request_headers
-             self._auth = _CallableHeaders(request_headers)
-         self.timeout = timeout
-         self._probes: dict[str, _ProbeResult] = {}
-@@ -263,6 +289,39 @@ def _make_client(self) -> ollama_api.AsyncClient:
-             kwargs['timeout'] = self.timeout
-         return ollama_api.AsyncClient(**kwargs)
- 
-+    @asynccontextmanager
-+    async def _client_for_request(self, *, api_key: str | None = None) -> AsyncIterator[ollama_api.AsyncClient]:
-+        """Yield the Ollama client to use for a single request.
-+
-+        When no per-request api_key is given, the shared per-event-loop client
-+        is yielded. A per-request key forces a fresh client: hosted Ollama
-+        bills whoever's bearer token is on the request. An ``Authorization``
-+        header from ``request_headers`` is proxy auth, so a per-request key
-+        raises ``FAILED_PRECONDITION`` instead of replacing it. The fresh
-+        client owns its own httpx connection pool and is closed on exit.
-+        """
-+        if api_key is None:
-+            yield self.client()
-+            return
-+
-+        if _pins_authorization(self.request_headers):
-+            raise _pinned_authorization_error('pins')
-+        headers = {**self.request_headers, 'Authorization': f'Bearer {api_key}'}
-+        auth: httpx.Auth | None = None
-+        if self._header_source is not None:
-+            auth = _CallableHeaders(self._header_source, api_key=api_key)
-+        kwargs: dict[str, Any] = {'host': self.base_url, 'headers': headers}
-+        if auth is not None:
-+            kwargs['auth'] = auth
-+        if self.timeout is not None:
-+            kwargs['timeout'] = self.timeout
-+
-+        client = ollama_api.AsyncClient(**kwargs)
-+        try:
-+            yield client
-+        finally:
-+            await client._client.aclose()
-+
-     async def init(self) -> list:
-         """Initialize the Ollama plugin.
- 
-@@ -385,9 +444,13 @@ def _create_model_action(self, model_re
-```
-
-**File**: `py/packages/genkit-ollama/src/genkit_ollama/_secrets.py` (added, +93/-0)
-```diff
-@@ -0,0 +1,93 @@
-+# Copyright 2026 Google LLC
-+#
-+# Licensed under the Apache License, Version 2.0 (the "License");
-+# you may not use this file except in compliance with the License.
-+# You may obtain a copy of the License at
-+#
-+#     http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software
-+# distributed under the License is distributed on an "AS IS" BASIS,
-+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+# See the License for the specific language governing permissions and
-+# limitations under the License.
-+#
-+# SPDX-License-Identifier: Apache-2.0
-+
-+"""Per-request API key on ``context.secrets`` for the Ollama plugin.
-+
-+A tenant key travels with the call, not the config, so it never lands in a
-+trace: ``context={'secrets': {'api_key': tenant_key}}``. Hosted Ollama reads
-+it as ``Authorization: Bearer <key>``. A key on ``config`` (including
-+``config.extra``) is rejected by Genkit before the model action runs.
-+
-+Same rules as ``genkit_openai._secrets``.
-+"""
-+
-+from collections.abc import Mapping
-+from typing import cast
-+
-+from genkit import GenkitError
-+
-+SECRETS_HINT = "Pass the key as context={'secrets': {'api_key': ...}}."
-+
-+_KEY_SLOTS = ('api_key', 'apiKey')
-+_BAD_KEY_CHARS = ('\r', '\n', '\0', ' ', '\t')
++class _NoTaskGroupError(BaseException):
++    """Never raised; stands in when no task-group exception type exists."""
 +
 +
-+def _clean_key(value: object, slot: str) -> str:
-+    if not isinstance(value, str):
-+        raise GenkitError(
-+            status='INVALID_ARGUMENT',
-+            message=f'context.secrets.{slot} must be a string. {SECRETS_HINT}',
-+        )
-+    cleaned = value.strip()
-+    if not cleaned:
-+        raise GenkitError(
-+            status='INVALID_ARGUMENT',
-+            message=f'context.secrets.{slot} is blank. {SECRETS_HINT}',
-+        )
-+    if any(c in cleaned for c in _BAD_KEY_CHARS):
-+        raise GenkitError(
-+            status='INVALID_ARGUMENT',
-+            message=f'context.secrets.{slot} contains invalid whitespace or control characters. {SECRETS_HINT}',
-+        )
-+    return cleaned
++def _task_group_error() -> type[BaseException]:
++    builtin = getattr(builtins, 'BaseExceptionGroup', None)  # 3.11+
++    if builtin is not None:
++        return builtin
++    # 3.10 has no asyncio.TaskGroup; anyio task groups raise the
++    # `exceptiongroup` backport, which anyio installs there.
++    try:
++        backport = importlib.import_module('exceptiongroup')
++    except ImportError:
++        return _NoTaskGroupError
++    return backport.BaseExceptionGroup
 +
 +
-+def context_api_key(context: Mapping[str, object] | None) -> str | None:
-+    """Read the per-request key from ``context.secrets``.
-+
-+    ``api_key`` is the documented slot; ``apiKey`` works too. ``secrets``
-+    without either runs on the plugin's headers, so apps can keep other
-+    secrets there. A key that is set but blank or not a string raises.
-+    Top-level context entries like ``context['api_key']`` are ignored, so
-+    app-level auth context providers and keys meant for other providers don't
-+    break an Ollama call made inside the same flow.
-+
-+    Args:
-+        context: The action context (``ctx.context``).
-+
-+    Returns:
-+        The trimmed key, or None when ``context.secrets`` has no key.
-+
-+    Raises:
-+        GenkitError: ``INVALID_ARGUMENT`` when ``secrets`` is not a mapping or
-+            the key is not a usable string.
-+    """
-+    if not context:
-+        return None
-+    secrets = context.get('secrets')
-+    if secrets is None:
-+        return None
-+    if not isinstance(secrets, Mapping):
-+        raise GenkitError(
-+            status='INVALID_ARGUMENT',
-+            message=f'context.secrets must be a dict. {SECRETS_HINT}',
-+        )
-+    bag = cast(Mapping[str, object], secrets)
-+    for slot in _KEY_SLOTS:
-+        value = bag.get(slot)
-+        if value is not None:
-+            return _clean_key(value, slot)
-+    return None
-```
-
-**File**: `py/packages/genkit-ollama/tests/config_and_secrets_test.py` (added, +439/-0)
-```diff
-@@ -0,0 +1,439 @@
-+# Copyright 2026 Google LLC
-+#
-+# Licensed under the Apache License, Version 2.0 (the "License");
-+# you may not use this file except in compliance with the License.
-+# You may obtain a copy of the License at
-+#
-+#     http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software
-+# distributed under the License is distributed on an "AS IS" BASIS,
-+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+# See the License for the specific language governing permissions and
-+# limitations under the License.
-+#
-+# SPDX-License-Identifier: Apache-2.0
-+
-+"""What an Ollama call sends: config keys, ``extra``, and the per-request key.
-+
-+Every test drives ``ai.generate`` through the real ``ollama`` client and reads
-+the HTTP request that would have reached the server.
-+"""
-+
-+import asyncio
-+import json
-+from collections.abc import Iterator
-+from dataclasses import dataclass, field
-+from typing import Any, cast, get_args
-+
-+import httpx
-+import ollama as ollama_api
-+import pytest
-+from genkit_ollama import Ollama, OllamaConfig
-+from genkit_ollama._plugin import _ResolvedModel
-+from pydantic import ValidationError
-+
-+from genkit import FinishReason, Genkit, GenkitError
-+
-+MODEL = 'ollama/llama3.2'
++# What asyncio.TaskGroup / anyio raise when a child task raises a
++# BaseException. An Interrupt in a child task arrives wrapped in one of these.
++TaskGroupError: type[BaseException] = _task_group_error()
 +
 +
-+@dataclass
-+class Server:
-+    """Captures the requests the ollama client sends."""
-+
-+    requests: list[httpx.Request] = field(default_factory=list)
-+
-+    @property
-+    def last_body(self) -> dict[str, Any]:
-+        return json.loads(self.requests[-1].content)
-+
-+    @property
-+    def last_options(self) -> dict[str, Any]:
-+        return cast(dict[str, Any], self.last_body.get('options') or {})
-+
-+    @property
-+    def last_authorization(self) -> str | None:
-+        return self.requests[-1].headers.get('authorization')
-+
-+    def handle(self, request: httpx.Request) -> httpx.Response:
-+        if request.url.path == '/api/show':
-+            return httpx.Response(200, json={'capabilities': ['tools', 'vision']})
-+        self.requests.append(request)
-+        body = json.loads(request.content)
-+        reply = {'model': body['model'], 'message': {'role': 'assistant', 'content': 'ok'}, 'done': True}
-+        if body.get('stream'):
-+            return httpx.Response(200, content=json.dumps(reply) + '\n')
-+        return httpx.Response(200, json=reply)
-+
-+
-+@pytest.fixture
-+def server(monkeypatch: pytest.MonkeyPatch) -> Iterator[Server]:
-+    srv = Server()
-+    real_client = ollama_api.AsyncClient
-+
-+    def client_with_fake_server(**kwargs: Any) -> ollama_api.AsyncClient:
-+        return real_client(transport=httpx.MockTransport(srv.handle), **kwargs)
-+
-+    monkeypatch.setattr(ollama_api, 'AsyncClient', client_with_fake_server)
-+    monkeypatch.delenv('OLLAMA_API_KEY', raising=False)
-+    yield srv
-+
-+
-+def make_ai(**plugin_kwargs: Any) -> Genkit:
-+    return Genkit(plugins=[Ollama(**plugin_kwargs)])
-+
-+
-+def test_ollama_config_with_unknown_key_raises_validation_error() -> None:
-+    """`OllamaConfig(temprature=0.2)` fails naming `temprature`."""
-+    with pytest.raises(ValidationError, match='temprature'):
-+        OllamaConfig.model_validate({'temprature': 0.2})
-+
-+
-+@pytest.mark.asyncio
-+async def test_generate_ollama_unknown_config_key_raises_before_sending(server: Server) -> None:
-+    """`config={'temprature': 0.2}` raises INVALID_ARGUMENT naming the key, and nothing is sent."""
-+    ai = make_ai()
-+
-+    with pytest.raises(GenkitError, match='temprature') as excinfo:
-+        await ai.generate(model=MODEL, prompt='hi', config={'temprature': 0.2})
-+
-+    assert excinfo.value.status == 'INVALID_ARGUMENT'
-+    assert "config['extra']" in str(excinfo.value)
-+    assert server.requests == []
-+
-+
-+@pytest.mark.asyncio
-+async def test_generate_ollama_declared_sampler_option_reaches_options(server: Server) -> None:
-+    """`repeat_penalty=1.1` arrives in the request's `options`."""
-+    ai = make_ai()
-+
-+    await ai.generate(model=MODEL, prompt='hi', config={'repeat_penalty': 1.1})
-+
-+    assert server.last_options == {'repeat_penalty': 1.1}
-+
-+
-+@pytest.mark.asyncio
-+async def test_generate_ollama_camel_case_sampler_option_reaches_options(server: Server) -> None:
-+    """`repeatPenalty=1.1` arrives the same way."""
-+    ai = make_ai()
-+
-+    await ai.generate(model=MODEL, prompt='hi', config={'repeatPenalty': 1.1})
-+
-+    assert server.last_options == {'repeat_penalty': 1.1}
-+
-+
-+def _sample_value(annotation: object) -> object:
-+    kinds = set(get_args(annotation)) - {type(None)}
-+    if bool in kinds:
++def _group_has_interrupt(exc: BaseException) -> bool:
++    if isinstance(exc, Interrupt):
 +        return True
-+    if int in kinds:
-+        return 3
-+    if float in kinds:
-+        return 0.5
-+    return ['###']
++    children = getattr(exc, 'exceptions', None) if isinstance(exc, TaskGroupError) else None
++    return any(_group_has_interrupt(child) for child in children or ())
 +
 +
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize('option', sorted(ollama_api.Options.model_fields))
-+async def test_generate_ollama_every_client_sampler_option_reaches_options(server: Server, option: str) -> None:
-+    """Each sampler option the installed `ollama` client knows is accepted and 
-```
-
-**File**: `py/packages/genkit-ollama/tests/models/config_extra_test.py` (modified, +3/-3)
-```diff
-@@ -23,9 +23,9 @@
++def interrupt_escape_error(exc: BaseException) -> GenkitError | None:
++    """The failure for an Interrupt that reached a boundary that can't pause on it.
++
++    Returns None when ``exc`` carries no Interrupt, so the caller re-raises it
++    as is. An Interrupt inside a task group can't pause generate: the group may
++    also hold other failures, and there's no single interrupt to answer. It
++    fails the run, as it did when Interrupt was an Exception.
++    """
++    if isinstance(exc, Interrupt):
++        return interrupt_outside_tool_error(exc)
++    if isinstance(exc, TaskGroupError) and _group_has_interrupt(exc):
++        error = GenkitError(
++            status='INTERNAL',
++            message='Interrupt raised inside a task group',
++            cause=exc,
++        )
++        error.__cause__ = exc
++        return error
++    return None
++
++
+ class PublicError(GenkitError):
+     """Error class for issues to be returned to users.
  
- 
- def test_unknown_key_raises() -> None:
--    """`{'repeatPenalty': 1.1}` is no longer a silent passthrough; it raises."""
--    with pytest.raises(ValidationError, match='repeatPenalty'):
--        OllamaConfig.model_validate({'repeatPenalty': 1.1})
-+    """`{'temprature': 0.2}` raises before the request is sent."""
-+    with pytest.raises(ValidationError, match='temprature'):
-+        OllamaConfig.model_validate({'temprature': 0.2})
- 
- 
- def test_extra_merges_into_options_verbatim() -> None:
+@@ -799,7 +873,7 @@ def get_error_stack(error: object) -> str | None:
+     Returns:
+         The stack trace string if available, None otherwise.
+     """
+-    if isinstance(error, Exception):
++    if isinstance(error, BaseException):
+         # Stack traces are valuable for debugging; consider making this configurable
+         # to enable them in development/staging and suppress in production.
+         # For now, return an empty string to keep Dev UI clean as per requirements.
 ```
 
 #### Recent Merged Pull Requests:
@@ -3232,36 +2695,3 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. py)!: rename GenkitError.original_message to message (#6639)
-
-**RULE**:
-When implementing operations in `py/packages/genkit-amazon-bedrock/src/genkit_amazon_bedrock/_embedders.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `7f44e2c3`: py)!: rename GenkitError.original_message to message (#6639). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `py/packages/genkit-amazon-bedrock/src/genkit_amazon_bedrock/_embedders.py`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// Verified production-grade fix pattern:
-                    message=f'bedrock embed: document {index}: {_without_own_prefix(error.message)}',
-                        detail = _without_own_prefix(error.message)
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-                    message=f'bedrock embed: document {index}: {_without_own_prefix(error.original_message)}',
-                        detail = _without_own_prefix(error.original_message)
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7f44e2c3` are properly handled with clean fallback behavior.

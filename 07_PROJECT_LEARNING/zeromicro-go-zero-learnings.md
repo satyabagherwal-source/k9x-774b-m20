@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  
 > **Source**: github ([https://github.com/zeromicro/go-zero](https://github.com/zeromicro/go-zero))  
-> **Source Version**: `f753a411`  
+> **Source Version**: `f3be7b00`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T04:43:43.502Z  
+> **Timestamp**: 2026-10-31T20:23:13.564Z  
 > **Learning ID**: `learn-github-zeromicro-go-zero`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeromicro/go-zero](https://github.com/zeromicro/go-zero))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T04:38:40.968Z  
+> **Harvest Timestamp**: 2026-10-31T20:23:13.456Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cloud-native Go microservices framework with cli tool for productivity.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 33417 stars
+- **Stars / Engagement**: 33419 stars
 
 ---
 
@@ -1305,484 +1305,283 @@ func Gunzip(bs []byte) ([]byte, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f753a411` (2026-10-31)
-**Commit Message**: fix(deps): bump go.opentelemetry.io/otel/exporters/zipkin to v1.46.0 in tools/goctl (#5862)
+### Incident Patch 1: `963ae7ef` (2026-10-31)
+**Commit Message**: fix(rest): avoid unbounded gzip body dump on JWT auth failure (#5865)
 
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `tools/goctl/go.mod` (modified, +18/-17)
+**File**: `rest/handler/authhandler.go` (modified, +22/-0)
 ```diff
-@@ -40,10 +40,14 @@ require (
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/go-openapi/jsonpointer v1.0.0 // indirect
- 	github.com/go-openapi/jsonreference v1.0.1 // indirect
--	github.com/go-openapi/swag v0.23.1 // indirect
-+	github.com/go-openapi/swag v0.28.0 // indirect
-+	github.com/go-openapi/swag/cmdutils v0.28.0 // indirect
- 	github.com/go-openapi/swag/conv v0.29.1 // indirect
-+	github.com/go-openapi/swag/fileutils v0.28.0 // indirect
- 	github.com/go-openapi/swag/jsonutils v0.29.1 // indirect
- 	github.com/go-openapi/swag/loading v0.29.1 // indirect
-+	github.com/go-openapi/swag/mangling v0.28.0 // indirect
-+	github.com/go-openapi/swag/netutils v0.28.0 // indirect
- 	github.com/go-openapi/swag/pools v0.29.1 // indirect
- 	github.com/go-openapi/swag/stringutils v0.29.1 // indirect
- 	github.com/go-openapi/swag/typeutils v0.29.1 // indirect
-@@ -56,18 +60,16 @@ require (
- 	github.com/google/uuid v1.6.0 // indirect
- 	github.com/grafana/pyroscope-go v1.3.0 // indirect
- 	github.com/grafana/pyroscope-go/godeltaprof v0.1.10 // indirect
--	github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0 // indirect
-+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 // indirect
- 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
- 	github.com/jackc/pgpassfile v1.0.0 // indirect
- 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
- 	github.com/jackc/pgx/v5 v5.9.2 // indirect
- 	github.com/jackc/puddle/v2 v2.2.2 // indirect
--	github.com/josharian/intern v1.0.0 // indirect
- 	github.com/json-iterator/go v1.1.12 // indirect
- 	github.com/klauspost/compress v1.19.1 // indirect
- 	github.com/klauspost/cpuid/v2 v2.4.0 // indirect
- 	github.com/logrusorgru/aurora v2.0.3+incompatible // indirect
--	github.com/mailru/easyjson v0.9.2 // indirect
- 	github.com/mattn/go-colorable v0.1.15 // indirect
- 	github.com/mattn/go-isatty v0.0.24 // indirect
- 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
-@@ -92,16 +94,16 @@ require (
- 	go.etcd.io/etcd/client/pkg/v3 v3.5.21 // indirect
- 	go.etcd.io/etcd/client/v3 v3.5.21 // indirect
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
--	go.opentelemetry.io/otel v1.45.0 // indirect
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.43.0 // indirect
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.40.0 // indirect
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.43.0 // indirect
--	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.40.0 // indirect
--	go.opentelemetry.io/otel/exporters/zipkin v1.40.0 // indirect
--	go.opentelemetry.io/otel/metric v1.45.0 // indirect
--	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
--	go.opentelemetry.io/otel/trace v1.45.0 // indirect
--	go.opentelemetry.io/proto/otlp v1.10.0 // indirect
-+	go.opentelemetry.io/otel v1.46.0 // indirect
-+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.46.0 // indirect
-+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.46.0 // indirect
-+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.46.0 // indirect
-+	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.46.0 // indirect
-+	go.opentelemetry.io/otel/exporters/zipkin v1.46.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.46.0 // indirect
-+	go.opentelemetry.io/otel/sdk v1.46.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.46.0 // indirect
-+	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
- 	go.uber.org/atomic v1.11.0 // indirect
- 	go.uber.org/automaxprocs v1.6.0 // indirect
- 	go.uber.org/mock v0.6.0 // indirect
-@@ -115,11 +117,10 @@ require (
- 	golang.org/x/sys v0.47.0 // indirect
- 	golang.org/x/term v0.45.0 // indirect
- 	golang.org/x/time v0.14.0 // indirect
--	google.golang.org/genproto/googleapis/api v0.0.0-20260706201446-f0a921348800 // indirect
--	google.golang.org/genproto/googleapis/rpc v0.0.0-20260706201446-f0a921348800 // indirect
-+	google.golang.org/genproto/googleapis/api v0.0.0-20260819154853-08b0e4226688 // indirect
-+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260819154853-08b0e4226688 // indirect
- 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
- 	gopkg.in/inf.v0 v0.9.1 // indirect
--	gopkg.in/yaml.v3 v3.0.1 // indirect
- 	k8s.io/api v0.34.3 // indirect
- 	k8s.io/apimachinery v0.34.3 // indirect
- 	k8s.io/client-go v0.34.3 // indirect
+@@ -1,8 +1,10 @@
+ package handler
+ 
+ import (
++	"bytes"
+ 	"context"
+ 	"errors"
++	"io"
+ 	"net/http"
+ 	"net/http/httputil"
+ 
+@@ -98,6 +100,26 @@ func WithUnauthorizedCallback(callback UnauthorizedCallback) AuthorizeOption {
+ }
+ 
+ func detailAuthLog(r *http.Request, reason string) {
++	// Cap the body read for the dump so that an attacker cannot force the
++	// server to fully read/decompress (e.g. a gzip-encoded) request body
++	// just by failing authentication. See GHSA-h4vj-585c-2r8x.
++	if r.Body != nil {
++		body := r.Body
++		var prefix bytes.Buffer
++		r.Body = io.NopCloser(io.LimitReader(io.TeeReader(body, &prefix), limitDetailedBodyBytes))
++		// Replay only the bytes consumed for logging, then continue reading the
++		// original body so unauthorized callbacks can still read the full request.
++		defer func() {
++			r.Body = struct {
++				io.Reader
++				io.Closer
++			}{
++				Reader: io.MultiReader(&prefix, body),
++				Closer: body,
++			}
++		}()
++	}
++
+ 	// discard dump error, only for debug purpose
+ 	details, _ := httputil.DumpRequest(r, true)
+ 	logc.Errorf(r.Context(), "authorize failed: %s\n=> %+v", reason, string(details))
 ```
 
-**File**: `tools/goctl/go.sum` (modified, +38/-34)
+**File**: `rest/handler/authhandler_test.go` (modified, +109/-0)
 ```diff
-@@ -45,16 +45,24 @@ github.com/go-openapi/jsonreference v1.0.1 h1:4zJ7AmYDKNmD3aSpfPnFNCFA5E80/xMHUN
- github.com/go-openapi/jsonreference v1.0.1/go.mod h1:dYplQXa6p5lXprLcJ8LE2iU7vNpXsAHDQ5ZAgL+Qx3A=
- github.com/go-openapi/spec v1.0.0 h1:JtB/GHOj+eetjse6YvxqLze88oEekl/4uPBethvzRrA=
- github.com/go-openapi/spec v1.0.0/go.mod h1:boj1PRhqS0x5jylgcNp9BRWxenphrh7vVNYZ90IRCoo=
--github.com/go-openapi/swag v0.23.1 h1:lpsStH0n2ittzTnbaSloVZLuB5+fvSY/+hnagBjSNZU=
--github.com/go-openapi/swag v0.23.1/go.mod h1:STZs8TbRvEQQKUA+JZNAm3EWlgaOBGpyFDqQnDHMef0=
-+github.com/go-openapi/swag v0.28.0 h1:xkgbOSKj6DZziNpyqRRAOt3GJGtgjgsd2RoyT30VWuw=
-+github.com/go-openapi/swag v0.28.0/go.mod h1:4qYnT3Cqr1p1VknOdPo70evN4rgQnAg6jwApHyxSGIg=
-+github.com/go-openapi/swag/cmdutils v0.28.0 h1:7TOeNtkYru1SG8Y34tDh9WBbLsMqGnptuxWiHREPZ4Q=
-+github.com/go-openapi/swag/cmdutils v0.28.0/go.mod h1:Sm1MVFMkF6guJJ+pQqHnQA3N0j9qALV3NxzDSv6bETM=
- github.com/go-openapi/swag/conv v0.29.1 h1:AC4Eh/5c/eUDOUCzzsRC9ghmFgOSBHeRMGIngY0ZUGA=
- github.com/go-openapi/swag/conv v0.29.1/go.mod h1:S1X7/ZrBEZOC0Wc8AGxjbcGS92l3WEjA7aPtpl+RaqM=
-+github.com/go-openapi/swag/fileutils v0.28.0 h1:Z04XWQD7R8Eq+7GnOrjovBxPPmZzsS4gt2H2GPGIViU=
-+github.com/go-openapi/swag/fileutils v0.28.0/go.mod h1:VvJFZLTZS0AI854gEQz5tk7dBESdLjiNUMSZ/th2ry8=
- github.com/go-openapi/swag/jsonutils v0.29.1 h1:AFCxs0eQZ24/QyfhVHM2t49rMz7Vv3XCsZQI6yrNy+c=
- github.com/go-openapi/swag/jsonutils v0.29.1/go.mod h1:u3+sCfJpttDpcmS5kpm0yxL6GK0eWgODsx8Yw8fcqNM=
- github.com/go-openapi/swag/jsonutils/fixtures_test v0.29.1 h1:BiiXE31Bx9SfpsMmOQj5KYpUhTZBpLVriVhJDuLuY2o=
- github.com/go-openapi/swag/jsonutils/fixtures_test v0.29.1/go.mod h1:julgTUKZ9/D0j6O7GKajmRs+812FWxQg/mMpGunWSjg=
- github.com/go-openapi/swag/loading v0.29.1 h1:FCv5fG8UhTdDJa2R7w+5O9Ekpcbw7tt0nFWvmDKGBjc=
- github.com/go-openapi/swag/loading v0.29.1/go.mod h1:N0ESuem4p2oedKal8EJhciqnJ9Q9Wmt83L1CRB3Fouw=
-+github.com/go-openapi/swag/mangling v0.28.0 h1:pH8eyeNO9SLYsTMWJrurnNfKmDa28XrlA+HePVD53VM=
-+github.com/go-openapi/swag/mangling v0.28.0/go.mod h1:jtBE2+V+3pILxOR7Vgce+Cwp6A2PgZbvVqfNntbVs0w=
-+github.com/go-openapi/swag/netutils v0.28.0 h1:YXN6TALEi2pzts8/8GNm6T61HTAZsieukGZidap989k=
-+github.com/go-openapi/swag/netutils v0.28.0/go.mod h1:J+WYyFMLtvtCGqa6jLv+YNUmIKI3ZRQRrvfNDMoQoEQ=
- github.com/go-openapi/swag/pools v0.29.1 h1:NRogYxdEW9SjRM4mkAOji9iefO4MRXq3p/ZJcoQbUKg=
- github.com/go-openapi/swag/pools v0.29.1/go.mod h1:leDcaghjkRAhCuCRv9NfJU5f0mjoU3cT/XZObhMk3pc=
- github.com/go-openapi/swag/stringutils v0.29.1 h1:1ykunK7iJQk1uOO7+oUH1ukbsK85fFCOiCFMOVSY+F0=
-@@ -93,8 +101,8 @@ github.com/grafana/pyroscope-go v1.3.0 h1:t3Jehad8vvqN4oRAB0LdmfQ5ZSUXQw3asoft+K
- github.com/grafana/pyroscope-go v1.3.0/go.mod h1:XA7I3usNx+UdjOZfQnl1WV8y924vsJo9KIVrKB+9jx4=
- github.com/grafana/pyroscope-go/godeltaprof v0.1.10 h1:dvhndEbyavTb59vFCd6PsrAG5qi69/qZZtegh/TJKSY=
- github.com/grafana/pyroscope-go/godeltaprof v0.1.10/go.mod h1:XnWRGg2XO5uxZdiz1rfeJH6w1eZ+YICCBVXNWOfH86g=
--github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0 h1:HWRh5R2+9EifMyIHV7ZV+MIZqgz+PMpZ14Jynv3O2Zs=
--github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0/go.mod h1:JfhWUomR1baixubs02l85lZYYOm7LV6om4ceouMv45c=
-+github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 h1:/Tnpcb2E0Pz/tN9s3bfEY2Q8ePCEX9iuS+cneUwncnw=
-+github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0/go.mod h1:zOBXOsUaBSjKgmH4OGzV1esUpR3oUSCPYVd2cUBjKYY=
- github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542 h1:2VTzZjLZBgl62/EtslCrtky5vbi9dd7HrQPQIx6wqiw=
- github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542/go.mod h1:Ow0tF8D4Kplbc8s8sSb3V2oUCygFHVp8gC3Dn6U4MNI=
- github.com/iancoleman/strcase v0.3.0 h1:nTXanmYxhfFAMjZL34Ov6gkzEsSJZ5DbhxWjvSASxEI=
-@@ -109,8 +117,6 @@ github.com/jackc/pgx/v5 v5.9.2 h1:3ZhOzMWnR4yJ+RW1XImIPsD1aNSz4T4fyP7zlQb56hw=
- github.com/jackc/pgx/v5 v5.9.2/go.mod h1:mal1tBGAFfLHvZzaYh77YS/eC6IX9OWbRV1QIIM0Jn4=
- github.com/jackc/puddle/v2 v2.2.2 h1:PR8nw+E/1w0GLuRFSmiioY6UooMp6KJv0/61nB7icHo=
- github.com/jackc/puddle/v2 v2.2.2/go.mod h1:vriiEXHvEE654aYKXXjOvZM39qJ0q+azkZFrfEOc3H4=
--github.com/josharian/intern v1.0.0 h1:vlS4z54oSdjm0bgjRigI+G1HpF+tI+9rE5LLzOg8HmY=
--github.com/josharian/intern v1.0.0/go.mod h1:5DoeVV0s6jJacbCEi61lwdGj/aVlrQvzHFFd8Hwg//Y=
- github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=
- github.com/json-iterator/go v1.1.12/go.mod h1:e30LSqwooZae/UwlEbR2852Gd8hjQvJoHmT4TnhNGBo=
- github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
-@@ -128,8 +134,6 @@ github.com/kylelemons/godebug v1.1.0 h1:RPNrshWIDI6G2gRW9EHilWtl7Z6Sb1BR0xunSBf0
- github.com/kylelemons/godebug v1.1.0/go.mod h1:9/0rRGxNHcop5bhtWyNeEfOS8JIWk580+fNqagV/RAw=
- github.com/logrusorgru/aurora v2.0.3+incompatible h1:tOpm7WcpBTn4fjmVfgpQq0EfczGlG91VSDkswnjF5A8=
- github.com/logrusorgru/aurora v2.0.3+incompatible/go.mod h1:7rIyQOR62GCctdiQpZ/zOJlFyk6y+94wXzv6RNZgaR4=
--github.com/mailru/easyjson v0.9.2 h1:dX8U45hQsZpxd80nLvDGihsQ/OxlvTkVUXH2r/8cb2M=
--github.com/mailru/ea
+@@ -2,6 +2,9 @@ package handler
+ 
+ import (
+ 	"bufio"
++	"bytes"
++	"compress/gzip"
++	"io"
+ 	"net"
+ 	"net/http"
+ 	"net/http/httptest"
+@@ -31,6 +34,112 @@ func TestAuthHandlerFailed(t *testing.T) {
+ 	assert.Equal(t, http.StatusUnauthorized, resp.Code)
+ }
+ 
++type countingReadCloser struct {
++	io.Reader
++	total  int64
++	closed bool
++}
++
++func (c *countingReadCloser) Read(p []byte) (int, error) {
++	n, err := c.Reader.Read(p)
++	c.total += int64(n)
++	return n, err
++}
++
++func (c *countingReadCloser) Close() error {
++	c.closed = true
++	return nil
++}
++
++func TestAuthHandlerUnauthorizedCallbackBody(t *testing.T) {
++	for _, tc := range []struct {
++		name string
++		size int
++	}{
++		{name: "empty"},
++		{name: "small", size: 128},
++		{name: "limit", size: limitDetailedBodyBytes},
++		{name: "large", size: limitDetailedBodyBytes * 2},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			for _, encoding := range []string{"plain", "gzip"} {
++				t.Run(encoding, func(t *testing.T) {
++					payload := bytes.Repeat([]byte("a"), tc.size)
++					var packed bytes.Buffer
++					var input io.Reader = bytes.NewReader(payload)
++					if encoding == "gzip" {
++						zw := gzip.NewWriter(&packed)
++						_, err := zw.Write(payload)
++						assert.NoError(t, err)
++						assert.NoError(t, zw.Close())
++						input = &packed
++					}
++
++					body := &countingReadCloser{Reader: input}
++					req := httptest.NewRequest(http.MethodPost, "http://localhost", nil)
++					req.Body = body
++					if encoding == "gzip" {
++						req.Header.Set("Content-Encoding", "gzip")
++					}
++
++					var called bool
++					handler := GunzipHandler(Authorize("secret", WithUnauthorizedCallback(
++						func(w http.ResponseWriter, r *http.Request, err error) {
++							called = true
++							assert.Error(t, err)
++							assert.False(t, body.closed)
++							got, readErr := io.ReadAll(r.Body)
++							assert.NoError(t, readErr)
++							assert.Equal(t, payload, got)
++							assert.NoError(t, r.Body.Close())
++							if encoding == "plain" {
++								assert.True(t, body.closed)
++							}
++						}))(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++						t.Error("unauthorized request reached the handler")
++					})))
++
++					resp := httptest.NewRecorder()
++					handler.ServeHTTP(resp, req)
++					assert.True(t, called)
++					assert.Equal(t, http.StatusUnauthorized, resp.Code)
++				})
++			}
++		})
++	}
++}
++
++// TestAuthHandlerFailedWithGzipBody guards against GHSA-h4vj-585c-2r8x: a
++// failed JWT authentication must not force the server to read/decompress
++// the full (potentially huge) gzip-encoded request body just to log it.
++func TestAuthHandlerFailedWithGzipBody(t *testing.T) {
++	// highly compressible payload, so a small compressed input unpacks to
++	// a payload far larger than the detailed-log limit.
++	plain := bytes.Repeat([]byte("A"), 16<<20) // 16 MiB decompressed
++	var packed bytes.Buffer
++	zw := gzip.NewWriter(&packed)
++	_, err := zw.Write(plain)
++	assert.Nil(t, err)
++	assert.Nil(t, zw.Close())
++
++	counter := &countingReadCloser{Reader: bytes.NewReader(packed.Bytes())}
++	req := httptest.NewRequest(http.MethodPost, "http://localhost", nil)
++	req.Body = counter
++	req.Header.Set("Content-Encoding", "gzip")
++
++	handler := GunzipHandler(Authorize("B63F477D-BBA3-4E52-96D3-C0034C27694A")(
++		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++			w.WriteHeader(http.StatusOK)
++		})))
++
++	resp := httptest.NewRecorder()
++	handler.ServeHTTP(resp, req)
++	assert.Equal(t, http.StatusUnauthorized, resp.Code)
++	// the compressed bytes actually consumed must stay far below the full
++	// compressed payload size, proving the body wasn't fully decompressed.
++	assert.Less(t, counter.total, int64(packed.Len()))
++}
++
+ func TestAuthHandler(t *testing.T) {
+ 	const key = "B63F477D-BBA3-4E52-96D3-C0034C27694A"
+ 	req := httptest.NewRequest(http.MethodGet, "http://localhost", http.NoBody)
 ```
 
 ---
 
-### Incident Patch 2: `551eaf71` (2026-10-30)
-**Commit Message**: fix(zrpc): clarify Kubernetes EndpointSlice RBAC errors (#5710)
+### Incident Patch 2: `f3be7b00` (2026-10-31)
+**Commit Message**: fix: preserve YAML null values (#5816)
+
+**File**: `internal/encoding/encoding.go` (modified, +1/-1)
+```diff
+@@ -120,7 +120,7 @@ func toStringKeyMap(v any) any {
+ 		return convertSlice(v)
+ 	case map[any]any:
+ 		return convertKeyToString(v)
+-	case bool, string:
++	case nil, bool, string:
+ 		return v
+ 	case int, uint, int8, uint8, int16, uint16, int32, uint32, int64, uint64, float32, float64:
+ 		return convertNumberToJsonNumber(v)
+```
+
+**File**: `internal/encoding/encoding_test.go` (modified, +9/-0)
+```diff
+@@ -118,6 +118,15 @@ func TestYamlToJsonSlice(t *testing.T) {
+ `, string(b))
+ }
+ 
++func TestYamlToJsonNull(t *testing.T) {
++	b, err := YamlToJson([]byte(`top: null
++nested:
++  value: ~
++items: [null]`))
++	assert.NoError(t, err)
++	assert.JSONEq(t, `{"top":null,"nested":{"value":null},"items":[null]}`, string(b))
++}
++
+ func TestJson5ToJson(t *testing.T) {
+ 	tests := []struct {
+ 		name   string
+```
+
+---
+
+### Incident Patch 3: `5e318f9f` (2026-10-31)
+**Commit Message**: fix(iox): close redirected pipe on restore (#5827)
 
 Co-authored-by: kevin <[REDACTED_EMAIL]>
-Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
 
-**File**: `readme.md` (modified, +24/-0)
+**File**: `core/iox/pipe.go` (modified, +2/-0)
 ```diff
-@@ -230,6 +230,30 @@ For clients that use MCP tools, such as Claude Desktop, configure **[mcp-zero](h
-    ...
-    ```
+@@ -17,6 +17,8 @@ func RedirectInOut() (restore func(), err error) {
+ 	restore = func() {
+ 		os.Stdin = or
+ 		os.Stdout = ow
++		_ = r.Close()
++		_ = w.Close()
+ 	}
  
-+## Kubernetes RPC discovery
-+
-+RPC clients can discover services inside Kubernetes by using the `k8s` target
-+scheme:
-+
-+```go
-+c := zrpc.RpcClientConf{
-+    NonBlock: true,
-+    Target:   "k8s://dev/demo-rpc:8080",
-+}
-+```
-+
-+The target format is `k8s://<namespace>/<service>:<port>`. If the namespace is
-+omitted, `default` is used. The resolver runs in-cluster and reads Kubernetes
-+EndpointSlices, so the service account used by the client must be allowed to
-+read EndpointSlices in the target namespace:
-+
-+```yaml
-+rules:
-+  - apiGroups: ["discovery.k8s.io"]
-+    resources: ["endpointslices"]
-+    verbs: ["list", "watch"]
-+```
-+
- ## Benchmark
- 
- ![benchmark](https://raw.githubusercontent.com/zeromicro/zero-doc/main/doc/images/benchmark.png)
+ 	return
 ```
 
-**File**: `zrpc/resolver/internal/kubebuilder.go` (modified, +35/-8)
+**File**: `core/iox/pipe_test.go` (modified, +20/-2)
 ```diff
-@@ -11,17 +11,30 @@ import (
- 	"github.com/zeromicro/go-zero/core/threading"
- 	"github.com/zeromicro/go-zero/zrpc/resolver/internal/kube"
- 	"google.golang.org/grpc/resolver"
-+	apierrors "k8s.io/apimachinery/pkg/api/errors"
- 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/client-go/informers"
- 	"k8s.io/client-go/kubernetes"
- 	"k8s.io/client-go/rest"
-+	"k8s.io/client-go/tools/cache"
- )
- 
- const (
- 	resyncInterval  = 5 * time.Minute
- 	serviceSelector = "kubernetes.io/service-name="
- )
- 
-+var (
-+	inClusterConfig = rest.InClusterConfig
-+	newKubeClient   = func(config *rest.Config) (kubernetes.Interface, error) {
-+		return kubernetes.NewForConfig(config)
-+	}
-+	addEndpointSliceEventHandler = func(informer cache.SharedIndexInformer, handler cache.ResourceEventHandler) error {
-+		_, err := informer.AddEventHandler(handler)
-+		return err
-+	}
-+)
-+
- type kubeResolver struct {
- 	cc     resolver.ClientConn
- 	inf    informers.SharedInformerFactory
-@@ -49,12 +62,12 @@ func (b *kubeBuilder) Build(target resolver.Target, cc resolver.ClientConn,
- 		return nil, err
- 	}
- 
--	config, err := rest.InClusterConfig()
-+	config, err := inClusterConfig()
- 	if err != nil {
- 		return nil, err
- 	}
- 
--	cs, err := kubernetes.NewForConfig(config)
-+	cs, err := newKubeClient(config)
- 	if err != nil {
- 		return nil, err
- 	}
-@@ -65,7 +78,7 @@ func (b *kubeBuilder) Build(target resolver.Target, cc resolver.ClientConn,
- 				LabelSelector: serviceSelector + svc.Name,
- 			})
- 		if err != nil {
--			return nil, err
-+			return nil, wrapEndpointSliceListError(svc, err)
- 		}
- 		if len(endpointSlices.Items) == 0 {
- 			return nil, fmt.Errorf("no endpoint slices found for service %s in namespace %s",
-@@ -106,11 +119,9 @@ func (b *kubeBuilder) Build(target resolver.Target, cc resolver.ClientConn,
- 	})
- 	inf := informers.NewSharedInformerFactoryWithOptions(cs, resyncInterval,
- 		informers.WithNamespace(svc.Namespace),
--		informers.WithTweakListOptions(func(options *v1.ListOptions) {
--			options.LabelSelector = serviceSelector + svc.Name
--		}))
-+		informers.WithTweakListOptions(endpointSliceTweakListOptions(svc.Name)))
- 	in := inf.Discovery().V1().EndpointSlices()
--	_, err = in.Informer().AddEventHandler(handler)
-+	err = addEndpointSliceEventHandler(in.Informer(), handler)
- 	if err != nil {
- 		return nil, err
- 	}
-@@ -122,7 +133,7 @@ func (b *kubeBuilder) Build(target resolver.Target, cc resolver.ClientConn,
- 			LabelSelector: serviceSelector + svc.Name,
- 		})
- 	if err != nil {
--		return nil, err
-+		return nil, wrapEndpointSliceListError(svc, err)
- 	}
- 
- 	// Aggregate endpoints from all EndpointSlices.
-@@ -144,3 +155,19 @@ func (b *kubeBuilder) Build(target resolver.Target, cc resolver.ClientConn,
- func (b *kubeBuilder) Scheme() string {
- 	return KubernetesScheme
- }
-+
-+func endpointSliceTweakListOptions(service string) func(*v1.ListOptions) {
-+	return func(options *v1.ListOptions) {
-+		options.LabelSelector = serviceSelector + service
-+	}
-+}
-+
-+func wrapEndpointSliceListError(svc kube.Service, err error) error {
-+	if apierrors.IsForbidden(err) {
-+		return fmt.Errorf("failed to list EndpointSlices for Kubernetes service %q in namespace %q: %w; "+
-+			"the k8s resolver requires list/watch permissions on endpointslices.discovery.k8s.io",
-+			svc.Name, svc.Namespace, err)
-+	}
-+
-+	return err
-+}
-```
-
-**File**: `zrpc/resolver/internal/kubebuilder_test.go` (modified, +162/-0)
-```diff
-@@ -1,12 +1,25 @@
-+//go:build !no_k8s
-+
- package internal
+@@ -1,13 +1,31 @@
+ package iox
  
  import (
-+	"errors"
- 	"fmt"
- 	"net/url"
++	"os"
  	"testing"
  
  	"github.com/stretchr/testify/assert"
-+	"github.com/zeromicro/go-zero/zrpc/resolver/internal/kube"
- 	"google.golang.org/grpc/resolver"
-+	apierrors "k8s.io/apimachinery/pkg/api/errors"
-+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/runtime/schema"
-+	"k8s.io/client-go/kubernetes"
-+	k8sfake "k8s.io/client-go/kubernetes/fake"
-+	"k8s.io/client-go/rest"
-+	ktesting "k8s.io/client-go/testing"
-+	"k8s.io/client-go/tools/cache"
++	"github.com/stretchr/testify/require"
  )
  
- func TestKubeBuilder_Scheme(t *testing.T) {
-@@ -32,3 +45,152 @@ func TestKubeBuilder_Build(t *testing.T) {
- 	}, nil, resolver.BuildOptions{})
- 	assert.Error(t, err)
+ func TestRedirectInOut(t *testing.T) {
++	originalStdin, originalStdout := os.Stdin, os.Stdout
+ 	restore, err := RedirectInOut()
+-	assert.Nil(t, err)
+-	defer restore()
++	require.NoError(t, err)
++
++	stdin, stdout := os.Stdin, os.Stdout
++	t.Cleanup(func() {
++		restore()
++		// Also clean up when testing an implementation that leaks the pipe.
++		_ = stdin.Close()
++		_ = stdout.Close()
++	})
++
++	restore()
++	assert.Same(t, originalStdin, os.Stdin)
++	assert.Same(t, originalStdout, os.Stdout)
++	_, err = stdin.Stat()
++	assert.ErrorIs(t, err, os.ErrClosed)
++	_, err = stdout.Stat()
++	assert.ErrorIs(t, err, os.ErrClosed)
  }
-+
-+func TestKubeBuilder_BuildReturnsKubeClientError(t *testing.T) {
-+	restoreConfig := mockKubeConfig(t)
-+	defer restoreConfig()
-+
-+	sentinel := errors.New("kube client failed")
-+	oldNewClient := newKubeClient
-+	defer func() {
-+		newKubeClient = oldNewClient
-+	}()
-+	newKubeClient = func(*rest.Config) (kubernetes.Interface, error) {
-+		return nil, sentinel
-+	}
-+
-+	var b kubeBuilder
-+	u, err := url.Parse("k8s://dev/demo-rpc:8080")
-+	assert.NoError(t, err)
-+
-+	_, err = b.Build(resolver.Target{URL: *u}, nil, resolver.BuildOptions{})
-+	assert.ErrorIs(t, err, sentinel)
-+}
-+
-+func TestKubeBuilder_BuildReturnsAddEventHandlerError(t *testing.T) {
-+	restoreConfig := mockKubeConfig(t)
-+	defer restoreConfig()
-+
-+	sentinel := errors.New("add event handler failed")
-+	restoreHandler := mockEndpointSliceEventHandler(t, sentinel)
-+	defer restoreHandler()
-+
-+	var b kubeBuilder
-+	u, err := url.Parse("k8s://dev/demo-rpc:8080")
-+	assert.NoError(t, err)
-+
-+	_, err = b.Build(resolver.Target{URL: *u}, nil, resolver.BuildOptions{})
-+	assert.ErrorIs(t, err, sentinel)
-+}
-+
-+func TestKubeBuilder_BuildWrapsFirstEndpointSliceListError(t *testing.T) {
-+	restore := mockKubeClient(t)
-+	defer restore()
-+
-+	var b kubeBuilder
-+	u, err := url.Parse("k8s://dev/demo-rpc")
-+	assert.NoError(t, err)
-+
-+	_, err = b.Build(resolver.Target{URL: *u}, nil, resolver.BuildOptions{})
-+	assert.Error(t, err)
-+	assert.Contains(t, err.Error(), "failed to list EndpointSlices")
-+	assert.Contains(t, err.Error(), "list/watch permissions")
-+}
-+
-+func TestKubeBuilder_BuildWrapsSecondEndpointSliceListError(t *testing.T) {
-+	restore := mockKubeClient(t)
-+	defer restore()
-+
-+	var b kubeBuilder
-+	u, err := url.Parse("k8s://dev/demo-rpc:8080")
-+	assert.NoError(t, err)
-+
-+	_, err = b.Build(resolver.Target{URL: *u}, nil, resolver.BuildOptions{})
-+	assert.Error(t, err)
-+	assert.Contains(t, err.Error(), "failed to list EndpointSlices")
-+	assert.Contains(t, err.Error(), "list/watch permissions")
-+}
-+
-+func TestWrapEndpointSliceListError(t *testing.T) {
-+	svc := kube.Service{
-+		Namespace: "dev",
-+		Name:      "demo-rpc",
-+	}
-+	forbidden := apierrors.NewForbidden(
-+		schema.GroupResource{Group: "discovery.k8s.io", Resource: "endpointslices"},
-+		svc.Name,
-+		fmt.Errorf("forbidden"),
-+	)
-+
-+	err := wrapEndpointSliceListError(svc, forbidden)
-+	assert.Error(t, err)
-+	assert.Contains(t, err.Error(), "EndpointSlices")
-+	assert.Contains(t, err.Error(), "endpointslices.discovery.k8s.io")
-+	assert.Contains(t, err.Error(), "list/watch")
-+}
-+
-+func TestWrapEndpointSliceListErrorOther(t *testing.T) {
-+	svc := kube.Service{
-+		Namespace: "dev",
-+		Name:      "demo-rpc",
-+	}
-+	err := errors.New("not forbidden")
-+	assert.Same(t, err, wrapEndpointSliceListError(svc, err))
-+}
-+
-+func TestEndpointSliceTweakListOptions(t *testing.T) {
-+	var options v1.ListOptions
-+	endpointSliceTweakListOptions("demo-rpc")(&options)
-+	assert.Equal(t, serviceSelector+"demo-rpc", options.LabelSelector)
-+}
-+
-+func mockKubeClient(t *testing.T) func() {
-+	t.Helper()
-+
-+	restoreConfig := mockKubeConfig(t)
-+	oldNewClient := newKubeClient
-+
-+	newKubeClient = func(*rest.Config) (kubernetes.Interface, error) {
-+		cli := k8sfake.NewSimpleClientset()
-+		cli.PrependReactor("list", "endpointslices", func(action ktesting.Action) (bool, runtime.Object, error) {
-+			_ = action
-+			return true, nil, apierrors.NewForbidden(
-+				schema.GroupResource{Group: "discovery.k8s.io", Resource: "endpointslices"},
-+				"demo-rpc",
-+				fmt.Errorf("forbidden"),
-+			)
-+		})
-+		return cli, nil
-+	}
-+
-+	return func() {
-+		restoreConfig()
-+		newKubeClient = oldNewClient
-+	}
-+}
-+
-+func mockKubeConfig(t *testing.T) func() {
-+	t.Helper()
-+
-+	oldConfig := inClusterConfig
-+	inClusterConfig = func() (*rest.Config, error) {
-+		return &rest.Config{Host: "https://127.0.0.1"}, nil
-+	}
-+
-+	return func() {
-+		inClusterConfig = oldConfig
-+	}
-+}
-+
-+func mockEndpointSliceEventHandler(t *testing.T, err error) func() {
-+	t.Helper()
-+
-+	oldAddHandler := addEndpointSliceEventHandler
-+	addEndpointSliceEventHandler = func(cache.SharedIndexInformer, cache.ResourceEventHandler) error {
-+		return err
-+	}
-+
-+	return func() {
-+		addEndpointSliceEventHandler = oldAddHandler
-+	}
-+}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5865** (2026-10-31): fix(rest): avoid unbounded gzip body dump on JWT auth failure (@kevwan)
 - **PR #5862** (2026-10-31): fix(deps): bump go.opentelemetry.io/otel/exporters/zipkin to v1.46.0 in tools/goctl (@kevwan)
+- **PR #5861** (closed): chore(deps): bump golang.org/x/net from 0.58.0 to 0.62.0 (@dependabot[bot])
+- **PR #5860** (closed): chore(deps): bump google.golang.org/grpc from 1.84.0 to 1.85.0 in /tools/goctl (@dependabot[bot])
+- **PR #5859** (closed): chore(deps): bump google.golang.org/grpc from 1.84.0 to 1.85.0 (@dependabot[bot])
 - **PR #5858** (2026-10-30): chore(deps): bump github.com/go-jose/go-jose/v4 from 4.1.4 to 4.1.6 in the go_modules group across 1 directory (@dependabot[bot])
-- **PR #5850** (2026-10-30): chore(deps): bump github/codeql-action from 4.39.0 to 4.39.1 (@dependabot[bot])
-- **PR #5849** (closed): chore(deps): bump go.etcd.io/etcd/client/v3 from 3.6.14 to 3.7.3 (@dependabot[bot])
-- **PR #5846** (closed): ci: add merge_group trigger to CodeQL and Go workflows (@kevwan)
-- **PR #5845** (2026-10-24): fix(ci): run required workflows for merge queue (@kevwan)
 
 ---
 
@@ -1802,61 +1601,49 @@ Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump go.opentelemetry.io/otel/exporters/zipkin to v1.46.0 in tools/goctl 
+## X. rest): avoid unbounded gzip body dump on JWT auth failure (#5865)
 
 **RULE**:
-When implementing operations in `tools/goctl/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeromicro/go-zero. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rest/handler/authhandler.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeromicro/go-zero. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f753a411`: deps): bump go.opentelemetry.io/otel/exporters/zipkin to v1.46.0 in tools/goctl (#5862). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `963ae7ef`: rest): avoid unbounded gzip body dump on JWT auth failure (#5865). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/goctl/go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `rest/handler/authhandler.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/go-openapi/swag v0.28.0 // indirect
-	github.com/go-openapi/swag/cmdutils v0.28.0 // indirect
-	github.com/go-openapi/swag/fileutils v0.28.0 // indirect
-	github.com/go-openapi/swag/mangling v0.28.0 // indirect
-	github.com/go-openapi/swag/netutils v0.28.0 // indirect
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 // indirect
-	go.opentelemetry.io/otel v1.46.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.46.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.46.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.46.0 // indirect
-	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.46.0 // indirect
-	go.opentelemetry.io/otel/exporters/zipkin v1.46.0 // indirect
-	go.opentelemetry.io/otel/metric v1.46.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.46.0 // indirect
-	go.opentelemetry.io/otel/trace v1.46.0 // indirect
-	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260819154853-08b0e4226688 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260819154853-08b0e4226688 // indirect
+	"bytes"
+	"io"
+	// Cap the body read for the dump so that an attacker cannot force the
+	// server to fully read/decompress (e.g. a gzip-encoded) request body
+	// just by failing authentication. See GHSA-h4vj-585c-2r8x.
+	if r.Body != nil {
+		body := r.Body
+		var prefix bytes.Buffer
+		r.Body = io.NopCloser(io.LimitReader(io.TeeReader(body, &prefix), limitDetailedBodyBytes))
+		// Replay only the bytes consumed for logging, then continue reading the
+		// original body so unauthorized callbacks can still read the full request.
+		defer func() {
+			r.Body = struct {
+				io.Reader
+				io.Closer
+			}{
+				Reader: io.MultiReader(&prefix, body),
+				Closer: body,
+			}
+		}()
+	}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/go-openapi/swag v0.23.1 // indirect
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0 // indirect
-	github.com/josharian/intern v1.0.0 // indirect
-	github.com/mailru/easyjson v0.9.2 // indirect
-	go.opentelemetry.io/otel v1.45.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.43.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.40.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.43.0 // indirect
-	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.40.0 // indirect
-	go.opentelemetry.io/otel/exporters/zipkin v1.40.0 // indirect
-	go.opentelemetry.io/otel/metric v1.45.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
-	go.opentelemetry.io/otel/trace v1.45.0 // indirect
-	go.opentelemetry.io/proto/otlp v1.10.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260706201446-f0a921348800 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260706201446-f0a921348800 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f753a411` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `963ae7ef` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T20:11:52.005Z",
+  "last_updated": "2026-10-31T20:23:17.433Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14310,8 +14310,8 @@
       "slug": "genkit-ai-genkit",
       "platform": "github",
       "source_url": "https://github.com/genkit-ai/genkit",
-      "source_version": "7f44e2c3",
-      "content_hash": "38edc13efc9e41da1d61fd821048c0450775aed5bc5add98d51e9241db9d7406",
+      "source_version": "1eb9489f",
+      "content_hash": "877eace18dafe06ee9427dd0a6775e13a6c46edeaa2c0055e7c08a18078d662f",
       "dossier_path": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "promoted_rules": [
@@ -14381,7 +14381,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T03:45:34.813Z",
+      "verified_at": "2026-10-31T20:23:17.406Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26527,10 +26527,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
       "source_version": "hf-mudler-locate-anything.cpp-gguf",
-      "content_hash": "273c5e57fbbf8c9aa13b8251145d8decb017644177a0395c07e7ac47b123b532",
+      "content_hash": "c2c27e227605cfd24e8d53b39ea90bc0e0267982fd2cb817ff654633ba5c9650",
       "dossier_path": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
       "promoted_rules": [
+        {
+          "number": 677,
+          "title": "Selective Precision Preservation in Hybrid Vision-Language Models",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 678,
           "title": "Zero-Python Inference Boundary",
@@ -26610,6 +26615,11 @@
           "number": 5372,
           "title": "Parity-Gated Deployment for C++/Python Migration",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6308,
+          "title": "The \"No-Python\" Inference Boundary",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -26629,7 +26639,7 @@
         "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4177m8",
         "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4f5wy1"
       ],
-      "verified_at": "2026-10-28T18:48:40.209Z",
+      "verified_at": "2026-10-31T20:23:13.069Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54076,8 +54086,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "6c6dd62b",
-      "content_hash": "fae376171272a37b292a8f23d648c2a7f51d0094b1e29e0082f2a18df8fc9daf",
+      "source_version": "49aa9c85",
+      "content_hash": "508a41d242219a8541d4a67901411f4d5374e23abb0e95cde77b4be300bd1a25",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -54215,6 +54225,11 @@
           "number": 6196,
           "title": "ipn/store/kubestore: omit ARI replaces for unstamped shared certs (#22053)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6310,
+          "title": "feature/conn25: store tokens from DNS response and pass them back in",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54222,7 +54237,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T12:46:56.337Z",
+      "verified_at": "2026-10-31T20:23:15.421Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60281,8 +60296,8 @@
       "slug": "zeromicro-go-zero",
       "platform": "github",
       "source_url": "https://github.com/zeromicro/go-zero",
-      "source_version": "f753a411",
-      "content_hash": "7b3dab45360738bed725c2c397eb6b6a063ce8c72379025a5908c31619dd2cc3",
+      "source_version": "f3be7b00",
+      "content_hash": "684cab988fceb93b29ef291472a02c19fc67a21fb67d5af076c9c61c787d90b2",
       "dossier_path": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
       "promoted_rules": [
@@ -60320,6 +60335,11 @@
           "number": 6073,
           "title": "deps): bump go.opentelemetry.io/otel/exporters/zipkin to v1.46.0 in tools/goctl",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6309,
+          "title": "rest): avoid unbounded gzip body dump on JWT auth failure (#5865)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60327,7 +60347,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T04:43:44.130Z",
+      "verified_at": "2026-10-31T20:23:14.177Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -79355,15 +79375,15 @@
       "learning_id": "rule-677",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 677,
-      "title": "Selective Precision Preservation in Hybrid Vision-Language Models (Harvested from mudler/locate-anything.cpp-gguf)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Selective Precision Preservation in Hybrid Vision-Language Models",
+      "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
+      "source_version": "hf-mudler-locate-anything.cpp-gguf",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.813Z"
+      "verified_at": "2026-10-31T20:23:13.069Z"
     },
     "rule-678": {
       "learning_id": "rule-678",
@@ -164179,6 +164199,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T20:05:00.756Z"
+    },
+    "rule-6308": {
+      "learning_id": "rule-6308",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6308,
+      "title": "The \"No-Python\" Inference Boundary",
+      "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
+      "source_version": "hf-mudler-locate-anything.cpp-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T20:23:13.069Z"
+    },
+    "rule-6309": {
+      "learning_id": "rule-6309",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6309,
+      "title": "rest): avoid unbounded gzip body dump on JWT auth failure (#5865)",
+      "source_url": "https://github.com/zeromicro/go-zero",
+      "source_version": "f3be7b00",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T20:23:14.177Z"
+    },
+    "rule-6310": {
+      "learning_id": "rule-6310",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6310,
+      "title": "feature/conn25: store tokens from DNS response and pass them back in",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "49aa9c85",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T20:23:15.421Z"
     }
   },
   "aliases": {
