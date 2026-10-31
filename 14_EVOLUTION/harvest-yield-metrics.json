@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T12:22:45.658Z",
-  "total_cycles_completed": 6536,
-  "total_learnings_persisted": 6536,
-  "total_rules_promoted": 6187,
+  "last_updated": "2026-10-31T12:29:47.556Z",
+  "total_cycles_completed": 6538,
+  "total_learnings_persisted": 6538,
+  "total_rules_promoted": 6190,
   "history": [
-    {
-      "timestamp": "2026-10-30T23:44:47.313Z",
-      "repository": "sharkdp/fd",
-      "learningId": "learn-github-sharkdp-fd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T23:44:49.375Z",
-      "repository": "appwrite/appwrite",
-      "learningId": "learn-github-appwrite-appwrite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T23:51:38.442Z",
       "repository": "codewhale-hq/Codewhale",
@@ -1403,6 +1389,20 @@
       "repository": "Cloudflare/clef-flash",
       "learningId": "learn-huggingface-cloudflare-clef-flash",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T12:29:46.502Z",
+      "repository": "clastix/kamaji",
+      "learningId": "learn-github-clastix-kamaji",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T12:29:47.556Z",
+      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

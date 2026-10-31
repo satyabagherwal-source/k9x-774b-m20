@@ -705,8 +705,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
     "license": "Open-Source",
-    "contentHash": "9509d73f326514f3dcb6ade3bf9f2138d81a3f2e51027887812aac29ea4fd24f",
-    "lastHarvestedAt": "2026-10-28T11:52:40.573Z",
+    "contentHash": "d81ebe1484595df30ce94702aeb8573259eca65decc6f2156169df708c56655b",
+    "lastHarvestedAt": "2026-10-31T12:29:47.550Z",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2"
   },
   "hf-google-bert-bert-base-uncased": {
@@ -4113,10 +4113,10 @@
     "repository": "clastix/kamaji",
     "platform": "github",
     "sourceUrl": "https://github.com/clastix/kamaji",
-    "sourceVersion": "c14e4456",
+    "sourceVersion": "31fed7a6",
     "license": "Apache-2.0",
-    "contentHash": "f96d68a8b5990cce6dace8fa31bda3221bd1a6c276148578ac72b3047b524d23",
-    "lastHarvestedAt": "2026-10-30T20:52:38.701Z",
+    "contentHash": "5e32eee53ecd1101d73f4d349eb271a731141b887d93967eadaa5638aa728d44",
+    "lastHarvestedAt": "2026-10-31T12:29:46.496Z",
     "learningId": "learn-github-clastix-kamaji"
   },
   "gluesql-gluesql": {

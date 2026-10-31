@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source**: github ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
-> **Source Version**: `c14e4456`  
+> **Source Version**: `31fed7a6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T20:52:38.001Z  
+> **Timestamp**: 2026-10-31T12:29:45.769Z  
 > **Learning ID**: `learn-github-clastix-kamaji`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T20:47:36.195Z  
+> **Harvest Timestamp**: 2026-10-31T12:29:45.617Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -743,206 +743,300 @@ func ShouldReconcileErrorBeIgnored(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c14e4456` (2026-10-30)
-**Commit Message**: feat(deps): bump the etcd group with 2 updates (#1394)
+### Incident Patch 1: `f068d4c7` (2026-10-30)
+**Commit Message**: fix(utilities): honor kubeconfig server when kubeconfig-secret-key annotation is set (#1397)
 
-Bumps the etcd group with 2 updates: [go.etcd.io/etcd/api/v3](https://github.com/etcd-io/etcd) and [go.etcd.io/etcd/client/v3](https://github.com/etcd-io/etcd).
+GetRESTClientConfig always overrode the kubeconfig server with the
+in-cluster Service DNS address (<name>.<namespace>.svc:<port>). On
+platforms where the in-cluster Service path is unreachable for the
+management components, the soot manager and the kubeadm phases can
+never reach the TenantControlPlane API server, leaving the kubeadm
+bootstrap RBAC unfinished.
 
+When the kamaji.clastix.io/kubeconfig-secret-key annotation is set,
+use the server address of the selected kubeconfig (e.g. the
+LoadBalancer endpoint) as the client Host instead. The behavior is
+unchanged when the annotation is not set.
 
-Updates `go.etcd.io/etcd/api/v3` from 3.7.2 to 3.7.3
-- [Release notes](https://github.com/etcd-io/etcd/releases)
-- [Commits](https://github.com/etcd-io/etcd/compare/v3.7.2...v3.7.3)
-
-Updates `go.etcd.io/etcd/client/v3` from 3.7.2 to 3.7.3
-- [Release notes](https://github.com/etcd-io/etcd/releases)
-- [Commits](https://github.com/etcd-io/etcd/compare/v3.7.2...v3.7.3)
-
----
-updated-dependencies:
-- dependency-name: go.etcd.io/etcd/api/v3
-  dependency-version: 3.7.3
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-  dependency-group: etcd
-- dependency-name: go.etcd.io/etcd/client/v3
-  dependency-version: 3.7.3
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-  dependency-group: etcd
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +12/-12)
+**File**: `internal/utilities/tenant_client.go` (modified, +8/-1)
 ```diff
-@@ -24,8 +24,8 @@ require (
- 	github.com/spf13/viper v1.21.0
- 	github.com/stretchr/testify v1.12.1
- 	github.com/testcontainers/testcontainers-go v0.44.0
--	go.etcd.io/etcd/api/v3 v3.7.2
--	go.etcd.io/etcd/client/v3 v3.7.2
-+	go.etcd.io/etcd/api/v3 v3.7.3
-+	go.etcd.io/etcd/client/v3 v3.7.3
- 	go.uber.org/automaxprocs v1.6.0
- 	gomodules.xyz/jsonpatch/v2 v2.5.0
- 	k8s.io/api v0.37.0
-@@ -155,7 +155,7 @@ require (
- 	github.com/x448/float16 v0.8.4 // indirect
- 	github.com/xlab/treeprint v1.2.0 // indirect
- 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
--	go.etcd.io/etcd/client/pkg/v3 v3.7.2 // indirect
-+	go.etcd.io/etcd/client/pkg/v3 v3.7.3 // indirect
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.68.0 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 // indirect
-@@ -170,19 +170,19 @@ require (
- 	go.uber.org/zap v1.27.1 // indirect
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
--	golang.org/x/crypto v0.57.0 // indirect
-+	golang.org/x/crypto v0.58.0 // indirect
- 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
- 	golang.org/x/mod v0.41.0 // indirect
--	golang.org/x/net v0.59.0 // indirect
-+	golang.org/x/net v0.61.0 // indirect
- 	golang.org/x/oauth2 v0.37.0 // indirect
--	golang.org/x/sync v0.23.0 // indirect
--	golang.org/x/sys v0.48.0 // indirect
--	golang.org/x/term v0.46.0 // indirect
--	golang.org/x/text v0.42.0 // indirect
-+	golang.org/x/sync v0.24.0 // indirect
-+	golang.org/x/sys v0.49.0 // indirect
-+	golang.org/x/term v0.47.0 // indirect
-+	golang.org/x/text v0.43.0 // indirect
- 	golang.org/x/time v0.15.0 // indirect
--	golang.org/x/tools v0.49.0 // indirect
--	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
--	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
-+	golang.org/x/tools v0.51.0 // indirect
-+	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
-+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
- 	google.golang.org/grpc v1.83.2 // indirect
- 	google.golang.org/protobuf v1.36.12 // indirect
- 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
+@@ -63,8 +63,15 @@ func GetRESTClientConfig(ctx context.Context, client client.Client, tenantContro
+ 		return nil, fmt.Errorf("kubeconfig is missing cluster or user entries")
+ 	}
+ 
++	host := fmt.Sprintf("https://%s.%s.svc:%d", tenantControlPlane.GetName(), tenantControlPlane.GetNamespace(), tenantControlPlane.Spec.NetworkProfile.Port)
++	if v, ok := tenantControlPlane.GetAnnotations()[kamajiv1alpha1.KubeconfigSecretKeyAnnotation]; ok && v != "" {
++		if server := kubeconfig.Clusters[0].Cluster.Server; server != "" {
++			host = server
++		}
++	}
++
+ 	config := &restclient.Config{
+-		Host: fmt.Sprintf("https://%s.%s.svc:%d", tenantControlPlane.GetName(), tenantControlPlane.GetNamespace(), tenantControlPlane.Spec.NetworkProfile.Port),
++		Host: host,
+ 		TLSClientConfig: restclient.TLSClientConfig{
+ 			CAData:   kubeconfig.Clusters[0].Cluster.CertificateAuthorityData,
+ 			CertData: kubeconfig.AuthInfos[0].AuthInfo.ClientCertificateData,
 ```
 
-**File**: `go.sum` (modified, +24/-24)
+**File**: `internal/utilities/tenant_client_test.go` (modified, +185/-0)
 ```diff
-@@ -370,12 +370,12 @@ github.com/yusufpapurcu/wmi v1.2.4 h1:zFUKzehAFReQwLys1b/iSMl+JQGSCSjtVqQn9bBrPo
- github.com/yusufpapurcu/wmi v1.2.4/go.mod h1:SBZ9tNy3G9/m5Oi98Zks0QjeHVDvuK0qfxQmPyzfmi0=
- go.etcd.io/bbolt v1.5.0 h1:S7GAl7Fxv12yohbwFfIbQCGDWbQbtDGPET4P/bD4lxU=
- go.etcd.io/bbolt v1.5.0/go.mod h1:mkltfYE5aUHQxUct9N9V+Kp7aSjFqjgrhcXIS70Lrdk=
--go.etcd.io/etcd/api/v3 v3.7.2 h1:xgt/6el1LsPWWYNLkhMAK4tZm6dF+1sCqDecpE5gdbk=
--go.etcd.io/etcd/api/v3 v3.7.2/go.mod h1:RoRCBRt9BfBff1pIGZLUVMiz7wu3bY+b2qLysGu1HY4=
--go.etcd.io/etcd/client/pkg/v3 v3.7.2 h1:SVtlR7tiSVAYOQ4nWPIyFXb4RMgEcnzeAG9RQ8MoNDU=
--go.etcd.io/etcd/client/pkg/v3 v3.7.2/go.mod h1:HsSux/B3ahgyw/D5+d4YbZqicOi0mEbuxm6lIUdjAoI=
--go.etcd.io/etcd/client/v3 v3.7.2 h1:Z66GqDQDI7zPDfVSsIBqGSK4mJYLtv8ESwXa4mPf+wY=
--go.etcd.io/etcd/client/v3 v3.7.2/go.mod h1:x03t1qMs4tGZirCDJlMuzPBJdQffXJImIyEjLhNBCsY=
-+go.etcd.io/etcd/api/v3 v3.7.3 h1:2tumepXe+wi7Wab64uUO71K7ISQyUWLGC1DJbbc59sY=
-+go.etcd.io/etcd/api/v3 v3.7.3/go.mod h1:HOR9Qn4gb/1/hVAmYprmlLpvTe6ZgfgNS9Z/+Ty65po=
-+go.etcd.io/etcd/client/pkg/v3 v3.7.3 h1:5zMwNu3ycrzCeA5NwOfQbxFRhqq974chq1DrYMua4QI=
-+go.etcd.io/etcd/client/pkg/v3 v3.7.3/go.mod h1:/OhzqYrF0U7d1NOk55VMyUQGbYD1WoIe4bJwxb47wOk=
-+go.etcd.io/etcd/client/v3 v3.7.3 h1:UrXcetgkuSEocaBlQlulQRJlXLEnUAHuBRbHh0lue1Q=
-+go.etcd.io/etcd/client/v3 v3.7.3/go.mod h1:DcPxpqcpV8WIaRi/2waPCx0/Uq8rQUweDJaDYZk1gEE=
- go.etcd.io/etcd/pkg/v3 v3.7.0 h1:aUBHGzXnYL2m3AlZfKp0ZhHQLVZIKfu9QsIlYdr+mxc=
- go.etcd.io/etcd/pkg/v3 v3.7.0/go.mod h1:fDQYyc8rOC1Yl4EZLh0O1OjHzwJW7jAly80+BpD1M9o=
- go.etcd.io/etcd/server/v3 v3.7.0 h1:ScdUdN8ljuimp0lZaNq0otLMrHcFSFT+dQyT1j7JSFo=
-@@ -419,8 +419,8 @@ go.yaml.in/yaml/v3 v3.0.5 h1:N6y/pJk8buWs9NY5ERU2HSMfm+IuD/OtfdAnq6kESPw=
- go.yaml.in/yaml/v3 v3.0.5/go.mod h1:HVTZu1O7/Vkt2N+BFy8Zza+lnLsABggaTM2ZpNIGuKg=
- golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
- golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
--golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
--golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
-+golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
-+golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
- golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f h1:W3F4c+6OLc6H2lb//N1q4WpJkhzJCK5J6kUi1NTVXfM=
- golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f/go.mod h1:J1xhfL/vlindoeF/aINzNzt2Bket5bjo9sdOYzOsU80=
- golang.org/x/mod v0.4.2/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
-@@ -429,14 +429,14 @@ golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
- golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
- golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
- golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4/go.mod h1:p54w0d4576C0XHj96bSt6lcn1PtDYWL6XObtHCRCNQM=
--golang.org/x/net v0.59.0 h1:5zfYln+w5XCxwrnMMJPufRgNoXEaGxl0wo5GqPXyues=
--golang.org/x/net v0.59.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
-+golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
-+golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
- golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
- golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20210220032951-036812b2e83c/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
--golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
-+golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
- golang.org/x/sys v0.0.0-20190916202348-b4ddaad3f8a3/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-@@ -447,33 +447,33 @@ golang.org/x/sys v0.0.0-20210510120138-977fb7262007/go.mod h1:oPkhp1MJrh7nUepCBc
- golang.org/x/sys v0.0.0-20210616094352-59db8d763f22/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.1.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.27.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
--golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
--golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
-+golang.org/x
+@@ -5,6 +5,8 @@ package utilities
+ 
+ import (
+ 	"context"
++	"encoding/base64"
++	"fmt"
+ 	"testing"
+ 
+ 	corev1 "k8s.io/api/core/v1"
+@@ -16,6 +18,67 @@ import (
+ 	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
+ )
+ 
++const testKubeconfigSecretName = "admin-kubeconfig"
++
++func testScheme(t *testing.T) *runtime.Scheme {
++	t.Helper()
++
++	scheme := runtime.NewScheme()
++	if err := corev1.AddToScheme(scheme); err != nil {
++		t.Fatalf("failed adding corev1 scheme: %v", err)
++	}
++
++	return scheme
++}
++
++func testKubeconfigYAML(server string) []byte {
++	return []byte(fmt.Sprintf(`apiVersion: v1
++kind: Config
++clusters:
++- cluster:
++    server: %q
++    certificate-authority-data: %s
++  name: tenant
++contexts:
++- context:
++    cluster: tenant
++    user: kubernetes-super-admin
++  name: kubernetes-super-admin@tenant
++current-context: kubernetes-super-admin@tenant
++users:
++- name: kubernetes-super-admin
++  user:
++    client-certificate-data: %s
++    client-key-data: %s
++`,
++		server,
++		base64.StdEncoding.EncodeToString([]byte("fake-ca")),
++		base64.StdEncoding.EncodeToString([]byte("fake-certificate")),
++		base64.StdEncoding.EncodeToString([]byte("fake-key")),
++	))
++}
++
++func testTenantControlPlane(t *testing.T, secret *corev1.Secret, annotations map[string]string) *kamajiv1alpha1.TenantControlPlane {
++	t.Helper()
++
++	port := int32(6443)
++	tcp := &kamajiv1alpha1.TenantControlPlane{
++		ObjectMeta: metav1.ObjectMeta{
++			Name:        "tcp",
++			Namespace:   "default",
++			Annotations: annotations,
++		},
++		Spec: kamajiv1alpha1.TenantControlPlaneSpec{
++			NetworkProfile: kamajiv1alpha1.NetworkProfileSpec{
++				Port: port,
++			},
++		},
++	}
++	tcp.Status.KubeConfig.Admin.SecretName = secret.Name
++
++	return tcp
++}
++
+ func TestGetRESTClientConfigEmptyKubeconfig(t *testing.T) {
+ 	t.Parallel()
+ 
+@@ -42,3 +105,125 @@ func TestGetRESTClientConfigEmptyKubeconfig(t *testing.T) {
+ 		t.Fatal("expected an error for a kubeconfig without cluster or user entries, got nil")
+ 	}
+ }
++
++func TestGetRESTClientConfigServiceHostWithoutAnnotation(t *testing.T) {
++	t.Parallel()
++
++	secret := &corev1.Secret{
++		ObjectMeta: metav1.ObjectMeta{Name: testKubeconfigSecretName, Namespace: "default"},
++		Data: map[string][]byte{
++			kubeadmconstants.SuperAdminKubeConfigFileName: testKubeconfigYAML("https://100.64.0.22:6443"),
++		},
++	}
++
++	c := fake.NewClientBuilder().WithScheme(testScheme(t)).WithObjects(secret).Build()
++
++	config, err := GetRESTClientConfig(context.Background(), c, testTenantControlPlane(t, secret, nil))
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++
++	if expected := "https://tcp.default.svc:6443"; config.Host != expected {
++		t.Errorf("expected Host %q, got %q", expected, config.Host)
++	}
++}
++
++func TestGetRESTClientConfigKubeconfigServerWithAnnotation(t *testing.T) {
++	t.Parallel()
++
++	secret := &corev1.Secret{
++		ObjectMeta: metav1.ObjectMeta{Name: testKubeconfigSecretName, Namespace: "default"},
++		Data: map[string][]byte{
++			kubeadmconstants.SuperAdminKubeConfigFileName: testKubeconfigYAML("https://100.64.0.22:6443"),
++		},
++	}
++
++	c := fake.NewClientBuilder().WithScheme(testScheme(t)).WithObjects(secret).Build()
++
++	tcp := testTenantControlPlane(t, secret, map[string]string{
++		kamajiv1alpha1.KubeconfigSecretKeyAnnotation: kubeadmconstants.SuperAdminKubeConfigFileName,
++	})
++
++	config, err := GetRESTClientConfig(context.Background(), c, tcp)
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++
++	if expected := "https://100.64.0.22:6443"; config.Host != expected {
++		t.Errorf("expected Host %q, got %q", expected, config.Host)
++	}
++}
++
++func TestGetRESTClientConfigKubeconfigServerWithCustomKeyAnnotation(t *testing.T) {
++	t.Parallel()
++
++	secret := &corev1.Secret{
++		ObjectMeta: metav1.ObjectMeta{Name: testKubeconfigSecretName, Namespace: "default"},
++		Data: map[string][]byte{
++			kubeadmconstants.SuperAdminKubeConfigFileName: testKubeconfigYAML("https://100.64.0.22:6443"),
++			kubeadmconstants.AdminKubeConfigFileName:      testKubeconfigYAML("https://100.64.0.23:6443"),
++		},
++	}
++
++	c := fake.NewClientBuilder().WithScheme(testScheme(t)).WithObjects(secret).Build()
++
++	tcp := testTenantControlPlane(t, secret, map[string]string{
++		kamajiv1alpha1.KubeconfigSecretKeyAnnotation: kubeadmconstants.AdminKubeConfigFileName,
++	})
++
++	config, err := GetRESTClientConfig(context.Background(), c, tcp)
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++
++	if expected := "https://100.64.0.23:6443"; config.Host != expected {
++		t.Errorf("expected Host %q, got %q", expected, config.Host)
++	}
++}
++
++func TestGetRESTClientConfigServiceHostWhenKubeconfigServerIsEmpty(t *testing.T) {
++	t.Parallel()
++
++	secret := &corev1.Secret{
++		ObjectMeta: metav1.ObjectMeta{Name: testKubeconfigSecretName, Namespace: "default"},
++		Data: map[string][]byte{
++			kubeadmconstants.SuperAdminKubeConfigFileName: testKubeconfigYAML(""),
++		},
++	}
++
++	c := fake.NewClientBuilder().WithScheme(testScheme(t)).WithObjects(secret).Bui
 ```
 
 ---
 
-### Incident Patch 2: `fa2e5fa4` (2026-10-30)
-**Commit Message**: feat(deps): bump github.com/nats-io/nats.go from 1.54.0 to 1.55.0 (#1395)
+### Incident Patch 2: `31fed7a6` (2026-10-30)
+**Commit Message**: docs: fix kamaji-etcd.deploy key and dead links (#1402)
 
-Bumps [github.com/nats-io/nats.go](https://github.com/nats-io/nats.go) from 1.54.0 to 1.55.0.
-- [Release notes](https://github.com/nats-io/nats.go/releases)
-- [Commits](https://github.com/nats-io/nats.go/compare/v1.54.0...v1.55.0)
+The chart README told users to pass `--set etcd.deploy=false` to use
+an external etcd, but the bundled subchart is gated on
+`kamaji-etcd.deploy` (Chart.yaml condition), so the documented flag
+still deployed the kamaji-etcd StatefulSet. Use the real key, as the
+alternative-datastore guide already does.
 
----
-updated-dependencies:
-- dependency-name: github.com/nats-io/nats.go
-  dependency-version: 1.55.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
+Also point the multi-tenant etcd link at clastix/kamaji-etcd instead
+of the private kamaji-internal repo (404), and the ServiceMonitor link
+in the benchmark page at prometheus-operator's current getting
+started guide.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Signed-off-by: sarankumar1325 <[REDACTED_EMAIL]>
 
-**File**: `go.mod` (modified, +1/-1)
+**File**: `charts/kamaji/README.md` (modified, +3/-3)
 ```diff
-@@ -14,7 +14,7 @@ require (
- 	github.com/json-iterator/go v1.1.12
- 	github.com/juju/mutex/v2 v2.0.0
- 	github.com/moby/moby/api v1.56.1
--	github.com/nats-io/nats.go v1.54.0
-+	github.com/nats-io/nats.go v1.55.0
- 	github.com/onsi/ginkgo/v2 v2.33.1
- 	github.com/onsi/gomega v1.44.0
- 	github.com/prometheus/client_golang v1.25.0
+@@ -24,8 +24,8 @@ Kubernetes: `>=1.21.0-0`
+ |------------|------|---------|
+ | https://clastix.github.io/charts | kamaji-etcd | >=0.15.0 |
+ 
+-[Kamaji](https://github.com/clastix/kamaji) requires a [multi-tenant `etcd`](https://github.com/clastix/kamaji-internal/blob/master/deploy/getting-started-with-kamaji.md#setup-internal-multi-tenant-etcd) cluster.
+-This Helm Chart starting from v0.1.1 provides the installation of an internal `etcd` in order to streamline the local test. If you'd like to use an externally managed etcd instance, you can specify the overrides and by setting the value `etcd.deploy=false`.
++[Kamaji](https://github.com/clastix/kamaji) requires a [multi-tenant `etcd`](https://github.com/clastix/kamaji-etcd) cluster.
++This Helm Chart starting from v0.1.1 provides the installation of an internal `etcd` in order to streamline the local test. If you'd like to use an externally managed etcd instance, you can specify the overrides and by setting the value `kamaji-etcd.deploy=false`.
+ 
+ > For production use an externally managed `etcd` is highly recommended, the `etcd` addon offered by this Chart is not considered production-grade.
+ 
+@@ -65,7 +65,7 @@ The values in your overrides file `myvalues.yaml` will override their counterpar
+ 
+ If you only need to make minor customizations, you can specify them on the command line by using the `--set` option. For example:
+ 
+-        helm upgrade kamaji --install --namespace kamaji-system --create-namespace clastix/kamaji --set etcd.deploy=false
++        helm upgrade kamaji --install --namespace kamaji-system --create-namespace clastix/kamaji --set kamaji-etcd.deploy=false
+ 
+ Here the values you can override:
+ 
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `charts/kamaji/README.md.gotmpl` (modified, +3/-3)
 ```diff
-@@ -255,8 +255,8 @@ github.com/monochromegane/go-gitignore v0.0.0-20200626010858-205db1a8cc00 h1:n6/
- github.com/monochromegane/go-gitignore v0.0.0-20200626010858-205db1a8cc00/go.mod h1:Pm3mSP3c5uWn86xMLZ5Sa7JB9GsEZySvHYXCTK4E9q4=
- github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 h1:C3w9PqII01/Oq1c1nUAm88MOHcQC9l5mIlSMApZMrHA=
- github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
--github.com/nats-io/nats.go v1.54.0 h1:vsXoOxjHp/GmPUN+EcI7uOf/uB+iAP+kEsAFNQN0yzA=
--github.com/nats-io/nats.go v1.54.0/go.mod h1:y+DZoD1oBOYfZTU681eTUiUjI0vbqYGixNVFHcjHJ0k=
-+github.com/nats-io/nats.go v1.55.0 h1:Ng8QKHdvdHIWoaiq0+d/aH1BWkxvcJxWJ0Y/9BPKx3M=
-+github.com/nats-io/nats.go v1.55.0/go.mod h1:y+DZoD1oBOYfZTU681eTUiUjI0vbqYGixNVFHcjHJ0k=
- github.com/nats-io/nkeys v0.4.16 h1:rd5oAuLOb8mnAycB0xleuEBNS1pVVnN0fv/FF34Eypg=
- github.com/nats-io/nkeys v0.4.16/go.mod h1:llLgWoI0o4z/Q57q2R1kHfmocyhGV6VG/U18Glg1Afs=
- github.com/nats-io/nuid v1.0.1 h1:5iA8DT8V7q8WK2EScv2padNa/rTESc1KdnPw4TC2paw=
+@@ -11,8 +11,8 @@
+ 
+ {{ template "chart.requirementsSection" . }}
+ 
+-[Kamaji](https://github.com/clastix/kamaji) requires a [multi-tenant `etcd`](https://github.com/clastix/kamaji-internal/blob/master/deploy/getting-started-with-kamaji.md#setup-internal-multi-tenant-etcd) cluster.
+-This Helm Chart starting from v0.1.1 provides the installation of an internal `etcd` in order to streamline the local test. If you'd like to use an externally managed etcd instance, you can specify the overrides and by setting the value `etcd.deploy=false`.
++[Kamaji](https://github.com/clastix/kamaji) requires a [multi-tenant `etcd`](https://github.com/clastix/kamaji-etcd) cluster.
++This Helm Chart starting from v0.1.1 provides the installation of an internal `etcd` in order to streamline the local test. If you'd like to use an externally managed etcd instance, you can specify the overrides and by setting the value `kamaji-etcd.deploy=false`.
+ 
+ > For production use an externally managed `etcd` is highly recommended, the `etcd` addon offered by this Chart is not considered production-grade.
+ 
+@@ -54,7 +54,7 @@ The values in your overrides file `myvalues.yaml` will override their counterpar
+ 
+ If you only need to make minor customizations, you can specify them on the command line by using the `--set` option. For example:
+ 
+-        helm upgrade kamaji --install --namespace kamaji-system --create-namespace clastix/kamaji --set etcd.deploy=false
++        helm upgrade kamaji --install --namespace kamaji-system --create-namespace clastix/kamaji --set kamaji-etcd.deploy=false
+ 
+ Here the values you can override:
+ 
+```
+
+**File**: `docs/content/reference/benchmark.md` (modified, +1/-1)
+```diff
+@@ -10,7 +10,7 @@ With that said, a main manager is responsible to reconcile the admin resources (
+ These Tenant Control Plane managers, named in the code base as soot managers, in turn, start and run controllers to ensure the desired state of the underlying add-ons, and required resources such as kubeadm ones.
+ 
+ With that said, monitoring the Kamaji stack is essential to understand any anomaly in memory consumption, or CPU usage.
+-The provided Helm Chart is offering a [`ServiceMonitor`](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md) that can be used to extract all the required metrics of the Kamaji operator.
++The provided Helm Chart is offering a [`ServiceMonitor`](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/developer/getting-started.md#using-servicemonitors) that can be used to extract all the required metrics of the Kamaji operator.
+ 
+ # Running 100 Tenant Control Planes using a single DataStore
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1402** (2026-10-30): docs: fix kamaji-etcd.deploy key and dead links (@sarankumar1325)
+- **PR #1401** (2026-10-30): feat(deps): bump k8s.io/kubernetes from 1.37.1 to 1.37.2 in the k8s group (@dependabot[bot])
 - **PR #1399** (closed): fix(kubeadm): use advertiseAddress for kubeadm's LocalAPIEndpoint (@Kellen275)
+- **PR #1397** (2026-10-30): fix(utilities): honor kubeconfig server when kubeconfig-secret-key annotation is set (@alistarle)
 - **PR #1395** (2026-10-30): feat(deps): bump github.com/nats-io/nats.go from 1.54.0 to 1.55.0 (@dependabot[bot])
 - **PR #1394** (2026-10-30): feat(deps): bump the etcd group with 2 updates (@dependabot[bot])
-- **PR #1393** (2026-10-26): fix(soot): stop managers before dropping them (@serhiimazurok)
-- **PR #1392** (2026-10-23): fix(tcp): refresh endpoint after address changes (@spicysharkco)
-- **PR #1390** (2026-10-23): fix(datastore): keep MySQL TLS config off the global driver registry (@somaz94)
 
 ---
 
@@ -962,50 +1056,35 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump the etcd group with 2 updates (#1394)
+## X. utilities): honor kubeconfig server when kubeconfig-secret-key annotation is set
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/utilities/tenant_client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c14e4456`: deps): bump the etcd group with 2 updates (#1394). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f068d4c7`: utilities): honor kubeconfig server when kubeconfig-secret-key annotation is set (#1397). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/utilities/tenant_client.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	go.etcd.io/etcd/api/v3 v3.7.3
-	go.etcd.io/etcd/client/v3 v3.7.3
-	go.etcd.io/etcd/client/pkg/v3 v3.7.3 // indirect
-	golang.org/x/crypto v0.58.0 // indirect
-	golang.org/x/net v0.61.0 // indirect
-	golang.org/x/sync v0.24.0 // indirect
-	golang.org/x/sys v0.49.0 // indirect
-	golang.org/x/term v0.47.0 // indirect
-	golang.org/x/text v0.43.0 // indirect
-	golang.org/x/tools v0.51.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
+	host := fmt.Sprintf("https://%s.%s.svc:%d", tenantControlPlane.GetName(), tenantControlPlane.GetNamespace(), tenantControlPlane.Spec.NetworkProfile.Port)
+	if v, ok := tenantControlPlane.GetAnnotations()[kamajiv1alpha1.KubeconfigSecretKeyAnnotation]; ok && v != "" {
+		if server := kubeconfig.Clusters[0].Cluster.Server; server != "" {
+			host = server
+		}
+	}
+
+		Host: host,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	go.etcd.io/etcd/api/v3 v3.7.2
-	go.etcd.io/etcd/client/v3 v3.7.2
-	go.etcd.io/etcd/client/pkg/v3 v3.7.2 // indirect
-	golang.org/x/crypto v0.57.0 // indirect
-	golang.org/x/net v0.59.0 // indirect
-	golang.org/x/sync v0.23.0 // indirect
-	golang.org/x/sys v0.48.0 // indirect
-	golang.org/x/term v0.46.0 // indirect
-	golang.org/x/text v0.42.0 // indirect
-	golang.org/x/tools v0.49.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
+		Host: fmt.Sprintf("https://%s.%s.svc:%d", tenantControlPlane.GetName(), tenantControlPlane.GetNamespace(), tenantControlPlane.Spec.NetworkProfile.Port),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c14e4456` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f068d4c7` are properly handled with clean fallback behavior.

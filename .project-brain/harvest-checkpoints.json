@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T12:22:45.662Z",
+  "last_updated": "2026-10-31T12:29:47.560Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -890,14 +890,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "content_hash": "9509d73f326514f3dcb6ade3bf9f2138d81a3f2e51027887812aac29ea4fd24f",
-      "verified_at": "2026-10-28T11:52:40.579Z",
+      "content_hash": "d81ebe1484595df30ce94702aeb8573259eca65decc6f2156169df708c56655b",
+      "verified_at": "2026-10-31T12:29:47.559Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T11:52:40.579Z"
+      "last_updated": "2026-10-31T12:29:47.559Z"
     },
     "google-bert/bert-base-uncased": {
       "repository": "google-bert/bert-base-uncased",
@@ -6291,14 +6291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clastix-kamaji",
-      "content_hash": "f96d68a8b5990cce6dace8fa31bda3221bd1a6c276148578ac72b3047b524d23",
-      "verified_at": "2026-10-30T20:52:38.710Z",
+      "content_hash": "5e32eee53ecd1101d73f4d349eb271a731141b887d93967eadaa5638aa728d44",
+      "verified_at": "2026-10-31T12:29:46.506Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T20:52:38.710Z"
+      "last_updated": "2026-10-31T12:29:46.506Z"
     },
     "gluesql/gluesql": {
       "repository": "gluesql/gluesql",

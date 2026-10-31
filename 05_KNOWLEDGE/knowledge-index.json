@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T12:22:45.573Z",
+  "last_updated": "2026-10-31T12:29:47.464Z",
   "total_verified_learnings": 1183,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7075,8 +7075,8 @@
       "slug": "clastix-kamaji",
       "platform": "github",
       "source_url": "https://github.com/clastix/kamaji",
-      "source_version": "c14e4456",
-      "content_hash": "f96d68a8b5990cce6dace8fa31bda3221bd1a6c276148578ac72b3047b524d23",
+      "source_version": "31fed7a6",
+      "content_hash": "5e32eee53ecd1101d73f4d349eb271a731141b887d93967eadaa5638aa728d44",
       "dossier_path": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "promoted_rules": [
@@ -7114,6 +7114,11 @@
           "number": 5873,
           "title": "deps): bump the etcd group with 2 updates (#1394)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6195,
+          "title": "utilities): honor kubeconfig server when kubeconfig-secret-key annotation is set",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7121,7 +7126,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T20:52:38.598Z",
+      "verified_at": "2026-10-31T12:29:46.389Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28873,7 +28878,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "content_hash": "9509d73f326514f3dcb6ade3bf9f2138d81a3f2e51027887812aac29ea4fd24f",
+      "content_hash": "d81ebe1484595df30ce94702aeb8573259eca65decc6f2156169df708c56655b",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
       "promoted_rules": [
@@ -28887,16 +28892,12 @@
         {
           "number": 354,
           "title": "Mask-Aware Mean Pooling Invariant",
-          "status": "PROMOTED_AND_VERIFIED",
-          "source_learning_id": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv48pqnn",
-          "verified_at": "2026-10-11T19:52:45.175Z"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 355,
           "title": "Tokenizer-Model Dimensional Consistency",
-          "status": "PROMOTED_AND_VERIFIED",
-          "source_learning_id": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv48pqnn",
-          "verified_at": "2026-10-11T19:52:45.175Z"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 356,
@@ -28974,7 +28975,7 @@
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv48pqnn",
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv4m2r5u"
       ],
-      "verified_at": "2026-10-28T11:52:40.526Z",
+      "verified_at": "2026-10-31T12:29:47.443Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65332,29 +65333,29 @@
       "learning_id": "rule-354",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 354,
-      "title": "Mask-Aware Mean Pooling Invariant (Harvested from sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Mask-Aware Mean Pooling Invariant",
+      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-13T17:43:04.598Z"
+      "verified_at": "2026-10-31T12:29:47.443Z"
     },
     "rule-355": {
       "learning_id": "rule-355",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 355,
-      "title": "Tokenizer-Model Dimensional Consistency (Harvested from sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Tokenizer-Model Dimensional Consistency",
+      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-13T17:43:04.598Z"
+      "verified_at": "2026-10-31T12:29:47.443Z"
     },
     "rule-356": {
       "learning_id": "rule-356",
@@ -161956,6 +161957,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T12:22:45.544Z"
+    },
+    "rule-6195": {
+      "learning_id": "rule-6195",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6195,
+      "title": "utilities): honor kubeconfig server when kubeconfig-secret-key annotation is set",
+      "source_url": "https://github.com/clastix/kamaji",
+      "source_version": "31fed7a6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T12:29:46.389Z"
     }
   },
   "aliases": {
