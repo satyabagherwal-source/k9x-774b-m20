@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T03:52:31.895Z",
+  "last_updated": "2026-10-31T03:59:08.966Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10459,8 +10459,8 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "583b1a67",
-      "content_hash": "d31516c4477f8ab9f46fdf82f15d0eb3ce5928943995fc32ffe35ae5a6b995f4",
+      "source_version": "1d2c21aa",
+      "content_hash": "32b7d1876503390e3ff4be2fa19e2f8d26e0094c7bc3880f40648d01beab9e08",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
@@ -10533,6 +10533,11 @@
           "number": 5661,
           "title": "Cooperative Fiber Dispatcher Non-Preemption Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6058,
+          "title": "cancel save op if loading starts (#8505)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10540,7 +10545,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T07:47:19.504Z",
+      "verified_at": "2026-10-31T03:59:08.949Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51157,8 +51162,8 @@
       "slug": "software-mansion-react-native-reanimated",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-reanimated",
-      "source_version": "bccbb730",
-      "content_hash": "be9db39764bb1ac9cd75962542e5e979583df065c0b0a2d0b756d26c74f32030",
+      "source_version": "c8b40ef3",
+      "content_hash": "0a6f883d35daaf9aafd3cc0d6387068bec0418d0876fef184db7fe6d307f206c",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
       "promoted_rules": [
@@ -51186,6 +51191,11 @@
           "number": 4866,
           "title": "Reanimated): convert settled boxShadow and backgroundImage back by the origin of",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6055,
+          "title": "Reanimated): don't crash on Android when worklets run during the teardown of the",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51193,7 +51203,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T14:53:58.217Z",
+      "verified_at": "2026-10-31T03:59:01.680Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -137911,7 +137921,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FastVideo/FastH3-Omni-Comfy",
       "source_version": "hf-fastvideo-fasth3-omni-comfy",
-      "content_hash": "355bd5a19d59cefb3eebbc37700814d5055c8720ad46c6a9d7083ff48bd2761c",
+      "content_hash": "43465e50344fc283450adc7d8930769339950baaee59ae5d3296204331667fed",
       "dossier_path": "07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md",
       "promoted_rules": [
@@ -137924,6 +137934,16 @@
           "number": 4719,
           "title": "Hardware-Gated Format Selection",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6056,
+          "title": "Strict Hardware-Precision Coupling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6057,
+          "title": "Multi-Modal VAE Synchronization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -137931,7 +137951,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:49:39.546Z",
+      "verified_at": "2026-10-31T03:59:04.133Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -159202,6 +159222,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T03:52:28.546Z"
+    },
+    "rule-6055": {
+      "learning_id": "rule-6055",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6055,
+      "title": "Reanimated): don't crash on Android when worklets run during the teardown of the",
+      "source_url": "https://github.com/software-mansion/react-native-reanimated",
+      "source_version": "c8b40ef3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T03:59:01.680Z"
+    },
+    "rule-6056": {
+      "learning_id": "rule-6056",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6056,
+      "title": "Strict Hardware-Precision Coupling Invariant",
+      "source_url": "https://huggingface.co/FastVideo/FastH3-Omni-Comfy",
+      "source_version": "hf-fastvideo-fasth3-omni-comfy",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T03:59:04.133Z"
+    },
+    "rule-6057": {
+      "learning_id": "rule-6057",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6057,
+      "title": "Multi-Modal VAE Synchronization Invariant",
+      "source_url": "https://huggingface.co/FastVideo/FastH3-Omni-Comfy",
+      "source_version": "hf-fastvideo-fasth3-omni-comfy",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T03:59:04.133Z"
+    },
+    "rule-6058": {
+      "learning_id": "rule-6058",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6058,
+      "title": "cancel save op if loading starts (#8505)",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "1d2c21aa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T03:59:08.949Z"
     }
   },
   "aliases": {

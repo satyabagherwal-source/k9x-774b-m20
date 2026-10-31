@@ -3803,10 +3803,10 @@
     "repository": "software-mansion/react-native-reanimated",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-reanimated",
-    "sourceVersion": "bccbb730",
+    "sourceVersion": "c8b40ef3",
     "license": "MIT",
-    "contentHash": "be9db39764bb1ac9cd75962542e5e979583df065c0b0a2d0b756d26c74f32030",
-    "lastHarvestedAt": "2026-10-27T14:53:58.291Z",
+    "contentHash": "0a6f883d35daaf9aafd3cc0d6387068bec0418d0876fef184db7fe6d307f206c",
+    "lastHarvestedAt": "2026-10-31T03:59:01.788Z",
     "learningId": "learn-github-software-mansion-react-native-reanimated"
   },
   "liftbridge-io-liftbridge": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "583b1a67",
+    "sourceVersion": "1d2c21aa",
     "license": "NOASSERTION",
-    "contentHash": "d31516c4477f8ab9f46fdf82f15d0eb3ce5928943995fc32ffe35ae5a6b995f4",
-    "lastHarvestedAt": "2026-10-30T07:47:19.600Z",
+    "contentHash": "32b7d1876503390e3ff4be2fa19e2f8d26e0094c7bc3880f40648d01beab9e08",
+    "lastHarvestedAt": "2026-10-31T03:59:09.033Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {
@@ -10865,8 +10865,8 @@
     "sourceUrl": "https://huggingface.co/FastVideo/FastH3-Omni-Comfy",
     "sourceVersion": "hf-fastvideo-fasth3-omni-comfy",
     "license": "Open-Source",
-    "contentHash": "355bd5a19d59cefb3eebbc37700814d5055c8720ad46c6a9d7083ff48bd2761c",
-    "lastHarvestedAt": "2026-10-27T11:49:39.605Z",
+    "contentHash": "43465e50344fc283450adc7d8930769339950baaee59ae5d3296204331667fed",
+    "lastHarvestedAt": "2026-10-31T03:59:04.215Z",
     "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy"
   },
   "yoanwai-agent-manager": {

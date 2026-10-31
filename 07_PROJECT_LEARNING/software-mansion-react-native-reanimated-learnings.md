@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-reanimated](https://github.com/software-mansion/react-native-reanimated))  
-> **Source Version**: `bccbb730`  
+> **Source Version**: `c8b40ef3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T14:53:57.890Z  
+> **Timestamp**: 2026-10-31T03:59:01.180Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-reanimated`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-reanimated](https://github.com/software-mansion/react-native-reanimated))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T14:53:57.215Z  
+> **Harvest Timestamp**: 2026-10-31T03:59:00.743Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: React Native's Animated library reimplemented
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 11033 stars
+- **Stars / Engagement**: 11039 stars
 
 ---
 
@@ -898,1137 +898,549 @@ export const getCodeWithOverrides = <C extends object, O extends object>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bccbb730` (2026-10-27)
-**Commit Message**: fix(Reanimated): convert settled boxShadow and backgroundImage back by the origin of the last write (#10819)
+### Incident Patch 1: `1ae46345` (2026-10-29)
+**Commit Message**: fix(Reanimated): don't crash on Android when worklets run during the teardown of the React host (#10858)
 
 > [!NOTE]
-> This pull request was authored by AI on behalf of @pawicao.
+> This pull request was authored by AI on behalf of @tomekzaw.
 
 ## Summary
 
-This PR needs #10736 to be merged first.
+Fixes an Android crash that happens when the React host is torn down (a
+reload, for example an `expo-updates` restart) while worklets still run
+on the UI thread:
 
-`boxShadow` and `backgroundImage` get a native format only from
-`useAnimatedStyle`, and after #10736 the sync of settled values
-converted them back only inside `style`. When `useAnimatedProps` and
-`useAnimatedStyle` both wrote such a key on one view, React received the
-native format as a top-level prop if the style wrote last, and the sync
-threw on a raw array if the props wrote last. I replaced the two key
-sets in the native write history with one map from each key to its
-origins and the origin of its last write. Native now also reports the
-keys that an animated style wrote last, and JS converts exactly those
-keys back in both `props` and `style`.
-
-Out of scope, both older than this PR: `filter` is not converted back at
-all, and `setNativeProps` writes raw values that native records as
-written by an animated style.
-
-## Test plan
-
-The `props` runtime tests pass on iOS and on Android (29 of 29 on each,
-`DebugRuntimeTests`). I added four cases to `syn
-
-**File**: `apps/common-app/runtime-tests/ReJest/types.ts` (modified, +2/-4)
-```diff
-@@ -10,16 +10,13 @@ import type {
-   LayoutAnimationStartFunction,
-   StyleProps,
- } from 'react-native-reanimated';
-+import type { ShadowNodeWrapper } from 'react-native-reanimated/lib/typescript/commonTypes';
- 
- export type CallTracker = {
-   UICallsCount: number;
-   JSCallsCount: number;
- };
- 
--type ShadowNodeWrapper = {
--  __hostObjectShadowNodeWrapper: never;
--};
--
- export type TrackerCallCount = {
-   name: string;
-   onJS: number;
-@@ -192,6 +189,7 @@ declare global {
-   var _getAnimationTimestamp: () => number;
-   var __frameTimestamp: number | undefined;
-   var _registriesLeakCheck: () => string;
-+  var _maybeFlushUIUpdatesQueue: () => void;
-   var _updateProps: (operations: Operation[]) => void;
-   var _notifyAboutProgress: (
-     tag: number,
+```
+JNI DETECTED ERROR IN APPLICATION: obj == null
+  _JNIEnv::CallLongMethod(_jobject*, _jmethodID*, ...)
+  reanimated::NativeProxy::getAnimationTimestamp()
+  ...
+  worklets::UIScheduler::triggerUI()
+  com.swmansion.worklets.AndroidUIScheduler.mUIThreadRunnable
 ```
 
-**File**: `apps/common-app/runtime-tests/reanimated/tests/props/syncBackToReact.test.tsx` (modified, +310/-1)
-```diff
-@@ -10,11 +10,15 @@ import { ScrollView, StyleSheet, View } from 'react-native';
- import Animated, {
-   interpolate,
-   interpolateColor,
-+  processColor,
-   useAnimatedProps,
-+  useAnimatedRef,
-   useAnimatedStyle,
-   useSharedValue,
-   withTiming,
- } from 'react-native-reanimated';
-+import type { SettledUpdate } from 'react-native-reanimated/lib/typescript/commonTypes';
-+import { createSynchronizable, scheduleOnUI } from 'react-native-worklets';
- 
- import {
-   createTestValue,
-@@ -26,7 +30,9 @@ import {
-   wait,
-   waitForNotification,
- } from '../../../ReJest/RuntimeTestsApi';
-+import type { Operation } from '../../../ReJest/types';
- import { ComparisonMode } from '../../../ReJest/types';
-+import { runOnUIBlocking } from '../../../ReJest/utils/runOnUIBlocking';
- 
- const NOTIFICATION_NAME = 'SYNC_BACK_ANIMATION_FINISHED';
- // Native sets a view to settled after SETTLED_ANIMATION_THRESHOLD_MS (1000 ms)
-@@ -46,6 +52,10 @@ const SECOND_WRITE_NOTIFICATION_NAME = 'SYNC_BACK_SECOND_WRITE_FINISHED';
- // that, with a margin for a slow emulator.
- const SECOND_WRITE_DELAY_MS = 4000;
- const SECOND_WRITE_BORDER_RADIUS = 20;
-+const SETTLED_BLUR_RADIUS = 8;
-+// processBoxShadow of Reanimated adds this color when a shadow has none.
-+const STYLE_BUILDER_DEFAULT_SHADOW_COLOR = '#000000';
-+const SETTLED_GRADIENT_ANGLE = 225;
- 
- type Gradient = Exclude<
-   NonNullable<ViewStyle['backgroundImage']>,
-@@ -196,7 +206,10 @@ function blockJSThread(durationMs: number) {
-   }
- }
- 
--type ScrollBoxAnimatedProps = ScrollViewProps & { borderRadius?: number };
-+type StyleBuilderValues = Pick<ViewStyle, 'boxShadow' | 'backgroundImage'>;
-+
-+type ScrollBoxAnimatedProps = ScrollViewProps &
-+  StyleBuilderValues & { borderRadius?: number };
- 
- type ReceivedProps = {
-   props: ScrollBoxAnimatedProps;
-@@ -368,6 +381,302 @@ describe('sync of a value written by both origins after native removed the settl
-   );
- });
- 
-+function LastWriteComponent({
-+  getValues,
-+  lastWriteOrigin,
-+  onProps,
-+}: {
-+  getValues: (progress: number) => StyleBuilderValues;
-+  lastWriteOrigin: WriteOrigin;
-+  onProps: (received: ReceivedProps) => void;
-+}) {
-+  const styleProgress = useSharedValue(0);
-+  const propsProgress = useSharedValue(0);
-+
-+  const animatedStyle = useAnimatedStyle(() => getValues(styleProgress.value));
-+  const animatedProps = useAnimatedProps<ScrollBoxAnimatedProps>(() =>
-+    getValues(propsProgress.value)
-+  );
-+
-+  useEffect(() => {
-+    const [firstProgress, lastProgress] =
-+      lastWriteOrigin === 'animatedStyle'
-+        ? [propsProgress, styleProgress]
-+        : [styleProgress, propsProgress];
-+    firstProgress.value = withTiming(1, { duration: 200 }, () => {
-+      lastProgress.value = withTiming(1, { duration: 200 }, () => {
-+        notify(NOTIFICATION_NAME);
-+      });
-+    });
-+  }, [styleProgress, propsProgress, lastWriteOrigin]);
-+
-+  return (
-+    <View style={styles.container}>
-+      <AnimatedScrollBox
-+        animatedProps={animatedProps}
-+        style={[styles.box, animatedStyle]}
-+        onProps={onProps}
-+      />
-+    </View>
-+  );
-+}
-+
-+async function renderAndWaitForLastWriteSyncBack(
-+  getValues: (progress: number) => StyleBuilderValues,
-+  lastWriteOrigin: WriteOrigin
-+) {
-+  const [received, setReceived] = createTestValue<ReceivedProps>({
-+    props: {},
-+    style: {},
-+  });
-+
-+  await render(
-+    <LastWriteComponent
-+      getValues={getValues}
-+      lastWriteOrigin={lastWriteOrigin}
-+      onProps={setReceived}
-+    />
-+  );
-+  await waitForNotification(NOTIFICATION_NAME);
-+  await wait(SYNC_BACK_DELAY_MS);
-+
-+  return received.value as ReceivedProps;
-+}
-+
-+// Android throws when `useAnimatedProps` sends a color string in a boxShadow
-+// or a backgroundImage string to a View. A ScrollView ignores backgroundImage.
-+function getBoxShadow(progress: number): StyleBuilderValues {
-+  'worklet';
-+  return {
-+    boxShadow: [
-+      {
-+        offsetX: 0,
-+        offsetY: 4,
-+        blurRadius: interpolate(progress, [0, 1], [1, SETTLED_BLUR_RADIUS]),
-+        spreadDistance: 0,
-+      },
-+    ],
-+  };
-+}
-+
-+function getBackgroundImage(progress: number): StyleBuilderValues {
-+  'worklet';
-+  return {
-+    backgroundImage: `linear-gradient(${interpolate(progress, [0, 1], [45, SETTLED_GRADIENT_ANGLE])}deg, #ff0000, #0000ff)`,
-+  };
-+}
-+
-+describe('sync of a value that only the style props builder processes, written by both origins', () => {
-+  test('React receives a boxShadow it can process as a prop and inside style when animatedStyle wrote last', async () => {
-+    const { props, style } = await renderAndWaitForLastWriteSyncBack(
-+      getBoxShadow,
-+      'animatedStyle'
-+    );
-+
-+    for (const boxShadow of [props.boxShadow, style.boxShadow]) {
-+      const [shadow] = boxShadow as BoxShadowValue[];
-+      expect(shadow.blurRadius as number).toBe(SETTLED_BLUR_RADIUS);
-+      expect(typeof shadow.color).toBe('string');
-+      expect(shadow.color as string).toBe(
-+        STYLE_BUILDER_DEFAULT_SHADOW_COLOR,
-```
+### The bug
 
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/updates/AnimatedPropsRegistry.cpp` (modified, +39/-21)
+- `NativeProxy::invalidateCpp()` reset `javaPart_`, but the functions
+returned by `bindThis` captured a raw `this` and called JNI on
+`javaPart_` without checking it. Some of them are globals of the UI
+runtime (`_getAnimationTimestamp`, `_setGestureState`). Worklets owns
+that runtime, so they outlive the invalidation.
+- React Native invalidates TurboModules on a background thread, in the
+order in which they were first requested. When `ReanimatedModule` goes
+before `WorkletsModule`, the UI scheduler of Worklets is still active,
+and the first worklet that starts
+
+**File**: `packages/react-native-reanimated/android/src/main/cpp/reanimated/android/NativeProxy.cpp` (modified, +8/-6)
 ```diff
-@@ -8,7 +8,6 @@
- #include <algorithm>
- #include <memory>
- #include <string>
--#include <unordered_set>
- #include <utility>
- #include <vector>
- 
-@@ -30,18 +29,6 @@ static void roundTextMetrics(jsi::Runtime &rt, const jsi::Value &updates) {
-   }
+@@ -30,6 +30,12 @@ NativeProxy::NativeProxy(
+     const std::shared_ptr<WorkletRuntime> &uiRuntime,
+     const std::shared_ptr<UIScheduler> &uiScheduler)
+     : javaPart_(jni::make_global(jThis)),
++      strongThis_(
++          this,
++          [](NativeProxy *self) {
++            // The Java part can destroy `self` as soon as it is released, so move it out first.
++            const auto javaPart = std::move(self->javaPart_);
++          }),
+       rnRuntime_(rnRuntime),
+       uiRuntime_(uiRuntime),
+       reanimatedModuleProxy_(std::make_shared<ReanimatedModuleProxy>(
+@@ -180,11 +186,6 @@ void NativeProxy::registerEventHandler() {
  }
  
--static jsi::Object
--pickProps(jsi::Runtime &rt, const folly::dynamic &props, const std::unordered_set<std::string> &keys) {
--  jsi::Object pickedProps(rt);
--  for (const auto &[key, value] : props.items()) {
--    const auto &keyString = key.getString();
--    if (keys.contains(keyString)) {
--      pickedProps.setProperty(rt, keyString.c_str(), jsi::valueFromDynamic(rt, value));
--    }
+ void NativeProxy::maybeFlushUIUpdatesQueue() {
+-  // Module might be already destroyed.
+-  if (!javaPart_) {
+-    return;
 -  }
--  return pickedProps;
--}
 -
- void AnimatedPropsRegistry::update(jsi::Runtime &rt, const jsi::Value &operations, const double timestamp) {
-   react_native_assert(UpdatesRegistryManager::isLockedByCurrentThread());
-   auto operationsArray = operations.asObject(rt).asArray(rt);
-@@ -80,9 +67,14 @@ void AnimatedPropsRegistry::trackUpdate(
-   auto &writeHistory = writeHistories_[tag];
-   writeHistory.lastWriteTimestamp = timestamp;
- 
--  auto &writtenKeys = isAnimatedProps ? writeHistory.animatedPropsKeys : writeHistory.animatedStyleKeys;
-   for (const auto &key : updates.keys()) {
--    writtenKeys.insert(key.getString());
-+    auto &keyOrigins = writeHistory.keyOrigins[key.getString()];
-+    if (isAnimatedProps) {
-+      keyOrigins.writtenByAnimatedProps = true;
-+    } else {
-+      keyOrigins.writtenByAnimatedStyle = true;
-+    }
-+    keyOrigins.lastWrittenByAnimatedStyle = !isAnimatedProps;
-   }
- 
-   invalidateSyncedTag(tag);
-@@ -101,10 +93,38 @@ jsi::Object AnimatedPropsRegistry::createSettledUpdate(
-     const Tag viewTag,
-     const folly::dynamic &props,
-     const WriteHistory &writeHistory) {
-+  jsi::Object settledProps(rt);
-+  jsi::Object settledStyle(rt);
-+  std::vector<jsi::Value> keysLastWrittenByAnimatedStyle;
-+
-+  for (const auto &[key, value] : props.items()) {
-+    const auto &keyString = key.getString();
-+    const auto keyOriginsIt = writeHistory.keyOrigins.find(keyString);
-+    if (keyOriginsIt == writeHistory.keyOrigins.end()) {
-+      continue;
-+    }
-+    const auto &keyOrigins = keyOriginsIt->second;
-+    if (keyOrigins.writtenByAnimatedProps) {
-+      settledProps.setProperty(rt, keyString.c_str(), jsi::valueFromDynamic(rt, value));
-+    }
-+    if (keyOrigins.writtenByAnimatedStyle) {
-+      settledStyle.setProperty(rt, keyString.c_str(), jsi::valueFromDynamic(rt, value));
-+    }
-+    if (keyOrigins.lastWrittenByAnimatedStyle) {
-+      keysLastWrittenByAnimatedStyle.emplace_back(jsi::String::createFromUtf8(rt, keyString));
-+    }
-+  }
-+
-+  jsi::Array keysLastWrittenByAnimatedStyleArray(rt, keysLastWrittenByAnimatedStyle.size());
-+  for (size_t i = 0; i < keysLastWrittenByAnimatedStyle.size(); ++i) {
-+    keysLastWrittenByAnimatedStyleArray.setValueAtIndex(rt, i, std::move(keysLastWrittenByAnimatedStyle[i]));
-+  }
-+
-   jsi::Object settledUpdate(rt);
-   settledUpdate.setProperty(rt, "viewTag", viewTag);
--  settledUpdate.setProperty(rt, "props", pickProps(rt, props, writeHistory.animatedPropsKeys));
--  settledUpdate.setProperty(rt, "style", pickProps(rt, props, writeHistory.animatedStyleKeys));
-+  settledUpdate.setProperty(rt, "props", std::move(settledProps));
-+  settledUpdate.setProperty(rt, "style", std::move(settledStyle));
-+  settledUpdate.setProperty(rt, "keysLastWrittenByAnimatedStyle", std::move(keysLastWrittenByAnimatedStyleArray));
-   return settledUpdate;
+   static const auto method = getJniMethod<void()>("maybeFlushUIUpdatesQueue");
+   method(javaPart_.get());
+ }
+@@ -455,7 +456,8 @@ void NativeProxy::invalidateCpp() {
+   // the pointer and it will be too late after it
+   reanimatedModuleProxy_->cleanupSensors();
+   reanimatedModuleProxy_.reset();
+-  javaPart_ = nullptr;
++  // Releases `javaPart_`, but only after the calls in flight on other threads return.
++  strongThis_.reset();
  }
  
-@@ -115,11 +135,12 @@ jsi::Value AnimatedPropsRegistry::collectSettledUpdates(
-   react_native_assert(UpdatesRegistryManager::isLockedByCurrentThread());
- 
-   std::vector<jsi::Object> settledUpdates;
-+  const auto pendingTags = getPendingTags();
- 
-   for (auto it = updatesRegistry_.begin(); it != updatesRegistry_.end();) {
-     const auto viewTag = it->first;
- 
--    if (!registeredViewTags.contains(viewTag)) {
-+    if (!registeredViewTags.contains(viewTag) || pendingTags.contains(viewTag)) {
-       ++it;
-       continue;
-     }
-@@ -151,9 +172,6 @@ jsi::Value AnimatedPropsRegistry::collectSettledUpdates(
-         syncedTags_.insert(viewTag);
-       }
-       if (isInvalidated) {
--        // Only erase serviced invalidations; if a tag was invalidated but the
--        // matching update batch hasn't been flushed into updatesRegistry_ yet,
--        // we leave the entry so the next sync picks it up.
-         invalidatedTags_.erase(invalidatedIt);
-       }
-     }
+ } // namespace reanimated
 ```
 
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/updates/AnimatedPropsRegistry.h` (modified, +8/-2)
+**File**: `packages/react-native-reanimated/android/src/main/cpp/reanimated/android/NativeProxy.h` (modified, +23/-7)
 ```diff
-@@ -17,6 +17,7 @@ class AnimatedPropsRegistry : public UpdatesRegistry {
+@@ -3,6 +3,7 @@
+ #include <ReactCommon/CallInvokerHolder.h>
+ #include <fbjni/fbjni.h>
+ #include <jsi/jsi.h>
++#include <react/debug/react_native_assert.h>
+ #include <react/fabric/JFabricUIManager.h>
+ #include <react/jni/WritableNativeMap.h>
+ #include <react/renderer/scheduler/Scheduler.h>
+@@ -20,7 +21,7 @@ namespace reanimated {
+ using namespace facebook;
+ using namespace facebook::jni;
  
-   /// Returns updates that settled (received no update since `settledTimestamp`)
-   /// or whose synced `settledProps` snapshot was invalidated by a fresh update.
-+  /// Skips tags with updates not yet flushed into the registry.
-   /// Also evicts entries that have already been synced to React — by the time
-   /// of the next call, the corresponding `settledProps` state is guaranteed to
-   /// be committed, so the registry entries are redundant. Skips views that JS
-@@ -30,10 +31,15 @@ class AnimatedPropsRegistry : public UpdatesRegistry {
+-class NativeProxy : public jni::HybridClass<NativeProxy>, std::enable_shared_from_this<NativeProxy> {
++class NativeProxy : public jni::HybridClass<NativeProxy>, public std::enable_shared_from_this<NativeProxy> {
+  public:
+   static auto constexpr kJavaDescriptor = "Lcom/swmansion/reanimated/NativeProxy;";
+   static jni::local_ref<jhybriddata> initHybrid(
+@@ -36,6 +37,13 @@ class NativeProxy : public jni::HybridClass<NativeProxy>, std::enable_shared_fro
   private:
-   static constexpr size_t MIN_UNMOUNTED_FAMILIES_PRUNE_THRESHOLD = 256;
+   friend HybridBase;
+   jni::global_ref<NativeProxy::javaobject> javaPart_;
++  /// The reference behind `weak_from_this()`. It does not own this object, the Java part does.
++  /// It guards `javaPart_` instead: `invalidateCpp()` drops it, and `javaPart_` is released once
++  /// the functions returned by `bindThis` that are running at that moment return. The UI runtime
++  /// keeps those functions, so they can be called during and after `invalidateCpp()`.
++  /// Declared after `javaPart_`, which its deleter releases, and before `reanimatedModuleProxy_`,
++  /// whose initializer calls `bindThis`.
++  std::shared_ptr<NativeProxy> strongThis_;
+   jsi::Runtime *rnRuntime_;
+   std::shared_ptr<worklets::WorkletRuntime> uiRuntime_;
+   std::shared_ptr<ReanimatedModuleProxy> reanimatedModuleProxy_;
+@@ -94,18 +102,26 @@ class NativeProxy : public jni::HybridClass<NativeProxy>, std::enable_shared_fro
+   std::shared_ptr<css::CSSPlatformTransitionBackend> makePlatformTransitionBackend();
  
-+  struct KeyOrigins {
-+    bool writtenByAnimatedProps = false;
-+    bool writtenByAnimatedStyle = false;
-+    bool lastWrittenByAnimatedStyle = false;
-+  };
-+
-   struct WriteHistory {
-     double lastWriteTimestamp = 0;
--    std::unordered_set<std::string> animatedPropsKeys;
--    std::unordered_set<std::string> animatedStyleKeys;
-+    std::unordered_map<std::string, KeyOrigins> keyOrigins;
-   };
- 
-   // Kept after eviction of the registry entry, until `removeTag`. Each sync
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/updates/UpdatesRegistry.cpp` (modified, +9/-0)
-```diff
-@@ -224,6 +224,15 @@ void UpdatesRegistry::addUpdatesToBatch(const ShadowNodeFamily::Shared &shadowNo
-   updatesBatch_.emplace_back(shadowNodeFamily, props);
- }
- 
-+std::unordered_set<Tag> UpdatesRegistry::getPendingTags() const {
-+  react_native_assert(UpdatesRegistryManager::isLockedByCurrentThread());
-+  std::unordered_set<Tag> pendingTags;
-+  for (const auto &[shadowNodeFamily, _] : updatesBatch_) {
-+    pendingTags.insert(shadowNodeFamily->getTag());
-+  }
-+  return pendingTags;
-+}
-+
- void UpdatesRegistry::setInUpdatesRegistry(
-     const ShadowNodeFamily::Shared &shadowNodeFamily,
-     const folly::dynamic &props) {
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/updates/UpdatesRegistry.h` (modified, +3/-0)
-```diff
-@@ -99,6 +99,9 @@ class UpdatesRegistry {
-   /// Assumes the caller already locked the registry.
-   void addUpdatesToBatch(const ShadowNodeFamily::Shared &shadowNodeFamily, const folly::dynamic &props);
- 
-+  /// Assumes the caller already locked the registry.
-+  std::unordered_set<Tag> getPendingTags() const;
-+
-   /// Assumes the caller already locked the registry.
-   folly::dynamic getUpdatesFromRegistry(const Tag tag) const;
- 
-```
-
-**File**: `packages/react-native-reanimated/changelog/settled-props-last-writer-format.fix.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+Fix settled `boxShadow` and `backgroundImage` values that reach React in the native format when both `useAnimatedProps` and `useAnimatedStyle` write them on one view.
-```
-
-**File**: `packages/react-native-reanimated/changelog/settled-props-pending-updates.fix.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+Defer sync of settled props until pending updates reach the registry.
-```
-
----
-
-### Incident Patch 2: `9fab3212` (2026-10-27)
-**Commit Message**: fix(Reanimated): track the origin of settled props natively (#10736)
-
-> [!NOTE]
-> This pull request was authored by AI on behalf of @pawicao.
-
-## Summary
-
-Fixes #10560.
-This is an alternative approach to #10733.
-
-Since #10140, settled values were split into props and style by the keys
-of the first `useAnimatedProps` run, so a key returned only after mount
-landed in `style` and the next React render reset it. I passed
-`isAnimatedProps` from `updateProps` down to the native
-`AnimatedPropsRegistry`, which now records for each view which keys were
-written by animated props and which by animated styles, and keeps that
-record until the view is removed. `getSettledUpdates` returns the
-settled values already split into `props` and `style`, and a key written
-by both origins goes to both. I removed the key-name inference from
-`AnimatedComponent` and converted processed values back only with the
-steps that match their origin.
-
-Known limit, left for a follow-up PR: if animated props and animated
-styles both write `boxShadow` or `backgroundImage` on one view, the
-top-level copy is not converted back.
-
-## Test plan
-
-The `props` runtime tests pass on iOS (25 of 25, `DebugRuntimeTests`). I
-added c
-
-**File**: `apps/common-app/runtime-tests/ReJest/types.ts` (modified, +1/-0)
-```diff
-@@ -133,6 +133,7 @@ export interface Operation {
-   shadowNodeWrapper?: ShadowNodeWrapper;
-   name: string;
-   updates: OperationUpdate;
-+  isAnimatedProps: boolean;
- }
- 
- export type TestValue =
-```
-
-**File**: `apps/common-app/runtime-tests/reanimated/tests/props/syncBackToReact.test.tsx` (modified, +189/-2)
-```diff
-@@ -1,10 +1,16 @@
- import type { ComponentRef } from 'react';
- import { forwardRef, useEffect } from 'react';
--import type { BoxShadowValue, ViewProps, ViewStyle } from 'react-native';
--import { StyleSheet, View } from 'react-native';
-+import type {
-+  BoxShadowValue,
-+  ScrollViewProps,
-+  ViewProps,
-+  ViewStyle,
-+} from 'react-native';
-+import { ScrollView, StyleSheet, View } from 'react-native';
- import Animated, {
-   interpolate,
-   interpolateColor,
-+  useAnimatedProps,
-   useAnimatedStyle,
-   useSharedValue,
-   withTiming,
-@@ -31,6 +37,15 @@ const NOTIFICATION_NAME = 'SYNC_BACK_ANIMATION_FINISHED';
- const SYNC_BACK_DELAY_MS = 2000;
- // The value settles and stays settled for 2000 ms while no timer can run.
- const JS_THREAD_STALL_MS = 3000;
-+const LATE_CONTENT_OFFSET_Y = 100;
-+const SETTLED_OPACITY = 0.5;
-+const SETTLED_BORDER_RADIUS = 10;
-+const SECOND_WRITE_NOTIFICATION_NAME = 'SYNC_BACK_SECOND_WRITE_FINISHED';
-+// React receives the first value after 1700 ms at the most. Native removes the
-+// settled entry on the next read, 500 ms later. The second write starts after
-+// that, with a margin for a slow emulator.
-+const SECOND_WRITE_DELAY_MS = 4000;
-+const SECOND_WRITE_BORDER_RADIUS = 20;
- 
- type Gradient = Exclude<
-   NonNullable<ViewStyle['backgroundImage']>,
-@@ -181,6 +196,178 @@ function blockJSThread(durationMs: number) {
-   }
- }
- 
-+type ScrollBoxAnimatedProps = ScrollViewProps & { borderRadius?: number };
-+
-+type ReceivedProps = {
-+  props: ScrollBoxAnimatedProps;
-+  style: ViewStyle;
-+};
-+
-+type ScrollBoxProps = ScrollBoxAnimatedProps & {
-+  onProps: (received: ReceivedProps) => void;
-+};
-+
-+const ScrollBox = forwardRef<ComponentRef<typeof ScrollView>, ScrollBoxProps>(
-+  ({ onProps, ...props }, ref) => {
-+    onProps({ props, style: StyleSheet.flatten(props.style) ?? {} });
-+    return <ScrollView ref={ref} {...props} />;
-+  }
-+);
-+
-+const AnimatedScrollBox = Animated.createAnimatedComponent(ScrollBox);
-+
-+function AnimatedPropsAndStyleComponent({
-+  onProps,
-+}: {
-+  onProps: (received: ReceivedProps) => void;
-+}) {
-+  const progress = useSharedValue(0);
-+
-+  const animatedStyle = useAnimatedStyle(() => ({
-+    opacity: interpolate(progress.value, [0, 1], [1, SETTLED_OPACITY]),
-+    borderRadius: progress.value * SETTLED_BORDER_RADIUS,
-+  }));
-+  const animatedProps = useAnimatedProps<ScrollBoxAnimatedProps>(() =>
-+    progress.value === 0
-+      ? {}
-+      : {
-+          contentOffset: { x: 0, y: progress.value * LATE_CONTENT_OFFSET_Y },
-+          borderRadius: progress.value * SETTLED_BORDER_RADIUS,
-+        }
-+  );
-+
-+  useEffect(() => {
-+    progress.value = withTiming(1, { duration: 200 }, () => {
-+      notify(NOTIFICATION_NAME);
-+    });
-+  }, [progress]);
-+
-+  return (
-+    <View style={styles.container}>
-+      <AnimatedScrollBox
-+        animatedProps={animatedProps}
-+        style={[styles.box, animatedStyle]}
-+        onProps={onProps}
-+      />
-+    </View>
-+  );
-+}
-+
-+async function renderAndWaitForSyncBack() {
-+  const [received, setReceived] = createTestValue<ReceivedProps>({
-+    props: {},
-+    style: {},
-+  });
-+
-+  await render(<AnimatedPropsAndStyleComponent onProps={setReceived} />);
-+  await waitForNotification(NOTIFICATION_NAME);
-+  await wait(SYNC_BACK_DELAY_MS);
-+
-+  return received.value as ReceivedProps;
-+}
-+
-+describe('sync of settled animated props back to React', () => {
-+  test('React receives a prop first returned after mount as a top-level prop', async () => {
-+    const { props, style } = await renderAndWaitForSyncBack();
-+
-+    expect(props.contentOffset?.y).toBe(LATE_CONTENT_OFFSET_Y);
-+    expect('contentOffset' in style).toBe(false);
-+  });
-+
-+  test('React receives an animated style value only inside style', async () => {
-+    const { props, style } = await renderAndWaitForSyncBack();
-+
-+    expect(style.opacity as number).toBe(SETTLED_OPACITY);
-+    expect('opacity' in props).toBe(false);
-+  });
-+
-+  test('React receives a value written by both animated props and animated style as a prop and inside style', async () => {
-+    const { props, style } = await renderAndWaitForSyncBack();
-+
-+    expect(props.borderRadius).toBe(SETTLED_BORDER_RADIUS);
-+    expect(style.borderRadius as number).toBe(SETTLED_BORDER_RADIUS);
-+  });
-+});
-+
-+type WriteOrigin = 'animatedProps' | 'animatedStyle';
-+
-+function SecondWriteComponent({
-+  secondWriteOrigin,
-+  onProps,
-+}: {
-+  secondWriteOrigin: WriteOrigin;
-+  onProps: (received: ReceivedProps) => void;
-+}) {
-+  const styleBorderRadius = useSharedValue(0);
-+  const propsBorderRadius = useSharedValue(0);
-+
-+  const animatedStyle = useAnimatedStyle(() => ({
-+    borderRadius: styleBorderRadius.value,
-+  }));
-+  const animatedProps = useAnimatedProps<ScrollBoxAnimatedProps>(() => ({
-+    borderRadius: propsBorderRadius.value,
-+  }));
-+
-+  useEffect(() => {
-+    styleBorderRadius.value = withTiming(SETTLED_BORDER_RADIUS, {
-+      duration: 200,
-+    });
-+    propsBorderRadius.value = withTiming(SETTLED_BORDER_RADIUS, {
-
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/updates/AnimatedPropsRegistry.cpp` (modified, +67/-30)
-```diff
-@@ -6,8 +6,9 @@
- #include <react/debug/react_native_assert.h>
- 
- #include <algorithm>
--#include <functional>
- #include <memory>
-+#include <string>
-+#include <unordered_set>
- #include <utility>
- #include <vector>
- 
-@@ -29,6 +30,18 @@ static void roundTextMetrics(jsi::Runtime &rt, const jsi::Value &updates) {
-   }
- }
- 
-+static jsi::Object
-+pickProps(jsi::Runtime &rt, const folly::dynamic &props, const std::unordered_set<std::string> &keys) {
-+  jsi::Object pickedProps(rt);
-+  for (const auto &[key, value] : props.items()) {
-+    const auto &keyString = key.getString();
-+    if (keys.contains(keyString)) {
-+      pickedProps.setProperty(rt, keyString.c_str(), jsi::valueFromDynamic(rt, value));
-+    }
-+  }
-+  return pickedProps;
-+}
-+
- void AnimatedPropsRegistry::update(jsi::Runtime &rt, const jsi::Value &operations, const double timestamp) {
-   react_native_assert(UpdatesRegistryManager::isLockedByCurrentThread());
-   auto operationsArray = operations.asObject(rt).asArray(rt);
-@@ -47,33 +60,61 @@ void AnimatedPropsRegistry::update(jsi::Runtime &rt, const jsi::Value &operation
-     if constexpr (StaticFeatureFlags::getFlag("USE_ANIMATION_BACKEND")) {
-       addJSIPropsToAnimatedPropsBatch(shadowNode->getFamilyShared(), rt, updates);
-     } else {
--      addUpdatesToBatch(shadowNode->getFamilyShared(), jsi::dynamicFromValue(rt, updates));
--    }
--
--    // When USE_ANIMATION_BACKEND is enabled, updates bypass `updatesRegistry_`,
--    // so entries added to `timestampMap_` would never be synced and thus never
--    // evicted, leaking until view unmount.
--    if constexpr (
--        StaticFeatureFlags::getFlag("FORCE_REACT_RENDER_FOR_SETTLED_ANIMATIONS") &&
--        !StaticFeatureFlags::getFlag("USE_ANIMATION_BACKEND")) {
--      const auto tag = shadowNode->getTag();
--      timestampMap_[tag] = timestamp;
--      // If JS already has a `settledProps` snapshot for this tag, it is now
--      // stale — schedule a refresh on the next `collectSettledUpdates`.
--      if (syncedTags_.erase(tag) > 0) {
--        invalidatedTags_.insert(tag);
-+      const auto dynamicUpdates = jsi::dynamicFromValue(rt, updates);
-+      // With USE_ANIMATION_BACKEND, no update reaches `updatesRegistry_`, so
-+      // `collectSettledUpdates` never reads `writeHistories_`.
-+      if constexpr (StaticFeatureFlags::getFlag("FORCE_REACT_RENDER_FOR_SETTLED_ANIMATIONS")) {
-+        const bool isAnimatedProps = item.getProperty(rt, "isAnimatedProps").asBool();
-+        trackUpdate(shadowNode->getTag(), dynamicUpdates, isAnimatedProps, timestamp);
-       }
-+      addUpdatesToBatch(shadowNode->getFamilyShared(), dynamicUpdates);
-     }
-   }
- }
- 
-+void AnimatedPropsRegistry::trackUpdate(
-+    const Tag tag,
-+    const folly::dynamic &updates,
-+    const bool isAnimatedProps,
-+    const double timestamp) {
-+  auto &writeHistory = writeHistories_[tag];
-+  writeHistory.lastWriteTimestamp = timestamp;
-+
-+  auto &writtenKeys = isAnimatedProps ? writeHistory.animatedPropsKeys : writeHistory.animatedStyleKeys;
-+  for (const auto &key : updates.keys()) {
-+    writtenKeys.insert(key.getString());
-+  }
-+
-+  invalidateSyncedTag(tag);
-+}
-+
-+void AnimatedPropsRegistry::invalidateSyncedTag(const Tag tag) {
-+  // If JS already has a `settledProps` snapshot for this tag, it is now
-+  // stale — schedule a refresh on the next `collectSettledUpdates`.
-+  if (syncedTags_.erase(tag) > 0) {
-+    invalidatedTags_.insert(tag);
-+  }
-+}
-+
-+jsi::Object AnimatedPropsRegistry::createSettledUpdate(
-+    jsi::Runtime &rt,
-+    const Tag viewTag,
-+    const folly::dynamic &props,
-+    const WriteHistory &writeHistory) {
-+  jsi::Object settledUpdate(rt);
-+  settledUpdate.setProperty(rt, "viewTag", viewTag);
-+  settledUpdate.setProperty(rt, "props", pickProps(rt, props, writeHistory.animatedPropsKeys));
-+  settledUpdate.setProperty(rt, "style", pickProps(rt, props, writeHistory.animatedStyleKeys));
-+  return settledUpdate;
-+}
-+
- jsi::Value AnimatedPropsRegistry::collectSettledUpdates(
-     jsi::Runtime &rt,
-     const double settledTimestamp,
-     const std::unordered_set<Tag> &registeredViewTags) {
-   react_native_assert(UpdatesRegistryManager::isLockedByCurrentThread());
- 
--  std::vector<std::pair<Tag, std::reference_wrapper<const folly::dynamic>>> updates;
-+  std::vector<jsi::Object> settledUpdates;
- 
-   for (auto it = updatesRegistry_.begin(); it != updatesRegistry_.end();) {
-     const auto viewTag = it->first;
-@@ -89,21 +130,21 @@ jsi::Value AnimatedPropsRegistry::collectSettledUpdates(
-       // entry is redundant. `syncedTags_` is intentionally retained to detect
-       // re-animation staleness. Note that `syncedTags_` and `invalidatedTags_`
-       // are disjoint — `update()` moves tags from the former to the latter.
--      timestampMap_.erase(viewTag);
-       it = updatesRegistry_.erase(it);
-       continue;
-     }
- 
--    const auto timestampIt = timestampMap_.find(viewTag);
--    if (timestampIt == timestampMap_.end()) {
-+    const auto writeHistoryIt = writeHistories_.find(v
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/updates/AnimatedPropsRegistry.h` (modified, +14/-1)
-```diff
-@@ -5,6 +5,7 @@
- #include <react/renderer/uimanager/UIManager.h>
- 
- #include <memory>
-+#include <string>
- #include <unordered_map>
- #include <unordered_set>
- 
-@@ -29,7 +30,15 @@ class AnimatedPropsRegistry : public UpdatesRegistry {
-  private:
-   static constexpr size_t MIN_UNMOUNTED_FAMILIES_PRUNE_THRESHOLD = 256;
- 
--  std::unordered_map<Tag, double> timestampMap_;
-+  struct WriteHistory {
-+    double lastWriteTimestamp = 0;
-+    std::unordered_set<std::string> animatedPropsKeys;
-+    std::unordered_set<std::string> animatedStyleKeys;
-+  };
-+
-+  // Kept after eviction of the registry entry, until `removeTag`. Each sync
-+  // must send a key to the same React fields as the syncs before it.
-+  std::unordered_map<Tag, WriteHistory> writeHistories_;
-   // Tags whose latest values have already been pushed to React `settledProps`.
-   // Intentionally retained after eviction to detect re-animation staleness.
-   std::unordered_set<Tag> syncedTags_;
-@@ -44,6 +53,10 @@ class AnimatedPropsRegistry : public UpdatesRegistry {
-   bool isUnmounted(const ShadowNodeFamily &shadowNodeFamily) const;
-   void pruneExpiredUnmountedFamilies();
- 
-+  void trackUpdate(Tag tag, const folly::dynamic &updates, bool isAnimatedProps, double timestamp);
-+  void invalidateSyncedTag(Tag tag);
-+  static jsi::Object
-+  createSettledUpdate(jsi::Runtime &rt, Tag viewTag, const folly::dynamic &props, const WriteHistory &writeHistory);
-   void removeTag(Tag tag) override;
- };
- 
-```
-
-**File**: `packages/react-native-reanimated/changelog/settled-props-origin.fix.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+Fix settled values of props that `useAnimatedProps` returns only after mount being reset by the next React render.
-```
-
-**File**: `packages/react-native-reanimated/src/PropsRegistryGarbageCollector.ts` (modified, +12/-10)
-```diff
-@@ -9,7 +9,7 @@ import {
-   unprocessColor,
-   unprocessColorsInProps,
- } from './common/style/processors/colors';
--import type { StyleProps } from './commonTypes';
-+import type { SettledUpdate, StyleProps } from './commonTypes';
- import type { IAnimatedComponentInternal } from './createAnimatedComponent/commonTypes';
- import { ReanimatedModule } from './ReanimatedModule';
- 
-@@ -45,13 +45,11 @@ export const PropsRegistryGarbageCollector = {
-     const settledUpdates = ReanimatedModule.getSettledUpdates([
-       ...this.viewsMap.keys(),
-     ]);
--    for (const { viewTag, styleProps } of settledUpdates) {
--      if (styleProps === null) {
--        continue;
--      }
-+    for (const settledUpdate of settledUpdates) {
-+      const { viewTag, props, style } = settledUpdate;
-       const component = this.viewsMap.get(viewTag);
--      unprocessProps(styleProps);
--      component?._syncStylePropsBackToReact(styleProps);
-+      unprocessSettledUpdate(settledUpdate);
-+      component?._syncStylePropsBackToReact(props, style);
-     }
-   },
- 
-@@ -70,10 +68,14 @@ export const PropsRegistryGarbageCollector = {
-   },
- };
- 
--export function unprocessProps(props: StyleProps) {
-+export function unprocessSettledUpdate({
-+  props,
-+  style,
-+}: Pick<SettledUpdate, 'props' | 'style'>) {
-   unprocessColorsInProps(props);
--  unprocessBoxShadow(props);
--  unprocessBackgroundImage(props);
-+  unprocessColorsInProps(style);
-+  unprocessBoxShadow(style);
-+  unprocessBackgroundImage(style);
- }
- 
- function unprocessBoxShadow(props: StyleProps) {
-```
-
-**File**: `packages/react-native-reanimated/src/__tests__/PropsRegistryGarbageCollector.test.ts` (modified, +30/-14)
-```diff
-@@ -12,11 +12,11 @@ import {
- } from '../common/style/processors';
- import { ValueProcessorTarget } from '../common/types';
- import type { StyleProps } from '../commonTypes';
--import { unprocessProps } from '../PropsRegistryGarbageCollector';
-+import { unprocessSettledUpdate } from '../PropsRegistryGarbageCollector';
- 
- const context = { target: ValueProcessorTarget.Default };
- 
--describe('unprocessProps', () => {
-+describe('unprocessSettledUpdate', () => {
-   describe('colors', () => {
-     const COLORS = [
-       '#ff0000',
-@@ -33,21 +33,26 @@ describe('unprocessProps', () => {
-         .flat()
-     )('round-trips %s: %s through React Native', (property, color) => {
-       const props: StyleProps = { [property]: processColor(color) };
-+      const style: StyleProps = { [property]: processColor(color) };
- 
--      unprocessProps(props);
-+      unprocessSettledUpdate({ props, style });
- 
--      expect(typeof props[property]).toBe('string');
--      expect(processColorRN(props[property] as string)).toBe(
--        processColorRN(color)
--      );
-+      for (const unprocessed of [props, style]) {
-+        expect(typeof unprocessed[property]).toBe('string');
-+        expect(processColorRN(unprocessed[property] as string)).toBe(
-+          processColorRN(color)
-+        );
+   /***
+-   * Wraps a method of `NativeProxy` in a function object capturing `this`
++   * Wraps a method of `NativeProxy` in a function object holding a weak
++   * reference to `this`
+    * @tparam TReturn return type of passed method
+    * @tparam TParams parameter types of passed method
+    * @param methodPtr pointer to method to be wrapped
+-   * @return a function object with the same signature as the method, calling
+-   * that method on `this`
++   * @return a function object with the same signature as the method. It calls
++   * that method on `this` while `javaPart_` is held, and returns a default
++   * value after `javaPart_` is released
+    */
+   template <class TReturn, class... TParams>
+   std::function<TReturn(TParams...)> bindThis(TReturn (NativeProxy::*methodPtr)(TParams...)) {
+-    // It's probably safe to pass `this` as reference here...
+-    return [this, methodPtr](TParams &&...args) {
+-      return (this->*methodPtr)(std::forward<TParams>(args)...);
++    auto weakThis = weak_from_this();
++    // Otherwise the function would never call the method.
++    react_native_assert(!weakThis.expired() && "`bindThis` called before `strongThis_` is initialized");
++    return [weakThis = std::move(weakThis), methodPtr](TParams &&...args) -> TReturn {
++      const auto strongThis = weakThis.lock();
++      if (!strongThis) {
++        return TReturn();
 +      }
-     });
++      return (strongThis.get()->*methodPtr)(std::forward<TParams>(args)...);
+     };
+   }
  
-     test('leaves a non-color property untouched', () => {
-       const props: StyleProps = { opacity: 0.5, width: 10 };
-+      const style: StyleProps = { opacity: 0.5, width: 10 };
- 
--      unprocessProps(props);
-+      unprocessSettledUpdate({ props, style });
- 
-       expect(props).toEqual({ opacity: 0.5, width: 10 });
-+      expect(style).toEqual({ opacity: 0.5, width: 10 });
-     });
-   });
- 
-@@ -67,16 +72,27 @@ describe('unprocessProps', () => {
-         },
-       ],
-     ])('round-trips %s through React Native', (boxShadow) => {
--      const props = {
-+      const style = {
-         boxShadow: processBoxShadow(boxShadow, context),
-       } as unknown as StyleProps;
- 
--      unprocessProps(props);
-+      unprocessSettledUpdate({ props: {}, style });
- 
--      expect(processBoxShadowRN(props.boxShadow)).toEqual(
-+      expect(processBoxShadowRN(style.boxShadow)).toEqual(
-         processBoxShadowRN(boxShadow)
-       );
-     });
-+
-+    test('leaves a boxShadow passed as a prop untouched', () => {
-+      const boxShadow = [
-+        { offsetX: 1, offsetY: 2, blurRadius: 3, color: '#ff0000' },
-+      ];
-+      const props = { boxShadow: [...boxShadow] } as unknown as StyleProps;
-+
-+      unprocessSettledUpdate({ props, style: {} });
-+
-+      expect(props.boxShadow).toEqual(boxShadow);
-+    });
-   });
- 
-   describe('backgroundImage', () => {
-@@ -88,13 +104,13 @@ describe('unprocessProps', () => {
-       'radial-gradient(ellipse 22% 70% at 50% 0%, #ffe6c4 0%, transparent 100%)',
-       'radial-gradient(closest-side, red, blue), linear-gradient(180deg, red, blue)',
-     ])('round-trips %s through React Native', (backgroundImage) => {
--      const props = {
-+      const style = {
-         backgroundImage: processBackgroundImage(backgroundImage, context),
-       } as unknown as StyleProps;
- 
--      unprocessProps(props);
-+      unprocessSettledUpdate({ props: {}, style });
- 
--      expect(processBackgroundImageRN(props.backgroundImage)).toEqual(
-+      expect(processBackgroundImageRN(style.backgroundImage)).toEqual(
-         processBackgroundImageRN(backgroundImage)
-       );
-     });
 ```
 
-**File**: `packages/react-native-reanimated/src/__tests__/PropsRegistryGarbageCollectorSync.test.ts` (modified, +9/-2)
+**File**: `packages/react-native-reanimated/changelog/android-native-proxy-call-after-invalidate.fix.md` (added, +1/-0)
 ```diff
-@@ -55,11 +55,18 @@ describe('PropsRegistryGarbageCollector.syncPropsBackToReact', () => {
-     const { component, syncStylePropsBackToReact } = createComponent();
-     PropsRegistryGarbageCollector.registerView(VIEW_TAG, component);
-     getSettledUpdates.mockReturnValue([
--      { viewTag: VIEW_TAG, styleProps: { opacity: 0 } },
-+      {
-+        viewTag: VIEW_TAG,
-+        props: { scrollEnabled: false },
-+        style: { opacity: 0 },
-+      },
-     ]);
- 
-     PropsRegistryGarbageCollector.syncPropsBackToReact();
- 
--    expect(syncStylePropsBackToReact).toHaveBeenCalledWith({ opacity: 0 });
-+    expect(syncStylePropsBackToReact).toHaveBeenCalledWith(
-+      { scrollEnabled: false },
-+      { opacity: 0 }
-+    );
-   });
- });
+@@ -0,0 +1 @@
++Fix an Android crash (`JNI DETECTED ERROR IN APPLICATION: obj == null` in `NativeProxy::getAnimationTimestamp`) when a worklet still runs on the UI thread while the React host is torn down, for example on an `expo-updates` restart.
 ```
 
 ---
 
-### Incident Patch 3: `caa78825` (2026-10-26)
-**Commit Message**: fix(Reanimated): keep a stable shared value identity in the useSharedValue mock (#10920)
+### Incident Patch 2: `4670996b` (2026-10-28)
+**Commit Message**: fix(Reanimated): don't throw when animating a component whose ref is an imperative handle (#11023)
 
 > [!NOTE]
-> This pull request was authored by AI on behalf of @pawicao.
+> This pull request was authored by AI on behalf of @bartlomiejbloniarz.
 
 ## Summary
 
-Stacked on #10919.
+When Reanimated can't read the native view straight from an animated
+component's ref, it falls back to React's `findHostInstance_DEPRECATED`.
+Since #9589 that fallback receives the component's own ref. React
+resolves only class component instances there and throws for anything
+else. So wrapping a component whose ref is a `useImperativeHandle`
+handle, such as react-native-video's `<Video>`, in
+`Animated.createAnimatedComponent` threw "Argument appears to not be a
+ReactComponent" on mount.
 
-The real `useSharedValue` keeps one shared value for the lifetime of the
-component. The Jest mock created a new object on every call, so the
-shared value changed identity on every render. Code that used it as a
-`useEffect` or `useMemo` dependency ran again on every render under the
-mock. I moved the mock shared value creation into the `useState`
-initializer, so each component keeps one shared value.
+Now Reanimated passes the component's ref only when it is a class
+component instance. Otherwise it resolves the view through the animated
+component itself, the same path it already takes when a component has no
+ref. Refs forwarded to a class component keep the behavior from #9589.
 
-## Test plan
+**iOS**
 
-I added a test to `__tests__/mock.useSharedValue.test.tsx` that
-re-renders the hook and compares the results. Before the fix it failed,
-after the fix it passes. The full reanimated Jest suite passes.
+<table>
+<tr><th>Before</th><th>After</th></tr>
+<tr>
+<td>
 
-## Changelog
 
-- [x] I added a changelog fragment with `yarn changelog:add` for each
-changed package, or this PR does not change `react-native-reanimated` or
-`react-native-worklets`.
+https://github.com/user-attachments/assets/a9ec42c9-01f6-49db-9e34-df5ec06b787f
 
-Co-authored-by: Tomasz Żelawski <[REDACTED_EMAIL]>
+</td>
+<td>
 
-**File**: `packages/react-native-reanimated/__tests__/mock.useSharedValue.test.tsx` (modified, +9/-0)
+
+https://github.com/user-attachments/assets/02ff36b6-c8bb-437c-9ef
+
+**File**: `apps/common-app/runtime-tests/reanimated/tests/props/hostReplacement.test.tsx` (modified, +25/-0)
 ```diff
-@@ -12,4 +12,13 @@ describe('mock useSharedValue', () => {
+@@ -129,12 +129,27 @@ function FreshHandleHost({
+   );
+ }
  
-     expect(result.current.get()).toBe(5);
++// Exposes methods instead of a view, so the animated component has to find
++// the view itself.
++function ImperativeHandleHost({
++  ref,
++  hostKey: _hostKey,
++  innerRef,
++  ...viewProps
++}: HostProps & { ref?: React.Ref<{ ping: () => void }> }) {
++  useImperativeHandle(ref, () => ({ ping: () => undefined }));
++
++  return <View ref={innerRef} {...viewProps} />;
++}
++
+ const AnimatedAnimatableRefHost =
+   Animated.createAnimatedComponent(AnimatableRefHost);
+ const AnimatedForwardedRefHost =
+   Animated.createAnimatedComponent(ForwardedRefHost);
+ const AnimatedFreshHandleHost =
+   Animated.createAnimatedComponent(FreshHandleHost);
++const AnimatedImperativeHandleHost =
++  Animated.createAnimatedComponent(ImperativeHandleHost);
+ 
+ type HostComponent = React.ComponentType<AnimatedProps<HostProps>>;
+ 
+@@ -273,4 +288,14 @@ describe('Host replacement', () => {
+       await expectTransitionOnCurrentHost(AnimatedFreshHandleHost);
+     });
    });
 +
-+  test('keeps the same shared value across re-renders', () => {
-+    const { result, rerender } = renderHook(() => useSharedValue(0));
-+    const first = result.current;
++  describe('the ref is an imperative handle', () => {
++    test('binds to the view the component renders', async () => {
++      await render(<Example Host={AnimatedImperativeHandleHost} />);
++      await waitForFrames();
 +
-+    rerender({});
-+
-+    expect(result.current).toBe(first);
++      await expectBindingsOnCurrentHost();
++      await expectTransitionOnCurrentHost(AnimatedImperativeHandleHost);
++    });
 +  });
  });
 ```
 
-**File**: `packages/react-native-reanimated/changelog/mock-shared-value-stable-identity.fix.md` (added, +1/-0)
+**File**: `packages/react-native-reanimated/__tests__/findHostInstance.test.ts` (modified, +41/-5)
 ```diff
-@@ -0,0 +1 @@
-+Fix the Jest mock of `useSharedValue` to return the same shared value on every render, like the real hook.
+@@ -1,4 +1,6 @@
+ /* eslint-disable eslint-core/camelcase */
++import { Component } from 'react';
++
+ import type { IAnimatedComponentInternalBase } from '../src/createAnimatedComponent/commonTypes';
+ import { findHostInstance } from '../src/platform-specific/findHostInstance';
+ 
+@@ -9,13 +11,20 @@ jest.mock('react-native/Libraries/Renderer/shims/ReactFabric', () => ({
+ const ReactFabric: { findHostInstance_DEPRECATED: jest.Mock } =
+   jest.requireMock('react-native/Libraries/Renderer/shims/ReactFabric');
+ 
++class ClassComponent extends Component {}
++
++class ScrollableClassComponent extends Component {
++  getNativeScrollRef = () => null;
++  getScrollableNode = () => 42;
++}
++
+ describe('findHostInstance', () => {
+   beforeEach(() => {
+     ReactFabric.findHostInstance_DEPRECATED.mockReset();
+   });
+ 
+   test('uses the resolved component ref when the fast path cannot handle it', () => {
+-    const componentRef = { __nativeTag: 42 };
++    const componentRef = new ClassComponent({});
+     const hostInstance = { host: true };
+     const animatedComponent = {
+       _componentRef: componentRef,
+@@ -77,10 +86,7 @@ describe('findHostInstance', () => {
+ 
+   test('falls back when getScrollableNode returns a view tag', () => {
+     const hostInstance = { host: true };
+-    const componentRef = {
+-      getNativeScrollRef: () => null,
+-      getScrollableNode: () => 42,
+-    };
++    const componentRef = new ScrollableClassComponent({});
+     const animatedComponent = {
+       _componentRef: componentRef,
+       _hasAnimatedRef: false,
+@@ -93,4 +99,34 @@ describe('findHostInstance', () => {
+       componentRef
+     );
+   });
++
++  test('falls back to the animated component for an imperative handle', () => {
++    const hostInstance = { host: true };
++    const animatedComponent = {
++      _componentRef: { seek: jest.fn(), pause: jest.fn() },
++      _hasAnimatedRef: false,
++    } as unknown as IAnimatedComponentInternalBase;
++
++    ReactFabric.findHostInstance_DEPRECATED.mockReturnValue(hostInstance);
++
++    expect(findHostInstance(animatedComponent)).toBe(hostInstance);
++    expect(ReactFabric.findHostInstance_DEPRECATED).toHaveBeenCalledWith(
++      animatedComponent
++    );
++  });
++
++  test('falls back to the animated component without a component ref', () => {
++    const hostInstance = { host: true };
++    const animatedComponent = {
++      _componentRef: null,
++      _hasAnimatedRef: false,
++    } as unknown as IAnimatedComponentInternalBase;
++
++    ReactFabric.findHostInstance_DEPRECATED.mockReturnValue(hostInstance);
++
++    expect(findHostInstance(animatedComponent)).toBe(hostInstance);
++    expect(ReactFabric.findHostInstance_DEPRECATED).toHaveBeenCalledWith(
++      animatedComponent
++    );
++  });
+ });
 ```
 
-**File**: `packages/react-native-reanimated/src/mock.ts` (modified, +48/-47)
+**File**: `packages/react-native-reanimated/changelog/imperative-handle-host-lookup.fix.md` (added, +1/-0)
 ```diff
-@@ -1,7 +1,7 @@
+@@ -0,0 +1 @@
++Fix `createAnimatedComponent` throwing on mount for components whose ref is a `useImperativeHandle` handle.
+```
+
+**File**: `packages/react-native-reanimated/src/platform-specific/findHostInstance.native.ts` (modified, +10/-4)
+```diff
+@@ -1,6 +1,8 @@
+ /* eslint-disable eslint-core/camelcase */
  'use strict';
  
- import type { ReactNode } from 'react';
--import { createElement } from 'react';
-+import { createElement, useState } from 'react';
- import type { TextProps } from 'react-native';
- import {
-   Animated as AnimatedRN,
-@@ -128,52 +128,53 @@ const hook = {
-   useReducedMotion: () => false,
-   useScrollOffset: () => ({ value: 0 }),
-   useScrollViewOffset: () => ({ value: 0 }),
--  useSharedValue: <Value>(init: Value | (() => Value)) => {
--    const value = {
--      value: typeof init === 'function' ? (init as () => Value)() : init,
--    };
--    return new Proxy(value, {
--      get(target, prop) {
--        if (prop === '_isReanimatedSharedValue') {
--          return true;
--        }
--        if (prop === 'value') {
--          return target.value;
--        }
--        if (prop === 'get') {
--          return () => target.value;
--        }
--        if (prop === 'set') {
--          return (newValue: Value | ((currentValue: Value) => Value)) => {
--            if (typeof newValue === 'function') {
--              target.value = (newValue as (currentValue: Value) => Value)(
--                target.value
--              );
--            } else {
--              target.value = newValue;
--            }
--          };
--        }
--        if (prop === 'modify') {
--          return (modifier?: (currentValue: Value) => Value) => {
--            if (modifier !== undefined) {
--              target.value = modifier(target.value);
--            }
--          };
--        }
--        if (prop === 'addListener' || prop === 'removeListener') {
--          return NOOP;
--        }
--      },
--      set(target, prop: string, newValue) {
--        if (prop === 'value') {
--          target.value = newValue;
--          return true;
--        }
--        return false;
--      },
--    });
--  },
-+  useSharedValue: <Value>(init: Value | (() => Value)) =>
-+    useState(() => {
-+      const value = {
-+        value: typeof init === 'function' ? (init as () => Value)() : init,
-+      };
-+      return new Proxy(value, {
-+        get(target, prop) {
-+          if (prop === '_isReanimatedSharedValue') {
-+            return true;
-+          }
-+          if (prop === 'value') {
-+            return target.value;
-+          }
-+          if (prop === 'get') {
-+            return () => target.value;
-+          }
-+          if (prop === 'set') {
-+            return (newValue: Value | ((currentValue: Value) => Value)) => {
-+              if (typeof newValue === 'function') {
-+                target.value = (newValue as (currentValue: Value) => Value)(
-+                  target.value
-+                );
-+              } else {
-+                target.value = newValue;
-+              }
-+            };
-+          }
-+          if (prop === 'modify') {
-+            return (modifier?: (currentValue: Value) => Value) => {
-+              if (modifier !== undefined) {
-+                target.value = modifier(target.value);
-+              }
-+            };
-+          }
-+          if (prop === 'addListener' || prop === 'removeListener') {
-+            return NOOP;
-+          }
-+        },
-+        set(target, prop: string, newValue) {
-+          if (prop === 'value') {
-+            target.value = newValue;
-+            return true;
-+          }
-+          return false;
-+        },
-+      });
-+    })[0],
-   useTimestamp: () => ({ value: 0 }),
- };
++import { Component } from 'react';
++
+ import type { InternalHostInstance } from '../commonTypes';
+ import type { IAnimatedComponentInternalBase } from '../createAnimatedComponent/commonTypes';
+ import type { HostInstance } from './types';
+@@ -92,9 +94,13 @@ export function findHostInstance(
+   resolveFindHostInstance_DEPRECATED();
+   /*
+     The Fabric implementation of `findHostInstance_DEPRECATED` requires a React ref as an argument
+-    rather than a native ref. Prefer the resolved component ref when available so components can
+-    forward their ref to the host view that should be animated. Components that expose an animatable
+-    ref via `getAnimatableRef` already have it resolved into `_componentRef`.
++    rather than a native ref, and it throws for anything that is not a class component instance,
++    such as a `useImperativeHandle` handle. Prefer the resolved component ref when it is a class
++    component so components can forward their ref to the host view that should be animated, and
++    use the animated component otherwise. Components that expose an animatable ref via
++    `getAnimatableRef` already have it resolved into `_componentRef`.
+   */
+-  return findHostInstance_DEPRECATED(componentRef ?? ref);
++  return findHostInstance_DEPRECATED(
++    componentRef instanceof Component ? componentRef : ref
++  );
+ }
+```
+
+---
+
+### Incident Patch 3: `cc8e5c5e` (2026-10-30)
+**Commit Message**: fix(Reanimated): run an animated ref's observers again only when its view changes (#10909)
+
+## Summary
+
+`useScrollOffset` unregisters its scroll handler and registers it again
+on every render of a component that passes the animated ref through an
+inline callback ref, such as `ref={(instance) => {
+animatedRef(instance); localRef.current = instance; }}`.
+
+React calls a callback ref again whenever the ref passed to an element
+changes, and `ScrollView` from `react-native` forwards each new `ref`
+prop as a new ref on its native view, so the animated ref is called with
+the same scroll view on every render. `useAnimatedRefBase` runs every
+observer's cleanup and then the observer again on each of these calls,
+and the observer `useScrollOffset` registers unregisters its handler and
+registers it again.
+
+Each observer now keeps the tag it last ran with, and the animated ref
+runs it again only when the view's tag changes. Moving the ref to
+another view still runs the cleanup and the observer for the new tag.
+
+## Test plan
+
+- `__tests__/hooks.useScrollOffset.test.tsx` re-renders a scroll view
+whose animated ref goes through an inline callback ref and expects the
+scroll handler to register once;
+
+**File**: `packages/react-native-reanimated/__tests__/hooks.useScrollOffset.test.tsx` (added, +86/-0)
+```diff
+@@ -0,0 +1,86 @@
++import { render } from '@testing-library/react-native';
++import { ScrollView } from 'react-native';
++
++import { useAnimatedRef, useScrollOffset } from '../src';
++import { WorkletEventHandler } from '../src/WorkletEventHandler';
++
++jest.mock('../src/platformFunctions/findNodeHandle', () => {
++  const tags = new WeakMap<object, number>();
++  let nextTag = 1000;
++  return {
++    findNodeHandle: jest.fn((componentOrHandle: unknown) => {
++      if (typeof componentOrHandle !== 'object' || componentOrHandle === null) {
++        return componentOrHandle ?? null;
++      }
++      if (!tags.has(componentOrHandle)) {
++        tags.set(componentOrHandle, nextTag++);
++      }
++      return tags.get(componentOrHandle);
++    }),
++  };
++});
++
++describe('useScrollOffset', () => {
++  let registerForEvents: jest.SpyInstance;
++  let unregisterFromEvents: jest.SpyInstance;
++
++  beforeEach(() => {
++    registerForEvents = jest.spyOn(
++      WorkletEventHandler.prototype,
++      'registerForEvents'
++    );
++    unregisterFromEvents = jest.spyOn(
++      WorkletEventHandler.prototype,
++      'unregisterFromEvents'
++    );
++  });
++
++  afterEach(() => {
++    jest.restoreAllMocks();
++  });
++
++  test('keeps the scroll handler registered while an inline ref re-attaches the same scroll view', () => {
++    function TrackedScrollView() {
++      const animatedRef = useAnimatedRef<ScrollView>();
++      useScrollOffset(animatedRef);
++      return (
++        <ScrollView
++          ref={(instance) => {
++            animatedRef(instance);
++          }}
++        />
++      );
++    }
++
++    const { rerender } = render(<TrackedScrollView />);
++    rerender(<TrackedScrollView />);
++    rerender(<TrackedScrollView />);
++
++    expect(registerForEvents).toHaveBeenCalledTimes(1);
++    expect(unregisterFromEvents).not.toHaveBeenCalled();
++  });
++
++  test('moves the scroll handler to the scroll view the ref attaches to next', () => {
++    function TrackedScrollView({ scrollViewKey }: { scrollViewKey: string }) {
++      const animatedRef = useAnimatedRef<ScrollView>();
++      useScrollOffset(animatedRef);
++      return (
++        <ScrollView
++          key={scrollViewKey}
++          ref={(instance) => {
++            animatedRef(instance);
++          }}
++        />
++      );
++    }
++
++    const { rerender } = render(<TrackedScrollView scrollViewKey="first" />);
++    rerender(<TrackedScrollView scrollViewKey="second" />);
++    rerender(<TrackedScrollView scrollViewKey="second" />);
++
++    const [[firstTag], [secondTag]] = registerForEvents.mock.calls;
++    expect(registerForEvents).toHaveBeenCalledTimes(2);
++    expect(secondTag).not.toBe(firstTag);
++    expect(unregisterFromEvents.mock.calls).toEqual([[firstTag]]);
++  });
++});
+```
+
+**File**: `packages/react-native-reanimated/changelog/animated-ref-observers-same-view.fix.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++Fix `useScrollOffset` unregistering and re-registering its scroll handler each time React re-attaches its animated ref to the same view, which an inline callback ref does on every render.
+```
+
+**File**: `packages/react-native-reanimated/src/hook/useAnimatedRefCommon.ts` (modified, +18/-6)
+```diff
+@@ -13,10 +13,15 @@ import type {
+   MaybeObserverCleanup,
+ } from './commonTypes';
  
++type ObserverRun = {
++  readonly tag: number | null;
++  readonly cleanup: MaybeObserverCleanup;
++};
++
+ export function useAnimatedRefBase<TRef extends InstanceOrElement>(
+   getWrapper: (ref: InternalHostInstance) => ShadowNodeWrapper
+ ): AnimatedRef<TRef> {
+-  const observers = useRef<Map<AnimatedRefObserver, MaybeObserverCleanup>>(
++  const observers = useRef<Map<AnimatedRefObserver, ObserverRun>>(
+     new Map()
+   ).current;
+   const wrapperRef = useRef<ShadowNodeWrapper | null>(null);
+@@ -34,13 +39,20 @@ export function useAnimatedRefBase<TRef extends InstanceOrElement>(
+ 
+         if (observers.size) {
+           const currentTag = fun?.getTag?.() ?? null;
+-          observers.forEach((cleanup, observer) => {
++          observers.forEach(({ tag, cleanup }, observer) => {
++            // React calls the ref again for the same view whenever the ref passed to it changes.
++            if (tag === currentTag) {
++              return;
++            }
+             // Perform the cleanup before calling the observer again.
+             // This ensures that all events that were set up in the observer
+             // are cleaned up before the observer sets up new events during
+             // the next call.
+             cleanup?.();
+-            observers.set(observer, observer(currentTag));
++            observers.set(observer, {
++              tag: currentTag,
++              cleanup: observer(currentTag),
++            });
+           });
+         }
+       }
+@@ -50,11 +62,11 @@ export function useAnimatedRefBase<TRef extends InstanceOrElement>(
+ 
+     fun.observe = (observer: AnimatedRefObserver) => {
+       // Call observer immediately to get the initial value
+-      const cleanup = observer(fun?.getTag?.() ?? null);
+-      observers.set(observer, cleanup);
++      const tag = fun?.getTag?.() ?? null;
++      observers.set(observer, { tag, cleanup: observer(tag) });
+ 
+       return () => {
+-        observers.get(observer)?.();
++        observers.get(observer)?.cleanup?.();
+         observers.delete(observer);
+       };
+     };
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11022** (2026-10-26): fix(repo): read the nightly owner Slack IDs from the repository secret (@tjzel)
-- **PR #11019** (2026-10-26): release(Worklets): 0.13.1 (@tjzel)
-- **PR #11007** (closed): test(Reanimated): cover native transform-only updates (@pawicao)
-- **PR #11005** (closed): test(Reanimated): fix runtime checks for synchronous UI props (@pawicao)
-- **PR #11004** (closed): fix(ReJest): fix native snapshot recording (@pawicao)
-- **PR #11003** (2026-10-26): fix(Reanimated): add listeners and modify to mocked shared values (@GrahamCampbell)
+- **PR #11099** (2026-10-30): fix(Reanimated): resolve web-only modules for __tests__ in the Jest resolver (@tomekzaw)
+- **PR #11098** (2026-10-30): docs(Reanimated): keep the Slider example's handle in place until the pointer returns (@bartlomiejbloniarz)
+- **PR #11080** (2026-10-30): chore(Reanimated): drop leftover cpplint NOLINT markers (@tshmieldev)
+- **PR #11071** (closed): refactor(Worklets): merge SerializableRemoteFunction constructors (@tjzel)
+- **PR #11067** (2026-10-29): test(Reanimated): stop recording before reading color frames in nonLayoutPropAndRender (@pawicao)
+- **PR #11066** (2026-10-29): docs(Worklets): fix the shadowed variable in the isWorkletFunction example (@tjzel)
 
 ---
 
@@ -2048,32 +1460,40 @@ Co-authored-by: Tomasz Żelawski <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Reanimated): convert settled boxShadow and backgroundImage back by the origin of
+## X. Reanimated): don't crash on Android when worklets run during the teardown of the
 
 **RULE**:
-When implementing operations in `apps/common-app/runtime-tests/ReJest/types.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-reanimated. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native-reanimated/android/src/main/cpp/reanimated/android/NativeProxy.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-reanimated. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bccbb730`: Reanimated): convert settled boxShadow and backgroundImage back by the origin of the last write (#10819). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1ae46345`: Reanimated): don't crash on Android when worklets run during the teardown of the React host (#10858). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/common-app/runtime-tests/ReJest/types.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-reanimated/android/src/main/cpp/reanimated/android/NativeProxy.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import type { ShadowNodeWrapper } from 'react-native-reanimated/lib/typescript/commonTypes';
-  var _maybeFlushUIUpdatesQueue: () => void;
+      strongThis_(
+          this,
+          [](NativeProxy *self) {
+            // The Java part can destroy `self` as soon as it is released, so move it out first.
+            const auto javaPart = std::move(self->javaPart_);
+          }),
+  // Releases `javaPart_`, but only after the calls in flight on other threads return.
+  strongThis_.reset();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-type ShadowNodeWrapper = {
-  __hostObjectShadowNodeWrapper: never;
-};
+  // Module might be already destroyed.
+  if (!javaPart_) {
+    return;
+  }
 
+  javaPart_ = nullptr;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bccbb730` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1ae46345` are properly handled with clean fallback behavior.

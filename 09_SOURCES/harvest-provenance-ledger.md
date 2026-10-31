@@ -6461,3 +6461,6 @@ Every entry in this ledger must capture:
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `7f44e2c3` | Multi-dimensional audit evidence | 2026-10-31T03:45:34.914Z |
 | `learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-31T03:52:28.650Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `4c77833a` | Multi-dimensional audit evidence | 2026-10-31T03:52:32.007Z |
+| `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `c8b40ef3` | Multi-dimensional audit evidence | 2026-10-31T03:59:01.788Z |
+| `learn-huggingface-fastvideo-fasth3-omni-comfy` | `https://huggingface.co/FastVideo/FastH3-Omni-Comfy` | `hf-fastvid` | Multi-dimensional audit evidence | 2026-10-31T03:59:04.215Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `1d2c21aa` | Multi-dimensional audit evidence | 2026-10-31T03:59:09.033Z |

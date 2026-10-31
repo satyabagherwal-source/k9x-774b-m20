@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-O8TD",
-    "timestamp": "2026-10-28T21:57:57.793Z",
-    "repository": "speridlabs/iris-3b",
-    "learningId": "learn-huggingface-speridlabs-iris-3b",
-    "contentHash": "b743ae20f915fe46a63c37c91c91be10c368e570428d16f4d9967ed9ff4cea35",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-SW9O",
-    "timestamp": "2026-10-28T22:01:34.812Z",
-    "repository": "astral-sh/ruff",
-    "learningId": "learn-github-astral-sh-ruff",
-    "contentHash": "3f671b045b69beeb9f9f20f16db955f61a12f9a9f36efd93b0729976a40270c1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-0QXU",
-    "timestamp": "2026-10-28T22:07:41.154Z",
-    "repository": "tokio-rs/tokio",
-    "learningId": "learn-github-tokio-rs-tokio",
-    "contentHash": "000e6c7499b78b01c1544f09b753b9f501e02909f208f2fb03548d6fb1759f84",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-0W5S",
     "timestamp": "2026-10-28T22:07:47.920Z",
     "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -7492,6 +7447,51 @@
     "contentHash": "3290601ef025037b0993174ffb3cd604a1e1aa78c074ef7393c87511d552a179",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-GA6X",
+    "timestamp": "2026-10-31T03:59:01.785Z",
+    "repository": "software-mansion/react-native-reanimated",
+    "learningId": "learn-github-software-mansion-react-native-reanimated",
+    "contentHash": "0a6f883d35daaf9aafd3cc0d6387068bec0418d0876fef184db7fe6d307f206c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-GC2C",
+    "timestamp": "2026-10-31T03:59:04.212Z",
+    "repository": "FastVideo/FastH3-Omni-Comfy",
+    "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy",
+    "contentHash": "43465e50344fc283450adc7d8930769339950baaee59ae5d3296204331667fed",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-GFS6",
+    "timestamp": "2026-10-31T03:59:09.030Z",
+    "repository": "dragonflydb/dragonfly",
+    "learningId": "learn-github-dragonflydb-dragonfly",
+    "contentHash": "32b7d1876503390e3ff4be2fa19e2f8d26e0094c7bc3880f40648d01beab9e08",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

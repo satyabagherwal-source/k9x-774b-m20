@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T03:52:32.017Z",
+  "last_updated": "2026-10-31T03:59:09.041Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5826,14 +5826,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-software-mansion-react-native-reanimated",
-      "content_hash": "be9db39764bb1ac9cd75962542e5e979583df065c0b0a2d0b756d26c74f32030",
-      "verified_at": "2026-10-27T14:53:58.299Z",
+      "content_hash": "0a6f883d35daaf9aafd3cc0d6387068bec0418d0876fef184db7fe6d307f206c",
+      "verified_at": "2026-10-31T03:59:01.795Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T14:53:58.299Z"
+      "last_updated": "2026-10-31T03:59:01.795Z"
     },
     "liftbridge-io/liftbridge": {
       "repository": "liftbridge-io/liftbridge",
@@ -9306,14 +9306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "d31516c4477f8ab9f46fdf82f15d0eb3ce5928943995fc32ffe35ae5a6b995f4",
-      "verified_at": "2026-10-30T07:47:19.609Z",
+      "content_hash": "32b7d1876503390e3ff4be2fa19e2f8d26e0094c7bc3880f40648d01beab9e08",
+      "verified_at": "2026-10-31T03:59:09.041Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T07:47:19.609Z"
+      "last_updated": "2026-10-31T03:59:09.041Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",
@@ -16326,14 +16326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fastvideo-fasth3-omni-comfy",
-      "content_hash": "355bd5a19d59cefb3eebbc37700814d5055c8720ad46c6a9d7083ff48bd2761c",
-      "verified_at": "2026-10-27T11:49:39.612Z",
+      "content_hash": "43465e50344fc283450adc7d8930769339950baaee59ae5d3296204331667fed",
+      "verified_at": "2026-10-31T03:59:04.223Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T11:49:39.612Z"
+      "last_updated": "2026-10-31T03:59:04.223Z"
     },
     "YoanWai/agent-manager": {
       "repository": "YoanWai/agent-manager",
