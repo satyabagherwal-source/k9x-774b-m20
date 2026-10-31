@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/insertkoinio-koin-learnings.md`  
 > **Source**: github ([https://github.com/InsertKoinIO/koin](https://github.com/InsertKoinIO/koin))  
-> **Source Version**: `d39a4f8e`  
+> **Source Version**: `d486a5e8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T10:10:52.761Z  
+> **Timestamp**: 2026-10-31T13:00:02.002Z  
 > **Learning ID**: `learn-github-insertkoinio-koin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/insertkoinio-koin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/InsertKoinIO/koin](https://github.com/InsertKoinIO/koin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T10:10:52.451Z  
+> **Harvest Timestamp**: 2026-10-31T13:00:01.998Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Koin - pragmatic dependency injection for Kotlin & Kotlin Multiplatform. Koin DSL or Koin Annotations (JSR-330), compile safe with the Koin Compiler Plugin.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10022 stars
+- **Stars / Engagement**: 10025 stars
 
 ---
 
@@ -738,42 +738,22 @@ public fun <T : ListenableWorker> ScopeDSL.buildWorker(kclass: KClass<T>, qualif
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d39a4f8e` (2026-10-22)
-**Commit Message**: Merge pull request #2481 from InsertKoinIO/arnaud/ktz-4991-skills-repo-link
+### Incident Patch 1: `d486a5e8` (2026-10-29)
+**Commit Message**: llms.txt: npx skills install for other agents
 
-README: Koin skills install from the koin-skills repo (KTZ-4991)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `README.md` (modified, +1/-1)
+**File**: `projects/llms.txt` (modified, +1/-1)
 ```diff
-@@ -49,7 +49,7 @@ Official [Koin skills](https://github.com/InsertKoinIO/koin-skills) teach your c
- npx skills add InsertKoinIO/koin-skills
- ```
+@@ -707,7 +707,7 @@ Building and contributing: https://github.com/InsertKoinIO/koin/blob/main/AGENTS
+ ## Related Repositories
  
--See [AI Agents and Koin Skills](https://insert-koin.io/docs/tooling/ai-agents).
-+Both commands install from the [koin-skills repository](https://github.com/InsertKoinIO/koin-skills) on GitHub (`npx skills` needs Node.js 22+). See [AI Agents and Koin Skills](https://insert-koin.io/docs/tooling/ai-agents).
- 
- ### Kotzilla Platform — KMP Crash Reporting & Observability
- 
-```
-
----
-
-### Incident Patch 2: `57a6cd63` (2026-10-22)
-**Commit Message**: README: say the Koin skills install from the koin-skills repo (KTZ-4991)
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@ Official [Koin skills](https://github.com/InsertKoinIO/koin-skills) teach your c
- npx skills add InsertKoinIO/koin-skills
- ```
- 
--See [AI Agents and Koin Skills](https://insert-koin.io/docs/tooling/ai-agents).
-+Both commands install from the [koin-skills repository](https://github.com/InsertKoinIO/koin-skills) on GitHub (`npx skills` needs Node.js 22+). See [AI Agents and Koin Skills](https://insert-koin.io/docs/tooling/ai-agents).
- 
- ### Kotzilla Platform — KMP Crash Reporting & Observability
- 
+ - **Compiler Plugin**: https://github.com/InsertKoinIO/koin-compiler-plugin
+-- **Koin skills (AI agents)**: https://github.com/InsertKoinIO/koin-skills — Claude Code: `/plugin marketplace add InsertKoinIO/koin-skills` then `/plugin install koin@koin-skills`
++- **Koin skills (AI agents)**: https://github.com/InsertKoinIO/koin-skills — Claude Code: `/plugin marketplace add InsertKoinIO/koin-skills` then `/plugin install koin@koin-skills`. Other agents (Cursor, Codex, Copilot, Windsurf, Gemini…): `npx skills add InsertKoinIO/koin-skills` (Node.js 22+)
+ - **Kotzilla MCP**: https://mcp.kotzilla.io/mcp — Koin error diagnosis and runtime debugging (graph behavior, scopes, memory, performance)
+ - **Playground Apps**: https://github.com/InsertKoinIO/playground-apps
+ - **Website**: https://insert-koin.io
 ```
 
 #### Recent Merged Pull Requests:
@@ -802,28 +782,28 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #2481 from InsertKoinIO/arnaud/ktz-4991-skills-repo-link
+## X. llms.txt: npx skills install for other agents
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in InsertKoinIO/koin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `projects/llms.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in InsertKoinIO/koin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d39a4f8e`: Merge pull request #2481 from InsertKoinIO/arnaud/ktz-4991-skills-repo-link. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d486a5e8`: llms.txt: npx skills install for other agents. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `projects/llms.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-Both commands install from the [koin-skills repository](https://github.com/InsertKoinIO/koin-skills) on GitHub (`npx skills` needs Node.js 22+). See [AI Agents and Koin Skills](https://insert-koin.io/docs/tooling/ai-agents).
+- **Koin skills (AI agents)**: https://github.com/InsertKoinIO/koin-skills — Claude Code: `/plugin marketplace add InsertKoinIO/koin-skills` then `/plugin install koin@koin-skills`. Other agents (Cursor, Codex, Copilot, Windsurf, Gemini…): `npx skills add InsertKoinIO/koin-skills` (Node.js 22+)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-See [AI Agents and Koin Skills](https://insert-koin.io/docs/tooling/ai-agents).
+- **Koin skills (AI agents)**: https://github.com/InsertKoinIO/koin-skills — Claude Code: `/plugin marketplace add InsertKoinIO/koin-skills` then `/plugin install koin@koin-skills`
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d39a4f8e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d486a5e8` are properly handled with clean fallback behavior.

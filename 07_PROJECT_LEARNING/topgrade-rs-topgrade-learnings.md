@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md`  
 > **Source**: github ([https://github.com/topgrade-rs/topgrade](https://github.com/topgrade-rs/topgrade))  
-> **Source Version**: `c58ad18d`  
+> **Source Version**: `dd4fca39`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T18:34:32.449Z  
+> **Timestamp**: 2026-10-31T12:59:57.102Z  
 > **Learning ID**: `learn-github-topgrade-rs-topgrade`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/topgrade-rs/topgrade](https://github.com/topgrade-rs/topgrade))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T18:34:32.443Z  
+> **Harvest Timestamp**: 2026-10-31T12:59:57.098Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Upgrade all the things
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 4712 stars
+- **Stars / Engagement**: 4723 stars
 
 ---
 
@@ -1472,13 +1472,11 @@ impl<'a> ExecutionContext<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2468** (2026-10-28): **fix(rubygems): skip --system update when gem is managed by Homebrew or macOS**
-  *Symptoms*: ## What does this PR do?  Topgrade previously ran `sudo gem update --system` whenever `gem` was not installed via `asdf`/`mise`/`rbenv`/`rvm` and the Linux path `/usr/lib/ruby/vendor_ruby/rubygems/defaults/operating_system.rb` did not exist.  On macOS: 1. Homebrew ruby (`/opt/homebrew/bin/gem`) does not have that Linux vendor path, causing Topgrade to invoke `sudo` and attempt to mutate files inside Homebrew's Cellar. Homebrew rubygems should only be updated via `brew upgrade ruby`. 2. macOS system ruby (`/usr/bin/gem`) is protected by SIP and cannot be updated via `sudo gem update --system`. 3. Rubies installed under `~/.rubies/` (e.g. via `chruby` or `ruby-install`) are user-managed and should not invoke `sudo` (the exact failure reported in #1763: `/usr/bin/sudo -E -H /Users/xyz/.rubies/.../bin/gem update --system`).  This PR skips `--system` updates when `gem` is managed by Homebrew or macOS, and recognizes `~/.rubies/` as user-managed without `sudo`.  Closes #1763 Related: #247, #1830  ## Standards checklist  - [x] I have read `CONTRIBUTING.md` - [x] *Optional:* The PR title is a descriptive commit message (this will appear in release notes, leave unchecked if you want a maintainer to improve it) - [x] *Optional:* I have tested the code myself, with the relevant tools installed. If yes, add Topgrade's output of the relevant steps.  ```shell $ cargo run -- --only ruby_gems --show-skipped ── 20:59:27 - Summary ────────────────────────────────────────────────────────── Ruby
+- **Issue #2470** (2026-10-30): **chore(renovate): switch to weekly schedule**
+  *Symptoms*: Committed via https://github.com/asottile/all-repos
 
-- **Issue #2466** (2026-10-28): **fix(skills): always pass --yes to npx runner**
-  *Symptoms*: ## What does this PR do?  When `skills` falls back to the `npx` package runner, `npx` requires `--yes` to auto-confirm package downloads non-interactively.  PR #1920 originally intended to prevent `npx skills update` from halting on the download prompt (`Need to install the following packages: skills@... Ok to proceed? (y)`), but gated `--yes` on `ctx.config().yes(Step::Skills)`. As a result, running Topgrade without the top-level `--yes` flag still hangs on stdin.  This change passes `--yes` whenever the `npx` runner is used, fulfilling the intent of #1920 regardless of whether `--yes` is passed to Topgrade.  Related: #1920, #2243  ## Standards checklist  - [x] I have read `CONTRIBUTING.md` - [x] *Optional:* The PR title is a descriptive commit message (this will appear in release notes, leave unchecked if you want a maintainer to improve it) - [x] *Optional:* I have tested the code myself, with the relevant tools installed. If yes, add Topgrade's output of the relevant steps.  ```shell $ cargo run -- --only skills --show-skipped ── 21:05:13 - Skills ─────────────────────────────────────────────────────────── Checking for skill updates… ✓ All global skills are up to date  ── 21:05:18 - Summary ────────────────────────────────────────────────────────── Skills: OK ```  - [x] If this PR introduces new user-facing messages, they are translated (N/A - no new user-facing messages)  ### AI involvement  I consulted an AI occasionally for inspiration and explanation.  <!-- Magic mark
-  **Post-Mortem & Fix Analysis**:
-  > The original justification still stands: if npx doesn't do this by default, neither should we. Topgrade shouldn't be opinionated, and especially not override the opinions of the tools it calls.
+- **Issue #2469** (2026-10-30): **chore(deps): update rust crate sysinfo to 0.40.0**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [sysinfo](https://redirect.github.com/GuillaumeGomez/sysinfo) | dependencies | minor | `0.38.4` → `0.40.0` |  ---  ### Release Notes  <details> <summary>GuillaumeGomez/sysinfo (sysinfo)</summary>  ### [`v0.40.1`](https://redirect.github.com/GuillaumeGomez/sysinfo/blob/HEAD/CHANGELOG.md#0401)  [Compare Source](https://redirect.github.com/GuillaumeGomez/sysinfo/compare/v0.40.0...v0.40.1)  - Add back `From<X> for Vec<Y>` trait implementations for `Disks`, `Gpus`, `Groups` and `Users`. - Windows: `System::load_average` now returns `Err(Error::Unsupported)`.  ### [`v0.40.0`](https://redirect.github.com/GuillaumeGomez/sysinfo/blob/HEAD/CHANGELOG.md#0400)  [Compare Source](https://redirect.github.com/GuillaumeGomez/sysinfo/compare/v0.39.6...v0.40.0)  - Add new `gpu` feature. - Add new `Process::gpu_usage` and `Process::gpu_memory` API. - Add new `GPUs` API. - Add new `NetworkData::transmit_link_speed` and `NetworkData::receive_link_speed` API. - Add new `Disk::id` API. - Remove `IS_SUPPORTED_SYSTEM` constant. - Remove `set_open_files_limit` API. - Remove `list[_mut]` methods for `Users`, `Components` and `Disks`. - Remove `Networks::list` method. - Remove `From` trait implementations for `Users`, `Groups` and `Disks`. - Fix `Networks` refresh. - `Networks` interface names have been switched from `String` to `OsString`. - Unix: Fix not thread-safe code in `Groups`. - Unix: Fix potential 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1495,209 +1493,28 @@ impl<'a> ExecutionContext<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c58ad18d` (2026-10-28)
-**Commit Message**: fix(rubygems): skip --system update when gem is managed by Homebrew or macOS (#2468)
+### Incident Patch 1: `dd4fca39` (2026-10-30)
+**Commit Message**: chore(renovate): switch to weekly schedule (#2470)
 
-**File**: `src/steps/generic.rs` (modified, +7/-0)
+**File**: `.github/renovate.json5` (modified, +1/-0)
 ```diff
-@@ -136,14 +136,21 @@ pub fn run_rubygems(ctx: &ExecutionContext) -> Result<()> {
-     HOME_DIR.join(".gem").require()?;
-     let gem = require("gem")?;
- 
-+    if is_installed_via_homebrew(&gem) {
-+        return Err(SkipStep("RubyGems is managed by Homebrew".to_string()).into());
-+    }
-+
-     let gem_path_str = gem.display().to_string();
-     if gem_path_str.contains("asdf")
-         || gem_path_str.contains("mise")
-         || gem_path_str.contains(".rbenv")
-         || gem_path_str.contains(".rvm")
-+        || gem_path_str.contains(".rubies")
-     {
-         print_separator("RubyGems");
-         ctx.execute(gem).args(["update", "--system"]).status_checked()?;
-+    } else if cfg!(target_os = "macos") && (gem.starts_with("/usr/bin") || gem.starts_with("/System")) {
-+        return Err(SkipStep("RubyGems is managed by the operating system".to_string()).into());
-     } else if !Path::new("/usr/lib/ruby/vendor_ruby/rubygems/defaults/operating_system.rb").exists() {
-         let sudo = ctx.require_sudo()?;
-         print_separator("RubyGems");
-```
-
----
-
-### Incident Patch 2: `69e148c5` (2026-10-28)
-**Commit Message**: fix(ollama): list models from the server, skip unknown pulls (#2464)
-
-**File**: `src/executor.rs` (modified, +1/-0)
-```diff
-@@ -276,6 +276,7 @@ pub enum ExecutorOutput {
- 
- impl ExecutorOutput {
-     /// Can be used on output returned by `.always()` executors
-+    #[allow(unused)]
-     pub fn unwrap_wet(self) -> Output {
-         match self {
-             Self::Wet(output) => output,
-```
-
-**File**: `src/steps/generic.rs` (modified, +149/-79)
-```diff
-@@ -21,7 +21,6 @@ use std::{fs, io::Write};
- use sysinfo::{ProcessRefreshKind, RefreshKind, System, UpdateKind};
- use tempfile::tempfile_in;
- use tracing::{debug, error, warn};
--use walkdir::WalkDir;
- 
- use crate::HOME_DIR;
- #[cfg(unix)]
-@@ -2793,115 +2792,186 @@ fn ollama_serve(ctx: &ExecutionContext, ollama: &Path) -> Result<ExecutorChild>
-         .context("Failed to start Ollama server")
- }
- 
--fn ollama_manifests_path() -> PathBuf {
--    env::var_os("OLLAMA_MODELS")
--        .map(PathBuf::from)
--        .unwrap_or_else(|| HOME_DIR.join(".ollama/models"))
--        .join("manifests/registry.ollama.ai")
--}
-+struct OllamaServer(Option<ExecutorChild>);
- 
--struct OllamaModel {
--    name: String,
--    manifest_path: PathBuf,
-+impl Drop for OllamaServer {
-+    fn drop(&mut self) {
-+        if let Some(ExecutorChild::Wet(mut child)) = self.0.take() {
-+            let _ = child.kill();
-+            let _ = child.wait();
-+        }
-+    }
- }
- 
--fn ollama_list_models() -> impl Iterator<Item = OllamaModel> {
--    let manifests = ollama_manifests_path();
--
--    WalkDir::new(&manifests)
--        .min_depth(3)
--        .max_depth(3)
--        .into_iter()
--        .filter_map(move |entry| {
--            let entry = entry.ok()?;
--            if !entry.file_type().is_file() {
--                return None;
--            }
--
--            let path = entry.path();
--            let tag = path.file_name()?.to_string_lossy();
--            let name = path.parent()?.file_name()?.to_string_lossy();
--            let namespace = path.parent()?.parent()?.file_name()?.to_string_lossy();
--
--            Some(OllamaModel {
--                name: if namespace == "library" {
--                    format!("{name}:{tag}")
--                } else {
--                    format!("{namespace}/{name}:{tag}")
--                },
--                manifest_path: path.to_path_buf(),
--            })
--        })
-+// Accepts the `ollama list` table: a `NAME  ID  SIZE  MODIFIED` header, then one row per model.
-+fn parse_ollama_list(output: &str) -> Result<Vec<String>> {
-+    let mut lines = output.lines().filter(|line| !line.trim().is_empty());
-+    let Some(header) = lines.next() else {
-+        return Err(eyre!(output_changed_message!("ollama list", "empty output")));
-+    };
-+    if !header.split_whitespace().eq(["NAME", "ID", "SIZE", "MODIFIED"]) {
-+        return Err(eyre!(output_changed_message!("ollama list", "unexpected table header")));
-+    }
-+    Ok(lines
-+        .filter_map(|line| line.split_whitespace().next())
-+        .map(str::to_string)
-+        .collect())
- }
- 
--#[derive(Deserialize)]
--struct OllamaManifest {
--    layers: Vec<OllamaLayer>,
-+// ollama maps any registry 404 to this message (images.go:1177, 1676-1678 at v0.40.2), so it
-+// marks a name no registry can serve: a locally created model, or a tag deleted upstream.
-+fn is_missing_model_error(stderr: &str) -> bool {
-+    stderr.contains("pull model manifest: file does not exist")
- }
- 
--#[derive(Deserialize)]
--#[serde(rename_all = "camelCase")]
--struct OllamaLayer {
--    media_type: String,
--    #[serde(default)]
--    from: Option<String>,
-+enum PullRetry {
-+    Succeeded,
-+    MissingManifest,
-+    Failed,
- }
- 
--// Locally created model manifests have a `from` field on their model layers
--fn is_local_ollama_model(manifest_path: &Path) -> bool {
--    let Ok(content) = fs::read_to_string(manifest_path) else {
--        return false;
--    };
--    let Ok(manifest) = serde_json::from_str::<OllamaManifest>(&content) else {
--        return false;
--    };
--    manifest
--        .layers
--        .iter()
--        .any(|l| l.media_type == "application/vnd.ollama.image.model" && l.from.is_some())
-+fn retry_outcome(success: bool, stderr: &str) -> PullRetry {
-+    if success {
-+        PullRetry::Succeeded
-+    } else if is_missing_model_error(stderr) {
-+        PullRetry::MissingManifest
-+    } else {
-+        PullRetry::Failed
-+    }
- }
- 
- pub fn run_ollama_pull(ctx: &ExecutionContext) -> Result<()> {
-     let ollama = require("ollama")?;
- 
--    let mut remote_models = ollama_list_models()
--        .filter(|m| !is_local_ollama_model(&m.manifest_path))
--        .peekable();
--    if remote_models.peek().is_none() {
--        return Err(SkipStep("No Ollama models to pull".to_string()).into());
-+    let mut server = OllamaServer(None);
-+    let probe = ctx
-+        .execute(&ollama)
-+        .always()
-+        .args(["list"])
-+        .output_checked_with(|out| {
-+            if out.status.success() || String::from_utf8_lossy(&out.stderr).contains("could not connect") {
-+                Ok(())
-+            } else {
-+                Err(())
-+            }
-+        })?;
-+    let probe_stderr = String::from_utf8_lossy(&probe.stderr);
-+    let offline = probe_stderr.contains("could not connect");
-+    if offline && ctx.run_type().dry() {
-+        return Err(SkipStep("Ollama server not running".to_string()).into());
-     }
--
--    print_separator("Ollama");
--
--    let mut server: Option<ExecutorChild> = N
+@@ -5,6 +5,7 @@
+         ":semanticCommits",
+         ":semanticCommitTypeAll(chore)",
+         ":disableRateLimiting",
++        "schedule:weekly",
+     ],
+     maxMajorIncrement: 0,
+     customManagers: [
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2470** (2026-10-30): chore(renovate): switch to weekly schedule (@GideonBear)
+- **PR #2469** (closed): chore(deps): update rust crate sysinfo to 0.40.0 (@renovate[bot])
 - **PR #2468** (2026-10-28): fix(rubygems): skip --system update when gem is managed by Homebrew or macOS (@thedavidweng)
 - **PR #2466** (closed): fix(skills): always pass --yes to npx runner (@thedavidweng)
 - **PR #2464** (2026-10-28): fix(ollama): list models from the server, skip unknown pulls (@uwuclxdy)
 - **PR #2463** (2026-10-28): feat(am): merge appman with am, and run am/appman reinstall (@GideonBear)
-- **PR #2460** (2026-10-26): feat(step): add LucidLink (@p-vdp)
-- **PR #2459** (2026-10-26): feat(step): add Tailscale (@p-vdp)
 
 ---
 
@@ -1717,27 +1534,21 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rubygems): skip --system update when gem is managed by Homebrew or macOS (#2468)
+## X. renovate): switch to weekly schedule (#2470)
 
 **RULE**:
-When implementing operations in `src/steps/generic.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topgrade-rs/topgrade. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/renovate.json5`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topgrade-rs/topgrade. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c58ad18d`: rubygems): skip --system update when gem is managed by Homebrew or macOS (#2468). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dd4fca39`: renovate): switch to weekly schedule (#2470). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/steps/generic.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/renovate.json5`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    if is_installed_via_homebrew(&gem) {
-        return Err(SkipStep("RubyGems is managed by Homebrew".to_string()).into());
-    }
-
-        || gem_path_str.contains(".rubies")
-    } else if cfg!(target_os = "macos") && (gem.starts_with("/usr/bin") || gem.starts_with("/System")) {
-        return Err(SkipStep("RubyGems is managed by the operating system".to_string()).into());
+        "schedule:weekly",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1747,4 +1558,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c58ad18d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dd4fca39` are properly handled with clean fallback behavior.

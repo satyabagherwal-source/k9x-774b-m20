@@ -745,8 +745,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-0.6B",
     "sourceVersion": "hf-qwen-qwen3-0.6b",
     "license": "Open-Source",
-    "contentHash": "d0787f52196867e12daa0884732a997e6990e1db0720cab41468f91349427786",
-    "lastHarvestedAt": "2026-10-28T12:27:18.213Z",
+    "contentHash": "9a24186f4ed260a3bf0f1567918af89ddfde8222721d50166379df87fe37a166",
+    "lastHarvestedAt": "2026-10-31T12:59:56.584Z",
     "learningId": "learn-huggingface-qwen-qwen3-0-6b"
   },
   "hf-google-t5-t5-small": {
@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "c187ec5c",
+    "sourceVersion": "fef259d7",
     "license": "Apache-2.0",
-    "contentHash": "91e4b23f7c8972b7a35ccdb0ecb3b272a07b3dd2b21f7a5185a9aac6c39106fa",
-    "lastHarvestedAt": "2026-10-30T20:22:10.895Z",
+    "contentHash": "f06a6ccd607b7b9675487bb68f45214b511e2e11b6491616479da87c78c5e4e3",
+    "lastHarvestedAt": "2026-10-31T13:00:10.288Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {
@@ -6593,10 +6593,10 @@
     "repository": "InsertKoinIO/koin",
     "platform": "github",
     "sourceUrl": "https://github.com/InsertKoinIO/koin",
-    "sourceVersion": "d39a4f8e",
+    "sourceVersion": "d486a5e8",
     "license": "Apache-2.0",
-    "contentHash": "3cf9abb83506d3e91080d8263cb9002296e6f51c5658021d22a29e45613a84bd",
-    "lastHarvestedAt": "2026-10-25T10:10:53.079Z",
+    "contentHash": "b5d269e91ed27b41a41c3bb55d88471261a5b868e214cde79aaf11ec2f358626",
+    "lastHarvestedAt": "2026-10-31T13:00:02.533Z",
     "learningId": "learn-github-insertkoinio-koin"
   },
   "actions-actions-runner-controller": {
@@ -6863,10 +6863,10 @@
     "repository": "topgrade-rs/topgrade",
     "platform": "github",
     "sourceUrl": "https://github.com/topgrade-rs/topgrade",
-    "sourceVersion": "c58ad18d",
+    "sourceVersion": "dd4fca39",
     "license": "GPL-3.0",
-    "contentHash": "8ed7e81777f00fea22ef0744ef17b77d141e1b6fb4106de881381fdd98af378d",
-    "lastHarvestedAt": "2026-10-28T18:34:32.974Z",
+    "contentHash": "832143cd6de71b1bd04f2d13028a8d99cae5cb20d6f824ba130af1412ebc5c9b",
+    "lastHarvestedAt": "2026-10-31T12:59:57.588Z",
     "learningId": "learn-github-topgrade-rs-topgrade"
   },
   "lucide-icons-lucide": {

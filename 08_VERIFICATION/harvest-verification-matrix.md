@@ -6569,3 +6569,7 @@
 | `CYCLE-20261031-JVDE` | `2026-10-31T12:53:41.906Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md` | Yes (`5dc9dfe7...`) |
 | `CYCLE-20261031-JVF1` | `2026-10-31T12:53:41.965Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`93f4f9d4...`) |
 | `CYCLE-20261031-JZ5Q` | `2026-10-31T12:53:46.814Z` | `amir1376/ab-download-manager` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6198` | Yes (`54f3d186...`) |
+| `CYCLE-20261031-RWGX` | `2026-10-31T12:59:56.577Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`9a24186f...`) |
+| `CYCLE-20261031-RX8Y` | `2026-10-31T12:59:57.586Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6199` | Yes (`832143cd...`) |
+| `CYCLE-20261031-S12B` | `2026-10-31T13:00:02.531Z` | `InsertKoinIO/koin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6200` | Yes (`b5d269e9...`) |
+| `CYCLE-20261031-S71Q` | `2026-10-31T13:00:10.286Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6201` | Yes (`f06a6ccd...`) |

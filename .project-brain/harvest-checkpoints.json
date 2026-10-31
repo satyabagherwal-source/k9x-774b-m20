@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T12:53:46.827Z",
+  "last_updated": "2026-10-31T13:00:10.317Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -950,14 +950,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-0-6b",
-      "content_hash": "d0787f52196867e12daa0884732a997e6990e1db0720cab41468f91349427786",
-      "verified_at": "2026-10-28T12:27:18.231Z",
+      "content_hash": "9a24186f4ed260a3bf0f1567918af89ddfde8222721d50166379df87fe37a166",
+      "verified_at": "2026-10-31T12:59:56.590Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T12:27:18.231Z"
+      "last_updated": "2026-10-31T12:59:56.590Z"
     },
     "google-t5/t5-small": {
       "repository": "google-t5/t5-small",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "91e4b23f7c8972b7a35ccdb0ecb3b272a07b3dd2b21f7a5185a9aac6c39106fa",
-      "verified_at": "2026-10-30T20:22:10.904Z",
+      "content_hash": "f06a6ccd607b7b9675487bb68f45214b511e2e11b6491616479da87c78c5e4e3",
+      "verified_at": "2026-10-31T13:00:10.317Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T20:22:10.904Z"
+      "last_updated": "2026-10-31T13:00:10.317Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",
@@ -9966,14 +9966,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-insertkoinio-koin",
-      "content_hash": "3cf9abb83506d3e91080d8263cb9002296e6f51c5658021d22a29e45613a84bd",
-      "verified_at": "2026-10-25T10:10:53.086Z",
+      "content_hash": "b5d269e91ed27b41a41c3bb55d88471261a5b868e214cde79aaf11ec2f358626",
+      "verified_at": "2026-10-31T13:00:02.539Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T10:10:53.086Z"
+      "last_updated": "2026-10-31T13:00:02.539Z"
     },
     "actions/actions-runner-controller": {
       "repository": "actions/actions-runner-controller",
@@ -10356,14 +10356,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-topgrade-rs-topgrade",
-      "content_hash": "8ed7e81777f00fea22ef0744ef17b77d141e1b6fb4106de881381fdd98af378d",
-      "verified_at": "2026-10-28T18:34:32.981Z",
+      "content_hash": "832143cd6de71b1bd04f2d13028a8d99cae5cb20d6f824ba130af1412ebc5c9b",
+      "verified_at": "2026-10-31T12:59:57.594Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T18:34:32.981Z"
+      "last_updated": "2026-10-31T12:59:57.594Z"
     },
     "lucide-icons/lucide": {
       "repository": "lucide-icons/lucide",

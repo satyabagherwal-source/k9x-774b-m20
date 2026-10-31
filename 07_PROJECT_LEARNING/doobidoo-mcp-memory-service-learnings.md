@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `c187ec5c`  
+> **Source Version**: `fef259d7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T20:22:10.164Z  
+> **Timestamp**: 2026-10-31T13:00:09.845Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T20:22:09.921Z  
+> **Harvest Timestamp**: 2026-10-31T13:00:09.840Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2058 stars
+- **Stars / Engagement**: 2056 stars
 
 ---
 
@@ -2911,11 +2911,11 @@ Commands:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1723** (2026-10-31): **[Bug]: harvest provider chain sends max_tokens and temperature to gpt-5.x**
+  *Symptoms*: Found while testing LLM provider integrations in agent frameworks: an automated tool flags candidates and each one is reproduced before it is reported. Reproduced on c187ec5.  ### Bug Description With `HARVEST_LLM_PROVIDERS` pointing at OpenAI and a gpt-5.x model, every call from the provider chain is refused, because the request always carries `max_tokens` and `temperature`. #797 fixed exactly this for the quality scorer, where gpt-5.4-mini answered `Unsupported parameter: 'max_tokens' is not supported with this model. Use 'max_completion_tokens' instead.` The harvest rewriter and classifier build their own payload and did not get that branch.  Harvest rewrite, `memory_distill`, search summaries and the LLM NLI backend all share this chain. For harvest, the whole batch comes back as `None` and nothing is stored. A non dry-run `memory_harvest` still adds the session to the tracker, so those candidates stay skipped until `force_reharvest`.  ### Steps to Reproduce 1. Use the configuration below. 2. Run a rewrite. The endpoint here is a fake that returns the error body from #797 when `max_tokens` is present:  ```python def endpoint(request):     body = json.loads(request.content)     if "max_tokens" in body:         return httpx.Response(400, json={"error": {             "message": "Unsupported parameter: 'max_tokens' is not supported with this model. "                        "Use 'max_completion_tokens' instead.",             "type": "invalid_request_error", "param": "max_token
+
 - **Issue #1708** (2026-10-29): **Milvus: purge_deleted() leaves graph edges of purged memories behind**
   *Symptoms*: Follow-up to #1703 / #1706.  #1706 made all six Milvus delete paths remove the graph edges of the memories they delete, through `MilvusMemoryStorage._delete_graph_edges()`. `purge_deleted()` was left out on purpose, as noted in the PR: it hard-deletes tombstoned rows by id and leaves their rows in `<collection>_graph` behind, the same leak #1703 fixed for the other paths.  On Milvus this is a narrow case. `delete()` is a hard delete, so a tombstone only exists when something set `metadata.deleted_at` explicitly via `update_memory_metadata()` (see the docstrings of `is_deleted()` and `purge_deleted()` in `storage/milvus.py`). When such a row is purged, its edges survive, including `has_entity`, so `find_memories_by_entity()` can still return the purged hash.  Fix: after the successful `delete` call in `purge_deleted()`, call `await self._delete_graph_edges(to_purge)`. Best-effort, same contract as the other paths.  Test: extend `tests/storage/test_milvus_delete_graph_edges.py`: store a memory with entity linking on, set `deleted_at` in its metadata with a `created_at` older than the threshold, run `purge_deleted()`, and assert no edge touches the hash. 
-
-- **Issue #1707** (2026-10-29): **[Bug]: POST /oauth/register returns a null client_secret for public clients, which Claude Code rejects**
-  *Symptoms*: ### Bug Description Since v11.8.2 a public client (token_endpoint_auth_method "none") is no longer issued a secret, which is correct. The comment in registration.py says the member is "omitted entirely for a public client", but the handler passes client_secret=None and FastAPI serializes it as JSON null. Unset client_name and scope come back as null the same way.  RFC 7591 section 3.2.1 treats these members as optional, so a member without a value should be left out. Claude Code validates the registration response and aborts the OAuth flow on the null, so it cannot connect to an OAuth-protected instance over HTTP.  ### Steps to Reproduce 1. Start the HTTP server with OAuth enabled (configuration below). 2. Register a public client.    ```bash    curl -s -X POST https://<host>/oauth/register -H 'Content-Type: application/json' \      -d '{"client_name":"test","redirect_uris":["http://localhost:53123/callback"],"grant_types":["authorization_code","refresh_token"],"response_types":["code"],"token_endpoint_auth_method":"none"}'    ``` 3. Add the server to Claude Code with `claude mcp add --transport http memory https://<host>/mcp` and authenticate from `/mcp`.  ### Expected Behavior The registration response leaves out members that have no value, and Claude Code opens the authorization page.  ### Actual Behavior ```json {"client_id":"mcp_client_...","client_secret":null,"redirect_uris":["http://localhost:53123/callback"],"grant_types":["authorization_code","refresh_token"],"respo
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2932,333 +2932,969 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c187ec5c` (2026-10-30)
-**Commit Message**: fix(storage): stop loading the Milvus backend on every import (#1718)
+### Incident Patch 1: `5ffe3614` (2026-10-30)
+**Commit Message**: fix(sync): bound the delta-sync event log by compacting update_metadata chains (#1721)
 
-* fix(storage): stop loading the Milvus backend on every import
+* fix(sync): bound the delta-sync event log by compacting update_metadata chains
 
-storage/__init__.py imported storage.milvus eagerly, and every
-deployment imports the storage package (web/dependencies.py does it at
-startup). Without pymilvus installed, milvus.py then logged "pymilvus not
-available" at WARNING on every start, for a backend the deployment never
-selected. The except ImportError in __init__.py never ran either, because
-milvus.py catches the ImportError itself.
+The sync_events log is append-only and never compacted. Periodic local
+recomputes (quality/utility) append an update_metadata event per memory
+several times a day; on a 3-week-old production DB that was 1.36M events,
+97% idempotent update_metadata (~53 per memory, ~half the DB file).
 
-MilvusMemoryStorage is now resolved on first access through a module
-__getattr__. The backend selectors (storage/factory.py, server_impl.py,
-cli/utils.py) already import storage.milvus directly. The import-time
-warning is gone: MilvusMemoryStorage.__init__ already raises with install
-instructions when pymilvus is missing, which is where it matters.
+compact_update_metadata collapses, per content_hash, the update_metadata
+chain into one consolidated event carrying the LWW-resolved state. It
+reuses the apply resolver (_load_live_events + _resolve_md_fields) instead
+of re-implementing LWW, so the compacted log re-materializes identically.
 
-* docs(changelog): add fragment for #1718
+Convergence-preserving:
+- only update_metadata is compacted; create/delete untouched (recreation anchor)
+- nothing above MIN(last_seq_pushed) across peers is touched; cursors left alone
+- per live incarnation (never merges across a create-after-delete boundary)
+- consolidated event carries the winning event's HLC pair (not per-column max),
+  reuses a seq within the collapsed range, deterministic event_id (idempotent)
+- single SAVEPOINT, fail-close
 
----------
-
-Co-authored-by: timkjr <[REDACTED_EMAIL]>
-Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
-
-**File**: `changelog.d/1718.fixed.md` (added, +5/-0)
+**File**: `changelog.d/1721.fixed.md` (added, +14/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+- **"pymilvus not available" logged on every start without Milvus (#1718).**
-+  `storage/__init__.py` imported the Milvus backend eagerly, so every install
-+  without pymilvus logged a WARNING at startup whatever backend it used.
-+  `MilvusMemoryStorage` now loads on first access, and the missing-pymilvus
-+  error is raised only when a Milvus storage is actually created.
+@@ -0,0 +1,14 @@
++- **Delta-sync: the `sync_events` log grew without bound from `update_metadata` churn (#1721, filhocf).**
++  The event log is append-only and never compacted, so periodic local recomputes
++  (quality/utility) that rewrite metadata appended an `update_metadata` event per memory
++  several times a day — on a 3-week-old database, 1.36M events, 97% of them idempotent
++  `update_metadata`. A new `compact_update_metadata` job collapses the chain per
++  `content_hash` into one consolidated event carrying the LWW-resolved state (reusing the
++  apply resolver, not re-implementing it). It is convergence-preserving: compaction is
++  all-or-nothing per live incarnation — a hash is only collapsed when its whole live
++  `update_metadata` chain sits at or below the safe watermark `MIN(last_seq_pushed)` across
++  peers, so a field whose winning edit is still above the watermark can never be defeated by
++  a collapsed field carrying an inflated clock. The consolidated event keeps the winning
++  event's HLC pair and a deterministic id that includes the payload hash (so peers that
++  compact divergent chains never reuse an identity). The delete is chunked and the whole
++  batch is fail-closed under a single SAVEPOINT.
 ```
 
-**File**: `src/mcp_memory_service/storage/__init__.py` (modified, +15/-4)
+**File**: `src/mcp_memory_service/storage/sync/compaction.py` (added, +355/-0)
 ```diff
-@@ -12,6 +12,8 @@
- # See the License for the specific language governing permissions and
- # limitations under the License.
- 
-+from typing import TYPE_CHECKING
+@@ -0,0 +1,355 @@
++"""
++Delta-sync sync_events LOG COMPACTION (Gate G4 implementation).
 +
- from .base import MemoryStorage
- 
- # Conditional imports based on available dependencies
-@@ -35,8 +37,17 @@
- except ImportError:
-     HybridMemoryStorage = None
- 
--try:
-+# Milvus is loaded on first access, not here: every deployment imports this
-+# package, and only Milvus users need storage/milvus.py. The backend
-+# selectors (factory.py, server_impl.py, cli/utils.py) import it directly.
-+__all__.append('MilvusMemoryStorage')
++Collapses the idempotent op='update_metadata' chain per content_hash into a single
++consolidated event that carries the LWW-resolved state, giving the sync_events log a bound
++without breaking cross-peer convergence.
 +
-+if TYPE_CHECKING:
-     from .milvus import MilvusMemoryStorage
--    __all__.append('MilvusMemoryStorage')
--except ImportError:
--    MilvusMemoryStorage = None
-\ No newline at end of file
++Design (reuses, never reinvents — G1):
++  - Field-level LWW is NOT re-implemented here: the winning fields are read back through the
++    SAME resolver the apply path uses (``_load_live_events`` + ``_resolve_md_fields`` elect the
++    live incarnation and the per-field winners via ``_winner_key``). The consolidated event is
++    built so that re-resolving the (now shorter) log yields a byte-identical verdict (T1/T5/T7).
++  - The consolidated event carries the WINNING update_metadata event's HLC PAIR (the single
++    smallest ``_winner_key``), never MAX-per-column, so bootstrap._read_snapshot elects the same
++    (hlc_physical, hlc_logical) pair and _seed_last_hlc_on_first_boot cannot regress (T2).
++  - Only op='update_metadata' rows are ever removed; op='create'/op='delete' are untouched (T3).
++  - Watermark frontier: no event with seq > MIN(last_seq_pushed) across push_cursor may be
++    removed/rewritten. When ``watermark`` is None it is computed as that MIN; when there is NO
++    push_cursor row at all, no peer depends on the log tail, so the frontier is MAX(seq) (the
++    whole live chain is collapsible). sync_cursor and push_cursor are never touched (T4).
++  - The consolidated event_id is DETERMINISTIC (content_hash + winning HLC pair), so a second
++    run recognises the already-consolidated chain and is a no-op (T6a/T6b).
++  - Fail-closed: all removals + the insert run inside ONE SAVEPOINT; any error rolls the whole
++    thing back, leaving the log byte-identical (T6c).
 +
-+
-+def __getattr__(name):
-+    if name == 'MilvusMemoryStorage':
-+        from .milvus import MilvusMemoryStorage
-+        return MilvusMemoryStorage
-+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-\ No newline at end of file
-```
-
-**File**: `src/mcp_memory_service/storage/milvus.py` (modified, +2/-3)
-```diff
-@@ -60,9 +60,8 @@
-     PYMILVUS_AVAILABLE = False
-     MilvusClient = None  # type: ignore
-     DataType = None  # type: ignore
--    logging.getLogger(__name__).warning(
--        "pymilvus not available. Install with: pip install pymilvus milvus-lite"
--    )
-+    # No warning here: MilvusMemoryStorage.__init__ raises with install
-+    # instructions, which is the only point where a missing pymilvus matters.
- 
- # BM25 full-text search support (Milvus 2.5+).
- # Function / FunctionType were added in pymilvus ≥ 2.5; older versions lack them.
-```
-
-**File**: `tests/storage/test_storage_package_lazy_milvus.py` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
-+"""Importing the storage package must not load the Milvus backend.
-+
-+Every deployment imports ``mcp_memory_service.storage`` (the web app does it
-+through ``web/dependencies.py``). When that import pulled in ``storage/milvus``
-+eagerly, a sqlite_vec or hybrid install without pymilvus logged
-+"pymilvus not available" at WARNING on every start, for a backend it never
-+selected. Each check runs in a fresh interpreter, because by the time pytest
-+gets here other tests have already imported the module.
++SPEC: spec-sync-eventlog-compaction.md.
 +"""
 +
-+import subprocess
-+import sys
++import hashlib
++import json
++import logging
++import os
++import time
++from typing import Dict, List, Optional, Tuple
++
++from ..base import MemoryStorage
++from ..mixins.base import _sanitize_log_value
++from .apply import (
++    _sqlite,
++    _sync_lock,
++    _load_live_events,
++    _ev_winner_key,
++    _metadata_items,
++    _top_level_fields,
++)
++
++logger = logging.getLogger(__name__)
++
++# The op of the consolidated event. The protection of free-form vs structured keys is NOT
++# done here — it comes from reusing apply._top_level_fields / apply._metadata_items, which
++# already classify the payload fields. This constant only names the op string.
++_CONSOLIDATED_OP = "update_metadata"
 +
 +
-+def _run(*lines: str) -> subprocess.CompletedProcess:
-+    return subprocess.run(
-+        [sys.executable, "-c", "\n".join(lines)],
-+        capture_output=True,
-+        text=True,
-+        timeout=120,
-+    )
++def _compaction_agent_id() -> str:
++    """Stable agent id for consolidated events. A dedicated, single-token id (no slash) keeps
++    the row a valid, filterable event and makes the consolidated event visibly synthetic without
++    impersonating a real author."""
++    return "compaction"
 +
 +
-+def test_storage_package_import_does_not_load_milvus():
-+    result = _run(
-+        "import sys",
-+        "import mcp_memory_service.storage",
-+        'print("mcp_memory_service.storage.milvus" in sys.modules)',
-+    )
-+    assert result.returncode == 0, result.stderr
-+    assert result.stdout.strip() == "False"
-+    assert "pymilvus not available" not in result.stderr
++def _deterministic_consolidated_event_id(content_hash: str, hlc_physical: int, hlc_logical: int,
++                                         updates: Dict) -> str:
++    """Stable id for the consolidated update_metadata event (T6b).
++
++    Keyed on (content_hash, winning HLC pair, op, AND a canonical hash of the consolidated
++    `updates`). Same inputs → same id, so a second run on an unchanged chain produces the
++    identical identity and is recognised as already-consolidated. Including the payload hash
++    (Greptile P1#2) ensures two peers that compact DIVERGENT chains sharing the same winning
++    HLC pair mint DIFFERENT ids — otherwise identical ids with different payloads would be
++    rejected by apply_remote_event as an altered replay, silently dropping the event and
++    stalling the pull. Mirrors bootstrap._deterministic_event_id's shape ('prefix-' + sha256[:32]).
++    """
++    payload_digest = hashlib.sha256(
++        json.dumps(updates, sort_keys=True, separators=(",", ":")).encode("utf-8")
++    ).hexdigest()[:16]
++    raw = f"compact:{_CONSOLIDATED_OP}:{content_hash}:{hlc_physical}:{hlc_logical}:{payload_digest}".encode("utf-8")
++    return "cmp-" + hashlib.sha256(raw).hexdigest()[:32]
 +
 +
-+def test_milvus_class_still_reachable_from_package():
-+    result = _run(
-+        "from mcp_memory_service.storage import MilvusMemoryStorage",
-+        "from mcp_memory_service.storage.milvus import MilvusMemoryStorage as direct",
-+        "print(MilvusMemoryStorage is direct)",
-+    )
-+    assert result.returncode == 0, result.stderr
-+    assert result.stdout.strip() == "True"
++def _frontier(s, watermark: Optional[int]) -> int:
++    """Compute the compaction frontier (max seq that may be collapsed).
++
++    - explicit watermark → use it verbatim (caller caps how far compaction may reach);
++    - watermark is None  → MIN(last_seq_pushed) across push_cursor; if there is NO push_cursor
++      row, no peer depends on the log tail, so the frontier is MAX(seq) (collapse everything).
++    """
++    if watermark is not None:
++        return int(watermark)
++    row = s.conn.execute("SELECT COUNT(*), MIN(last_seq_pushed) FROM push_cursor").fetchone()
++    has_peers = row is not None and row[0] and row[0] > 0
++    if has_peers and row[1] is not None:
++        return int(row[1])
++    max_row = s.conn.execute("SELECT COALESCE(MAX(seq), 0) FROM sync_events").fetchone()
++    return int(max_row[0]) if max_row and max_row[0] is not None else 0
 +
 +
-+def test_milvus_module_import_without_pymilvus_is_silent():
-+    # Block pymilvus so the check holds whether or not it is installed here.
-+    result = _run(
-+        "import sys",
-+        'sys.modules["pymilvus"] = None',
-+        "import logging",
-+        "logging.basicConfig(level=logging.WARNING)",
-+        "import mcp_memory_service.storage.milvus as m",
-+        "print(m.PYMILVUS_AVAILABLE)",
-+    )
-+    assert result.returncode == 0, result.stderr
-+    assert result.stdout.strip() == "False"
-+    assert "pymilvus not available" not in result.stderr
++def _live_hashes_with_update_metadata(s) -> List[str]:
++
+```
+
+**File**: `tests/sync/test_sync_event_log_compaction.py` (added, +692/-0)
+```diff
+@@ -0,0 +1,692 @@
++"""
++RED tests (Gate G3 / TDD) for the sync_events LOG COMPACTION job — the fix for the
++unbounded sync_events growth where ~97% of rows are idempotent op='update_metadata'
++recomputes.
++
++Target under test (DOES NOT EXIST YET — collection fails with ImportError, valid RED):
++
++    from mcp_memory_service.storage.sync.compaction import compact_update_metadata
++    result = compact_update_metadata(storage, watermark=None)
++    # -> {"events_removed": int, "bytes_reclaimed": int | None}
++
++API / NAME DECISIONS (documented for G4, see subagent_response too):
++  - Module: mcp_memory_service/storage/sync/compaction.py (sibling of apply.py/bootstrap.py,
++    matches the package convention: resolver/apply/bootstrap/orchestrator/protocol).
++  - Public fn: compact_update_metadata(storage, watermark=None) -> dict. Name kept from the
++    task; it is precise (it compacts ONLY the update_metadata chains, never create/delete).
++  - watermark semantics (T4): optional int. When None the function MUST compute a safe
++    internal watermark = MIN(last_seq_pushed) across push_cursor (and never exceed the
++    live-event frontier). An explicit watermark lets the caller cap how far compaction may
++    touch. NO event with seq > watermark may be removed or rewritten.
++  - Return keys: events_removed (int, count of sync_events rows deleted) and bytes_reclaimed
++    (int | None; None allowed when the backend cannot cheaply measure, e.g. no VACUUM).
++
++WHY EACH TEST IS RED TODAY: compaction.py does not exist, so the module import at the top
++fails at COLLECTION time → every test in the file errors (ImportError). That is a legitimate
++RED for a not-yet-written function. Each test ALSO specifies real post-compaction BEHAVIOR
++(not just "import works") so it stays meaningful and turns GREEN only when G4 implements the
++contract — and would turn RED again on a regression.
++
++Reuses the REAL resolution (never re-implements LWW in the test):
++  - apply._load_live_events + apply._resolve_md_fields  (field-level LWW winners)
++  - apply._materialize_update_metadata                  (materialized row state)
++  - bootstrap._read_snapshot                            (HLC pair election per hash)
++  - store._recreate_of_for / recreate_of SELECT op='delete'  (delete dominance)
++"""
++
++import os
++import json
++import tempfile
++import time
++
++import pytest
++import pytest_asyncio
++
++from mcp_memory_service.models.memory import Memory
++from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
++from mcp_memory_service.utils.hashing import generate_content_hash
++from mcp_memory_service.storage.sync.apply import (
++    apply_remote_event,
++    advance_sync_cursor,
++    _load_live_events,
++    _resolve_md_fields,
++    _materialize_update_metadata,
++    _sqlite,
++)
++from mcp_memory_service.storage.sync.bootstrap import _read_snapshot
++
++# The module under test — DOES NOT EXIST YET. This import fails at collection → RED.
++from mcp_memory_service.storage.sync.compaction import compact_update_metadata
++
++
++# ─────────────────────────────── fixtures / helpers ───────────────────────────────
++
++@pytest_asyncio.fixture
++async def store(monkeypatch):
++    monkeypatch.setenv("MCP_AGENT_ID", "beta")
++    monkeypatch.setenv("MCP_SYNC_EVENTLOG", "true")
++    monkeypatch.setenv("MCP_SEMANTIC_DEDUP_ENABLED", "false")
++    with tempfile.TemporaryDirectory() as tmp:
++        s = SqliteVecMemoryStorage(os.path.join(tmp, "c.db"))
++        await s.initialize()
++        yield s
++        await s.close()
++
++
++async def _mk_store(name="x.db"):
++    d = tempfile.mkdtemp()
++    s = SqliteVecMemoryStorage(os.path.join(d, name))
++    await s.initialize()
++    return s
++
++
++def _create_event(content_hash, *, content, tags=None, store="default",
++                  created_at=1000.0, updated_at=1000.0, agent="alpha", event_id="c1",
++                  hlc_physical=10, hlc_logical=0, memory_type="note", metadata=None):
++    return {
++        "agent_id": agent, "event_id": event_id, "op": "create",
++        "content_hash": content_hash, "hlc_physical": hlc_physical, "hlc_logical": hlc_logical,
++        "embedding_model": None, "embedding_dim": None,
++        "payload": {
++            "content_hash": content_hash, "content": content, "memory_type": memory_type,
++            "tags": tags or [], "created_at": created_at, "updated_at": updated_at,
++            "metadata": metadata or {}, "store": store,
++        },
++    }
++
++
++def _update_metadata_event(content_hash, *, updates, event_id, agent="alpha",
++                           hlc_physical, hlc_logical=0, updated_at=2000.0):
++    return {
++        "agent_id": agent, "event_id": event_id, "op": "update_metadata",
++        "content_hash": content_hash, "hlc_physical": hlc_physical, "hlc_logical": hlc_logical,
++        "embedding_model": None, "embedding_dim": None,
++        "payload": {"content_hash": content_hash, "updates": updates, "updated_at": updated_at},
++    }
++
++
++def _delete_event(content_hash, *
 ```
 
 ---
 
-### Incident Patch 2: `38ce0293` (2026-10-30)
-**Commit Message**: fix(quality): log the async scorer's first-use start at DEBUG, not WARNING (#1719)
+### Incident Patch 2: `0071ab2a` (2026-10-31)
+**Commit Message**: feat(rerank): per-stage timing of memory_search rerank under include_debug, and honor MCP_QUALITY_LOCAL_DEVICE (#1669) (#1701)
 
-* fix(quality): log the async scorer's first-use start at DEBUG, not WARNING
+* feat(rerank): per-stage timing of memory_search rerank under include_debug (#1669)
 
-Nothing starts AsyncQualityScorer at boot. score_memory() starts it on
-the first store or retrieve, which is the only start path in the service,
-and logged "Async quality scorer not running, starting now" at WARNING
-before doing so. Every process therefore logged one warning after each
-restart for behaviour that is working as designed (31 times in 30 days
-on a production deployment). start() already logs "Async quality scorer
-started" at INFO, so the first-use line moves to DEBUG.
+With rerank=true and include_debug=true, result["debug"]["rerank_timing"]
+now carries the wall-clock of each stage of the call: search (and pool
+size), filters, scorer resolve (cold or warm, with the to_thread hop),
+scoring (with the hop and one entry per ONNX inference chunk: items,
+padded length, tokenize and run time) and the rerank stage total. The
+debug block prints it; the handler logs one debug line per call.
 
-* docs(changelog): add fragment for #1719
+Without include_debug nothing is measured and the response is unchanged;
+scores and ordering are the same with or without timing. The tail of
+handle_memory_search moved to _finish_memory_search so the handler can
+time the stages before it (behaviour unchanged, complexity budget held).
 
----------
+* fix(rerank): honor MCP_QUALITY_LOCAL_DEVICE for the search reranker (#1669)
 
-Co-authored-by: timkjr <[REDACTED_EMAIL]>
+The rerank path resolved its scorer with device='auto' no matter what,
+while the quality evaluator already passes MCP_QUALITY_LOCAL_DEVICE. On
+Apple Silicon 'auto' selects the CoreML provider, which 
 
-**File**: `changelog.d/1719.fixed.md` (added, +3/-0)
+**File**: `changelog.d/1701.added.md` (added, +6/-0)
 ```diff
-@@ -0,0 +1,3 @@
-+- **Async quality scorer logged a WARNING on every restart (#1719).**
-+  Its first-use start is the only way the scorer starts, so
-+  "Async quality scorer not running, starting now" is now logged at DEBUG.
+@@ -0,0 +1,6 @@
++- **Per-stage timing of the `memory_search` rerank path (#1669, #1701, massimiliano1991).**
++  With `rerank=true` and `include_debug=true`, `debug.rerank_timing` carries the wall-clock of
++  each stage of the call — search and pool size, filters, scorer resolve (cold or warm, with the
++  `to_thread` hop), scoring with one line per ONNX inference chunk (items, padded length,
++  tokenize and run time) — and the debug block prints it. Without `include_debug` nothing is
++  measured and the response is unchanged.
 ```
 
-**File**: `src/mcp_memory_service/quality/async_scorer.py` (modified, +3/-1)
+**File**: `changelog.d/1701.fixed.md` (added, +14/-0)
 ```diff
-@@ -110,7 +110,9 @@ async def score_memory(
-             storage: Optional storage instance to persist updated scores
-         """
-         if not self.running:
--            logger.warning("Async quality scorer not running, starting now")
-+            # The first score is the normal start path (nothing starts the
-+            # scorer at boot), so this is not a warning; start() logs at INFO.
-+            logger.debug("Async quality scorer not running, starting now")
-             await self.start()
+@@ -0,0 +1,14 @@
++- **The search reranker ignored `MCP_QUALITY_LOCAL_DEVICE` (#1669, #1701, massimiliano1991).**
++  It resolved its scorer with `device='auto'` regardless of the setting the quality evaluator
++  already passes to the same loader; on Apple Silicon `auto` selects the CoreML provider, which
++  runs the int8 cross-encoder an order of magnitude slower than the CPU provider. The setting
++  now reaches the reranker; the default (`auto`) is unchanged.
++- **Under `max_response_chars`, the debug block could displace every result; a zero-hit search printed none (#1701, massimiliano1991).**
++  With `include_debug=true` the diagnostics now ride after the results as the optional section
++  of a limited response, so the limiter drops them before it drops a memory; and a search with
++  no matches prints its debug block (filter counts and the search/filter timing) too, and
++  keeps it under the limit whether or not a summarization warning precedes it. The non-empty
++  limited path without a summarization warning budgeted only the memories and appended the
++  header, the truncation notice and the optional section uncounted; every positive
++  `max_response_chars` now goes through the bounded formatter, so a limited non-summary search
++  carries the bounded formatter's truncation notice (result counts, no character counts).
+```
+
+**File**: `src/mcp_memory_service/quality/onnx_ranker.py` (modified, +40/-7)
+```diff
+@@ -9,6 +9,7 @@
+ import logging
+ import os
+ import threading
++import time
+ from pathlib import Path
+ from typing import List, Optional, Tuple
+ import numpy as np
+@@ -448,6 +449,19 @@ def score_quality(self, query: str, memory_content: str) -> float:
+             logger.error("Error scoring quality with %s: %s", self.model_name, _sanitize_log_value(str(e)))
+             return 0.5  # Return neutral score on error
  
-         # Add to queue
++    @staticmethod
++    def _record_chunk_timing(timing, input_ids, t_start: float, t_tokenized: float) -> None:
++        """Append one chunk's split (tokenize vs. ``session.run``) when asked (#1669)."""
++        if timing is None:
++            return
++        t_done = time.perf_counter()
++        timing.append({
++            "items": int(input_ids.shape[0]),
++            "max_len": int(input_ids.shape[1]),
++            "tokenize_ms": round((t_tokenized - t_start) * 1000, 1),
++            "run_ms": round((t_done - t_tokenized) * 1000, 1),
++        })
++
+     def _accepted_ort_inputs(self, ort_inputs: dict) -> dict:
+         """Filter the feed to the inputs the loaded graph declares.
+ 
+@@ -476,7 +490,8 @@ def _accepted_ort_inputs(self, ort_inputs: dict) -> dict:
+     MIN_GPU_BATCH_SIZE = int(os.environ.get("MCP_QUALITY_MIN_GPU_BATCH", "16"))
+ 
+     def score_quality_batch(
+-        self, pairs: List[Tuple[str, str]], max_batch_size: int = 32
++        self, pairs: List[Tuple[str, str]], max_batch_size: int = 32,
++        timing: Optional[List[dict]] = None,
+     ) -> List[float]:
+         """
+         Score multiple (query, memory_content) pairs in batched inference calls.
+@@ -489,6 +504,12 @@ def score_quality_batch(
+         Args:
+             pairs: List of (query, memory_content) tuples
+             max_batch_size: Maximum items per ONNX inference call
++            timing: Optional list; when given, one dict per inference chunk is
++                appended with ``items``, ``max_len`` (padded sequence length),
++                ``tokenize_ms`` and ``run_ms`` (issue #1669). Scores are not
++                affected. A chunk that fell back to sequential scoring leaves no
++                entry, so the sum of ``run_ms`` under the caller's total is the
++                sign of that fallback.
+ 
+         Returns:
+             List of quality scores between 0.0 and 1.0
+@@ -512,7 +533,7 @@ def score_quality_batch(
+         for chunk_start in range(0, len(pairs), max_batch_size):
+             chunk = pairs[chunk_start:chunk_start + max_batch_size]
+             try:
+-                chunk_scores = self._score_batch_chunk(chunk)
++                chunk_scores = self._score_batch_chunk(chunk, timing)
+                 all_scores.extend(chunk_scores)
+             except Exception as e:
+                 logger.warning(
+@@ -523,20 +544,25 @@ def score_quality_batch(
+ 
+         return all_scores
+ 
+-    def _score_batch_chunk(self, pairs: List[Tuple[str, str]]) -> List[float]:
++    def _score_batch_chunk(
++        self, pairs: List[Tuple[str, str]], timing: Optional[List[dict]] = None
++    ) -> List[float]:
+         """Score a single chunk of pairs in one ONNX inference call."""
+         if self.model_config['type'] == 'classifier':
+-            return self._score_classifier_batch(pairs)
++            return self._score_classifier_batch(pairs, timing)
+         elif self.model_config['type'] == 'cross-encoder':
+-            return self._score_cross_encoder_batch(pairs)
++            return self._score_cross_encoder_batch(pairs, timing)
+         else:
+             raise ValueError(f"Unsupported model type: {self.model_config['type']}")
+ 
+-    def _score_classifier_batch(self, pairs: List[Tuple[str, str]]) -> List[float]:
++    def _score_classifier_batch(
++        self, pairs: List[Tuple[str, str]], timing: Optional[List[dict]] = None
++    ) -> List[float]:
+         """Batch score for classifier models (DeBERTa). Uses memory_content only."""
+         texts = [content for _, content in pairs]
+         texts = [t if t else " " for t in texts]  # Avoid empty strings
+ 
++        t_start = time.perf_counter()
+         if self._use_fast_tokenizer:
+             encoded_list = self._tokenizer.encode_batch(texts)
+             max_len = max(len(enc.ids) for enc in encoded_list)
+@@ -557,7 +583,9 @@ def _score_classifier_batch(self, pairs: List[Tuple[str, str]]) -> List[float]:
+             attention_mask = inputs["attention_mask"].astype(np.int64)
+ 
+         ort_inputs = {"input_ids": input_ids, "attention_mask": attention_mask}
++        t_tokenized = time.perf_counter()
+         outputs = self._model.run(None, self._accepted_ort_inputs(ort_inputs))
++        self._record_chunk_timing(timing, input_ids, t_start, t_tokenized)
+         logits = outputs[0]  # Shape: (batch_size, num_classes)
+ 
+         # Vectorized softmax + weighted score
+@@ -569,8 +597,11 @@ def _score_classifier_batch(self, pairs: List[Tuple[str, str]]) -> List[float]:
+         scores = probs @ class_values
+         return np.clip(scores, 0.0, 1.0).tolist()
+ 
+-    def 
 ```
 
-**File**: `tests/quality/test_async_scorer_lazy_start.py` (added, +41/-0)
+**File**: `src/mcp_memory_service/quality/search_rerank.py` (modified, +89/-13)
 ```diff
-@@ -0,0 +1,41 @@
-+"""The scorer's first-use start is its normal start path, not a fault.
+@@ -32,6 +32,7 @@
+ """
+ 
+ import asyncio
++import time
+ import logging
+ import os
+ import threading
+@@ -51,6 +52,7 @@
+ DEFAULT_RERANK_CANDIDATES = 40
+ 
+ _TRUTHY = frozenset(('true', '1', 'yes', 'on', 'enabled'))
++_DEVICES = ('auto', 'cpu', 'cuda', 'mps', 'directml')
+ 
+ 
+ @dataclass(frozen=True)
+@@ -60,10 +62,12 @@ class SearchRerankConfig:
+     enabled: bool = False
+     candidates: int = DEFAULT_RERANK_CANDIDATES
+     model: str = DEFAULT_RERANK_MODEL
++    device: str = 'auto'
+ 
+     @classmethod
+     def from_env(cls) -> 'SearchRerankConfig':
+-        """Read the three flags. Junk falls back to defaults, never raises."""
++        """Read the three flags and the shared quality device. Junk falls back
++        to defaults, never raises."""
+         raw_candidates = (os.getenv('MCP_RERANK_CANDIDATES') or '').strip()
+         candidates = DEFAULT_RERANK_CANDIDATES
+         if raw_candidates:
+@@ -75,10 +79,21 @@ def from_env(cls) -> 'SearchRerankConfig':
+                     _sanitize_log_value(raw_candidates),
+                     DEFAULT_RERANK_CANDIDATES,
+                 )
++        # Same knob as the quality evaluator (MCP_QUALITY_LOCAL_DEVICE): the
++        # reranker went through the loader with device='auto' regardless, so on
++        # Apple Silicon it always took the CoreML provider (issue #1669).
++        device = (os.getenv('MCP_QUALITY_LOCAL_DEVICE') or '').strip().lower() or 'auto'
++        if device not in _DEVICES:
++            logger.warning(
++                'Invalid MCP_QUALITY_LOCAL_DEVICE=%s for the reranker. Using auto',
++                _sanitize_log_value(device),
++            )
++            device = 'auto'
+         return cls(
+             enabled=(os.getenv('MCP_RERANK_ENABLED') or '').strip().lower() in _TRUTHY,
+             candidates=candidates,
+             model=(os.getenv('MCP_RERANK_MODEL') or '').strip() or DEFAULT_RERANK_MODEL,
++            device=device,
+         )
+ 
+ 
+@@ -113,7 +128,7 @@ def resolve_fetch_limit(arguments: dict, base_limit: int, config: Optional[Searc
+ 
+ def _build_scorer(config: SearchRerankConfig) -> Any:
+     """Resolve through the existing loader -- the single ONNX path."""
+-    model = get_onnx_ranker_model(model_name=config.model)
++    model = get_onnx_ranker_model(model_name=config.model, device=config.device)
+     if model is None:
+         raise RuntimeError(
+             f"ONNX ranker '{config.model}' could not be resolved through the existing loader"
+@@ -147,48 +162,103 @@ def _log_failure_once(error: Exception) -> None:
+ 
+ def _resolve_scorer(config: SearchRerankConfig) -> Optional[Any]:
+     """Build once; a load failure latches for the process lifetime so callers
+-    neither pay for a re-download nor re-log (EARS 4).
++    neither pay for a re-download nor re-log (EARS 4)."""
++    return _resolve_scorer_built(config)[0]
 +
-+Nothing in the service starts AsyncQualityScorer at boot; score_memory()
-+starts it on the first store or retrieve. That start used to be logged at
-+WARNING ("Async quality scorer not running, starting now"), so every process
-+logged one warning after each restart for behaviour that is working as
-+designed. start() already logs "Async quality scorer started" at INFO.
++
++def _resolve_scorer_built(config: SearchRerankConfig) -> tuple:
++    """``_resolve_scorer`` plus whether THIS call built the scorer, decided
++    inside the lock: of several searches arriving during the first load only
++    the one that ran ``_build_scorer`` reports ``True`` (issue #1669 timing).
+ 
+     The once-log runs OUTSIDE ``_scorer_lock``: ``threading.Lock`` is not
+     reentrant, so logging inside the critical section deadlocked every
+     first-failure caller.
+     """
+     global _scorer
++    built = False
+     if _load_failed.is_set():
+-        return None
++        return None, built
+     if _scorer is None:
+         failure: Optional[Exception] = None
+         with _scorer_lock:
+             if _scorer is None:
++                built = True
+                 try:
+                     _scorer = _build_scorer(config)
+                 except Exception as error:
+                     _load_failed.set()
+                     failure = error
+         if failure is not None:
+             _log_failure_once(failure)
+-            return None
+-    return _scorer
++            return None, built
++    return _scorer, built
++
++
++def _on_worker(fn, *args, **kwargs):
++    """Run ``fn`` on the worker and return (started_at, finished_at, result),
++    both clocks taken on the worker itself so the caller can tell the time
++    inside ``fn`` from the time spent waiting for the executor or the loop."""
++    started = time.perf_counter()
++    result = fn(*args, **kwargs)
++    return started, time.perf_counter(), result
++
++
++async def _timed_hop(record: Optional[dict], key: str, fn, *args, **kwargs):
++    """``asyncio.to_thread`` with, when ``record`` is given, ``<key>_ms`` (time
++    inside ``fn``, measured on the worker) and ``<key>_hop_ms`` (everything
++    else: the executor's queueing delay plus the wait for the event loop to
++    resume after ``fn`` returned) written to it. ``kwargs`` go to ``fn``
++    untouched (it may take a ``timing`` of its own)."""
++    if record is None:
++        return await asyncio.to_thread(fn, *args, **kwargs)
++    scheduled = time.perf_counter()
++    started, finished, result = await asyncio.to_thread(_on_w
+```
+
+**File**: `src/mcp_memory_service/server/handlers/memory.py` (modified, +121/-41)
+```diff
+@@ -1440,6 +1440,41 @@ def _format_memory_search_debug(result: dict) -> str:
+                 f"\n  Time range: {time_filter.get('start_timestamp')} - "
+                 f"{time_filter.get('end_timestamp')}"
+             )
++    text += _format_rerank_timing(debug.get("rerank_timing"))
++    return text
++
++
++def _format_rerank_timing(timing) -> str:
++    """One block per stage of the rerank path (issue #1669); empty when the
++    stage did not run under include_debug."""
++    if not timing:
++        return ""
++    text = "\n  Rerank timing (ms):"
++    if "search_ms" in timing:
++        text += f"\n    search: {timing['search_ms']} (pool {timing.get('pool')})"
++        text += f"\n    filters: {timing['filters_ms']}"
++    if "resolve_ms" in timing:
++        text += (
++            f"\n    scorer resolve: {timing['resolve_ms']}"
++            f" ({'cold' if timing.get('scorer_cold') else 'warm'},"
++            f" hop {timing.get('resolve_hop_ms')})"
++        )
++    if "score_ms" in timing:
++        text += (
++            f"\n    score: {timing['score_ms']} (hop {timing.get('score_hop_ms')},"
++            f" {timing.get('candidates')} candidates)"
++        )
++        for chunk in timing.get("chunks") or ():
++            text += (
++                f"\n      chunk of {chunk.get('items')} x {chunk.get('max_len')} tokens:"
++                f" tokenize {chunk.get('tokenize_ms')}, run {chunk.get('run_ms')}"
++            )
++    if "rerank_ms" in timing:
++        text += f"\n    rerank stage total: {timing['rerank_ms']}"
++        # The fallback note means the scorer was asked and the baseline order
++        # was kept; an empty pool never asked it, so it says nothing.
++        if "candidates" in timing and not timing.get("applied", True):
++            text += " (fell back to the unreranked order)"
+     return text
+ 
+ 
+@@ -1464,11 +1499,7 @@ async def _format_truncated_memory_search(
+     fallback_used: bool, max_response_chars: int, summary_warning: str,
+ ) -> types.TextContent:
+     """Format search results through the configured response-length limiter."""
+-    from ..utils.response_limiter import (
+-        format_bounded_response,
+-        format_truncated_response,
+-        truncate_memories,
+-    )
++    from ..utils.response_limiter import format_bounded_response
+ 
+     memory_dicts = [
+         {
+@@ -1480,20 +1511,25 @@ async def _format_truncated_memory_search(
+         }
+         for memory in memories
+     ]
++    # Under a limit the diagnostics asked for with include_debug ride after
++    # the results as the optional section, never in the required header: the
++    # limiter drops an optional section before it drops a memory (Greptile
++    # on #1701: in the header a long debug block could leave only the header).
+     header = _build_memory_search_header(result, total, fallback_used) + "\n\n"
+-    beliefs_section = await _format_beliefs_section(arguments, storage)
+-    if summary_warning:
+-        response_text = format_bounded_response(
+-            memory_dicts,
+-            max_response_chars,
+-            header=summary_warning + header,
+-            footer=beliefs_section,
+-        )
+-        return types.TextContent(type="text", text=response_text)
+-
+-    truncated, meta = truncate_memories(memory_dicts, max_response_chars)
+-    response_text = (
+-        header + format_truncated_response(truncated, meta) + beliefs_section
++    optional_section = (
++        _format_memory_search_debug(result)
++        + await _format_beliefs_section(arguments, storage)
++    )
++    # Every positive limit goes through the bounded formatter, with or
++    # without a summarization warning in front: the no-warning branch used to
++    # budget only the memories and append the header, the truncation notice
++    # and the optional section uncounted (doobidoo and ducanhnguyen223 on
++    # #1701), so a response could exceed the limit by the whole debug block.
++    response_text = format_bounded_response(
++        memory_dicts,
++        max_response_chars,
++        header=summary_warning + header,
++        footer=optional_section,
+     )
+     return types.TextContent(type="text", text=response_text)
+ 
+@@ -1508,17 +1544,25 @@ async def _format_empty_memory_search(
+     response = "No memories found"
+     if result.get("query"):
+         response += f" for query: '{result['query']}'"
+-    beliefs_section = await _format_beliefs_section(arguments, storage)
+-    if summary_warning and max_response_chars > 0:
++    # A zero-hit search still carries the diagnostics the caller asked for
++    # (filter counts, and the search/filter timing of #1669): a slow empty
++    # search is the one that needs them (Greptile on #1701).
++    optional_section = (
++        _format_memory_search_debug(result)
++        + await _format_beliefs_section(arguments, storage)
++    )
++    # Every positive limit goes through the limiter, with or without a
++    # summarization warning in front (doobidoo and ducanhnguyen223 on #1701).
++    if max_response_chars > 0:
+  
+```
+
+**File**: `tests/quality/test_search_rerank_flag.py` (modified, +1/-1)
+```diff
+@@ -159,7 +159,7 @@ async def test_reranker_model_env_is_passed_to_the_loader(monkeypatch):
+     monkeypatch.setenv('MCP_RERANK_MODEL', 'ms-marco-MiniLM-L-6-v2')
+     with patch(LOADER, return_value=stub) as loader:
+         await rerank_candidates('q', _memories(2), _enabled_config())
+-    loader.assert_called_once_with(model_name='ms-marco-MiniLM-L-6-v2')
++    loader.assert_called_once_with(model_name='ms-marco-MiniLM-L-6-v2', device='auto')
+ 
+ 
+ # --- EARS 4: fail-open -------------------------------------------------------
+```
+
+**File**: `tests/quality/test_search_rerank_timing.py` (added, +583/-0)
+```diff
+@@ -0,0 +1,583 @@
++"""Per-stage timing of the rerank path (issue #1669).
++
++Contract:
++- Timing rides on ``include_debug``: with it, ``result["debug"]["rerank_timing"]``
++  carries one wall-clock entry per stage; without it the response is unchanged
++  (no ``debug`` key is added, the scorer is called exactly as before).
++- ``scorer_cold`` is True on the call that built the scorer and False after.
++- The ranker records one entry per ONNX inference call (``items``, ``max_len``,
++  ``tokenize_ms``, ``run_ms``), so a pool of 40 under the default
++  ``max_batch_size`` shows as two chunks of 32 and 8.
++- The handler adds ``search_ms``/``pool``/``filters_ms``/``rerank_ms`` and the
++  debug block prints them.
++- Scores and ordering are the same with or without timing.
 +"""
 +
++import asyncio
 +import logging
++import threading
++import time
++from unittest.mock import AsyncMock, MagicMock, patch
 +
++import numpy as np
 +import pytest
 +
-+from mcp_memory_service.models.memory import Memory
-+from mcp_memory_service.quality.ai_evaluator import QualityEvaluator
-+from mcp_memory_service.quality.async_scorer import AsyncQualityScorer
-+from mcp_memory_service.quality.config import QualityConfig
++from mcp_memory_service.quality import search_rerank
++from mcp_memory_service.quality.onnx_ranker import ONNXRankerModel
++from mcp_memory_service.quality.search_rerank import (
++    SearchRerankConfig,
++    apply_search_rerank,
++    rerank_candidates,
++    reset_scorer_for_tests,
++)
++from mcp_memory_service.server.handlers import memory as memory_handlers
++
++LOADER = 'mcp_memory_service.quality.search_rerank.get_onnx_ranker_model'
++ENV_VARS = ('MCP_RERANK_ENABLED', 'MCP_RERANK_CANDIDATES', 'MCP_RERANK_MODEL')
++STAGE_KEYS = {
++    'candidates', 'scorer_cold', 'resolve_hop_ms', 'resolve_ms',
++    'score_hop_ms', 'score_ms', 'chunks', 'applied',
++}
++
++
++@pytest.fixture(autouse=True)
++def _clean_state(monkeypatch):
++    for var in ENV_VARS:
++        monkeypatch.delenv(var, raising=False)
++    reset_scorer_for_tests()
++    yield
++    reset_scorer_for_tests()
++
++
++class _StubModel:
++    """Scorer double that records how it was called, timing included."""
++
++    def __init__(self, scores, error=None):
++        self._scores = scores
++        self._error = error
++        self.calls = []
++
++    def score_quality_batch(self, pairs, max_batch_size=32, timing=None):
++        self.calls.append((list(pairs), timing))
++        if self._error is not None:
++            raise self._error
++        if timing is not None:
++            timing.append({'items': len(pairs), 'max_len': 7,
++                           'tokenize_ms': 0.1, 'run_ms': 0.2})
++        return list(self._scores)
++
++
++def _memories(n):
++    return [{'content': f'memory-{i}', 'content_hash': f'hash-{i}'} for i in range(n)]
++
++
++def _config():
++    return SearchRerankConfig(enabled=True, candidates=40, model='Xenova/bge-reranker-base')
++
++
++# --- timing rides on include_debug ------------------------------------------
 +
 +
 +@pytest.mark.asyncio
-+async def test_first_score_starts_scorer_without_a_warning(caplog):
-+    scorer = AsyncQualityScorer()
-+    # A disabled evaluator scores without loading a model (see
-+    # test_quality_system.py::test_async_background_scoring).
-+    scorer.evaluator = QualityEvaluator(QualityConfig(enabled=False))
-+    memory = Memory(content="lazy start", content_hash="hash_lazy", metadata={})
-+
-+    caplog.set_level(logging.DEBUG, logger="mcp_memory_service.quality.async_scorer")
-+    try:
-+        await scorer.score_memory(memory, "query")
-+
-+        assert scorer.running is True
-+        assert scorer.get_stats()["total_queued"] == 1
-+        warnings = [r for r in caplog.records if r.levelno >= logging.WARNING]
-+        assert warnings == [], [r.getMessage() for r in warnings]
-+        assert any(
-+            r.levelno == logging.INFO and r.getMessage() == "Async quality scorer started"
-+            for r in caplog.records
++async def test_timing_attached_only_under_include_debug(monkeypatch):
++    monkeypatch.setenv('MCP_RERANK_ENABLED', 'true')
++    stub = _StubModel(scores=[0.9 - 0.01 * i for i in range(40)])
++    memories = _memories(40)
++    with patch(LOADER, return_value=stub):
++        result = {'memories': memories, 'total': 40}
++        out, total = await apply_search_rerank(
++            {'rerank': True, 'limit': 10, 'include_debug': True}, 'q', memories, 40, result
 +        )
-+    finally:
-+        await scorer.stop()
++    assert total == 10 and len(out) == 10
++    timing = result['debug']['rerank_timing']
++    assert STAGE_KEYS <= set(timing)
++    assert timing['candidates'] == 40
++    assert timing['applied'] is True
++    assert timing['chunks'] == [{'items': 40, 'max_len': 7, 'tokenize_ms': 0.1, 'run_ms': 0.2}]
++    for key in ('resolve_hop_ms', 'resolve_ms', 'score_hop_ms', 'score_ms'):
++        assert isinstance(timing[key], float) and timing[key] >= 0.0
++    # The scorer received the chunk list it was asked to fill.
++    assert stub.calls[0][1] is timing['chunks']
++
++
++@pytest.mark.asyncio
++async def test_without_include_debug_nothing_is_measured(monkeypatch):
++    monkeypatch.setenv('MCP_RERANK_ENABLED', 'true')
++    stub = _StubModel(scores=[0.9 - 0.01 * i for i in range(5)])
++    memories = _memories(5)
++    result = {'memories': memories, 'total': 5}
++    with patch(LOADER, return_value=stub):
++        await apply_search_rerank({'rerank': True, 'limit': 3}, 'q', memories, 5, result)
++    assert 'debug' not in result
++    assert stub.calls == [([('q', f'memory-{i}') for i in range(5)], None)]
++
++
++@pytest.mark.asyncio
++async def test_existing_debug_block_is_extended_not_replaced(monkeypatch):
++    monkeypatch.setenv('MCP_RERANK_ENABLED', 'true')
++    stub = _StubModel(scores=[0.6 + 0.1 * i for i in range(3)])
++    memories = _memories(3)
++    result = {'memories': memories, 'total': 3, 'debug': {'raw_total': 3}}
++    with patch(LOADER, return_value=stub):
++        await apply_search_rerank(
++            {'rerank': True, 'limit': 3, 'include_debug': True}, 'q', memories, 3, result
++        )
++    assert result['debug']['raw_total'] == 3
++    assert result['debug']['rerank_timing']['candidates'] == 3
++
++
++@pytest.mark.asyncio
++async def test_order_i
 ```
 
 ---
 
-### Incident Patch 3: `c14318ac` (2026-10-30)
-**Commit Message**: test(multi-store): assert the isolated memory is absent, not that search is empty (#1720)
+### Incident Patch 3: `fef259d7` (2026-10-31)
+**Commit Message**: fix(harvest): support GPT-5 completion parameters (#1725)
 
-* test(multi-store): assert the isolated memory is absent, not that search is empty
+* fix: use GPT-5 compatible harvest completion parameters
 
-test_search_with_store_param stored into the "isolated" store, then
-asserted that a search of the "default" store returned no results. The
-default store is shared with every earlier test in the same process, and
-semantic search returns its nearest matches whatever they are, so the
-test failed whenever an earlier test had left anything there. Running
-tests/test_memory_ops.py before it reproduces this on main; under
-pytest -n auto it depends on which worker the two files land on, which
-is why it surfaced on one PR's CI and not another's.
+* docs: add changelog entry for harvest GPT-5 fix
 
-The test now checks for a unique marker at the start of the stored
-content: absent from the default store's results, present in the
-isolated store's results (so an empty search cannot pass it).
+* test: cover legacy harvest completion parameters
 
-* test(multi-store): require the default-store search to succeed before checking absence
+* docs: fix changelog fragment format
 
-An "Error: ..." reply does not contain the marker either, so the
-absence assertion passed on a failed search. The isolated-store control
-runs a separate search and could not catch a failure limite
+---------
 
-**File**: `tests/test_multi_store.py` (modified, +22/-5)
+Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/1723.fixed.md` (added, +1/-0)
 ```diff
-@@ -1,6 +1,7 @@
- """Tests for multi-store partition key support (Issue #57)."""
- import pytest
- import os
-+import uuid
+@@ -0,0 +1 @@
++- Fix harvest OpenAI-compatible requests for GPT-5 models by using max_completion_tokens.
+```
+
+**File**: `src/mcp_memory_service/harvest/classifier.py` (modified, +2/-3)
+```diff
+@@ -15,7 +15,7 @@
  
- os.environ.setdefault('MCP_MEMORY_STORAGE_BACKEND', 'sqlite_vec')
+ from ..compat import _sanitize_log_value
+ from .models import HarvestCandidate
+-from .rewriter import load_llm_providers, is_usable_provider
++from .rewriter import build_openai_compatible_payload, load_llm_providers, is_usable_provider
  
-@@ -195,20 +196,36 @@ async def test_search_with_store_param(self):
-         """memory_search tool respects store parameter."""
-         from mcp_memory_service.server import MemoryServer
-         server = MemoryServer()
--        # Store in specific store
-+        # The default store is shared with every earlier test in this process
-+        # (and semantic search returns its nearest matches whatever they are),
-+        # so assert that *this* memory is absent, not that the results are
-+        # empty. The marker leads the content because results show only a
-+        # short preview of each memory, and stays out of the query because
-+        # the response echoes the query.
-+        marker = f"msiso-{uuid.uuid4().hex[:12]}"
-+        query = "unique multi-store test content alpha"
-         await server.call_tool("memory_store", {
--            "content": "Unique multi-store test content alpha",
-+            "content": f"{marker} {query}",
-             "metadata": {"tags": "test"},
-             "store": "isolated"
-         })
-         # Search in different store should not find it
-         result = await server.call_tool("memory_search", {
--            "query": "unique multi-store test content alpha",
-+            "query": query,
-             "store": "default"
-         })
-         text = result[0].text
--        # Should either be empty results or not contain our content
--        assert "no memories found" in text.lower() or "0 memories" in text.lower() or '"memories": []' in text
-+        # An "Error: ..." reply would not contain the marker either, so the
-+        # search itself has to have succeeded before absence means anything.
-+        assert text.startswith(("Found ", "No memories found")), text
-+        assert marker not in text
-+        # Control: the same search in its own store does find it, so the
-+        # absence above is not just a search that matched nothing.
-+        result = await server.call_tool("memory_search", {
-+            "query": query,
-+            "store": "isolated"
-+        })
-+        assert marker in result[0].text
+ logger = logging.getLogger(__name__)
  
+@@ -241,8 +241,7 @@ def _call_openai_compatible(
+                 f"{base_url}/chat/completions",
+                 headers=headers,
+                 # stream is explicit: fm serve streams SSE when it is absent (#1666)
+-                json={"model": model, "stream": False, "messages": messages,
+-                      "temperature": temperature, "max_tokens": max_tokens},
++                json=build_openai_compatible_payload(model, messages, max_tokens, temperature),
+             )
+             if resp.status_code == 429:
+                 raise Exception(f"Rate limit exceeded: {resp.text[:100]}")
+```
+
+**File**: `src/mcp_memory_service/harvest/rewriter.py` (modified, +14/-7)
+```diff
+@@ -15,6 +15,17 @@
  
- async def _build_pre_62_db(db_path):
+ VALID_TYPES = {"decision", "bug", "convention", "learning", "context"}
+ 
++
++def build_openai_compatible_payload(model: str, messages: list, max_tokens: int, temperature: float) -> dict:
++    """Build a chat-completions payload compatible with GPT-5 reasoning models."""
++    payload = {"model": model, "stream": False, "messages": messages}
++    if model.startswith("gpt-5"):
++        payload["max_completion_tokens"] = max_tokens + 800
++    else:
++        payload["temperature"] = temperature
++        payload["max_tokens"] = max_tokens
++    return payload
++
+ # Models sometimes echo the literal placeholder word "TYPE" or "<type>" from the prompt
+ # instead of substituting the real type, e.g. "TYPE: convention — <text>" or "<type>: text".
+ # This strips that leaked wrapper and recovers the real type + content.
+@@ -517,13 +528,9 @@ async def _call_openai_compatible(self, base_url: str, model: str, api_key: str,
+             resp = await client.post(
+                 f"{base_url}/chat/completions",
+                 headers=headers,
+-                json={
+-                    "model": model,
+-                    "stream": False,  # fm serve streams SSE when this is absent (#1666)
+-                    "messages": [{"role": "user", "content": prompt}],
+-                    "temperature": 0.3,
+-                    "max_tokens": 200,
+-                },
++                json=build_openai_compatible_payload(
++                    model, [{"role": "user", "content": prompt}], 200, 0.3
++                ),
+             )
+             if resp.status_code == 429:
+                 raise Exception(f"Rate limit exceeded: {resp.text[:100]}")
+```
+
+**File**: `tests/harvest/test_classifier.py` (modified, +19/-0)
+```diff
+@@ -375,3 +375,22 @@ def test_payload_disables_streaming_explicitly(self):
+ 
+         payload = client.__enter__.return_value.post.call_args.kwargs["json"]
+         assert payload["stream"] is False
++        assert payload["max_tokens"] == 50
++        assert payload["temperature"] == 0.0
++        assert "max_completion_tokens" not in payload
++
++    def test_gpt5_uses_completion_tokens_without_temperature(self):
++        resp = MagicMock(status_code=200)
++        resp.json.return_value = {"choices": [{"message": {"content": "{}"}}]}
++        client = MagicMock()
++        client.__enter__.return_value.post.return_value = resp
++
++        with patch("httpx.Client", return_value=client):
++            _classifier_without_groq_key()._call_openai_compatible(
++                "http://127.0.0.1:1976/v1", "gpt-5.4-mini", "", "prompt", "system msg", 200, 0.3
++            )
++
++        payload = client.__enter__.return_value.post.call_args.kwargs["json"]
++        assert payload["max_completion_tokens"] == 1000
++        assert "max_tokens" not in payload
++        assert "temperature" not in payload
+```
+
+**File**: `tests/harvest/test_rewriter.py` (modified, +25/-0)
+```diff
+@@ -357,3 +357,28 @@ async def post(self, *args, **kwargs):
+             "http://127.0.0.1:1976/v1", "system", "", "prompt", 5.0
+         )
+         assert captured["stream"] is False
++        assert captured["max_tokens"] == 200
++        assert captured["temperature"] == 0.3
++        assert "max_completion_tokens" not in captured
++
++    @pytest.mark.asyncio
++    async def test_gpt5_uses_completion_tokens_without_temperature(self, monkeypatch):
++        captured = {}
++
++        class _FakeAsyncClient:
++            def __init__(self, timeout): pass
++            async def __aenter__(self): return self
++            async def __aexit__(self, *exc): return False
++            async def post(self, *args, **kwargs):
++                captured.update(kwargs["json"])
++                resp = MagicMock(status_code=200)
++                resp.json.return_value = {"choices": [{"message": {"content": "ok"}}]}
++                return resp
++
++        monkeypatch.setattr(httpx, "AsyncClient", _FakeAsyncClient)
++        await HarvestRewriter()._call_openai_compatible(
++            "http://127.0.0.1:1976/v1", "gpt-5.4-mini", "", "prompt", 5.0
++        )
++        assert captured["max_completion_tokens"] == 1000
++        assert "max_tokens" not in captured
++        assert "temperature" not in captured
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1725** (2026-10-31): fix(harvest): support GPT-5 completion parameters (@mikemikimike)
+- **PR #1721** (2026-10-30): fix(sync): bound the delta-sync event log by compacting update_metadata chains (@filhocf)
 - **PR #1720** (2026-10-30): test(multi-store): assert the isolated memory is absent, not that search is empty (@timkjr)
 - **PR #1719** (2026-10-30): fix(quality): log the async scorer's first-use start at DEBUG, not WARNING (@timkjr)
 - **PR #1718** (2026-10-30): fix(storage): stop loading the Milvus backend on every import (@timkjr)
 - **PR #1717** (2026-10-29): fix(oauth): omit empty members from the client registration response (#1707) (@djimenezm2)
-- **PR #1713** (2026-10-29): feat(entities): choose which tags become entities for entity linking (@andrunio)
-- **PR #1712** (2026-10-29): fix(milvus): delete graph edges of memories purged by purge_deleted() (@andrunio)
 
 ---
 
@@ -3278,25 +3914,34 @@ runs a separate search and could not catch a failure limite
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. storage): stop loading the Milvus backend on every import (#1718)
+## X. sync): bound the delta-sync event log by compacting update_metadata chains (#172
 
 **RULE**:
-When implementing operations in `changelog.d/1718.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/1721.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c187ec5c`: storage): stop loading the Milvus backend on every import (#1718). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5ffe3614`: sync): bound the delta-sync event log by compacting update_metadata chains (#1721). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1718.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1721.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **"pymilvus not available" logged on every start without Milvus (#1718).**
-  `storage/__init__.py` imported the Milvus backend eagerly, so every install
-  without pymilvus logged a WARNING at startup whatever backend it used.
-  `MilvusMemoryStorage` now loads on first access, and the missing-pymilvus
-  error is raised only when a Milvus storage is actually created.
+- **Delta-sync: the `sync_events` log grew without bound from `update_metadata` churn (#1721, filhocf).**
+  The event log is append-only and never compacted, so periodic local recomputes
+  (quality/utility) that rewrite metadata appended an `update_metadata` event per memory
+  several times a day — on a 3-week-old database, 1.36M events, 97% of them idempotent
+  `update_metadata`. A new `compact_update_metadata` job collapses the chain per
+  `content_hash` into one consolidated event carrying the LWW-resolved state (reusing the
+  apply resolver, not re-implementing it). It is convergence-preserving: compaction is
+  all-or-nothing per live incarnation — a hash is only collapsed when its whole live
+  `update_metadata` chain sits at or below the safe watermark `MIN(last_seq_pushed)` across
+  peers, so a field whose winning edit is still above the watermark can never be defeated by
+  a collapsed field carrying an inflated clock. The consolidated event keeps the winning
+  event's HLC pair and a deterministic id that includes the payload hash (so peers that
+  compact divergent chains never reuse an identity). The delete is chunked and the whole
+  batch is fail-closed under a single SAVEP
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3306,4 +3951,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c187ec5c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5ffe3614` are properly handled with clean fallback behavior.

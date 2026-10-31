@@ -6578,3 +6578,7 @@ Every entry in this ledger must capture:
 | `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `c28fe6f3` | Multi-dimensional audit evidence | 2026-10-31T12:53:41.915Z |
 | `learn-huggingface-baai-bge-m3` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-31T12:53:41.975Z |
 | `learn-github-amir1376-ab-download-manager` | `https://github.com/amir1376/ab-download-manager` | `34cd27af` | Multi-dimensional audit evidence | 2026-10-31T12:53:46.818Z |
+| `learn-huggingface-qwen-qwen3-0-6b` | `https://huggingface.co/Qwen/Qwen3-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-31T12:59:56.584Z |
+| `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `dd4fca39` | Multi-dimensional audit evidence | 2026-10-31T12:59:57.588Z |
+| `learn-github-insertkoinio-koin` | `https://github.com/InsertKoinIO/koin` | `d486a5e8` | Multi-dimensional audit evidence | 2026-10-31T13:00:02.533Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `fef259d7` | Multi-dimensional audit evidence | 2026-10-31T13:00:10.288Z |
