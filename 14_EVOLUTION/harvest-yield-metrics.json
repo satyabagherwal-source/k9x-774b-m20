@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T22:40:02.000Z",
-  "total_cycles_completed": 6718,
-  "total_learnings_persisted": 6718,
+  "last_updated": "2026-10-31T22:46:44.912Z",
+  "total_cycles_completed": 6719,
+  "total_learnings_persisted": 6719,
   "total_rules_promoted": 6359,
   "history": [
-    {
-      "timestamp": "2026-10-31T11:09:34.953Z",
-      "repository": "prithivMLmods/Gender-Classifier-Mini",
-      "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T11:09:37.682Z",
       "repository": "Ontos-AI/knowhere",
@@ -1403,6 +1396,13 @@
       "repository": "freenet/freenet-core",
       "learningId": "learn-github-freenet-freenet-core",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:46:44.912Z",
+      "repository": "Phocinae/Phocinae-Largha-150M-v1",
+      "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

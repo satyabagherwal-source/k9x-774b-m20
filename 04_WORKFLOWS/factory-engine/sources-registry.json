@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T22:40:04.552Z",
-    "lastVerified": "2026-10-31T22:40:04.552Z",
+    "lastChecked": "2026-10-31T22:46:56.355Z",
+    "lastVerified": "2026-10-31T22:46:56.355Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -248,8 +248,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T22:12:16.447Z",
-    "lastVerified": "2026-10-31T22:12:16.447Z",
+    "lastChecked": "2026-10-31T22:46:56.344Z",
+    "lastVerified": "2026-10-31T22:46:56.344Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -609,8 +609,8 @@
     "officialUrl": "https://github.com/VectifyAI/PageIndex",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-31T06:18:06.447Z",
-    "lastVerified": "2026-10-31T06:18:06.447Z",
+    "lastChecked": "2026-10-31T22:46:53.798Z",
+    "lastVerified": "2026-10-31T22:46:53.798Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vectifyai-pageindex",
@@ -1319,8 +1319,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T18:40:46.973Z",
-    "lastVerified": "2026-10-31T18:40:46.973Z",
+    "lastChecked": "2026-10-31T22:46:51.298Z",
+    "lastVerified": "2026-10-31T22:46:51.298Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -2738,9 +2738,9 @@
   "easegress-io-easegress": {
     "name": "easegress",
     "officialUrl": "https://github.com/easegress-io/easegress",
-    "lastChecked": "2026-10-31T06:59:14.640Z",
+    "lastChecked": "2026-10-31T22:46:48.791Z",
     "revisionIdentifier": "48bacc2e",
-    "lastVerified": "2026-10-31T06:59:14.640Z"
+    "lastVerified": "2026-10-31T22:46:48.791Z"
   },
   "ontos-ai-knowhere": {
     "name": "Ontos-AI/knowhere",
@@ -3005,9 +3005,9 @@
   "xampprocky-tokei": {
     "name": "tokei",
     "officialUrl": "https://github.com/XAMPPRocky/tokei",
-    "lastChecked": "2026-10-31T02:50:56.094Z",
+    "lastChecked": "2026-10-31T22:46:41.290Z",
     "revisionIdentifier": "c14f7447",
-    "lastVerified": "2026-10-31T02:50:56.094Z"
+    "lastVerified": "2026-10-31T22:46:41.290Z"
   },
   "hf-alissonerdx-bfs-best-face-swap": {
     "name": "Alissonerdx/BFS-Best-Face-Swap",
@@ -7796,12 +7796,12 @@
     "officialUrl": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T21:04:19.460Z",
-    "lastVerified": "2026-10-28T21:04:19.460Z",
+    "lastChecked": "2026-10-31T22:46:43.826Z",
+    "lastVerified": "2026-10-31T22:46:43.826Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-    "contentHash": "c12cc8d8e318e2436efe32ede70041ff3d5bba7ea9bf3a6b7df64c173044f0eb",
+    "contentHash": "9dcca3e4f1b8645c97beca93aa6e98e3ff37735259097bce614db4d05f6cb1f9",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9116,12 +9116,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "vinceglb-filekit": {
-    "name": "vinceglb/FileKit",
+    "name": "FileKit",
     "officialUrl": "https://github.com/vinceglb/FileKit",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-10-29T16:36:44.855Z",
-    "lastVerified": "2026-10-29T16:36:44.855Z",
+    "lastChecked": "2026-10-31T22:46:46.347Z",
+    "lastVerified": "2026-10-31T22:46:46.347Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vinceglb-filekit",
@@ -9130,7 +9130,8 @@
     "recentFixesCount": 5,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ddc09b4a"
   },
   "hf-mistralai-mistral-large-4-1t-a52b": {
     "name": "mistralai/Mistral-Large-4-1T-A52B",

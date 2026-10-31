@@ -6750,3 +6750,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-31T22:33:05.502Z |
 | `learn-huggingface-qwen-qwen-image-2-1-turbo` | `https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-31T22:39:51.942Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `6f0a7f13` | Multi-dimensional audit evidence | 2026-10-31T22:40:01.995Z |
+| `learn-huggingface-phocinae-phocinae-largha-150m-v1` | `https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1` | `hf-phocina` | Multi-dimensional audit evidence | 2026-10-31T22:46:44.906Z |
