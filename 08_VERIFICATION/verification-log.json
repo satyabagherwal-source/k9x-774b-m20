@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-XAKF",
-    "timestamp": "2026-10-30T15:08:26.175Z",
-    "repository": "t8y2/dbx",
-    "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "772aebdd1b79f5c06c0fc6dd9a02eca265e1b0a3bbb69783b4662553c05ea929",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-5PVN",
-    "timestamp": "2026-10-30T15:14:59.267Z",
-    "repository": "axios/axios",
-    "learningId": "learn-github-axios-axios",
-    "contentHash": "19231c36656aaaaf2a3b8c801f1c7b389bddbc05b94728bc0aceb73a1d4a800d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-5QOJ",
     "timestamp": "2026-10-30T15:15:00.307Z",
     "repository": "StikDebug/StikDebug",
@@ -7490,6 +7460,36 @@
     "repository": "canberkkkkkk/ema-lightning",
     "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
     "contentHash": "4790bcaa173fafcf803ab13360e0b6c782066220e15ea55141054f9b4be3f530",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-9IF3",
+    "timestamp": "2026-10-31T21:09:31.647Z",
+    "repository": "unsloth/embeddinggemma-2-GGUF",
+    "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
+    "contentHash": "315ee571628b1ba4eb5d193b458442ea3b319fc6ad672c5fa383658949dfd046",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-AY00",
+    "timestamp": "2026-10-31T21:10:38.496Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "b8a64a97f588d005aca83d18a6ad7ea62af9f52762848b4fa3b7ecadeed5ec85",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

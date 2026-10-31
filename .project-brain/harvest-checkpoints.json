@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T20:59:43.798Z",
+  "last_updated": "2026-10-31T21:10:38.509Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -845,14 +845,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "0b4ecab20085c0a2b9057c6d6a1f3aad7417c40963f118a6ce95222539ea08dc",
-      "verified_at": "2026-10-28T19:46:40.767Z",
+      "content_hash": "315ee571628b1ba4eb5d193b458442ea3b319fc6ad672c5fa383658949dfd046",
+      "verified_at": "2026-10-31T21:09:31.660Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T19:46:40.767Z"
+      "last_updated": "2026-10-31T21:09:31.660Z"
     },
     "Cloudflare/clef": {
       "repository": "Cloudflare/clef",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "713bdd6598848ea265bfd7d7feeb68f2be566a5fe99ba42092c59dca4fb62035",
-      "verified_at": "2026-10-31T07:55:11.591Z",
+      "content_hash": "b8a64a97f588d005aca83d18a6ad7ea62af9f52762848b4fa3b7ecadeed5ec85",
+      "verified_at": "2026-10-31T21:10:38.508Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T07:55:11.591Z"
+      "last_updated": "2026-10-31T21:10:38.508Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",

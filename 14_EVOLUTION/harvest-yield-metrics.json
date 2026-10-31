@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T20:59:43.795Z",
-  "total_cycles_completed": 6696,
-  "total_learnings_persisted": 6696,
-  "total_rules_promoted": 6325,
+  "last_updated": "2026-10-31T21:10:38.504Z",
+  "total_cycles_completed": 6698,
+  "total_learnings_persisted": 6698,
+  "total_rules_promoted": 6330,
   "history": [
-    {
-      "timestamp": "2026-10-31T09:40:12.536Z",
-      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T09:47:08.309Z",
-      "repository": "orcarouter/OrcaSAQ-2-27B",
-      "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T09:53:59.337Z",
       "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-31T20:59:43.795Z",
       "repository": "canberkkkkkk/ema-lightning",
       "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T21:09:31.656Z",
+      "repository": "unsloth/embeddinggemma-2-GGUF",
+      "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T21:10:38.504Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

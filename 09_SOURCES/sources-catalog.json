@@ -675,8 +675,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
     "sourceVersion": "hf-unsloth-embeddinggemma-2-gguf",
     "license": "Open-Source",
-    "contentHash": "0b4ecab20085c0a2b9057c6d6a1f3aad7417c40963f118a6ce95222539ea08dc",
-    "lastHarvestedAt": "2026-10-28T19:46:40.750Z",
+    "contentHash": "315ee571628b1ba4eb5d193b458442ea3b319fc6ad672c5fa383658949dfd046",
+    "lastHarvestedAt": "2026-10-31T21:09:31.651Z",
     "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf"
   },
   "hf-cloudflare-clef": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "9f2b612e",
+    "sourceVersion": "8193b024",
     "license": "MIT",
-    "contentHash": "8ced0cff377f0ef10cb71d915eaa181d5cf8f5c02cc8ace30914a300ba78c43c",
-    "lastHarvestedAt": "2026-10-31T04:38:49.406Z",
+    "contentHash": "b8a64a97f588d005aca83d18a6ad7ea62af9f52762848b4fa3b7ecadeed5ec85",
+    "lastHarvestedAt": "2026-10-31T21:10:38.499Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {

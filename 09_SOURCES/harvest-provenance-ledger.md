@@ -6728,3 +6728,5 @@ Every entry in this ledger must capture:
 | `learn-github-jacklandrin-onlyswitch` | `https://github.com/jacklandrin/OnlySwitch` | `1daf9e74` | Multi-dimensional audit evidence | 2026-10-31T20:59:38.511Z |
 | `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `8bd47ad6` | Multi-dimensional audit evidence | 2026-10-31T20:59:40.851Z |
 | `learn-huggingface-canberkkkkkk-ema-lightning` | `https://huggingface.co/canberkkkkkk/ema-lightning` | `hf-canberk` | Multi-dimensional audit evidence | 2026-10-31T20:59:43.792Z |
+| `learn-huggingface-unsloth-embeddinggemma-2-gguf` | `https://huggingface.co/unsloth/embeddinggemma-2-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-31T21:09:31.651Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `8193b024` | Multi-dimensional audit evidence | 2026-10-31T21:10:38.499Z |
