@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T14:52:43.245Z",
-    "lastVerified": "2026-10-31T14:52:43.245Z",
+    "lastChecked": "2026-10-31T14:59:41.061Z",
+    "lastVerified": "2026-10-31T14:59:41.061Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -246,8 +246,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T14:32:41.266Z",
-    "lastVerified": "2026-10-31T14:32:41.266Z",
+    "lastChecked": "2026-10-31T14:59:41.048Z",
+    "lastVerified": "2026-10-31T14:59:41.048Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1477,9 +1477,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-10-31T11:46:45.609Z",
+    "lastChecked": "2026-10-31T14:59:36.128Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-10-31T11:46:45.609Z"
+    "lastVerified": "2026-10-31T14:59:36.128Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -4656,9 +4656,9 @@
   "skyzh-mini-lsm": {
     "name": "mini-lsm",
     "officialUrl": "https://github.com/skyzh/mini-lsm",
-    "lastChecked": "2026-10-30T22:56:37.240Z",
+    "lastChecked": "2026-10-31T14:59:38.491Z",
     "revisionIdentifier": "2f7ce315",
-    "lastVerified": "2026-10-30T22:56:37.240Z"
+    "lastVerified": "2026-10-31T14:59:38.491Z"
   },
   "embassy-rs-embassy": {
     "name": "embassy-rs/embassy",
@@ -4813,12 +4813,12 @@
     "officialUrl": "https://huggingface.co/openai/gpt-oss-20b",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T14:35:53.743Z",
-    "lastVerified": "2026-10-28T14:35:53.743Z",
+    "lastChecked": "2026-10-31T14:59:28.637Z",
+    "lastVerified": "2026-10-31T14:59:28.637Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openai-gpt-oss-20b",
-    "contentHash": "f09340f49a85be12781689902457a854ceda9ed4433d4e75a9832b52cefb19e2",
+    "contentHash": "344b79af70e304fdd9ce55c75c420c1b0af0069a9b5c33283f744887b57082e9",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -5857,9 +5857,9 @@
   "octodns-octodns": {
     "name": "octodns",
     "officialUrl": "https://github.com/octodns/octodns",
-    "lastChecked": "2026-10-30T23:44:45.702Z",
+    "lastChecked": "2026-10-31T14:59:33.541Z",
     "revisionIdentifier": "d3d4a37a",
-    "lastVerified": "2026-10-30T23:44:45.702Z"
+    "lastVerified": "2026-10-31T14:59:33.541Z"
   },
   "citusdata-citus": {
     "name": "citus",
@@ -7452,9 +7452,9 @@
   "mobilenativefoundation-store": {
     "name": "Store",
     "officialUrl": "https://github.com/MobileNativeFoundation/Store",
-    "lastChecked": "2026-10-28T20:01:27.513Z",
+    "lastChecked": "2026-10-31T14:59:31.098Z",
     "revisionIdentifier": "74a5988f",
-    "lastVerified": "2026-10-28T20:01:27.513Z"
+    "lastVerified": "2026-10-31T14:59:31.098Z"
   },
   "volcengine-openviking": {
     "name": "volcengine/OpenViking",
@@ -7681,9 +7681,9 @@
   "atanunq-viu": {
     "name": "viu",
     "officialUrl": "https://github.com/atanunq/viu",
-    "lastChecked": "2026-10-30T19:12:16.095Z",
+    "lastChecked": "2026-10-31T14:59:25.991Z",
     "revisionIdentifier": "5733be5f",
-    "lastVerified": "2026-10-30T19:12:16.095Z"
+    "lastVerified": "2026-10-31T14:59:25.991Z"
   },
   "hf-conwayresearch-underdog-saluki-27b-1.0": {
     "name": "ConwayResearch/Underdog-Saluki-27B-1.0",

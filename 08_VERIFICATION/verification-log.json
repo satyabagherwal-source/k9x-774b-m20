@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-MSDX",
-    "timestamp": "2026-10-30T05:12:24.117Z",
-    "repository": "citusdata/citus",
-    "learningId": "learn-github-citusdata-citus",
-    "contentHash": "e170651cd360fce81f852d71875aaabc31c3803f3f3ab46448a3acaadc2c887b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-W4EE",
     "timestamp": "2026-10-30T05:19:39.590Z",
     "repository": "StarRocks/starrocks",
@@ -7490,6 +7475,21 @@
     "repository": "zai-org/GLM-5.2",
     "learningId": "learn-huggingface-zai-org-glm-5-2",
     "contentHash": "7ec7c307fee253d1cfb2b4bb4aa6a84905aad37cd4ee82ff78a1fab642a16929",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-1N7I",
+    "timestamp": "2026-10-31T14:59:29.598Z",
+    "repository": "openai/gpt-oss-20b",
+    "learningId": "learn-huggingface-openai-gpt-oss-20b",
+    "contentHash": "344b79af70e304fdd9ce55c75c420c1b0af0069a9b5c33283f744887b57082e9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
