@@ -6556,3 +6556,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-alissonerdx-bfs-best-face-swap` | `https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap` | `hf-alisson` | Multi-dimensional audit evidence | 2026-10-31T11:26:00.176Z |
 | `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `9fc77dec` | Multi-dimensional audit evidence | 2026-10-31T11:26:00.750Z |
 | `learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ukisai-` | Multi-dimensional audit evidence | 2026-10-31T11:32:51.921Z |
+| `learn-huggingface-psrben-visionhope` | `https://huggingface.co/PSRben/VisionHOPE` | `hf-psrben-` | Multi-dimensional audit evidence | 2026-10-31T11:39:55.769Z |

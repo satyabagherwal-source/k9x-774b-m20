@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261029-21F9",
-    "timestamp": "2026-10-29T16:48:26.037Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "4cde4727500ffa8ec734b3d993d88b44a3745f394e007746ca30ca76172c02bc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261029-5CQ5",
     "timestamp": "2026-10-29T16:51:00.653Z",
     "repository": "Jakeschincariol/arena-skill",
@@ -7492,6 +7477,21 @@
     "contentHash": "21b167d749b9807f0780ac6a9999c6a0cb84befa186b1d5ffcb77918ebb963f8",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-X051",
+    "timestamp": "2026-10-31T11:39:55.765Z",
+    "repository": "PSRben/VisionHOPE",
+    "learningId": "learn-huggingface-psrben-visionhope",
+    "contentHash": "51da8314b6c139fe9fd53fbb3990a521b8b42090ad87dcffad6b8cdc2e41fb04",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T11:33:03.302Z",
-    "lastVerified": "2026-10-31T11:33:03.302Z",
+    "lastChecked": "2026-10-31T11:39:58.835Z",
+    "lastVerified": "2026-10-31T11:39:58.835Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -247,8 +247,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T11:09:34.547Z",
-    "lastVerified": "2026-10-31T11:09:34.547Z",
+    "lastChecked": "2026-10-31T11:39:58.824Z",
+    "lastVerified": "2026-10-31T11:39:58.824Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1406,9 +1406,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-10-31T06:38:29.386Z",
+    "lastChecked": "2026-10-31T11:39:53.769Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-10-31T06:38:29.386Z"
+    "lastVerified": "2026-10-31T11:39:53.769Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -2973,9 +2973,9 @@
   "pingcap-autoflow": {
     "name": "autoflow",
     "officialUrl": "https://github.com/pingcap/autoflow",
-    "lastChecked": "2026-10-30T18:39:38.505Z",
+    "lastChecked": "2026-10-31T11:39:56.321Z",
     "revisionIdentifier": "c4cb19d8",
-    "lastVerified": "2026-10-30T18:39:38.505Z"
+    "lastVerified": "2026-10-31T11:39:56.321Z"
   },
   "hf-prithivmlmods-gender-classifier-mini": {
     "name": "prithivMLmods/Gender-Classifier-Mini",
@@ -3127,12 +3127,12 @@
     "officialUrl": "https://huggingface.co/PSRben/VisionHOPE",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T10:17:46.201Z",
-    "lastVerified": "2026-10-28T10:17:46.201Z",
+    "lastChecked": "2026-10-31T11:39:46.495Z",
+    "lastVerified": "2026-10-31T11:39:46.495Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-psrben-visionhope",
-    "contentHash": "c2cd76b795a830c4291740f2007a2da96dc0a0101414a5a12c7e15fbdb1b33e9",
+    "contentHash": "51da8314b6c139fe9fd53fbb3990a521b8b42090ad87dcffad6b8cdc2e41fb04",
     "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -4087,9 +4087,9 @@
   "apptainer-singularity": {
     "name": "singularity",
     "officialUrl": "https://github.com/apptainer/singularity",
-    "lastChecked": "2026-10-30T19:35:49.301Z",
+    "lastChecked": "2026-10-31T11:39:51.326Z",
     "revisionIdentifier": "9dceb424",
-    "lastVerified": "2026-10-30T19:35:49.301Z"
+    "lastVerified": "2026-10-31T11:39:51.326Z"
   },
   "risingwavelabs-risingwave": {
     "name": "risingwavelabs/risingwave",
@@ -5693,9 +5693,9 @@
   "shoutem-ui": {
     "name": "ui",
     "officialUrl": "https://github.com/shoutem/ui",
-    "lastChecked": "2026-10-28T16:12:20.720Z",
+    "lastChecked": "2026-10-31T11:39:48.795Z",
     "revisionIdentifier": "92e3f530",
-    "lastVerified": "2026-10-28T16:12:20.720Z"
+    "lastVerified": "2026-10-31T11:39:48.795Z"
   },
   "decodingai-magazine-llm-twin-course": {
     "name": "llm-twin-course",
@@ -6095,12 +6095,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "ataraxy-labs-sem": {
-    "name": "Ataraxy-Labs/sem",
+    "name": "sem",
     "officialUrl": "https://github.com/Ataraxy-Labs/sem",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T13:46:18.989Z",
-    "lastVerified": "2026-10-30T13:46:18.989Z",
+    "lastChecked": "2026-10-31T11:39:43.740Z",
+    "lastVerified": "2026-10-31T11:39:43.740Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ataraxy-labs-sem",
@@ -6109,7 +6109,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "fee69d96"
   },
   "hf-nomic-ai-nomic-embed-text-v1.5": {
     "name": "nomic-ai/nomic-embed-text-v1.5",

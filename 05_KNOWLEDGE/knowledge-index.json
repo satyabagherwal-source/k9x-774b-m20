@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T11:32:51.825Z",
+  "last_updated": "2026-10-31T11:39:55.684Z",
   "total_verified_learnings": 1183,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -27589,7 +27589,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/PSRben/VisionHOPE",
       "source_version": "hf-psrben-visionhope",
-      "content_hash": "c2cd76b795a830c4291740f2007a2da96dc0a0101414a5a12c7e15fbdb1b33e9",
+      "content_hash": "51da8314b6c139fe9fd53fbb3990a521b8b42090ad87dcffad6b8cdc2e41fb04",
       "dossier_path": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "promoted_rules": [
@@ -27671,6 +27671,16 @@
           "number": 5249,
           "title": "Dimension Coupling Contract Enforcement in Hierarchical Mixers",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6182,
+          "title": "Dual-Channel Dimensionality Decoupling in Hierarchical Backbones",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6183,
+          "title": "Non-Uniform Depth Allocation for Semantic Hierarchy",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -27691,7 +27701,7 @@
         "learn-huggingface-hf-psrben-visionhope-mv47isqm",
         "learn-huggingface-hf-psrben-visionhope-mv4ksdgc"
       ],
-      "verified_at": "2026-10-28T10:20:00.827Z",
+      "verified_at": "2026-10-31T11:39:55.659Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -161709,6 +161719,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T11:26:00.649Z"
+    },
+    "rule-6182": {
+      "learning_id": "rule-6182",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6182,
+      "title": "Dual-Channel Dimensionality Decoupling in Hierarchical Backbones",
+      "source_url": "https://huggingface.co/PSRben/VisionHOPE",
+      "source_version": "hf-psrben-visionhope",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T11:39:55.659Z"
+    },
+    "rule-6183": {
+      "learning_id": "rule-6183",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6183,
+      "title": "Non-Uniform Depth Allocation for Semantic Hierarchy",
+      "source_url": "https://huggingface.co/PSRben/VisionHOPE",
+      "source_version": "hf-psrben-visionhope",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T11:39:55.659Z"
     }
   },
   "aliases": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T11:32:51.932Z",
+  "last_updated": "2026-10-31T11:39:55.779Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -740,14 +740,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-psrben-visionhope",
-      "content_hash": "c2cd76b795a830c4291740f2007a2da96dc0a0101414a5a12c7e15fbdb1b33e9",
-      "verified_at": "2026-10-28T10:20:00.924Z",
+      "content_hash": "51da8314b6c139fe9fd53fbb3990a521b8b42090ad87dcffad6b8cdc2e41fb04",
+      "verified_at": "2026-10-31T11:39:55.779Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T10:20:00.924Z"
+      "last_updated": "2026-10-31T11:39:55.779Z"
     },
     "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF": {
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
