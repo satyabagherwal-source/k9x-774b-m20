@@ -6585,3 +6585,4 @@
 | `CYCLE-20261031-QULW` | `2026-10-31T13:27:07.124Z` | `timm/mobilenetv3_small_100.lamb_in1k` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md` | Yes (`6e8dc0c3...`) |
 | `CYCLE-20261031-QYT3` | `2026-10-31T13:27:12.567Z` | `kotest/kotest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6209` | Yes (`355ba433...`) |
 | `CYCLE-20261031-ZUBF` | `2026-10-31T13:34:06.651Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6210, Rule 6211` | Yes (`86cafee2...`) |
+| `CYCLE-20261031-868A` | `2026-10-31T13:40:35.338Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`1cf75a7c...`) |

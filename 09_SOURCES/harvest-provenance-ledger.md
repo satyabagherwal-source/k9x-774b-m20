@@ -6594,3 +6594,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-10-31T13:27:07.131Z |
 | `learn-github-kotest-kotest` | `https://github.com/kotest/kotest` | `0397e47b` | Multi-dimensional audit evidence | 2026-10-31T13:27:12.570Z |
 | `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-10-31T13:34:06.654Z |
+| `learn-huggingface-hexgrad-kokoro-82m` | `https://huggingface.co/hexgrad/Kokoro-82M` | `hf-hexgrad` | Multi-dimensional audit evidence | 2026-10-31T13:40:35.347Z |

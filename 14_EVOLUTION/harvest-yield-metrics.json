@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T13:34:06.660Z",
-  "total_cycles_completed": 6562,
-  "total_learnings_persisted": 6562,
+  "last_updated": "2026-10-31T13:40:35.352Z",
+  "total_cycles_completed": 6563,
+  "total_learnings_persisted": 6563,
   "total_rules_promoted": 6208,
   "history": [
-    {
-      "timestamp": "2026-10-31T00:53:04.881Z",
-      "repository": "reflection/Beam-1.0-501B-A23B",
-      "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T01:04:47.346Z",
       "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
@@ -1403,6 +1396,13 @@
       "repository": "CompVis/stable-diffusion-v1-4",
       "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T13:40:35.352Z",
+      "repository": "hexgrad/Kokoro-82M",
+      "learningId": "learn-huggingface-hexgrad-kokoro-82m",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
