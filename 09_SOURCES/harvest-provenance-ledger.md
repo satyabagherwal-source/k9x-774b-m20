@@ -6466,3 +6466,5 @@ Every entry in this ledger must capture:
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `1d2c21aa` | Multi-dimensional audit evidence | 2026-10-31T03:59:09.033Z |
 | `learn-huggingface-baidu-unlimited-ocr-2` | `https://huggingface.co/baidu/Unlimited-OCR-2` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-10-31T04:09:42.092Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `71f47d41` | Multi-dimensional audit evidence | 2026-10-31T04:09:42.994Z |
+| `learn-huggingface-ccore-qwen3-5-4b-3d-coder` | `https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder` | `hf-ccore-q` | Multi-dimensional audit evidence | 2026-10-31T04:15:56.346Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `6983f5a1` | Multi-dimensional audit evidence | 2026-10-31T04:16:06.437Z |

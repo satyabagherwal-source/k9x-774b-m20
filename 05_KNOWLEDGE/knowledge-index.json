@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T04:09:42.916Z",
+  "last_updated": "2026-10-31T04:16:06.385Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7161,8 +7161,8 @@
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "d7fbe7d3",
-      "content_hash": "5d01b0f63089e826fb9dc9f478a8b22e2c576666646ee89f397c3cd39ab21ce4",
+      "source_version": "6983f5a1",
+      "content_hash": "b87c2ec518266e186800f30378f9c7f2801e2cabbae4231681f0321a985eda42",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "promoted_rules": [
@@ -7240,6 +7240,11 @@
           "number": 5679,
           "title": "Discrimination Between Hardware/Transient I/O Faults and Metadata Corruption",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6066,
+          "title": "Merge pull request #121121 from iliasabk/fix/undrop-uuid-source-database",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7247,7 +7252,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T08:18:56.210Z",
+      "verified_at": "2026-10-31T04:16:06.373Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -142594,7 +142599,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
       "source_version": "hf-ccore-qwen3.5-4b-3d-coder",
-      "content_hash": "ce3a5161a76b514b0941a139522e7f2e7fc0eca6ffdf06c602f3f493fdde5bad",
+      "content_hash": "7e0fb81d86c198bd9082b1cfcc63189aa6a09bde7b07191132aacff72f7540c3",
       "dossier_path": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md",
       "promoted_rules": [
@@ -142607,6 +142612,21 @@
           "number": 4951,
           "title": "Domain-Specific Code Generation Prompt Engineering",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6063,
+          "title": "**Attention‑Bias Consistency Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6064,
+          "title": "**Tokenizer‑Pad‑Token Alignment Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6065,
+          "title": "**Sampling‑Temperature Consistency Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -142614,7 +142634,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T18:59:39.266Z",
+      "verified_at": "2026-10-31T04:15:56.282Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -159354,6 +159374,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T04:09:42.896Z"
+    },
+    "rule-6063": {
+      "learning_id": "rule-6063",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6063,
+      "title": "**Attention‑Bias Consistency Rule**",
+      "source_url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
+      "source_version": "hf-ccore-qwen3.5-4b-3d-coder",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T04:15:56.282Z"
+    },
+    "rule-6064": {
+      "learning_id": "rule-6064",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6064,
+      "title": "**Tokenizer‑Pad‑Token Alignment Rule**",
+      "source_url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
+      "source_version": "hf-ccore-qwen3.5-4b-3d-coder",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T04:15:56.282Z"
+    },
+    "rule-6065": {
+      "learning_id": "rule-6065",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6065,
+      "title": "**Sampling‑Temperature Consistency Rule**",
+      "source_url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
+      "source_version": "hf-ccore-qwen3.5-4b-3d-coder",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T04:15:56.282Z"
+    },
+    "rule-6066": {
+      "learning_id": "rule-6066",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6066,
+      "title": "Merge pull request #121121 from iliasabk/fix/undrop-uuid-source-database",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "6983f5a1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T04:16:06.373Z"
     }
   },
   "aliases": {

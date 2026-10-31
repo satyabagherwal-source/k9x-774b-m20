@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T04:09:45.549Z",
-    "lastVerified": "2026-10-31T04:09:45.549Z",
+    "lastChecked": "2026-10-31T04:16:08.982Z",
+    "lastVerified": "2026-10-31T04:16:08.982Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -343,9 +343,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T03:45:32.340Z",
+    "lastChecked": "2026-10-31T04:16:02.853Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T03:45:32.340Z"
+    "lastVerified": "2026-10-31T04:16:02.853Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1185,12 +1185,12 @@
     "lastVerified": "2026-10-31T00:52:52.917Z"
   },
   "emberstack-kubernetes-reflector": {
-    "name": "emberstack/kubernetes-reflector",
+    "name": "kubernetes-reflector",
     "officialUrl": "https://github.com/emberstack/kubernetes-reflector",
     "sourceType": "github",
     "technology": "C#",
-    "lastChecked": "2026-10-30T10:07:44.444Z",
-    "lastVerified": "2026-10-30T10:07:44.444Z",
+    "lastChecked": "2026-10-31T04:15:55.384Z",
+    "lastVerified": "2026-10-31T04:15:55.384Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-emberstack-kubernetes-reflector",
@@ -1199,7 +1199,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a5ba070c"
   },
   "freenet-freenet-core": {
     "name": "freenet-core",
@@ -2292,8 +2293,8 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T00:34:24.641Z",
-    "lastVerified": "2026-10-31T00:34:24.641Z",
+    "lastChecked": "2026-10-31T04:15:57.928Z",
+    "lastVerified": "2026-10-31T04:15:57.928Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -3047,9 +3048,9 @@
   "leecade-react-native-swiper": {
     "name": "react-native-swiper",
     "officialUrl": "https://github.com/leecade/react-native-swiper",
-    "lastChecked": "2026-10-28T09:57:58.868Z",
+    "lastChecked": "2026-10-31T04:15:52.860Z",
     "revisionIdentifier": "98cc9060",
-    "lastVerified": "2026-10-28T09:57:58.868Z"
+    "lastVerified": "2026-10-31T04:15:52.860Z"
   },
   "taubyte-tau": {
     "name": "tau",
@@ -3527,12 +3528,12 @@
     "lastVerified": "2026-10-30T20:15:16.392Z"
   },
   "mfontanini-presenterm": {
-    "name": "mfontanini/presenterm",
+    "name": "presenterm",
     "officialUrl": "https://github.com/mfontanini/presenterm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T04:25:11.839Z",
-    "lastVerified": "2026-10-30T04:25:11.839Z",
+    "lastChecked": "2026-10-31T04:15:47.878Z",
+    "lastVerified": "2026-10-31T04:15:47.878Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mfontanini-presenterm",
@@ -3541,7 +3542,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "11d2b279"
   },
   "hf-google-electra-base-discriminator": {
     "name": "google/electra-base-discriminator",
@@ -6985,14 +6987,14 @@
     "officialUrl": "https://github.com/ClickHouse/ClickHouse",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-30T08:16:59.607Z",
-    "lastVerified": "2026-10-30T08:16:59.607Z",
+    "lastChecked": "2026-10-31T04:16:05.559Z",
+    "lastVerified": "2026-10-31T04:16:05.559Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "5d01b0f63089e826fb9dc9f478a8b22e2c576666646ee89f397c3cd39ab21ce4",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 10,
+    "contentHash": "b87c2ec518266e186800f30378f9c7f2801e2cabbae4231681f0321a985eda42",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12168,6 +12170,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
     "contentHash": "ae491bba61bb1ed28c3721e72110d66f4e5ecb58cff6fe4976e0639f8af27625",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-ccore-qwen3.5-4b-3d-coder": {
+    "name": "ccore/Qwen3.5-4B-3D-Coder",
+    "officialUrl": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-31T04:15:50.525Z",
+    "lastVerified": "2026-10-31T04:15:50.525Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
+    "contentHash": "7e0fb81d86c198bd9082b1cfcc63189aa6a09bde7b07191132aacff72f7540c3",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

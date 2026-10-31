@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T04:09:43.003Z",
+  "last_updated": "2026-10-31T04:16:06.443Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9231,14 +9231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clickhouse-clickhouse",
-      "content_hash": "5d01b0f63089e826fb9dc9f478a8b22e2c576666646ee89f397c3cd39ab21ce4",
-      "verified_at": "2026-10-30T08:18:56.328Z",
+      "content_hash": "b87c2ec518266e186800f30378f9c7f2801e2cabbae4231681f0321a985eda42",
+      "verified_at": "2026-10-31T04:16:06.443Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T08:18:56.328Z"
+      "last_updated": "2026-10-31T04:16:06.443Z"
     },
     "dockview/dockview": {
       "repository": "dockview/dockview",
@@ -16971,14 +16971,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
-      "content_hash": "ce3a5161a76b514b0941a139522e7f2e7fc0eca6ffdf06c602f3f493fdde5bad",
-      "verified_at": "2026-10-27T18:59:39.371Z",
+      "content_hash": "7e0fb81d86c198bd9082b1cfcc63189aa6a09bde7b07191132aacff72f7540c3",
+      "verified_at": "2026-10-31T04:15:56.353Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T18:59:39.371Z"
+      "last_updated": "2026-10-31T04:15:56.353Z"
     },
     "AgileRL/AgileRL": {
       "repository": "AgileRL/AgileRL",

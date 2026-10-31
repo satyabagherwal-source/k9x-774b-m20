@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "d7fbe7d3",
+    "sourceVersion": "6983f5a1",
     "license": "Apache-2.0",
-    "contentHash": "5d01b0f63089e826fb9dc9f478a8b22e2c576666646ee89f397c3cd39ab21ce4",
-    "lastHarvestedAt": "2026-10-30T08:18:56.320Z",
+    "contentHash": "b87c2ec518266e186800f30378f9c7f2801e2cabbae4231681f0321a985eda42",
+    "lastHarvestedAt": "2026-10-31T04:16:06.437Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {
@@ -11295,8 +11295,8 @@
     "sourceUrl": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
     "sourceVersion": "hf-ccore-qwen3.5-4b-3d-coder",
     "license": "Open-Source",
-    "contentHash": "ce3a5161a76b514b0941a139522e7f2e7fc0eca6ffdf06c602f3f493fdde5bad",
-    "lastHarvestedAt": "2026-10-27T18:59:39.363Z",
+    "contentHash": "7e0fb81d86c198bd9082b1cfcc63189aa6a09bde7b07191132aacff72f7540c3",
+    "lastHarvestedAt": "2026-10-31T04:15:56.346Z",
     "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder"
   },
   "agilerl-agilerl": {
