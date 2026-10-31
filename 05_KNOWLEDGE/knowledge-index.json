@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T01:28:23.219Z",
+  "last_updated": "2026-10-31T01:40:03.399Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13291,8 +13291,8 @@
       "slug": "flox-flox",
       "platform": "github",
       "source_url": "https://github.com/flox/flox",
-      "source_version": "55536b5d",
-      "content_hash": "3ad8e2109a4cbad7402c9241951798d84973b764ddf8b9c6bf85dc4f6d2f3dce",
+      "source_version": "da039c11",
+      "content_hash": "f710c126a505a6952ad47b531c5a2b6f6bb53f3333dbc8c36b9f94003b3e12ca",
       "dossier_path": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "promoted_rules": [
@@ -13320,6 +13320,11 @@
           "number": 5529,
           "title": "auth): compile the default FloxHub authn mode into the build (#4580)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5994,
+          "title": "cli): Drop the unused webpki-roots CA store (#4855)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13327,7 +13332,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T17:04:36.011Z",
+      "verified_at": "2026-10-31T01:39:57.565Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43251,8 +43256,8 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "fdee1bd9",
-      "content_hash": "c5f5880bb236e6438227044d4393aa2a1138fabf6d7242abdd95a82798c6a6b3",
+      "source_version": "786d6bf7",
+      "content_hash": "9d57da2081d274c601546a776c2cd68025ce997ee9771b5b49c91b3f71d5f741",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
@@ -43305,6 +43310,11 @@
           "number": 5621,
           "title": "ast: probe base data collections without converting them (#9447)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5995,
+          "title": "rego: exclude wasm compile time from context timeout test (#9455)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43312,7 +43322,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T06:01:56.299Z",
+      "verified_at": "2026-10-31T01:40:02.760Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -119446,7 +119456,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
       "source_version": "hf-orcarouter-orcacyber-nano-1.0",
-      "content_hash": "4c4a2bfff7ac0b40b484db3ef36b30d7cc33b46db8ca11e4f6668b66dc9110d4",
+      "content_hash": "f3e81fcb70265f77f4b9c3172eed206b884aff2bd71e2f45cecd2c253ac5f2df",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md",
       "promoted_rules": [
@@ -119459,6 +119469,11 @@
           "number": 3542,
           "title": "Namespace Collision & Ownership Verification",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5996,
+          "title": "Repository Integrity & Non-Empty Artifact Verification",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -119466,7 +119481,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T02:57:21.263Z",
+      "verified_at": "2026-10-31T01:40:03.382Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -158033,6 +158048,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T01:28:23.199Z"
+    },
+    "rule-5994": {
+      "learning_id": "rule-5994",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5994,
+      "title": "cli): Drop the unused webpki-roots CA store (#4855)",
+      "source_url": "https://github.com/flox/flox",
+      "source_version": "da039c11",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T01:39:57.565Z"
+    },
+    "rule-5995": {
+      "learning_id": "rule-5995",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5995,
+      "title": "rego: exclude wasm compile time from context timeout test (#9455)",
+      "source_url": "https://github.com/open-policy-agent/opa",
+      "source_version": "786d6bf7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T01:40:02.760Z"
+    },
+    "rule-5996": {
+      "learning_id": "rule-5996",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5996,
+      "title": "Repository Integrity & Non-Empty Artifact Verification",
+      "source_url": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
+      "source_version": "hf-orcarouter-orcacyber-nano-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T01:40:03.382Z"
     }
   },
   "aliases": {

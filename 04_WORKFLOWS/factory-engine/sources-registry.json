@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T01:28:26.106Z",
-    "lastVerified": "2026-10-31T01:28:26.106Z",
+    "lastChecked": "2026-10-31T01:40:06.013Z",
+    "lastVerified": "2026-10-31T01:40:06.013Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -342,9 +342,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T01:04:58.010Z",
+    "lastChecked": "2026-10-31T01:40:04.835Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T01:04:58.010Z"
+    "lastVerified": "2026-10-31T01:40:04.835Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -583,8 +583,8 @@
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T21:53:01.525Z",
-    "lastVerified": "2026-10-30T21:53:01.525Z",
+    "lastChecked": "2026-10-31T01:39:59.890Z",
+    "lastVerified": "2026-10-31T01:39:59.890Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -1579,9 +1579,9 @@
   "react-navigation-react-navigation": {
     "name": "react-navigation",
     "officialUrl": "https://github.com/react-navigation/react-navigation",
-    "lastChecked": "2026-10-28T04:55:00.082Z",
+    "lastChecked": "2026-10-31T01:39:54.979Z",
     "revisionIdentifier": "641efd1e",
-    "lastVerified": "2026-10-28T04:55:00.082Z"
+    "lastVerified": "2026-10-31T01:39:54.979Z"
   },
   "nats-io-nats-server": {
     "name": "nats-io/nats-server",
@@ -2208,14 +2208,14 @@
     "officialUrl": "https://github.com/flox/flox",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T17:03:28.141Z",
-    "lastVerified": "2026-10-29T17:03:28.141Z",
+    "lastChecked": "2026-10-31T01:39:56.517Z",
+    "lastVerified": "2026-10-31T01:39:56.517Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-flox-flox",
-    "contentHash": "3ad8e2109a4cbad7402c9241951798d84973b764ddf8b9c6bf85dc4f6d2f3dce",
+    "contentHash": "f710c126a505a6952ad47b531c5a2b6f6bb53f3333dbc8c36b9f94003b3e12ca",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5708,12 +5708,12 @@
     "lastVerified": "2026-10-30T23:44:45.702Z"
   },
   "citusdata-citus": {
-    "name": "citusdata/citus",
+    "name": "citus",
     "officialUrl": "https://github.com/citusdata/citus",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-10-30T05:09:59.707Z",
-    "lastVerified": "2026-10-30T05:09:59.707Z",
+    "lastChecked": "2026-10-31T01:40:02.507Z",
+    "lastVerified": "2026-10-31T01:40:02.507Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-citusdata-citus",
@@ -5722,7 +5722,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "843ef6f0"
   },
   "dicklesworthstone-destructive_command_guard": {
     "name": "Dicklesworthstone/destructive_command_guard",
@@ -6441,14 +6442,14 @@
     "officialUrl": "https://github.com/open-policy-agent/opa",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T06:01:49.394Z",
-    "lastVerified": "2026-10-30T06:01:49.394Z",
+    "lastChecked": "2026-10-31T01:40:01.925Z",
+    "lastVerified": "2026-10-31T01:40:01.925Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-policy-agent-opa",
-    "contentHash": "c5f5880bb236e6438227044d4393aa2a1138fabf6d7242abdd95a82798c6a6b3",
+    "contentHash": "9d57da2081d274c601546a776c2cd68025ce997ee9771b5b49c91b3f71d5f741",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11788,6 +11789,23 @@
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
     "contentHash": "707b9107c84077b9df8584416e55fd6a49796e689e1e57855106e5f8209ebd6b",
     "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-orcarouter-orcacyber-nano-1.0": {
+    "name": "orcarouter/OrcaCyber-Nano-1.0",
+    "officialUrl": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-31T01:39:52.372Z",
+    "lastVerified": "2026-10-31T01:39:52.372Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
+    "contentHash": "f3e81fcb70265f77f4b9c3172eed206b884aff2bd71e2f45cecd2c253ac5f2df",
+    "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

@@ -6411,3 +6411,6 @@ Every entry in this ledger must capture:
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `ef92bc17` | Multi-dimensional audit evidence | 2026-10-31T01:21:33.898Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `2f1bdadc` | Multi-dimensional audit evidence | 2026-10-31T01:21:35.017Z |
 | `learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-31T01:28:23.301Z |
+| `learn-github-flox-flox` | `https://github.com/flox/flox` | `da039c11` | Multi-dimensional audit evidence | 2026-10-31T01:39:57.662Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `786d6bf7` | Multi-dimensional audit evidence | 2026-10-31T01:40:02.844Z |
+| `learn-huggingface-orcarouter-orcacyber-nano-1-0` | `https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-31T01:40:03.466Z |

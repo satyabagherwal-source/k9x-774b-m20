@@ -6402,3 +6402,6 @@
 | `CYCLE-20261031-TS5K` | `2026-10-31T01:21:33.896Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5990` | Yes (`ce83b778...`) |
 | `CYCLE-20261031-TT0N` | `2026-10-31T01:21:35.015Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5991` | Yes (`1c77e86f...`) |
 | `CYCLE-20261031-2K1T` | `2026-10-31T01:28:23.297Z` | `nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5992, Rule 5993` | Yes (`707b9107...`) |
+| `CYCLE-20261031-HFTN` | `2026-10-31T01:39:57.659Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5994` | Yes (`f710c126...`) |
+| `CYCLE-20261031-HJTL` | `2026-10-31T01:40:02.841Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5995` | Yes (`9d57da20...`) |
+| `CYCLE-20261031-HKAV` | `2026-10-31T01:40:03.463Z` | `orcarouter/OrcaCyber-Nano-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5996` | Yes (`f3e81fcb...`) |

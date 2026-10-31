@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-GFSY",
-    "timestamp": "2026-10-28T19:31:55.522Z",
-    "repository": "google/embeddinggemma-2",
-    "learningId": "learn-huggingface-google-embeddinggemma-2",
-    "contentHash": "5326aa75d022e2dd201273f40eacb947b02a0053bd2b45de6b5de6fddc2036ee",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-GFUI",
-    "timestamp": "2026-10-28T19:31:55.578Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "733db5923a1482eed79f03cfe624a5019f1f23a11bf449924984474a586bcec9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-GK5L",
-    "timestamp": "2026-10-28T19:32:01.161Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "dc280eae6f46aac6750cab824fe4bdbb0b878794e02ab80d73eb1bcaa8c74a36",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-PFF2",
     "timestamp": "2026-10-28T19:38:54.926Z",
     "repository": "canberkkkkkk/ema-lightning",
@@ -7492,6 +7447,51 @@
     "contentHash": "707b9107c84077b9df8584416e55fd6a49796e689e1e57855106e5f8209ebd6b",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-HFTN",
+    "timestamp": "2026-10-31T01:39:57.659Z",
+    "repository": "flox/flox",
+    "learningId": "learn-github-flox-flox",
+    "contentHash": "f710c126a505a6952ad47b531c5a2b6f6bb53f3333dbc8c36b9f94003b3e12ca",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-HJTL",
+    "timestamp": "2026-10-31T01:40:02.841Z",
+    "repository": "open-policy-agent/opa",
+    "learningId": "learn-github-open-policy-agent-opa",
+    "contentHash": "9d57da2081d274c601546a776c2cd68025ce997ee9771b5b49c91b3f71d5f741",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-HKAV",
+    "timestamp": "2026-10-31T01:40:03.463Z",
+    "repository": "orcarouter/OrcaCyber-Nano-1.0",
+    "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
+    "contentHash": "f3e81fcb70265f77f4b9c3172eed206b884aff2bd71e2f45cecd2c253ac5f2df",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

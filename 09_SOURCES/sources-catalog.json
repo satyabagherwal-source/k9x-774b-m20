@@ -3253,10 +3253,10 @@
     "repository": "flox/flox",
     "platform": "github",
     "sourceUrl": "https://github.com/flox/flox",
-    "sourceVersion": "55536b5d",
+    "sourceVersion": "da039c11",
     "license": "GPL-2.0",
-    "contentHash": "3ad8e2109a4cbad7402c9241951798d84973b764ddf8b9c6bf85dc4f6d2f3dce",
-    "lastHarvestedAt": "2026-10-29T17:04:36.108Z",
+    "contentHash": "f710c126a505a6952ad47b531c5a2b6f6bb53f3333dbc8c36b9f94003b3e12ca",
+    "lastHarvestedAt": "2026-10-31T01:39:57.662Z",
     "learningId": "learn-github-flox-flox"
   },
   "wix-react-native-navigation": {
@@ -6113,10 +6113,10 @@
     "repository": "open-policy-agent/opa",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/opa",
-    "sourceVersion": "fdee1bd9",
+    "sourceVersion": "786d6bf7",
     "license": "Apache-2.0",
-    "contentHash": "c5f5880bb236e6438227044d4393aa2a1138fabf6d7242abdd95a82798c6a6b3",
-    "lastHarvestedAt": "2026-10-30T06:01:56.401Z",
+    "contentHash": "9d57da2081d274c601546a776c2cd68025ce997ee9771b5b49c91b3f71d5f741",
+    "lastHarvestedAt": "2026-10-31T01:40:02.844Z",
     "learningId": "learn-github-open-policy-agent-opa"
   },
   "dragonflydb-dragonfly": {
@@ -10435,8 +10435,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
     "sourceVersion": "hf-orcarouter-orcacyber-nano-1.0",
     "license": "Open-Source",
-    "contentHash": "4c4a2bfff7ac0b40b484db3ef36b30d7cc33b46db8ca11e4f6668b66dc9110d4",
-    "lastHarvestedAt": "2026-10-26T02:57:21.337Z",
+    "contentHash": "f3e81fcb70265f77f4b9c3172eed206b884aff2bd71e2f45cecd2c253ac5f2df",
+    "lastHarvestedAt": "2026-10-31T01:40:03.466Z",
     "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0"
   },
   "ryder-sun-meldwork": {
