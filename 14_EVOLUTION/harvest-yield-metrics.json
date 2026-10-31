@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T20:32:05.810Z",
-  "total_cycles_completed": 6683,
-  "total_learnings_persisted": 6683,
+  "last_updated": "2026-10-31T20:38:56.702Z",
+  "total_cycles_completed": 6685,
+  "total_learnings_persisted": 6685,
   "total_rules_promoted": 6314,
   "history": [
-    {
-      "timestamp": "2026-10-31T08:06:56.979Z",
-      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-      "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T08:13:59.701Z",
-      "repository": "salvo-rs/salvo",
-      "learningId": "learn-github-salvo-rs-salvo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T08:14:03.275Z",
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-31T20:32:05.810Z",
       "repository": "RediSearch/RediSearch",
       "learningId": "learn-github-redisearch-redisearch",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:38:46.877Z",
+      "repository": "autotrust/JEV-27B-VL",
+      "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:38:56.702Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -6715,3 +6715,5 @@ Every entry in this ledger must capture:
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `1eb9489f` | Multi-dimensional audit evidence | 2026-10-31T20:23:17.532Z |
 | `learn-huggingface-jialinyyzz-humanizer` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-10-31T20:31:54.094Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `4be31bd5` | Multi-dimensional audit evidence | 2026-10-31T20:32:05.804Z |
+| `learn-huggingface-autotrust-jev-27b-vl` | `https://huggingface.co/autotrust/JEV-27B-VL` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-31T20:38:46.871Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `0c3f87a5` | Multi-dimensional audit evidence | 2026-10-31T20:38:56.696Z |

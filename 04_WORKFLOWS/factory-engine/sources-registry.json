@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T20:32:08.343Z",
-    "lastVerified": "2026-10-31T20:32:08.343Z",
+    "lastChecked": "2026-10-31T20:38:59.237Z",
+    "lastVerified": "2026-10-31T20:38:59.237Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -348,9 +348,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T20:02:22.525Z",
+    "lastChecked": "2026-10-31T20:38:58.240Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T20:02:22.525Z"
+    "lastVerified": "2026-10-31T20:38:58.240Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1550,9 +1550,9 @@
   "go-kratos-kratos": {
     "name": "kratos",
     "officialUrl": "https://github.com/go-kratos/kratos",
-    "lastChecked": "2026-10-31T05:00:45.316Z",
+    "lastChecked": "2026-10-31T20:38:50.712Z",
     "revisionIdentifier": "dd0fb7df",
-    "lastVerified": "2026-10-31T05:00:45.316Z"
+    "lastVerified": "2026-10-31T20:38:50.712Z"
   },
   "lunasec-io-lunasec": {
     "name": "lunasec",
@@ -1821,12 +1821,12 @@
     "revisionIdentifier": "4c5be75d"
   },
   "michael-a-kuykendall-shimmy": {
-    "name": "Michael-A-Kuykendall/shimmy",
+    "name": "shimmy",
     "officialUrl": "https://github.com/Michael-A-Kuykendall/shimmy",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T00:41:10.788Z",
-    "lastVerified": "2026-10-31T00:41:10.788Z",
+    "lastChecked": "2026-10-31T20:38:43.182Z",
+    "lastVerified": "2026-10-31T20:38:43.182Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-michael-a-kuykendall-shimmy",
@@ -1835,7 +1835,8 @@
     "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "239bb745"
   },
   "hf-supersoniclabs-julia-1": {
     "name": "SupersonicLabs/Julia-1",
@@ -2328,22 +2329,21 @@
     "revisionIdentifier": "b1a36daf"
   },
   "aleo-labs-protocol-snarkos": {
-    "name": "snarkOS",
+    "name": "aleo-labs-protocol/snarkOS",
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T16:39:40.031Z",
-    "lastVerified": "2026-10-31T16:39:40.031Z",
+    "lastChecked": "2026-10-31T20:38:56.389Z",
+    "lastVerified": "2026-10-31T20:38:56.389Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "324ee7b14f8c8b4a67dcb36c614c94a48c08c9b9aa2e74dee3f0d6424a255dbe",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 1,
+    "contentHash": "12ed42b3e0e7b252eb382bf5f0464b66c8015bf206d7dfb778876ef6d90ab67b",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "e8618dbc"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "databendlabs-databend": {
     "name": "databend",
@@ -7045,12 +7045,12 @@
     "revisionIdentifier": "4ab32131"
   },
   "dragonflydb-dragonfly": {
-    "name": "dragonflydb/dragonfly",
+    "name": "dragonfly",
     "officialUrl": "https://github.com/dragonflydb/dragonfly",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-31T03:59:07.614Z",
-    "lastVerified": "2026-10-31T03:59:07.614Z",
+    "lastChecked": "2026-10-31T20:38:55.767Z",
+    "lastVerified": "2026-10-31T20:38:55.767Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dragonflydb-dragonfly",
@@ -7059,7 +7059,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1d2c21aa"
   },
   "jhspetersson-fselect": {
     "name": "fselect",
@@ -7160,12 +7161,12 @@
     "officialUrl": "https://huggingface.co/autotrust/JEV-27B-VL",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T19:17:08.526Z",
-    "lastVerified": "2026-10-28T19:17:08.526Z",
+    "lastChecked": "2026-10-31T20:38:45.764Z",
+    "lastVerified": "2026-10-31T20:38:45.764Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-autotrust-jev-27b-vl",
-    "contentHash": "211ca5d4504695d06faef9a042c31bc8296d21f7864e4a7179c755a47a9e781a",
+    "contentHash": "1d1cc344e296d743616df1339bbfd5d1c3d1825faf04bb3551632a3084271e1d",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -8813,9 +8814,9 @@
   "github-copilotforxcode": {
     "name": "CopilotForXcode",
     "officialUrl": "https://github.com/github/CopilotForXcode",
-    "lastChecked": "2026-10-29T01:43:09.822Z",
+    "lastChecked": "2026-10-31T20:38:48.264Z",
     "revisionIdentifier": "258d4577",
-    "lastVerified": "2026-10-29T01:43:09.822Z"
+    "lastVerified": "2026-10-31T20:38:48.264Z"
   },
   "istifano-seo-auditor": {
     "name": "seo-auditor",

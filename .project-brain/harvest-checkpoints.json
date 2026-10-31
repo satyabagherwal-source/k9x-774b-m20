@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T20:32:05.814Z",
+  "last_updated": "2026-10-31T20:38:56.706Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1775,14 +1775,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
-      "content_hash": "211ca5d4504695d06faef9a042c31bc8296d21f7864e4a7179c755a47a9e781a",
-      "verified_at": "2026-10-28T19:17:09.502Z",
+      "content_hash": "1d1cc344e296d743616df1339bbfd5d1c3d1825faf04bb3551632a3084271e1d",
+      "verified_at": "2026-10-31T20:38:46.881Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T19:17:09.502Z"
+      "last_updated": "2026-10-31T20:38:46.881Z"
     },
     "autotrust/GEV-26B-Decide": {
       "repository": "autotrust/GEV-26B-Decide",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "324ee7b14f8c8b4a67dcb36c614c94a48c08c9b9aa2e74dee3f0d6424a255dbe",
-      "verified_at": "2026-10-30T20:52:08.936Z",
+      "content_hash": "12ed42b3e0e7b252eb382bf5f0464b66c8015bf206d7dfb778876ef6d90ab67b",
+      "verified_at": "2026-10-31T20:38:56.705Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T20:52:08.936Z"
+      "last_updated": "2026-10-31T20:38:56.705Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",

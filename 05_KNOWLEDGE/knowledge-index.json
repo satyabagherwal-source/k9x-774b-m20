@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T20:32:05.697Z",
+  "last_updated": "2026-10-31T20:38:56.597Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18657,7 +18657,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
       "source_version": "hf-autotrust-jev-27b-vl",
-      "content_hash": "211ca5d4504695d06faef9a042c31bc8296d21f7864e4a7179c755a47a9e781a",
+      "content_hash": "1d1cc344e296d743616df1339bbfd5d1c3d1825faf04bb3551632a3084271e1d",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "promoted_rules": [
@@ -18753,7 +18753,7 @@
         "learn-huggingface-hf-autotrust-jev-27b-vl-mv41j8wr",
         "learn-huggingface-hf-autotrust-jev-27b-vl-mv4fdvg8"
       ],
-      "verified_at": "2026-10-28T19:17:09.388Z",
+      "verified_at": "2026-10-31T20:38:46.750Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -69147,8 +69147,8 @@
       "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
       "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "e8618dbc",
-      "content_hash": "324ee7b14f8c8b4a67dcb36c614c94a48c08c9b9aa2e74dee3f0d6424a255dbe",
+      "source_version": "0c3f87a5",
+      "content_hash": "12ed42b3e0e7b252eb382bf5f0464b66c8015bf206d7dfb778876ef6d90ab67b",
       "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
@@ -69243,7 +69243,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T20:52:08.824Z",
+      "verified_at": "2026-10-31T20:38:56.576Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
