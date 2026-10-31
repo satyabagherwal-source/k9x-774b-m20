@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source**: github ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
-> **Source Version**: `8a38b901`  
+> **Source Version**: `f2d74650`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T05:46:10.078Z  
+> **Timestamp**: 2026-10-31T02:07:34.738Z  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T05:46:09.452Z  
+> **Harvest Timestamp**: 2026-10-31T02:07:34.457Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6771 stars
+- **Stars / Engagement**: 6774 stars
 
 ---
 
@@ -1672,1452 +1672,542 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ec59131d` (2026-10-30)
-**Commit Message**: feat(ci): support optional Docker targets for query regression (#10028)
+### Incident Patch 1: `f2d74650` (2026-10-30)
+**Commit Message**: fix: optimize Prometheus remote write v2 ingestion (#9928)
 
-* feat(ci): support optional Docker targets for query regression
+* fix: optimize Prometheus remote write v2 ingestion
 
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
 
-* fix(ci): enable Docker when provisioning image regression runners
+* fix: correct remote write v2 memory accounting and response counts
 
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
-
-* feat(ci): publish precompiled query regression helpers with pin update PRs
-
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
-
-* fix(ci): retry helper image publication on registry timeouts
-
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
-
-* fix(ci): publish helper artifacts with hosted Skopeo job
-
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
-
-* refactor(ci): update helper image through repository variable
-
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
 
 ---------
 
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
 
-**File**: `.github/actions/github-script-tests/action.yml` (modified, +1/-0)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -44,6 +44,7 @@ runs:
-         python3 tests/perf/test_query_regression_runner_otlp_trace_load.py
-         python3 tests/perf/test_query_regression_summary_otlp.py
-         python3 tests/perf/test_query_regression_case_selection.py
-+        python3 tests/perf/test_query_regression_helpers.py
-         python3 tests/perf/test_query_regression_nightly_refs.py
-         python3 tests/perf/test_query_regression_slash.py
-         python3 tests/perf/test_aliyun_ecs_runner_scripts.py
+@@ -13848,6 +13848,7 @@ dependencies = [
+  "prost 0.14.1",
+  "snafu 0.8.6",
+  "sql",
++ "tokio",
+  "uuid",
+ ]
+ 
 ```
 
-**File**: `.github/scripts/build-query-regression-helpers.sh` (added, +43/-0)
+**File**: `src/mito2/src/region_write_ctx.rs` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,43 @@
-+#!/usr/bin/env bash
-+set -euo pipefail
-+: "${CARGO_TARGET_DIR:?CARGO_TARGET_DIR must be configured by the runner}"
-+revision="$(git rev-parse HEAD)"
-+tag="query-regression-helpers:${revision}"
-+staging="$(mktemp -d)"
-+trap 'rm -rf -- "$staging"' EXIT
-+cargo build --profile nightly -p cmd --features dev-tools \
-+  --bin query_perf_fixture --bin query_regression_runner
-+for binary in query_perf_fixture query_regression_runner; do
-+  "$CARGO_TARGET_DIR/nightly/$binary" --help >/dev/null
-+  cp "$CARGO_TARGET_DIR/nightly/$binary" "$staging/$binary"
-+done
-+mkdir -p helpers-image helpers-validation
-+docker build --provenance=false --build-arg "SOURCE_REVISION=$revision" \
-+  --file docker/query-regression-helpers/Dockerfile --tag "$tag" "$staging"
-+container="$(docker create "$tag" /query_perf_fixture --help)"
-+trap 'docker rm --force --volumes "$container"; rm -rf -- "$staging"' EXIT
-+mkdir -p "$staging/extracted"
-+for binary in query_perf_fixture query_regression_runner; do
-+  docker cp "$container:/$binary" "$staging/extracted/$binary"
-+  chmod +x "$staging/extracted/$binary"
-+  "$staging/extracted/$binary" --help >/dev/null
-+  cmp "$staging/$binary" "$staging/extracted/$binary"
-+done
-+# Hold the revision and cases constant: compare source-built versus extracted
-+# fixture normalization twice. Keep the raw outputs as workflow artifacts.
-+printf '%s\n' "$revision" > helpers-validation/source-revision.txt
-+for iteration in 1 2; do
-+  while IFS= read -r case; do
-+    name="$(basename "$(dirname "$case")")"
-+    for mode in source image; do
-+      binary="$staging/query_perf_fixture"
-+      [[ "$mode" != image ]] || binary="$staging/extracted/query_perf_fixture"
-+      "$binary" plan --case "$case" > "helpers-validation/${name}-${iteration}-${mode}.json"
-+    done
-+    cmp "helpers-validation/${name}-${iteration}-source.json" \
-+        "helpers-validation/${name}-${iteration}-image.json"
-+  done < <(find tests/perf/query_cases -name case.toml -type f | sort)
-+done
-+(cd "$staging" && sha256sum query_perf_fixture query_regression_runner) > helpers-image/SHA256SUMS
-+printf '%s\n' "$revision" > helpers-image/source-revision.txt
-+docker save "$tag" --output helpers-image/image.tar
+@@ -398,6 +398,7 @@ impl RegionWriteCtx {
+         }
+ 
+         self.has_skip_wal_writes |= bulk.num_rows() > 0 && self.is_skip_wal_write(skip_wal);
++        // WriteAttribution requires the input count on success, before any deduplication.
+         self.bulk_notifiers
+             .push(WriteNotify::new(sender, bulk.num_rows()));
+ 
 ```
 
-**File**: `.github/scripts/publish-query-regression-helpers.sh` (added, +28/-0)
+**File**: `src/operator/AGENTS.md` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,28 @@
-+#!/usr/bin/env bash
-+set -euo pipefail
-+repository=greptime-registry.cn-hangzhou.cr.aliyuncs.com/tools/query-regression-helpers
-+revision="$(cat helpers-image/source-revision.txt)"
-+[[ "$revision" == "$GITHUB_SHA" ]]
-+tag="${repository}:${revision}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
-+# Match release-dev-builder-images.yaml: publish ACR images with Skopeo from
-+# a hosted runner. A failed publish can reuse the completed build artifact.
-+mkdir -p helpers-validation
-+docker run --rm \
-+  -v "${DOCKER_CONFIG:-$HOME/.docker}:/root/.docker:ro" \
-+  -v "$PWD/helpers-image:/image:ro" \
-+  -v "$PWD/helpers-validation:/result" \
-+  -e REGISTRY_AUTH_FILE=/root/.docker/config.json \
-+  quay.io/skopeo/stable:latest --command-timeout 20m copy --retry-times 3 \
-+  --digestfile /result/digest.txt \
-+  docker-archive:/image/image.tar "docker://$tag"
-+digest="$(cat helpers-validation/digest.txt)"
-+[[ "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]
-+image="$repository@$digest"
-+# The ECS build tested these exact bytes. Verify them again from the registry;
-+# hosted runners need not share the ECS runtime library versions.
-+python3 .github/scripts/query-regression-helpers.py "$image" helpers-validation/extracted \
-+  --checksums helpers-image/SHA256SUMS
-+jq -e --arg revision "$revision" '.source_revision == $revision' \
-+  helpers-validation/extracted/helpers-image.json >/dev/null
-+printf 'image=%s\n' "$image" >> "$GITHUB_OUTPUT"
-+printf 'Published helpers: `%s` (source `%s`)\n' "$image" "$revision" >> "$GITHUB_STEP_SUMMARY"
+@@ -41,6 +41,8 @@ cargo sqlness bare -t <case>
+ Check standalone and distributed routing when changing region dispatch.
+ Write retries operate on prepared region requests in `write_dispatcher`; keep
+ admission and Flow side effects outside retries, and preserve successful regions.
++Process-local write attribution must follow the same row masks through batching
++and retry repartitioning; only confirmed storage responses advance progress.
+ 
+ Write admission uses fallible `write_meter!` calls in `Inserter::do_request`
+ and `handle_bulk_insert`, before flow side effects and datanode dispatch. Bulk
 ```
 
-**File**: `.github/scripts/query-regression-helpers.py` (added, +82/-0)
+**File**: `src/operator/src/bulk_insert.rs` (modified, +16/-11)
 ```diff
-@@ -0,0 +1,82 @@
-+#!/usr/bin/env python3
-+# Copyright 2023 Greptime Team
-+#
-+# Licensed under the Apache License, Version 2.0 (the "License");
-+# you may not use this file except in compliance with the License.
-+# You may obtain a copy of the License at
-+#
-+#     http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software
-+# distributed under the License is distributed on an "AS IS" BASIS,
-+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+# See the License for the specific language governing permissions and
-+# limitations under the License.
-+
-+"""Extract digest-pinned query regression tools from an artifact image."""
-+
-+import argparse
-+import hashlib
-+import json
-+import os
-+import re
-+import subprocess
-+from pathlib import Path
-+
-+BINARIES = ("query_perf_fixture", "query_regression_runner")
-+
-+
-+def resolve_image(value):
-+    if value == "pinned":
-+        value = os.environ.get("QUERY_REGRESSION_HELPERS_IMAGE", "")
-+    if not re.fullmatch(r"[a-zA-Z0-9][a-zA-Z0-9._/:@-]*@sha256:[0-9a-f]{64}", value):
-+        raise ValueError("helpers_image requires an image@sha256 digest; set QUERY_REGRESSION_HELPERS_IMAGE by publishing a verified image before using 'pinned'")
-+    return value
-+
-+
-+def run(*args):
-+    return subprocess.check_output(args, text=True).strip()
-+
-+
-+def extract(image, destination, checksums=None):
-+    expected = None
-+    if checksums is not None:
-+        entries = [line.split() for line in checksums.read_text().splitlines()]
-+        expected = {name: digest for digest, name in entries}
-+        if set(expected) != set(BINARIES) or len(entries) != len(BINARIES):
-+            raise ValueError("Checksums must contain exactly the two helper binaries")
-+    image = resolve_image(image)
-+    destination.mkdir(parents=True, exist_ok=True)
-+    run("docker", "pull", image)
-+    metadata = json.loads(run("docker", "image", "inspect", image))[0]
-+    revision = (metadata.get("Config", {}).get("Labels") or {}).get("org.opencontainers.image.revision", "")
-+    if not re.fullmatch(r"[0-9a-f]{40}", revision):
-+        raise ValueError("Helper image is missing its source revision label")
-+    container = run("docker", "create", image, "/query_perf_fixture", "--help")
-+    try:
-+        for binary in BINARIES:
-+            target = destination / binary
-+            run("docker", "cp", f"{container}:/{binary}", str(target))
-+            target.chmod(0o755)
-+            if expected is None:
-+                run(str(target.resolve()), "--help")
-+            else:
-+                with target.open("rb") as file:
-+                    actual = hashlib.file_digest(file, "sha256").hexdigest()
-+                if actual != expected[binary]:
-+                    raise ValueError(f"Published helper checksum mismatch: {binary}")
-+    finally:
-+        run("docker", "rm", "--force", "--volumes", container)
-+    provenance = {"image": image, "image_id": metadata["Id"], "source_revision": revision}
-+    (destination / "helpers-image.json").write_text(json.dumps(provenance, indent=2) + "\n")
-+    print(json.dumps(provenance))
-+    return provenance
-+
-+
-+if __name__ == "__main__":
-+    parser = argparse.ArgumentParser(description=__doc__)
-+    parser.add_argument("image")
-+    parser.add_argument("destination", type=Path)
-+    parser.add_argument("--checksums", type=Path, help="Verify build checksums instead of executing on this host")
-+    args = parser.parse_args()
-+    extract(args.image, args.destination, args.checksums)
+@@ -41,7 +41,7 @@ use crate::error::Result;
+ use crate::insert::Inserter;
+ use crate::req_convert::TablePartitioner;
+ use crate::req_convert::insert;
+-use crate::write_dispatcher::WriteAttempt;
++use crate::write_dispatcher::{WriteAttempt, WriteAttribution};
+ use crate::{error, metrics};
+ 
+ impl Inserter {
+@@ -54,26 +54,31 @@ impl Inserter {
+         table_info: TableInfoRef,
+         batch: RecordBatch,
+         ctx: QueryContextRef,
++        attribution: WriteAttribution,
+     ) -> Result<AffectedRows> {
+         let requests = TablePartitioner::try_new(&self.partition_manager, &table_info)
+             .await
+             .context(error::InvalidPartitionSnafu)?
+-            .partition_bulk_insert_requests(batch, None, ctx.skip_wal())?;
++            .partition_attributed_bulk_requests(batch, ctx.skip_wal(), attribution)?;
+         let writes = requests
+             .into_iter()
+-            .map(|request| RegionRequest {
+-                header: Some(RegionRequestHeader {
+-                    dbname: ctx.get_db_string(),
+-                    tracing_context: TracingContext::from_current_span().to_w3c(),
+-                    ..Default::default()
+-                }),
+-                body: Some(region_request::Body::BulkInsert(request)),
++            .map(|(request, attribution)| {
++                (
++                    RegionRequest {
++                        header: Some(RegionRequestHeader {
++                            dbname: ctx.get_db_string(),
++                            tracing_context: TracingContext::from_current_span().to_w3c(),
++                            ..Default::default()
++                        }),
++                        body: Some(region_request::Body::BulkInsert(request)),
++                    },
++                    attribution,
++                )
+             })
+             .collect();
+-        let writes = self.write_dispatcher.prepare(writes).await?;
+         Ok(self
+             .write_dispatcher
+-            .execute(writes, None, None)
++            .dispatch_attributed(writes, None)
+             .await
+             .context(error::RequestInsertsSnafu)?
+             .affected_rows)
 ```
 
-**File**: `.github/scripts/query-regression-run.py` (modified, +143/-6)
+**File**: `src/operator/src/insert.rs` (modified, +4/-1)
 ```diff
-@@ -21,10 +21,13 @@
- import json
- import os
- import re
-+import shlex
- import signal
- import socket
- import subprocess
-+import sys
- import time
-+import uuid
- import urllib.request
- from dataclasses import dataclass
- from pathlib import Path
-@@ -130,6 +133,7 @@ class RunTarget:
-     datanode_http_port: int
-     datanode_data_dir: Path
-     frontend_config: Path | None = None
-+    containerized: bool = False
- 
- 
- def allocate_ports(n: int) -> list[int]:
-@@ -151,6 +155,7 @@ def make_target(
-     root: Path,
-     ports: list[int],
-     frontend_config: Path | None = None,
-+    containerized: bool = False,
- ) -> RunTarget:
-     work_dir = root / name
-     return RunTarget(
-@@ -167,6 +172,7 @@ def make_target(
-         datanode_http_port=ports[3],
-         datanode_data_dir=work_dir / "datanode-0" / "data",
-         frontend_config=frontend_config,
-+        containerized=containerized,
-     )
- 
- 
-@@ -258,7 +264,11 @@ def stop_component(
-     procs: dict[tuple[str, str], subprocess.Popen[bytes]],
- ) -> None:
-     proc = procs.pop((target.name, name), None)
--    if proc is None or proc.poll() is not None:
-+    if proc is None:
-+        return
-+    if proc.poll() is not None:
-+        if target.containerized and proc.returncode != 0:
-+            raise RuntimeError(f"Docker target {target.name}/{name} exited with {proc.returncode}")
-         return
-     try:
-         os.killpg(proc.pid, signal.SIGTERM)
-@@ -272,6 +282,8 @@ def stop_component(
-         except ProcessLookupError:
-             return
-         proc.wait(timeout=20)
-+    if target.containerized and proc.returncode not in (0, 128 + signal.SIGTERM):
-+        raise RuntimeError(f"Docker target {target.name}/{name} cleanup failed: {proc.returncode}")
- 
- 
- def restart_component(
-@@ -284,9 +296,15 @@ def restart_component(
- 
- 
- def stop_all(targets: list[RunTarget], procs: dict[tuple[str, str], subprocess.Popen[bytes]]) -> None:
-+    errors = []
-     for target in reversed(targets):
-         for name in ("frontend", "datanode", "metasrv"):
--            stop_component(target, name, procs)
-+            try:
-+                stop_component(target, name, procs)
-+            except Exception as err:
-+                errors.append(err)
-+    if errors:
-+        raise RuntimeError(f"component cleanup failed: {errors}") from errors[0]
- 
- 
- def load_plan(fixture_generator: Path, case_path: Path) -> dict[str, Any]:
-@@ -313,8 +331,8 @@ def run_direct_case(
- ) -> int:
-     ports = allocate_ports(16)
-     targets = [
--        make_target("base", base_bin, work_dir, ports[:8]),
--        make_target("candidate", candidate_bin, work_dir, ports[8:]),
-+        make_target("base", base_bin, work_dir, ports[:8], containerized=bool(getattr(args, "base_image", ""))),
-+        make_target("candidate", candidate_bin, work_dir, ports[8:], containerized=bool(getattr(args, "candidate_image", ""))),
-     ]
-     for target in targets:
-         if target.work_dir.exists() and any(target.work_dir.iterdir()):
-@@ -407,13 +425,15 @@ def run_remote_case(
-             work_dir,
-             ports[:8],
-             work_dir / "base" / "frontend-prom-store.toml",
-+            containerized=bool(getattr(args, "base_image", "")),
-         ),
-         make_target(
-             "candidate",
-             candidate_bin,
-             work_dir,
-             ports[8:],
-             work_dir / "candidate" / "frontend-prom-store.toml",
-+            containerized=bool(getattr(args, "candidate_image", "")),
-         ),
-     ]
-     for target in targets:
-@@ -495,8 +515,8 @@ def run_otlp_case(
-         raise ValueError("--otelgen-bin is required for otlp_trace_load")
-     ports = allocate_ports(16)
-     targets = [
--        make_target("base", base_bin, work_dir, ports[:8]),
--        make_target("candidate", candidate_bin, work_dir, ports[8:]),
-+        make_target("base", base_bin, work_dir, ports[:8], containerized=bool(getattr(args, "base_image", ""))),
-+        make_target("candidate", candidate_bin, work_dir, ports[8:], containerized=bool(getattr(args, "candidate_image", ""))),
-     ]
-     for target in targets:
-         if target.work_dir.exists() and any(target.work_dir.iterdir()):
-@@ -634,6 +654,106 @@ def write_failed_report(work_dir: Path, case_path: Path, error: Exception) -> No
-     )
- 
- 
-+def docker_target(image: str, root: Path, command: list[str]) -> int:
-+    """Expose an image as a binary, including read-bench subcommands.
-+
-+    The caller terminates a process group. Keep Docker clients in separate
-+    sessions so cleanup can stop the container before SST inspection starts.
-+    """
-+    name = f"query-regression-{uuid.uuid4().hex}"
-+
-+    def interrupted(signum, _frame):
-+        raise SystemExit(128 + signum)
-+
-+    previous = {sig: signal.signal(sig, interrupted) for sig in (signal.SIGTERM, signal.SIGINT)}
-+    try:
-+        subprocess.run([
-+            "docker", "create", "--name", name, "--network", "host",
-+            "--user", f"{os.getuid()}:{os.getgid()}",
-+            "--volume", f"{r
+@@ -861,8 +861,11 @@ impl Inserter {
+         // Dropping the caller stops retries without abandoning in-flight writes.
+         let cancellation = CancellationToken::new();
+         let _guard = cancellation.clone().drop_guard();
++        let progress = ctx.write_progress().cloned();
+         let affected_rows = common_runtime::spawn_global(async move {
+-            dispatcher.execute(writes, None, Some(&cancellation)).await
++            dispatcher
++                .execute_with_progress(writes, None, Some(&cancellation), progress)
++                .await
+         })
+         .await
+         .context(JoinTaskSnafu)?
 ```
 
-**File**: `.github/scripts/update-query-regression-helpers-image.sh` (added, +14/-0)
+**File**: `src/operator/src/req_convert/common/partitioner.rs` (modified, +120/-6)
 ```diff
-@@ -0,0 +1,14 @@
-+#!/usr/bin/env bash
-+set -euo pipefail
-+: "${HELPERS_IMAGE:?Verified image digest is required}"
-+: "${GITHUB_REPOSITORY:?Repository is required}"
-+repository=greptime-registry.cn-hangzhou.cr.aliyuncs.com/tools/query-regression-helpers
-+[[ "$HELPERS_IMAGE" == "$repository@sha256:"* ]]
-+[[ "${HELPERS_IMAGE#"$repository@"}" =~ ^sha256:[0-9a-f]{64}$ ]]
-+# Like QUERY_REGRESSION_ECS_IMAGE_ID, this is CI configuration, not a source
-+# change. Create on first publication, then update only after image verification.
-+gh variable set QUERY_REGRESSION_HELPERS_IMAGE \
-+  --repo "$GITHUB_REPOSITORY" --body "$HELPERS_IMAGE"
-+gh api "repos/$GITHUB_REPOSITORY/actions/variables/QUERY_REGRESSION_HELPERS_IMAGE" \
-+  | jq -e --arg expected "$HELPERS_IMAGE" '.value == $expected' >/dev/null
-+printf 'QUERY_REGRESSION_HELPERS_IMAGE updated to `%s`\n' "$HELPERS_IMAGE"
-```
-
-**File**: `.github/workflows/publish-query-regression-helpers.yml` (added, +166/-0)
-```diff
-@@ -0,0 +1,166 @@
-+name: Publish query regression helpers
-+
-+on:
-+  workflow_dispatch:
-+  workflow_call:
-+  push:
-+    branches: [main]
-+    paths:
-+      - src/cmd/src/bin/query_perf_fixture.rs
-+      - src/cmd/src/bin/query_perf_fixture/**
-+      - src/cmd/src/bin/query_regression_runner.rs
-+      - src/cmd/src/bin/query_regression_runner/**
-+      - docker/query-regression-helpers/**
-+      - .github/workflows/publish-query-regression-helpers.yml
-+      - .github/scripts/publish-query-regression-helpers.sh
-+      - .github/scripts/build-query-regression-helpers.sh
-+      - .github/scripts/update-query-regression-helpers-image.sh
-+      - Cargo.lock
-+
-+permissions:
-+  contents: read
-+
-+# Serialize publication and updates of the repository image variable.
-+concurrency:
-+  group: publish-query-regression-helpers
-+  cancel-in-progress: false
-+
-+jobs:
-+  provision:
-+    if: ${{ github.repository == 'GreptimeTeam/greptimedb' }}
-+    runs-on: ubuntu-latest
-+    timeout-minutes: 45
-+    outputs:
-+      label: ${{ steps.provision.outputs.label }}
-+      instance_id: ${{ steps.provision.outputs.instance_id }}
-+      runner_name: ${{ steps.provision.outputs.runner_name }}
-+    steps:
-+      - name: Checkout trusted provisioning scripts
-+        uses: actions/checkout@v4
-+        with:
-+          repository: ${{ github.repository }}
-+          ref: ${{ github.sha }}
-+          persist-credentials: false
-+
-+      - name: Provision ECS runner
-+        id: provision
-+        uses: ./.github/actions/aliyun-ecs-create
-+        with:
-+          access-key-id: ${{ secrets.ALICLOUD_ECS_ACCESS_KEY_ID }}
-+          access-key-secret: ${{ secrets.ALICLOUD_ECS_ACCESS_KEY_SECRET }}
-+          github-token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-+          region-id: ${{ vars.ALIYUN_ECS_REGION_ID }}
-+          vswitch-id: ${{ vars.ALIYUN_ECS_VSWITCH_ID }}
-+          security-group-id: ${{ vars.ALIYUN_ECS_SECURITY_GROUP_ID }}
-+          instance-type: ${{ vars.ALIYUN_ECS_INSTANCE_TYPE }}
-+          # Preserve query regression's original resource and janitor budgets.
-+          system-disk-gib: '80'
-+          ttl-hours: '4'
-+          enable-docker: 'true'
-+          resource-group-id: ${{ vars.ALIYUN_ECS_RESOURCE_GROUP_ID }}
-+          image-id: ${{ vars.QUERY_REGRESSION_ECS_IMAGE_ID }}
-+          runner-uid: ${{ vars.QUERY_REGRESSION_RUNNER_UID || '1001' }}
-+          runner-gid: ${{ vars.QUERY_REGRESSION_RUNNER_GID || '1001' }}
-+
-+  build:
-+    needs: provision
-+    runs-on: ${{ needs.provision.outputs.label }}
-+    timeout-minutes: 150
-+    env:
-+      CARGO_HOME: /home/runner/.cargo
-+      CARGO_TARGET_DIR: /home/runner/query-regression-target
-+      RUSTUP_HOME: /opt/rustup
-+      RUSTUP_TOOLCHAIN: nightly-2026-03-21
-+      RUSTUP_AUTO_INSTALL: "0"
-+      CARGO_INCREMENTAL: "0"
-+      RUSTFLAGS: -D warnings -C link-arg=-fuse-ld=mold
-+    steps:
-+      - uses: actions/checkout@v4
-+        with:
-+          persist-credentials: false
-+      - name: Build and validate helpers
-+        run: bash .github/scripts/build-query-regression-helpers.sh
-+      - name: Upload reusable helper image
-+        uses: actions/upload-artifact@v4
-+        with:
-+          name: helpers-image
-+          path: helpers-image/
-+          compression-level: 1
-+          retention-days: 7
-+          if-no-files-found: error
-+      - name: Upload build validation evidence
-+        if: always()
-+        uses: actions/upload-artifact@v4
-+        with:
-+          name: helpers-build-validation
-+          path: helpers-validation/
-+          if-no-files-found: warn
-+
-+  publish:
-+    needs: build
-+    runs-on: ubuntu-latest
-+    timeout-minutes: 45
-+    outputs:
-+      image: ${{ steps.publish.outputs.image }}
-+    steps:
-+      - uses: actions/checkout@v4
-+        with:
-+          persist-credentials: false
-+      - uses: actions/download-artifact@v4
-+        with:
-+          name: helpers-image
-+          path: helpers-image/
-+      - name: Login to registry
-+        uses: docker/login-action@v3
-+        with:
-+          registry: greptime-registry.cn-hangzhou.cr.aliyuncs.com
-+          username: ${{ secrets.ALICLOUD_USERNAME }}
-+          password: ${{ secrets.ALICLOUD_PASSWORD }}
-+      - name: Publish and verify helpers
-+        id: publish
-+        run: bash .github/scripts/publish-query-regression-helpers.sh
-+      - name: Upload publication validation evidence
-+        if: always()
-+        uses: actions/upload-artifact@v4
-+        with:
-+          name: helpers-publish-validation
-+          path: |
-+            helpers-validation/digest.txt
-+            helpers-validation/extracted/helpers-image.json
-+          if-no-files-found: warn
-+
-+  update-variable:
-+    needs: publish
-+    runs-on: ubuntu-latest
-+    steps:
-+      - uses: actions/checkout@v4
-+        with:
-+          persist-credentials: false
-+      - name: Update helpers image repository variable
-+        env:
-+          GH_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-+          HELPERS
-```
-
-**File**: `.github/workflows/query-regression.yml` (modified, +76/-9)
-```diff
-@@ -26,6 +26,21 @@ on:
-         description: Candidate ref/sha to build; reusable release calls must provide an immutable full SHA
-         required: true
-         type: string
-+      base_image:
-+        description: Base Docker image tag/digest (empty builds base_ref from source)
-+        required: false
-+        type: string
-+        default: ""
-+      candidate_image:
-+        description: Candidate Docker image tag/digest (empty builds candidate_ref from source)
-+        required: false
-+        type: string
-+        default: ""
-+      helpers_image:
-+        description: Helpers image@sha256 or pinned from repository variable (empty builds from source)
-+        required: false
-+        type: string
-+        default: ""
-       cargo_profile:
-         description: Cargo profile to build base and candidate binaries with
-         required: false
-@@ -80,6 +95,21 @@ on:
-         description: Runner HTTP timeout seconds
-         required: true
-         default: "300"
-+      base_image:
-+        description: Base Docker image tag/digest (empty builds base_ref from source)
-+        required: false
-+        type: string
-+        default: ""
-+      candidate_image:
-+        description: Candidate Docker image tag/digest (empty builds candidate_ref from source)
-+        required: false
-+        type: string
-+        default: ""
-+      helpers_image:
-+        description: Helpers image@sha256 or pinned from repository variable (empty builds from source)
-+        required: false
-+        type: string
-+        default: ""
-       cargo_profile:
-         description: Cargo profile to build base and candidate binaries with
-         required: true
-@@ -132,6 +162,7 @@ jobs:
-           python3 tests/perf/test_query_regression_runner_otlp_trace_load.py
-           python3 tests/perf/test_query_regression_summary_otlp.py
-           python3 tests/perf/test_query_regression_case_selection.py
-+          python3 tests/perf/test_query_regression_helpers.py
-           python3 tests/perf/test_query_regression_nightly_refs.py
-           python3 tests/perf/test_query_regression_slash.py
-           python3 tests/perf/test_aliyun_ecs_runner_scripts.py
-@@ -171,6 +202,7 @@ jobs:
-           # Preserve query regression's original resource and janitor budgets.
-           system-disk-gib: '80'
-           ttl-hours: '4'
-+          enable-docker: ${{ inputs.base_image != '' || inputs.candidate_image != '' || inputs.helpers_image != '' }}
-           resource-group-id: ${{ vars.ALIYUN_ECS_RESOURCE_GROUP_ID }}
-           image-id: ${{ vars.QUERY_REGRESSION_ECS_IMAGE_ID }}
-           runner-uid: ${{ vars.QUERY_REGRESSION_RUNNER_UID || '1001' }}
-@@ -214,6 +246,10 @@ jobs:
-       PR_NUMBER: ${{ inputs.pr_number }}
-       HEAD_REPO: ${{ inputs.head_repo }}
-       BASE_REPO: ${{ inputs.base_repo }}
-+      HELPERS_IMAGE: ${{ inputs.helpers_image }}
-+      QUERY_REGRESSION_HELPERS_IMAGE: ${{ vars.QUERY_REGRESSION_HELPERS_IMAGE }}
-+      BASE_IMAGE: ${{ inputs.base_image }}
-+      CANDIDATE_IMAGE: ${{ inputs.candidate_image }}
-       BASE_REF: ${{ inputs.base_ref }}
-       CANDIDATE_REF: ${{ inputs.candidate_ref || github.ref }}
-       EVENT_MERGE_SHA: ${{ inputs.pr_number != '' && inputs.candidate_ref || '' }}
-@@ -224,6 +260,16 @@ jobs:
-       EXPECTED_RUNNER_UID: ${{ vars.QUERY_REGRESSION_RUNNER_UID || '1001' }}
-       EXPECTED_RUNNER_GID: ${{ vars.QUERY_REGRESSION_RUNNER_GID || '1001' }}
-     steps:
-+      - name: Validate image target admission
-+        run: |
-+          if [[ "${PR_ADMISSION}" == "true" && ( -n "${BASE_IMAGE}" || -n "${CANDIDATE_IMAGE}" || -n "${HELPERS_IMAGE}" ) ]]; then
-+            echo "PR admission requires source targets for verified commit attribution." >&2
-+            exit 1
-+          fi
-+          if [[ -n "${BASE_IMAGE}" || -n "${CANDIDATE_IMAGE}" || -n "${HELPERS_IMAGE}" ]]; then
-+            docker info >/dev/null
-+          fi
-+
-       - name: Report provisioned ECS runner
-         if: ${{ needs.provision.outputs.instance_id != '' }}
-         shell: bash
-@@ -418,6 +464,7 @@ jobs:
-             > "${GITHUB_WORKSPACE}/query-regression-trusted-scripts/query-regression-summary.py"
+@@ -37,6 +37,7 @@ use store_api::storage::{RegionId, RegionNumber, TableId};
+ use table::metadata::TableInfo;
  
-       - name: Verify runner image tools
-+        if: ${{ inputs.base_image == '' || inputs.candidate_image == '' || inputs.helpers_image == '' }}
-         shell: bash
-         run: |
-           set -euo pipefail
-@@ -534,6 +581,7 @@ jobs:
-           fi
+ use crate::error::{self, Result, SplitDeleteSnafu, SplitInsertSnafu};
++use crate::write_dispatcher::{WriteAttribution, write_row_count};
  
-       - name: Prepare query regression cache
-+        if: ${{ inputs.base_image == '' || inputs.candidate_image == '' || inputs.helpers_image == '' }}
-         shell: bash
-         working-directory: src
-         run: |
-@@ -694,6 +742,7 @@ jobs:
-           sccache --show-stats
- 
-       - name: Build base greptime
-+        if: ${{ inputs.base_image == '' }}
-         working-directory: src
-         run: |
-           set -euo pipefail
-@@ -728,14 +777,27 @@ jobs:
-           git reset --hard "${VERIFIED_CANDIDATE_SHA}"
-           git clean -ffdx
- 
-+      - name: Extract precompiled query regression
-```
-
----
-
-### Incident Patch 2: `c7ea8055` (2026-10-29)
-**Commit Message**: fix(mito2): preserve live index files across remote compactions (#10046)
-
-fix(mito2): reuse executor-owned compaction index resources
-
-Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
-
-**File**: `src/mito2/src/compaction/compactor.rs` (modified, +138/-104)
-```diff
-@@ -201,28 +201,26 @@ pub struct OpenCompactionRegionRequest {
-     pub plugins: Plugins,
+ /// Loads table routing rules and converts rows to region write requests.
+ pub struct Partitioner<'a> {
+@@ -83,6 +84,101 @@ impl<'a> Partitioner<'a> {
  }
  
--/// Open a compaction region from a compaction request.
--/// It's simple version of RegionOpener::open().
--pub async fn open_compaction_region(
--    req: &OpenCompactionRegionRequest,
--    mito_config: &MitoConfig,
-+/// Opens manifest-backed compaction regions using executor-owned index resources.
-+///
-+/// Create one opener per auxiliary directory before accepting jobs and reuse it
-+/// for the executor's lifetime. Initialization recovers staging files and removes
-+/// stale intermediate files, so repeating it can delete another job's live files.
-+#[derive(Clone)]
-+pub struct CompactionRegionOpener {
-+    mito_config: Arc<MitoConfig>,
-     object_store_manager: ObjectStoreManagerRef,
--    ttl_provider: Either<TimeToLive, SchemaMetadataManagerRef>,
--) -> Result<CompactionRegion> {
--    let object_store = {
--        let name = &req.region_options.storage;
--        if let Some(name) = name {
--            object_store_manager
--                .find(name)
--                .with_context(|| ObjectStoreNotFoundSnafu {
--                    object_store: name.clone(),
--                })?
--        } else {
--            object_store_manager.default_object_store()
--        }
--    };
-+    puffin_manager_factory: PuffinManagerFactory,
-+    intermediate_manager: IntermediateManager,
-+}
- 
--    let access_layer = {
-+impl CompactionRegionOpener {
-+    /// Initializes the executor's index resources. The config must be sanitized
-+    /// and its auxiliary directory must not be owned by another engine or opener.
-+    pub async fn new(
-+        mito_config: MitoConfig,
-+        object_store_manager: ObjectStoreManagerRef,
-+    ) -> Result<Self> {
-         let puffin_manager_factory = PuffinManagerFactory::new(
-             &mito_config.index.aux_path,
-             mito_config.index.staging_size.as_bytes(),
-@@ -231,95 +229,131 @@ pub async fn open_compaction_region(
-         )
-         .await?;
-         let intermediate_manager =
--            IntermediateManager::init_fs(mito_config.index.aux_path.clone()).await?;
-+            IntermediateManager::init_fs(&mito_config.index.aux_path).await?;
-+
-+        Ok(Self {
-+            mito_config: Arc::new(mito_config),
-+            object_store_manager,
-+            puffin_manager_factory,
-+            intermediate_manager,
-+        })
-+    }
-+
-+    /// Opens a region without reinitializing or cleaning shared index resources.
-+    pub async fn open(
+ impl TablePartitioner {
++    pub(crate) fn rebuild_attributed_write(
 +        &self,
-+        req: &OpenCompactionRegionRequest,
-+        ttl_provider: Either<TimeToLive, SchemaMetadataManagerRef>,
-+    ) -> Result<CompactionRegion> {
-+        let mito_config = &self.mito_config;
-+        let object_store = {
-+            let name = &req.region_options.storage;
-+            if let Some(name) = name {
-+                self.object_store_manager
-+                    .find(name)
-+                    .with_context(|| ObjectStoreNotFoundSnafu {
-+                        object_store: name.clone(),
-+                    })?
-+            } else {
-+                self.object_store_manager.default_object_store()
-+            }
-+        };
- 
--        Arc::new(AccessLayer::new(
-+        let access_layer = Arc::new(AccessLayer::new(
-             &req.table_dir,
-             req.path_type,
-             object_store.clone(),
--            puffin_manager_factory,
--            intermediate_manager,
--        ))
--    };
--
--    let manifest_manager = {
--        let region_dir = region_dir_from_table_dir(&req.table_dir, req.region_id, req.path_type);
--        let region_manifest_options =
--            RegionManifestOptions::new(mito_config, &region_dir, object_store);
--
--        RegionManifestManager::open(region_manifest_options, &Default::default())
--            .await?
--            .with_context(|| EmptyRegionDirSnafu {
--                region_id: req.region_id,
--                region_dir: region_dir_from_table_dir(&req.table_dir, req.region_id, req.path_type),
--            })?
--    };
--
--    let manifest = manifest_manager.manifest();
--    let region_metadata = manifest.metadata.clone();
--    let hook: Option<RegionHookRef> = req.plugins.get();
--    let manifest_ctx = Arc::new(ManifestContext::new(
--        manifest_manager,
--        RegionRoleState::Leader(RegionLeaderState::Writable),
--        hook,
--    ));
--
--    let file_purger = {
--        let purge_scheduler = Arc::new(LocalScheduler::new(mito_config.max_background_purges));
--        Arc::new(LocalFilePurger::new(
--            purge_scheduler.clone(),
--            access_layer.clone(),
--            None,
--        ))
--    };
--
--    let current_version = {
--        let mut ssts = SstVersion::new(region_metadata.clone());
--        ssts.add_files(file_purger.clone(), manifest.files.values().cloned());
--        CompactionVersion {
--            metadata: region_metadata.clone(),
--            options: req.region_options.clone(),
--            ssts: Arc::new(ssts),
--            // Remo
-```
-
-**File**: `src/mito2/src/engine/open_test.rs` (modified, +132/-9)
-```diff
-@@ -33,7 +33,7 @@ use store_api::region_request::{
- use store_api::storage::{RegionId, ScanRequest};
- use tokio::sync::{Notify, oneshot};
- 
--use crate::compaction::compactor::{OpenCompactionRegionRequest, open_compaction_region};
-+use crate::compaction::compactor::{CompactionRegionOpener, OpenCompactionRegionRequest};
- use crate::config::MitoConfig;
- use crate::engine::flush_test::MockRegionHook;
- use crate::engine::listener::EventListener;
-@@ -1037,16 +1037,139 @@ async fn test_open_compaction_region_with_format(flat_format: bool) {
-         plugins: Plugins::new(),
-     };
- 
--    let compaction_region = open_compaction_region(
--        &req,
--        &mito_config,
--        object_store_manager.clone(),
--        Either::Right(schema_metadata_manager),
--    )
--    .await
--    .unwrap();
-+    mito_config.index.aux_path = env
-+        .data_home()
-+        .join("compactor-index")
-+        .display()
-+        .to_string();
-+    let opener = CompactionRegionOpener::new(mito_config, object_store_manager)
-+        .await
-+        .unwrap();
-+    let compaction_region = opener
-+        .open(&req, Either::Right(schema_metadata_manager))
-+        .await
-+        .unwrap();
- 
-     assert_eq!(region_id, compaction_region.region_id);
-+    compaction_region.stop_purger_scheduler().await.unwrap();
-+}
-+
-+// Regression: per-job initialization used to delete another compaction's live
-+// atomic-write, external-sort, and staging files under the shared aux_path.
-+#[tokio::test]
-+async fn test_compaction_region_opens_preserve_live_index_files() {
-+    use common_time::TimeToLive;
-+    use futures::{AsyncReadExt, AsyncWriteExt};
-+    use index::external_provider::ExternalTempFileProvider;
-+    use store_api::storage::FileId;
-+
-+    use crate::sst::index::intermediate::{IntermediateLocation, TempFileProvider};
-+
-+    let mut env = TestEnv::new().await;
-+    let engine = env.create_engine(MitoConfig::default()).await;
-+    let mut requests = Vec::new();
-+    for (index, path_type) in [PathType::Bare, PathType::Data].into_iter().enumerate() {
-+        let region_id = RegionId::new(100 + index as u32, 0);
-+        let mut create = CreateRequestBuilder::new()
-+            .table_dir(&format!("data/{}/", region_id.table_id()))
-+            .build();
-+        create.path_type = path_type;
-+        engine
-+            .handle_request(region_id, RegionRequest::Create(create.clone()))
-+            .await
-+            .unwrap();
-+        put_rows(
-+            &engine,
-+            region_id,
-+            Rows {
-+                schema: rows_schema(&create),
-+                rows: build_rows(0, 3),
-+            },
-+        )
-+        .await;
-+        flush_region(&engine, region_id, None).await;
-+        requests.push(OpenCompactionRegionRequest {
-+            region_id,
-+            table_dir: create.table_dir,
-+            path_type,
-+            region_options: RegionOptions::default(),
-+            max_parallelism: 1,
-+            plugins: Plugins::new(),
-+        });
++        request: RegionRequest,
++        table_info: &TableInfo,
++        attribution: WriteAttribution,
++    ) -> Result<Vec<(RegionRequest, WriteAttribution)>> {
++        if !attribution.is_tracked() {
++            return Ok(self
++                .rebuild_write_requests(request, table_info)?
++                .into_iter()
++                .map(|request| (request, WriteAttribution::default()))
++                .collect());
++        }
++        let RegionRequest { header, body } = request;
++        if let Some(Body::BulkInsert(bulk)) = body {
++            return Ok(self
++                .rebuild_bulk_insert_request(bulk, table_info, attribution)?
++                .into_iter()
++                .map(|(body, attribution)| {
++                    (
++                        RegionRequest {
++                            header: header.clone(),
++                            body: Some(body),
++                        },
++                        attribution,
++                    )
++                })
++                .collect());
++        }
++        self.rebuild_write_requests(RegionRequest { header, body }, table_info)?
++            .into_iter()
++            .map(|request| {
++                let attribution = attribution
++                    .for_rows(write_row_count(&request))
++                    .map_err(BoxedError::new)
++                    .context(error::ExternalSnafu)?;
++                Ok((request, attribution))
++            })
++            .collect()
 +    }
 +
-+    let mut config = MitoConfig::default();
-+    config.sanitize(env.data_home().to_str().unwrap()).unwrap();
-+    let aux_path = env.data_home().join("compactor-index");
-+    config.index.aux_path = aux_path.display().to_string();
-+    let opener = CompactionRegionOpener::new(config, env.get_object_store_manager().unwrap())
-+        .await
-+        .unwrap();
-+    let first = opener
-+        .open(&requests[0], Either::Left(TimeToLive::default()))
-+        .await
-+        .unwrap();
-+    let provider = TempFileProvider::new(
-+        IntermediateLocation::new(&first.region_id, &FileId::random()),
-+        first.access_layer.intermediate_manager().clone(),
-+    );
-+    let mut committed = provider.create("sort", "committed").await.unwrap();
-+    committed.write_all(b"committed sort input").await.unwrap();
-+    committed.close().await.unwrap();
-+    let mut pending = provider.create("sort", "pending").await.unwrap();
-+    pending.write_all(b"pending sort input").await.unwrap();
-+    pending.flush().await.unwrap();
-+    let staging_file = aux_path.join("staging/inflight.tmp");
-+    tokio::fs::write(&staging_file, b"staging input")
-+        .await
-+        .unwrap();
++    pub fn partition_attributed_bulk_requests(
++        &self,
++        batch: RecordBatch,
++        skip_wal: bool,
++        attribution: WriteAttribution,
++    ) -> Result<Vec<(BulkInsertRequest, WriteAttribution)>> {
++        if !attribution.is_tracked() {
++            return Ok(self
++                .partition_bulk_insert_requests(batch, None, skip_wal)?
++                .into_iter()
++                .map(|request| (request, WriteAttribution::default()))
++                .collect());
++        }
++        let masks = self
++            .rule
++            .split_record_batch(&batch)
++            .context(SplitInsertSnafu)?;
++        self.build_attributed_bulk_requests(batch, masks, None, skip_wal, attribution)
++    }
 +
-+    let cloned_opener = opener.clone();
-+    let (second, reopened) = tokio::try_join!(
-+        opener.open(&requests[1], Either::Left(TimeToLive::default())),
-+        cloned_opener.open(&requests[0], Either::Left(TimeToLive::default())),
-+    )
-+    .unwrap();
-+    assert_eq!(second.access_layer.path_type(), PathType::Data);
-+    assert_eq!(reopened.access_layer.path_type(), PathType::Bare);
-+    let missing = OpenCompactionRegionRequest {
-+        region_id: RegionId::new(999, 0),
-+        table_dir: "missing/".into(),
-+        ..requests[0].clone()
-+    };
-+    assert!(matches!(
-+        opener
-+            .open(&missing, Either::Left(TimeToLive::default()))
-+            .await,
-+        Err(error::Error::EmptyRegionDir { .. })
-+    ));
-+    drop(cloned_opener);
-+    drop(opener);
++    fn build_attributed_bulk_requests(
++        &self,
++        batch: RecordBatch,
++        masks: HashMap<RegionNumber, RegionMask>,
++        original_ipc: Option<ArrowIpc>,
++        skip_wal: bool,
++        attribution: WriteAttribution,
++    ) -> Result<Vec<(BulkInsertRequest, WriteAttribution)>> {
++        let mut by_region = masks
++            .iter()
++            .filter(|(_, mask)| !mask.select_none())
++            .map(|(region, mask)| {
++                Ok((
++                    *region,
++                    attribution
++                        .filter(mask)
++                        .map_err(BoxedError::new)
++                        .context(error::ExternalSnafu)?,
++                ))
++            })
++            .collect::<Result<HashMap<_, _>>>()?;
++        self.build_bulk_insert_requests(batch, masks, original_ipc, skip_wal)?
++            .into_iter()
++            .map(|request| {
++                let attribution = by_region
++                    .remove(&RegionId::from_u64(request.region_id).region_number())
++                    .context(error::UnexpectedSnafu {
++                        violated: "Missing write ownership after partitioning",
++                    })?;
++                Ok((request, attribution))
++            })
++            .collect()
++    }
 +
-+    //
+     /// Reads a table's partition rule and expression versions into one routing snapshot.
+     pub async fn try_new(
+         partition_manager: &PartitionRuleManager,
+@@ -119,7 +215,11 @@ impl TablePartitioner {
+         })? {
+             Body::Inserts(inserts) => self.rebuild_insert_requests(inserts)?,
+             Body::Deletes(deletes) => self.rebuild_delete_requests(deletes)?,
+-            Body::BulkInsert(bulk) => self.rebuild_bulk_insert_request(bulk, table_info)?,
++            Body::BulkInsert(bulk) => self
++                .rebuild_bulk_insert_request(bulk, table_info, WriteAttribution::default())?
++                .into_iter()
++                .map(|(body, _)| body)
++                .collect(),
+             _ => {
+                 return error::UnexpectedSnafu {
+                     violated: "Only writes can be rebuilt",
+@@ -278,10 +378,11 @@ impl TablePartitioner {
+         &self,
+         bulk: BulkInsertRequest,
+         table_info: &TableInfo,
+-    ) -> Result<Vec<Body>
 ```
 
-**File**: `src/mito2/src/engine/region_hook.rs` (modified, +2/-2)
+**File**: `src/operator/src/write_dispatcher.rs` (modified, +150/-9)
 ```diff
-@@ -62,7 +62,7 @@
- //! | Operations during staging    | N/A                    | ❌ (staging dir)      |
- //! | Async index build            | ❌ (index files only)   | ✅ Yes                |
- //!
--//! ¹ Remote compaction runs on a dedicated compactor node via `open_compaction_region()`;
-+//! ¹ Remote compaction runs on a dedicated compactor node via `CompactionRegionOpener::open()`;
- //!   pass plugins via `OpenCompactionRegionRequest` to enable hooks there. `sst_infos` is
- //!   `#[serde(skip)]` over the wire, so each [`SstInfo`] is rebuilt from [`FileMeta`] with
- //!   empty footer/index — see [`SstFileInfo`] for field-level detail.
-@@ -328,7 +328,7 @@ pub trait RegionHook: Send + Sync + Debug {
-     /// Fires once when a region becomes active via a create or open request —
-     /// the natural counterpart to [`on_region_closed`] / [`on_region_dropped`].
-     /// It does **not** fire for the compactor's transient compaction regions
--    /// (`open_compaction_region`), nor for the internal reopen performed during
-+    /// (`CompactionRegionOpener::open`), nor for the internal reopen performed during
-     /// follower catch-up / leadership promotion.
-     ///
-     /// On the **create** path it runs inline in the region worker loop; on the
-```
-
----
-
-### Incident Patch 3: `efed847c` (2026-10-28)
-**Commit Message**: fix!: enforce sparse primary key schema (#10020)
-
-* fix: preserve required sorting for ordinary sparse scans
-
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
-
-* fix: enforce sparse primary key schema
-
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
-
-* test: fix
-
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
-
-**File**: `src/common/function/src/scalars/primary_key.rs` (modified, +15/-1)
-```diff
-@@ -354,7 +354,11 @@ mod tests {
-         builder.primary_key_encoding(encoding);
-         for (id, name, ty) in columns {
-             builder.push_column_metadata(ColumnMetadata {
--                column_schema: ColumnSchema::new((*name).to_string(), ty.clone(), true),
-+                column_schema: ColumnSchema::new(
-+                    (*name).to_string(),
-+                    ty.clone(),
-+                    !ReservedColumnId::is_reserved(*id),
-+                ),
-                 semantic_type: SemanticType::Tag,
-                 column_id: *id,
-             });
-@@ -440,6 +444,16 @@ mod tests {
-     #[test]
-     fn test_decode_sparse_primary_key() {
-         let columns = vec![
-+            (
-+                ReservedColumnId::table_id(),
-+                "__table_id",
-+                ConcreteDataType::uint32_datatype(),
-+            ),
-+            (
-+                ReservedColumnId::tsid(),
-+                "__tsid",
-+                ConcreteDataType::uint64_datatype(),
-+            ),
-             (10, "k0", ConcreteDataType::string_datatype()),
-             (11, "k1", ConcreteDataType::string_datatype()),
-         ];
-```
-
-**File**: `src/mito2/benches/bench_index_update.rs` (modified, +2/-1)
-```diff
-@@ -60,7 +60,8 @@ fn input(shape: &Shape) -> (RegionMetadataRef, HashSet<ColumnId>, RecordBatch) {
-     let mut pk = vec![ReservedColumnId::table_id(), ReservedColumnId::tsid()];
-     let mut inverted_columns = HashSet::new();
-     let mut add_tag = |id, name: String, data_type, indexed| {
--        let mut schema = ColumnSchema::new(name, data_type, true).with_inverted_index(false);
-+        let mut schema = ColumnSchema::new(name, data_type, !ReservedColumnId::is_reserved(id))
-+            .with_inverted_index(false);
-         if indexed && shape.inverted {
-             inverted_columns.insert(id);
-         }
-```
-
-**File**: `src/mito2/benches/bench_pk_tag_column.rs` (modified, +5/-1)
-```diff
-@@ -77,7 +77,11 @@ fn metadata(tags: u32) -> RegionMetadataRef {
-         primary_key.push(column_id);
-         builder.push_column_metadata(ColumnMetadata {
-             column_id,
--            column_schema: ColumnSchema::new(name, data_type, true),
-+            column_schema: ColumnSchema::new(
-+                name,
-+                data_type,
-+                !ReservedColumnId::is_reserved(column_id),
-+            ),
-             semantic_type: SemanticType::Tag,
-         });
-     }
-```
-
-**File**: `src/mito2/src/engine/create_test.rs` (modified, +40/-0)
-```diff
-@@ -117,6 +117,46 @@ async fn test_engine_column_compression_validation() {
-     assert_eq!(StatusCode::InvalidArguments, err.status_code());
- }
+@@ -12,7 +12,9 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
  
-+#[tokio::test]
-+async fn test_engine_create_sparse_requires_reserved_columns() {
-+    let mut env = TestEnv::new().await;
-+    let engine = env.create_engine(MitoConfig::default()).await;
-+    let region_id = RegionId::new(1, 1);
-+    let mut request = CreateRequestBuilder::new()
-+        .insert_option("primary_key_encoding", "sparse")
-+        .insert_option("sst_format", "flat")
-+        .build();
-+    let error = engine
-+        .handle_request(region_id, RegionRequest::Create(request.clone()))
-+        .await
-+        .unwrap_err();
-+    assert_eq!(StatusCode::InvalidArguments, error.status_code());
-+    assert!(
-+        error
-+            .output_msg()
-+            .contains("sparse primary keys must start with (__table_id, __tsid)")
-+    );
-+    assert!(!engine.is_region_exists(region_id));
-+
-+    let metadata = sst_region_metadata_with_encoding(PrimaryKeyEncoding::Sparse);
-+    request.column_metadatas = metadata.column_metadatas;
-+    request.primary_key = metadata.primary_key;
-+    engine
-+        .handle_request(region_id, RegionRequest::Create(request.clone()))
-+        .await
-+        .unwrap();
-+    let expected = engine.get_region(region_id).unwrap().metadata();
-+    reopen_region(
-+        &engine,
-+        region_id,
-+        request.table_dir,
-+        false,
-+        request.options,
-+    )
-+    .await;
-+    assert_eq!(expected, engine.get_region(region_id).unwrap().metadata());
-+}
-+
- #[tokio::test]
- async fn test_engine_create_new_region() {
-     test_engine_create_new_region_with_format(false).await;
-```
-
-**File**: `src/mito2/src/memtable/bulk/part.rs` (modified, +25/-77)
-```diff
-@@ -1858,19 +1858,17 @@ impl MultiBulkPart {
- 
++mod attribution;
+ mod options;
++pub use attribution::WriteAttribution;
  #[cfg(test)]
- mod tests {
--    use api::v1::{Row, SemanticType, WriteHint};
-+    use api::v1::{Row, WriteHint};
-     use datafusion_common::ScalarValue;
-     use datatypes::arrow::array::{
-         BinaryArray, DictionaryArray, Float64Array, TimestampMillisecondArray,
-     };
-     use datatypes::arrow::datatypes::UInt32Type;
-     use datatypes::prelude::{ConcreteDataType, Value};
--    use datatypes::schema::ColumnSchema;
-     use mito_codec::row_converter::build_primary_key_codec;
-     use rand::rngs::StdRng;
-     use rand::{Rng, SeedableRng};
--    use store_api::metadata::{ColumnMetadata, RegionMetadataBuilder};
--    use store_api::storage::RegionId;
-+    use store_api::metadata::RegionMetadataBuilder;
-     use store_api::storage::consts::ReservedColumnId;
-     use table::predicate::Predicate;
+ mod tests;
  
-@@ -2594,47 +2592,30 @@ mod tests {
-         KeyValues::new(metadata.as_ref(), mutation).unwrap()
+@@ -35,6 +37,7 @@ use common_meta::rpc::router;
+ use futures::future;
+ use partition::manager::{PartitionRuleManager, PartitionRuleManagerRef};
+ use prometheus::Histogram;
++use session::write_progress::WriteProgress;
+ use snafu::{IntoError, OptionExt, ResultExt, ensure};
+ use store_api::storage::RegionId;
+ use table::table_name::TableName;
+@@ -110,6 +113,35 @@ impl WriteDispatcher {
+         self.dispatch_inner(requests, Some(histogram)).await
      }
  
--    #[test]
--    fn test_bulk_part_converter_sparse_primary_key_encoding() {
--        use api::v1::SemanticType;
--        use datatypes::schema::ColumnSchema;
--        use store_api::metadata::{ColumnMetadata, RegionMetadataBuilder};
--        use store_api::storage::RegionId;
--
--        let mut builder = RegionMetadataBuilder::new(RegionId::new(123, 456));
-+    fn sparse_metadata_for_test() -> RegionMetadataRef {
-+        let mut metadata = metadata_for_test().as_ref().clone();
-+        metadata.column_metadatas[1].column_schema.data_type = ConcreteDataType::string_datatype();
-+        let mut builder = RegionMetadataBuilder::from_existing(metadata);
-+        let reserved = crate::test_util::sst_util::sst_region_metadata_with_encoding(
-+            PrimaryKeyEncoding::Sparse,
-+        );
-+        for column in reserved.column_metadatas.into_iter().take(2) {
-+            builder.push_column_metadata(column);
-+        }
-         builder
--            .push_column_metadata(ColumnMetadata {
--                column_schema: ColumnSchema::new("k0", ConcreteDataType::string_datatype(), false),
--                semantic_type: SemanticType::Tag,
--                column_id: 0,
--            })
--            .push_column_metadata(ColumnMetadata {
--                column_schema: ColumnSchema::new("k1", ConcreteDataType::string_datatype(), false),
--                semantic_type: SemanticType::Tag,
--                column_id: 1,
--            })
--            .push_column_metadata(ColumnMetadata {
--                column_schema: ColumnSchema::new(
--                    "ts",
--                    ConcreteDataType::timestamp_millisecond_datatype(),
--                    false,
--                ),
--                semantic_type: SemanticType::Timestamp,
--                column_id: 2,
--            })
--            .push_column_metadata(ColumnMetadata {
--                column_schema: ColumnSchema::new("v0", ConcreteDataType::int64_datatype(), true),
--                semantic_type: SemanticType::Field,
--                column_id: 3,
--            })
--            .push_column_metadata(ColumnMetadata {
--                column_schema: ColumnSchema::new("v1", ConcreteDataType::float64_datatype(), true),
--                semantic_type: SemanticType::Field,
--                column_id: 4,
--            })
--            .primary_key(vec![0, 1])
-+            .primary_key(vec![
-+                ReservedColumnId::table_id(),
-+                ReservedColumnId::tsid(),
-+                0,
-+                1,
-+            ])
-             .primary_key_encoding(PrimaryKeyEncoding::Sparse);
--        let metadata = Arc::new(builder.build().unwrap());
-+        Arc::new(builder.build().unwrap())
++    /// Dispatches shared batches with row ownership retained across retries.
++    pub async fn dispatch_attributed(
++        &self,
++        requests: Vec<(RegionRequest, WriteAttribution)>,
++        histogram: Option<Histogram>,
++    ) -> Result<RegionResponse> {
++        let regions = requests
++            .iter()
++            .map(|(request, _)| write_region_id(request))
++            .collect::<Result<Vec<_>>>()?;
++        let peers = self
++            .resolve_peers(&regions)
++            .await
++            .map_err(BoxedError::new)
++            .context(ExternalSnafu)?;
++        let writes = requests
++            .into_iter()
++            .zip(regions)
++            .map(|((request, attribution), region)| {
++                Ok((get_peer(&peers, region)?, request, attribution))
++            })
++            .collect::<Result<Vec<_>>>()?;
++        let attempts = future::join_all(writes.into_iter().map(|(peer, request, attribution)| {
++            self.send_attributed(peer, request, attribution, histogram.as_ref())
++        }))
++        .await;
++        self.finish(attempts, histogram.as_ref(), None).await
 +    }
 +
-+    #[test]
-+    fn test_bulk_part_converter_sparse_primary_key_encoding() {
-+        let metadata = sparse_metadata_for_test();
- 
-         let primary_key_codec = build_primary_key_codec(&metadata);
-         let schema = to_flat_sst_arrow_schema(
-@@ -2923,40 +2904,7 @@ mod tests {
- 
-     #[test]
-     fn test_convert_bulk_part_sparse_encoding() {
--        let mut builder = RegionMetadataBuilder::new(RegionId::new(123, 456));
--        builder
--            .push_column_metadata(ColumnMetadata {
--                column_schema: ColumnSchema::new("k0", ConcreteDataType::string_datatype(), false),
--                semantic_type: SemanticType::Tag,
--                column_id: 0,
--            })
--            .push_column_metadata(ColumnMetadata {
--                column_schema: ColumnSchema::new("k1", ConcreteDataType::string_datatype(), false),
--                semantic_type: SemanticType::Tag,
--                column_id: 1,
--            })
--            .push_column_metadata(ColumnMetadata {
--                column_schema: ColumnSchema::new(
--                    "ts",
--                    ConcreteDataType::timestamp_millisecond_datatype(),
--                    false,
--                ),
--                semantic_type: SemanticType::Timestamp,
--                column_id: 2,
--            })
--            .push_column_met
-```
-
-**File**: `src/mito2/src/read/compat.rs` (modified, +51/-13)
-```diff
-@@ -1344,8 +1344,19 @@ mod tests {
-             ],
-             &[],
-         );
-+        let reserved = crate::test_util::sst_util::sst_region_metadata_with_encoding(
-+            PrimaryKeyEncoding::Sparse,
-+        );
-+        actual_metadata.primary_key = reserved.primary_key.into_iter().take(2).collect();
-+        actual_metadata
-+            .column_metadatas
-+            .extend(reserved.column_metadatas.into_iter().take(2));
-         actual_metadata.primary_key_encoding = PrimaryKeyEncoding::Sparse;
--        let actual_metadata = Arc::new(actual_metadata);
-+        let actual_metadata = Arc::new(
-+            RegionMetadataBuilder::from_existing(actual_metadata)
-+                .build()
-+                .unwrap(),
-+        );
- 
-         let mut expected_metadata = (*actual_metadata).clone();
-         for column in expected_metadata.column_metadatas.iter_mut() {
-@@ -1373,7 +1384,10 @@ mod tests {
-             .unwrap()
-             .unwrap();
- 
--        let sparse_k1 = encode_sparse_key(&[]);
-+        let mut sparse_k1 = Vec::new();
-+        SparsePrimaryKeyCodec::schemaless()
-+            .encode_internal(42, 7, &mut sparse_k1)
-+            .unwrap();
-         let input_columns: Vec<ArrayRef> = vec![
-             Arc::new(Int64Array::from(vec![100, 200])),
-             Arc::new(TimestampMillisecondArray::from_iter_values([1000, 2000])),
-@@ -1384,8 +1398,10 @@ mod tests {
-                 OpType::Put as u8,
-             ])),
-         ];
--        let input_schema =
--            to_flat_sst_arrow_schema(&actual_metadata, &FlatSchemaOptions::default());
-+        let input_schema = to_flat_sst_arrow_schema(
-+            &actual_metadata,
-+            &FlatSchemaOptions::from_encoding(PrimaryKeyEncoding::Sparse),
-+        );
-         let input_batch = RecordBatch::try_new(input_schema, input_columns).unwrap();
- 
-         let result = compat_batch.compat(input_batch).unwrap();
-@@ -1402,8 +1418,10 @@ mod tests {
-                 OpType::Put as u8,
-             ])),
-         ];
--        let output_schema =
--            to_flat_sst_arrow_schema(&expected_metadata, &FlatSchemaOptions::default());
-+        let output_schema = to_flat_sst_arrow_schema(
-+            &expected_metadata,
-+            &FlatSchemaOptions::from_encoding(PrimaryKeyEncoding::Sparse),
-+        );
-         let expected_batch = RecordBatch::try_new(output_schema, expected_columns).unwrap();
- 
-         assert_eq!(expected_batch, result);
-@@ -1520,6 +1538,16 @@ mod tests {
-         columns[0] = json;
-         let batch = RecordBatch::try_new(Arc::new(Schema::new(fields)), columns)?;
-         for encoding in [PrimaryKeyEncoding::Dense, PrimaryKeyEncoding::Sparse] {
-+            let batch = if encoding == PrimaryKeyEncoding::Sparse {
-+                let mut key = Vec::new();
-+                SparsePrimaryKeyCodec::schemaless().encode_internal(42, 7, &mut key)?;
-+                let mut columns = batch.columns().to_vec();
-+                columns[primary_key_column_index(batch.num_columns())] =
-+                    build_flat_test_pk_array(&[&key, &key]);
-+                RecordBatch::try_new(batch.schema(), columns)?
-+            } else {
-+                batch.clone()
-+            };
-             for missing_json in [false, true] {
-                 let source = if missing_json {
-                     new_metadata(
-@@ -1533,12 +1561,12 @@ mod tests {
-                 } else {
-                     metadata.as_ref().clone()
-                 };
--                let mut builder = RegionMetadataBuilder::from_existing(source);
--                builder.primary_key_encoding(encoding);
--                let actual = Arc::new(builder.build()?);
--                let mut builder = RegionMetadataBuilder::from_existing(metadata.as_ref().clone());
--                builder.primary_key_encoding(encoding);
--                builder.push_column_metadata(ColumnMetadata {
-+                let mut actual_builder = RegionMetadataBuilder::from_existing(source);
-+                actual_builder.primary_key_encoding(encoding);
-+                let mut expected_builder =
-+                    RegionMetadataBuilder::from_existing(metadata.as_ref().clone());
-+                expected_builder.primary_key_encoding(encoding);
-+                expected_builder.push_column_metadata(ColumnMetadata {
-                     column_schema: ColumnSchema::new(
-                         "added",
-                         ConcreteDataType::int64_datatype(),
-@@ -1550,7 +1578,17 @@ mod tests {
-                     semantic_type: SemanticType::Field,
-                     column_id: 2,
-                 });
--                let expected = Arc::new(builder.build()?);
-+                if encoding == PrimaryKeyEncoding::Sparse {
-+                    let reserved = test_util::sst_util::sst_region_metadata_with_encoding(encoding);
-+                    for builder in [&mut actual_builder, &mut expected_builder] {
-+                        builder.primary_key(reserved.primary_key[..2].to_vec());
-+       
-```
-
-**File**: `src/mito2/src/sst/parquet/flat_format.rs` (modified, +8/-1)
-```diff
-@@ -1355,7 +1355,14 @@ mod tests {
-             column_id: col_id,
-         });
- 
--        let primary_key: Vec<u32> = (0..num_tags as u32).collect();
-+        let mut primary_key: Vec<u32> = (0..num_tags as u32).collect();
-+        if encoding == PrimaryKeyEncoding::Sparse {
-+            let reserved = crate::test_util::sst_util::sst_region_metadata_with_encoding(encoding);
-+            primary_key.splice(0..0, reserved.primary_key.into_iter().take(2));
-+            for column in reserved.column_metadatas.into_iter().take(2) {
-+                builder.push_column_metadata(column);
-+            }
-+        }
-         builder.primary_key(primary_key);
-         builder.primary_key_encoding(encoding);
-         builder.build().unwrap()
-```
-
-**File**: `src/store-api/src/metadata.rs` (modified, +133/-1)
-```diff
-@@ -31,6 +31,7 @@ use common_macro::stack_trace_debug;
- use datatypes::arrow;
- use datatypes::arrow::datatypes::FieldRef;
- use datatypes::extension::json::json2_metadata_with_updated_settings;
-+use datatypes::prelude::ConcreteDataType;
- use datatypes::schema::{ColumnSchema, FulltextOptions, Schema, SchemaRef};
- use datatypes::types::TimestampType;
- use itertools::Itertools;
-@@ -39,10 +40,11 @@ use serde::{Deserialize, Deserializer, Serialize};
- use snafu::{Location, OptionExt, ResultExt, Snafu, ensure};
- 
- use crate::codec::PrimaryKeyEncoding;
-+use crate::metric_engine_consts::{DATA_SCHEMA_TABLE_ID_COLUMN_NAME, DATA_SCHEMA_TSID_COLUMN_NAME};
- use crate::region_request::{
-     AddColumn, AddColumnLocation, AlterKind, ModifyColumnType, SetIndexOption, UnsetIndexOption,
- };
--use crate::storage::consts::is_internal_column;
-+use crate::storage::consts::{ReservedColumnId, is_internal_column};
- use crate::storage::{ColumnId, RegionId};
- 
- pub type Result<T> = std::result::Result<T, MetadataError>;
-@@ -476,6 +478,16 @@ impl RegionMetadata {
-             }
-         );
- 
-+        if self.primary_key_encoding == PrimaryKeyEncoding::Sparse {
-+            ensure!(
-+                self.primary_key
-+                    .starts_with(&[ReservedColumnId::table_id(), ReservedColumnId::tsid()]),
-+                InvalidMetaSnafu {
-+                    reason: "sparse primary keys must start with (__table_id, __tsid)",
-+                }
-+            );
-+        }
+     /// Resolves routes before writes are detached from the caller.
+     pub(crate) async fn prepare(
+         &self,
+@@ -178,11 +210,23 @@ impl WriteDispatcher {
+         writes: Vec<(PeerRef, RegionRequest)>,
+         histogram: Option<Histogram>,
+         cancellation: Option<&CancellationToken>,
++    ) -> Result<RegionResponse> {
++        self.execute_with_progress(writes, histogram, cancellation, None)
++            .await
++    }
 +
-         if !self.primary_key.is_empty() {
-             let mut pk_ids = HashSet::with_capacity(self.primary_key.len());
-             // Checks column ids in the primary key is valid.
-@@ -523,6 +535,27 @@ impl RegionMetadata {
-                     }
-                 );
- 
-+                if self.primary_key_encoding == PrimaryKeyEncoding::Sparse {
-+                    let schema = &column.column_schema;
-+                    let valid = if *column_id == ReservedColumnId::table_id() {
-+                        schema.name == DATA_SCHEMA_TABLE_ID_COLUMN_NAME
-+                            && schema.data_type == ConcreteDataType::uint32_datatype()
-+                            && !schema.is_nullable()
-+                    } else if *column_id == ReservedColumnId::tsid() {
-+                        schema.name == DATA_SCHEMA_TSID_COLUMN_NAME
-+                            && schema.data_type == ConcreteDataType::uint64_datatype()
-+                            && !schema.is_nullable()
-+                    } else {
-+                        !ReservedColumnId::is_reserved(*column_id) && schema.data_type.is_string()
-+                    };
-+                    ensure!(
-+                        valid,
-+                        InvalidMetaSnafu {
-+                            reason: format!("invalid sparse primary key column {}", schema.name),
-+                        }
-+                    );
-+                }
-+
-                 pk_ids.insert(column_id);
++    pub(crate) async fn execute_with_progress(
++        &self,
++        writes: Vec<(PeerRef, RegionRequest)>,
++        histogram: Option<Histogram>,
++        cancellation: Option<&CancellationToken>,
++        progress: Option<Arc<WriteProgress>>,
+     ) -> Result<RegionResponse> {
+         let histogram = histogram.as_ref();
++        let progress = progress.as_ref();
+         let attempts = future::join_all(writes.into_iter().map(|(peer, request)| async move {
+-            if self.retry.is_some() {
+-                self.send_batch(peer, request, histogram).await
++            if self.retry.is_some() || progress.is_some() {
++                self.send_batch(peer, request, histogram, progress).await
+             } else {
+                 vec![self.send(peer, request, histogram).await]
              }
+@@ -196,9 +240,20 @@ impl WriteDispatcher {
+ 
+     /// Sends the first attempt immediately so bulk encoding can overlap other sends.
+     pub(crate) async fn send(
++        &self,
++        peer: PeerRef,
++        request: RegionRequest,
++        histogram: Option<&Histogram>,
++    ) -> WriteAttempt {
++        self.send_attributed(peer, request, WriteAttribution::default(), histogram)
++            .await
++    }
++
++    async fn send_attributed(
+         &self,
+         peer: PeerRef,
+         mut request: RegionRequest,
++        attribution: WriteAttribution,
+         histogram: Option<&Histogram>,
+     ) -> WriteAttempt {
+         if let Some(retry) = &self.retry {
+@@ -210,6 +265,7 @@ impl WriteDispatcher {
+                     RoutedWrite {
+                         peer,
+                         request: Arc::new(request),
++                        attribution,
+                     },
+                     histogram,
+                 )
+@@ -218,7 +274,7 @@ impl WriteDispatcher {
+         let _timer = histogram.map(Histogram::start_timer);
+         let datanode = self.node_manager.datanode(&peer).await;
+         match datanode.handle(request).await {
+-            Ok(response) => WriteAttempt::Success(response),
++            Ok(response) => acknowledged(response, &attribution),
+             Err(error) => WriteAttempt::Failed {
+                 error,
+                 request: None,
+@@ -267,21 +323,61 @@ impl WriteDispatcher {
+         peer: PeerRef,
+         mut request: RegionRequest,
+         histogram: Option<&Histogram>,
++        progress: Option<&Arc<WriteProgress>>,
+     ) -> Vec<WriteAttempt> {
+         if !matches!(&request.body, Some(Body::Inserts(_) | Body::Deletes(_))) {
+             return vec![self.send(peer, request, histogram).await];
          }
-@@ -1388,6 +1421,105 @@ mod test {
-         builder.build().unwrap()
-     }
- 
-+    #[test]
-+    fn test_sparse_primary_key_requires_reserved_columns() {
-+        for primary_key in [vec![], vec![1]] {
-+            let mut metadata = build_test_region_metadata();
-+            if primary_key.is_empty() {
-+                metadata.column_metadatas[0].semantic_type = SemanticType::Field;
-+            }
-+            metadata.primary_key = primary_key;
-+            let mut builder = RegionMetadataBuilder::from_existing(metadata);
-+            builder.primary_key_encoding(PrimaryKeyEncoding::Sparse);
-+            let error = builder.build().unwrap_err();
-+            assert_eq!(error.status_code(), StatusCode::InvalidArguments);
-+            assert!(
-+                error
-+                    .to_string()
-+                    .contains("sparse primary keys must start with (__table_id, __tsid)")
-+            );
+         // Upgrade datanodes first and roll back frontends first: old datanodes
+         // cannot report which entries succeeded, so retrying 
+```
+
+**File**: `src/operator/src/write_dispatcher/attribution.rs` (added, +144/-0)
+```diff
+@@ -0,0 +1,144 @@
++// Copyright 2023 Greptime Team
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++use std::sync::Arc;
++
++use common_meta::error::{Result, UnexpectedSnafu};
++use partition::partition::RegionMask;
++use session::write_progress::WriteProgress;
++use snafu::ensure;
++
++/// Row ownership in payload order. Kept in process memory, never encoded in an RPC.
++#[derive(Clone, Debug, Default)]
++pub struct WriteAttribution {
++    spans: Vec<(usize, Option<Arc<WriteProgress>>)>,
++}
++
++impl WriteAttribution {
++    pub fn new(rows: usize, progress: Option<Arc<WriteProgress>>) -> Self {
++        Self {
++            spans: vec![(rows, progress)],
 +        }
 +    }
 +
-+    #[test]
-+    fn test_sparse_reserved_primary_key_contract() {
-+        let mut builder = RegionMetadataBuilder::from_existing(build_test_region_metadata());
-+        builder.primary_key_encoding(PrimaryKeyEncoding::Sparse);
-+        builder.column_metadatas[0].column_schema.data_type = ConcreteDataType::string_datatype();
-+        for (name, column_id, data_type) in [
-+            (
-+                DATA_SCHEMA_TABLE_ID_COLUMN_NAME,
-+                ReservedColumnId::table_id(),
-+                ConcreteDataType::uint32_datatype(),
-+            ),
-+            (
-+                DATA_SCHEMA_TSID_COLUMN_NAME,
-+                ReservedColumnId::tsid(),
-+                ConcreteDataType::uint64_datatype(),
-+            ),
-+        ] {
-+            builder.push_column_metadata(ColumnMetadata {
-+                column_schema: ColumnSchema::new(name, data_type, false),
-+                semantic_type: SemanticType::Tag,
-+                column_id,
-+            });
++    pub fn extend(&mut self, other: Self) {
++        self.spans.extend(other.spans);
++    }
++
++    pub fn row_count(&self) -> usize {
++        self.spans.iter().map(|(rows, _)| rows).sum()
++    }
++
++    pub fn is_tracked(&self) -> bool {
++        self.spans.iter().any(|(_, progress)| progress.is_some())
++    }
++
++    /// Selects ownership using the exact mask applied to the Arrow payload.
++    pub fn filter(&self, mask: &RegionMask) -> Result<Self> {
++        ensure!(
++            self.row_count() == mask.array().len(),
++            UnexpectedSnafu {
++                err_msg: "Write ownership does not match the partition mask",
++            }
++        );
++        if !self.is_tracked() {
++            return Ok(Self::default());
 +        }
-+        builder.primary_key(vec![
-+            ReservedColumnId::table_id(),
-+            ReservedColumnId::tsid(),
-
++        let mut offset = 0;
++        let mut selected = Self::default();
++        for (rows, progress) in &self.spans {
++            let count = mask.array().slice(offset, *rows).true_count();
++            if count > 0 {
++                selected.spans.push((count, progress.clone()));
++            }
++            offset += rows;
++        }
++        Ok(selected)
++    }
++
++    /// Successful writes must acknowledge every input row, including duplicates, as
++    /// Mito's `RegionWriteCtx::push_bulk` does. A partial count cannot identify owners.
++    pub(crate) fn record(&self, affected_rows: usize) -> Result<()> {
++        if !self.is_tracked() {
++            return Ok(());
++        }
++        ensure!(
++            affected_rows == self.row_count(),
++            UnexpectedSnafu {
++                err_msg: format!(
++                    "Write affected {affected_rows} rows, expected {}; cannot attribute the result",
++                    self.row_count()
++                ),
++            }
++        );
++        for (rows, progress) in &self.spans {
++            if let Some(progress) = progress {
++                progress.add_written(*rows);
++            }
++        }
++        Ok(())
++    }
++
++    /// Direct row writes have one owner even when a refreshed route splits them.
++    pub(crate) fn for_rows(&self, rows: usize) -> Result<Self> {
++        ensure!(
++            self.spans.len() <= 1,
++            UnexpectedSnafu {
++                err_msg: "Cannot repartition shared ownership without a row mask",
++            }
++        );
++        Ok(Self::new(
++            rows,
++            self.spans.first().and_then(|(_, p)| p.clone()),
++        ))
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use datatypes::arrow::array::BooleanArray;
++
++    use super::*;
++
++    #[test]
++    fn ownership_survives_filtering_and_repartition() {
++        let first = Arc::new(WriteProgress::default());
++        let second = Arc::new(WriteProgress::default());
++        let mut owners = WriteAttribution::new(3, Some(first.clone()));
++        owners.extend(WriteAttribution::new(2, Some(second.clone())));
++        let initial = owners
++            .filter(&RegionMask::new(
++                BooleanArray::from(vec![true, false, true, false, true]),
++                3,
++            ))
++            .unwrap();
++        let retry = initial
++            .filter(&RegionMask::new(
++                BooleanArray::from(vec![false, true, true]),
++                2,
++            ))
++            .unwrap();
++        assert!(retry.record(1).is_err());
++        assert_eq!(first.written(), 0);
++        retry.record(2).unwrap();
++        assert_eq!(first.written(), 1);
++        assert_eq!(second.written(), 1);
++        assert!(owners.for_rows(5).is_err());
++        assert!(
++            owners
++                .filter(&RegionMask::new(BooleanArray::from(vec![true]), 1))
++                .is_err()
++        );
++    }
++}
 ```
 
 #### Recent Merged Pull Requests:
@@ -3146,21 +2236,21 @@ Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): support optional Docker targets for query regression (#10028)
+## X. optimize Prometheus remote write v2 ingestion (#9928)
 
 **RULE**:
-When implementing operations in `.github/actions/github-script-tests/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ec59131d`: ci): support optional Docker targets for query regression (#10028). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f2d74650`: optimize Prometheus remote write v2 ingestion (#9928). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/github-script-tests/action.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        python3 tests/perf/test_query_regression_helpers.py
+ "tokio",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3170,4 +2260,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ec59131d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f2d74650` are properly handled with clean fallback behavior.

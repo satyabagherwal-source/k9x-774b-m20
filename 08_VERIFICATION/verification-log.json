@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-RVQ1",
-    "timestamp": "2026-10-28T20:08:48.985Z",
-    "repository": "Cactus-Compute/whistle",
-    "learningId": "learn-huggingface-cactus-compute-whistle",
-    "contentHash": "61c1551e84f8a8f2feeed7f979dff8e65c4b041c54575edbf9d2b3814b7e1851",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-0OX7",
-    "timestamp": "2026-10-28T20:15:40.075Z",
-    "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-    "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-    "contentHash": "98b22cf2ae9582e6bef134ae158406b0416bbca9f2011c62a3e623a008e1ec80",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-0XK7",
-    "timestamp": "2026-10-28T20:15:51.271Z",
-    "repository": "microsoft/agent-governance-toolkit",
-    "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "cbfc8107ff09908a04c24b077058e03320036cf8fd762f9a3c21063cb1ce7e98",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-0ZT2",
-    "timestamp": "2026-10-28T20:15:54.182Z",
-    "repository": "meilisearch/meilisearch",
-    "learningId": "learn-github-meilisearch-meilisearch",
-    "contentHash": "bd96eac799af92e489fe49b6a105655763d74bd17c21e5986bf108baa52718d2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-928V",
     "timestamp": "2026-10-28T20:22:10.591Z",
     "repository": "autotrust/GEV-26B-Decide-NVFP4",
@@ -7490,6 +7430,66 @@
     "repository": "yugabyte/yugabyte-db",
     "learningId": "learn-github-yugabyte-yugabyte-db",
     "contentHash": "8cf2d75047e3f4b27b0c1a5142cabfde2885e8865978fc0f21a60d0a6b2c9248",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-GS6F",
+    "timestamp": "2026-10-31T02:07:26.631Z",
+    "repository": "streetwriters/notesnook",
+    "learningId": "learn-github-streetwriters-notesnook",
+    "contentHash": "7ececbb9000989b719a61ec1874efd3475b88768453aebda40a807a75ef7ab39",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-GUGA",
+    "timestamp": "2026-10-31T02:07:29.578Z",
+    "repository": "temporalio/temporal",
+    "learningId": "learn-github-temporalio-temporal",
+    "contentHash": "2ffdb17f90f2beff6e91368ac8b478edb7844a1962a0730721b63ea9c948d7d1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-GX7B",
+    "timestamp": "2026-10-31T02:07:33.143Z",
+    "repository": "Qwen/Qwen3-14B",
+    "learningId": "learn-huggingface-qwen-qwen3-14b",
+    "contentHash": "6c2bfb783c176998b3e128c16cf895321d186a09b638b848a435d069b865c773",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-GYYB",
+    "timestamp": "2026-10-31T02:07:35.411Z",
+    "repository": "GreptimeTeam/greptimedb",
+    "learningId": "learn-github-greptimeteam-greptimedb",
+    "contentHash": "de12ab2a49a91c01287f4947d652db11ea831e83bd76e5dc318c481bfc10cbde",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

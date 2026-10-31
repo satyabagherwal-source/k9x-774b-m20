@@ -2833,10 +2833,10 @@
     "repository": "streetwriters/notesnook",
     "platform": "github",
     "sourceUrl": "https://github.com/streetwriters/notesnook",
-    "sourceVersion": "7a183013",
+    "sourceVersion": "fa0684f4",
     "license": "GPL-3.0",
-    "contentHash": "d9c85f7436630f188b7d1ebf9d0fd5266a62e427d2f42346d75726b17175e4fc",
-    "lastHarvestedAt": "2026-10-27T13:48:15.327Z",
+    "contentHash": "7ececbb9000989b719a61ec1874efd3475b88768453aebda40a807a75ef7ab39",
+    "lastHarvestedAt": "2026-10-31T02:07:26.635Z",
     "learningId": "learn-github-streetwriters-notesnook"
   },
   "kgateway-dev-kgateway": {
@@ -5373,10 +5373,10 @@
     "repository": "GreptimeTeam/greptimedb",
     "platform": "github",
     "sourceUrl": "https://github.com/GreptimeTeam/greptimedb",
-    "sourceVersion": "8a38b901",
+    "sourceVersion": "f2d74650",
     "license": "Apache-2.0",
-    "contentHash": "7efe5b99e08f1e695a6366a8bbdcd4af1d490638879868cf2a4cdd2c26192990",
-    "lastHarvestedAt": "2026-10-30T05:46:10.668Z",
+    "contentHash": "de12ab2a49a91c01287f4947d652db11ea831e83bd76e5dc318c481bfc10cbde",
+    "lastHarvestedAt": "2026-10-31T02:07:35.415Z",
     "learningId": "learn-github-greptimeteam-greptimedb"
   },
   "heroui-inc-heroui-native": {
@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "7726647d",
+    "sourceVersion": "af87eca0",
     "license": "MIT",
-    "contentHash": "324c9ccf38323938dfcfe96c95797bee924c8777b5dbf7d2444fd61e44715a4f",
-    "lastHarvestedAt": "2026-10-30T06:29:47.656Z",
+    "contentHash": "2ffdb17f90f2beff6e91368ac8b478edb7844a1962a0730721b63ea9c948d7d1",
+    "lastHarvestedAt": "2026-10-31T02:07:29.582Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {
@@ -10525,8 +10525,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-14B",
     "sourceVersion": "hf-qwen-qwen3-14b",
     "license": "Open-Source",
-    "contentHash": "574e8b4d84cb6ef1d6193942ddc06731c80a3864566c52b226b6cc918d3c1da2",
-    "lastHarvestedAt": "2026-10-26T14:10:05.393Z",
+    "contentHash": "6c2bfb783c176998b3e128c16cf895321d186a09b638b848a435d069b865c773",
+    "lastHarvestedAt": "2026-10-31T02:07:33.146Z",
     "learningId": "learn-huggingface-qwen-qwen3-14b"
   },
   "solaceproducts-solace-agent-mesh": {

@@ -6425,3 +6425,7 @@ Every entry in this ledger must capture:
 | `learn-github-feathersjs-feathers` | `https://github.com/feathersjs/feathers` | `8c007bc4` | Multi-dimensional audit evidence | 2026-10-31T02:00:27.241Z |
 | `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `6356fbe3` | Multi-dimensional audit evidence | 2026-10-31T02:00:30.630Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `6ce4c398` | Multi-dimensional audit evidence | 2026-10-31T02:00:36.214Z |
+| `learn-github-streetwriters-notesnook` | `https://github.com/streetwriters/notesnook` | `fa0684f4` | Multi-dimensional audit evidence | 2026-10-31T02:07:26.635Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `af87eca0` | Multi-dimensional audit evidence | 2026-10-31T02:07:29.582Z |
+| `learn-huggingface-qwen-qwen3-14b` | `https://huggingface.co/Qwen/Qwen3-14B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-31T02:07:33.146Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `f2d74650` | Multi-dimensional audit evidence | 2026-10-31T02:07:35.415Z |

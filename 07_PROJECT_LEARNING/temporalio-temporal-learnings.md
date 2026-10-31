@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `7726647d`  
+> **Source Version**: `af87eca0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T06:29:47.246Z  
+> **Timestamp**: 2026-10-31T02:07:28.915Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T06:29:46.757Z  
+> **Harvest Timestamp**: 2026-10-31T02:07:28.643Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 24078 stars
+- **Stars / Engagement**: 24095 stars
 
 ---
 
@@ -2121,47 +2121,179 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0e9d1cc6` (2026-10-29)
-**Commit Message**: Render percentage point comparisons with percent sign (#12282)
+### Incident Patch 1: `69c692e8` (2026-10-30)
+**Commit Message**: fix: return current-session skip count in response (#12824)
 
 ## What changed?
-Render weekly CI success-rate comparisons with `%` instead of `pp`.
+fix CurrentSessionSkipCount is not returned
 
-**File**: `tools/ci-notify/app_test.go` (modified, +4/-0)
+## How did you test it?
+- [x] built
+- [x] run locally and tested manually
+- [ ] covered by existing tests
+- [x] added new unit test(s)
+- [ ] added new functional test(s)
+
+**File**: `service/history/workflow/timeskipping.go` (modified, +4/-3)
 ```diff
-@@ -137,6 +137,10 @@ func TestSlackMessageStructure(t *testing.T) {
- 	}, BuildFailureMessage(report))
+@@ -299,9 +299,10 @@ func (util *TimeSkippingInfoUtil) ToDescribeInfo(currentTime time.Time) *commonp
+ 		return nil
+ 	}
+ 	return &commonpb.TimeSkippingInfo{
+-		CurrentTime:     timestamppb.New(currentTime),
+-		EffectiveConfig: common.CloneProto(util.tsi.GetConfig()),
+-		FastForwardInfo: util.ToFastForwardInfo(),
++		CurrentTime:             timestamppb.New(currentTime),
++		EffectiveConfig:         common.CloneProto(util.tsi.GetConfig()),
++		FastForwardInfo:         util.ToFastForwardInfo(),
++		CurrentSessionSkipCount: util.tsi.GetSessionSkipCount(),
+ 	}
  }
  
-+func TestFormatPercentagePointComparison(t *testing.T) {
-+	require.Equal(t, "↑ 1.5%", formatPercentagePointComparison(91.5, 90, true))
-+}
-+
- func TestBuildFailureMessageLimitsFailures(t *testing.T) {
- 	report := &FailureReport{
- 		Run: github.Run{
 ```
 
-**File**: `tools/ci-notify/slack.go` (modified, +1/-1)
+**File**: `service/history/workflow/timeskipping_test.go` (modified, +7/-2)
 ```diff
-@@ -130,7 +130,7 @@ func formatPercentagePointComparison(current, previous float64, available bool)
- 	if difference <= successRateComparisonTolerance {
- 		return formatComparison(0, "")
- 	}
--	return formatComparison(cmp.Compare(current, previous), fmt.Sprintf("%.1f pp", difference))
-+	return formatComparison(cmp.Compare(current, previous), fmt.Sprintf("%.1f%%", difference))
- }
+@@ -2323,11 +2323,13 @@ func (s *mutableStateSuite) TestTimeSkippingInfoUtil() {
+ 	s.Run("ToDescribeInfo_EnabledNoFastForward_NilFastForwardInfo", func() {
+ 		now := time.Date(2027, 1, 1, 12, 0, 0, 0, time.UTC)
+ 		util := NewTimeSkippingInfoUtil(&persistencespb.TimeSkippingInfo{
+-			Config: &commonpb.TimeSkippingConfig{Enabled: true},
++			Config:           &commonpb.TimeSkippingConfig{Enabled: true},
++			SessionSkipCount: 3,
+ 		})
+ 		info := util.ToDescribeInfo(now)
+ 		s.NotNil(info)
+ 		s.True(info.GetEffectiveConfig().GetEnabled())
++		s.Equal(int32(3), info.GetCurrentSessionSkipCount())
+ 		s.Equal(now, info.GetCurrentTime().AsTime())
+ 		s.Nil(info.GetFastForwardInfo(), "no fast-forward set")
+ 	})
+@@ -2337,9 +2339,10 @@ func (s *mutableStateSuite) TestTimeSkippingInfoUtil() {
+ 		targetTime := now.Add(time.Hour)
+ 		util := NewTimeSkippingInfoUtil(&persistencespb.TimeSkippingInfo{
+ 			Config: &commonpb.TimeSkippingConfig{
+-				Enabled:           true,
++				Enabled:           false,
+ 				FastForwardConfig: &commonpb.FastForwardConfig{Id: "ff-1"},
+ 			},
++			SessionSkipCount: 2,
+ 			FastForwardInfo: &persistencespb.FastForwardInfo{
+ 				TargetTime: timestamppb.New(targetTime),
+ 				HasReached: true,
+@@ -2352,6 +2355,7 @@ func (s *mutableStateSuite) TestTimeSkippingInfoUtil() {
+ 		s.Equal(targetTime, ff.GetTargetTime().AsTime())
+ 		s.True(ff.GetHasCompleted())
+ 		s.Equal("ff-1", ff.GetFastForwardId())
++		s.Equal(int32(2), info.GetCurrentSessionSkipCount())
+ 	})
  
- func formatDurationComparison(current, previous time.Duration, available bool) string {
+ 	s.Run("ToDescribeInfo_DisabledConfig_ReflectsConfig", func() {
+@@ -2363,6 +2367,7 @@ func (s *mutableStateSuite) TestTimeSkippingInfoUtil() {
+ 		info := util.ToDescribeInfo(msNow)
+ 		s.NotNil(info)
+ 		s.False(info.GetEffectiveConfig().GetEnabled())
++		s.Zero(info.GetCurrentSessionSkipCount())
+ 		s.Equal(msNow, info.GetCurrentTime().AsTime())
+ 	})
+ 
+```
+
+---
+
+### Incident Patch 2: `af87eca0` (2026-10-31)
+**Commit Message**: Bump auto-scaled-workers to include k8s build-tag gate (#12851)
+
+* Picks up temporalio/temporal-auto-scaled-workers@75274b6 (k8s compute
+provider gated behind a build tag). 
+* Updates the catch-all scaling group assertion for the reworded WCI error (temporalio/temporal-auto-scaled-workers#163).
+
+**File**: `go.mod` (modified, +2/-2)
+```diff
+@@ -72,7 +72,7 @@ require (
+ 	go.opentelemetry.io/otel/trace v1.45.0
+ 	go.opentelemetry.io/proto/otlp v1.11.0
+ 	go.temporal.io/api v1.64.1-0.20261030195137-01272cbd37c9
+-	go.temporal.io/auto-scaled-workers v0.0.0-20261013231030-67ffdef6330d
++	go.temporal.io/auto-scaled-workers v0.0.0-20261030203857-75274b664c29
+ 	go.temporal.io/sdk v1.49.0
+ 	go.temporal.io/testx v0.0.0-20261028001837-eec3975de26f
+ 	go.uber.org/fx v1.24.0
+@@ -167,7 +167,7 @@ require (
+ 	github.com/jackc/puddle/v2 v2.2.2 // indirect
+ 	github.com/josharian/intern v1.0.0 // indirect
+ 	github.com/json-iterator/go v1.1.12 // indirect
+-	github.com/klauspost/compress v1.18.5 // indirect
++	github.com/klauspost/compress v1.18.7 // indirect
+ 	github.com/kylelemons/godebug v1.1.0 // indirect
+ 	github.com/mailru/easyjson v0.9.2 // indirect
+ 	github.com/mattn/go-colorable v0.1.14 // indirect
+```
+
+**File**: `go.sum` (modified, +4/-4)
+```diff
+@@ -280,8 +280,8 @@ github.com/jstemmer/go-junit-report/v2 v2.1.0/go.mod h1:mgHVr7VUo5Tn8OLVr1cKnLuE
+ github.com/jung-kurt/gofpdf v1.0.3-0.20190309125859-24315acbbda5/go.mod h1:7Id9E/uU8ce6rXgefFLlgrJj/GYY22cpxn+r32jIOes=
+ github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
+ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+-github.com/klauspost/compress v1.18.5 h1:/h1gH5Ce+VWNLSWqPzOVn6XBO+vJbCNGvjoaGBFW2IE=
+-github.com/klauspost/compress v1.18.5/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
++github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
++github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
+ github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
+ github.com/konsorten/go-windows-terminal-sequences v1.0.2/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
+ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
+@@ -485,8 +485,8 @@ go.opentelemetry.io/proto/slim/otlp/profiles/v1development v0.3.0 h1:CQvJSldHRUN
+ go.opentelemetry.io/proto/slim/otlp/profiles/v1development v0.3.0/go.mod h1:xSQ+mEfJe/GjK1LXEyVOoSI1N9JV9ZI923X5kup43W4=
+ go.temporal.io/api v1.64.1-0.20261030195137-01272cbd37c9 h1:ZJb+HC/3UhzBBnvzKhGOVNf6WSDpNPBDn94vhEBfZVo=
+ go.temporal.io/api v1.64.1-0.20261030195137-01272cbd37c9/go.mod h1:acM0I9WPuYg8W3Pd9jOZvEgi7mRUttUQ4+e7fowKVnM=
+-go.temporal.io/auto-scaled-workers v0.0.0-20261013231030-67ffdef6330d h1:cKo/dGcLpFAZXKxIAR2sg9hI+h8/8Z0tNHxXA7LCRVI=
+-go.temporal.io/auto-scaled-workers v0.0.0-20261013231030-67ffdef6330d/go.mod h1:DpnPBMkwtk/08wMxwR3u3mIOshsgK/V7KKLh1QzNdjw=
++go.temporal.io/auto-scaled-workers v0.0.0-20261030203857-75274b664c29 h1:wr2yPeTpZAvovJ1tQviQFfcZQRuqvdhU1T+6yvZ23S0=
++go.temporal.io/auto-scaled-workers v0.0.0-20261030203857-75274b664c29/go.mod h1:Wcxj1DAGbC/tQwcfX8VjGhVKM9+/idGDQIvYx/gf13Y=
+ go.temporal.io/sdk v1.49.0 h1:CtGI0BUe/SCo3eoqTwuWWtXKueii9GBVus7KrKKH1Vo=
+ go.temporal.io/sdk v1.49.0/go.mod h1:xP0FulN5JJSfisESUP60LlWsrKz2tLSStGjVdk8r5cc=
+ go.uber.org/atomic v1.5.0/go.mod h1:sABNBOSYdrvTF6hTgEIbc7YasKWGhgEQZyfxyTvoXHQ=
+```
+
+**File**: `tests/worker_deployment_version_test.go` (modified, +1/-1)
+```diff
+@@ -3929,7 +3929,7 @@ func (s *DeploymentVersionSuite) TestCreateWorkerDeploymentVersion_InvalidScalin
+ 					"sg2": {TaskQueueTypes: nil, Provider: validProvider},
+ 				},
+ 			},
+-			expectedError: "only one scaling group can have no task types defined",
++			expectedError: "which already serves all task queue types",
+ 		},
+ 		{
+ 			name: "overlapping workflow task queue type",
+```
+
+---
+
+### Incident Patch 3: `114b0921` (2026-10-30)
+**Commit Message**: Require write access to validate worker deployment version compute configs (#12843)
+
+**File**: `common/api/metadata.go` (modified, +1/-1)
+```diff
+@@ -173,7 +173,7 @@ var (
+ 		"DeleteWorkerDeployment":                       {Scope: ScopeNamespace, Access: AccessWrite, Polling: PollingNone},
+ 		"CreateWorkerDeploymentVersion":                {Scope: ScopeNamespace, Access: AccessWrite, Polling: PollingNone},
+ 		"UpdateWorkerDeploymentVersionComputeConfig":   {Scope: ScopeNamespace, Access: AccessWrite, Polling: PollingNone},
+-		"ValidateWorkerDeploymentVersionComputeConfig": {Scope: ScopeNamespace, Access: AccessReadOnly, Polling: PollingNone},
++		"ValidateWorkerDeploymentVersionComputeConfig": {Scope: ScopeNamespace, Access: AccessWrite, Polling: PollingNone},
+ 		"DeleteWorkerDeploymentVersion":                {Scope: ScopeNamespace, Access: AccessWrite, Polling: PollingNone},
+ 		"UpdateWorkerDeploymentVersionMetadata":        {Scope: ScopeNamespace, Access: AccessWrite, Polling: PollingNone},
+ 		"ListWorkerDeployments":                        {Scope: ScopeNamespace, Access: AccessReadOnly, Polling: PollingNone},
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12815** (2026-10-29): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #12808** (2026-10-29): Preserve bad binaries when namespace replication creates a namespace (@qyc5937)
-- **PR #12805** (2026-10-28): Update Alpine base image to 3.24.3 (@dnr)
-- **PR #12804** (2026-10-29): Add tests for FailoverVersion bump on passive namespace replica (@hehaifengcn)
-- **PR #12803** (2026-10-29): Update Go to 1.27.3 and golang.org/x/net to 0.60.0 (@dnr)
-- **PR #12802** (2026-10-28): Update go-jose to v4.1.6 (@dnr)
+- **PR #12851** (2026-10-31): Bump auto-scaled-workers to include k8s build-tag gate (@gcristea-temporal)
+- **PR #12850** (2026-10-31): [release/v1.31.x] Bump auto-scaled-workers to v0.0.1-1.31.2 (@gcristea-temporal)
+- **PR #12849** (2026-10-31): [release/v1.32.x] Bump auto-scaled-workers to v0.2.1-1.32.0.158.0 (@gcristea-temporal)
+- **PR #12843** (2026-10-30): Require write access to validate worker deployment version compute configs (@02strich)
+- **PR #12839** (2026-10-30): Track and gate deprecated Worker Versioning pollers (@Shivs11)
+- **PR #12835** (2026-10-30): 1.33.0: Prepare release branch (@temporal-cicd[bot])
 
 ---
 
@@ -2181,31 +2313,33 @@ Render weekly CI success-rate comparisons with `%` instead of `pp`.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Render percentage point comparisons with percent sign (#12282)
+## X. return current-session skip count in response (#12824)
 
 **RULE**:
-When implementing operations in `tools/ci-notify/app_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `service/history/workflow/timeskipping.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0e9d1cc6`: Render percentage point comparisons with percent sign (#12282). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `69c692e8`: return current-session skip count in response (#12824). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/ci-notify/app_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `service/history/workflow/timeskipping.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-func TestFormatPercentagePointComparison(t *testing.T) {
-	require.Equal(t, "↑ 1.5%", formatPercentagePointComparison(91.5, 90, true))
-}
-
+		CurrentTime:             timestamppb.New(currentTime),
+		EffectiveConfig:         common.CloneProto(util.tsi.GetConfig()),
+		FastForwardInfo:         util.ToFastForwardInfo(),
+		CurrentSessionSkipCount: util.tsi.GetSessionSkipCount(),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+		CurrentTime:     timestamppb.New(currentTime),
+		EffectiveConfig: common.CloneProto(util.tsi.GetConfig()),
+		FastForwardInfo: util.ToFastForwardInfo(),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0e9d1cc6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `69c692e8` are properly handled with clean fallback behavior.

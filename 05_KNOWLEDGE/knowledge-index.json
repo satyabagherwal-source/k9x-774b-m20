@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T02:00:36.152Z",
+  "last_updated": "2026-10-31T02:07:35.337Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15615,8 +15615,8 @@
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "8a38b901",
-      "content_hash": "7efe5b99e08f1e695a6366a8bbdcd4af1d490638879868cf2a4cdd2c26192990",
+      "source_version": "f2d74650",
+      "content_hash": "de12ab2a49a91c01287f4947d652db11ea831e83bd76e5dc318c481bfc10cbde",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "promoted_rules": [
@@ -15669,6 +15669,11 @@
           "number": 5616,
           "title": "ci): support optional Docker targets for query regression (#10028)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6009,
+          "title": "optimize Prometheus remote write v2 ingestion (#9928)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15676,7 +15681,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T05:46:10.539Z",
+      "verified_at": "2026-10-31T02:07:35.318Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52030,8 +52035,8 @@
       "slug": "streetwriters-notesnook",
       "platform": "github",
       "source_url": "https://github.com/streetwriters/notesnook",
-      "source_version": "7a183013",
-      "content_hash": "d9c85f7436630f188b7d1ebf9d0fd5266a62e427d2f42346d75726b17175e4fc",
+      "source_version": "fa0684f4",
+      "content_hash": "7ececbb9000989b719a61ec1874efd3475b88768453aebda40a807a75ef7ab39",
       "dossier_path": "07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
       "promoted_rules": [
@@ -52054,6 +52059,11 @@
           "number": 4818,
           "title": "server(themes): fix sync and install count edge cases",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6005,
+          "title": "core: fix attachment locked note check never firing (#10522)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52061,7 +52071,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:48:15.257Z",
+      "verified_at": "2026-10-31T02:07:26.537Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53574,8 +53584,8 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "7726647d",
-      "content_hash": "324c9ccf38323938dfcfe96c95797bee924c8777b5dbf7d2444fd61e44715a4f",
+      "source_version": "af87eca0",
+      "content_hash": "2ffdb17f90f2beff6e91368ac8b478edb7844a1962a0730721b63ea9c948d7d1",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
@@ -53628,6 +53638,11 @@
           "number": 5630,
           "title": "Render percentage point comparisons with percent sign (#12282)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6006,
+          "title": "return current-session skip count in response (#12824)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53635,7 +53650,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T06:29:47.600Z",
+      "verified_at": "2026-10-31T02:07:29.483Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -120739,14 +120754,14 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-14B",
       "source_version": "hf-qwen-qwen3-14b",
-      "content_hash": "574e8b4d84cb6ef1d6193942ddc06731c80a3864566c52b226b6cc918d3c1da2",
+      "content_hash": "6c2bfb783c176998b3e128c16cf895321d186a09b638b848a435d069b865c773",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md",
       "promoted_rules": [
         {
           "number": 4620,
           "title": "GQA KV-Cache Memory Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 4621,
@@ -120757,6 +120772,16 @@
           "number": 4622,
           "title": "Chat Template Thinking Mode Toggle Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6007,
+          "title": "RoPE Base Theta Context Extrapolation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6008,
+          "title": "Chat Template State Machine Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -120764,7 +120789,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T14:10:05.320Z",
+      "verified_at": "2026-10-31T02:07:33.047Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -135978,7 +136003,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-26T14:10:05.320Z"
+      "verified_at": "2026-10-31T02:07:33.047Z"
     },
     "rule-4621": {
       "learning_id": "rule-4621",
@@ -158242,6 +158267,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T02:00:36.135Z"
+    },
+    "rule-6005": {
+      "learning_id": "rule-6005",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6005,
+      "title": "core: fix attachment locked note check never firing (#10522)",
+      "source_url": "https://github.com/streetwriters/notesnook",
+      "source_version": "fa0684f4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:07:26.537Z"
+    },
+    "rule-6006": {
+      "learning_id": "rule-6006",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6006,
+      "title": "return current-session skip count in response (#12824)",
+      "source_url": "https://github.com/temporalio/temporal",
+      "source_version": "af87eca0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:07:29.483Z"
+    },
+    "rule-6007": {
+      "learning_id": "rule-6007",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6007,
+      "title": "RoPE Base Theta Context Extrapolation Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-14B",
+      "source_version": "hf-qwen-qwen3-14b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:07:33.047Z"
+    },
+    "rule-6008": {
+      "learning_id": "rule-6008",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6008,
+      "title": "Chat Template State Machine Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-14B",
+      "source_version": "hf-qwen-qwen3-14b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:07:33.047Z"
+    },
+    "rule-6009": {
+      "learning_id": "rule-6009",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6009,
+      "title": "optimize Prometheus remote write v2 ingestion (#9928)",
+      "source_url": "https://github.com/GreptimeTeam/greptimedb",
+      "source_version": "f2d74650",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:07:35.318Z"
     }
   },
   "aliases": {

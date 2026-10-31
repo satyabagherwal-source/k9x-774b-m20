@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md`  
 > **Source**: github ([https://github.com/streetwriters/notesnook](https://github.com/streetwriters/notesnook))  
-> **Source Version**: `7a183013`  
+> **Source Version**: `fa0684f4`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:48:14.942Z  
+> **Timestamp**: 2026-10-31T02:07:25.953Z  
 > **Learning ID**: `learn-github-streetwriters-notesnook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/streetwriters/notesnook](https://github.com/streetwriters/notesnook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:48:14.671Z  
+> **Harvest Timestamp**: 2026-10-31T02:07:25.732Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A fully open source & end-to-end encrypted note taking alternative to Evernote.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 14837 stars
+- **Stars / Engagement**: 14861 stars
 
 ---
 
@@ -754,11 +754,11 @@ function setDockMenuOnMacOs() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #10602** (2026-10-30): **web: prevent infinite re-render crash by decoupling scrollMargin from render-phase ref**
+  *Symptoms*: ## Description Reading containerRef.current?.offsetTop directly during the render body phase causes TanStack Virtual's scrollMargin to change between the initial render (when containerRef.current is null / offset is 0) and post-mount dynamic item measurement. Under dynamic virtualization (mode="dynamic" as used in the note properties panel when switching or closing tabs), this triggers cascading resizeItem / notify updates and exceeds React's maximum update depth (Minified React error #185). This PR:  Measures offsetTop inside a useLayoutEffect and stores it in state with a change bailout check. Prevents reading mutable DOM ref values during the render pass in both VirtualizedList and VirtualizedGrid.  ## Type of Change - [x] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [x] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [ ] Added/updated tests for this change (if needed) - [x] N/A (tests not needed — explanation provided below)  ### If tests were not added, explain why <!-- explanation -->  ## Platform <!-- Describe which platforms this PR is related to -->  - [x] Web - [ ] Mobile - [x] Desktop  ## Sign-off - [x] QA passed - [x] UI/UX passed 
+
 - **Issue #10596** (2026-10-27): **ci: run web, help & desktop previews on fork PRs**
   *Symptoms*: ## Description Web, help and desktop previews now run on fork PRs, using the same split as the iOS/Android previews: an untrusted `pull_request` build (no secrets, read-only token) and a trusted `workflow_run` publish that never executes fork code.  - **Web**: fork build is deployed with the base repo's `functions/`; any `_worker.js` in the output is stripped. - **Help**: fork build is uploaded using the base repo's `wrangler.jsonc`. - **Desktop**: same-repo PRs keep the signed + notarized macOS build; fork PRs get an ad-hoc signed dmg (no Developer ID). PR comment moved to the publish workflow, with artifact links resolved via the API. - **All preview publish workflows** (incl. iOS/Android) now verify `pr-meta.env` through a shared `verify-pr-meta` action: only a numeric PR number is accepted and it must match the triggering run's head branch. Previously Android appended the fork-written file straight into `$GITHUB_ENV`.  ## Type of Change - [x] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [x] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [ ] Added/updated tests for this change (if needed) - [x] N/A (tests not needed — explanation provided below)  ## Platform - [x] Web - [x] Mobile - [x] Desktop  ## Sign-off - [ ] QA passed - [ ] UI/UX passed 
-
-- **Issue #10592** (2026-10-26): **Fix snap build and store upload (pin snapcraft 8.x, explicit plugs)**
-  *Symptoms*: ## Description Follow-up to #10591 for #10189.  With LXD set up, the snap build now fails at the last step ([run](https://github.com/streetwriters/notesnook/actions/runs/40331956478/job/121605329083)):  ``` Failed to generate desktop file '/root/project/snap/meta/gui/notesnook.desktop': file does not exist (defined in app 'notesnook') ```  electron-builder writes the desktop file to `snap/gui/` and sets `desktop: meta/gui/<name>.desktop`, expecting snapcraft to copy `snap/gui` into `prime/meta/gui` first. snapcraft 9.2.0 (2026-10-13) changed how gui assets are packed and no longer does that copy beforehand. The newest electron-builder (26.18.x) still uses the same path.  This PR pins snapcraft to `8.x/stable` (8.14.5), which copies the assets before reading the desktop file. electron-builder's core24 target supports snapcraft 8.  With that, the snap builds, but the Store holds the upload for manual review ([run](https://github.com/streetwriters/notesnook/actions/runs/40337808070/job/121625908883)): electron-builder's core24 defaults add `browser-support` with `allow-sandbox: true`. This PR also sets `snapcraft.core24.plugs` to the same list the core22 snap used. `browser-support` then has no `allow-sandbox`, so electron-builder adds `--no-sandbox`, the same way 3.4.5 ran.  ## Type of Change - [x] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [x] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ra
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -775,437 +775,518 @@ function setDockMenuOnMacOs() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d2ff4316` (2026-10-26)
-**Commit Message**: server(themes): fix sync and install count edge cases
+### Incident Patch 1: `f5a5b93c` (2026-10-30)
+**Commit Message**: core: fix attachment locked note check never firing (#10522)
 
-- run a full rebuild after a running check-only sync instead of skipping it
-- don't block theme installs on install counting
-- re-clone the themes repo when a clone/pull fails so it can't get stuck
-- update only totalInstalls on the current db instead of writing back a stale theme
+* core: fix attachment locked note check never firing
 
-**File**: `servers/themes/src/api.ts` (modified, +3/-4)
+Signed-off-by: Abdullah Atta <[REDACTED_EMAIL]>
+
+* web: don't show success toast when attachment deletion fails
+
+Signed-off-by: Abdullah Atta <[REDACTED_EMAIL]>
+
+* mobile: show error when attachment deletion fails
+
+Signed-off-by: Abdullah Atta <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Abdullah Atta <[REDACTED_EMAIL]>
+
+**File**: `apps/mobile/app/components/attachments/actions.tsx` (modified, +5/-0)
 ```diff
-@@ -41,10 +41,9 @@ export const ThemesAPI = router({
-       if (!theme) return;
+@@ -245,6 +245,11 @@ const Actions = ({
+                   });
+                 return true;
+               } catch (e) {
++                ToastManager.error(
++                  e as Error,
++                  strings.failedToDelete(),
++                  "local"
++                );
+                 return false;
+               }
+             }
+```
+
+**File**: `apps/web/src/common/multi-select.ts` (modified, +4/-2)
+```diff
+@@ -112,6 +112,7 @@ async function deleteAttachments(ids: string[]) {
+   )
+     return;
  
-       if (userId) {
--        updateTotalInstalls(
--          theme,
--          await InstallsCounter.increment(theme.id, userId)
--        ).catch((e) => console.error("Failed to update total installs:", e));
-+        InstallsCounter.increment(theme.id, userId)
-+          .then((totalInstalls) => updateTotalInstalls(theme.id, totalInstalls))
-+          .catch((e) => console.error("Failed to update total installs:", e));
++  let deleted = 0;
+   await TaskManager.startTask({
+     type: "status",
+     id: "deleteAttachments",
+@@ -127,11 +128,12 @@ async function deleteAttachments(ids: string[]) {
+           current: i,
+           total: ids.length
+         });
+-        await attachmentStore.permanentDelete(attachment);
++        if (await attachmentStore.permanentDelete(attachment)) deleted++;
        }
-       return theme;
-     }),
+     }
+   });
+-  showToast("success", strings.actions.deleted.attachment(ids.length));
++  if (deleted > 0)
++    showToast("success", strings.actions.deleted.attachment(deleted));
+ }
+ 
+ async function moveRemindersToTrash(ids: string[]) {
 ```
 
-**File**: `servers/themes/src/orama.ts` (modified, +14/-7)
+**File**: `apps/web/src/stores/attachment-store.ts` (modified, +3/-0)
 ```diff
-@@ -16,7 +16,14 @@ GNU General Public License for more details.
- You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
--import { Orama, SearchParams, create, search, update } from "@orama/orama";
-+import {
-+  Orama,
-+  SearchParams,
-+  create,
-+  getByID,
-+  search,
-+  update
-+} from "@orama/orama";
- import { CompiledThemeDefinition, ThemeMetadata } from "./sync";
- import { ThemeQuerySchema } from "./schemas";
- 
-@@ -62,12 +69,12 @@ export async function findTheme(
-   return results.hits[0]?.document as CompiledThemeDefinition | undefined;
- }
- 
--export async function updateTotalInstalls(
--  theme: CompiledThemeDefinition,
--  totalInstalls: number
--) {
--  if (!ThemesDatabase) await initializeDatabase();
--  await update(ThemesDatabase!, theme.id, { ...theme, totalInstalls });
-+export async function updateTotalInstalls(id: string, totalInstalls: number) {
-+  const db = ThemesDatabase || (await initializeDatabase());
-+  // re-read so a theme updated by a sync isn't overwritten with a stale copy
-+  const theme = await getByID(db, id);
-+  if (!theme) return;
-+  await update(db, id, { ...theme, totalInstalls });
- }
- 
- export async function getThemes(query: (typeof ThemeQuerySchema)["_type"]) {
+@@ -152,11 +152,14 @@ class AttachmentStore extends BaseStore<AttachmentStore> {
+             silent: true
+           });
+         }
++        return true;
+       }
++      return false;
+     } catch (e) {
+       console.error(e);
+       if (e instanceof Error)
+         showToast("error", `${strings.failedToDelete()}: ${e.message}`);
++      return false;
+     } finally {
+       this._changeWorkingStatus(attachment.hash);
+     }
 ```
 
-**File**: `servers/themes/src/sync.ts` (modified, +27/-6)
+**File**: `packages/core/__tests__/attachments.test.ts` (modified, +26/-0)
+```diff
+@@ -58,3 +58,29 @@ test("remove orphaned attachments should remove only orphaned attachments", () =
+     expect(await db.attachments.exists(hash1)).toBe(true);
+     expect(await db.attachments.orphaned.count()).toBe(0);
+   }));
++
++test("remove should throw if attachment is inside a locked note", () =>
++  databaseTest().then(async (db) => {
++    await loginFakeUser(db);
++
++    const hash = await db.attachments.save(
++      "iVBORw0KGgoAAAANSUhEUgAAAAEEAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
++      "image/png",
++      "test.png"
++    );
++    if (!hash) throw new Error("Failed to create attachment");
++    const attachment = await db.attachments.attachment(hash);
++    if (!attachment) throw new Error("Failed to find attachment");
++
++    const noteId = await db.notes.add({ title: "Test Note" });
++    await db.relations.add(
++      { id: noteId, type: "note" },
++      { id: attachment.id, type: "attachment" }
++    );
++    await db.vault.create("password");
++    await db.vault.add(noteId);
++
++    await expect(db.attachments.remove(hash, false)).rejects.toThrow(
++      "locked note"
++    );
++  }));
+```
+
+**File**: `packages/core/src/collections/attachments.ts` (modified, +1/-1)
+```diff
+@@ -280,7 +280,7 @@ export class Attachments implements ICollection {
+     const linkedNotes = await this.db.relations.to(attachment, "note").get();
+     return (
+       (await this.db.relations
+-        .to({ ids: linkedNotes.map((n) => n.toId), type: "note" }, "vault")
++        .to({ ids: linkedNotes.map((n) => n.fromId), type: "note" }, "vault")
+         .count()) <= 0
+     );
+   }
+```
+
+---
+
+### Incident Patch 2: `fa0684f4` (2026-10-30)
+**Commit Message**: web: prevent infinite re-render crash by decoupling scrollMargin from render-phase ref (#10602)
+
+* web: prevent infinite re-render crash by decoupling scrollMargin from render-phase ref
+
+Signed-off-by: Mohd Sultan <[REDACTED_EMAIL]>
+
+* web: remeasure scrollMargin on layout updates in virtualized components
+
+Signed-off-by: Mohd Sultan <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Mohd Sultan <[REDACTED_EMAIL]>
+
+**File**: `apps/web/src/components/virtualized-grid/index.tsx` (modified, +11/-2)
 ```diff
 @@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
- import { execFile } from "child_process";
- import { promisify } from "util";
- import fs from "node:fs";
--import { readdir, readFile } from "fs/promises";
-+import { readdir, readFile, rm } from "fs/promises";
- import path from "path";
- import {
-   InstallsCounter,
-@@ -51,11 +51,17 @@ const THEME_COMPATIBILITY_VERSIONS: ThemeCompatibilityVersion[] = [1];
- const execFileAsync = promisify(execFile);
- const GIT_TIMEOUT = 60 * 1000;
- let currentSync: Promise<void> | undefined;
-+let isCurrentSyncFull = false;
  
--export function syncThemes(onlyIfChanged = false) {
-+export function syncThemes(onlyIfChanged = false): Promise<void> {
-   // concurrent git pulls fail on index.lock, so piggyback on the running sync
--  if (!currentSync)
--    currentSync = sync(onlyIfChanged).finally(() => (currentSync = undefined));
-+  if (currentSync) {
-+    if (onlyIfChanged || isCurrentSyncFull) return currentSync;
-+    // the running check-only sync may skip the rebuild, so queue a full one
-+    return currentSync.catch(() => {}).then(() => syncThemes());
-+  }
-+  isCurrentSyncFull = !onlyIfChanged;
-+  currentSync = sync(onlyIfChanged).finally(() => (currentSync = undefined));
-   return currentSync;
- }
+ import { Virtualizer, useVirtualizer } from "@tanstack/react-virtual";
+ import { Box } from "@theme-ui/components";
+-import React, { useEffect, useRef } from "react";
++import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
  
-@@ -75,13 +81,28 @@ async function hasUpstreamChanges() {
-   return remote.split(/\s/)[0] !== local;
- }
- 
-+// a failed clone/pull can leave the repo unusable (e.g. index.lock), so re-clone next time
-+async function resetOnFailure(promise: Promise<unknown>) {
-+  try {
-+    await promise;
-+  } catch (e) {
-+    await rm(THEME_REPO_DIR_PATH, { recursive: true, force: true });
-+    throw e;
-+  }
-+}
+ type VirtualizedGridProps<T> = {
+   virtualizerRef?: React.MutableRefObject<
+@@ -49,6 +49,15 @@ export function VirtualizedGrid<T>(props: VirtualizedGridProps<T>) {
+     onEndReached
+   } = props;
+   const containerRef = useRef<HTMLDivElement>(null);
++  const [measuredOffset, setMeasuredOffset] = useState(0);
 +
- async function sync(onlyIfChanged: boolean) {
-   if (!fs.existsSync(THEME_REPO_DIR_PATH)) {
--    await git(["clone", THEMES_REPO_URL], path.dirname(THEME_REPO_DIR_PATH));
-+    await resetOnFailure(
-+      git(
-+        ["clone", "--quiet", THEMES_REPO_URL],
-+        path.dirname(THEME_REPO_DIR_PATH)
-+      )
-+    );
-     console.log(`Cloned github repo to path ${THEME_REPO_DIR_PATH}`);
-   } else {
-     if (onlyIfChanged && !(await hasUpstreamChanges())) return;
--    console.log(await git(["pull"], THEME_REPO_DIR_PATH));
-+    await resetOnFailure(git(["pull", "--quiet"], THEME_REPO_DIR_PATH));
-     console.log(`Synced github repo ${THEMES_REPO_URL}`);
-   }
-   await generateThemesMetadata();
++  useLayoutEffect(() => {
++    if (scrollMargin !== undefined) return;
++    if (containerRef.current) {
++      const offset = containerRef.current.offsetTop || 0;
++      setMeasuredOffset((prev) => (prev !== offset ? offset : prev));
++    }
++  });
+ 
+   const virtualizer = useVirtualizer({
+     lanes: columns,
+@@ -57,7 +66,7 @@ export function VirtualizedGrid<T>(props: VirtualizedGridProps<T>) {
+     getItemKey,
+     getScrollElement: () =>
+       scrollElement || containerRef.current?.closest(".ms-container") || null,
+-    scrollMargin: scrollMargin || containerRef.current?.offsetTop || 0
++    scrollMargin: scrollMargin ?? measuredOffset
+   });
+ 
+   useEffect(() => {
+```
+
+**File**: `apps/web/src/components/virtualized-list/index.tsx` (modified, +13/-2)
+```diff
+@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ 
+ import { Virtualizer, useVirtualizer } from "@tanstack/react-virtual";
+ import { Box, BoxProps } from "@theme-ui/components";
+-import React, { useRef } from "react";
++import React, { useLayoutEffect, useRef, useState } from "react";
+ 
+ export type VirtualizedListProps<T, C> = {
+   virtualizerRef?: React.MutableRefObject<
+@@ -41,6 +41,7 @@ export type VirtualizedListProps<T, C> = {
+   itemGap?: number;
+   overscan?: number;
+ } & BoxProps;
++
+ export function VirtualizedList<T, C>(props: VirtualizedListProps<T, C>) {
+   const {
+     items,
+@@ -57,15 +58,25 @@ export function VirtualizedList<T, C>(props: VirtualizedListProps<T, C>) {
+     context,
+     ...containerProps
+   } = props;
++
+   const containerRef = useRef<HTMLDivElement>(null);
++  const [measuredOffset, setMeasuredOffset] = useState(0);
++
++  useLayoutEffect(() => {
++    if (scrollMargin !== undefined) return;
++    if (containerRef.current) {
++      const offset = containerRef.current.offsetTop || 0;
++      setMeasuredOffset((prev) => (prev !== offset ? offset : prev));
++    }
++  });
+ 
+   const virtualizer = useVirtualizer({
+     count: items.length,
+     estimateSize: () => estimatedSize + (itemGap || 0),
+     getItemKey: (index) => getItemKey(index, items),
+     getScrollElement: () =>
+       scrollElement || containerRef.current?.closest(".ms-container") || null,
+-    scrollMargin: scrollMargin || containerRef.current?.offsetTop || 0,
++    scrollMargin: scrollMargin ?? measuredOffset,
+     overscan
+   });
+ 
 ```
 
 ---
 
-### Incident Patch 2: `c28013b4` (2026-10-26)
-**Commit Message**: Merge pull request #10587 from streetwriters/fix/theme-server-crash-find-theme
+### Incident Patch 3: `b1477075` (2026-10-30)
+**Commit Message**: core: fix backup restore not re-uploading re-keyed attachments (#10524)
 
-Theme Server improvements
+* core: fix backup restore not re-uploading re-keyed attachments
 
-**File**: `servers/themes/package-lock.json` (modified, +2/-2)
+Signed-off-by: Abdullah Atta <[REDACTED_EMAIL]>
+
+* core: keep local attachment key when restoring a backup with a different key
+
+* web: skip restoring backup attachment files that would overwrite local ones
+
+* mobile: skip restoring backup attachment files that would overwrite local ones
+
+---------
+
+Signed-off-by: Abdullah Atta <[REDACTED_EMAIL]>
+
+**File**: `apps/mobile/app/screens/settings/restore-backup/index.tsx` (modified, +4/-2)
 ```diff
-@@ -1,12 +1,12 @@
- {
-   "name": "@notesnook/themes-server",
--  "version": "1.0.4",
-+  "version": "1.1.0",
-   "lockfileVersion": 2,
-   "requires": true,
-   "packages": {
-     "": {
-       "name": "@notesnook/themes-server",
--      "version": "1.0.4",
-+      "version": "1.1.0",
-       "license": "ISC",
-       "dependencies": {
-         "@notesnook/theme": "file:../../packages/theme",
+@@ -156,6 +156,7 @@ const restoreBackup = async (options: {
+         : undefined;
+ 
+       let count = 0;
++      const skippedAttachments = new Set<string>();
+       await db.transaction(async () => {
+         let passwordOrKey: PasswordOrKey | undefined = undefined;
+         for (const path of extractedBackupFiles) {
+@@ -186,10 +187,11 @@ const restoreBackup = async (options: {
+             throw new Error(strings.failedToDecryptBackup());
+           }
+ 
+-          await db.backup.import(backup, {
++          const skipped = await db.backup.import(backup, {
+             ...passwordOrKey,
+             attachmentsKey: attachmentsKey
+           });
++          skipped?.forEach((hash) => skippedAttachments.add(hash));
+         }
+       });
+ 
+@@ -205,7 +207,7 @@ const restoreBackup = async (options: {
+         });
+         const hash = path;
+         const attachment = await db.attachments.attachment(hash as string);
+-        if (!attachment) continue;
++        if (!attachment || skippedAttachments.has(hash)) continue;
+ 
+         await deleteCacheFileByName(hash);
+         await RNFetchBlob.fs.cp(
 ```
 
-**File**: `servers/themes/package.json` (modified, +1/-1)
+**File**: `apps/web/src/common/index.ts` (modified, +14/-8)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "@notesnook/themes-server",
--  "version": "1.0.4",
-+  "version": "1.1.0",
-   "description": "A simple rest api for notesnook themes",
-   "private": "true",
-   "main": "src/index.ts",
+@@ -276,6 +276,7 @@ export async function restoreBackupFile(backupFile: File) {
+         const attachments: ZipEntry[] = [];
+         let attachmentsKey: SerializedKey | Cipher<"base64"> | undefined;
+         let filesProcessed = 0;
++        const skippedAttachments = new Set<string>();
+ 
+         let isValid = false;
+         for await (const entry of createUnzipIterator(backupFile)) {
+@@ -304,25 +305,30 @@ export async function restoreBackupFile(backupFile: File) {
+                 const result = await BackupPasswordDialog.show({
+                   validate: async ({ password, key: encryptionKey }) => {
+                     if (!password && !encryptionKey) return false;
+-                    await db.backup?.import(backup, {
++                    const skipped = await db.backup?.import(backup, {
+                       password,
+                       encryptionKey,
+                       attachmentsKey
+                     });
++                    skipped?.forEach((hash) => skippedAttachments.add(hash));
+                     cachedPassword = password;
+                     cachedKey = encryptionKey;
+                     return true;
+                   }
+                 });
+                 if (!result) break;
+               } else
+-                await db.backup?.import(backup, {
+-                  password: cachedPassword,
+-                  encryptionKey: cachedKey,
+-                  attachmentsKey
+-                });
++                (
++                  await db.backup?.import(backup, {
++                    password: cachedPassword,
++                    encryptionKey: cachedKey,
++                    attachmentsKey
++                  })
++                )?.forEach((hash) => skippedAttachments.add(hash));
+             } else {
+-              await db.backup?.import(backup, { attachmentsKey });
++              (await db.backup?.import(backup, { attachmentsKey }))?.forEach(
++                (hash) => skippedAttachments.add(hash)
++              );
+             }
+ 
+             report({
+@@ -345,7 +351,7 @@ export async function restoreBackupFile(backupFile: File) {
+           });
+ 
+           const attachment = await db.attachments.attachment(hash);
+-          if (!attachment) continue;
++          if (!attachment || skippedAttachments.has(hash)) continue;
+ 
+           await streamablefs.deleteFile(attachment.hash);
+           const handle = await streamablefs.createFile(
 ```
 
-**File**: `servers/themes/src/api.ts` (modified, +3/-9)
+**File**: `packages/core/__tests__/backup.test.ts` (added, +98/-0)
 ```diff
-@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
- import { z } from "zod";
- import { InstallsCounter } from "./constants";
- import { findTheme, getThemes, updateTotalInstalls } from "./orama";
--import { syncThemes } from "./sync";
- import { publicProcedure, router } from "./trpc";
- import { THEME_COMPATIBILITY_VERSION } from "@notesnook/theme";
- import { ThemeQuerySchema } from "./schemas";
-@@ -42,10 +41,9 @@ export const ThemesAPI = router({
-       if (!theme) return;
- 
-       if (userId) {
--        updateTotalInstalls(
--          theme,
--          await InstallsCounter.increment(theme.id, userId)
--        );
-+        InstallsCounter.increment(theme.id, userId)
-+          .then((totalInstalls) => updateTotalInstalls(theme.id, totalInstalls))
-+          .catch((e) => console.error("Failed to update total installs:", e));
-       }
-       return theme;
-     }),
-@@ -61,10 +59,6 @@ export const ThemesAPI = router({
-       const theme = await findTheme(id, compatibilityVersion);
-       if (theme && theme.version !== version) return theme;
-     }),
--  sync: publicProcedure.query(() => {
--    syncThemes();
--    return true;
--  }),
-   health: publicProcedure.query(() => {
-     return "Healthy";
-   })
-```
-
-**File**: `servers/themes/src/counter/kv.ts` (modified, +35/-18)
-```diff
-@@ -38,6 +38,13 @@ export class KVCounter {
- 
-   async increment(key: string, uid: string) {
-     return await this.mutex.runExclusive(async () => {
-+      if (!(key in this.installs)) {
-+        const installs = await readMulti(this.client, this.config, [key]);
-+        // writing without the existing set would overwrite it in KV
-+        if (!(key in installs))
-+          throw new Error(`Could not read installs for ${key}`);
-+        this.installs[key] = installs[key];
-+      }
-       const existing = this.installs[key] || [];
-       const installsSet = Array.from(new Set([...existing, uid]));
-       await write(this.client, this.config, key, installsSet);
-@@ -48,36 +55,46 @@ export class KVCounter {
- 
-   async counts(keys: string[]): Promise<Record<string, number>> {
-     const result: Record<string, number> = {};
--    const installs = await readMulti(this.client, this.config, keys);
--    for (const [key, value] of Object.entries(installs)) {
--      result[key] = value?.length ?? 0;
-+    // keys whose read failed keep their previously known installs
-+    this.installs = {
-+      ...this.installs,
-+      ...(await readMulti(this.client, this.config, keys))
-+    };
-+    for (const key of keys) {
-+      result[key] = this.installs[key]?.length ?? 0;
-     }
--    this.installs = installs;
-     return result;
-   }
- }
- 
-+const BULK_GET_LIMIT = 100;
- async function readMulti(
-   client: Cloudflare,
-   config: WorkersKVRESTConfig,
-   keys: string[]
- ): Promise<Record<string, string[] | null>> {
--  try {
--    const response = await client.kv.namespaces.bulkGet(config.namespaceId, {
--      account_id: config.cfAccountId,
--      keys,
--      type: "json",
--      withMetadata: false
--    });
--    const result: Record<string, string[]> = {};
--    for (const [key, value] of Object.entries(response?.values || {})) {
--      result[key] = value;
-+  const result: Record<string, string[] | null> = {};
-+  for (let i = 0; i < keys.length; i += BULK_GET_LIMIT) {
-+    const chunk = keys.slice(i, i + BULK_GET_LIMIT);
-+    try {
-+      const response = await client.kv.namespaces.bulkGet(config.namespaceId, {
-+        account_id: config.cfAccountId,
-+        keys: chunk,
-+        type: "json",
-+        withMetadata: false
-+      });
-+      const values = (response?.values || {}) as Record<
-+        string,
-+        string[] | null
-+      >;
-+      for (const key of chunk) {
-+        result[key] = values[key] ?? null;
-+      }
-+    } catch (e) {
-+      console.error("Failed to read installs from KV:", e);
-     }
--    return result;
--  } catch (e) {
--    console.error(e);
--    return {};
-   }
-+  return result;
- }
- 
- function write<T>(
-```
-
-**File**: `servers/themes/src/orama.ts` (modified, +25/-10)
-```diff
-@@ -16,13 +16,29 @@ GNU General Public License for more details.
- You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
--import { Orama, SearchParams, create, search, update } from "@orama/orama";
-+import {
-+  Orama,
-+  SearchParams,
-+  create,
-+  getByID,
-+  search,
-+  update
-+} from "@orama/orama";
- import { CompiledThemeDefinition, ThemeMetadata } from "./sync";
- import { ThemeQuerySchema } from "./schemas";
- 
- export let ThemesDatabase: Orama | null = null;
- export async function initializeDatabase(): Promise<Orama> {
--  ThemesDatabase = await create({
-+  ThemesDatabase = await createDatabase();
-+  return ThemesDatabase;
-+}
+@@ -0,0 +1,98 @@
++/*
++This file is part of the Notesnook project (https://notesnook.com/)
 +
-+export function setDatabase(db: Orama) {
-+  ThemesDatabase = db;
-+}
++Copyright (C) 2023 Streetwriters (Private) Limited
 +
-+export function createDatabase(): Promise<Orama> {
-+  return create({
-     schema: {
-       id: "string",
-       name: "string",
-@@ -35,7 +51,6 @@ export async function initializeDatabase(): Promise<Orama> {
-     },
-     id: "notesnook-themes"
-   });
--  return ThemesDatabase;
- }
- 
- export async function findTheme(
-@@ -51,15 +66,15 @@ export async function findTheme(
-       compatibilityVersion: { eq: compatibilityVersion }
-     }
-   });
--  return results.hits[0].document as CompiledThemeDefinition;
-+  return results.hits[0]?.document as CompiledThemeDefinition | undefined;
- }
- 
--export async function updateTotalInstalls(
--  theme: CompiledThemeDefinition,
--  totalInstalls: number
--) {
--  if (!ThemesDatabase) await initializeDatabase();
--  await update(ThemesDatabase!, theme.id, { ...theme, totalInstalls });
-+export async function updateTotalInstalls(id: string, totalInstalls: number) {
-+  const db = ThemesDatabase || (await initializeDatabase());
-+  // re-read so a theme updated by a sync isn't overwritten with a stale copy
-+  const theme = await getByID(db, id);
-+  if (!theme) return;
-+  await update(db, id, { ...theme, totalInstalls });
- }
- 
- export async function getThemes(query: (typeof ThemeQuerySchema)["_type"]) {
-```
-
-**File**: `servers/themes/src/schemas.ts` (modified, +2/-2)
-```diff
-@@ -29,7 +29,7 @@ export const ThemeQuerySchema = z.object({
-       })
-     )
-     .optional(),
--  limit: z.number(),
--  cursor: z.number().default(0),
-+  limit: z.number().int().min(1).max(100),
-+  cursor: z.number().int().min(0).default(0),
-   compatibilityVersion: z.number().default(THEME_COMPATIBILITY_VERSION)
- });
-```
-
-**File**: `servers/themes/src/secrets.ts` (modified, +1/-1)
-```diff
-@@ -35,6 +35,6 @@ export function readSecret(name: string): string | undefined {
-   if (value) return value;
-   const file = process.env[`${name}_FILE`];
-   if (file) {
--    return readFileSync(file, "utf-8");
-+    return readFileSync(file, "utf-8").trim();
-   }
- }
-```
-
-**File**: `servers/themes/src/server.ts` (modified, +10/-4)
-```diff
-@@ -31,10 +31,16 @@ const HOST = process.env.HOST || "localhost";
- server.listen(PORT, HOST);
- console.log(`Server started successfully on: http://${HOST}:${PORT}/`);
- 
--syncThemes();
--setInterval(() => {
--  syncThemes();
--}, 1000 * 60 * 60); // every hour
-+function sync(onlyIfChanged?: boolean) {
-+  syncThemes(onlyIfChanged).catch((e) =>
-+    console.error("Failed to sync themes:", e)
++This program is free software: you can redistribute it and/or modify
++it under the terms of the GNU General Public License as published by
++the Free Software Foundation, either version 3 of the License, or
++(at your option) any later version.
++
++This program is distributed in the hope that it will be useful,
++but WITHOUT ANY WARRANTY; without even the implied warranty of
++MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++GNU General Public License for more details.
++
++You should have received a copy of the GNU General Public License
++along with this program.  If not, see <http://www.gnu.org/licenses/>.
++*/
++
++
++import { expect, test } from "vitest";
++import { databaseTest, loginFakeUser } from "./utils";
++import Database from "../src/api/index.js";
++
++async function restoreWithDifferentKey(
++  db: Database,
++  local: { dateUploaded?: number; fileExists: boolean }
++) {
++  await loginFakeUser(db);
++
++  const hash = await db.attachments.save(
++    "iVBORw0KGgoAAAANSUhEUgAAAAEEAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
++    "image/png",
++    "test.png"
 +  );
++  if (!hash) throw new Error("Failed to create attachment");
++  const attachment = await db.attachments.attachment(hash);
++  if (!attachment) throw new Error("Failed to find attachment");
++  await db.attachments.collection.update([attachment.id], {
++    dateUploaded: local.dateUploaded,
++    chunkSize: 1
++  });
++  if (!local.fileExists) await db.fs().deleteFile(hash, true);
++
++  const attachmentsKey = await db.user?.getAttachmentsKey();
++  if (!attachmentsKey) throw new Error("Missing attachments key");
++  const backupKey = await db
++    .storage()
++    .encrypt(attachmentsKey, JSON.stringify({ iv: "a", salt: "b", key: "c" }));
++
++  const skipped = await (db.backup as any).migrateData(
++    [
++      {
++        ...attachment,
++        key: backupKey,
++        iv: "new-iv",
++        salt: "new-salt",
++        chunkSize: 4096,
++        dateUploaded: undefined
++      }
++    ],
++    6.0,
++    attachmentsKey
++  );
++
++  return {
++    skipped,
++    original: attachment,
++    restored: await db.attachments.attachment(hash)
++  };
 +}
-+sync();
-+// each replica polls on its own since a webhook would only reach one of them
-+setInterval(() => sync(true), 1000 * 60); // every minute
-+// full rebuild also refreshes install counts written by other replicas
-+setInterval(sync, 1000 * 60 * 60); // every hour
- 
- if (import.meta.hot) {
-   import.meta.hot.on("vite:beforeFullReload", () => {
++
++test("restoring a backup attachment with a different key should keep the uploaded local attachment", () =>
++  databaseTest().then(async (db) => {
++    const dateUploaded = Date.now();
++    const { skipped, original, restored } = await restoreWithDifferentKey(db, {
++      dateUploaded,
++      fileExists: true
++    });
++
++    expect(skipped).toEqual([original.hash]);
++    expect(restored?.key).toEqual(original.key);
++    expect(restored?.iv).toBe(original.iv);
++    expect(restored?.chunkSize).toBe(1);
++    expect(restored?.dateUploaded).toBe(dateUploaded);
++  }));
++
++test("restoring a backup attachment with a different key should adopt the backup key if local file is unavailable", () =>
++  databaseTest().then(async (db) => {
++    const { skipped, restored } = await restoreWithDifferentKey(db, {
++      fileExists: false
++    });
++
++    expect(skipped).toEqual([]);
++    expect(restored?.iv).toBe("new-iv");
++    expect(restored?.chunkSize).toBe(4096);
++    expect(restored?.dateUploaded).toBeFalsy();
++  }));
 ```
 
----
-
-### Incident Patch 3: `7b216d4c` (2026-10-26)
-**Commit Message**: theme(server): fix `undefined is not an object` crash
-
-**File**: `servers/themes/src/orama.ts` (modified, +1/-1)
+**File**: `packages/core/src/database/backup.ts` (modified, +18/-2)
 ```diff
-@@ -51,7 +51,7 @@ export async function findTheme(
-       compatibilityVersion: { eq: compatibilityVersion }
-     }
-   });
--  return results.hits[0].document as CompiledThemeDefinition;
-+  return results.hits[0]?.document as CompiledThemeDefinition | undefined;
- }
+@@ -519,7 +519,7 @@ export default class Backup {
+       : typeof data === "object"
+       ? Object.values(data)
+       : [];
+-    await this.migrateData(
++    return await this.migrateData(
+       normalizedData,
+       backup.version === 6.1 && isLegacyBackup(normalizedData)
+         ? 5.9
+@@ -561,6 +561,7 @@ export default class Backup {
+     attachmentsKey?: SerializedKey
+   ) {
+     const queue: Partial<Record<CollectionName, MaybeDeletedItem<Item>[]>> = {};
++    const skippedAttachments: string[] = [];
+     for (let item of data) {
+       // we do not want to restore deleted items
+       if (
+@@ -622,7 +623,17 @@ export default class Backup {
+           attachment.key.cipher === item.key.cipher &&
+           attachment.key.salt === item.key.salt;
  
- export async function updateTotalInstalls(
+-        if (attachmentsKey && !isSameKey) {
++        if (
++          attachmentsKey &&
++          !isSameKey &&
++          attachment &&
++          (attachment.dateUploaded ||
++            (await this.db.fs().exists(attachment.hash)))
++        ) {
++          // the server won't overwrite an uploaded file & other devices may have
++          // it cached, so we must keep the local key and file.
++          skippedAttachments.push(attachment.hash);
++        } else if (attachmentsKey && !isSameKey) {
+           const newKey = await this.db.attachments.encryptKey(
+             JSON.parse(
+               await this.db.storage().decrypt(attachmentsKey, item.key)
+@@ -633,6 +644,10 @@ export default class Backup {
+             attachment.iv = item.iv;
+             attachment.salt = item.salt;
+             attachment.size = item.size;
++            attachment.chunkSize = item.chunkSize;
++            attachment.alg = item.alg;
++            delete attachment.dateUploaded;
++            delete attachment.failed;
+           } else item.key = newKey;
+           delete item.dateUploaded;
+           delete item.failed;
+@@ -714,6 +729,7 @@ export default class Backup {
+ 
+       await collection.put(items as any[]);
+     }
++    return skippedAttachments;
+   }
+ 
+   private validate(backup: LegacyBackupFile | BackupFile) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #10602** (2026-10-30): web: prevent infinite re-render crash by decoupling scrollMargin from render-phase ref (@mohdsultan18)
 - **PR #10596** (2026-10-27): ci: run web, help & desktop previews on fork PRs (@thecodrr)
 - **PR #10592** (2026-10-26): Fix snap build and store upload (pin snapcraft 8.x, explicit plugs) (@thecodrr)
 - **PR #10591** (2026-10-26): Fix snap failing to launch (core24 snap build + desktop actions) (@thecodrr)
 - **PR #10588** (2026-10-26): web: bump version to 3.4.11 (@01zulfi)
 - **PR #10587** (2026-10-26): Theme Server improvements (@thecodrr)
-- **PR #10576** (2026-10-27): core: handle 5xx http error codes & retry after (@thecodrr)
 
 ---
 
@@ -1225,33 +1306,32 @@ Theme Server improvements
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. server(themes): fix sync and install count edge cases
+## X. core: fix attachment locked note check never firing (#10522)
 
 **RULE**:
-When implementing operations in `servers/themes/src/api.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in streetwriters/notesnook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/mobile/app/components/attachments/actions.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in streetwriters/notesnook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d2ff4316`: server(themes): fix sync and install count edge cases. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f5a5b93c`: core: fix attachment locked note check never firing (#10522). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `servers/themes/src/api.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/mobile/app/components/attachments/actions.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        InstallsCounter.increment(theme.id, userId)
-          .then((totalInstalls) => updateTotalInstalls(theme.id, totalInstalls))
-          .catch((e) => console.error("Failed to update total installs:", e));
+                ToastManager.error(
+                  e as Error,
+                  strings.failedToDelete(),
+                  "local"
+                );
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-        updateTotalInstalls(
-          theme,
-          await InstallsCounter.increment(theme.id, userId)
-        ).catch((e) => console.error("Failed to update total installs:", e));
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d2ff4316` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f5a5b93c` are properly handled with clean fallback behavior.
