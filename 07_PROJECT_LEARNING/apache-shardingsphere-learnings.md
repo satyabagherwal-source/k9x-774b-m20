@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source**: github ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
-> **Source Version**: `858b475a`  
+> **Source Version**: `7c0523a3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T04:25:24.725Z  
+> **Timestamp**: 2026-10-31T00:41:25.389Z  
 > **Learning ID**: `learn-github-apache-shardingsphere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T04:25:24.465Z  
+> **Harvest Timestamp**: 2026-10-31T00:41:25.381Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1450,16 +1450,15 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40417** (2026-10-29): **Fix database resolution for PREVIEW without USE**
+- **Issue #40425** (2026-10-30): **Upgrade Guava to 33.7.2-jre and reuse stream aggregation entry views**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > ### Summary Fix PREVIEW database resolution and unknown-database handling when no database is selected.  ### Result Review Result: Mergeable No blocking issues or recommended changes remain.  ### Evidence All 284 relevant tests and style checks passed. Two independent complete reviews, a defensive-code audit, and coordinator confirmation are complete.  ### Coverage All five authorized files and all 40 diff blocks were reviewed. CI was not reviewed; no live Proxy or database was started.
-  > Fixes #20998
+  > ### Summary  This PR upgrades to the [official Guava 33.7.2-jre release](https://github.com/google/guava/releases/tag/v33.7.2), which fixes CVE-2026-102554, and caches the keySet once per group for reuse during row aggregation and result backfill. No aggregation semantics changes were found, but this does not establish unchanged performance across all workloads.  ### Result  Review Result: Mergeable  No changes are required to resolve blocking issues within the reviewed code scope.  ### Evidence  - Aggregation units are still created eagerly per group. Iteration order, accumulation across rows, isolation between groups, derived aggregation and result backfill remain unchanged. - Projection indexes are bound before Map construction. No path was found that modifies hash-relevant key state during group processing. - The Checkstyle configuration is byte-for-byte identical to the original baseline, with no added exemptions. - A group containing R rows and A aggregation keys i
 
-- **Issue #40416** (2026-10-29): **Unify MCP payload JSON handling with JsonEngine**
+- **Issue #40424** (2026-10-30): **Reuse named swappers and prevent Shadow export mutations**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > ### Summary Ordinary MCP payload encoding and decoding now use JsonEngine. SDK transport and schema-validation mappers remain unchanged. Existing tests and new failure regressions protect exception conversion, error sanitization, and transport behavior.  ### Result Review Result: Mergeable No blocking issues or recommended changes remain.  ### Evidence Two independent reviews, coordinator verification, and review-session validation completed. Focused tests and scoped style checks passed.  ### Coverage Standalone local candidate based on 5bed7f8c79c, covering the complete eight-file change. This is a code-correctness assessment; CI was not reviewed.
+  > ### Summary  The PR reuses existing named conversion methods and removes default filling from Shadow YAML export. It preserves the initial export output and import defaults while preventing export side effects on input configuration, repeated exports, and runtime mappings. [Commit diff](https://github.com/apache/shardingsphere/commit/cb070f513d0b468f1791c1c09d1cdef6d5d4fd46)  ### Result  Review Result: Mergeable  No blocking issues requiring changes were found.  ### Evidence  - Names, fields, PRIMARY defaults, and invalid-strategy exceptions remain unchanged. - Regression tests cover unchanged input, stable repeated exports, explicit configuration, import defaults, and shared runtime mappings. - After verifying that the current commit and relevant inputs matched the checked candidate, passing results from 44 targeted tests, Spotless, Checkstyle, and Apache RAT were reused. - Two independent complete reviews and coordinator confirmation have been completed.  ### Coverag
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1476,412 +1475,312 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a3df40af` (2026-10-28)
-**Commit Message**: Fix OWASP database caching and nightly timeout (#40388)
+### Incident Patch 1: `723801c8` (2026-10-30)
+**Commit Message**: Fix PostgreSQL symbolic operator precedence and JSON aggregate parsing (#40384)
 
-**File**: `.github/workflows/nightly-check.yml` (modified, +20/-1)
+**File**: `parser/sql/engine/dialect/postgresql/src/main/antlr4/imports/postgresql/BaseRule.g4` (modified, +19/-11)
 ```diff
-@@ -164,10 +164,29 @@ jobs:
-     name: Check - OWASP
-     needs: global-environment
-     runs-on: ${{ needs.global-environment.outputs.GLOBAL_RUNS_ON }}
--    timeout-minutes: 40
-+    timeout-minutes: 90
-     steps:
-       - uses: actions/checkout@v7.0.1
-       - uses: ./.github/actions/setup-build-environment
-+      - name: Set OWASP Cache Key
-+        id: owasp-cache-key
-+        run: |
-+          version=$(sed -n 's/.*<dependency-check-maven\.version>\(.*\)<\/dependency-check-maven\.version>.*/\1/p' pom.xml)
-+          echo "prefix=${{ runner.os }}-owasp-${version}-" >> "$GITHUB_OUTPUT"
-+      - name: Restore OWASP Database
-+        id: owasp-cache
-+        uses: actions/cache/restore@v5.0.1
-+        with:
-+          path: ~/.m2/repository/org/owasp/dependency-check-data
-+          key: ${{ steps.owasp-cache-key.outputs.prefix }}${{ github.run_id }}-${{ github.run_attempt }}
-+          restore-keys: ${{ steps.owasp-cache-key.outputs.prefix }}
-+      - name: Update OWASP Database
-+        run: ./mvnw -N dependency-check:update-only -DnvdApiKey=${{ secrets.NIST_NVD_API_KEY }}
-+      - name: Save OWASP Database
-+        uses: actions/cache/save@v5.0.1
-+        with:
-+          path: ~/.m2/repository/org/owasp/dependency-check-data
-+          key: ${{ steps.owasp-cache.outputs.cache-primary-key }}
-       - name: Run OWASP Check
-         # https://nvd.nist.gov/developers/request-an-api-key
-         run: ./mvnw clean dependency-check:aggregate -DnvdApiKey=${{ secrets.NIST_NVD_API_KEY }}
+@@ -589,7 +589,7 @@ primaryKey
+     ;
+ 
+ andOperator
+-    : AND | AND_
++    : AND
+     ;
+ 
+ orOperator
+@@ -602,16 +602,20 @@ comparisonOperator
+ 
+ patternMatchingOperator
+     : LIKE
+-    | TILDE_TILDE_
+     | NOT LIKE
+-    | NOT_TILDE_TILDE_
+     | ILIKE
+-    | ILIKE_
+     | NOT ILIKE
+-    | NOT_ILIKE_
+     | SIMILAR TO
+     | NOT SIMILAR TO
+-    | TILDE_
++    | patternMatchingSymbol
++    ;
++
++patternMatchingSymbol
++    : TILDE_
++    | TILDE_TILDE_
++    | NOT_TILDE_TILDE_
++    | ILIKE_
++    | NOT_ILIKE_
+     | REGEX_NOT_MATCH_
+     | REGEX_MATCH_CASE_INSENSITIVE_
+     | REGEX_NOT_MATCH_CASE_INSENSITIVE_
+@@ -636,10 +640,8 @@ aExpr
+     | aExpr MOD_ aExpr
+     | aExpr CARET_ aExpr
+     | TILDE_ aExpr
+-    | aExpr AMPERSAND_ aExpr
+-    | aExpr VERTICAL_BAR_ aExpr
+-    | aExpr qualOp aExpr
+     | {QUESTION_ != _input.LA(1)}? qualOp aExpr
++    | aExpr qualOp aExpr
+     | aExpr qualOp
+     | aExpr comparisonOperator aExpr
+     | NOT aExpr
+@@ -690,8 +692,8 @@ bExpr
+     | bExpr (ASTERISK_ | SLASH_ | MOD_) bExpr
+     | bExpr (PLUS_ | MINUS_) bExpr
+     | TILDE_ bExpr
+-    | bExpr qualOp bExpr
+     | {QUESTION_ != _input.LA(1)}? qualOp bExpr
++    | bExpr qualOp bExpr
+     | bExpr qualOp
+     | bExpr IS DISTINCT FROM bExpr
+     | bExpr IS NOT DISTINCT FROM bExpr
+@@ -772,10 +774,16 @@ columnref
+ qualOp
+     : jsonOperator
+     | geometricOperator
++    | patternMatchingSymbol
++    | AND_
++    | AMPERSAND_
++    | VERTICAL_BAR_
+     | CUSTOM_OPERATOR_
+     | NOT_
+     | AT_
+     | DEQ_
++    | SAFE_EQ_
++    | BQ_
+     | OPERATOR LP_ anyOperator RP_
+     ;
+ 
+@@ -1127,7 +1135,7 @@ filterClause
+     ;
+ 
+ functionExprWindowless
+-    : funcApplication | functionExprCommonSubexpr
++    : funcApplication | functionExprCommonSubexpr | jsonAggregateFunction
+     ;
+ 
+ ordinality
 ```
 
----
-
-### Incident Patch 2: `858b475a` (2026-10-29)
-**Commit Message**: Fix database resolution for PREVIEW without USE (#40417)
-
-**File**: `infra/binder/core/src/main/java/org/apache/shardingsphere/infra/binder/engine/segment/dml/from/type/SimpleTableSegmentBinder.java` (modified, +1/-1)
+**File**: `parser/sql/engine/dialect/postgresql/src/main/java/org/apache/shardingsphere/sql/parser/engine/postgresql/visitor/statement/PostgreSQLStatementVisitor.java` (modified, +8/-4)
 ```diff
-@@ -134,7 +134,7 @@ private static IdentifierValue getDatabaseName(final SimpleTableSegment segment,
-         Optional<OwnerSegment> owner = dialectDatabaseMetaData.getSchemaOption().getDefaultSchema().isPresent() ? segment.getOwner().flatMap(OwnerSegment::getOwner) : segment.getOwner();
-         IdentifierValue result = ownerDatabaseName.orElseGet(() -> new IdentifierValue(owner.map(optional -> optional.getIdentifier().getValue()).orElse(binderContext.getCurrentDatabaseName())));
-         ShardingSpherePreconditions.checkNotNull(result.getValue(), NoDatabaseSelectedException::new);
--        if (binderContext.getHintValueContext().isSkipMetadataValidate() && !binderContext.getMetaData().containsDatabase(result)) {
-+        if (binderContext.getHintValueContext().isSkipMetadataValidate() && null != binderContext.getCurrentDatabaseName() && !binderContext.getMetaData().containsDatabase(result)) {
-             return new IdentifierValue(binderContext.getCurrentDatabaseName());
+@@ -462,7 +462,10 @@ private Optional<ASTNode> createAExprSegment(final AExprContext ctx) {
+             return Optional.of(createInSegment(ctx));
          }
-         ShardingSpherePreconditions.checkState(binderContext.getMetaData().containsDatabase(result), () -> new UnknownDatabaseException(result.getValue()));
-```
-
-**File**: `infra/binder/core/src/test/java/org/apache/shardingsphere/infra/binder/engine/segment/dml/from/type/SimpleTableSegmentBinderTest.java` (modified, +11/-0)
-```diff
-@@ -21,6 +21,7 @@
- import com.google.common.collect.LinkedHashMultimap;
- import com.google.common.collect.Multimap;
- import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
-+import org.apache.shardingsphere.database.exception.core.exception.syntax.database.UnknownDatabaseException;
- import org.apache.shardingsphere.infra.binder.engine.segment.dml.from.context.TableSegmentBinderContext;
- import org.apache.shardingsphere.infra.binder.engine.segment.dml.from.context.type.SimpleTableSegmentBinderContext;
- import org.apache.shardingsphere.infra.binder.engine.statement.SQLStatementBinderContext;
-@@ -81,6 +82,16 @@ void assertBindUnknownOwnerWithSkipMetadataValidate() {
-         assertTrue(((SimpleTableSegmentBinderContext) tableBinderContexts.values().iterator().next()).isSkipColumnBind());
-     }
-     
-+    @Test
-+    void assertBindUnknownOwnerWithoutCurrentDatabase() {
-+        SimpleTableSegment simpleTableSegment = new SimpleTableSegment(new TableNameSegment(11, 19, new IdentifierValue("foo_table")));
-+        simpleTableSegment.setOwner(new OwnerSegment(0, 9, new IdentifierValue("unknown_db")));
-+        HintValueContext hintValueContext = new HintValueContext();
-+        hintValueContext.setSkipMetadataValidate(true);
-+        SQLStatementBinderContext binderContext = new SQLStatementBinderContext(createMetaData(), null, hintValueContext, SelectStatement.builder().databaseType(databaseType).build());
-+        assertThrows(UnknownDatabaseException.class, () -> SimpleTableSegmentBinder.bind(simpleTableSegment, binderContext, LinkedHashMultimap.create()));
-+    }
-+    
-     @Test
-     void assertBindWithDBLinkContainsDBLink() {
-         SimpleTableSegment simpleTableSegment = new SimpleTableSegment(new TableNameSegment(0, 10, new IdentifierValue("t_not_exists")));
-```
-
-**File**: `infra/distsql-handler/src/main/java/org/apache/shardingsphere/distsql/handler/executor/preview/PreviewExecutor.java` (modified, +9/-9)
-```diff
-@@ -21,7 +21,6 @@
- import lombok.Setter;
- import org.apache.shardingsphere.distsql.handler.context.DistSQLConnectionContext;
- import org.apache.shardingsphere.distsql.handler.executor.aware.DistSQLExecutorConnectionContextAware;
--import org.apache.shardingsphere.distsql.handler.executor.aware.DistSQLExecutorDatabaseAware;
- import org.apache.shardingsphere.distsql.handler.executor.preview.spi.PreviewExecutionUnitGenerator;
- import org.apache.shardingsphere.distsql.handler.executor.spi.query.DistSQLQueryExecutor;
- import org.apache.shardingsphere.distsql.statement.type.rul.sql.PreviewStatement;
-@@ -55,9 +54,7 @@
-  * Preview executor.
-  */
- @Setter
--public final class PreviewExecutor implements DistSQLQueryExecutor<PreviewStatement>, DistSQLExecutorDatabaseAware, DistSQLExecutorConnectionContextAware {
--    
--    private ShardingSphereDatabase database;
-+public final class PreviewExecutor implements DistSQLQueryExecutor<PreviewStatement>, DistSQLExecutorConnectionContextAware {
-     
-     private DistSQLConnectionContext connectionContext;
-     
-@@ -70,19 +67,21 @@ public Collection<String> getColumnNames(final PreviewStatement sqlStatement) {
-     public Collection<LocalDataQueryResultRow> getRows(final PreviewStatement sqlStatement, final ContextManager contextManager) {
-         ShardingSphereMetaData metaData = contextManager.getMetaDataContexts().getMetaData();
-         String toBePreviewedSQL = sqlStatement.getSql();
--        SQLStatement toBePreviewedStatement = metaData.getGlobalRuleMetaData().getSingleRule(SQLParserRule.class).getSQLParserEngine(database.getProtocolType()).parse(toBePreviewedSQL, false);
-+        SQLStatement toBePreviewedStatement =
-+                metaData.getGlobalRuleMetaData().getSingleRule(SQLParserRule.class).getSQLParserEngine(connectionContext.getProtocolType()).parse(toBePreviewedSQL, false);
-         HintValueContext hintValueContext = connectionContext.getQueryContext().getHintValueContext();
-         hintValueContext.setSkipMetadataValidate(true);
-         String currentDatabaseName = connectionContext.getQueryContext().getConnectionContext().getCurrentDatabaseName().orElse(null);
-         SQLStatementContext toBePreviewedStatementContext = new SQLBindEngine(metaData, currentDatabaseName, hintValueContext).bind(toBePreviewedStatement);
--        QueryContext queryContext = new QueryContext(
--                toBePreviewedStatementContext, toBePreviewedSQL, Collections.emptyList(), hintValueContext, connectionContext.getQueryContext().getConnectionContext(), metaData);
-         if (toBePreviewedStatementContext.getSqlStatement().getAttributes().findAttribute(CursorSQLStatementAttribute.class).isPresent()
-                 && toBePreviewedStatementContext instanceof CursorHeldSQLStatementContext) {
-             setUpCursorDefinition((CursorHeldSQLStatementContext) toBePreviewedStatementContext);
+         if (null != ctx.patternMatchingOperator()) {
+-            return Optional.of(createPatternMatchingOperationSegment(ctx));
++            return Optional.of(createPatternMatchingOperationSegment(ctx, ctx.patternMatchingOperator()));
++        }
++        if (null != ctx.qualOp() && null != ctx.qualOp().patternMatchingSymbol() && null != ctx.aExpr(1)) {
++            return Optional.of(createPatternMatchingOperationSegment(ctx, ctx.qualOp()));
          }
-+        QueryContext queryContext = new QueryContext(
-+                toBePreviewedStatementContext, toBePreviewedSQL, Collections.emptyList(), hintValueContext, connectionContext.getQueryContext().getConnectionContext(), metaData);
-+        ShardingSphereDatabase database = queryContext.getUsedDatabaseNames().size() > 1 ? contextManager.getDatabase(currentDatabaseName) : queryContext.getUsedDatabase();
-         ShardingSpherePreconditions.checkState(database.isComplete(), () -> new EmptyRuleException(database.getName()));
--        Collection<ExecutionUnit> executionUnits = getExecutionUnits(contextManager, metaData, queryContext);
-+        Collection<ExecutionUnit> executionUnits = getExecutionUnits(contextManager, metaData, queryContext, database);
-         return executionUnits.stream().map(each -> new LocalDataQueryResultRow(each.getDataSourceName(), each.getSqlUnit().getSql())).collect(Collectors.toList());
+         if (null != ctx.subqueryOp() && (null != ctx.subqueryOp().LIKE() || null != ctx.subqueryOp().ILIKE())) {
+             return Optional.of(createQuantifiedPatternMatchingOperationSegment(ctx));
+@@ -539,14 +542,15 @@ private Optional<String> findBinaryOperator(final AExprContext ctx) {
+         if (null != ctx.SLASH_()) {
+             return Optional.of(ctx.SLASH_().getText());
+         }
+-        if (null != ctx.qualOp() && (null != ctx.qualOp().CUSTOM_OPERATOR_() || null != ctx.qualOp().OPERATOR())) {
++        if (null != ctx.qualOp() && (null != ctx.qualOp().CUSTOM_OPERATOR_() || null != ctx.qualOp().OPERATOR() || null != ctx.qualOp().SAFE_EQ_() || null != ctx.qualOp().BQ_()
++                || null != ctx.qualOp().AND_())) {
+             return Optional.of(ctx.qualOp().getText());
+         }
+         return Optional.empty();
      }
      
-@@ -97,7 +96,8 @@ private void setUpCursorDefinition(final CursorHeldSQLStatementContext toBePrevi
-         toBePreviewedStatementContext.setCursorStatementContext(cursorStatementContext);
-     }
-     
--    private Collection<ExecutionUnit> getExecutionUnits(final ContextManager contextManager, final ShardingSphereMetaData metaData, final QueryContext queryContext) {
-+    private Collection<ExecutionUnit> getExecutionUnits(final ContextManager contextManager, final ShardingSphereMetaData metaData, final QueryContext queryContext,
-+                                                        final ShardingSphereDatabase database) {
-         for (PreviewExecutionUnitGenerator each : ShardingSphereServiceLoader.getServiceInstances(PreviewExecutionUnitGenerator.class)) {
-             Optional<Collection<ExecutionUnit>> result = each.generate(database, queryContext, contextManager, connectionContext);
-             if (result.isPresent()) {
+-    private BinaryOperationExpression createPatternMatchingOperationSegment(final AExprContext ctx) {
+-        String operator = getOriginalText(ctx.patternMatchingOperator()).toUpperCase();
++    private BinaryOperationExpression createPatternMatchingOperationSegment(final AExprContext ctx, final ParserRuleContext operatorContext) {
++        String operator = getOriginalText(operatorContext).toUpperCase();
+         ExpressionSegment left = (ExpressionSegment) visit(ctx.aExpr(0));
+         ListExpression right = new ListExpression(ctx.aExpr(1).start.getStartIndex(), ctx.aExpr().get(ctx.aExpr().size() - 1).stop.getStopIndex());
+         for (int i = 1; i < ctx.aExpr().size(); i++) {
 ```
 
-**File**: `proxy/backend/core/src/test/java/org/apache/shardingsphere/proxy/backend/handler/distsql/DistSQLQueryProxyBackendHandlerTest.java` (modified, +53/-0)
+**File**: `parser/sql/engine/dialect/postgresql/src/main/java/org/apache/shardingsphere/sql/parser/engine/postgresql/visitor/statement/type/PostgreSQLDDLStatementVisitor.java` (modified, +3/-0)
 ```diff
-@@ -25,8 +25,14 @@
- import org.apache.shardingsphere.distsql.statement.type.ral.queryable.QueryableRALStatement;
- import org.apache.shardingsphere.distsql.statement.type.ral.queryable.export.ExportDatabaseConfigurationStatement;
- import org.apache.shardingsphere.distsql.statement.type.ral.queryable.show.ShowTableMetaDataStatement;
-+import org.apache.shardingsphere.distsql.statement.type.rul.sql.PreviewStatement;
- import org.apache.shardingsphere.infra.config.mode.ModeConfiguration;
- import org.apache.shardingsphere.infra.config.props.ConfigurationProperties;
-+import org.apache.shardingsphere.infra.connection.kernel.KernelProcessor;
-+import org.apache.shardingsphere.infra.executor.sql.context.ExecutionContext;
-+import org.apache.shardingsphere.infra.executor.sql.context.ExecutionUnit;
-+import org.apache.shardingsphere.infra.executor.sql.context.SQLUnit;
-+import org.apache.shardingsphere.infra.hint.HintValueContext;
- import org.apache.shardingsphere.infra.instance.ComputeNodeInstanceContext;
- import org.apache.shardingsphere.infra.merge.result.impl.local.LocalDataQueryResultRow;
- import org.apache.shardingsphere.infra.metadata.ShardingSphereMetaData;
-@@ -38,19 +44,27 @@
- import org.apache.shardingsphere.infra.metadata.database.schema.model.ShardingSphereSchema;
- import org.apache.shardingsphere.infra.metadata.database.schema.model.ShardingSphereTable;
- import org.apache.shardingsphere.infra.metadata.statistics.ShardingSphereStatistics;
-+import org.apache.shardingsphere.infra.route.context.RouteContext;
-+import org.apache.shardingsphere.infra.session.connection.ConnectionContext;
-+import org.apache.shardingsphere.infra.session.query.QueryContext;
- import org.apache.shardingsphere.infra.spi.exception.ServiceProviderNotFoundException;
- import org.apache.shardingsphere.infra.spi.type.typed.TypedSPILoader;
- import org.apache.shardingsphere.mode.manager.ContextManager;
- import org.apache.shardingsphere.mode.metadata.MetaDataContexts;
- import org.apache.shardingsphere.mode.spi.repository.PersistRepository;
-+import org.apache.shardingsphere.parser.rule.SQLParserRule;
-+import org.apache.shardingsphere.parser.rule.builder.DefaultSQLParserRuleConfigurationBuilder;
-+import org.apache.shardingsphere.proxy.backend.distsql.DistSQLStatementContext;
- import org.apache.shardingsphere.proxy.backend.response.data.QueryResponseRow;
- import org.apache.shardingsphere.proxy.backend.response.header.query.QueryResponseHeader;
- import org.apache.shardingsphere.proxy.backend.session.ConnectionSession;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dal.FromDatabaseSegment;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.generic.DatabaseSegment;
- import org.apache.shardingsphere.sql.parser.statement.core.statement.attribute.SQLStatementAttributes;
- import org.apache.shardingsphere.sql.parser.statement.core.value.identifier.IdentifierValue;
-+import org.apache.shardingsphere.sqlfederation.engine.SQLFederationEngine;
- import org.junit.jupiter.api.Test;
-+import org.mockito.MockedConstruction;
- import org.mockito.MockedStatic;
- 
- import java.sql.SQLException;
-@@ -65,8 +79,10 @@
- import static org.junit.jupiter.api.Assertions.assertFalse;
- import static org.junit.jupiter.api.Assertions.assertThrows;
- import static org.junit.jupiter.api.Assertions.assertTrue;
-+import static org.mockito.ArgumentMatchers.any;
- import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
- import static org.mockito.Mockito.mock;
-+import static org.mockito.Mockito.mockConstruction;
- import static org.mockito.Mockito.mockStatic;
- import static org.mockito.Mockito.when;
- 
-@@ -110,6 +126,43 @@ void assertExecute() {
-         assertDoesNotThrow(() -> new DistSQLQueryProxyBackendHandler(createSqlStatement(), mock(), mock(ConnectionSession.class, RETURNS_DEEP_STUBS), contextManager).execute());
-     }
+@@ -812,6 +812,9 @@ private void appendIndexExpressionColumns(final ParseTree expression, final Coll
      
-+    @Test
-+    void assertExecutePreviewWithQualifiedTableAndNoDatabase() throws SQLException {
-+        DatabaseType mysqlDatabaseType = TypedSPILoader.getService(DatabaseType.class, "MySQL");
-+        ShardingSphereDatabase database = mock(ShardingSphereDatabase.class);
-+        when(database.getName()).thenReturn("foo_db");
-+        when(database.isComplete()).thenReturn(true);
-+        when(database.getRuleMetaData()).thenReturn(new RuleMetaData(Collections.emptyList()));
-+        when(database.getDefaultSchemaName()).thenReturn("foo_db");
-+        when(database.getSchema(any(IdentifierValue.class))).thenReturn(new ShardingSphereSchema("foo_db", mysqlDatabaseType));
-+        ShardingSphereMetaData metaData = new ShardingSphereMetaData(Collections.singleton(database), mock(),
-+                new RuleMetaData(Collections.singleton(new SQLParserRule(new DefaultSQLParserRuleConfigurationBuilder().build()))), new ConfigurationProperties(new Properties()));
-+        ContextManager contextManager = mock(ContextManager.class, RETURNS_DEEP_STUBS);
-+        when(contextManager.getMetaDataContexts().getMetaData()).thenReturn(metaData);
-+    
+     @Override
+     public ASTNode visitFunctionExprWindowless(final FunctionExprWindowlessContext ctx) {
++        if (null != ctx.jsonAggregateFunction()) {
++            return visit(ctx.jsonAggregateFunction());
++        }
+         if (null == ctx.funcApplication()) {
+             return visit(ctx.functionExprCommonSubexpr());
+         }
 ```
 
-**File**: `proxy/backend/core/src/test/java/org/apache/shardingsphere/proxy/backend/handler/distsql/rul/PreviewExecutorTest.java` (modified, +96/-16)
+**File**: `test/it/parser/src/main/resources/case/ddl/create-index.xml` (modified, +15/-0)
 ```diff
-@@ -18,6 +18,8 @@
- package org.apache.shardingsphere.proxy.backend.handler.distsql.rul;
- 
- import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
-+import org.apache.shardingsphere.database.exception.core.exception.syntax.database.NoDatabaseSelectedException;
-+import org.apache.shardingsphere.database.exception.core.exception.syntax.database.UnknownDatabaseException;
- import org.apache.shardingsphere.database.exception.core.exception.syntax.sql.DialectSQLParsingException;
- import org.apache.shardingsphere.distsql.handler.context.DistSQLConnectionContext;
- import org.apache.shardingsphere.distsql.handler.executor.preview.PreviewExecutor;
-@@ -49,6 +51,7 @@
- import org.apache.shardingsphere.infra.metadata.database.resource.node.StorageNode;
- import org.apache.shardingsphere.infra.metadata.database.resource.unit.StorageUnit;
- import org.apache.shardingsphere.infra.metadata.database.rule.RuleMetaData;
-+import org.apache.shardingsphere.infra.metadata.database.schema.model.ShardingSphereSchema;
- import org.apache.shardingsphere.infra.route.context.RouteContext;
- import org.apache.shardingsphere.infra.rule.ShardingSphereRule;
- import org.apache.shardingsphere.infra.session.connection.ConnectionContext;
-@@ -66,6 +69,8 @@
- import org.apache.shardingsphere.sqlfederation.engine.SQLFederationEngine;
- import org.junit.jupiter.api.BeforeEach;
- import org.junit.jupiter.api.Test;
-+import org.junit.jupiter.params.ParameterizedTest;
-+import org.junit.jupiter.params.provider.CsvSource;
- import org.mockito.MockedConstruction;
- import org.mockito.invocation.InvocationOnMock;
- 
-@@ -83,7 +88,9 @@
- import java.util.concurrent.atomic.AtomicReference;
- 
- import static org.hamcrest.MatcherAssert.assertThat;
-+import static org.hamcrest.Matchers.containsInAnyOrder;
- import static org.hamcrest.Matchers.is;
-+import static org.hamcrest.Matchers.sameInstance;
- import static org.junit.jupiter.api.Assertions.assertNull;
- import static org.junit.jupiter.api.Assertions.assertThrows;
- import static org.junit.jupiter.api.Assertions.assertTrue;
-@@ -102,16 +109,21 @@ class PreviewExecutorTest {
-     
-     private ContextManager contextManager;
-     
-+    private ConnectionContext connectionContext;
-+    
-     @BeforeEach
-     void setUp() {
--        contextManager = mockContextManager();
-+        contextManager = mockContextManager(mockCompleteDatabase());
-+        connectionContext = new ConnectionContext(Collections::emptyList);
-+        connectionContext.setCurrentDatabaseName("foo_db");
-+        executor.setConnectionContext(mockConnectionContext(new HintValueContext(), connectionContext, mock(DatabaseConnectionManager.class)));
-     }
-     
--    private ContextManager mockContextManager() {
-+    private ContextManager mockContextManager(final ShardingSphereDatabase... databases) {
-         ContextManager result = mock(ContextManager.class, RETURNS_DEEP_STUBS);
-         Collection<ShardingSphereRule> rules = Collections.singleton(new SQLParserRule(new DefaultSQLParserRuleConfigurationBuilder().build()));
--        when(result.getMetaDataContexts().getMetaData()).thenReturn(
--                new ShardingSphereMetaData(Collections.emptyList(), mock(), new RuleMetaData(rules), new ConfigurationProperties(new Properties())));
-+        ShardingSphereMetaData metaData = new ShardingSphereMetaData(Arrays.asList(databases), mock(), new RuleMetaData(rules), new ConfigurationProperties(new Properties()));
-+        when(result.getMetaDataContexts().getMetaData()).thenReturn(metaData);
-         return result;
-     }
-     
-@@ -122,34 +134,100 @@ void assertGetColumnNames() {
-     
-     @Test
-     void assertGetRowsWithInvalidSQL() {
--        ShardingSphereDatabase database = mock(ShardingSphereDatabase.class);
--        when(database.getProtocolType()).thenReturn(databaseType);
--        executor.setDatabase(database);
-         assertThrows(DialectSQLParsingException.class, () -> executor.getRows(new PreviewStatement("invalid sql"), contextManager));
-     }
-     
-     @Test
-     void assertGetRowsWithIncompleteDatabase() {
-         ShardingSphereDatabase database = mock(ShardingSphereDatabase.class);
--        when(database.getProtocolType()).thenReturn(databaseType);
-         when(database.getName()).thenReturn("foo_db");
--        executor.setDatabase(database);
-+        when(database.getRuleMetaData()).thenReturn(new RuleMetaData(Collections.emptyList()));
-+        contextManager = mockContextManager(database);
-         HintValueContext hintValueContext = new HintValueContext();
--        executor.setConnectionContext(mockConnectionContext(hintValueContext, new ConnectionContext(Collections::emptyList), mock(DatabaseConnectionManager.class)));
-+        executor.setConnectionContext(mockConnectionContext(hintValueContext, connectionContext, mock(DatabaseConnectionManager.class)));
-         assertThrows(EmptyRuleException.class, () -> executor.getRows(new PreviewStatement("SELECT 1"), contextManager));
-         assertTrue(hintValueContext.isS
+@@ -566,4 +566,19 @@
+         <index name="idx" start-index="20" stop-index="22" />
+         <column name="a" start-index="38" stop-index="38" />
+     </create-index>
++    <create-index sql-case-id="create_index_json_objectagg_pg">
++        <table>
++            <simple-table name="t" start-index="19" stop-index="19" />
++        </table>
++        <index name="ix" start-index="13" stop-index="14" />
++        <column name="a" start-index="37" stop-index="37" />
++        <column name="b" start-index="40" stop-index="40" />
++    </create-index>
++    <create-index sql-case-id="create_index_json_arrayagg_pg">
++        <table>
++            <simple-table name="t" start-index="19" stop-index="19" />
++        </table>
++        <index name="ix" start-index="13" stop-index="14" />
++        <column name="a" start-index="36" stop-index="36" />
++    </create-index>
+ </sql-parser-test-cases>
 ```
 
----
-
-### Incident Patch 3: `71b9c4ca` (2026-10-29)
-**Commit Message**: Upgrade Bouncy Castle BOM and fix Proxy TLS certificate generation (#40400)
-
-**File**: `distribution/proxy/src/main/release-docs/LICENSE` (modified, +4/-4)
+**File**: `test/it/parser/src/main/resources/case/dml/select.xml` (modified, +445/-0)
 ```diff
-@@ -355,10 +355,10 @@ MIT licenses
- The following components are provided under the MIT License. See project link for details.
- The text of each license is also included at licenses/LICENSE-[project].txt.
- 
--    bcpkix-jdk18on 1.84: https://www.bouncycastle.org, MIT
--    bcprov-jdk18on 1.84: https://www.bouncycastle.org, MIT
--    bctls-jdk18on 1.84: https://www.bouncycastle.org, MIT
--    bcutil-jdk18on 1.84: https://www.bouncycastle.org, MIT
-+    bcpkix-jdk18on 1.86: https://www.bouncycastle.org, MIT
-+    bcprov-jdk18on 1.86: https://www.bouncycastle.org, MIT
-+    bctls-jdk18on 1.86.2: https://www.bouncycastle.org, MIT
-+    bcutil-jdk18on 1.86: https://www.bouncycastle.org, MIT
-     checker-qual 3.39.0: https://github.com/typetools/checker-framework/blob/master/checker-qual, MIT
-     jul-to-slf4j 2.0.17: https://www.slf4j.org, MIT
-     slf4j-api 2.0.17: https://www.slf4j.org, MIT
+@@ -16299,4 +16299,449 @@
+             <column-projection name="order_id" alias="COMMENT" start-index="7" stop-index="22" />
+         </projections>
+     </select>
++    <select sql-case-id="select_operator_prefix_aliases_pg">
++        <from>
++            <simple-table name="foo_table" start-index="56" stop-index="64" />
++        </from>
++        <projections start-index="7" stop-index="49">
++            <expression-projection text="~~a" start-index="7" stop-index="9">
++                <expr>
++                    <unary-operation-expression start-index="7" stop-index="9">
++                        <operator>~~</operator>
++                        <expr>
++                            <column name="a" start-index="9" stop-index="9" />
++                        </expr>
++                    </unary-operation-expression>
++                </expr>
++            </expression-projection>
++            <expression-projection text="!~~a" start-index="12" stop-index="15">
++                <expr>
++                    <unary-operation-expression start-index="12" stop-index="15">
++                        <operator>!~~</operator>
++                        <expr>
++                            <column name="a" start-index="15" stop-index="15" />
++                        </expr>
++                    </unary-operation-expression>
++                </expr>
++            </expression-projection>
++            <expression-projection text="~~*a" start-index="18" stop-index="21">
++                <expr>
++                    <unary-operation-expression start-index="18" stop-index="21">
++                        <operator>~~*</operator>
++                        <expr>
++                            <column name="a" start-index="21" stop-index="21" />
++                        </expr>
++                    </unary-operation-expression>
++                </expr>
++            </expression-projection>
++            <expression-projection text="!~~*a" start-index="24" stop-index="28">
++                <expr>
++                    <unary-operation-expression start-index="24" stop-index="28">
++                        <operator>!~~*</operator>
++                        <expr>
++                            <column name="a" start-index="28" stop-index="28" />
++                        </expr>
++                    </unary-operation-expression>
++                </expr>
++            </expression-projection>
++            <expression-projection text="&amp;&amp;a" start-index="31" stop-index="33">
++                <expr>
++                    <unary-operation-expression start-index="31" stop-index="33">
++                        <operator>&amp;&amp;</operator>
++                        <expr>
++                            <column name="a" start-index="33" stop-index="33" />
++                        </expr>
++                    </unary-operation-expression>
++                </expr>
++            </expression-projection>
++            <expression-projection text="~*a" start-index="36" stop-index="38">
++                <expr>
++                    <unary-operation-expression start-index="36" stop-index="38">
++                        <operator>~*</operator>
++                        <expr>
++                            <column name="a" start-index="38" stop-index="38" />
++                        </expr>
++                    </unary-operation-expression>
++                </expr>
++            </expression-projection>
++            <expression-projection text="!~a" start-index="41" stop-index="43">
++                <expr>
++                    <unary-operation-expression start-index="41" stop-index="43">
++                        <operator>!~</operator>
++                        <expr>
++                            <column name="a" start-index="43" stop-index="43" />
++                        </expr>
++                    </unary-operation-expression>
++                </expr>
++            </expression-projection>
++            <expression-projection text="!~*a" start-index="46" stop-index="49">
++                <expr>
++                    <unary-operation-expression start-index="46" stop-index="49">
++                        <operator>!~*</operator>
++                        <expr>
++                            <column name="a" start-index="49" stop-index="49" />
++                        </expr>
++                    </unary-operation-expression>
++                </expr>
++            </expression-projection>
++        </projections>
++    </select>
++    <select sql-case-id="select_fixed_generic_operator_symbols_pg">
++        <from>
++            <simple-table name="foo_table" start-index="28" stop-index="36" />
++        </from>
++        <projections start-index="7" stop-index="21">
++            <expression-projection text="a == b" start-index="7" stop-index="12">
++                <expr>
++                    <common-expression text="a == b" start-index="7" stop-index="12">
++                        <children>
++                            <expression>
++                                <column name="a" star
 ```
 
-**File**: `pom.xml` (modified, +5/-8)
+**File**: `test/it/parser/src/main/resources/sql/supported/ddl/create-index.xml` (modified, +2/-0)
 ```diff
-@@ -107,7 +107,7 @@
-         <bval.version>2.0.6</bval.version>
-         
-         <netty.version>4.2.19.Final</netty.version>
--        <bouncycastle.version>1.84</bouncycastle.version>
-+        <bouncycastle-bom.version>1.86.2</bouncycastle-bom.version>
-         
-         <curator.version>5.7.0</curator.version>
-         <zookeeper.version>3.9.6</zookeeper.version>
-@@ -436,13 +436,10 @@
-             
-             <dependency>
-                 <groupId>org.bouncycastle</groupId>
--                <artifactId>bcpkix-jdk18on</artifactId>
--                <version>${bouncycastle.version}</version>
--            </dependency>
--            <dependency>
--                <groupId>org.bouncycastle</groupId>
--                <artifactId>bctls-jdk18on</artifactId>
--                <version>${bouncycastle.version}</version>
-+                <artifactId>bc-jdk18on-bom</artifactId>
-+                <version>${bouncycastle-bom.version}</version>
-+                <type>pom</type>
-+                <scope>import</scope>
-             </dependency>
-             
-             <dependency>
+@@ -111,4 +111,6 @@
+     <sql-case id="create_index_array_subscript_function_pg" value="CREATE INDEX foo_idx ON foo_table (abs(a[1]))" db-types="PostgreSQL" case-types="Literal" />
+     <sql-case id="create_index_nulls_distinct_pg" value="CREATE UNIQUE INDEX idx ON foo_table (a) INCLUDE (b) NULLS DISTINCT" db-types="PostgreSQL" />
+     <sql-case id="create_index_nulls_not_distinct_pg" value="CREATE UNIQUE INDEX idx ON foo_table (a) NULLS NOT DISTINCT" db-types="PostgreSQL" />
++    <sql-case id="create_index_json_objectagg_pg" value="CREATE INDEX ix ON t (JSON_OBJECTAGG(a: b ABSENT ON NULL WITH UNIQUE KEYS RETURNING jsonb))" db-types="PostgreSQL" case-types="Literal" />
++    <sql-case id="create_index_json_arrayagg_pg" value="CREATE INDEX ix ON t (JSON_ARRAYAGG(a RETURNING json))" db-types="PostgreSQL" case-types="Literal" />
+ </sql-cases>
 ```
 
-**File**: `proxy/frontend/core/src/main/java/org/apache/shardingsphere/proxy/frontend/ssl/SSLUtils.java` (modified, +1/-2)
+**File**: `test/it/parser/src/main/resources/sql/supported/dml/select.xml` (modified, +10/-0)
 ```diff
-@@ -77,8 +77,7 @@ public static KeyPair generateRSAKeyPair() {
-     public static X509Certificate generateSelfSignedX509Certificate(final KeyPair keyPair) {
-         long now = System.currentTimeMillis();
-         Date startDate = Date.from(LocalDateTime.ofInstant(Instant.ofEpochMilli(now - TimeUnit.DAYS.toMillis(1L)), ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant());
--        X500Name dnName = new X500NameBuilder(BCStyle.INSTANCE)
--                .addRDN(BCStyle.CN, "").addRDN(BCStyle.OU, "").addRDN(BCStyle.O, "").addRDN(BCStyle.L, "").addRDN(BCStyle.ST, "").addRDN(BCStyle.C, "").addRDN(BCStyle.E, "").build();
-+        X500Name dnName = new X500NameBuilder(BCStyle.INSTANCE).addRDN(BCStyle.CN, "").addRDN(BCStyle.O, "ShardingSphere").build();
-         BigInteger certSerialNumber = new BigInteger(Long.toString(now));
-         Date endDate = Date.from(
-                 LocalDateTime.ofInstant(Instant.ofEpochMilli(startDate.getTime() + TimeUnit.DAYS.toMillis(365L * 100L)), ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant());
-```
-
-**File**: `proxy/frontend/core/src/test/java/org/apache/shardingsphere/proxy/frontend/ssl/SSLUtilsTest.java` (modified, +3/-0)
-```diff
-@@ -29,6 +29,7 @@
- 
- import static org.hamcrest.MatcherAssert.assertThat;
- import static org.hamcrest.Matchers.is;
-+import static org.junit.jupiter.api.Assertions.assertNull;
- import static org.junit.jupiter.api.Assertions.assertThrows;
- 
- class SSLUtilsTest {
-@@ -46,6 +47,8 @@ void assertGenerateKeyPair() {
-     void assertGenerateSelfSignedX509Certificate() throws GeneralSecurityException {
-         KeyPair keyPair = SSLUtils.generateRSAKeyPair();
-         X509Certificate actual = SSLUtils.generateSelfSignedX509Certificate(keyPair);
-+        assertThat(actual.getSubjectX500Principal().getName(), is("O=ShardingSphere,CN="));
-+        assertNull(actual.getSubjectAlternativeNames());
-         actual.checkValidity(new Date());
-         actual.checkValidity(Date.from(Instant.ofEpochMilli(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365L * 99L))));
-         actual.verify(keyPair.getPublic());
+@@ -651,4 +651,14 @@
+     <sql-case id="select_key_alias_without_as_firebird" value="SELECT order_id KEY FROM t_order" db-types="Firebird" />
+     <sql-case id="select_text_alias_without_as_firebird" value="SELECT order_id TEXT FROM t_order" db-types="Firebird" />
+     <sql-case id="select_comment_alias_without_as_firebird" value="SELECT order_id COMMENT FROM t_order" db-types="Firebird" />
++    <sql-case id="select_operator_prefix_aliases_pg" value="SELECT ~~a, !~~a, ~~*a, !~~*a, &amp;&amp;a, ~*a, !~a, !~*a FROM foo_table" db-types="PostgreSQL" case-types="Literal" />
++    <sql-case id="select_fixed_generic_operator_symbols_pg" value="SELECT a == b, a &lt;=&gt; b FROM foo_table" db-types="PostgreSQL" case-types="Literal" />
++    <sql-case id="select_operator_backtick_pg" value="SELECT a ` b, `a FROM foo_table" db-types="PostgreSQL" case-types="Literal" />
++    <sql-case id="select_prefix_alias_parameter_precedence_pg" value="SELECT ~~$1 + $2" db-types="PostgreSQL" case-types="Placeholder" />
++    <sql-case id="select_json_arrayagg_function_table_pg" value="SELECT * FROM JSON_ARRAYAGG(1 RETURNING json) AS agg" db-types="PostgreSQL" />
++    <sql-case id="select_prefix_alias_between_pg" value="SELECT 1 BETWEEN ~~$1 + $2 AND 3" db-types="PostgreSQL" case-types="Placeholder" />
++    <sql-case id="select_fixed_operator_left_associative_pg" value="SELECT `1 ` 2, &lt;=&gt;1 &lt;=&gt; 2" db-types="PostgreSQL" case-types="Literal" />
++    <sql-case id="select_fixed_operator_between_left_associative_pg" value="SELECT 0 BETWEEN `1 ` 2 AND 3, 0 BETWEEN &lt;=&gt;1 &lt;=&gt; 2 AND 3" db-types="PostgreSQL" case-types="Literal" />
++    <sql-case id="select_mixed_symbolic_operator_precedence_pg" value="SELECT $1 &amp;&amp; $2 &lt;=&gt; $3, $4 &lt;=&gt; $5 &amp; $6, $7 ~~ $8 &lt;=&gt; $9, @ $10 @ $11" db-types="PostgreSQL" case-types="Placeholder" />
++    <sql-case id="select_mixed_symbolic_operator_between_pg" value="SELECT 0 BETWEEN $1 &amp;&amp; $2 &lt;=&gt; $3 AND 4" db-types="PostgreSQL" case-types="Placeholder" />
+ </sql-cases>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #40425** (2026-10-30): Upgrade Guava to 33.7.2-jre and reuse stream aggregation entry views (@terrymanu)
+- **PR #40424** (2026-10-30): Reuse named swappers and prevent Shadow export mutations (@terrymanu)
+- **PR #40422** (2026-10-30): Separate YAML configuration conversion from runtime resource creation (@terrymanu)
 - **PR #40417** (2026-10-29): Fix database resolution for PREVIEW without USE (@terrymanu)
 - **PR #40416** (2026-10-29): Unify MCP payload JSON handling with JsonEngine (@terrymanu)
 - **PR #40415** (2026-10-29): Refactor pom (@terrymanu)
-- **PR #40401** (2026-10-29): Refactor ClassPathLocalFileURLLoaderTest (@terrymanu)
-- **PR #40400** (2026-10-29): Upgrade Bouncy Castle BOM and fix Proxy TLS certificate generation (@terrymanu)
-- **PR #40391** (2026-10-29): Enhance descending expression ORDER BY conversion in SQL federation (@strongduanmu)
 
 ---
 
@@ -1901,47 +1800,56 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. OWASP database caching and nightly timeout (#40388)
+## X. PostgreSQL symbolic operator precedence and JSON aggregate parsing (#40384)
 
 **RULE**:
-When implementing operations in `.github/workflows/nightly-check.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `parser/sql/engine/dialect/postgresql/src/main/antlr4/imports/postgresql/BaseRule.g4`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a3df40af`: OWASP database caching and nightly timeout (#40388). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `723801c8`: PostgreSQL symbolic operator precedence and JSON aggregate parsing (#40384). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/nightly-check.yml`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `parser/sql/engine/dialect/postgresql/src/main/antlr4/imports/postgresql/BaseRule.g4`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    timeout-minutes: 90
-      - name: Set OWASP Cache Key
-        id: owasp-cache-key
-        run: |
-          version=$(sed -n 's/.*<dependency-check-maven\.version>\(.*\)<\/dependency-check-maven\.version>.*/\1/p' pom.xml)
-          echo "prefix=${{ runner.os }}-owasp-${version}-" >> "$GITHUB_OUTPUT"
-      - name: Restore OWASP Database
-        id: owasp-cache
-        uses: actions/cache/restore@v5.0.1
-        with:
-          path: ~/.m2/repository/org/owasp/dependency-check-data
-          key: ${{ steps.owasp-cache-key.outputs.prefix }}${{ github.run_id }}-${{ github.run_attempt }}
-          restore-keys: ${{ steps.owasp-cache-key.outputs.prefix }}
-      - name: Update OWASP Database
-        run: ./mvnw -N dependency-check:update-only -DnvdApiKey=${{ secrets.NIST_NVD_API_KEY }}
-      - name: Save OWASP Database
-        uses: actions/cache/save@v5.0.1
-        with:
-          path: ~/.m2/repository/org/owasp/dependency-check-data
-          key: ${{ steps.owasp-cache.outputs.cache-primary-key }}
+    : AND
+    | patternMatchingSymbol
+    ;
+
+patternMatchingSymbol
+    : TILDE_
+    | TILDE_TILDE_
+    | NOT_TILDE_TILDE_
+    | ILIKE_
+    | NOT_ILIKE_
+    | aExpr qualOp aExpr
+    | bExpr qualOp bExpr
+    | patternMatchingSymbol
+    | AND_
+    | AMPERSAND_
+    | VERTICAL_BAR_
+    | SAFE_EQ_
+    | BQ_
+    : funcApplication | functionExprCommonSubexpr | jsonAggregateFunction
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-    timeout-minutes: 40
+    : AND | AND_
+    | TILDE_TILDE_
+    | NOT_TILDE_TILDE_
+    | ILIKE_
+    | NOT_ILIKE_
+    | TILDE_
+    | aExpr AMPERSAND_ aExpr
+    | aExpr VERTICAL_BAR_ aExpr
+    | aExpr qualOp aExpr
+    | bExpr qualOp bExpr
+    : funcApplication | functionExprCommonSubexpr
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a3df40af` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `723801c8` are properly handled with clean fallback behavior.

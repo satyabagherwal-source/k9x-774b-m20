@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source**: github ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
-> **Source Version**: `e9bb7b3d`  
+> **Source Version**: `139738f7`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T20:59:28.521Z  
+> **Timestamp**: 2026-10-31T00:41:22.258Z  
 > **Learning ID**: `learn-github-rustls-rustls`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T20:59:28.510Z  
+> **Harvest Timestamp**: 2026-10-31T00:41:21.337Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern TLS library in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7720 stars
+- **Stars / Engagement**: 7721 stars
 
 ---
 
@@ -2250,8 +2250,11 @@ fn exec(
   >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap256_chacha_server | 1340087 | 1346600 | ⚠️ [6513](https://bench.rustls.dev/comparisons/0c05a2c1f9452034042826713961276918d75c10:34becce95da816b48a29e0ca64f7f17d4f967914/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap256_chacha_server) (0.49%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server | 10396668 | 10430386 | [33718](https://bench.rustls.dev/comparisons/0c05a2c1f9452034042826713961276918d75c10:34becce95da816b48a29e0ca64f7f17d4f967914/cachegr
   > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3401?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.65%. Comparing base ([`44323f5`](https://app.codecov.io/gh/rustls/rustls/commit/44323f51bfdd090e7cbd0fe3f6012ba194a74abc?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`34becce`](https://app.codecov.io/gh/rustls/rustls/commit/34becce95da816b48a29e0ca64f7f17d4f967914?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)). :warning: Report is 1 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3401 
 
-- **Issue #3398** (2026-10-29): **Enforce TLS 1.2 ECDSA certificate curve against offered groups**
-  *Symptoms*: **What this fixes** I noticed rustls doesn't check the server's ECDSA certificate curve against the client's offered groups in TLS 1.2, even though it already does in TLS 1.3. Per RFC 8422 section 5.4, a client's supported_groups is meant to constrain the curve of the server's ECDSA certificate, not just the ECDHE group — so today a server can present an ECDSA leaf on a curve the client never offered and rustls will accept it. This PR closes that gap.  **The change** Enforce the curve-vs-offered-groups check in TLS 1.2 on both sides: - Client (client/tls12.rs): after verifying the ServerKeyExchange signature, reject a server ECDSA leaf whose curve wasn't offered → PeerMisbehaved::ServerEcdsaCertificateCurveNotOffered. - Server (server/hs.rs): don't select an ECDHE_ECDSA suite for a cert whose curve the client didn't offer (other KX like FFDHE unaffected); if that's the only blocker → PeerIncompatible::EcdsaCertificateCurveNotOffered.  **Scope decision (P-521)** Limited to curves rustls actually does key exchange on — X25519 / P-256 / P-384 (NamedGroup::offered_for_key_exchange). P-521 is excluded on purpose: rustls verifies/produces P-521 ECDSA signatures but has no P-521 key exchange, so it never advertises secp521r1 — scoping keeps existing P-521 cert behaviour working.  **Supporting pieces** x509::spki_algorithm_identifier (a small DER reader for the SubjectPublicKeyInfo algorithm identifier), NamedGroup::from_ecdsa_public_key, and Identity::ecdsa_curve.  **Verification** 
+- **Issue #3400** (2026-10-30): **Ensure hashing of type_id is for concrete type**
+  *Symptoms*: Fix the tests for this feature so each tests precisely one change at a time, and is capable of resumption otherwise.  fixes #3350 fixes #3303
+  **Post-Mortem & Fix Analysis**:
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_aes_client | 2384635 | 2371677 | ✅ [-12958](https://bench.rustls.dev/comparisons/44323f51bfdd090e7cbd0fe3f6012ba194a74abc:f48840713b3591f405c23a3d656f6c342d02caff/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_aes_client) (-0.54%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_aes_server | 10928310 | 10857799 | [-70511](https://bench.rustls.dev/comparisons/44323f51bfdd090e7cbd0fe3f6012ba194a74abc:f48840713b3591f405c23a3d656f6c342d02caff/cachegrind-diff/handsh
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3400?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :x: Patch coverage is `83.92857%` with `9 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 95.62%. Comparing base ([`44323f5`](https://app.codecov.io/gh/rustls/rustls/commit/44323f51bfdd090e7cbd0fe3f6012ba194a74abc?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`f488407`](https://app.codecov.io/gh/rustls/rustls/commit/f48840713b3591f405c23a3d656f6c342d02caff?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)). :warning: Report is 3 commits behind head on main.  | [Files with missing lines](https://app.codecov.io/gh/rustls/rustls/pull/3400?dropdown=coverage&src=pr&el=tree&utm_medium
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2268,77 +2271,340 @@ fn exec(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e9bb7b3d` (2026-10-30)
-**Commit Message**: Ensure rustls-ring crate is used by rustls-test
+### Incident Patch 1: `139738f7` (2026-10-30)
+**Commit Message**: Ensure hashing of type_id is for concrete type
 
-**File**: `rustls-test/src/lib.rs` (modified, +4/-1)
+Fix the tests for this feature so each tests precisely one
+change at a time, and is capable of resumption otherwise.
+
+**File**: `rustls-test/tests/api/resume.rs` (modified, +64/-48)
 ```diff
-@@ -2227,6 +2227,9 @@ pub fn provider_with_suites(
-     }
+@@ -2,26 +2,27 @@
+ 
+ #![allow(clippy::disallowed_types, clippy::duplicate_mod)]
+ 
++use core::hash::Hasher;
+ use core::sync::atomic::{AtomicUsize, Ordering};
+ use core::time::Duration;
+ use std::fmt;
+ use std::sync::Arc;
+ 
+-use rustls::client::{Resumption, TicketRequest};
++use rustls::client::{ClientCredentialResolver, CredentialRequest, Resumption, TicketRequest};
+ use rustls::crypto::kx::NamedGroup;
+-use rustls::crypto::{CertificateIdentity, Identity, TicketProducer};
+-use rustls::enums::ProtocolVersion;
++use rustls::crypto::{CertificateIdentity, Identity, SelectedCredential, TicketProducer};
++use rustls::enums::{CertificateType, ProtocolVersion};
+ use rustls::error::{ApiMisuse, Error, PeerMisbehaved};
+ use rustls::server::{ServerSessionKey, Tls13Tickets};
+ use rustls::{
+     ClientConfig, ClientSide, Connection, HandshakeKind, ServerConfig, ServerSide, Tcp, VecInput,
+ };
+ use rustls_test::{
+-    ClientConfigExt, ClientStorage, ClientStorageOp, ErrorFromPeer, KeyType, MultiTest,
+-    ServerConfigExt, do_handshake, do_handshake_collecting_early_data, do_handshake_until_error,
+-    make_client_config, make_client_config_with_auth, make_client_config_with_kx_groups, make_pair,
+-    make_pair_for_arc_configs, make_pair_for_configs, make_server_config,
+-    make_server_config_with_kx_groups, transfer, webpki_server_verifier_builder,
++    ClientStorage, ClientStorageOp, ErrorFromPeer, KeyType, MultiTest, ServerConfigExt,
++    do_handshake, do_handshake_collecting_early_data, do_handshake_until_error, make_client_config,
++    make_client_config_with_kx_groups, make_pair, make_pair_for_arc_configs, make_pair_for_configs,
++    make_server_config, make_server_config_with_kx_groups, transfer,
++    webpki_server_verifier_builder,
+ };
+ 
+ use super::provider;
+@@ -80,14 +81,14 @@ fn client_only_attempts_resumption_with_compatible_security() {
+         assert_eq!(client.handshake_kind(), Some(HandshakeKind::Resumed));
+ 
+         // disallowed case: unmatching `client_auth_cert_resolver`
+-        let client_config = ClientConfig::builder(base_client_config.provider().clone())
+-            .add_root_certs(expect.key_type)
+-            .with_client_credential_resolver(
+-                make_client_config_with_auth(expect.key_type, base_client_config.provider())
+-                    .resolver()
+-                    .clone(),
+-            )
++        let mut client_config = ClientConfig::builder(base_client_config.provider().clone())
++            .dangerous()
++            .with_custom_certificate_verifier(base_client_config.verifier().clone())
++            .with_client_credential_resolver(Arc::new(ForwardingResolver(
++                base_client_config.resolver().clone(),
++            )))
+             .unwrap();
++        client_config.resumption = base_client_config.resumption.clone();
+ 
+         let mut client_output = Vec::new();
+         let mut server_output = Vec::new();
+@@ -107,39 +108,54 @@ fn client_only_attempts_resumption_with_compatible_security() {
+         assert_eq!(client.handshake_kind(), Some(HandshakeKind::Full));
+ 
+         // disallowed case: unmatching `verifier`
+-        if !expect.client_auth {
+-            let mut client_config = ClientConfig::builder(base_client_config.provider().clone())
+-                .dangerous()
+-                .with_custom_certificate_verifier(Arc::new(
+-                    webpki_server_verifier_builder(
+-                        expect.key_type.client_root_store(),
+-                        base_client_config.provider(),
+-                    )
+-                    .allow_unknown_revocation_status()
+-                    .build()
+-                    .unwrap(),
+-                ))
+-                .with_client_credential_resolver(client_config.resolver().clone())
+-                .unwrap();
+-            client_config.resumption = base_client_config.resumption.clone();
+-
+-            let mut client_output = Vec::new();
+-            let mut server_output = Vec::new();
+-            let (mut client, mut server) = make_pair_for_configs(
+-                client_config,
+-                ServerConfig::clone(&server_config),
+-                &mut client_output,
+-            );
+-            do_handshake(
+-                &mut client_input,
+-                &mut client_output,
+-                &mut client,
+-                &mut server_input,
+-                &mut server_output,
+-                &mut server,
+-            );
+-            assert_eq!(client.handshake_kind(), Some(HandshakeKind::Full));
+-        }
++        let mut client_config = ClientConfig::builder(base_client_config.provider().clone())
++            .dangerous()
++            .with_custom_certificate_verifier(Arc::new(
++                webpki_server_verifier_builder(
++                    expect.key_type.client_root_store(),
++                    base_client_config.provider(),
++                )
++                .allow_unknown_revocation_status()
++                .build()
++                .unwrap(),
++            ))
++            .
+```
+
+**File**: `rustls/src/client/config.rs` (modified, +9/-13)
+```diff
+@@ -78,12 +78,14 @@ pub struct ClientConfig {
+     /// configs share a single [`Resumption`].
+     ///
+     /// However, resumption is only allowed between two `ClientConfig`s if their
+-    /// `client_auth_cert_resolver` (ie, potential client authentication credentials)
+-    /// and `verifier` (ie, server certificate verification settings):
++    /// `client_auth_cert_resolver` (ie, potential client authentication credentials),
++    /// `verifier` (ie, server certificate verification settings), and `time_provider`
++    /// (ie, verification time source):
+     ///
+     /// - are the same type (determined by hashing their `TypeId`), and
+     /// - input the same data into [`ServerVerifier::hash_config()`] and
+-    ///   [`ClientCredentialResolver::hash_config()`].
++    ///   [`ClientCredentialResolver::hash_config()`] (note that time providers are
++    ///   assumed to have no state and do not have a `hash_config()`.)
+     ///
+     /// To illustrate, imagine two `ClientConfig`s `A` and `B`.  `A` fully validates
+     /// the server certificate, `B` does not.  If `A` and `B` shared a resumption store,
+@@ -387,7 +389,7 @@ impl ClientSessionKey<'_> {
+ 
+ /// A trait for the ability to choose a certificate chain and
+ /// private key for the purposes of client authentication.
+-pub trait ClientCredentialResolver: fmt::Debug + Send + Sync {
++pub trait ClientCredentialResolver: fmt::Debug + Send + Sync + Any {
+     /// Resolve a client certificate chain/private key to use as the client's identity.
+     ///
+     /// The [`SelectedCredential`] returned from this method contains an identity and a
+@@ -496,19 +498,13 @@ impl SecurityDomain {
+ 
+         // Include TypeId of impl, so two different types with different non-configured
+         // behavior do not collide even if their `hash_config()`s are the same.
+-        client_auth_cert_resolver
+-            .type_id()
+-            .hash(&mut DynHasher(&mut adapter));
++        Any::type_id(client_auth_cert_resolver.as_ref()).hash(&mut DynHasher(&mut adapter));
+         client_auth_cert_resolver.hash_config(&mut adapter);
+ 
+-        verifier
+-            .type_id()
+-            .hash(&mut DynHasher(&mut adapter));
++        Any::type_id(verifier.as_ref()).hash(&mut DynHasher(&mut adapter));
+         verifier.hash_config(&mut adapter);
+ 
+-        time_provider
+-            .type_id()
+-            .hash(&mut DynHasher(&mut adapter));
++        Any::type_id(time_provider.as_ref()).hash(&mut DynHasher(&mut adapter));
+ 
+         let config_hash = h.finish().as_ref()[..32]
+             .try_into()
+```
+
+**File**: `rustls/src/client/test.rs` (modified, +80/-4)
+```diff
+@@ -9,18 +9,19 @@ use std::vec;
+ 
+ use pki_types::{CertificateDer, FipsStatus, ServerName, UnixTime};
+ 
++use super::handy::FailResolveClientCert;
+ use super::{Tls12Session, Tls13ClientSessionInput, Tls13Session};
+ use crate::client::{
+-    ClientConfig, ClientSessionKey, ClientSessionMemoryCache, ClientSessionStore, Resumption,
+-    Tls12Resumption,
++    ClientConfig, ClientCredentialResolver, ClientSessionKey, ClientSessionMemoryCache,
++    ClientSessionStore, CredentialRequest, Resumption, Tls12Resumption,
+ };
+ use crate::crypto::cipher::{EncodableVersion, Payload, Record, RecordEncrypter};
+ use crate::crypto::kx::{self, NamedGroup, SharedSecret, StartedKeyExchange, SupportedKxGroup};
+ use crate::crypto::test_provider::{FakeKeyExchangeGroup, KEY_EXCHANGE_GROUP, TLS_TEST_SUITE};
+ use crate::crypto::tls13::OkmBlock;
+ use crate::crypto::{
+-    CipherSuite, Credentials, CryptoProvider, Identity, SignatureScheme, SingleCredential,
+-    TEST_PROVIDER, TLS13_TEST_SUITE, tls12_only, tls13_only, tls13_suite,
++    CipherSuite, Credentials, CryptoProvider, Identity, SelectedCredential, SignatureScheme,
++    SingleCredential, TEST_PROVIDER, TLS13_TEST_SUITE, tls12_only, tls13_only, tls13_suite,
+ };
+ use crate::enums::{CertificateType, HandshakeType, ProtocolVersion};
+ use crate::error::{Error, PeerIncompatible, PeerMisbehaved};
+@@ -37,6 +38,7 @@ use crate::pki_types::PrivateKeyDer;
+ use crate::pki_types::pem::PemObject;
+ use crate::suites::Suite;
+ use crate::sync::Arc;
++use crate::time_provider::{DefaultTimeProvider, TimeProvider};
+ use crate::tls13::Tls13ProtocolSuite;
+ use crate::tls13::key_schedule::{derive_traffic_iv, derive_traffic_key};
+ use crate::verify::{
+@@ -636,6 +638,80 @@ impl ServerVerifier for ExpectSha1EcdsaVerifier {
+     fn hash_config(&self, _: &mut dyn Hasher) {}
  }
  
-+#[cfg(feature = "ring")]
-+pub use rustls_ring;
++#[test]
++fn config_hash_includes_concrete_type_of_each_component() {
++    fn config_hash(
++        time_provider: Arc<dyn TimeProvider>,
++        verifier: Arc<dyn ServerVerifier>,
++        resolver: Arc<dyn ClientCredentialResolver>,
++    ) -> [u8; 32] {
++        ClientConfig::builder_with_details(Arc::new(TEST_PROVIDER), time_provider)
++            .dangerous()
++            .with_custom_certificate_verifier(verifier)
++            .with_client_credential_resolver(resolver)
++            .unwrap()
++            .config_hash()
++    }
 +
- pub mod macros {
-     //! Macros that bring a provider into the current scope.
-     //!
-@@ -2238,7 +2241,7 @@ pub mod macros {
-     macro_rules! provider_ring {
-         () => {
-             #[allow(unused_imports)]
--            use rustls_ring as provider;
-+            use $crate::rustls_ring as provider;
-             #[allow(dead_code)]
-             const fn provider_is_aws_lc_rs() -> bool {
-                 false
++    let base = || {
++        config_hash(
++            Arc::new(DefaultTimeProvider),
++            Arc::new(ServerVerifierRequiringRpk),
++            Arc::new(FailResolveClientCert {}),
++        )
++    };
++    assert_eq!(base(), base());
++
++    assert_ne!(
++        base(),
++        config_hash(
++            Arc::new(FixedTimeProvider),
++            Arc::new(ServerVerifierRequiringRpk),
++            Arc::new(FailResolveClientCert {}),
++        )
++    );
++    assert_ne!(
++        base(),
++        config_hash(
++            Arc::new(DefaultTimeProvider),
++            Arc::new(ExpectSha1EcdsaVerifier::default()),
++            Arc::new(FailResolveClientCert {}),
++        )
++    );
++    assert_ne!(
++        base(),
++        config_hash(
++            Arc::new(DefaultTimeProvider),
++            Arc::new(ServerVerifierRequiringRpk),
++            Arc::new(NoCredentialResolver),
++        )
++    );
++}
++
++#[derive(Debug)]
++struct FixedTimeProvider;
++
++impl TimeProvider for FixedTimeProvider {
++    fn current_time(&self) -> Option<UnixTime> {
++        Some(UnixTime::since_unix_epoch(Duration::from_secs(1)))
++    }
++}
++
++#[derive(Debug)]
++struct NoCredentialResolver;
++
++impl ClientCredentialResolver for NoCredentialResolver {
++    fn resolve(&self, _: &CredentialRequest<'_>) -> Option<SelectedCredential> {
++        None
++    }
++
++    fn supported_certificate_types(&self) -> &'static [CertificateType] {
++        &[]
++    }
++
++    fn hash_config(&self, _: &mut dyn Hasher) {}
++}
++
+ #[test]
+ fn test_client_requiring_rpk_rejects_server_that_only_offers_x509_id_by_omission() {
+     client_requiring_rpk_receives_server_ee(
 ```
 
----
-
-### Incident Patch 2: `0419f479` (2026-10-28)
-**Commit Message**: Send internal_error for Error::Other
-
-RFC 10024 section 4.2 requires internal_error when ML-KEM
-decapsulation fails for a reason other than an invalid ciphertext
-length. Providers can report these failures through Error::Other,
-which currently sends no alert.
-
-**File**: `rustls/src/error/mod.rs` (modified, +1/-0)
+**File**: `rustls/src/time_provider.rs` (modified, +2/-1)
 ```diff
-@@ -177,6 +177,7 @@ impl TryFrom<&Error> for AlertDescription {
-             Error::PeerSentOversizedRecord => Self::RecordOverflow,
-             Error::RejectedEch(_) => Self::EncryptedClientHelloRequired,
-             Error::General(_) => Self::GeneralError,
-+            Error::Other(_) => Self::InternalError,
+@@ -1,5 +1,6 @@
+ //! The library's source of time.
  
-             _ => return Err(()),
-         })
++use core::any::Any;
+ use core::fmt::Debug;
+ 
+ use pki_types::UnixTime;
+@@ -8,7 +9,7 @@ use pki_types::UnixTime;
+ ///
+ /// This is used to, for example, check if a certificate has expired during
+ /// certificate validation, or to check the age of a ticket.
+-pub trait TimeProvider: Debug + Send + Sync {
++pub trait TimeProvider: Debug + Send + Sync + Any {
+     /// Returns the current wall time.
+     ///
+     /// This is not required to be monotonic.
 ```
 
-**File**: `rustls/src/error/tests.rs` (modified, +4/-1)
+**File**: `rustls/src/verify.rs` (modified, +2/-1)
 ```diff
-@@ -366,7 +366,10 @@ fn alert_mapping() {
-         (Error::AlertReceived(AlertDescription::UnknownCa), Err(())),
-         (ApiMisuse::ExporterNotAvailable.into(), Err(())),
-         (Error::Unreachable("unreachable"), Err(())),
--        (Error::Other(OtherError::new(TestError)), Err(())),
-+        (
-+            Error::Other(OtherError::new(TestError)),
-+            Ok(AlertDescription::InternalError),
-+        ),
-         (
-             CertificateError::BadEncoding.into(),
-             Ok(AlertDescription::BadCertificate),
+@@ -1,4 +1,5 @@
+ use alloc::vec::Vec;
++use core::any::Any;
+ use core::fmt::Debug;
+ use core::hash::Hasher;
+ use core::ops::Deref;
+@@ -25,7 +26,7 @@ use crate::x509::wrap_in_sequence;
+ 
+ /// Something that can verify a server certificate chain, and verify
+ /// signatures made by certificates.
+-pub trait ServerVerifier: Debug + Send + Sync {
++pub trait ServerVerifier: Debug + Send + Sync + Any {
+     /// Verify the server's identity.
+     ///
+     /// Note that none of the certificates have been parsed yet, so it is the responsibility of
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #3401** (2026-10-30): Ensure rustls-ring crate is used by rustls-test (@ctz)
+- **PR #3400** (2026-10-30): Ensure hashing of type_id is for concrete type (@ctz)
 - **PR #3398** (closed): Enforce TLS 1.2 ECDSA certificate curve against offered groups (@parthod0x)
 - **PR #3397** (2026-10-30): Send internal_error for Error::Other (@loadingalias)
 - **PR #3396** (2026-10-29): Minor performance improvements (@ctz)
 - **PR #3395** (2026-10-28): Move connection FIPS status onto `ConnectionOutputs` (@ctz)
-- **PR #3393** (2026-10-28): Extract signature scheme filtering (@djc)
 
 ---
 
@@ -2358,31 +2624,65 @@ which currently sends no alert.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Ensure rustls-ring crate is used by rustls-test
+## X. Ensure hashing of type_id is for concrete type
 
 **RULE**:
-When implementing operations in `rustls-test/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rustls-test/tests/api/resume.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e9bb7b3d`: Ensure rustls-ring crate is used by rustls-test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `139738f7`: Ensure hashing of type_id is for concrete type. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls-test/src/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls-test/tests/api/resume.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#[cfg(feature = "ring")]
-pub use rustls_ring;
-
-            use $crate::rustls_ring as provider;
+use core::hash::Hasher;
+use rustls::client::{ClientCredentialResolver, CredentialRequest, Resumption, TicketRequest};
+use rustls::crypto::{CertificateIdentity, Identity, SelectedCredential, TicketProducer};
+use rustls::enums::{CertificateType, ProtocolVersion};
+    ClientStorage, ClientStorageOp, ErrorFromPeer, KeyType, MultiTest, ServerConfigExt,
+    do_handshake, do_handshake_collecting_early_data, do_handshake_until_error, make_client_config,
+    make_client_config_with_kx_groups, make_pair, make_pair_for_arc_configs, make_pair_for_configs,
+    make_server_config, make_server_config_with_kx_groups, transfer,
+    webpki_server_verifier_builder,
+        let mut client_config = ClientConfig::builder(base_client_config.provider().clone())
+            .dangerous()
+            .with_custom_certificate_verifier(base_client_config.verifier().clone())
+            .with_client_credential_resolver(Arc::new(ForwardingResolver(
+                base_client_config.resolver().clone(),
+            )))
+        client_config.resumption = base_client_config.resumption.clone();
+        let mut client_config = ClientConfig::builder(base_client_config.provider().clone())
+            .dangerous()
+     
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            use rustls_ring as provider;
+use rustls::client::{Resumption, TicketRequest};
+use rustls::crypto::{CertificateIdentity, Identity, TicketProducer};
+use rustls::enums::ProtocolVersion;
+    ClientConfigExt, ClientStorage, ClientStorageOp, ErrorFromPeer, KeyType, MultiTest,
+    ServerConfigExt, do_handshake, do_handshake_collecting_early_data, do_handshake_until_error,
+    make_client_config, make_client_config_with_auth, make_client_config_with_kx_groups, make_pair,
+    make_pair_for_arc_configs, make_pair_for_configs, make_server_config,
+    make_server_config_with_kx_groups, transfer, webpki_server_verifier_builder,
+        let client_config = ClientConfig::builder(base_client_config.provider().clone())
+            .add_root_certs(expect.key_type)
+            .with_client_credential_resolver(
+                make_client_config_with_auth(expect.key_type, base_client_config.provider())
+                    .resolver()
+                    .clone(),
+            )
+        if !expect.client_auth {
+            let mut client_config = ClientConfig::builder(base_client_config.provider().clone())
+                .dangerous()
+                .with_custom_certificate_verifier(Arc::new(
+                    webpki_server_veri
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e9bb7b3d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `139738f7` are properly handled with clean fallback behavior.

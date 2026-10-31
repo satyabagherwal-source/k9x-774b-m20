@@ -6387,3 +6387,9 @@ Every entry in this ledger must capture:
 | `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `155a246f` | Multi-dimensional audit evidence | 2026-10-31T00:34:19.569Z |
 | `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `f619e1e3` | Multi-dimensional audit evidence | 2026-10-31T00:34:25.408Z |
 | `learn-huggingface-mistralai-timestral-209m` | `https://huggingface.co/mistralai/Timestral-209M` | `hf-mistral` | Multi-dimensional audit evidence | 2026-10-31T00:34:27.002Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `139738f7` | Multi-dimensional audit evidence | 2026-10-31T00:41:22.977Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `7c0523a3` | Multi-dimensional audit evidence | 2026-10-31T00:41:26.074Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `54ee07c6` | Multi-dimensional audit evidence | 2026-10-31T00:41:27.058Z |
+| `learn-github-nervjs-taro` | `https://github.com/NervJS/taro` | `0493b525` | Multi-dimensional audit evidence | 2026-10-31T00:44:56.938Z |
+| `learn-github-michael-a-kuykendall-shimmy` | `https://github.com/Michael-A-Kuykendall/shimmy` | `239bb745` | Multi-dimensional audit evidence | 2026-10-31T00:45:36.338Z |
+| `learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-10-31T00:46:10.481Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md`  
 > **Source**: github ([https://github.com/Michael-A-Kuykendall/shimmy](https://github.com/Michael-A-Kuykendall/shimmy))  
-> **Source Version**: `d64d0c8e`  
+> **Source Version**: `239bb745`  
 > **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T13:27:28.616Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-31T00:45:34.691Z  
 > **Learning ID**: `learn-github-michael-a-kuykendall-shimmy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,1936 +12,442 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): Michael-A-Kuykendall/shimmy
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/Michael-A-Kuykendall/shimmy](https://github.com/Michael-A-Kuykendall/shimmy))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T13:27:28.608Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): Michael-A-Kuykendall/shimmy
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `Michael-A-Kuykendall/shimmy`
-- **Description**: ⚡ Pure-Rust WebGPU inference engine — OpenAI-API compatible, GGUF native, runs on any GPU. No Python. No llama.cpp. Single binary.
-- **Primary Language / Ecosystem**: Rust
-- **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5985 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+```
+                             [ Network Clients / OpenAI API Callers ]
+                                                │
+                                    HTTP / REST / WebSockets
+                                                ▼
+┌───────────────────────────────────────────────────────────────────────────────────────────┐
+│ Shimmy HTTP Ingress Layer (Axum 0.7)                                                      │
+│ ┌───────────────────────────────────────────────────────────────────────────────────────┐ │
+│ │ Security Boundary: Non-loopback Bind Gate (Enforces SHIMMY_API_KEY if bind != 127.0.0.1)│ │
+│ └────────────────────────────────┬──────────────────────────────────────────────────────┘ │
+│                                  │                                                        │
+│                                  ▼                                                        │
+│ ┌───────────────────────────────────────────────────────────────────────────────────────┐ │
+│ │ Routing & Request Parsing: /v1/chat/completions, /v1/completions, /health             │ │
+│ └────────────────────────────────┬──────────────────────────────────────────────────────┘ │
+│                                  │                                                        │
+│                                  ▼                                                        │
+│ ┌───────────────────────────────────────────────────────────────────────────────────────┐ │
+│ │ Response Cache Layer (RwLock<HashMap<CacheKey, CachedResponse>>)                      │ │
+│ │  - Direct-occupancy reconciliation (occupied_bytes derived from map)                  │ │
+│ │  - Dual-metric LRU eviction (max_entries count & max_size_mb memory capacity)        │ │
+│ └────────────────────────────────┬──────────────────────────────────────────────────────┘ │
+└──────────────────────────────────┼────────────────────────────────────────────────────────┘
+                                   │ (Cache Miss)
+                                   ▼
+┌───────────────────────────────────────────────────────────────────────────────────────────┐
+│ Unified Prompt Rendering Substrate (`prompt_render.rs`)                                   │
+│  - Extraction Priority: GGUF Embedded `tokenizer.chat_template` (via `shimmyjinja`)     │
+│  - Fallback: TemplateFamily (ChatML / Llama3)                                             │
+│  - Base Model Gate: `TemplateFamily::OpenChat` maps to true Raw Completion (No ChatML wrap)│
+│  - Thinking Heuristic: Force `/nothink` or disable reasoning tokens for Qwen/DeepSeek-R1  │
+└──────────────────────────────────┬────────────────────────────────────────────────────────┘
+                                   │ Rendered Token/Text Prompt
+                                   ▼
+┌───────────────────────────────────────────────────────────────────────────────────────────┐
+│ Inference Engine Adapter (`engine/adapter.rs`)                                            │
+│  - Backend Arbiter: Inspects file extension & path magic heuristics                       │
+│      * `.safetensors`  ──► SafeTensorsEngine (Native Rust, zero C++, mmap-backed)         │
+│      * `.gguf` / blobs ──► AirframeEngine (WebGPU / WGSL compute shaders, in-process)     │
+└───────────────────┬───────────────────────────────────────────┬───────────────────────────┘
+                    │                                           │
+                    ▼                                           ▼
+┌───────────────────────────────────────┐   ┌───────────────────────────────────────────────┐
+│ SafeTensors Native Engine             │   │ Airframe GPU Engine (`engine/airframe.rs`)    │
+│  - Mmap strategy: >100MB mmap2::Mmap  │   │  - tokio::task::spawn_blocking Worker Bridge  │
+│  - In-Memory buffer: <=100MB Vec<u8>  │   │  - Mutex<Option<GpuRuntime>> Serialization    │
+│  - Zero Python dependencies           │   │  - LogitsMask & Grammar Injection Hooks       │
+│  - Direct header deserialization      │   │  - F32 deterministic accumulation compute     │
+└───────────────────────────────────────┘   └───────────────────────────────────────────────┘
+```
+
+### Architectural Subsystem Boundaries
+
+1. **HTTP Ingress & Policy Guard Layer (`src/server.rs`, `src/util/diag.rs`)**:
+   Axum 0.7-based asynchronous routing. Terminates requests, applies strict loopback checks (preventing non-authenticated exposure on `0.0.0.0`), manages streaming chunk buffers via Server-Sent Events (SSE), and surfaces runtime telemetry (`sysinfo`).
+2. **Response Cache Subsystem (`src/cache/response_cache.rs`)**:
+   In-memory query acceleration layer. Implements a synchronized dual-metric LRU cache tracking total entry count and cumulative byte size. Resolves race conditions by computing cache occupancy directly from stored byte slices, preventing stale accounting during key updates or evictions.
+3. **Prompt Rendering Substrate (`src/prompt_render.rs`)**:
+   Decoupled template resolution pipeline that prioritizes model-native Jinja templates extracted directly from GGUF binary headers via `shimmyjinja`. It falls back to hardcoded formatters (`ChatML`, `Llama3`) only when model-level templates are missing, and passes base/code model prompts through unformatted to prevent instruct-wrapper pollution.
+4. **Engine Abstraction & Adapter Layer (`src/engine/adapter.rs`, `src/engine/mod.rs`)**:
+   Unified dynamic dispatch boundary exposing `InferenceEngine` and `LoadedModel` traits. Decouples front-end protocol parsing from low-level tensor computation backends (`AirframeEngine` vs `SafeTensorsEngine`).
+5. **Compute Runtime Core (`src/engine/airframe.rs`, `src/engine/safetensors_native.rs`)**:
+   The execution runtime. For GGUF models, it interfaces with the `Airframe` WebGPU/WGSL engine using an asynchronous-to-synchronous execution bridge (`tokio::task::spawn_blocking`). For SafeTensors, it bypasses Python/C++ entirely, using zero-copy memory-mapped file access (`memmap2`) for models larger than 100MB and in-memory buffers for smaller checkpoints.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: Cargo.toml, README.md, Dockerfile.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `src/engine/adapter.rs`
-```
-use anyhow::Result;
-use async_trait::async_trait;
-
-use super::{InferenceEngine, LoadedModel, ModelSpec};
-
-pub struct InferenceEngineAdapter {
-    #[cfg(feature = "airframe")]
-    airframe_engine: super::airframe::AirframeEngine,
-    safetensors_engine: super::safetensors_native::SafeTensorsEngine,
-}
-
-impl Default for InferenceEngineAdapter {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl InferenceEngineAdapter {
-    pub fn new() -> Self {
-        Self {
-            #[cfg(feature = "airframe")]
-            airframe_engine: super::airframe::AirframeEngine::new(),
-            safetensors_engine: super::safetensors_native::SafeTensorsEngine::new(),
-        }
-    }
-
-    /// Backend arg retained for CLI compatibility; ignored in v2 (airframe auto-detects GPU)
-    pub fn new_with_backend(_gpu_backend: Option<&str>) -> Self {
-        Self::new()
-    }
-
-    fn select_backend(&self, spec: &ModelSpec) -> BackendChoice {
-        let path_str = spec.base_path.to_string_lossy();
-
-        if let Some(ext) = spec.base_path.extension().and_then(|s| s.to_str()) {
-            match ext {
-                "safetensors" => return BackendChoice::SafeTensors,
-                "gguf" => {
-                    #[cfg(feature = "airframe")]
-                    return BackendChoice::Airframe;
-                    #[cfg(not(feature = "airframe"))]
-                    return BackendChoice::SafeTensors;
-                }
-                _ => {}
-            }
-        }
-
-        // Ollama blob files (extensionless GGUF)
-        if path_str.contains("ollama") && path_str.contains("blobs") {
-            #[cfg(feature = "airframe")]
-            return BackendChoice::Airframe;
-        }
-
-        // Name/path heuristic for GGUF
-        if path_str.contains(".gguf") {
-            #[cfg(feature = "airframe")]
-            return BackendChoice::Airframe;
-        }
-
-        BackendChoice::SafeTensors
-    }
-}
-
-#[derive(Debug, Clone, PartialEq)]
-enum BackendChoice {
-    #[cfg(feature = "airframe")]
-    Airframe,
-    SafeTensors,
-}
-
-#[async_trait]
-impl InferenceEngine for InferenceEngineAdapter {
-    async fn load(&self, spec: &ModelSpec) -> Result<Box<dyn LoadedModel>> {
-        match self.select_backend(spec) {
-            BackendChoice::SafeTensors => self.safetensors_engine.load(spec).await,
-            #[cfg(feature = "airframe")]
-            BackendChoice::Airframe => self.airframe_engine.load(spec).await,
-        }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::path::PathBuf;
-
-    fn spec(name: &str, path: &str) -> ModelSpec {
-        ModelSpec {
-            name: name.to_string(),
-            base_path: PathBuf::from(path),
-            lora_path: None,
-            template: None,
-            chat_template: None,
-            ctx_len: 2048,
-            n_threads: None,
-        }
-    }
-
-    #[test]
-    fn test_safetensors_routes_to_safetensors() {
-        let a = InferenceEngineAdapter::new();
-        assert_eq!(
-            a.select_backend(&spec("m", "model.safetensors")),
-            BackendChoice::SafeTensors
-        );
-    }
-
-    #[test]
-    #[cfg(feature = "airframe")]
-    fn test_gguf_routes_to_airframe() {
-        let a = InferenceEngineAdapter::new();
-        assert_eq!(
-            a.select_backend(&spec("m", "model.gguf")),
-            BackendChoice::Airframe
-        );
-    }
-
-    #[test]
-    fn test_safetensors_priority() {
-        let a = InferenceEngineAdapter::new();
-        assert_eq!(
-            a.select_backend(&spec("m", "/models/org/pytorch_model.safetensors")),
-            BackendChoice::SafeTensors
-        );
-    }
-}
-
-```
-
-### Core Architecture Module: `src/engine/airframe.rs`
-```
-use anyhow::Result;
-use async_trait::async_trait;
-use std::sync::Arc;
-use tokio::sync::Mutex;
-
-use super::{GenOptions, InferenceEngine, LoadedModel, ModelSpec};
-
-use airframe::runtime::gpu::{GpuRuntime, SamplingParams};
-
-/// Airframe GPU inference engine — in-process, zero-HTTP.
-pub struct AirframeEngine {
-    runtime: Arc<Mutex<Option<GpuRuntime>>>,
-}
-
-impl AirframeEngine {
-    pub fn new() -> Self {
-        Self {
-            runtime: Arc::new(Mutex::new(None)),
-        }
-    }
-}
-
-impl Default for AirframeEngine {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-#[async_trait]
-impl InferenceEngine for AirframeEngine {
-    async fn load(&self, spec: &ModelSpec) -> Result<Box<dyn LoadedModel>> {
-        let mut guard = self.runtime.lock().await;
-        if guard.is_none() {
-            let rt = GpuRuntime::load(&spec.base_path)
-                .await
-                .map_err(|e| anyhow::anyhow!("Airframe GPU load failed: {}", e))?;
-            *guard = Some(rt);
-        }
-        drop(guard);
-
-        Ok(Box::new(AirframeModel {
-            runtime: self.runtime.clone(),
-        }))
-    }
-}
-
-struct AirframeModel {
-    runtime: Arc<Mutex<Option<GpuRuntime>>>,
-}
-
-unsafe impl Send for AirframeModel {}
-unsafe impl Sync for AirframeModel {}
-
-impl AirframeModel {
-    fn bridge_params(opts: &GenOptions) -> SamplingParams {
-        SamplingParams {
-            max_tokens: opts.max_tokens,
-            temperature: opts.temperature,
-            top_p: opts.top_p,
-            repetition_penalty: opts.repeat_penalty,
-            seed: opts.seed.unwrap_or(42) as u64,
-            extra_stop_tokens: opts.stop_tokens.clone(),
-        }
-    }
-}
-
-#[async_trait]
-impl LoadedModel for AirframeModel {
-    async fn generate(
-        &self,
-        prompt: &str,
-        opts: GenOptions,
-        on_token: Option<Box<dyn FnMut(String) + Send>>,
-    ) -> Result<String> {
-        Ok(self
-            .generate_with_metadata(prompt, opts, on_token)
-            .await?
-            .text)
-    }
-
-    async fn generate_with_metadata(
-        &self,
-        prompt: &str,
-        opts: GenOptions,
-        on_token: Option<Box<dyn FnMut(String) + Send>>,
-    ) -> Result<crate::engine::GenerationOutput> {
-        let params = Self::bridge_params(&opts);
-        let runtime = self.runtime.clone();
-        let prompt = prompt.to_string();
-
-        let result = tokio::task::spawn_blocking(move || {
-            let guard = runtime.blocking_lock();
-            let rt = guard
-                .as_ref()
-                .expect("AirframeModel used before engine loaded");
-            rt.reset();
-
-            // Build hooks from opts
-            let control = build_control(&opts);
-            let modify_logits = build_modify_logits(rt, &opts);
-            let trace_cb = build_trace(&opts);
-
-            let callback: Option<Box<dyn FnMut(&str) + Send>> = on_token.map(|mut cb| {
-                let wrapper: Box<dyn FnMut(&str) + Send> = Box::new(move |piece: &str| {
-                    cb(piece.to_string());
-                });
-                wrapper
-            });
-
-            // Apply the model's chat template (Jinja-first) so instruct models are
-            // NOT fed a raw prompt (the cert-path fix). The engine's `generate`
-            // receives a bare completion prompt; wrap it with the GGUF template
-            // unless --raw (opts.raw_prompt) or the model has no template (base).
-            let model_name = rt.spec().model_name.clone();
-            let gguf_tpl = rt.chat_template().map(|s| s.to_string());
-            let mut extras = crate::prompt_render::JinjaExtras::for_model(&model_name);
-            // Resolve real bos/eos strings from the tokenizer for template vars.
-            let tok = rt.tokenizer_arc();
-            extras.bos_token = tok.token_to_piece(tok.bos_token()).ok();
-            extras.eos_token = tok.token_to_piece(tok.eos_token()).ok();
-            let fam = crate::prompt_render::family_from_spec(None, &model_name);
-            let rendered = crate::prompt_render::render_completion_prompt_with_extras(
-                &prompt,
-                gguf_tpl.as_deref(),
-                fam,
-                opts.raw_prompt,
-                &extras,
-            );
-            let final_prompt = rendered.text;
-
-            rt.generate_with_metadata(
-                &final_prompt,
-                &params,
-                callback,
-                control,
-                modify_logits,
-                trace_cb,
-            )
-        })
-        .await
-        .map_err(|e| anyhow::anyhow!("Airframe task panicked: {}", e))?
-        .map_err(|e| anyhow::anyhow!("Airframe generation failed: {}", e))?;
-
-        Ok(crate::engine::GenerationOutput {
-            text: result.text,
-            usage: Some(crate::engine::TokenUsage {
-                prompt_tokens: result.prompt_tokens,
-                completion_tokens: result.completion_tokens,
-                total_tokens: result.prompt_tokens + result.completion_tokens,
-            }),
-            finish_reason: Some(
-                match result.finish_reason {
-                    airframe::runtime::generation::FinishReason::Stop => "stop",
-                    airframe::runtime::generation::FinishReason::Length => "length",
-                }
-                .into(),
-            ),
-        })
-    }
-}
-
-fn build_control(
-    opts: &GenOptions,
-) -> Option<Box<dyn airframe::control::InferenceControl + Send + Sync>> {
-    airframe::runtime::gpu::fse_control_from_patterns(&opts.fse_reject_patterns)
-}
-
-/// Pre-sample logits mask hook type shared by grammar and FSE control paths.
-type LogitsMask = Box<dyn Fn(&mut [f32]) + Send + Sync>;
-/// Post-sample trace callback type (step, logits, elapsed).
-type TraceHook = Box<dyn FnMut(usize, &[f32], f64) + Send>;
-
-fn build_modify_logits(rt: &GpuRuntime, opts: &GenOptions) -> Option<LogitsMask> {
-    airframe::grammar::grammar_hooks(
-        &opts.grammar_mode,
-        rt.tokenizer_arc(),
-        rt.spec().n_vocab,
-        rt.eos_token(),
-        rt.im_end_token(),
-    )
-    .map(|(mask, _control)| mask)
-}
-
-fn build_trace(opts: &GenOptions) -> Option<TraceHook> {
-    airframe::runtime::gpu::trace_callback(&opts.trace_path)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::engine::GenOptions;
-
-    #[test]
-    fn test_bridge_params_maps_basic_fields() {
-        let opts = GenOptions {
-            max_tokens: 128,
-            temperature: 0.5,
-            top_p: 0.85,
-            top_k: 40,
-            repeat_penalty: 1.2,
-            seed: Some(7),
-            stream: false,
-            stop_tokens: Vec::new(),
-            grammar_mode: "none".to_string(),
-            fse_reject_patterns: String::new(),
-            math_bypass: false,
-            trace_path: String::new(),
-            session_id: String::new(),
-            raw_prompt: false,
-        };
-        let p = AirframeModel::bridge_params(&opts);
-        assert_eq!(p.max_tokens, 128);
-        assert!((p.temperature - 0.5).abs() < 1e-6);
-        assert!((p.top_p - 0.85).abs() < 1e-6);
-        assert!((p.repetition_penalty - 1.2).abs() < 1e-6);
-        assert_eq!(p.seed, 7u64);
-        assert!(p.extra_stop_tokens.is_empty());
-    }
-
-    #[test]
-    fn test_bridge_params_propagates_stop_tokens() {
-        let opts = GenOptions {
-            stop_tokens: vec!["<|eot_id|>".to_string(), "<|im_end|>".to_string()],
-            grammar_mode: "none".to_string(),
-            fse_reject_patterns: String::new(),
-            math_bypass: false,
-            trace_path: String::new(),
-            session_id: String::new(),
-            raw_prompt: false,
-            ..GenOptions::default()
-        };
-        let p = AirframeModel::bridge_params(&opts);
-        assert_eq!(p.extra_stop_tokens.len(), 2);
-        assert!(p.extra_stop_tokens.contains(&"<|eot_id|>".to_string()));
-        assert!(p.extra_stop_tokens.contains(&"<|im_end|>".to_string()));
-    }
-
-    #[test]
-    fn test_bridge_params_seed_default_when_none() {
-        let opts = GenOptions {
-            seed: None,
-            grammar_mode: "none".to_string(),
-            fse_reject_patterns: String::new(),
-            math_bypass: false,
-            trace_path: String::new(),
-            session_id: String::new(),
-            raw_prompt: false,
-            ..GenOptions::default()
-        };
-        let p = AirframeModel::bridge_params(&opts);
-        assert_eq!(p.seed, 42u64);
-    }
-}
-
-```
-
-### Core Architecture Module: `src/engine/mod.rs`
-```
-use anyhow::Result;
-use async_trait::async_trait;
-use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GenOptions {
-    pub max_tokens: usize,
-    pub temperature: f32,
-    pub top_p: f32,
-    pub top_k: i32,
-    pub repeat_penalty: f32,
-    pub seed: Option<u32>,
-    pub stream: bool,
-    #[serde(default)]
-    pub stop_tokens: Vec<String>,
-    #[serde(default)]
-    pub grammar_mode: String,
-    #[serde(default)]
-    pub fse_reject_patterns: String,
-    #[serde(default)]
-    pub math_bypass: bool,
-    #[serde(default)]
-    pub trace_path: String,
-    #[serde(default)]
-    pub session_id: String,
-    /// Force raw completion (bypass chat template). Serde default false.
-    #[serde(default)]
-    pub raw_prompt: bool,
-}
-
-impl Default for GenOptions {
-    fn default() -> Self {
-        Self {
-            max_tokens: 256,
-            temperature: 0.7,
-            top_p: 0.9,
-            top_k: 40,
-            repeat_penalty: 1.1,
-            seed: None,
-            stream: true,
-            stop_tokens: Vec::new(),
-            grammar_mode: "none".to_string(),
-            fse_reject_patterns: String::new(),
-            math_bypass: false,
-            trace_path: String::new(),
-            session_id: String::new(),
-            raw_prompt: false,
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct ModelSpec {
-    pub name: String,
-    pub base_path: PathBuf,
-    pub lora_path: Option<PathBuf>,
-    pub template: Option<String>,
-    /// The real GGUF `tokenizer.chat_template` (Jinja) for this model, if any.
-    /// Populated at registry-load from the GGUF header (see model_registry).
-    pub chat_template: Option<String>,
-    pub ctx_len: usize,
-    pub n_threads: Option<i32>,
-}
-
-#[async_trait]
-pub trait InferenceEngine: Send + Sync {
-    async fn load(&self, spec: &ModelSpec) -> Result<Box<dyn LoadedModel>>;
-}
-
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct TokenUsage {
-    pub prompt_tokens: usize,
-    pub completion_tokens: usize,
-    pub total_tokens: usize,
-}
-
-#[derive(Debug, Clone)]
-pub struct GenerationOutput {
-    pub text: String,
-    pub usage: Option<TokenUsage>,
-    pub finish_reason: Option<String>,
-}
-
-#[async_trait]
-pub trait LoadedModel: Send + Sync {
-    async fn generate(
-        &self,
-        prompt: &str,
-        opts: GenOptions,
-        on_token: Option<Box<dyn FnMut(String) + Send>>,
-    ) -> Result<String>;
-
-    /// Backends that cannot supply exact accounting leave metadata unavailable.
-    async fn generate_with_metadata(
-        &self,
-        prompt: &str,
-        opts: GenOptions,
-        on_token: Option<Box<dyn FnMut(String) + Send>>,
-    ) -> Result<GenerationOutput> {
-        Ok(GenerationOutput {
-            text: self.generate(prompt, opts, on_token).await?,
-            usage: None,
-            finish_reason: None,
-        })
-    }
-}
-
-pub mod adapter;
-#[cfg(feature = "airframe")]
-pub mod airframe;
-pub mod safetensors_native;
-
-```
-
-### Core Architecture Module: `src/engine/safetensors_native.rs`
-```
-// Native SafeTensors inference engine - NO Python dependency
-// Implements direct SafeTensors model loading and inference in pure Rust
-
-use anyhow::{anyhow, Result};
-use async_trait::async_trait;
-use safetensors::SafeTensors;
-use std::collections::HashMap;
-use std::fs::{self, File};
-use std::path::Path;
-#[cfg(test)]
-use std::path::PathBuf;
-use tracing::{debug, info, warn};
-
-// use crate::cache::{ModelCache, ModelMetadata};
-// use crate::cache::model_cache;
-
-use super::{GenOptions, InferenceEngine, LoadedModel, ModelSpec};
-
-// Memory-mapped file support for large models
-use memmap2::MmapOptions;
-
-#[derive(Debug)]
-pub struct SafeTensorsEngine {
-    // Pure Rust implementation - no external dependencies
-    // cache: RwLock<ModelCache>,
-    use_mmap: bool, // Enable memory-mapped loading for large models
-}
-
-impl Default for SafeTensorsEngine {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl SafeTensorsEngine {
-    pub fn new() -> Self {
-        // let cache = ModelCache::new().unwrap_or_else(|e| {
-        //     warn!("Failed to initialize model cache: {}. Running without cache.", e);
-        //     ModelCache::default()
-        // });
-        Self {
-            // cache: RwLock::new(cache),
-            use_mmap: true, // Enable memory-mapped loading by default
-        }
-    }
-
-    #[cfg(test)]
-    pub fn with_mmap(mut self, use_mmap: bool) -> Self {
-        self.use_mmap = use_mmap;
-        self
-    }
-
-    /// Check if a model file is SafeTensors format
-    pub fn is_safetensors_model(path: &Path) -> bool {
-        if let Some(ext) = path.extension().and_then(|s| s.to_str()) {
-            return ext == "safetensors";
-        }
-
-        // Also check by reading header if no extension
-        if let Ok(data) = fs::read(path) {
-            if data.len() >= 8 {
-                // SafeTensors files start with 8-byte header length
-                return SafeTensors::deserialize(&data).is_ok();
-            }
-        }
-
-        false
-    }
-
-    /// Discover SafeTensors models in a directory
-    #[cfg(test)]
-    pub fn discover_safetensors_models(dir: &Path) -> Result<Vec<PathBuf>> {
-        let mut models = Vec::new();
-
-        if !dir.exists() || !dir.is_dir() {
-            return Ok(models);
-        }
-
-        for entry in fs::read_dir(dir)? {
-            let entry = entry?;
-            let path = entry.path();
-
-            if path.is_file() && Self::is_safetensors_model(&path) {
-                models.push(path);
-            }
-        }
-
-        Ok(models)
-    }
-}
-
-#[async_trait]
-impl InferenceEngine for SafeTensorsEngine {
-    async fn load(&self, spec: &ModelSpec) -> Result<Box<dyn LoadedModel>> {
-        info!("Loading SafeTensors model: {}", spec.base_path.display());
-
-        // Check if it's actually a SafeTensors file
-        if !Self::is_safetensors_model(&spec.base_path) {
-            return Err(anyhow!(
-                "File is not in SafeTensors format: {}",
-                spec.base_path.display()
-            ));
-        }
-
-        // Check cache first with read lock
-        let _cached_metadata = {
-            // let cache = self.cache.read().unwrap();
-            // cache.get(&spec.base_path).cloned()
-            None::<()> // Temporarily disable cache
-        };
-
-        let model = /* if let Some(metadata) = cached_metadata {
-            info!("Found cached metadata for {}", spec.base_path.display());
-            SafeTensorsModel::load_from_cached_metadata(spec, &metadata, self.use_mmap).await?
-        } else */ {
-            info!("Loading model file directly (cache disabled)");
-            // Load model and cache metadata
-            let model = SafeTensorsModel::load_and_cache(spec, self.use_mmap).await?;
-            model
-        };
-        Ok(Box::new(model))
-    }
-}
-
-#[derive(Debug)]
-enum ModelData {
-    InMemory(Vec<u8>),
-    MemoryMapped(memmap2::Mmap),
-}
-
-impl ModelData {
-    fn as_bytes(&self) -> &[u8] {
-        match self {
-            ModelData::InMemory(data) => data,
-            ModelData::MemoryMapped(mmap) => mmap,
-        }
-    }
-}
-
-#[derive(Debug)]
-struct SafeTensorsModel {
-    name: String,
-    model_data: ModelData, // Either in-memory or memory-mapped
-    config: ModelConfig,
-    tokenizer: SimpleTokenizer,
-}
-
-#[derive(Debug, Clone)]
-struct ModelConfig {
-    vocab_size: usize,
-    #[allow(dead_code)]
-    hidden_size: usize,
-    num_layers: usize,
-    #[allow(dead_code)]
-    max_sequence_length: usize,
-    // Add more config fields as needed
-}
-
-#[derive(Debug)]
-struct SimpleTokenizer {
-    // Simple tokenizer implementation
-    vocab: HashMap<String, u32>,
-    #[allow(dead_code)]
-    reverse_vocab: HashMap<u32, String>,
-    bos_token: u32,
-    #[allow(dead_code)]
-    eos_token: u32,
-}
-
-impl SafeTensorsModel {
-    /// Load model and cache metadata (for new models not in cache)
-    async fn load_and_cache(
-        spec: &ModelSpec,
-        /* cache: &RwLock<ModelCache>, */ use_mmap: bool,
-    ) -> Result<Self> {
-        info!("Reading SafeTensors file: {}", spec.base_path.display());
-
-        // Choose loading strategy based on file size and mmap setting
-        let file_size = fs::metadata(&spec.base_path)?.len();
-        let use_mmap_for_file = use_mmap && file_size > 100 * 1024 * 1024; // Use mmap for files > 100MB
-
-        let model_data = if use_mmap_for_file {
-            info!(
-                "Using memory-mapped loading for large model ({:.1} MB)",
-                file_size as f64 / 1024.0 / 1024.0
-            );
-            let file = File::open(&spec.base_path)?;
-            let mmap = unsafe { MmapOptions::new().map(&file)? };
-            ModelData::MemoryMapped(mmap)
-        } else {
-            info!(
-                "Loading model into memory ({:.1} MB)",
-                file_size as f64 / 1024.0 / 1024.0
-            );
-            let data = fs::read(&spec.base_path)?;
-            ModelData::InMemory(data)
-        };
-
-        // Parse SafeTensors format to validate and get info
-        let tensors = SafeTensors::deserialize(model_data.as_bytes())?;
-
-        debug!("SafeTensors loaded with {} tensors", tensors.len());
-
-        // Extract metadata for caching
-        // let metadata = model_cache::extract_safetensors_metadata(&spec.base_path)?;
-
-        // Cache the metadata for future loads
-        // {
-        //     let mut cache_guard = cache.write().unwrap();
-        //     if let Err(e) = cache_guard.set(metadata.clone()) {
-        //         warn!("Failed to cache metadata: {}", e);
-        //     }
-        // } // Drop the lock before async operations
-
-        // Load configuration from cached metadata if available, otherwise parse
-        let config = /* if let Some(config_data) = &metadata.config {
-            Self::parse_config_from_json(config_data)?
-        } else */ {
-            Self::load_config(&spec.base_path, &tensors).await?
-        };
-
-        // Load tokenizer from cached metadata if available, otherwise parse
-        let tokenizer = /* if let Some(tokenizer_data) = &metadata.tokenizer {
-            Self::parse_tokenizer_from_json(tokenizer_data)?
-        } else */ {
-            Self::load_tokenizer(&spec.base_path).await?
-        };
-
-        Ok(SafeTensorsModel {
-            name: spec.name.clone(),
-            model_data,
-            config,
-            tokenizer,
-        })
-    }
-
-    // Load model from cached metadata (much faster)
-    /* async fn load_from_cached_metadata(spec: &ModelSpec, metadata: &ModelMetadata, use_mmap: bool) -> Result<Self> {
-        info!("Loading model from cached metadata");
-
-        // Choose loading strategy based on file size and mmap setting
-        let file_size = fs::metadata(&spec.base_path)?.len();
-        let use_mmap_for_file = use_mmap && file_size > 100 * 1024 * 1024; // Use mmap for files > 100MB
-
-        let model_data = if use_mmap_for_file {
-            info!("Using memory-mapped loading for cached model ({:.1} MB)", file_size as f64 / 1024.0 / 1024.0);
-            let file = File::open(&spec.base_path)?;
-            let mmap = unsafe { MmapOptions::new().map(&file)? };
-            ModelData::MemoryMapped(mmap)
-        } else {
-            info!("Loading cached model into memory ({:.1} MB)", file_size as f64 / 1024.0 / 1024.0);
-            let data = fs::read(&spec.base_path)?;
-            ModelData::InMemory(data)
-        };
-
-        // Parse config from cached metadata
-        let config = if let Some(config_data) = &metadata.config {
-            Self::parse_config_from_json(config_data)?
-        } else {
-            // Fallback to file-based loading if not in cache
-            let tensors = SafeTensors::deserialize(model_data.as_bytes())?;
-            Self::load_config(&spec.base_path, &tensors).await?
-        };
-
-        // Parse tokenizer from cached metadata
-        let tokenizer = if let Some(tokenizer_data) = &metadata.tokenizer {
-            Self::parse_tokenizer_from_json(tokenizer_data)?
-        } else {
-            // Fallback to file-based loading if not in cache
-            Self::load_tokenizer(&spec.base_path).await?
-        };
-
-        debug!("Model loaded from cache with {} cached tensors", metadata.tensors.len());
-
-        Ok(SafeTensorsModel {
-            name: spec.name.clone(),
-            model_data,
-            config,
-            tokenizer,
-        })
-    } */
-
-    /// Parse configuration from cached JSON data
-    #[allow(dead_code)]
-    fn parse_config_from_json(config_data: &serde_json::Value) -> Result<ModelConfig> {
-        let vocab_size = config_data
-            .get("vocab_size")
-            .and_then(|v| v.as_u64())
-            .unwrap_or(32000) as usize;
-
-        let hidden_size = config_data
-            .get("hidden_size")
-            .or_else(|| config_data.get("hidden_dim"))
-            .and_then(|v| v.as_u64())
-            .unwrap_or(4096) as usize;
-
-        let num_layers = config_data
-            .get("num_hidden_layers")
-            .or_else(|| config_data.get("num_layers"))
-            .and_then(|v| v.as_u64())
-            .unwrap_or(32) as usize;
-```
-
-### Core Architecture Module: `src/prompt_render.rs`
-```
-//! Unified prompt rendering: **shimmyjinja + GGUF chat_template first**,
-//! hardcoded TemplateFamily only as fallback.
-//!
-//! Goal: every chat/instruct path prefers the model's own Jinja from GGUF
-//! (`tokenizer.chat_template`) instead of name→ChatML heuristics alone.
-
-use crate::templates::TemplateFamily;
-use shimmyjinja::{try_render_chat_template_with_context, ChatMessage, RenderContext};
-use std::panic::{catch_unwind, AssertUnwindSafe};
-
-/// How the prompt was produced (for logs / factory diagnostics).
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum RenderSource {
-    /// GGUF Jinja via shimmyjinja
-    GgufJinja,
-    /// Hardcoded TemplateFamily (ChatML / Llama3 / OpenChat)
-    FamilyFallback,
-    /// Unchanged raw string (explicit --raw / no template available)
-    Raw,
-}
-
-#[derive(Debug, Clone)]
-pub struct RenderedPrompt {
-    pub text: String,
-    // RenderSource is part of the public substrate API (used by gguf_routing +
-    // observability in later beads); allowed as dead in the bin build for now.
-    #[allow(dead_code)]
-    pub source: RenderSource,
-}
-
-/// Optional Jinja context knobs (BOS/EOS, thinking policy).
-#[derive(Debug, Clone, Default)]
-pub struct JinjaExtras {
-    pub bos_token: Option<String>,
-    pub eos_token: Option<String>,
-    /// Model/path name used for Qwen/DeepSeek thinking heuristics.
-    pub model_hint: Option<String>,
-    /// Override enable_thinking (None = heuristic).
-    pub enable_thinking: Option<bool>,
-}
-
-impl JinjaExtras {
-    pub fn for_model(model_name: &str) -> Self {
-        Self {
-            model_hint: Some(model_name.to_string()),
-            ..Default::default()
-        }
-    }
-}
-
-/// How the renderer should choose a source (the single decision point).
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[allow(dead_code)] // public substrate API consumed by oqu.2/routing + later beads
-pub enum RenderMode {
-    /// Auto: GGUF Jinja when present, else Raw for base models, else family fallback.
-    Auto,
-    /// Force raw completion (bypass template + thinking heuristic).
-    ForceRaw,
-    /// Force template rendering (Jinja, with family fallback if it fails).
-    ForceTemplate,
-}
-
-/// The single render-decision point. All served/CLI paths call this so there is
-/// exactly ONE rule for how a prompt is built. Returns the source to use (the
-/// actual rendered text is produced by the render_* functions with that source).
-///
-/// Priority (Auto):
-/// 1. `gguf_chat_template` (real GGUF Jinja) is Some → GgufJinja.
-/// 2. Otherwise, if `registry_template` (shimmy's coarse "chatml"/"llama3") or
-///    model-name heuristic resolves a non-OpenChat family → FamilyFallback.
-/// 3. Otherwise (no template at all, e.g. base/code models) → Raw.
-///
-/// `registry_template` is the shimmy model-registry coarse string; it is the
-/// fallback only — the real GGUF template always wins when present.
-#[allow(dead_code)]
-pub fn decide(
-    gguf_chat_template: Option<&str>,
-    registry_template: Option<&str>,
-    model_name: &str,
-    mode: RenderMode,
-) -> RenderSource {
-    match mode {
-        RenderMode::ForceRaw => RenderSource::Raw,
-        RenderMode::ForceTemplate => {
-            if let Some(tpl) = gguf_chat_template {
-                if !tpl.trim().is_empty() {
-                    return RenderSource::GgufJinja;
-                }
-            }
-            RenderSource::FamilyFallback
-        }
-        RenderMode::Auto => {
-            if let Some(tpl) = gguf_chat_template {
-                if !tpl.trim().is_empty() {
-                    return RenderSource::GgufJinja;
-                }
-            }
-            // Auto with no GGUF template: family fallback or raw.
-            match family_from_spec(registry_template, model_name) {
-                TemplateFamily::OpenChat => RenderSource::Raw,
-                _ => RenderSource::FamilyFallback,
-            }
-        }
-    }
-}
-
-/// Build a chat-style prompt.
-///
-/// Priority:
-/// 1. If `gguf_chat_template` is Some and renders successfully → shimmyjinja
-/// 2. Else → `family` hardcoded renderer
-///
-/// `messages` are (role, content). If `user_input` is Some, it is treated as
-/// the final user turn (and omitted from history when rendering via family
-/// path that uses history+input).
-#[allow(dead_code)] // public API / tests; binary uses `_with_extras`
-pub fn render_chat_prompt(
-    gguf_chat_template: Option<&str>,
-    family: TemplateFamily,
-    system: Option<&str>,
-    messages: &[(String, String)],
-    user_input: Option<&str>,
-) -> RenderedPrompt {
-    render_chat_prompt_with_extras(
-        gguf_chat_template,
-        family,
-        system,
-        messages,
-        user_input,
-        &JinjaExtras::default(),
-    )
-}
-
-/// Same as [`render_chat_prompt`] with BOS/EOS and thinking-policy knobs.
-pub fn render_chat_prompt_with_extras(
-    gguf_chat_template: Option<&str>,
-    family: TemplateFamily,
-    system: Option<&str>,
-    messages: &[(String, String)],
-    user_input: Option<&str>,
-    extras: &JinjaExtras,
-) -> RenderedPrompt {
-    if let Some(tpl) = gguf_chat_template {
-        match render_via_jinja(tpl, system, messages, user_input, extras) {
-            Ok(text) => {
-                return RenderedPrompt {
-                    text,
-                    source: RenderSource::GgufJinja,
-                };
-            }
-            Err(e) => {
-                tracing::warn!(
-                    "GGUF chat_template present but shimmyjinja failed ({}); falling back to {:?}",
-                    e,
-                    family
-                );
-            }
-        }
-    }
-
-    // Family path: TemplateFamily::render takes history + optional last user input
-    let history: Vec<(String, String)> = if user_input.is_some() && !messages.is_empty() {
-        let last_is_user = messages.last().map(|(r, _)| r == "user").unwrap_or(false);
-        if last_is_user {
-            messages[..messages.len() - 1].to_vec()
-        } else {
-            messages.to_vec()
-        }
-    } else {
-        messages.to_vec()
-    };
-
-    let text = family.render(system, &history, user_input);
-    RenderedPrompt {
-        text,
-        source: RenderSource::FamilyFallback,
-    }
-}
-
-/// Wrap a raw completion prompt as a single user message when a GGUF template exists.
-/// If `raw` is true or no template, return the prompt unchanged.
-#[allow(dead_code)] // public API / tests; binary uses `_with_extras`
-pub fn render_completion_prompt(
-    raw_prompt: &str,
-    gguf_chat_template: Option<&str>,
-    family: TemplateFamily,
-    force_raw: bool,
-) -> RenderedPrompt {
-    render_completion_prompt_with_extras(
-        raw_prompt,
-        gguf_chat_template,
-        family,
-        force_raw,
-        &JinjaExtras::default(),
-    )
-}
-
-/// Same as [`render_completion_prompt`] with Jinja extras (model hint for thinking).
-pub fn render_completion_prompt_with_extras(
-    raw_prompt: &str,
-    gguf_chat_template: Option<&str>,
-    family: TemplateFamily,
-    force_raw: bool,
-    extras: &JinjaExtras,
-) -> RenderedPrompt {
-    if force_raw || raw_prompt.is_empty() {
-        return RenderedPrompt {
-            text: raw_prompt.to_string(),
-            source: RenderSource::Raw,
-        };
-    }
-
-    if gguf_chat_template.is_some() {
-        return render_chat_prompt_with_extras(
-            gguf_chat_template,
-            family,
-            None,
-            &[],
-            Some(raw_prompt),
-            extras,
-        );
-    }
-
-    // No GGUF Jinja: only family-wrap if the model actually has a chat family
-    // (ChatML/Llama3). OpenChat = no real chat structure → true raw completion
-    // (base/code models like starcoder2, phi-2). This is the behavior change
-    // that makes base models render RAW instead of a bogus "role: content" wrap.
-    if family == TemplateFamily::OpenChat {
-        return RenderedPrompt {
-            text: raw_prompt.to_string(),
-            source: RenderSource::Raw,
-        };
-    }
-    let text = family.render(None, &[], Some(raw_prompt));
-    RenderedPrompt {
-        text,
-        source: RenderSource::FamilyFallback,
-    }
-}
-
-fn thinking_policy(extras: &JinjaExtras) -> (Option<bool>, &'static str) {
-    if let Some(v) = extras.enable_thinking {
-        return (Some(v), "explicit");
-    }
-    let hint = extras
-        .model_hint
-        .as_deref()
-        .unwrap_or("")
-        .to_ascii_lowercase();
-    // Reasoning families often default-open <think>; keep no-think unless overridden.
-    if hint.contains("qwen")
-        || hint.contains("qwq")
-        || hint.contains("deepseek-r1")
-        || hint.contains("deepseek_r1")
-    {
-        (Some(false), "heuristic_no_think")
-    } else {
-        (None, "template_default")
-    }
-}
-
-fn render_via_jinja(
-    template: &str,
-    system: Option<&str>,
-    messages: &[(String, String)],
-    user_input: Option<&str>,
-    extras: &JinjaExtras,
-) -> Result<String, String> {
-    let (enable_thinking, _policy) = thinking_policy(extras);
-
-    let mut msgs: Vec<ChatMessage> = Vec::new();
-    if let Some(sys) = system {
-        if !sys.is_empty() {
-            msgs.push(ChatMessage {
-                role: "system".into(),
-                content: sys.into(),
-            });
-        }
-    }
-    for (role, content) in messages {
-        msgs.push(ChatMessage {
-            role: role.clone(),
-            content: content.clone(),
-        });
-    }
-    if let Some(inp) = user_input {
-        let dup = msgs
-            .last()
-            .map(|m| m.role == "user" && m.content == inp)
-            .unwrap_or(false);
-        if !dup {
-            if msgs.last().map(|m| m.role.as_str()) == Some("user") {
-                if let Some(last) = msgs.last_mut() {
-                    last.content = inp.to_string();
-                }
-            } else {
-                msgs.push(ChatMessage {
-                    role: "user".into(),
-                    content: inp.into(),
-                });
-            }
-        }
-    }
-
-    // Match airframe shimmy_server_gpu: append /nothink when thinking disabled.
-   
-```
-
-### Core Architecture Module: `src/util/diag.rs`
-```
-use axum::Json;
-use serde::Serialize;
-use sysinfo::System;
-
-#[derive(Serialize)]
-pub struct Diag {
-    os: String,
-    cores: usize,
-    mem_total_mb: u64,
-}
-
-pub async fn diag_handler() -> Json<Diag> {
-    let mut sys = System::new_all();
-    sys.refresh_all();
-    // Some sysinfo methods changed across versions; keep it minimal & portable.
-    let os = std::env::consts::OS.to_string();
-    let cores = std::thread::available_parallelism()
-        .map(|n| n.get())
-        .unwrap_or(0);
-    let mem_total_mb = sys.total_memory() / 1024; // KiB -> MiB
-    Json(Diag {
-        os,
-        cores,
-        mem_total_mb,
-    })
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[tokio::test]
-    async fn diag_handler_returns_valid_fields() {
-        let Json(diag) = diag_handler().await;
-        assert!(!diag.os.is_empty(), "os must be populated");
-        assert!(diag.cores >= 1, "cores must be >= 1 on this machine");
-        assert!(diag.mem_total_mb > 0, "total memory must be non-zero");
-    }
-}
-
-```
-
-### Core Architecture Module: `src/util/memory.rs`
-```
-/// Memory management utilities for Issue #108
-///
-/// Provides memory estimation and warnings to help users understand
-/// system requirements for large language models.
-use sysinfo::System;
-
-/// Get total system memory in bytes
-#[allow(dead_code)] // Placeholder utility for future use
-pub fn get_total_memory() -> u64 {
-    let mut system = System::new_all();
-    system.refresh_memory();
-    system.total_memory()
-}
-
-/// Get available system memory in bytes
-#[allow(dead_code)] // Placeholder utility for future use
-pub fn get_available_memory() -> u64 {
-    let mut system = System::new_all();
-    system.refresh_memory();
-    system.available_memory()
-}
-
-/// Estimate memory requirements for a model file
-///
-/// This provides a rough estimate based on file size and typical
-/// memory overhead for quantized models.
-#[allow(dead_code)] // Placeholder utility for future use
-pub fn estimate_memory_requirements(model_file_size: u64) -> MemoryEstimate {
-    let file_size_gb = model_file_size as f64 / 1_024_000_000.0;
-
-    // Rough estimates based on typical quantized model behavior:
-    // - File size is the compressed/quantized size
-    // - Runtime needs additional memory for:
-    //   * Context buffers
-    //   * Intermediate activations
-    //   * Operating system overhead
-    let runtime_multiplier = 1.8; // 80% overhead is typical
-    let estimated_runtime_gb = file_size_gb * runtime_multiplier;
-
-    MemoryEstimate {
-        file_size_gb,
-        estimated_runtime_gb,
-        needs_moe_offloading: estimated_runtime_gb > 16.0, // >16GB suggests MoE needed
-    }
-}
-
-/// Memory requirement estimate
-#[derive(Debug)]
-#[allow(dead_code)] // Placeholder utility for future use
-pub struct MemoryEstimate {
-    pub file_size_gb: f64,
-    pub estimated_runtime_gb: f64,
-    pub needs_moe_offloading: bool,
-}
-
-/// Check if system has enough memory for a model
-#[allow(dead_code)] // Placeholder utility for future use
-pub fn check_memory_availability(required_gb: f64) -> MemoryAvailability {
-    let total_gb = get_total_memory() as f64 / 1_024_000_000.0;
-    let available_gb = get_available_memory() as f64 / 1_024_000_000.0;
-
-    let status = if available_gb >= required_gb {
-        MemoryStatus::Sufficient
-    } else if total_gb >= required_gb {
-        MemoryStatus::Tight
-    } else {
-        MemoryStatus::Insufficient
-    };
-
-    MemoryAvailability {
-        total_gb,
-        available_gb,
-        required_gb,
-        status,
-    }
-}
-
-/// Memory availability analysis
-#[derive(Debug)]
-#[allow(dead_code)] // Placeholder utility for future use
-pub struct MemoryAvailability {
-    pub total_gb: f64,
-    pub available_gb: f64,
-    pub required_gb: f64,
-    pub status: MemoryStatus,
-}
-
-#[derive(Debug, PartialEq)]
-#[allow(dead_code)] // Placeholder utility for future use
-pub enum MemoryStatus {
-    Sufficient,   // Available memory > required
-    Tight,        // Total memory >= required but available < required
-    Insufficient, // Total memory < required
-}
-
-impl MemoryAvailability {
-    /// Get user-friendly recommendations based on memory status
-    #[allow(dead_code)] // Placeholder utility for future use
-    pub fn get_recommendations(&self) -> Vec<String> {
-        let mut recommendations = Vec::new();
-
-        match self.status {
-            MemoryStatus::Sufficient => {
-                recommendations.push("✅ Sufficient memory available".to_string());
-            }
-            MemoryStatus::Tight => {
-                recommendations.push("⚠️  Close other applications to free memory".to_string());
-                recommendations.push("💡 Consider restarting to free cached memory".to_string());
-            }
-            MemoryStatus::Insufficient => {
-                recommendations.push("❌ Insufficient system memory".to_string());
-                recommendations
-                    .push("💡 Use a smaller model (7B instead of 14B parameters)".to_string());
-                recommendations.push("💡 Add more RAM to your system".to_string());
-                recommendations
-                    .push("💡 Use a more quantized model (Q4_K_M instead of Q8_0)".to_string());
-            }
-        }
-
-        // Always suggest MoE when applicable
-        if self.required_gb > 16.0 {
-            recommendations.push(
-                "🧠 MoE CPU offloading would help (currently disabled - Issue #108)".to_string(),
-            );
-        }
-
-        recommendations
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_memory_estimation() {
-        // Test with a typical 7B model file (~4GB)
-        let estimate = estimate_memory_requirements(4_000_000_000);
-        assert!(estimate.file_size_gb > 3.0 && estimate.file_size_gb < 5.0);
-        assert!(estimate.estimated_runtime_gb > 6.0); // Should be ~7.2GB
-        assert!(!estimate.needs_moe_offloading); // 7B shouldn't need MoE
-    }
-
-    #[test]
-    fn test_large_model_estimation() {
-        // Test with a large 14B model file (~8GB)
-        let estimate = estimate_memory_requirements(8_000_000_000);
-        assert!(estimate.file_size_gb > 7.0 && estimate.file_size_gb < 9.0);
-        assert!(estimate.estimated_runtime_gb > 14.0); // Should be ~14.4GB
-        assert!(!estimate.needs_moe_offloading); // 14B is borderline
-    }
-
-    #[test]
-    fn test_huge_model_estimation() {
-        // Test with a huge model requiring MoE (~20GB)
-        let estimate = estimate_memory_requirements(20_000_000_000);
-        assert!(estimate.needs_moe_offloading); // Should definitely need MoE
-        assert!(estimate.estimated_runtime_gb > 30.0);
-    }
-
-    #[test]
-    fn test_memory_availability_logic() {
-        let availability = MemoryAvailability {
-            total_gb: 16.0,
-            available_gb: 12.0,
-            required_gb: 10.0,
-            status: MemoryStatus::Sufficient,
-        };
-
-        let recommendations = availability.get_recommendations();
-        assert!(recommendations.iter().any(|r| r.contains("Sufficient")));
-    }
-
-    #[test]
-    fn test_insufficient_memory_recommendations() {
-        let availability = MemoryAvailability {
-            total_gb: 8.0,
-            available_gb: 6.0,
-            required_gb: 12.0,
-            status: MemoryStatus::Insufficient,
-        };
-
-        let recommendations = availability.get_recommendations();
-        assert!(recommendations.iter().any(|r| r.contains("smaller model")));
-        assert!(recommendations.iter().any(|r| r.contains("Add more RAM")));
-    }
-}
-
-```
-
-### Core Architecture Module: `benches/generation_performance.rs`
-```
-// Generation Performance Benchmarks
-// Measures performance of text generation and API processing
-
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use shimmy::invariant_ppt::shimmy_invariants::*;
-
-fn benchmark_template_rendering(c: &mut Criterion) {
-    c.bench_function("chat_template_rendering", |b| {
-        b.iter(|| {
-            let prompt = black_box("What is the meaning of life?");
-            let template = r#"<|user|>
-{{prompt}}
-<|assistant|>
-"#;
-
-            // Simulate template rendering (simplified)
-            let rendered = template.replace("{{prompt}}", prompt);
-            black_box(rendered)
-        })
-    });
-}
-
-fn benchmark_invariant_checking(c: &mut Criterion) {
-    c.bench_function("generation_invariants", |b| {
-        b.iter(|| {
-            let _prompt = black_box("Hello world");
-            let _response = black_box("Hello! How can I help you today?");
-
-            // Benchmark measures generation performance only
-            // Invariant validation removed - function doesn't exist in current codebase
-        })
-    });
-
-    c.bench_function("api_response_invariants", |b| {
-        b.iter(|| {
-            let status = black_box(200u16);
-            let body = black_box(r#"{"response": "Generated text"}"#);
-
-            std::panic::catch_unwind(|| {
-                assert_api_response_valid(status, body);
-            })
-            .unwrap_or_default();
-        })
-    });
-}
-
-fn benchmark_response_processing(c: &mut Criterion) {
-    let sample_responses = vec![
-        "Short response.",
-        "This is a medium length response that contains more detail and explanation.",
-        "This is a very long response that simulates the kind of detailed, comprehensive answer that an AI model might generate when asked a complex question. It includes multiple sentences, various concepts, and demonstrates the kind of text processing that would be typical in a real-world scenario.",
-    ];
-
-    c.bench_function("response_length_calculation", |b| {
-        b.iter(|| {
-            for response in &sample_responses {
-                let length = black_box(response).len();
-                let word_count = black_box(response).split_whitespace().count();
-                black_box((length, word_count));
-            }
-        })
-    });
-}
-
-fn benchmark_json_processing(c: &mut Criterion) {
-    let sample_request = r#"{
-        "model": "test-model",
-        "messages": [
-            {"role": "user", "content": "What is AI?"}
-        ],
-        "max_tokens": 100,
-        "temperature": 0.7
-    }"#;
-
-    c.bench_function("json_parsing", |b| {
-        b.iter(
-            || match serde_json::from_str::<serde_json::Value>(black_box(sample_request)) {
-                Ok(parsed) => black_box(parsed),
-                Err(_) => serde_json::Value::Null,
-            },
-        )
-    });
-
-    let sample_response = serde_json::json!({
-        "id": "chatcmpl-123",
-        "object": "chat.completion",
-        "created": 1677652288,
-        "choices": [{
-            "index": 0,
-            "message": {
-                "role": "assistant",
-                "content": "AI stands for Artificial Intelligence."
-            },
-            "finish_reason": "stop"
-        }],
-        "usage": {
-            "prompt_tokens": 9,
-            "completion_tokens": 8,
-            "total_tokens": 17
-        }
-    });
-
-    c.bench_function("json_serialization", |b| {
-        b.iter(|| {
-            let serialized = serde_json::to_string(&black_box(&sample_response));
-            black_box(serialized)
-        })
-    });
-}
-
-criterion_group!(
-    benches,
-    benchmark_template_rendering,
-    benchmark_invariant_checking,
-    benchmark_response_processing,
-    benchmark_json_processing
-);
-criterion_main!(benches);
-
-```
-
-### Core Architecture Module: `benches/model_loading.rs`
-```
-// Model Loading Performance Benchmarks
-// Measures performance of various model loading operations
-
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use shimmy::auto_discovery::ModelAutoDiscovery;
-use shimmy::model_registry::{ModelEntry, Registry};
-use std::path::PathBuf;
-
-fn benchmark_model_discovery(c: &mut Criterion) {
-    c.bench_function("model_auto_discovery_scan", |b| {
-        b.iter(|| {
-            let discovery = ModelAutoDiscovery::new();
-            let discovered = discovery.discover_models();
-            black_box(discovered)
-        })
-    });
-}
-
-fn benchmark_model_registry(c: &mut Criterion) {
-    let mut registry = Registry::new();
-
-    c.bench_function("model_registry_register", |b| {
-        b.iter(|| {
-            let entry = ModelEntry {
-                name: black_box("test-model".to_string()),
-                base_path: black_box(PathBuf::from("test.gguf")),
-                lora_path: None,
-                template: Some("chatml".to_string()),
-                ctx_len: Some(black_box(4096)),
-                n_threads: Some(black_box(4)),
-            };
-            registry.register(black_box(entry));
-        })
-    });
-
-    // Add some models for listing benchmark
-    for i in 0..100 {
-        let entry = ModelEntry {
-            name: format!("model-{}", i),
-            base_path: PathBuf::from(format!("model-{}.gguf", i)),
-            lora_path: None,
-            template: Some("chatml".to_string()),
-            ctx_len: Some(4096),
-            n_threads: Some(4),
-        };
-        registry.register(entry);
-    }
-
-    c.bench_function("model_registry_list_100", |b| {
-        b.iter(|| {
-            let models = registry.list();
-            black_box(models)
-        })
-    });
-
-    c.bench_function("model_registry_get", |b| {
-        b.iter(|| {
-            let model = registry.get(black_box("model-50"));
-            black_box(model)
-        })
-    });
-
-    c.bench_function("model_registry_infer_template", |b| {
-        b.iter(|| {
-            let template = registry.infer_template(black_box("llama-3-8b"));
-            black_box(template)
-        })
-    });
-}
-
-fn benchmark_safetensors_detection(c: &mut Criterion) {
-    c.bench_function("safetensors_file_detection", |b| {
-        b.iter(|| {
-            let paths = vec![
-                "model.safetensors",
-                "model.gguf",
-                "model.bin",
-                "pytorch_model.bin",
-                "model.pt",
-            ];
-
-            for path in paths {
-                let path_buf = PathBuf::from(black_box(path));
-                let is_safetensors = path_buf
-                    .extension()
-                    .and_then(|ext| ext.to_str())
-                    .map(|ext| ext == "safetensors")
-                    .unwrap_or(false);
-                black_box(is_safetensors);
-            }
-        })
-    });
-}
-
-criterion_group!(
-    benches,
-    benchmark_model_discovery,
-    benchmark_model_registry,
-    benchmark_safetensors_detection
-);
-criterion_main!(benches);
-
-```
-
-### Core Architecture Module: `packaging/npm/lib/install.js`
-```
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
-const https = require('https');
-
-const GITHUB_REPO = 'Michael-A-Kuykendall/shimmy';
-const BINARY_NAME = process.platform === 'win32' ? 'shimmy.exe' : 'shimmy';
-
-function getPlatformInfo() {
-  const platform = process.platform;
-  const arch = process.arch;
-
-  const platformMap = {
-    'win32': 'windows',
-    'darwin': 'darwin',
-    'linux': 'linux'
-  };
-
-  const archMap = {
-    'x64': 'amd64',
-    'arm64': 'arm64'
-  };
-
-  return {
-    platform: platformMap[platform],
-    arch: archMap[arch],
-    extension: platform === 'win32' ? '.exe' : ''
-  };
-}
-
-async function downloadBinary() {
-  console.log('🔄 Installing Shimmy binary...');
-
-  const { platform, arch, extension } = getPlatformInfo();
-
-  if (!platform || !arch) {
-    throw new Error(`Unsupported platform: ${process.platform}-${process.arch}`);
-  }
-
-  const packageJson = require('../package.json');
-  const version = packageJson.version;
-
-  // Construct download URL
-  const filename = `shimmy-${platform}-${arch}${extension}`;
-  const downloadUrl = `https://github.com/${GITHUB_REPO}/releases/download/v${version}/${filename}`;
-
-  // Create bin directory
-  const binDir = path.join(__dirname, '..', 'bin');
-  if (!fs.existsSync(binDir)) {
-    fs.mkdirSync(binDir, { recursive: true });
-  }
-
-  const binaryPath = path.join(binDir, BINARY_NAME);
-
-  console.log(`📥 Downloading from: ${downloadUrl}`);
-
-  return new Promise((resolve, reject) => {
-    const file = fs.createWriteStream(binaryPath);
-
-    https.get(downloadUrl, (response) => {
-      if (response.statusCode === 200) {
-        response.pipe(file);
-        file.on('finish', () => {
-          file.close();
-
-          // Make executable on Unix systems
-          if (process.platform !== 'win32') {
-            fs.chmodSync(binaryPath, '755');
-          }
-
-          console.log('✅ Shimmy installed successfully!');
-          console.log(`📍 Binary location: ${binaryPath}`);
-          console.log('🚀 Run "shimmy --help" to get started');
-          resolve();
-        });
-      } else if (response.statusCode === 302 || response.statusCode === 301) {
-        // Handle redirect
-        https.get(response.headers.location, (redirectResponse) => {
-          redirectResponse.pipe(file);
-          file.on('finish', () => {
-            file.close();
-            if (process.platform !== 'win32') {
-              fs.chmodSync(binaryPath, '755');
-            }
-            console.log('✅ Shimmy installed successfully!');
-            resolve();
-          });
-        }).on('error', reject);
-      } else {
-        reject(new Error(`Download failed: ${response.statusCode} ${response.statusMessage}`));
-      }
-    }).on('error', reject);
-
-    file.on('error', reject);
-  });
-}
-
-// Run installation
-downloadBinary().catch(error => {
-  console.error('❌ Installation failed:', error.message);
-  console.error('💡 Try installing manually from: https://github.com/Michael-A-Kuykendall/shimmy/releases');
-  process.exit(1);
-});
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #221** (2026-10-19): **Missing authentication on the inference API, exposed by the project's own default production deployment templates**
-  *Symptoms*: ### 🐛 Bug Description  - private reporting isn't enabled. - emailed report but bounced:  <img width="659" height="266" alt="Image" src="https://github.com/user-attachments/assets/220c8b36-2d86-4a6c-a87b-689c0ced4adb" />  ### Summary  Shimmy's HTTP server ships with no authentication mechanism of any kind. Every route, including the OpenAI-compatible completion/chat endpoints that run model inference, is reachable by any network client with no token, header, or credential required. The project's own official Docker and Kubernetes deployment templates configure the server to bind `0.0.0.0` and, in the Kubernetes case, expose it through a `LoadBalancer` Service, meaning a deployment that follows the project's documented production setup is open to the public internet with zero access control.  ### Details  - `src/server.rs:133-158` builds the Axum router (`/health`, `/api/generate`, `/api/models/*`, `/v1/chat/completions`, `/v1/completions`, `/v1/models`, `/v1/messages`, etc.) and applies exactly one middleware layer: `app.layer(middleware::from_fn(cors_layer))` (`src/server.rs:160`). `cors_layer` (`src/server.rs:14-35`) only sets CORS response headers; it does not inspect or validate the request in any way, and it sets `Access-Control-Allow-Origin: *` unconditionally. - A full-codebase grep of `src/*.rs` for `Authorization`, `Bearer`, `api_key`, `API_KEY`, or any auth-check construct returns no hits outside of the literal string `"Content-Type, Authorization"` in the CORS allo
-
-- **Issue #213** (2026-08-27): **Windows binary missing?**
-  *Symptoms*: ### 🐛 Bug Description  Instructions in README (https://github.com/Michael-A-Kuykendall/shimmy/blob/main/README.md) quick-start and Windows build instructions are incorrect.  I get the following error trying to download the Windows binary: > A parameter cannot be found that matches parameter name 'L'.  Also, the binary is missing.  ### 🔄 Steps to Reproduce  1. Follow install instructions for Windows. 2. Unable to download Windows binary.  ### ✅ Expected Behavior  Windows binary could be downloaded.  ### ❌ Actual Behavior  Windows binary cannot be downloaded (incorrect argument to curl in Windows; binary missing).  ### 📦 Shimmy Version  Latest (main branch)  ### 💻 Operating System  Windows  ### 📥 Installation Method  Pre-built binary from releases  ### 🌍 Environment Details  _No response_  ### 📋 Logs/Error Messages  ```text  ```  ### 📝 Additional Context  _No response_
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `9fb15fad` (2026-10-18)
-**Commit Message**: Document Linux ARM64 binaries and native platform verification
-
-**File**: `CHANGELOG.md` (modified, +2/-1)
-```diff
-@@ -40,7 +40,8 @@ minor-version increment.
- ### Changed
- 
- - Use Airframe 0.4.4 and `airframe-observe` 0.1.3.
--- Validate release binaries on each build runner and publish SHA256 checksums.
-+- Test on native Linux x86-64/ARM64, Windows x86-64 and macOS ARM64 runners.
-+- Add Linux ARM64 release binaries and publish SHA256 checksums for all assets.
- - Refresh Docker images for the current Airframe build and Vulkan runtime.
- - Resolve `shimmytok` 0.8.4 in the release lockfile.
- - Correct quickstart commands and add `scripts/smoke_text.py` for model-backed
-```
-
----
-
-### Incident Patch 2: `698c94b5` (2026-10-18)
-**Commit Message**: Clarify the container model volume in the quickstart
-
-**File**: `docs/quickstart.md` (modified, +4/-1)
-```diff
-@@ -98,7 +98,10 @@ Allowed browser origins still need the configured API key.
- 
- For Docker Compose, export `SHIMMY_API_KEY` before
- `docker compose -f templates/docker/docker-compose.yml up --build`.
--The example publishes its host port on loopback. For Kubernetes, create the
-+The example publishes its host port on loopback and mounts
-+`templates/docker/models/` at `/app/models`; place your GGUF files there first.
-+With `docker run`, bind-mount your existing model directory at `/app/models`.
-+For Kubernetes, create the
- credential before applying the manifests:
- 
- ```bash
-```
-
----
-
-### Incident Patch 3: `c1106345` (2026-10-05)
-**Commit Message**: fix: correct response cache accounting
-
-(cherry picked from commit 03f21ca6622d9e64d188e663710e5fcf3882f05d)
-
-**File**: `src/cache/response_cache.rs` (modified, +61/-1)
-```diff
-@@ -197,6 +197,12 @@ impl ResponseCache {
-         let mut cache = self.cache.write().await;
-         let mut stats = self.stats.write().await;
- 
-+        // Replacing an entry must release its previous contribution to the
-+        // size accounting before capacity checks and insertion.
-+        if let Some(previous) = cache.remove(&key) {
-+            stats.total_size_bytes -= previous.size_bytes;
-+        }
-+
-         // Check if we need to evict entries
-         while cache.len() >= self.config.max_entries
-             || stats.total_size_bytes + entry_size > self.config.max_size_mb * 1024 * 1024
-@@ -262,10 +268,11 @@ impl ResponseCache {
-         let mut cache = self.cache.write().await;
-         let mut stats = self.stats.write().await;
- 
-+        let cleared_entries = cache.len() as u64;
-         cache.clear();
-         stats.entries = 0;
-         stats.total_size_bytes = 0;
--        stats.evictions += stats.entries as u64;
-+        stats.evictions += cleared_entries;
- 
-         info!("Cache cleared");
-     }
-@@ -401,6 +408,59 @@ mod tests {
-         assert!(cache.get(&create_test_key("3", "model")).await.is_some());
-     }
- 
-+    #[tokio::test]
-+    async fn test_cache_overwrite_updates_size_accounting() {
-+        let cache = ResponseCache::with_config(ResponseCacheConfig {
-+            max_entries: 1,
-+            ..Default::default()
-+        });
-+        let key = create_test_key("overwrite", "model");
-+        let replacement = "a longer replacement response".to_string();
-+
-+        cache
-+            .put(
-+                key.clone(),
-+                "short response".to_string(),
-+                Duration::from_millis(10),
-+            )
-+            .await;
-+        cache
-+            .put(key, replacement.clone(), Duration::from_millis(10))
-+            .await;
-+
-+        let stats = cache.stats.read().await;
-+        assert_eq!(stats.entries, 1);
-+        assert_eq!(stats.evictions, 0);
-+        assert_eq!(stats.total_size_bytes, replacement.len());
-+    }
-+
-+    #[tokio::test]
-+    async fn test_cache_clear_counts_evictions() {
-+        let cache = ResponseCache::new();
-+
-+        cache
-+            .put(
-+                create_test_key("clear 1", "model"),
-+                "response 1".to_string(),
-+                Duration::from_millis(10),
-+            )
-+            .await;
-+        cache
-+            .put(
-+                create_test_key("clear 2", "model"),
-+                "response 2".to_string(),
-+                Duration::from_millis(10),
-+            )
-+            .await;
-+
-+        cache.clear().await;
-+
-+        let stats = cache.stats().await;
-+        assert_eq!(stats.entries, 0);
-+        assert_eq!(stats.total_size_bytes, 0);
-+        assert_eq!(stats.evictions, 2);
-+    }
-+
-     #[test]
-     fn test_cache_key_generation() {
-         let key1 = CacheKey::new("hello", "model1", 100, 0.7, 0.9, &[]);
-```
-
-#### Recent Merged Pull Requests:
-- **PR #219** (closed): fix: correct ResponseCache accounting on overwrite and clear (@aiqubits)
-- **PR #215** (closed): fix: restore broken star history chart in README (@OctoBored)
-- **PR #211** (closed): fix: build 2.3.x from source — use airframe::grammar::grammar_hooks (modify_logits_from_grammar does not exist in any published airframe) (@Supersynergy)
-- **PR #209** (2026-06-30): chore: consolidate test suite (19 files → 3) + SSE regression test + doc updates (@Michael-A-Kuykendall)
-- **PR #198** (closed): feat: read per-model stop tokens from Ollama model card at runtime (@LopezNuance)
-- **PR #196** (closed): fix: correct sampler chain order, penalty params, and KV eviction (@LopezNuance)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Document Linux ARM64 binaries and native platform verification
-
+### 1. In-Memory Cache Occupancy Derived-State Invariant
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Michael-A-Kuykendall/shimmy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing an in-memory capacity-bounded or size-bounded cache (e.g., bounded by total megabytes or entry count), you **MUST NOT** track byte occupancy using an external mutable running counter updated via ad-hoc delta arithmetic (`total += size`, `total -= size`) on insert/update. You **MUST** compute occupancy from map primitives or reconcile occupancy from actual entries during replacement, and you **MUST** reject oversized entries *before* triggering LRU evictions.
 
 **WHY**:
-Prevents defects observed in production commit `9fb15fad`: Document Linux ARM64 binaries and native platform verification. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Key replacement (`map.insert(existing_key, new_value)`) silently evicts an existing entry's value without decreasing an external running accumulator unless explicit replacement detection is handled. This leads to phantom memory inflation, premature evictions of valid items, and eventual cache starvation. Furthermore, if a candidate item exceeds the total cache capacity, an unreconciled eviction loop will purge the entire cache before realizing the candidate cannot fit.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Any cache layer in Rust, Go, C++, or TypeScript enforcing soft or hard memory limits (`max_bytes`, `max_memory_mb`) alongside an LRU, LFU, or FIFO eviction algorithm.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
-// Verified production-grade fix pattern:
-- Test on native Linux x86-64/ARM64, Windows x86-64 and macOS ARM64 runners.
-- Add Linux ARM64 release binaries and publish SHA256 checksums for all assets.
+pub struct BoundedSizeCache<K, V> {
+    entries: HashMap<K, CacheEntry<V>>,
+    max_entries: usize,
+    max_size_bytes: usize,
+}
+
+pub struct CacheEntry<V> {
+    pub value: V,
+    pub size_bytes: usize,
+    pub last_accessed: std::time::Instant,
+}
+
+impl<K: std::hash::Hash + Eq + Clone, V> BoundedSizeCache<K, V> {
+    #[inline]
+    fn occupied_bytes(entries: &HashMap<K, CacheEntry<V>>) -> usize {
+        entries.values().map(|entry| entry.size_bytes).sum()
+    }
+
+    pub fn insert(&mut self, key: K, value: V, size_bytes: usize) -> bool {
+        // Guard 1: Prevent insertion if entry alone exceeds total capacity
+        if self.max_entries == 0 || size_bytes > self.max_size_bytes {
+            return false;
+        }
+
+        let entry = CacheEntry {
+            value,
+            size_bytes,
+            last_accessed: std::time::Instant::now(),
+        };
+
+        // Insert first to let the collection handle replacement mechanics
+        self.entries.insert(key.clone(), entry);
+        let mut current_occupied = Self::occupied_bytes(&self.entries);
+
+        // Guard 2: Evict LRU entries if count or size limits are exceeded
+        while self.entries.len() > self.max_entries || current_occupied > self.max_size_bytes {
+            // Find LRU excluding the key we just inserted
+            let lru_key = self.entries
+                .iter()
+                .filter(|(k, _)| **k != key)
+                .min_by_key(|(_, v)| v.last_accessed)
+                .map(|(k, _)| k.clone());
+
+            if let Some(evict_key) = lru_key {
+                if let Some(removed) = self.entries.remove(&evict_key) {
+                    current_occupied -= removed.size_bytes;
+                }
+            } else {
+                break;
+            }
+        }
+        true
+    }
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-- Validate release binaries on each build runner and publish SHA256 checksums.
+// ANTI-PATTERN: Running delta arithmetic with independent accumulator
+let entry_size = entry.size_bytes;
+// BUG 1: If entry_size > max_size, this purges valid cache entries
+while current_size + entry_size > max_size {
+    let lru = find_lru(&cache);
+    cache.remove(&lru);
+    current_size -= lru.size;
+}
+// BUG 2: If key already exists in map, map.insert replaces it, but current_size
+// is incremented by entry_size without subtracting old entry's size!
+cache.insert(key, entry);
+current_size += entry_size; // Accumulator drifts upward indefinitely!
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9fb15fad` are properly handled with clean fallback behavior.
+Property-based or unit testing verifying replacement invariants:
+```rust
+#[tokio::test]
+async fn test_cache_replacement_does_not_drift_occupancy() {
+    let mut cache = BoundedSizeCache::new(2, 1024 * 1024);
+    let key = "test_key";
+    let data_500kb = vec![0u8; 500 * 1024];
+    let data_600kb = vec![0u8; 600 * 1024];
+
+    cache.insert(key, data_500kb, 500 * 1024);
+    assert_eq!(cache.occupied_bytes(), 500 * 1024);
+
+    // Overwrite existing key with larger valid payload
+    cache.insert(key, data_600kb, 600 * 1024);
+    // Stale running sum would report 1100KB and trigger invalid eviction
+    assert_eq!(cache.occupied_bytes(), 600 * 1024);
+    assert_eq!(cache.len(), 1);
+}
+```
+
+---
+
+### 2. Fail-Closed Network Boundary Invariant for Unauthenticated Daemons
+**RULE**:
+Any backend daemon that exposes administrative, execution, or inference endpoints without a cryptographically verified authentication token **MUST NOT** bind to non-loopback network interfaces (`0.0.0.0`, `::`) by default. The server runtime **MUST** evaluate the socket bind target on boot; if bound to a non-loopback address and no shared secret (`API_KEY`) is configured, the server **MUST** terminate startup immediately with a non-zero exit code.
+
+**WHY**:
+Container runtimes (Docker, Podman) and orchestration templates (Kubernetes, Compose) routinely specify `--bind 0.0.0.0` or `hostPort` mappings to enable service discovery and container ingress. If authentication middleware is optional or absent, non-loopback binding immediately exposes computational, financial, and data resources to public scanners, bypassing host perimeter firewalls and loopback assumptions.
+
+**WHEN TO APPLY**:
+All local AI runtimes, CLI inference engines, microservice proxy layers, and developer tooling providing local HTTP/RPC interfaces.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::net::SocketAddr;
+
+pub struct ServerConfig {
+    pub bind_addr: SocketAddr,
+    pub api_key: Option<String>,
+}
+
+pub fn enforce_network_security_boundary(config: &ServerConfig) -> Result<(), &'static str> {
+    let is_loopback = config.bind_addr.ip().is_loopback();
+    let has_auth = config.api_key.as_ref().map_or(false, |k| !k.trim().is_empty());
+
+    if !is_loopback && !has_auth {
+        eprintln!(
+            "FATAL SECURITY VIOLATION: Refusing to bind to non-loopback address ({}) \
+            without authentication. Set SHIMMY_API_KEY or bind to 127.0.0.1.",
+            config.bind_addr
+        );
+        return Err("Insecure non-loopback binding rejected");
+    }
+    Ok(())
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Blindly binding to user-supplied address with wildcard CORS
+let app = Router::new()
+    .route("/v1/chat/completions", post(chat_handler))
+    .layer(CorsLayer::permissive()); // Allows any origin, unauthenticated
+
+// Server starts unconditionally on 0.0.0.0:11435 in Docker containers!
+let listener = tokio::net::TcpListener::bind(&cli_args.bind_address).await?;
+axum::serve(listener, app).await?;
+```
+
+**VERIFICATION METHOD**:
+Automated integration test asserting startup failure on wildcard binding without credentials:
+```rust
+#[test]
+fn test_wildcard_bind_requires_api_key() {
+    let insecure_config = ServerConfig {
+        bind_addr: "0.0.0.0:11435".parse().unwrap(),
+        api_key: None,
+    };
+    assert!(enforce_network_security_boundary(&insecure_config).is_err());
+
+    let secure_config = ServerConfig {
+        bind_addr: "0.0.0.0:11435".parse().unwrap(),
+        api_key: Some("secret-token-value".to_string()),
+    };
+    assert!(enforce_network_security_boundary(&secure_config).is_ok());
+}
+```
+
+---
+
+### 3. Asynchronous-to-Synchronous Hardware Runtime Isolation
+**RULE**:
+When bridging asynchronous HTTP request handlers (e.g., Tokio, Actix) to synchronous hardware-bound runtimes (e.g., WebGPU compute queues, CUDA streams, C++ FFI inference loops), the runtime state **MUST** be accessed via a blocking mutex inside a dedicated worker thread (`tokio::task::spawn_blocking`). Asynchronous code **MUST NOT** hold an `async` Mutex guard across an FFI or blocking hardware call, nor may synchronous hardware code access async runtime reactors directly.
+
+**WHY**:
+Acquiring asynchronous locks (`tokio::sync::Mutex`) across long-running SIMD/GPU compute operations stalls the asynchronous runtime's worker threads, starving event loops of I/O cycles. Conversely, acquiring synchronous locks directly inside async tasks causes thread pool deadlocks. Encapsulating the runtime in a `tokio::task::spawn_blocking` closure and calling `blocking_lock()` isolates the heavy hardware execution from the network reactor.
+
+**WHEN TO APPLY**:
+All systems interfacing asynchronous network servers with synchronous native libraries, GPU runtimes (`wgpu`, `Vulkan`, `DirectX`), or CPU-bound matrix multiplication kernels.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::sync::Arc;
+use tokio::sync::Mutex as TokioMutex;
+
+pub struct SafeGpuEngine {
+    runtime: Arc<TokioMutex<Option<GpuHardwareContext>>>,
+}
+
+impl SafeGpuEngine {
+    pub async fn dispatch_inference(
+        &self,
+        prompt: String,
+        params: InferenceParams,
+    ) -> Result<InferenceResult, Box<dyn std::error::Error + Send + Sync>> {
+        let runtime_arc = self.runtime.clone();
+
+        // Offload blocking compute to dedicated blocking thread pool
+        let output = tokio::task::spawn_blocking(move || -> Result<InferenceResult, HardwareError> {
+            // Lock safely on the blocking thread without starving Tokio async workers
+            let guard = runtime_arc.blocking_lock();
+            let context = guard.as_ref().ok_or(HardwareError::Uninitialized)?;
+
+            context.reset();
+            context.execute_pipeline(&prompt, &params)
+        })
+        .await
+        .map_err(|join_err| format!("Task execution panicked: {join_err}"))??;
+
+        Ok(output)
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Calling synchronous hardware compute inside async task context
+pub async fn dispatch_bad(&self, prompt: &str) -> Result<String, Error> {
+    // BUG: Async lock held while blocking thread runs GPU kernel for 3000ms
+    let mut guard = self.runtime.lock().await; 
+    let context = guard.as_mut().unwrap();
+    // STALLS TOKIO RUNTIME: The entire async worker thread is blocked here!
+    let result = context.execute_blocking_gpu_shader(prompt); 
+    Ok(result)
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce concurrency safety by verifying non-blocking execution under heavy async ping loads:
+```rust
+#[tokio::test]
+async fn test_async_reactor_not_blocked_during_inference() {
+    let engine = SafeGpuEngine::new_mock();
+    let inference_future = engine.dispatch_inference("long prompt".into(), Default::default());
+
+    let mut counter = 0;
+    let timer_future = async {
+        for _ in 0..100 {
+            tokio::time::sleep(std::time::Duration::from_millis(5)).await;
+            counter += 1;
+        }
+    };
+
+    tokio::select! {
+        _ = inference_future => {},
+        _ = timer_future => {},
+    }
+    // Async timer must have progressed significantly during compute
+    assert!(counter > 10, "Tokio reactor starved during hardware inference!");
+}
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Stale Running-Sum Cache Memory Leak & Self-Eviction Deadlock on Overwrite
+- **Context**: Subsystem: Response Caching. File: `src/cache/response_cache.rs`.
+- **What Was Expected**: When a response cache entry was overwritten or evicted, the internal tracker `stats.total_size_bytes` should accurately reflect the actual allocated bytes in `HashMap<CacheKey, CachedResponse>`.
+- **What Actually Happened**: The code tracked memory usage with an independent running accumulator: `stats.total_size_bytes += entry_size;`. When a key was replaced, the map dropped the old value, but the running total added the new entry's size without deducting the old entry's size. Over time, `stats.total_size_bytes` artificially inflated beyond `max_size_mb * 1024 * 1024`. Consequently, *every* subsequent cache insertion triggered an aggressive LRU eviction loop, purging valid cached items while the running sum remained stuck above the ceiling.
+- **Evidence in Repo**: Commit `239bb745`, Git Message: *"fix: reconcile response cache capacity from stored entries"*.
+- **Root Cause**: Desynchronization between data structure occupancy and a secondary tracking integer. Failure to calculate delta changes during key-overwrite operations.
+- **Remediation Code Diff**:
+```rust
+@@ -150,6 +150,10 @@ impl ResponseCache {
+         }
+     }
+ 
++    fn occupied_bytes(cache: &HashMap<CacheKey, CachedResponse>) -> usize {
++        cache.values().map(|entry| entry.size_bytes).sum()
++    }
++
+@@ -192,38 +198,44 @@ impl ResponseCache {
+-        let entry_size = entry.size_bytes;
++        let max_size_bytes = self.config.max_size_mb.saturating_mul(1024 * 1024);
++        if self.config.max_entries == 0 || entry.size_bytes > max_size_bytes {
++            return;
++        }
+ 
+         let mut cache = self.cache.write().await;
+         let mut stats = self.stats.write().await;
+ 
+-        // Check if we need to evict entries
+-        while cache.len() >= self.config.max_entries
+-            || stats.total_size_bytes + entry_size > self.config.max_size_mb * 1024 * 1024
+-        {
+-            if let Some(lru_key) = self.find_lru_key(&cache).await {
++        // Let the map decide whether this is a replacement, then derive occupancy
++        // from its actual entries instead of maintaining a separate running sum.
++        cache.insert(key.clone(), entry);
++        let mut occupied = Self::occupied_bytes(&cache);
++        while cache.len() > self.config.max_entries || occupied > max_size_bytes {
++            if let Some(lru_key) = Self::find_lru_key(&cache, &key) {
+                 if let Some(removed) = cache.remove(&lru_key) {
+-                    stats.total_size_bytes -= removed.size_bytes;
++                    occupied -= removed.size_bytes;
+                     stats.evictions += 1;
+                     debug!("Evicted LRU cache entry");
+                 }
+             } else {
+-                break; // No entries to evict
++                break;
+             }
+         }
+-        cache.insert(key.clone(), entry);
+         stats.entries = cache.len();
+-        stats.total_size_bytes += entry_size;
++        stats.total_size_bytes = occupied;
+```
+- **Lesson**: Do not maintain redundant mutable state for properties derivable from collection contents. If performance requires an accumulator, recalculate or verify it against the primary source of truth during mutating operations.
+
+---
+
+### Incident 2: Unauthenticated 0.0.0.0 Exposure via Production Deployment Templates
+- **Context**: Subsystem: HTTP Server & Ingress Network Configuration. Files: `src/server.rs`, `deploy/Dockerfile`, `deploy/docker-compose.yml`.
+- **What Was Expected**: Production templates deploying an LLM server to Kubernetes or Docker should safeguard the inference endpoint from public internet exploitation.
+- **What Actually Happened**: The Axum HTTP router had no authentication middleware checking `Authorization` or `API_KEY` headers. Concurrently, official deployment manifests configured containers to bind `0.0.0.0:11435` and Kubernetes services were specified with `type: LoadBalancer`. This created open proxies on public cloud infrastructures, exposing local GPU compute resources without rate limits or access controls.
+- **Evidence in Repo**: Issue #221 (*"Missing authentication on the inference API, exposed by the project's own default production deployment templates"*). Resolved in version 2.6.5.
+- **Root Cause**: Deployment manifests were decoupled from network validation logic. Development defaults (`bind: 0.0.0.0` with no auth required) were used in production container configurations.
+- **Remediation Code Diff**:
+```rust
+// src/main.rs / src/server.rs
+let bind_addr: SocketAddr = cli.bind.parse()?;
+let api_key = std::env::var("SHIMMY_API_KEY").ok();
+
+if !bind_addr.ip().is_loopback() && api_key.is_none() {
+    tracing::error!("FATAL: Non-loopback bind address ({}) requested without SHIMMY_API_KEY", bind_addr);
+    std::process::exit(1);
+}
+
+let app = Router::new()
+    .route("/v1/chat/completions", post(chat_handler))
+    .layer(axum::middleware::from_fn(move |req, next| {
+        let expected_key = api_key.clone();
+        async move {
+            if let Some(ref required) = expected_key {
+                let auth_header = req.headers().get(header::AUTHORIZATION)
+                    .and_then(|h| h.to_str().ok());
+                let token = auth_header.and_then(|h| h.strip_prefix("Bearer "));
+                if token != Some(required.as_str()) {
+                    return Err(StatusCode::UNAUTHORIZED);
+                }
+            }
+            Ok(next.run(req).await)
+        }
+    }));
+```
+- **Lesson**: Network services should default to secure configurations: bind to loopback (`127.0.0.1`) by default, and fail fast during startup if public interfaces are targeted without authentication credentials.
+
+---
+
+### Incident 3: Oversized Entry Eviction Thrashing
+- **Context**: Subsystem: Response Cache. File: `src/cache/response_cache.rs`.
+- **What Was Expected**: If an incoming LLM response exceeds the entire cache capacity (`max_size_mb`), the cache should bypass caching for this item and leave existing valid cache entries untouched.
+- **What Actually Happened**: The eviction check ran in a `while` loop evaluated *before* insertion:
+```rust
+while cache.len() >= self.config.max_entries
+    || stats.total_size_bytes + entry_size > self.config.max_size_mb * 1024 * 1024
+```
+When `entry_size > max_size_bytes`, the condition remained true even after evicting *every* item

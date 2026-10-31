@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T00:34:26.914Z",
+  "last_updated": "2026-10-31T00:46:10.380Z",
   "total_verified_learnings": 1179,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2328,8 +2328,8 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "858b475a",
-      "content_hash": "6f0ccb8ab6b31dfc30fb89cf48ab910e992e8f9febbc362349d59e00c426f11e",
+      "source_version": "7c0523a3",
+      "content_hash": "0dbcdfc76505fe4083217edc61b7cba4e406d6203f629b058b32444950192a6a",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
@@ -2387,6 +2387,11 @@
           "number": 5600,
           "title": "OWASP database caching and nightly timeout (#40388)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5964,
+          "title": "PostgreSQL symbolic operator precedence and JSON aggregate parsing (#40384)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2394,7 +2399,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T04:25:25.248Z",
+      "verified_at": "2026-10-31T00:41:25.971Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -4855,8 +4860,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "66a52434",
-      "content_hash": "9b69cb0843be714d525993b309c800a5af7951c25d4722c23968bb7849e2da99",
+      "source_version": "54ee07c6",
+      "content_hash": "2578c919276b082652fc0c11b628247394998f97ccc21cf0836810486cf64615",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -4999,6 +5004,11 @@
           "number": 5926,
           "title": "deps-dev): bump the bundler group across 1 directory with 2 updates (#324)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5965,
+          "title": "deps): bump the native group across 1 directory with 3 updates (#326)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5006,7 +5016,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T22:34:42.218Z",
+      "verified_at": "2026-10-31T00:41:26.951Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38333,8 +38343,8 @@
       "slug": "michael-a-kuykendall-shimmy",
       "platform": "github",
       "source_url": "https://github.com/Michael-A-Kuykendall/shimmy",
-      "source_version": "d64d0c8e",
-      "content_hash": "6ea49ea4732b98aa39a26a4bf52f7f46b7a9c6a8c37aae90a3d44b5a6a4a6101",
+      "source_version": "239bb745",
+      "content_hash": "93d52b45950786e856d0ff2463069e9bb97854cfc207cf57d76fc96c7323b3e9",
       "dossier_path": "07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md",
       "promoted_rules": [
@@ -38347,6 +38357,21 @@
           "number": 2608,
           "title": "Document Linux ARM64 binaries and native platform verification",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5969,
+          "title": "In-Memory Cache Occupancy Derived-State Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5970,
+          "title": "Fail-Closed Network Boundary Invariant for Unauthenticated Daemons",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5971,
+          "title": "Asynchronous-to-Synchronous Hardware Runtime Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38354,7 +38379,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T13:27:28.833Z",
+      "verified_at": "2026-10-31T00:45:36.226Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40969,8 +40994,8 @@
       "slug": "nervjs-taro",
       "platform": "github",
       "source_url": "https://github.com/NervJS/taro",
-      "source_version": "c4e9c548",
-      "content_hash": "f8f19beae004818bbedc3255249b41475ec8e4f5df92d0a6023eb195f6010753",
+      "source_version": "0493b525",
+      "content_hash": "061ace3a74fc8330d3ba6c0b0237806f7b58d0d0ebebd095add36b8a550bc412",
       "dossier_path": "07_PROJECT_LEARNING/nervjs-taro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nervjs-taro-learnings.md",
       "promoted_rules": [
@@ -40988,6 +41013,21 @@
           "number": 4790,
           "title": "h5): handle asynchronous storage failures (#19563)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5966,
+          "title": "Zero-Mutation Invariant for Shared Plugin Configuration State",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5967,
+          "title": "Mandatory Parameterized Quoting for Subprocess Executable and Operand Paths",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5968,
+          "title": "Complete Code-Unit Atomic Caching for Module Bundler Asset Hooks",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40995,7 +41035,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:14:17.465Z",
+      "verified_at": "2026-10-31T00:44:56.833Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48403,8 +48443,8 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "e9bb7b3d",
-      "content_hash": "f9b56a9b6bd5094f606e8687fd216fa392f1b4d94b9101f999a19981544126cd",
+      "source_version": "139738f7",
+      "content_hash": "62e1646e0835f09a6914031223a78eaa2bc9031a6169525c1a0db2f440d79f4e",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
@@ -48462,6 +48502,11 @@
           "number": 5875,
           "title": "Ensure rustls-ring crate is used by rustls-test",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5963,
+          "title": "Ensure hashing of type_id is for concrete type",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48469,7 +48514,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T20:59:29.094Z",
+      "verified_at": "2026-10-31T00:41:22.870Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -107373,7 +107418,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
       "source_version": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
-      "content_hash": "4ec04b8099b630255e8249c0640f4da2d01cebf30011f579c80c410516c65d2b",
+      "content_hash": "8b312baf56c87b812cf657c2de3f566eeb8cae5d66368bc1452f4c37afa34e0c",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md",
       "promoted_rules": [
@@ -107418,7 +107463,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T11:32:00.788Z",
+      "verified_at": "2026-10-31T00:46:10.352Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -157410,6 +157455,132 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T00:34:26.895Z"
+    },
+    "rule-5963": {
+      "learning_id": "rule-5963",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5963,
+      "title": "Ensure hashing of type_id is for concrete type",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "139738f7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:41:22.870Z"
+    },
+    "rule-5964": {
+      "learning_id": "rule-5964",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5964,
+      "title": "PostgreSQL symbolic operator precedence and JSON aggregate parsing (#40384)",
+      "source_url": "https://github.com/apache/shardingsphere",
+      "source_version": "7c0523a3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:41:25.971Z"
+    },
+    "rule-5965": {
+      "learning_id": "rule-5965",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5965,
+      "title": "deps): bump the native group across 1 directory with 3 updates (#326)",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "54ee07c6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:41:26.951Z"
+    },
+    "rule-5966": {
+      "learning_id": "rule-5966",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5966,
+      "title": "Zero-Mutation Invariant for Shared Plugin Configuration State",
+      "source_url": "https://github.com/NervJS/taro",
+      "source_version": "0493b525",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:44:56.833Z"
+    },
+    "rule-5967": {
+      "learning_id": "rule-5967",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5967,
+      "title": "Mandatory Parameterized Quoting for Subprocess Executable and Operand Paths",
+      "source_url": "https://github.com/NervJS/taro",
+      "source_version": "0493b525",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:44:56.833Z"
+    },
+    "rule-5968": {
+      "learning_id": "rule-5968",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5968,
+      "title": "Complete Code-Unit Atomic Caching for Module Bundler Asset Hooks",
+      "source_url": "https://github.com/NervJS/taro",
+      "source_version": "0493b525",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:44:56.833Z"
+    },
+    "rule-5969": {
+      "learning_id": "rule-5969",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5969,
+      "title": "In-Memory Cache Occupancy Derived-State Invariant",
+      "source_url": "https://github.com/Michael-A-Kuykendall/shimmy",
+      "source_version": "239bb745",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:45:36.226Z"
+    },
+    "rule-5970": {
+      "learning_id": "rule-5970",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5970,
+      "title": "Fail-Closed Network Boundary Invariant for Unauthenticated Daemons",
+      "source_url": "https://github.com/Michael-A-Kuykendall/shimmy",
+      "source_version": "239bb745",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:45:36.226Z"
+    },
+    "rule-5971": {
+      "learning_id": "rule-5971",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5971,
+      "title": "Asynchronous-to-Synchronous Hardware Runtime Isolation",
+      "source_url": "https://github.com/Michael-A-Kuykendall/shimmy",
+      "source_version": "239bb745",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:45:36.226Z"
     }
   },
   "aliases": {

@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "66a52434",
+    "sourceVersion": "54ee07c6",
     "license": "MIT",
-    "contentHash": "9b69cb0843be714d525993b309c800a5af7951c25d4722c23968bb7849e2da99",
-    "lastHarvestedAt": "2026-10-30T22:34:42.342Z",
+    "contentHash": "2578c919276b082652fc0c11b628247394998f97ccc21cf0836810486cf64615",
+    "lastHarvestedAt": "2026-10-31T00:41:27.058Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -2393,10 +2393,10 @@
     "repository": "NervJS/taro",
     "platform": "github",
     "sourceUrl": "https://github.com/NervJS/taro",
-    "sourceVersion": "c4e9c548",
+    "sourceVersion": "0493b525",
     "license": "NOASSERTION",
-    "contentHash": "f8f19beae004818bbedc3255249b41475ec8e4f5df92d0a6023eb195f6010753",
-    "lastHarvestedAt": "2026-10-27T13:14:17.538Z",
+    "contentHash": "061ace3a74fc8330d3ba6c0b0237806f7b58d0d0ebebd095add36b8a550bc412",
+    "lastHarvestedAt": "2026-10-31T00:44:56.938Z",
     "learningId": "learn-github-nervjs-taro"
   },
   "kubeedge-kubeedge": {
@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "e9bb7b3d",
+    "sourceVersion": "139738f7",
     "license": "NOASSERTION",
-    "contentHash": "f9b56a9b6bd5094f606e8687fd216fa392f1b4d94b9101f999a19981544126cd",
-    "lastHarvestedAt": "2026-10-30T20:59:29.192Z",
+    "contentHash": "62e1646e0835f09a6914031223a78eaa2bc9031a6169525c1a0db2f440d79f4e",
+    "lastHarvestedAt": "2026-10-31T00:41:22.977Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -2953,10 +2953,10 @@
     "repository": "Michael-A-Kuykendall/shimmy",
     "platform": "github",
     "sourceUrl": "https://github.com/Michael-A-Kuykendall/shimmy",
-    "sourceVersion": "d64d0c8e",
+    "sourceVersion": "239bb745",
     "license": "Apache-2.0",
-    "contentHash": "6ea49ea4732b98aa39a26a4bf52f7f46b7a9c6a8c37aae90a3d44b5a6a4a6101",
-    "lastHarvestedAt": "2026-10-19T13:27:28.900Z",
+    "contentHash": "93d52b45950786e856d0ff2463069e9bb97854cfc207cf57d76fc96c7323b3e9",
+    "lastHarvestedAt": "2026-10-31T00:45:36.338Z",
     "learningId": "learn-github-michael-a-kuykendall-shimmy"
   },
   "infinitered-reactotron": {
@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "858b475a",
+    "sourceVersion": "7c0523a3",
     "license": "Apache-2.0",
-    "contentHash": "6f0ccb8ab6b31dfc30fb89cf48ab910e992e8f9febbc362349d59e00c426f11e",
-    "lastHarvestedAt": "2026-10-30T04:25:25.344Z",
+    "contentHash": "0dbcdfc76505fe4083217edc61b7cba4e406d6203f629b058b32444950192a6a",
+    "lastHarvestedAt": "2026-10-31T00:41:26.074Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -8565,8 +8565,8 @@
     "sourceUrl": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
     "sourceVersion": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
     "license": "Open-Source",
-    "contentHash": "4ec04b8099b630255e8249c0640f4da2d01cebf30011f579c80c410516c65d2b",
-    "lastHarvestedAt": "2026-10-26T11:32:00.847Z",
+    "contentHash": "8b312baf56c87b812cf657c2de3f566eeb8cae5d66368bc1452f4c37afa34e0c",
+    "lastHarvestedAt": "2026-10-31T00:46:10.481Z",
     "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4"
   },
   "rickclephas-kmp-nativecoroutines": {

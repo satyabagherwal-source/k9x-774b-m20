@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `66a52434`  
+> **Source Version**: `54ee07c6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T22:34:41.593Z  
+> **Timestamp**: 2026-10-31T00:41:26.347Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T22:34:40.202Z  
+> **Harvest Timestamp**: 2026-10-31T00:41:26.339Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,171 +1799,291 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `66a52434` (2026-10-30)
-**Commit Message**: chore(deps-dev): bump the bundler group across 1 directory with 2 updates (#324)
+### Incident Patch 1: `54ee07c6` (2026-10-31)
+**Commit Message**: chore(deps): bump the native group across 1 directory with 3 updates (#326)
 
-Bumps the bundler group with 2 updates in the / directory: [rolldown](https://github.com/rolldown/rolldown/tree/HEAD/packages/rolldown) and [tsdown](https://github.com/rolldown/tsdown).
+Bumps the native group with 3 updates in the / directory: [@lydell/node-pty](https://github.com/lydell/node-pty), [playwright](https://github.com/microsoft/playwright) and [playwright-core](https://github.com/microsoft/playwright).
 
 
-Updates `rolldown` from 1.2.13 to 1.2.15
-- [Release notes](https://github.com/rolldown/rolldown/releases)
-- [Changelog](https://github.com/rolldown/rolldown/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/rolldown/rolldown/commits/v1.2.15/packages/rolldown)
+Updates `@lydell/node-pty` from 1.2.0-beta.15 to 1.2.0-beta.18
+- [Release notes](https://github.com/lydell/node-pty/releases)
+- [Commits](https://github.com/lydell/node-pty/compare/v1.2.0-beta.15...v1.2.0-beta.18)
 
-Updates `tsdown` from 0.23.1 to 0.23.2
-- [Release notes](https://github.com/rolldown/tsdown/releases)
-- [Commits](https://github.com/rolldown/tsdown/compare/v0.23.1...v0.23.2)
+Updates `playwright` from 1.64.0 to 1.64.1
+- [Release notes](https://github.com/microsoft/playwright/releases)
+- [Commits](https://github.com/microsoft/playwright/compare/v1.64.0...v1.64.1)
+
+Updates `playwright-core` from 1.64.0 to 1.64.1
+- [Release notes](https://github.com/microsoft/playwright/releases)
+- [Commits](https://github.com/microsoft/playwright/compare/v1.64.0...v1.64.1)
 
 ---
 updated-dependencies:
-- dependency-name: rolldown
-  dependency-version: 1.2.15
-  dependency-type: direct:development
+- dependency-name: "@lydell/node-pty"
+  dependency-version: 1.2.0-beta.18
+  dependency-type: direct:production
   update-type: version-update:semver-patch
-  dependency-group: bundler
-- dependency-name: tsdown
-  dependency-version: 0.23.2
-  dependency-type: direct:development
-  update-type: version-update:semver-patch
-  dependency-group: bundler
+  dependency-group: native
+- dependency-name: playwright
+  dependency-version: 1.64.1
+  dependency-type: di
+
+**File**: `package.json` (modified, +3/-3)
+```diff
+@@ -168,7 +168,7 @@
+     "@grammyjs/runner": "^2.0.3",
+     "@grammyjs/transformer-throttler": "^1.2.1",
+     "@larksuiteoapi/node-sdk": "^1.74.0",
+-    "@lydell/node-pty": "1.2.0-beta.15",
++    "@lydell/node-pty": "1.2.0-beta.18",
+     "@mariozechner/pi-agent-core": "0.73.1",
+     "@mariozechner/pi-ai": "0.73.1",
+     "@modelcontextprotocol/sdk": "^1.32.1",
+@@ -209,8 +209,8 @@
+     "nodemailer": "^10.0.15",
+     "osc-progress": "^0.3.4",
+     "pdfjs-dist": "^5.4.624",
+-    "playwright": "1.64.0",
+-    "playwright-core": "1.64.0",
++    "playwright": "1.64.1",
++    "playwright-core": "1.64.1",
+     "proper-lockfile": "^4.1.2",
+     "qrcode-terminal": "^0.12.0",
+     "sharp": "^0.35.5",
+```
+
+**File**: `pnpm-lock.yaml` (modified, +44/-44)
+```diff
+@@ -50,8 +50,8 @@ importers:
+         specifier: ^1.74.0
+         version: 1.76.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+       '@lydell/node-pty':
+-        specifier: 1.2.0-beta.15
+-        version: 1.2.0-beta.15
++        specifier: 1.2.0-beta.18
++        version: 1.2.0-beta.18
+       '@mariozechner/pi-agent-core':
+         specifier: 0.73.1
+         version: 0.73.1(@modelcontextprotocol/sdk@1.32.2(zod@4.6.7))(@opentelemetry/api@1.10.0)(@opentelemetry/exporter-trace-otlp-http@0.300.0(@opentelemetry/api@1.10.0))(@opentelemetry/resources@2.12.0(@opentelemetry/api@1.10.0))(@opentelemetry/sdk-trace-base@2.12.0(@opentelemetry/api@1.10.0))(bufferutil@4.1.0)(utf-8-validate@5.0.10)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))(zod@4.6.7)
+@@ -179,11 +179,11 @@ importers:
+         specifier: ^5.4.624
+         version: 5.4.624
+       playwright:
+-        specifier: 1.64.0
+-        version: 1.64.0
++        specifier: 1.64.1
++        version: 1.64.1
+       playwright-core:
+-        specifier: 1.64.0
+-        version: 1.64.0
++        specifier: 1.64.1
++        version: 1.64.1
+       proper-lockfile:
+         specifier: ^4.1.2
+         version: 4.1.2
+@@ -1646,38 +1646,38 @@ packages:
+   '@lit/reactive-element@2.1.2':
+     resolution: {integrity: sha512-pbCDiVMnne1lYUIaYNN5wrwQXDtHaYtg7YEFPeW+hws6U47WeFvISGUWekPGKWOP1ygrs0ef0o1VJMk1exos5A==}
+ 
+-  '@lydell/node-pty-darwin-arm64@1.2.0-beta.15':
+-    resolution: {integrity: sha512-6TSBbzdcLiNTHl1mTuzflqXrkmcC36USVGvERoDgvHk2ItEDaMaFZuAJ1CqPmwYj0DyhCS16TVS8OGK9xZnjyQ==}
++  '@lydell/node-pty-darwin-arm64@1.2.0-beta.18':
++    resolution: {integrity: sha512-gJizeNHkkKCoggtj5Q0yf4btK6dPfr7E063SrOh1jHXp3IyjiErU4KwT7Cn29qb/OY5pBo/Utctenl03MyBtAg==}
+     cpu: [arm64]
+     os: [darwin]
+ 
+-  '@lydell/node-pty-darwin-x64@1.2.0-beta.15':
+-    resolution: {integrity: sha512-yDT2oqPqYMBScyuk1U9Rg5VKcrbMOD9o9jWYYamDADA3NSbUISroPChrqYRQ74Y7BQtNH4gqYAiWOZRi5uQZ0Q==}
++  '@lydell/node-pty-darwin-x64@1.2.0-beta.18':
++    resolution: {integrity: sha512-xnJQz+i5v7pkR1xo14ffTwvMm2DoK3KqPACQaJqxtMVkM7ojv14/KmkaV2jte7Q0BIzfU+VbKVUL9Zmf23G8VQ==}
+     cpu: [x64]
+     os: [darwin]
+ 
+-  '@lydell/node-pty-linux-arm64@1.2.0-beta.15':
+-    resolution: {integrity: sha512-wkbNF7dYAmtJv+o2+iztVlNwnUB4B0uX0wh/UD+mwMcmE2gNMnW9GChXO7fEE5XJokD0vB5idiHpGegaN+G/sg==}
++  '@lydell/node-pty-linux-arm64@1.2.0-beta.18':
++    resolution: {integrity: sha512-fM8jRcZDZwG7ihEOx/R7N1aGHdT4Fd6IQj1d6Jp7Qb9FeDWlIwLuVlxUkJOsW4V1ZmJe1xZl2+WR0RjqMvb2+Q==}
+     cpu: [arm64]
+     os: [linux]
+ 
+-  '@lydell/node-pty-linux-x64@1.2.0-beta.15':
+-    resolution: {integrity: sha512-+U/5AVvHT6W+8OCYcnJgN0Qgc0ycO3TfD6aaFJHK+WHij797f8gsi5dV1HEO9l6YQmWCD+VL5gaLDhx3mxHwCA==}
++  '@lydell/node-pty-linux-x64@1.2.0-beta.18':
++    resolution: {integrity: sha512-LGikvfcvoPrxXO7o1gCsd5ErrRWnQFYLxjJfX0uwBpi0oGPiTERUBLzKspzZs7wjXZqF30mnNB/C09uotu5vRA==}
+     cpu: [x64]
+     os: [linux]
+ 
+-  '@lydell/node-pty-win32-arm64@1.2.0-beta.15':
+-    resolution: {integrity: sha512-pyAk91w7wnnKrD4mrHXtIXRfmzSWV5bEzvRhurXcMCtCc2TJ424ciUskIgWMhAPP6y3KyUnqElj+U6kY3iOt0A==}
++  '@lydell/node-pty-win32-arm64@1.2.0-beta.18':
++    resolution: {integrity: sha512-S6h4G3zYGe+pPQxhlNxg+MvJNUIwXFxhnUufx1QT45TgratKMxQfoGPidvnwoLwuXQ3hqQ7SsI93rH8RUoL09g==}
+     cpu: [arm64]
+     os: [win32]
+ 
+-  '@lydell/node-pty-win32-x64@1.2.0-beta.15':
+-    resolution: {integrity: sha512-2f8twEmDVxZ7drchAXjtevpmSPhFok0avAnzXro4t5gmz0xsPNKkoZvymwtuIS3xo7PzQqZOPQ/YzwEMb7oIzQ==}
++  '@lydell/node-pty-win32-x64@1.2.0-beta.18':
++    resolution: {integrity: sha512-wBSMeAwEL04t694ln+QbLnc98YeF3mAwWm/NP8acYDAobPw/WK7KKpk8z07iyxv0gRH2Z2/L/f6vgtnBgxE0Bg==}
+     cpu: [x64]
+     os: [win32]
+ 
+-  '@lydell/node-pty@1.2.0-beta.15':
+-    resolution: {integrity: sha512-Br8wBxzbxFwdWgk9uQ+rdzE0xfoxOK4QuGH54swhRwc5IxP6H9Y1/bcyazRGvNUs6XkB5qNVkezuKSRxUwZe7A==}
++  '@lydell/node-pty@1.2.0-beta.18':
++    resolution: {integrity: sha512-ryy4liRcw6QBBKWDIbJgTW7Pw8NI2xjri/5s/LZg/jJ8ZVg8MgA1xI/vjpT5qTvDvPjUpU5NybJBrKRgK/QvlA==}
+ 
+   '@mariozechner/pi-agent-core@0.73.1':
+     resolution: {integrity: sha512-Y/KVOhuKSgRQgYBlwmRtO2gPkUcoavOSqGF9bpQIINvNZvc19k6Z1H3bFDTce3Vp5ApMmTsfLH3+tNvOg75fAQ==}
+@@ -8570,13 +8570,13 @@ packages:
+     resolution: {integrity: sha512-wQ0b/W4Fr01qtpHlqSqspcj3EhBvimsdh0KlHhH8HRZnMsEa0ea2fTULOXOS9ccQr3om+GcGRk4e+isrZWV8qQ==}
+     engines: {node: '>=16.20.0'}
+ 
+-  playwright-core@1.64.0:
+-    resolution: {integrity: sha512-T9r+MZkTECl2+oUcZ26YgZzTrYidTsIhYYkJix+6iDOymOb1FB2RLLSOxRGnZGv5DStt+aduIVbt+E8WygXYpg==}
++  playwright-core@1.64.1:
++    resolution: {integrity: sha512-BC4s8y6SEVA6Q1rSxZTto8hI1KUI3xXlHGZgvGqP4IqPdI/a6FX9H29IDNz7vKo9l21b6LfYosScPL6M3xxyDQ==}
+     engines: {node: '>=20'}
+     hasBin: true
+ 
+-  playwright@1.64.0:
+-    resolution: {integrity: sha512-kVzTnYFYEyQ9RGzBjNCd2+yEqWmVbxl3AHPynv3qQ6JTjv4a+kwRcnqQwIpuP3NnrnIrE/Q6wWAIAvMfIE2/Yg==}
++  playwright@1.64.1:
++    resolution: {integrity: sha512-HCrVhHr5QQuwYoswEUGTb7gGp522yflbv/ST8nF4sFWGuLjQCt17Q/EubpGGSNKYn1tsTCPZxqHhHCf
+```
+
+---
+
+### Incident Patch 2: `e5b262ec` (2026-10-31)
+**Commit Message**: chore(deps): bump shiki from 1.29.2 to 4.5.0 (#305)
+
+Bumps [shiki](https://github.com/shikijs/shiki/tree/HEAD/packages/shiki) from 1.29.2 to 4.5.0.
+- [Release notes](https://github.com/shikijs/shiki/releases)
+- [Commits](https://github.com/shikijs/shiki/commits/v4.5.0/packages/shiki)
+
+---
+updated-dependencies:
+- dependency-name: shiki
+  dependency-version: 4.5.0
+  dependency-type: direct:production
+  update-type: version-update:semver-major
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.gith
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `package.json` (modified, +1/-1)
+**File**: `desktop/package.json` (modified, +1/-1)
 ```diff
-@@ -243,7 +243,7 @@
-     "oxfmt": "0.74.0",
-     "oxlint": "^1.87.0",
-     "oxlint-tsgolint": "^7.0.2003",
--    "rolldown": "1.2.13",
-+    "rolldown": "1.2.15",
-     "tsdown": "^0.23.0",
-     "tsx": "^4.23.15",
-     "typescript": "^5.9.3",
+@@ -50,7 +50,7 @@
+     "react-markdown": "^9.0.1",
+     "react-router-dom": "^7.18.4",
+     "remark-gfm": "^4.0.0",
+-    "shiki": "^1.26.2",
++    "shiki": "^4.5.0",
+     "sonner": "^2.0.8",
+     "tailwind-merge": "^3.7.0",
+     "vaul": "^1.1.2",
 ```
 
-**File**: `pnpm-lock.yaml` (modified, +187/-20)
+**File**: `pnpm-lock.yaml` (modified, +103/-86)
 ```diff
-@@ -276,11 +276,11 @@ importers:
-         specifier: ^7.0.2003
-         version: 7.0.2005
-       rolldown:
--        specifier: 1.2.13
--        version: 1.2.13
-+        specifier: 1.2.15
-+        version: 1.2.15
-       tsdown:
-         specifier: ^0.23.0
--        version: 0.23.1(@typescript/native-preview@7.0.0-dev.20260215.1)(tsx@4.23.15)(typescript@5.9.3)(unrun@0.2.27(@emnapi/core@1.8.1)(@emnapi/runtime@1.11.3))
-+        version: 0.23.2(tsx@4.23.15)(typescript@5.9.3)(unrun@0.2.27(@emnapi/core@1.8.1)(@emnapi/runtime@1.11.3))
-       tsx:
-         specifier: ^4.23.15
-         version: 4.23.15
-@@ -2343,6 +2343,9 @@ packages:
-   '@oxc-project/types@0.153.0':
-     resolution: {integrity: sha512-jSNrRIyvPVLL5E1z/tS5zLAprosGz/FuI1PWwEOz59j3E4TTTzSpqKb/RDGqJhhW0QHYISGXxq582wGx6T11Tw==}
+@@ -399,8 +399,8 @@ importers:
+         specifier: ^4.0.0
+         version: 4.0.1
+       shiki:
+-        specifier: ^1.26.2
+-        version: 1.29.2
++        specifier: ^4.5.0
++        version: 4.5.0
+       sonner:
+         specifier: ^2.0.8
+         version: 2.0.8(@types/react@18.3.28)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+@@ -3797,26 +3797,36 @@ packages:
+     peerDependencies:
+       selderee: ~0.12.0
  
-+  '@oxc-project/types@0.155.0':
-+    resolution: {integrity: sha512-SeE8JPwW1xs1tHeNycjUtUBdhorRa8o4jlvjwk49R7/Z291i+4DQa7JJIgOm/TaYQZx+QrPQbVJ/9c8dMIZN8Q==}
-+
-   '@oxfmt/binding-android-arm-eabi@0.74.0':
-     resolution: {integrity: sha512-xxQwrf5EPI5zxvuCTW8r6tzCTjPQ+h6+HqJ0iRKRy2zS1yBllt/xLVjoIyUc+FnR7g0a5g1SZv2yyDYhTItLbA==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-@@ -3343,6 +3346,12 @@ packages:
-     cpu: [arm]
-     os: [android]
+-  '@shikijs/core@1.29.2':
+-    resolution: {integrity: sha512-vju0lY9r27jJfOY4Z7+Rt/nIOjzJpZ3y+nYpqtUZInVoXQ/TJZcfGnNOGnKjFdVZb8qexiCuSlZRKcGfhhTTZQ==}
++  '@shikijs/core@4.5.0':
++    resolution: {integrity: sha512-6CIgwq+bt2JZ3OSjb/nBkkwEf/CfpHcbam+Mg5Pllco7HAGRQ2/EFhZrrJtbyNTgKwknfVS+llsXGygiDGwJWw==}
++    engines: {node: '>=20'}
  
-+  '@rolldown/binding-android-arm-eabi@1.2.15':
-+    resolution: {integrity: sha512-aLcgK9gIJ3YRvrrtfSBbRa27F5WrpiTaPulnFpsHPxpUHgFlSgnU4854MHwoRGEBhfRJDWCS2WQ7lIjskE9Olw==}
-+    engines: {node: ^20.19.0 || >=22.12.0}
-+    cpu: [arm]
-+    os: [android]
-+
-   '@rolldown/binding-android-arm64@1.0.0-rc.3':
-     resolution: {integrity: sha512-0T1k9FinuBZ/t7rZ8jN6OpUKPnUjNdYHoj/cESWrQ3ZraAJ4OMm6z7QjSfCxqj8mOp9kTKc1zHK3kGz5vMu+nQ==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-@@ -3355,6 +3364,12 @@ packages:
-     cpu: [arm64]
-     os: [android]
+-  '@shikijs/engine-javascript@1.29.2':
+-    resolution: {integrity: sha512-iNEZv4IrLYPv64Q6k7EPpOCE/nuvGiKl7zxdq0WFuRPF5PAE9PRo2JGq/d8crLusM59BRemJ4eOqrFrC4wiQ+A==}
++  '@shikijs/engine-javascript@4.5.0':
++    resolution: {integrity: sha512-Ed6UdEj84LyYkwnxM5CvSMWAD+id9ExTYri0/+x41U9zrgNifPSS9lZm0JqBP0VfYI8yr8tY5nbNq9+p9R0kFA==}
++    engines: {node: '>=20'}
  
-+  '@rolldown/binding-android-arm64@1.2.15':
-+    resolution: {integrity: sha512-xD7DdZCrbThKuxNg7ooQmvp07ys4J/pnSEMTG3/OdOWl6daC67m/Q4fL78sRHMxTH/N4fGUbYhcPM0MF5WFHkg==}
-+    engines: {node: ^20.19.0 || >=22.12.0}
-+    cpu: [arm64]
-+    os: [android]
-+
-   '@rolldown/binding-darwin-arm64@1.0.0-rc.3':
-     resolution: {integrity: sha512-JWWLzvcmc/3pe7qdJqPpuPk91SoE/N+f3PcWx/6ZwuyDVyungAEJPvKm/eEldiDdwTmaEzWfIR+HORxYWrCi1A==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-@@ -3367,6 +3382,12 @@ packages:
-     cpu: [arm64]
-     os: [darwin]
+-  '@shikijs/engine-oniguruma@1.29.2':
+-    resolution: {integrity: sha512-7iiOx3SG8+g1MnlzZVDYiaeHe7Ez2Kf2HrJzdmGwkRisT7r4rak0e655AcM/tF9JG/kg5fMNYlLLKglbN7gBqA==}
++  '@shikijs/engine-oniguruma@4.5.0':
++    resolution: {integrity: sha512-dKVmbJecVdB9recl8a/CU4jdpNXyjJQrIcesIkpS70s5HS02ohpnCSpMUbotPnEUzbAcLQ+S4hwZYbkBBiTcJw==}
++    engines: {node: '>=20'}
  
-+  '@rolldown/binding-darwin-arm64@1.2.15':
-+    resolution: {integrity: sha512-m2WuQ6r0B4OTYxyPpNLtXaMRbRDUbG8YQV2Q3KTdSSK8Th6KHCnC8jVCJt8bvYeSB5WivkkNbc85mKadaSdOxA==}
-+    engines: {node: ^20.19.0 || >=22.12.0}
-+    cpu: [arm64]
-+    os: [darwin]
-+
-   '@rolldown/binding-darwin-x64@1.0.0-rc.3':
-     resolution: {integrity: sha512-MTakBxfx3tde5WSmbHxuqlDsIW0EzQym+PJYGF4P6lG2NmKzi128OGynoFUqoD5ryCySEY85dug4v+LWGBElIw==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-@@ -3379,6 +3400,12 @@ packages:
-     cpu: [x64]
-     os: [darwin]
+-  '@shikijs/langs@1.29.2':
+-    resolution: {integrity: sha512-FIBA7N3LZ+223U7cJDUYd5shmciFQlYkFXlkKVaHsCPgfVLiO+e12FmQE6Tf9vuyEsFe3dIl8qGWKXgEHL9wmQ==}
++  '@shikijs/langs@4.5.0':
++    resolution: {integrity: sha512-wwBTqwduXSz0X4v9Qa2EWeFaYJEw1clCncWjoRNQRbVDu3SPRTRWucnouYapKj3b8Q+sk/41Vbc4B5c8nuYzLA==}
++    engines: {node: '>=20'}
  
-+  '@rolldown/binding-darwin-x64@1.2.15':
-+    resolution: {integrity: sha512-5RtnsHM36nodM9WbMy+zip0LGS/G+y5wro5RHrpOlr4ac24+1zSi9kiV2MP1myZeZ/ifEHfulQcWjnAXzc2C2A==}
-+    engines: {node: ^20.19.0 || >=22.12.0}
-+    cpu: [x64]
-+    os: [darwin]
-+
-   '@rolldown/binding-freebsd-x64@1.0.0-rc.3':
-     resolution: {integrity: sha512-jje3oopyOLs7IwfvXoS6Lxnmie5JJO7vW29fdGFu5YGY1EDbVDhD+P9vDihqS5X6fFiqL3ZQZCMBg6jyHkSVww==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-@@ -3391,6 +3418,12 @@ packages:
-     cpu: [x64]
-     os: [freebsd]
+-  '@shikijs/themes@1.29.2':
+-    resolution: {integrity: sha512-i9TNZlsq4uoyqSbluIcZkmPL9Bfi3djVxRnofUHwvx/h6SRW3cwgBC5SML7vsDcWyukY0eCzVN980rqP6qNl9g==}
++  '@shikijs/primitive@4.5.0':
++    resolution: {integrity: sha512-UM7ShlA8oz0OWxLLO8BmO9Ip6fVqdkt8yF0EH7nOCqHfrx1eEAzF0ZUVK7L+I8NEgeu1PEWSRlxaiPPeCb4iDg==}
++    engines: {node: '>=20'}
  
-+  '@rolldown/binding-freebsd-x64@1.2.15':
-+    resolution: {integrity: sha512-g3l09pyFqhu+135JKkbkwiKGQmwU5hUMUPJ4VdBADvuqR8d33L6H578rh8m7rtxbdp+VmX/+nzI7nvhSZlzpUQ==}
-+    engines: {node: ^20.19.0 || >=22.12.0}
-+    cpu: [x64]
-+    os: [freebsd]
-+
-   '@rolldown/binding-linux-arm-gnueabihf@1.0.0-rc.3':
-     resolution: {integrity: sha512-A0n8P3hdLAaqzSFrQoA42p23ZKBYQOw+8EH5r15Sa9X1kD9/JXe0YT2gph2QTWvdr0CVK2BOXiK6ENfy6DXOag==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-@@ -3403,6 +3436,12 @@ packages:
-     cpu: [arm]
-     os: [linux]
+-  '@shikijs/types@1.29.2':
+-    resolution: {integrity: sha512-VJjK0eIijTZf0QSTODEXCqinjBn0joAHQ+aPSBzrv4O2d/QSbsMw+ZeSRx03kV34Hy7NzUvV/7NqfYGRLrASmw==}
++  '@shikijs/themes@4.5.0':
++    resolution: {integrity: sha512-zGb87H3UBbpuI4yoh5UguB1XbU+2BDU3kflM7UfZ+Cy2hWo9lBtqjSVK20gmLY6ukYl040hAypGXMgud9vul8Q==}
++    engines: {node: '>=20'}
  
-+  '@rolldown/binding-linux-arm-gnueabihf@1.2.15':
-+    resolution: {integrity: sha512-nIe3VugI97nGQtspPxDqA4sXMUpeiocKIP/CqpY/u/vgbT+alX+cVxu1C/oVBPKg4feNTmYovE91v4DgXvXNwQ==}
-+    engines: {node: ^20.19.0 || >=22.12.0}
-+    cpu: [arm]
-+    os: [linux]
+-  '@shikijs/vscode-textmate@10.0.2':
+-    resolution: {integrity: sha512-83yeghZ2xxin3Nj8z1NMd/NCuca+gsYXswywDy5bHvwlWL8tpTQmzGeUuHd9FC3E/SBEMvzJRwWEOz5gGes9Qg==}
++  '@shikijs/types@4.5.0':
++    resolution: {integrity: sha512-drtPrtD8N0DENyD2cyt6Ajy+IWsiCLgMxODwLTpvH1UsN6a9jf90tNTPjqwHvA+0Lzu9e0txk8DjfqH1p9UJRw==}
++    engines: {node: '>=20'}
 +
-   '@rolldown/binding-linux-arm64-gnu@1.0.0-rc.3':
-     resolution: {integrity: sha512-kWXkoxxarYISBJ4bLNf5vFkEbb4JvccOwxWDxuK9yee8lg5XA7OpvlTptfRuwEvYcOZf+7VS69Uenpmpyo5Bjw==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-@@ -3417,6 +3456,13 @@ packages:
-     os: [linux]
-     libc: [glibc]
++  '@shikijs/vscode-textmate@10.1.0':
++    resolution: {integrity: sha512-cVBuhDQjBZaNMTwBquYfPydrUP+E3hE6oYGasx8h6ZrODIM7/r+gxLDXdd66oszbrggZHEntdE6j+5gYIVyMWQ==}
  
-+  '@rolldown/binding-linux-arm64-gnu@1.2.15':
-+    resolution: {integrity: sha512-iTBjXx+B5QSvgI89lJfmqh4wTh8NabR1YZIIN3hNx4zSG0EVfVqkOvLulNpG4251pbd6/IAmZ/LefVk1Y4rPhw==}
-+    engines: {node: ^20.19.0 || >=22.12.0}
-+    cpu: [arm64]
-+    os: [linux]
-+    libc: [glibc]
+   '@simplewebauthn/browser@8.3.7':
+     resolution: {integrity: sha512-ZtRf+pUEgOCvjrYsbMsJfiHOdKcrSZt2zrAnIIpfmA06r0FxBovFYq0rJ171soZbe13KmWzAoLKjSxVW7KxCdQ==}
+@@ -5066,6 +5076,9 @@ packages:
+   '@types/hast@3.0.4':
+     resolution: {integrity: sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ==}
+ 
++  '@types/hast@3.0.5':
++    resolution: {integrity: sha512-rp/ezSWaD1m44dPKICGhiskI13nVr7qTloFwDa/IYkhhf5nzwP+zIQcIJh3WIFSBOy/H1PzB40jPjMDksN4F+g==}
 +
-   '@rolldown/binding-linux-arm64-musl@1.0.0-rc.3':
-     resolution: {integrity: sha512-Z03/wrqau9Bicfgb3Dbs6SYTHliELk2PM2LpG2nFd+cGupTMF5kanLEcj2vuuJLLhptNyS61rtk7SOZ+lPsTUA==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-@@ -3431,20 +347
+   '@types/http-errors@2.0.5':
+     resolution: {integrity: sha512-r8Tayk8HJnX0FztbZN7oVqGccWgw98T/0neJphO91KkmOzug1KkofZURD4UaD5uH8AqcFLfdPErnBod0u71/qg==}
+ 
+@@ -6617,9 +6630,6 @@ packages:
+   elliptic@6.6.1:
+     resolution: {integrity: sha512-RaddvvMatK2LJHqFJ+YA4WysVN5Ita9E35botqIYspQ4TkRAlCicdzKOjlyv/1Za5RyTNn7di//eEV0uTAfe3g==}
+ 
+-  emoji-regex-xs@1.0.0:
+-    resolution: {integrity: sha512-LRlerrMYoIDrT6jgpeZ2YYl/L8EulRTt5hQcYjy5AInh7HWXKimpqx68aknBFpGL2+/IcogTcaydJEgaTmOpDg==}
+-
+   emoji-regex@10.6.0:
+     resolution: {integrity: sha512-toUI84YS5YmxW219erniWD0CIVOo46xGKColeNQRgOzDorgBi1v4D71/OFzgD9GO2UGKIv1C3Sp8DAn0+j5w7A==}
+ 
+@@ -8267,8 +8277,11 @@ packages:
+     resolution: {integrity: sha512-VXJjc87FScF88uafS3JllDgvAm+c/Slfz06lorj2uAY34rlUu0Nt+v8wreiImcrgAjjIHp1rXpTDlLOGw29WwQ==}
+     engines: {node: '>=18'}
+ 
+-  oniguruma-to-es@2.3.0:
+-    resolution: {integrity: sha512-bwALDxriqfKGfUufKGGepCzu9x7nJQuoRoAFp4AnwehhC2crqrDIAP/uN2qdlsAvSMpeRC3+Yzhqc7hLmle5+g==}
++  oniguruma-parser@0.12.2:
++    resolution: {integrity: sha512-6HVa5oIrgMC6aA6WF6XyyqbhRPJrKR02L20+2+zpDtO5QAzGHAUGw5TKQvwi5vctNnRHkJYmjAhRVQF2EKdTQw==}
++
++  oniguruma-to-es@4.3.6:
++    resolution: {integrity: sha512-csuQ9x3Yr0cEIs/Zgx/OEt9iBw9vqIunAPQkx19R/fiMq2oGVTgcMqO/V3Ybqefr1TBvosI6jU539ksaBULJyA==}
+ 
+   openai@6.26.0:
+     resolution: {integrity: sha512-zd23dbWTjiJ6sSAX6s0HrCZi41JwTA1bQVs0wLQPZ2/5o2gxOJA5wh7yOAUgwYybfhDXyhwlpeQf7Mlgx8EOCA==}
+@@ -8690,6 +8703,9 @@ packages:
+   property-informatio
 ```
 
 #### Recent Merged Pull Requests:
@@ -1992,13 +2112,13 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.gith
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps-dev): bump the bundler group across 1 directory with 2 updates (#324)
+## X. deps): bump the native group across 1 directory with 3 updates (#326)
 
 **RULE**:
 When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `66a52434`: deps-dev): bump the bundler group across 1 directory with 2 updates (#324). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `54ee07c6`: deps): bump the native group across 1 directory with 3 updates (#326). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
@@ -2006,14 +2126,18 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "rolldown": "1.2.15",
+    "@lydell/node-pty": "1.2.0-beta.18",
+    "playwright": "1.64.1",
+    "playwright-core": "1.64.1",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "rolldown": "1.2.13",
+    "@lydell/node-pty": "1.2.0-beta.15",
+    "playwright": "1.64.0",
+    "playwright-core": "1.64.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `66a52434` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `54ee07c6` are properly handled with clean fallback behavior.

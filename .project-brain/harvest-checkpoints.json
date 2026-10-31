@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T00:34:27.011Z",
+  "last_updated": "2026-10-31T00:46:10.496Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "9b69cb0843be714d525993b309c800a5af7951c25d4722c23968bb7849e2da99",
-      "verified_at": "2026-10-30T22:34:42.351Z",
+      "content_hash": "2578c919276b082652fc0c11b628247394998f97ccc21cf0836810486cf64615",
+      "verified_at": "2026-10-31T00:41:27.068Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T22:34:42.351Z"
+      "last_updated": "2026-10-31T00:41:27.068Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -3726,14 +3726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nervjs-taro",
-      "content_hash": "f8f19beae004818bbedc3255249b41475ec8e4f5df92d0a6023eb195f6010753",
-      "verified_at": "2026-10-27T13:14:17.546Z",
+      "content_hash": "061ace3a74fc8330d3ba6c0b0237806f7b58d0d0ebebd095add36b8a550bc412",
+      "verified_at": "2026-10-31T00:44:56.947Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:14:17.546Z"
+      "last_updated": "2026-10-31T00:44:56.947Z"
     },
     "kubeedge/kubeedge": {
       "repository": "kubeedge/kubeedge",
@@ -4176,14 +4176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustls-rustls",
-      "content_hash": "f9b56a9b6bd5094f606e8687fd216fa392f1b4d94b9101f999a19981544126cd",
-      "verified_at": "2026-10-30T20:59:29.201Z",
+      "content_hash": "62e1646e0835f09a6914031223a78eaa2bc9031a6169525c1a0db2f440d79f4e",
+      "verified_at": "2026-10-31T00:41:22.987Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T20:59:29.201Z"
+      "last_updated": "2026-10-31T00:41:22.987Z"
     },
     "liyupi/yu-ai-agent": {
       "repository": "liyupi/yu-ai-agent",
@@ -4551,14 +4551,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-michael-a-kuykendall-shimmy",
-      "content_hash": "6ea49ea4732b98aa39a26a4bf52f7f46b7a9c6a8c37aae90a3d44b5a6a4a6101",
-      "verified_at": "2026-10-19T13:27:28.906Z",
+      "content_hash": "93d52b45950786e856d0ff2463069e9bb97854cfc207cf57d76fc96c7323b3e9",
+      "verified_at": "2026-10-31T00:45:36.349Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T13:27:28.906Z"
+      "last_updated": "2026-10-31T00:45:36.349Z"
     },
     "infinitered/reactotron": {
       "repository": "infinitered/reactotron",
@@ -7431,14 +7431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-shardingsphere",
-      "content_hash": "6f0ccb8ab6b31dfc30fb89cf48ab910e992e8f9febbc362349d59e00c426f11e",
-      "verified_at": "2026-10-30T04:25:25.354Z",
+      "content_hash": "0dbcdfc76505fe4083217edc61b7cba4e406d6203f629b058b32444950192a6a",
+      "verified_at": "2026-10-31T00:41:26.084Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T04:25:25.354Z"
+      "last_updated": "2026-10-31T00:41:26.084Z"
     },
     "sharkdp/pastel": {
       "repository": "sharkdp/pastel",
@@ -12891,14 +12891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
-      "content_hash": "4ec04b8099b630255e8249c0640f4da2d01cebf30011f579c80c410516c65d2b",
-      "verified_at": "2026-10-26T11:32:00.854Z",
+      "content_hash": "8b312baf56c87b812cf657c2de3f566eeb8cae5d66368bc1452f4c37afa34e0c",
+      "verified_at": "2026-10-31T00:46:10.495Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T11:32:00.854Z"
+      "last_updated": "2026-10-31T00:46:10.495Z"
     },
     "rickclephas/KMP-NativeCoroutines": {
       "repository": "rickclephas/KMP-NativeCoroutines",
