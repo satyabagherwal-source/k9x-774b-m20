@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T19:14:46.317Z",
+  "last_updated": "2026-10-31T19:23:50.710Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14069,8 +14069,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "df9dc86a",
-      "content_hash": "5f39742c0783f066247a239c2fdd728ad9a4f874aa57400b38890215074a06a5",
+      "source_version": "9c5c0eb9",
+      "content_hash": "eebc493f0d58539a904ce16eb96a7793576a160460c18348857899b7374b66cb",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -14158,6 +14158,11 @@
           "number": 6050,
           "title": "Add a Quota usage guide (#15957)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6294,
+          "title": "Update sigs.k8s.io/kube-api-linter digest to d90122c (#16178)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14165,7 +14170,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T03:45:30.119Z",
+      "verified_at": "2026-10-31T19:23:50.688Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23881,7 +23886,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/gemma-4-31B-it",
       "source_version": "hf-google-gemma-4-31b-it",
-      "content_hash": "204302ceb403baf987288409b1e31924f68341d859c2103650999e122d7938e5",
+      "content_hash": "793a6e330640d45df5db18bbd3f55b484cfd18c28258bf3696da81f2079d9497",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
       "promoted_rules": [
@@ -23943,7 +23948,7 @@
         "learn-huggingface-hf-google-gemma-4-31b-it-mv40fw8a",
         "learn-huggingface-hf-google-gemma-4-31b-it-mv4ee2dq"
       ],
-      "verified_at": "2026-10-28T17:56:33.309Z",
+      "verified_at": "2026-10-31T19:23:42.381Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -163908,6 +163913,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T19:14:46.298Z"
+    },
+    "rule-6294": {
+      "learning_id": "rule-6294",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6294,
+      "title": "Update sigs.k8s.io/kube-api-linter digest to d90122c (#16178)",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "9c5c0eb9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T19:23:50.688Z"
     }
   },
   "aliases": {

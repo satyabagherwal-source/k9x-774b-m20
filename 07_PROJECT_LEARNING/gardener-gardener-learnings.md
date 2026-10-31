@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source**: github ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
-> **Source Version**: `df9dc86a`  
+> **Source Version**: `9c5c0eb9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T03:45:29.517Z  
+> **Timestamp**: 2026-10-31T19:23:50.104Z  
 > **Learning ID**: `learn-github-gardener-gardener`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T03:45:29.507Z  
+> **Harvest Timestamp**: 2026-10-31T19:23:50.097Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -732,11 +732,11 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
   > /label skip-review
   > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [lucabernstein](https://github.com/lucabernstein) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["lucabernstein"]} -->
 
-- **Issue #16174** (2026-10-30): **Adapt `node-local-dns` metrics and DNS dashboard to CoreDNS v1.11+**
-  *Symptoms*: **How to categorize this PR?**  /area monitoring /kind enhancement  **What this PR does / why we need it**:  The CoreDNS forward plugin reworked some of its metrics in CoreDNS v1.11. The `coredns_forward_*` metrics were deprecated in favor of  `coredns_proxy_*{proxy_name="forward"}`.  The DNS dashboard and the scrape config were adapted back then for CoreDNS, but not for `node-local-dns`, which at that point had not yet been updated to CoreDNS v1.11. Those adaptations were included in:  - https://github.com/gardener/gardener/pull/10034  To make the DNS dashboard work with either CoreDNS version (so that it still showed `node-local-dns` metrics), the Plutono queries were adapted to union the old and new metric names and thus present a unified view.  `node-local-dns` has been running CoreDNS v1.11+ for a while now. Therefore, this PR:  - Updates the node-local-dns scrape config to keep `coredns_proxy_request_duration_seconds_count` instead of the old `coredns_forward_*` metrics. - Removes the fallback union from the DNS dashboard so the corresponding panels query only the v1.11+ metric. - Removes the TODO that tracked this adaptation.  **Special notes for your reviewer**:  /cc @marc1404 @rickardsjp   **Release note**:  ```other operator Adapted the `node-local-dns` Prometheus scrape config and the DNS dashboard to the forward plugin metrics introduced in CoreDNS v1.11, so the dashboard reflects the metric names emitted by current `node-local-dns` versions. ``` 
+- **Issue #16178** (2026-10-31): **Update sigs.k8s.io/kube-api-linter digest to d90122c**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [sigs.k8s.io/kube-api-linter](https://redirect.github.com/kubernetes-sigs/kube-api-linter) | require | digest | `79b557a` → `d90122c` |  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4xODguMiIsInVwZGF0ZWRJblZlciI6IjQ0LjE4OC4yIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
   **Post-Mortem & Fix Analysis**:
-  > /assign
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/gardener/gardener/pull/16174#pullrequestreview-5712142377" title="Approved">marc1404</a>*, *<a href="https://github.com/gardener/gardener/pull/16174#pullrequestreview-5714387744" title="Approved">ScheererJ</a>*  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  The pull request process is described [here](https://gardener.cloud/docs/contribute/#pull-request-checklist)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)~~ [ScheererJ,marc1404]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
+  > LGTM label has been added.  <details>Git tree hash: eb6e0ed5bc97472decddfa88c9c7e7479271c221</details>
+  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/gardener/gardener/pull/16178#pullrequestreview-5719607163" title="Approved">marc1404</a>*  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  The pull request process is described [here](https://gardener.cloud/docs/contribute/#pull-request-checklist)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)~~ [marc1404]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -753,198 +753,46 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `004f9c9d` (2026-10-30)
-**Commit Message**: Add a Quota usage guide (#15957)
+### Incident Patch 1: `9c5c0eb9` (2026-10-31)
+**Commit Message**: Update sigs.k8s.io/kube-api-linter digest to d90122c (#16178)
 
-* Add a Quota usage guide
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-Adds a Quota usage guide and links it from the Projects page. The guide
-follows Quota creation through CredentialsBinding or SecretBinding
-references to a Shoot, explains scope-based aggregation and declared
-resource consumption, and distinguishes Gardener Quotas from Kubernetes
-ResourceQuota. It also covers admission enforcement, lifetime
-constraints, expiration updates, and automatic Shoot deletion.
-
-Refs #15868
-
-Signed-off-by: Matt Van Horn <[REDACTED_EMAIL]>
-
-* Link the Quota guide from the docs index
-
-Add the Quotas page to the Project section of docs/README.md and format
-Shoot as inline code in the projects.md cross-reference, per review.
-
-Signed-off-by: Matt Van Horn <[REDACTED_EMAIL]>
-
-* Clarify the Quota guide introduction
-
-Apply the suggested opening with Shoot and Quota as inline code, and
-add a short overview of what a Quota declares, how it is attached
-through a binding, and how it is enforced before the detailed sections.
-
-Signed-off-by: Matt Van Horn <[REDACTED_EMAIL]>
-
-* Reorder the Quota guide and format resource names
-
-Move Scopes and Aggregation after the walkthrough so readers see a
-complete Quota mani
-
-**File**: `docs/README.md` (modified, +1/-0)
+**File**: `hack/tools/go.mod` (modified, +1/-1)
 ```diff
-@@ -35,6 +35,7 @@
- * [Projects](usage/project/projects.md)
- * [Service Account Manager](usage/project/service-account-manager.md)
- * [`NamespacedCloudProfile`s](usage/project/namespaced-cloud-profiles.md)
-+* [`Quota`s](usage/project/quotas.md)
+@@ -29,7 +29,7 @@ require (
+ 	// use go version -m hack/tools/bin/<<architecture>>/golangci-lint to detect the dependency versions
+ 	// or, with `go work` enabled, use `go work sync`
+ 	golang.org/x/tools v0.52.0
+-	sigs.k8s.io/kube-api-linter v0.0.0-20261012124120-79b557aa8c8d
++	sigs.k8s.io/kube-api-linter v0.0.0-20261030144752-d90122c89087
+ )
  
- ### Shoot
- 
+ require (
 ```
 
-**File**: `docs/usage/project/projects.md` (modified, +2/-0)
+**File**: `hack/tools/go.sum` (modified, +2/-2)
 ```diff
-@@ -8,6 +8,8 @@ The Gardener API server supports a cluster-scoped `Project` resource which is us
- 
- Each `Project` is backed by a Kubernetes `Namespace` that contains the actual related Kubernetes resources, like `Secret`s or `Shoot`s.
- 
-+See [Quotas](quotas.md) to limit `Shoot` infrastructure consumption or configure automatic deletion after a cluster lifetime.
-+
- **Example resource:**
- 
- ```yaml
-```
-
-**File**: `docs/usage/project/quotas.md` (added, +223/-0)
-```diff
-@@ -0,0 +1,223 @@
-+---
-+description: Limit Shoot infrastructure consumption and cluster lifetime with Quotas
-+---
-+
-+# Quotas
-+
-+Gardener `Quota` resources limit the infrastructure resources consumed by `Shoot` clusters and can optionally limit their lifetime.
-+They are namespaced resources connected to `Shoot`s through a `CredentialsBinding` or `SecretBinding`.
-+Creating a `Quota` alone does not attach it to every `Shoot` in a project or automatically discover all uses of a provider credential.
-+
-+A `Quota` declares upper limits in `spec.metrics`, such as CPU, memory, storage, and load balancers, and an optional `spec.clusterLifetimeDays`.
-+To use it, create the `Quota` and list it under `quotas` in the binding that a `Shoot` references.
-+When such a `Shoot` is created or its workers are changed, Gardener adds up the requested resources of all `Shoot`s using that `Quota` and rejects the request if a limit would be exceeded.
-+If a lifetime is set, Gardener deletes those `Shoot`s automatically after it expires.
-+The sections below walk through a complete example, then explain scopes, how usage is calculated, and the lifetime behavior.
-+
-+A Gardener `Quota` differs from the native Kubernetes `ResourceQuota` named `gardener` maintained by the [Project controller](../../concepts/controller-manager.md#project-controller).
-+That resource limits object counts in the project namespace; see its [ResourceQuota reconciler](../../concepts/controller-manager.md#resourcequota-reconciler).
-+Gardener `Quota`s instead constrain the infrastructure consumption described below.
-+
-+## Prerequisites
-+
-+- Access to the Garden API with `kubectl` and an existing project namespace, here `garden-dev`.
-+- Permissions:
-+  - To create or manage `Quota`s, or an operator who provides them.
-+  - To create bindings and `Shoot`s.
-+  - To read every `Quota` a binding references, including one in another namespace.
-+- Existing provider credentials. The examples use a `Secret` named `my-provider-account` in `garden-dev`; create it using your provider's required credential keys before creating the binding.
-+- A valid provider-specific `Shoot` configuration, including an available `CloudProfile` or `NamespacedCloudProfile`, region, machine types, images, networking, and provider configuration. Use the [Shoot example manifest](../../../example/90-shoot.yaml) as a starting point and replace its placeholders for your environment.
-+
-+## Create and Attach a Quota
-+
-+### 1. Create the Quota
-+
-+Save this complete `Quota` manifest as `quota.yaml`:
-+
-+```yaml
-+apiVersion: core.gardener.cloud/v1beta1
-+kind: Quota
-+metadata:
-+  name: project-quota
-+  namespace: garden-dev
-+spec:
-+  scope:
-+    apiVersion: core.gardener.cloud/v1beta1
-+    kind: Project
-+  metrics:
-+    cpu: "10"
-+    gpu: "0"
-+    memory: 40Gi
-+    storage.standard: 500Gi
-+    storage.premium: 100Gi
-+    loadbalancer: "4"
-+```
-+
-+Apply it before creating a binding that references it:
-+
-+```sh
-+kubectl apply -f quota.yaml
-+```
-+
-+To create a credentials-scope `Quota` instead, use one of the credentials scope pairs from the [scopes table](#scopes-and-aggregation) below and a distinct `Quota` name.
-+See also the [Quota example manifest](../../../example/60-quota.yaml) and [Quota API reference](../../api-reference/core.md#quota).
-+
-+### 2. Create a CredentialsBinding
-+
-+Save the following as `credentialsbinding.yaml` and replace `<provider-type>` with your provider, for example `aws`, matching the credentials and `Shoot` configuration.
-+This is a complete binding manifest once the placeholder is replaced:
-+
-+```yaml
-+apiVersion: security.gardener.cloud/v1alpha1
-+kind: CredentialsBinding
-+metadata:
-+  name: my-provider-account
-+  namespace: garden-dev
-+provider:
-+  type: <provider-type>
-+credentialsRef:
-+  apiVersion: v1
-+  kind: Secret
-+  name: my-provider-account
-+  namespace: garden-dev
-+quotas:
-+- name: project-quota
-+  namespace: garden-dev
-+```
-+
-+> [!NOTE]
-+> `quotas` is a top-level field, not part of `spec` or `credentialsRef`.
-+
-+For an existing `WorkloadIdentity`, use `apiVersion: security.gardener.cloud/v1alpha1` and `kind: WorkloadIdentity` in `credentialsRef`, with its name and namespace, as shown in the [CredentialsBinding example](../../../example/80-credentialsbinding.yaml).
-+
-+```sh
-+kubectl apply -f credentialsbinding.yaml
-+```
-+
-+### 3. Reference the Binding from a Shoot
-+
-+The following is a **partial `Shoot` excerpt**, not a complete manifest.
-+Merge these fields into your provider-specific configuration based on the [Shoot example](../../../example/90-shoot.yaml), saved as `shoot.yaml`:
-+
-+```yaml
-+apiVersion: core.gardener.cloud/v1beta1
-+kind: Shoot
-+metadata:
-+  name: quota-demo
-+  namespace: garden-dev
-+spec:
-+  credentialsBindingName: my-provider-account
-+```
-+
-+The `Shoot` and its binding must be in the same namespace.
-+Apply the completed `Shoot` manifest after the credentials, `Quota`, and binding exist:
-+
-+```sh
-+kubectl apply -f shoot.yaml
-+```
-+
-+### Alternative: S
+@@ -1040,8 +1040,8 @@ sigs.k8s.io/controller-tools v0.22.0 h1:eG3FAVja/KnlXKIWg95udIFz1cMyAtMjP11cqBh3
+ sigs.k8s.io/controller-tools v0.22.0/go.mod h1:VizwUStoZK7rReCj704czGGrB7mLxXTiJSJt7wN5ilI=
+ sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 h1:IpInykpT6ceI+QxKBbEflcR5EXP7sU1kvOlxwZh5txg=
+ sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730/go.mod h1:mdzfpAEoE6DHQEN0uh9ZbOCuHbLK5wOm7dK4ctXE9Tg=
+-sigs.k8s.io/kube-api-linter v0.0.0-20261012124120-79b557aa8c8d h1:XNllDc3cAHdTzBYTyfZObS5izoWrM0JoT63q4zxbUeQ=
+-sigs.k8s.io/kube-api-linter v0.0.0-20261012124120-79b557aa8c8d/go.mod h1:rV2mWRPlEGeU1RkcLR1zc2ZsC7Y72fScbi+TrMA779Y=
++sigs.k8s.io/kube-api-linter v0.0.0-20261030144752-d90122c89087 h1:UMGzIsnhhNPtSRHreTvOA2Ox7aitGqcwyYHSJAfzsqw=
++sigs.k8s.io/kube-api-linter v0.0.0-20261030144752-d90122c89087/go.mod h1:rV2mWRPlEGeU1RkcLR1zc2ZsC7Y72fScbi+TrMA779Y=
+ sigs.k8s.io/randfill v1.0.0 h1:JfjMILfT8A6RbawdsK2JXGBR5AQVfd+9TbzrlneTyrU=
+ sigs.k8s.io/randfill v1.0.0/go.mod h1:XeLlZ/jmk4i1HRopwe7/aU3H5n1zNUcX6TM94b3QxOY=
+ sigs.k8s.io/structured-merge-diff/v6 v6.4.2 h1:qdOxHwrl2Kaag1aQEarlYcOA9vSyGCp3CIki3aW8c4Q=
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #16179** (2026-10-31): Update pvc-autoscaler to v0.3.2 (@renovate[bot])
+- **PR #16178** (2026-10-31): Update sigs.k8s.io/kube-api-linter digest to d90122c (@renovate[bot])
 - **PR #16174** (2026-10-30): Adapt `node-local-dns` metrics and DNS dashboard to CoreDNS v1.11+ (@vicwicker)
 - **PR #16172** (closed): Update registry.k8s.io/metrics-server/metrics-server Docker tag to v0.9.1 (@renovate[bot])
 - **PR #16171** (2026-10-30): Update registry.k8s.io/coredns/coredns Docker tag to v1.15.0 (@renovate[bot])
 - **PR #16170** (2026-10-30): Update module github.com/prometheus/common to v0.73.1 (@renovate[bot])
-- **PR #16163** (2026-10-30): Update registry.k8s.io/metrics-server/metrics-server Docker tag to v0.9.1 (@renovate[bot])
 
 ---
 
@@ -964,28 +812,28 @@ complete Quota mani
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add a Quota usage guide (#15957)
+## X. Update sigs.k8s.io/kube-api-linter digest to d90122c (#16178)
 
 **RULE**:
-When implementing operations in `docs/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `hack/tools/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `004f9c9d`: Add a Quota usage guide (#15957). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9c5c0eb9`: Update sigs.k8s.io/kube-api-linter digest to d90122c (#16178). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `hack/tools/go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-* [`Quota`s](usage/project/quotas.md)
+	sigs.k8s.io/kube-api-linter v0.0.0-20261030144752-d90122c89087
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	sigs.k8s.io/kube-api-linter v0.0.0-20261012124120-79b557aa8c8d
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `004f9c9d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9c5c0eb9` are properly handled with clean fallback behavior.

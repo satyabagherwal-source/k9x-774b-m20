@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-28VE",
-    "timestamp": "2026-10-30T11:28:20.330Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "e46e7ba6eff98acd1d401d4c7c736ab942375b848a209ce0df0a116db8863f3c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-EKSB",
-    "timestamp": "2026-10-30T13:01:54.491Z",
-    "repository": "fb55/htmlparser2",
-    "learningId": "learn-github-fb55-htmlparser2",
-    "contentHash": "8d9465bf2c2d7f7c28701a4034c5f5641428df5078623e0ff03703c7adfdeb2f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-NXHP",
     "timestamp": "2026-10-30T13:09:10.861Z",
     "repository": "dathere/qsv",
@@ -7490,6 +7460,36 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "4f417311c69306ee213c528b228ba4cdbf75ea13771f5397c56824da9a4c5bde",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-HFDL",
+    "timestamp": "2026-10-31T19:23:42.489Z",
+    "repository": "google/gemma-4-31B-it",
+    "learningId": "learn-huggingface-google-gemma-4-31b-it",
+    "contentHash": "793a6e330640d45df5db18bbd3f55b484cfd18c28258bf3696da81f2079d9497",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-HLSV",
+    "timestamp": "2026-10-31T19:23:50.815Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "eebc493f0d58539a904ce16eb96a7793576a160460c18348857899b7374b66cb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1245,8 +1245,8 @@
     "sourceUrl": "https://huggingface.co/google/gemma-4-31B-it",
     "sourceVersion": "hf-google-gemma-4-31b-it",
     "license": "Open-Source",
-    "contentHash": "204302ceb403baf987288409b1e31924f68341d859c2103650999e122d7938e5",
-    "lastHarvestedAt": "2026-10-28T17:56:33.446Z",
+    "contentHash": "793a6e330640d45df5db18bbd3f55b484cfd18c28258bf3696da81f2079d9497",
+    "lastHarvestedAt": "2026-10-31T19:23:42.498Z",
     "learningId": "learn-huggingface-google-gemma-4-31b-it"
   },
   "hf-baai-bge-base-en-v1.5": {
@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "df9dc86a",
+    "sourceVersion": "9c5c0eb9",
     "license": "Apache-2.0",
-    "contentHash": "5f39742c0783f066247a239c2fdd728ad9a4f874aa57400b38890215074a06a5",
-    "lastHarvestedAt": "2026-10-31T03:45:30.234Z",
+    "contentHash": "eebc493f0d58539a904ce16eb96a7793576a160460c18348857899b7374b66cb",
+    "lastHarvestedAt": "2026-10-31T19:23:50.819Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {

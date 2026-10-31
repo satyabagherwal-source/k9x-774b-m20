@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T19:14:48.956Z",
-    "lastVerified": "2026-10-31T19:14:48.956Z",
+    "lastChecked": "2026-10-31T19:23:53.886Z",
+    "lastVerified": "2026-10-31T19:23:53.886Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -347,9 +347,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T18:40:51.989Z",
+    "lastChecked": "2026-10-31T19:23:53.874Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T18:40:51.990Z"
+    "lastVerified": "2026-10-31T19:23:53.874Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -863,14 +863,14 @@
     "officialUrl": "https://github.com/gardener/gardener",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T03:45:29.507Z",
-    "lastVerified": "2026-10-31T03:45:29.507Z",
+    "lastChecked": "2026-10-31T19:23:50.097Z",
+    "lastVerified": "2026-10-31T19:23:50.097Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gardener-gardener",
-    "contentHash": "5f39742c0783f066247a239c2fdd728ad9a4f874aa57400b38890215074a06a5",
+    "contentHash": "eebc493f0d58539a904ce16eb96a7793576a160460c18348857899b7374b66cb",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1151,12 +1151,12 @@
     "lastVerified": "2026-10-31T06:59:19.648Z"
   },
   "sharkdp-bat": {
-    "name": "sharkdp/bat",
+    "name": "bat",
     "officialUrl": "https://github.com/sharkdp/bat",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T23:35:07.146Z",
-    "lastVerified": "2026-10-30T23:35:07.146Z",
+    "lastChecked": "2026-10-31T19:23:38.864Z",
+    "lastVerified": "2026-10-31T19:23:38.864Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sharkdp-bat",
@@ -1165,7 +1165,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8f5727ea"
   },
   "hf-xingchen-agi-teleocr": {
     "name": "XingChen-AGI/TeleOCR",
@@ -1635,9 +1636,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-10-31T15:29:47.050Z",
+    "lastChecked": "2026-10-31T19:23:48.875Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-10-31T15:29:47.050Z"
+    "lastVerified": "2026-10-31T19:23:48.875Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -6516,9 +6517,9 @@
   "apache-incubator-pegasus": {
     "name": "incubator-pegasus",
     "officialUrl": "https://github.com/apache/incubator-pegasus",
-    "lastChecked": "2026-10-31T02:51:08.659Z",
+    "lastChecked": "2026-10-31T19:23:51.422Z",
     "revisionIdentifier": "75015467",
-    "lastVerified": "2026-10-31T02:51:08.659Z"
+    "lastVerified": "2026-10-31T19:23:51.422Z"
   },
   "dalance-procs": {
     "name": "procs",
@@ -6598,12 +6599,12 @@
     "officialUrl": "https://huggingface.co/google/gemma-4-31B-it",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T17:56:32.418Z",
-    "lastVerified": "2026-10-28T17:56:32.418Z",
+    "lastChecked": "2026-10-31T19:23:41.415Z",
+    "lastVerified": "2026-10-31T19:23:41.415Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-google-gemma-4-31b-it",
-    "contentHash": "204302ceb403baf987288409b1e31924f68341d859c2103650999e122d7938e5",
+    "contentHash": "793a6e330640d45df5db18bbd3f55b484cfd18c28258bf3696da81f2079d9497",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -8609,9 +8610,9 @@
   "swiftkickmobile-swiftmessages": {
     "name": "SwiftMessages",
     "officialUrl": "https://github.com/SwiftKickMobile/SwiftMessages",
-    "lastChecked": "2026-10-29T00:09:09.785Z",
+    "lastChecked": "2026-10-31T19:23:43.916Z",
     "revisionIdentifier": "c0ff6c65",
-    "lastVerified": "2026-10-29T00:09:09.785Z"
+    "lastVerified": "2026-10-31T19:23:43.916Z"
   },
   "hf-nvidia-qwen3.8-flash-next-fp4-local": {
     "name": "nvidia/Qwen3.8-Flash-Next-FP4-Local",

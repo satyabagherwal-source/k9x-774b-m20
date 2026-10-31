@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T19:14:46.409Z",
+  "last_updated": "2026-10-31T19:23:50.829Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1640,14 +1640,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-gemma-4-31b-it",
-      "content_hash": "204302ceb403baf987288409b1e31924f68341d859c2103650999e122d7938e5",
-      "verified_at": "2026-10-28T17:56:33.461Z",
+      "content_hash": "793a6e330640d45df5db18bbd3f55b484cfd18c28258bf3696da81f2079d9497",
+      "verified_at": "2026-10-31T19:23:42.508Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T17:56:33.461Z"
+      "last_updated": "2026-10-31T19:23:42.508Z"
     },
     "BAAI/bge-base-en-v1.5": {
       "repository": "BAAI/bge-base-en-v1.5",
@@ -10401,14 +10401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gardener-gardener",
-      "content_hash": "5f39742c0783f066247a239c2fdd728ad9a4f874aa57400b38890215074a06a5",
-      "verified_at": "2026-10-31T03:45:30.243Z",
+      "content_hash": "eebc493f0d58539a904ce16eb96a7793576a160460c18348857899b7374b66cb",
+      "verified_at": "2026-10-31T19:23:50.828Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T03:45:30.243Z"
+      "last_updated": "2026-10-31T19:23:50.828Z"
     },
     "NirDiamant/RAG_Techniques": {
       "repository": "NirDiamant/RAG_Techniques",

@@ -6696,3 +6696,5 @@ Every entry in this ledger must capture:
 | `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `28e3d13a` | Multi-dimensional audit evidence | 2026-10-31T19:14:38.656Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `5ea67989` | Multi-dimensional audit evidence | 2026-10-31T19:14:45.772Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `2a9447c5` | Multi-dimensional audit evidence | 2026-10-31T19:14:46.399Z |
+| `learn-huggingface-google-gemma-4-31b-it` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-31T19:23:42.498Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `9c5c0eb9` | Multi-dimensional audit evidence | 2026-10-31T19:23:50.819Z |
