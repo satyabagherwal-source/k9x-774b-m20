@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T18:33:58.478Z",
+  "last_updated": "2026-10-31T18:45:47.442Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4032,8 +4032,8 @@
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "26d3b3dd",
-      "content_hash": "08a13f0043a308364fac1e6d46132ed9ed28a35bfbfdde6831c9dc5466868060",
+      "source_version": "ea52d606",
+      "content_hash": "f80eeefc4282b063221581e5f16a6ec63f8ee063a060ec74a7e79d00de9c5d39",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "promoted_rules": [
@@ -4091,6 +4091,11 @@
           "number": 5931,
           "title": "web): enable platform checkbox by default",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6283,
+          "title": "backlash vs backslash (#4768)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4098,7 +4103,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T23:05:17.084Z",
+      "verified_at": "2026-10-31T18:40:42.309Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18215,7 +18220,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
       "source_version": "hf-argmaxinc-whisperkit-coreml",
-      "content_hash": "fa4256a2bc6d88730e453b5c3e4b87a20f1c2fa29a538bc68b51c3ec071193c3",
+      "content_hash": "bcdb342705802c15b7960a78fa984f5310a62e11c71cdafe07535fda4d1dd23d",
       "dossier_path": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "promoted_rules": [
@@ -18258,6 +18263,16 @@
           "number": 1606,
           "title": "Model Artifact Size Transparency Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6284,
+          "title": "Hardware-Capability Gating via Explicit Identifier Allow-Lists",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6285,
+          "title": "Model Size Suffixing for Storage and Memory Transparency",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -18277,7 +18292,7 @@
         "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv404ar8",
         "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv4e2t25"
       ],
-      "verified_at": "2026-10-28T17:28:12.434Z",
+      "verified_at": "2026-10-31T18:45:47.422Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -163699,6 +163714,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T18:29:13.920Z"
+    },
+    "rule-6283": {
+      "learning_id": "rule-6283",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6283,
+      "title": "backlash vs backslash (#4768)",
+      "source_url": "https://github.com/Automattic/harper",
+      "source_version": "ea52d606",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T18:40:42.309Z"
+    },
+    "rule-6284": {
+      "learning_id": "rule-6284",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6284,
+      "title": "Hardware-Capability Gating via Explicit Identifier Allow-Lists",
+      "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
+      "source_version": "hf-argmaxinc-whisperkit-coreml",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T18:45:47.422Z"
+    },
+    "rule-6285": {
+      "learning_id": "rule-6285",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6285,
+      "title": "Model Size Suffixing for Storage and Memory Transparency",
+      "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
+      "source_version": "hf-argmaxinc-whisperkit-coreml",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T18:45:47.422Z"
     }
   },
   "aliases": {

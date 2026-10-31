@@ -3,7 +3,7 @@
 > **Source Version**: `hf-argmaxinc`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-28T17:28:11.965Z  
+> **Timestamp**: 2026-10-31T18:45:46.345Z  
 > **Learning ID**: `learn-huggingface-argmaxinc-whisperkit-coreml`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,242 +17,164 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-This repository (`argmaxinc/whisperkit-coreml`) is not a source code repository but a **Model Artifact Repository** (Hugging Face Hub) containing pre-compiled, quantized Core ML models for the WhisperKit SDK. It solves the problem of **on-device, low-latency, privacy-preserving Automatic Speech Recognition (ASR)** on Apple Silicon (A-series, M-series, S-series chips). It bridges the gap between large language model (LLM) quality (Whisper) and edge device constraints (memory, thermal throttling, battery) by providing hardware-specific model variants.
+This repository serves as the **Model Distribution Layer** for WhisperKit, an on-device Automatic Speech Recognition (ASR) SDK for Apple Silicon. It does not contain the inference engine itself (which resides in `argmaxinc/argmax-oss-swift`) but rather the **quantized Core ML model artifacts** and the **device-capability mapping manifest** (`config.json`). The core problem it solves is **heterogeneous hardware capability gating**: ensuring that a specific device (e.g., iPhone 11 vs. MacBook Pro M1) loads a model variant that fits within its unified memory bandwidth and Neural Engine (ANE) constraints without crashing or degrading performance.
 
 **Architectural Boundaries:**
-1.  **Consumer Boundary:** The `argmax-oss-swift` SDK (Swift). This repo is a dependency artifact, not executable code.
-2.  **Hardware Boundary:** Strictly Apple Silicon. The `config.json` defines a rigid mapping between `device identifiers` (e.g., `iPhone15`, `MacBookPro18,1`) and `supported models`.
-3.  **Model Boundary:** Quantized Core ML formats. The models are pre-optimized for specific Neural Engine (ANE) capabilities.
+1.  **Consumer Boundary:** The Swift SDK (`WhisperKit`) reads `config.json` at runtime to determine which `.mlmodel` or `.mlpackage` file to download and load.
+2.  **Hardware Boundary:** The `identifiers` array maps specific Apple hardware model identifiers (e.g., `iPhone15`, `MacBookPro18,1`) to supported model sizes. This is a strict allow-list, not a heuristic.
+3.  **Model Variant Boundary:** The `supported` array lists specific quantized variants (e.g., `openai_whisper-large-v3_947MB`). The suffixes (e.g., `_947MB`) indicate the file size, which is a critical constraint for iOS storage and memory limits.
 
 **Critical Subsystem Abstractions:**
-*   **Device-Model Matrix:** A static configuration layer that decouples model selection from runtime logic. The SDK queries this matrix to determine which model weights to load based on the host device's hardware capabilities.
-*   **Quantization Tiers:** The naming convention (`_949MB`, `_626MB`, `_turbo`) implies a tiered abstraction of precision vs. speed. `turbo` likely refers to lower precision (e.g., int8) or pruned architectures for real-time inference, while larger sizes imply higher accuracy but higher latency/memory footprint.
-*   **Language-Specific Variants:** Distinction between multilingual (`openai_whisper-base`) and English-only (`openai_whisper-base.en`) models, allowing for smaller model sizes when language is known a priori.
+*   **Device Profile:** A composite key of `chips` (marketing name) and `identifiers` (system model string) that defines the hardware capability tier.
+*   **Model Registry:** A map from device profile to a set of valid model identifiers.
+*   **Default Selection Logic:** Each device profile has a `default` model, which is the fallback if the user does not specify a model. This default is chosen based on the optimal balance of accuracy and latency for that specific hardware tier.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Hardware-Aware Model Routing Invariant
+### 1. Hardware-Capability Gating via Explicit Identifier Allow-Lists
 **RULE**:
-In edge AI systems, model selection MUST be driven by a static, versioned device-capability matrix that maps hardware identifiers to specific model artifacts. Runtime dynamic model selection based on available memory or CPU load is FORBIDDEN for production ASR pipelines due to non-deterministic latency and memory fragmentation risks.
+When distributing machine learning models or heavy computational assets to heterogeneous client devices, you MUST define an explicit allow-list of hardware identifiers (e.g., `sysctlbyname("hw.model")` on Apple, `ro.product.model` on Android) mapped to supported asset variants. You MUST NOT rely on generic OS version checks or heuristic memory estimation to determine model compatibility.
 
 **WHY**:
-Dynamic selection introduces race conditions where the model might be swapped mid-inference, leading to state corruption or OOM crashes. A static matrix ensures that the model loaded is guaranteed to fit within the thermal and memory envelopes of the specific chip (e.g., A12 vs. A18). It also allows for A/B testing of model versions without changing SDK logic.
+Generic OS version checks (e.g., "iOS 16+") are insufficient because hardware capabilities vary wildly within the same OS version (e.g., iPhone 12 vs. iPhone 15 both run iOS 17, but have different Neural Engine throughput and memory bandwidth). Heuristic memory estimation is dangerous because it does not account for the specific memory layout of the model (e.g., quantization format, layer fusion) and can lead to `malloc` failures or `EXC_BAD_ACCESS` crashes during model loading. An explicit allow-list ensures that the model is only loaded on hardware that has been verified to support the specific quantization format and memory footprint.
 
 **WHEN TO APPLY**:
-Any on-device AI SDK that supports multiple hardware generations with varying Neural Engine capabilities and memory constraints.
+Any system that distributes ML models, large binary assets, or native code plugins to mobile or embedded devices with heterogeneous hardware capabilities.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "device_support": [
+    {
+      "chips": "A12, A13",
+      "identifiers": ["iPhone11", "iPhone12"],
+      "models": {
+        "default": "model_tiny",
+        "supported": ["model_tiny", "model_base"]
+      }
+    },
+    {
+      "chips": "A16, A17 Pro",
+      "identifiers": ["iPhone15", "iPhone16"],
+      "models": {
+        "default": "model_base",
+        "supported": ["model_tiny", "model_base", "model_small"]
+      }
+    }
+  ]
+}
+```
 ```swift
-// config.json structure
-let deviceMatrix: [String: [String]] = [
-    "iPhone15": ["openai_whisper-base", "openai_whisper-small"],
-    "iPhone11": ["openai_whisper-tiny"]
-]
-
-func selectModel(for deviceID: String) -> String? {
-    guard let supportedModels = deviceMatrix[deviceID] else {
-        return nil // Fail-safe: No model for unknown device
+// Swift SDK Logic
+func getSupportedModels(for deviceIdentifier: String) -> [String] {
+    guard let config = loadConfig() else { return [] }
+    for deviceProfile in config.deviceSupport {
+        if deviceProfile.identifiers.contains(deviceIdentifier) {
+            return deviceProfile.models.supported
+        }
     }
-    // Prioritize 'turbo' or 'default' if available, else smallest
-    if let defaultModel = supportedModels.first(where: { $0.contains("default") }) {
-        return defaultModel
-    }
-    return supportedModels.first
+    return [] // No support, fail gracefully
 }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// ANTI-PATTERN: Dynamic selection based on current memory
-func selectModelDynamic() -> String {
-    let availableMemory = ProcessInfo.processInfo.physicalMemory
-    if availableMemory > 4GB {
-        return "large-v3" // Risky: May fail if other apps consume memory
-    } else {
-        return "tiny"
-    }
+// ANTI-PATTERN: Heuristic memory check
+func canLoadModel(sizeInMB: Int) -> Bool {
+    let totalMemory = ProcessInfo.processInfo.physicalMemory
+    return sizeInMB < Int(totalMemory / 1024 / 1024 / 2) // Dangerous: ignores OS overhead, other apps, and model-specific memory layout
 }
 ```
 
 **VERIFICATION METHOD**:
-Unit test that asserts `selectModel(for: "iPhone15")` returns a model ID present in the `config.json` for that device. Integration test that verifies the SDK does not attempt to load a model not listed in the device's supported array.
+1.  **Static Analysis:** Lint the `config.json` to ensure every `identifier` in the `supported` list is a valid, known hardware model string.
+2.  **Integration Test:** On a CI matrix of real devices (or simulators with specific hardware profiles), assert that `getSupportedModels()` returns the expected list for each device identifier.
+3.  **Crash Test:** Attempt to load a model not in the `supported` list on a device and verify that the SDK throws a specific `UnsupportedDeviceError` rather than crashing.
 
-### 2. Quantized Model Naming & Size Transparency
+### 2. Model Size Suffixing for Storage and Memory Transparency
 **RULE**:
-Quantized model artifacts MUST include their approximate file size in the model identifier or metadata. This allows the client SDK to perform pre-flight disk space checks before initiating download or loading, preventing mid-download failures.
+When naming quantized model artifacts, you MUST include the approximate file size in the model identifier (e.g., `model_large_947MB`). This size MUST be the actual on-disk size of the quantized artifact, not the original model size.
 
 **WHY**:
-On mobile devices, disk space is a critical constraint. A 950MB model download that fails at 99% due to insufficient space is a catastrophic UX failure. Embedding size in the name or metadata enables the SDK to check `FileManager.default.attributesOfItem(forItemAt:)` before starting the transfer.
+Users and developers need to make informed decisions about which model to download based on their device's storage constraints and network conditions. Including the size in the identifier allows the SDK to display accurate download sizes in the UI and to implement pre-download checks. If the size is not included, the SDK must perform a `HEAD` request to the server to get the size, which adds latency and complexity. If the size is incorrect, it can lead to user frustration and failed downloads.
 
 **WHEN TO APPLY**:
-Any system distributing large binary artifacts (models, datasets) to edge devices with limited storage.
+Any system that distributes large binary assets (ML models, video, audio) to client devices where storage and bandwidth are constrained.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```json
 {
-  "model_id": "openai_whisper-large-v2_949MB",
-  "size_bytes": 996147200,
-  "quantization": "int8"
+  "supported": [
+    "openai_whisper-large-v3_947MB",
+    "openai_whisper-large-v3_turbo_954MB"
+  ]
+}
+```
+```swift
+// Swift SDK Logic
+func getModelSize(from identifier: String) -> Int? {
+    // Parse the size from the identifier
+    let parts = identifier.split(separator: "_")
+    guard let lastPart = parts.last,
+          let sizeString = lastPart.dropLast(2), // Remove "MB"
+          let size = Int(sizeString) else {
+        return nil
+    }
+    return size * 1024 * 1024 // Convert to bytes
 }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```json
+// ANTI-PATTERN: No size in identifier
 {
-  "model_id": "whisper-large-v2",
-  "size_bytes": null // Forces client to guess or fail post-download
+  "supported": [
+    "openai_whisper-large-v3",
+    "openai_whisper-large-v3_turbo"
+  ]
 }
 ```
 
 **VERIFICATION METHOD**:
-Lint check on `config.json` ensuring all model IDs with size suffixes match the actual file size in the repository within a 5% tolerance.
+1.  **Static Analysis:** Lint the `config.json` to ensure every model identifier in the `supported` list ends with a valid size suffix (e.g., `_123MB`).
+2.  **Integration Test:** Download each model and verify that the actual file size matches the size specified in the identifier within a 5% tolerance.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: No commit patches or bug issues were provided in the input data. The following incidents are inferred from the architectural constraints and common failure modes in similar on-device ASR systems, based on the `config.json` structure.*
-
-### Incident 1: Model Loading Failure on Unsupported Device (BUG-DEVICE-MISMATCH-01)
-- **Context**: SDK initialization on a device not listed in `config.json`.
-- **What Was Expected**: Graceful fallback to a minimal model or clear error message.
-- **What Actually Happened**: SDK attempted to load a default model not supported by the device's Neural Engine, causing a crash or infinite hang.
-- **Evidence in Repo**: `config.json` lists specific `identifiers`. If a new device (e.g., `iPhone19`) is released, it is not in the list.
-- **Root Cause**: Lack of a default fallback mechanism for unknown devices.
-- **Remediation Code Diff**:
-```swift
-// - Buggy: Direct lookup
-let model = config[deviceID] // Crashes if nil
-
-// + Fixed: Safe lookup with fallback
-let model = config[deviceID] ?? config["default_fallback"] ?? nil
-if model == nil {
-    throw ASRError.unsupportedDevice(deviceID)
-}
-```
-- **Lesson**: Always provide a safe fallback for hardware capability lookups.
-
-### Incident 2: Memory Overflow on Low-End Devices (BUG-MEMORY-OOM-02)
-- **Context**: Loading `openai_whisper-base` on an A12 chip.
-- **What Was Expected**: Successful loading and inference.
-- **What Actually Happened**: App crashed with `SIGABRT` due to memory allocation failure.
-- **Evidence in Repo**: `config.json` shows A12 supports only `tiny` and `base`. If `base` is too large for A12's available memory at runtime, it fails.
-- **Root Cause**: Static model size does not account for runtime memory pressure.
-- **Remediation Code Diff**:
-```swift
-// - Buggy: Load model directly
-let model = try MLModel(contentsOf: url)
-
-// + Fixed: Check memory before loading
-let requiredMemory = modelMetadata.sizeBytes
-let availableMemory = ProcessInfo.processInfo.thermalState == .nominal ? 512MB : 256MB
-if requiredMemory > availableMemory {
-    throw ASRError.insufficientMemory
-}
-```
-- **Lesson**: Pre-flight memory checks are essential for large model loading.
+*Note: The provided repository data does not contain any commit patches, bug issues, or post-mortems. Therefore, no specific incidents can be documented. The following section is intentionally left empty to reflect the absence of evidence.*
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Invariant**: Model IDs in `config.json` MUST be unique strings. Duplicate IDs for different quantizations will cause ambiguous model selection.
-    *   **Code Example**:
-        ```json
-        // BAD: Ambiguous ID
-        "supported": ["whisper-base", "whisper-base"]
-        
-        // GOOD: Unique IDs
-        "supported": ["whisper-base-int8", "whisper-base-fp16"]
-        ```
-
-2.  **Infinite Loop & Recursion Guards**:
-    *   **Invariant**: Model download and loading MUST have a timeout. If the network is slow, the SDK MUST NOT block the main thread indefinitely.
-    *   **Code Example**:
-        ```swift
-        // BAD: Synchronous download
-        let data = try Data(contentsOf: url)
-        
-        // GOOD: Asynchronous with timeout
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            // Handle completion
-        }
-        task.timeoutIntervalForRequest = 30.0
-        task.resume()
-        ```
-
-3.  **UI & UX Micro-Mechanics**:
-    *   **Invariant**: Model loading progress MUST be reported on the main thread to update UI. Inference MUST run on a background queue to avoid UI jank.
-    *   **Code Example**:
-        ```swift
-        // BAD: Inference on main thread
-        let result = try model.predict(audio)
-        
-        // GOOD: Inference on background queue
-        DispatchQueue.global(qos: .userInitiated).async {
-            let result = try model.predict(audio)
-            DispatchQueue.main.async {
-                self.updateUI(with: result)
-            }
-        }
-        ```
-
-4.  **Backend Concurrency & Memory Safety**:
-    *   **Invariant**: Model instances MUST be thread-safe or accessed via a serial queue. Concurrent access to the same `MLModel` instance can cause undefined behavior.
-    *   **Code Example**:
-        ```swift
-        // BAD: Shared model instance without synchronization
-        let model = MLModel()
-        // Thread 1: model.predict()
-        // Thread 2: model.predict() // Race condition
-        
-        // GOOD: Serial queue for model access
-        let modelQueue = DispatchQueue(label: "model.queue")
-        modelQueue.async {
-            let result = try model.predict(audio)
-        }
-        ```
-
-5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Invariant**: Model file integrity MUST be verified (checksum) before loading. Corrupted downloads will cause cryptic MLModel errors.
-    *   **Code Example**:
-        ```swift
-        // BAD: Load model without verification
-        let model = try MLModel(contentsOf: url)
-        
-        // GOOD: Verify checksum
-        let checksum = try calculateChecksum(url)
-        if checksum != expectedChecksum {
-            throw ASRError.checksumMismatch
-        }
-        let model = try MLModel(contentsOf: url)
-        ```
+*Note: The provided repository data does not contain any source code snippets, only configuration files. Therefore, no microscopic code-level invariants can be extracted. The following section is intentionally left empty to reflect the absence of evidence.*
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: Decoupled model distribution from SDK logic. The SDK is a thin wrapper around Core ML, with model selection driven by external configuration.
-2.  **Core Abstractions**: `DeviceIdentifier`, `ModelID`, `QuantizationTier`. These are the primary domain primitives.
-3.  **Error Handling**: Fail-safe model selection. If a model is not supported, the SDK MUST throw a clear error, not crash.
-4.  **Testing**: Unit tests for device-model mapping. Integration tests for model loading on various hardware.
-5.  **Security**: Model files are signed by Apple. The SDK MUST verify the signature before loading to prevent tampering.
-6.  **Performance**: Quantized models for reduced memory and latency. `turbo` variants for real-time inference.
-7.  **Deployment**: Hugging Face Hub for model distribution. Versioned model IDs for reproducibility.
-8.  **Agent Patterns**: N/A (This is a model repo, not an agent).
-9.  **Data Flow**: Audio input -> Preprocessing -> Core ML Inference -> Text output. The model is a stateless function in this flow.
+1.  **Architecture:** The repository is a pure data distribution layer. It has no runtime logic, only static configuration. The architectural boundary is clear: it provides data to the SDK, which provides logic to the application.
+2.  **Core Abstractions:** The core abstractions are `DeviceProfile` (hardware capability) and `ModelRegistry` (supported models per device). These are simple data structures, but they are critical for the correct functioning of the SDK.
+3.  **Error Handling:** Error handling is not present in this repository. It is the responsibility of the SDK to handle errors when loading the configuration or downloading the models.
+4.  **Testing:** Testing is not present in this repository. It is the responsibility of the SDK to test the configuration and the model loading process.
+5.  **Security:** Security is not a concern in this repository, as it only contains public model artifacts and configuration data. However, the integrity of the configuration file is critical, as a malicious modification could cause the SDK to load an unsupported model, leading to a crash.
+6.  **Performance:** Performance is not a concern in this repository, as it does not contain any runtime logic. However, the size of the configuration file is small, so it can be loaded quickly.
+7.  **Deployment:** Deployment is straightforward: the repository is hosted on Hugging Face, and the SDK downloads the configuration and models from there. The deployment process is automated and reproducible.
+8.  **Agent Patterns:** Agent patterns are not relevant to this repository, as it does not contain any AI agent logic.
+9.  **Data Flow:** The data flow is simple: the SDK reads the configuration, determines the supported models, downloads the selected model, and loads it into memory. The data flow is linear and unidirectional.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Device-Capability Matrix for Model Selection.
-2.  **Rule**: Static model selection based on hardware identifiers.
-3.  **Architecture Principle**: Separation of model artifacts from SDK logic.
-4.  **Failure Mode**: OOM crash on low-end devices due to incorrect model selection.
-5.  **Reusable Skill**: Pre-flight memory and disk space checks before model loading.
-6.  **Decision**: Use quantized models for edge deployment.
-7.  **Anti-pattern**: Dynamic model selection based on runtime memory.
-8.  **Verification Method**: Unit tests for device-model mapping and integration tests for model loading.
+1.  **Pattern:** Explicit hardware identifier allow-listing for model compatibility.
+2.  **Rule:** MUST use explicit hardware identifiers, MUST NOT use heuristic memory checks.
+3.  **Architecture Principle:** Separation of concerns: the repository provides data, the SDK provides logic.
+4.  **Failure Mode:** Loading an unsupported model on a device, leading to a crash or out-of-memory error.
+5.  **Reusable Skill:** How to define a device-capability mapping for ML model distribution.
+6.  **Decision:** Use explicit hardware identifiers instead of heuristic memory checks to ensure compatibility.
+7.  **Anti-pattern:** Using heuristic memory checks to determine model compatibility.
+8.  **Verification Method:** Static analysis of the configuration file and integration tests on real devices.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Define Device Matrix**: Create a JSON configuration mapping device identifiers to supported models.
-2.  **Implement Model Selector**: Write a function that takes a device ID and returns the appropriate model ID.
-3.  **Add Pre-flight Checks**: Check disk space and available memory before downloading/loading the model.
-4.  **Verify Model Integrity**: Calculate and verify the checksum of the downloaded model file.
-5.  **Handle Errors Gracefully**: Throw clear errors for unsupported devices, insufficient memory, or checksum mismatches.
-6.  **Test on Multiple Devices**: Run integration tests on a range of devices to ensure model selection and loading work correctly.
+1.  **Define Device Profiles:** Identify the hardware identifiers for each device you want to support.
+2.  **Map Models to Devices:** Determine which models are supported on each device and define the default model.
+3.  **Include Model Sizes:** Include the approximate file size in the model identifier.
+4.  **Validate Configuration:** Lint the configuration file to ensure it is valid and complete.
+5.  **Test on Real Devices:** Test the SDK on real devices to ensure that the correct models are loaded.
+6.  **Handle Errors:** Implement error handling in the SDK to gracefully handle unsupported devices and failed downloads.

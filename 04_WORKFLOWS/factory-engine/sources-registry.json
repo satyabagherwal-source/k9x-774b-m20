@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T18:34:01.104Z",
-    "lastVerified": "2026-10-31T18:34:01.104Z",
+    "lastChecked": "2026-10-31T18:45:50.072Z",
+    "lastVerified": "2026-10-31T18:45:50.072Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -347,9 +347,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T18:08:51.527Z",
+    "lastChecked": "2026-10-31T18:40:51.989Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T18:08:51.527Z"
+    "lastVerified": "2026-10-31T18:40:51.990Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -489,8 +489,8 @@
     "officialUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T03:12:29.610Z",
-    "lastVerified": "2026-10-31T03:12:29.610Z",
+    "lastChecked": "2026-10-31T18:40:44.539Z",
+    "lastVerified": "2026-10-31T18:40:44.539Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
@@ -812,14 +812,14 @@
     "officialUrl": "https://github.com/Automattic/harper",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T23:05:14.809Z",
-    "lastVerified": "2026-10-30T23:05:14.809Z",
+    "lastChecked": "2026-10-31T18:40:40.381Z",
+    "lastVerified": "2026-10-31T18:40:40.381Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-automattic-harper",
-    "contentHash": "08a13f0043a308364fac1e6d46132ed9ed28a35bfbfdde6831c9dc5466868060",
+    "contentHash": "f80eeefc4282b063221581e5f16a6ec63f8ee063a060ec74a7e79d00de9c5d39",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1315,8 +1315,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T14:45:52.381Z",
-    "lastVerified": "2026-10-31T14:45:52.381Z",
+    "lastChecked": "2026-10-31T18:40:46.973Z",
+    "lastVerified": "2026-10-31T18:40:46.973Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -6262,9 +6262,9 @@
   "netflix-dynomite": {
     "name": "dynomite",
     "officialUrl": "https://github.com/Netflix/dynomite",
-    "lastChecked": "2026-10-31T02:21:26.072Z",
+    "lastChecked": "2026-10-31T18:40:49.496Z",
     "revisionIdentifier": "2046b05e",
-    "lastVerified": "2026-10-31T02:21:26.072Z"
+    "lastVerified": "2026-10-31T18:40:49.496Z"
   },
   "silasmarvin-lsp-ai": {
     "name": "lsp-ai",
@@ -6323,12 +6323,12 @@
     "officialUrl": "https://huggingface.co/argmaxinc/whisperkit-coreml",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T17:28:04.092Z",
-    "lastVerified": "2026-10-28T17:28:04.092Z",
+    "lastChecked": "2026-10-31T18:40:39.580Z",
+    "lastVerified": "2026-10-31T18:40:39.580Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
-    "contentHash": "fa4256a2bc6d88730e453b5c3e4b87a20f1c2fa29a538bc68b51c3ec071193c3",
+    "contentHash": "bcdb342705802c15b7960a78fa984f5310a62e11c71cdafe07535fda4d1dd23d",
     "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -8512,9 +8512,9 @@
   "xcodesorg-xcodesapp": {
     "name": "XcodesApp",
     "officialUrl": "https://github.com/XcodesOrg/XcodesApp",
-    "lastChecked": "2026-10-28T23:30:41.198Z",
+    "lastChecked": "2026-10-31T18:40:42.027Z",
     "revisionIdentifier": "45722c72",
-    "lastVerified": "2026-10-28T23:30:41.198Z"
+    "lastVerified": "2026-10-31T18:40:42.027Z"
   },
   "hf-pyannote-speaker-diarization-community-1": {
     "name": "pyannote/speaker-diarization-community-1",

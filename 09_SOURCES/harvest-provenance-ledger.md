@@ -6686,3 +6686,5 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `310e494c` | Multi-dimensional audit evidence | 2026-10-31T18:29:09.291Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `a762d016` | Multi-dimensional audit evidence | 2026-10-31T18:29:14.014Z |
 | `learn-huggingface-intfloat-multilingual-e5-small` | `https://huggingface.co/intfloat/multilingual-e5-small` | `hf-intfloa` | Multi-dimensional audit evidence | 2026-10-31T18:33:58.567Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `ea52d606` | Multi-dimensional audit evidence | 2026-10-31T18:40:42.415Z |
+| `learn-huggingface-argmaxinc-whisperkit-coreml` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-10-31T18:45:47.525Z |

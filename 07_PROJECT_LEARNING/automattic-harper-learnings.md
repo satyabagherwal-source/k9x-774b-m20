@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `26d3b3dd`  
+> **Source Version**: `ea52d606`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T23:05:16.475Z  
+> **Timestamp**: 2026-10-31T18:40:41.696Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T23:05:14.809Z  
+> **Harvest Timestamp**: 2026-10-31T18:40:40.381Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17294 stars
+- **Stars / Engagement**: 17315 stars
 
 ---
 
@@ -1429,261 +1429,167 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `26d3b3dd` (2026-10-30)
-**Commit Message**: fix(web): enable platform checkbox by default
+### Incident Patch 1: `ea52d606` (2026-10-31)
+**Commit Message**: feat: backlash vs backslash (#4768)
 
-**File**: `packages/web/src/routes/uninstall-browser-extension/+page.svelte` (modified, +5/-3)
+**File**: `harper-core/default_config.json` (modified, +7/-0)
 ```diff
-@@ -83,9 +83,11 @@ function handleFormData(e: FormDataEvent) {
- 						{/if}
- 					</fieldset>
- 
--					<Checkbox name="platform" value={platform} checked>
--						Include browser type
--					</Checkbox>
-+					{#if platform}
-+						<Checkbox name="platform" value={platform} checked>
-+							Include browser type
-+						</Checkbox>
-+					{/if}
- 
- 					<div class="flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
- 						<Button type="submit" size="lg" disabled={!selected}>
+@@ -4583,6 +4583,13 @@
+ 								"label": "A Whole Other"
+ 							}
+ 						},
++						{
++							"Bool": {
++								"name": "BacklashBackslash",
++								"state": true,
++								"label": "Backlash / Backslash"
++							}
++						},
+ 						{
+ 							"Bool": {
+ 								"name": "BadRap",
 ```
 
----
-
-### Incident Patch 2: `872abab0` (2026-10-30)
-**Commit Message**: fix(web): show the correct link for the user's browser (#4757)
-
-* fix(web): show the correct link for the user's browser
-
-* fix(web): use arrows instead of Unicode
-
-* fix(web): add star icon to "Star on GitHub" button
-
-**File**: `packages/components/src/lib/Icons.stories.svelte` (modified, +2/-0)
+**File**: `harper-core/src/linting/weir_rules/BacklashBackslash/ToBacklash.weir` (added, +14/-0)
 ```diff
-@@ -19,6 +19,7 @@ import PlusIcon from './icons/PlusIcon.svelte';
- import QuillIcon from './icons/QuillIcon.svelte';
- import RocketIcon from './icons/RocketIcon.svelte';
- import SearchIcon from './icons/SearchIcon.svelte';
-+import StarIcon from './icons/StarIcon.svelte';
- import TrashIcon from './icons/TrashIcon.svelte';
- import UploadIcon from './icons/UploadIcon.svelte';
- 
-@@ -50,6 +51,7 @@ const icons = [
- 	{ name: 'Quill', component: QuillIcon },
- 	{ name: 'Rocket', component: RocketIcon },
- 	{ name: 'Search', component: SearchIcon },
-+	{ name: 'Star', component: StarIcon },
- 	{ name: 'Trash', component: TrashIcon },
- 	{ name: 'Upload', component: UploadIcon },
- ];
-```
-
-**File**: `packages/components/src/lib/icons/StarIcon.svelte` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+<script lang="ts">
-+export let className: string | undefined = undefined;
-+</script>
+@@ -0,0 +1,14 @@
++expr main <[([conservative, cultural, gear, political, public, violent] backslash), (backslash [adjustment, against, gear, gears])], backslash>
 +
-+<svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21" class={className} aria-hidden="true">
-+	<path d="m7.5 11.5-5 3 2-5.131-4-3.869h5l2-5 2 5h5l-4 4 2 5z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" transform="translate(3 3)" />
-+</svg>
++let message "Did you mean `backlash`?"
++let description "Corrects `backslash` to `backlash` when it looks like a typo."
++let kind "Typo"
++let becomes "backlash"
++
++test "Citizens' Assembly Sparks Art World Criticism and Conservative Backslash." "Citizens' Assembly Sparks Art World Criticism and Conservative Backlash."
++test "adopt AI, despite inevitable public backslash" "adopt AI, despite inevitable public backlash"
++test "The attacks triggered a violent backslash against the Muslim community" "The attacks triggered a violent backlash against the Muslim community"
++test "calibration errors,gear backslash" "calibration errors,gear backlash"
++test "Backslash adjustment in Takahashi mounts" "Backlash adjustment in Takahashi mounts"
++test "Miniature zero-backslash gears and actuators for precision positioning applications." "Miniature zero-backlash gears and actuators for precision positioning applications."
++test "Cultural Backslash: Trump, Brexit and the Rise of Authoritarian Populism" "Cultural Backlash: Trump, Brexit and the Rise of Authoritarian Populism"
 ```
 
-**File**: `packages/components/src/lib/index.ts` (modified, +1/-0)
+**File**: `harper-core/src/linting/weir_rules/BacklashBackslash/ToBacklashes.weir` (added, +11/-0)
 ```diff
-@@ -42,6 +42,7 @@ export { default as QuillIcon } from './icons/QuillIcon.svelte';
- export { default as RocketIcon } from './icons/RocketIcon.svelte';
- export { default as SearchIcon } from './icons/SearchIcon.svelte';
- export { default as SendIcon } from './icons/SendIcon.svelte';
-+export { default as StarIcon } from './icons/StarIcon.svelte';
- export { default as TrashIcon } from './icons/TrashIcon.svelte';
- export { default as UploadIcon } from './icons/UploadIcon.svelte';
- export { default as Link } from './Link.svelte';
+@@ -0,0 +1,11 @@
++expr main <[(backslashes against), ([conservative, political, public] backslashes)], backslashes>
++
++let message "Did you mean `backlashes`?"
++let description "Corrects `backslashes` to `backlashes` when it looks like a typo."
++let kind "Typo"
++let becomes "backlashes"
++
++test "The recent backslashes against the numerisation project" "The recent backlashes against the numerisation project"
++test "the easiest job you can do without receiving public backslashes is to market a generally loved 'item'" "the easiest job you can do without receiving public backlashes is to market a generally loved 'item'"
++test "there were political backslashes, with energy cost a factor" "there were political backlashes, with energy cost a factor"
++test "but faced various conservative backslashes in the form of right-wing national policies" "but faced various conservative backlashes in the form of right-wing national policies"
 ```
 
-**File**: `packages/web/src/routes/+page.svelte` (modified, +9/-3)
+**File**: `harper-core/src/linting/weir_rules/BacklashBackslash/ToBackslash.weir` (added, +14/-0)
 ```diff
-@@ -6,7 +6,7 @@ export const frontmatter = {
- 
- <script lang="ts">
- import { browser } from '$app/environment';
--import { Arrow } from 'components';
-+import { Arrow, StarIcon } from 'components';
- import { TestimonialCollection } from 'components';
- import { createEditorLinter } from '$lib/createEditorLinter';
- import FaqSection from '$lib/marketing/FaqSection.svelte';
-@@ -182,7 +182,10 @@ onMount(() => {
- 			</p>
- 			<div class="mt-7 flex flex-wrap gap-[0.65rem] max-[620px]:flex-col max-[620px]:items-stretch">
- 				<PillButton href="/get" size="lg">Get Harper</PillButton>
--				<PillButton href={marketingLinks.github} kind="secondary" size="lg">Star on GitHub</PillButton>
-+				<PillButton href={marketingLinks.github} kind="secondary" size="lg">
-+					<StarIcon slot="icon" />
-+					Star on GitHub
-+				</PillButton>
- 			</div>
- 		</div>
- 	</section>
-@@ -361,7 +364,10 @@ onMount(() => {
- 				and we’d love your help.
- 			</p>
- 			<div class="mt-7 flex flex-col flex-wrap items-center justify-center gap-[0.65rem]">
--				<PillButton href={marketingLinks.github} size="lg">Star on GitHub</PillButton>
-+				<PillButton href={marketingLinks.github} size="lg">
-+					<StarIcon slot="icon" />
-+					Star on GitHub
-+				</PillButton>
- 				<PillButton href="/docs/contributors/introduction" size="lg">Contribute</PillButton>
- 			</div>
- 		</div>
+@@ -0,0 +1,14 @@
++expr main <[([single, double][-, ( )]backlash), (backlash [character, characters, key]), ([escaped, escaping] backlash)], backlash>
++
++let message "Did you mean `backslash`?"
++let description "Corrects `backlash` to `backslash` when it looks like a typo."
++let kind "Typo"
++let becomes "backslash"
++
++test "Exporting adds backlash characters after each row" "Exporting adds backslash characters after each row"
++test "Backlash character in the prompt needs to be escaped" "Backslash character in the prompt needs to be escaped"
++test "It was written as a double backslash but it renders as a single backlash." "It was written as a double backslash but it renders as a single backslash."
++test "string representation of a JSON with escaped backlash is incorrect" "string representation of a JSON with escaped backslash is incorrect"
++test "which does not differentiate between the escaping backlash and the literal character" "which does not differentiate between the escaping backslash and the literal character"
++test "Mapping the yen/backlash key didn't seem to work" "Mapping the yen/backslash key didn't seem to work"
++test "note the double backlash only on the first backslash" "note the double backslash only on the first backslash"
 ```
 
-**File**: `packages/web/src/routes/get/+page.svelte` (modified, +8/-3)
+**File**: `harper-core/src/linting/weir_rules/BacklashBackslash/ToBackslashes.weir` (added, +16/-0)
 ```diff
-@@ -1,5 +1,7 @@
- <script lang="ts">
-+import { Arrow } from 'components';
- import { onMount } from 'svelte';
-+import getBrowserType from '$lib/getBrowserType';
- import {
- 	type Integration,
- 	integrationCategories,
-@@ -14,13 +16,16 @@ import { isUpToDate, liveVersions, loadLiveVersions } from '$lib/marketing/versi
- const chromeHref =
- 	'https://chromewebstore.google.com/detail/private-grammar-checking/lodbfhdipoipcjmlebjbgmmgekckhpfb?utm_source=harper-get&utm_medium=referral';
- 
-+// Keep server rendering and initial hydration consistent before browser detection.
-+let browserType: ReturnType<typeof getBrowserType> = 'chrome';
- let activeCategory = 'all';
- let query = '';
- 
- const VERSION_UPTODATE = 'Up-to-date';
- const VERSION_BEHIND = 'This version is slightly behind the core engine due to a delay';
- 
- onMount(() => {
-+	browserType = getBrowserType();
- 	void loadLiveVersions();
- });
- 
-@@ -80,7 +85,7 @@ function clearFilters() {
- 				Use Harper in your favorite apps and browsers. Good grammar goes where you are.
- 			</p>
- 			<div class="mx-auto grid max-w-[47.5rem] grid-cols-2 gap-[0.85rem] text-left max-[640px]:grid-cols-1">
--				{#each ['desktop', 'chrome'] as id}
-+				{#each [browserType, 'desktop'] as id}
- 					{@const integration = integrations.find((item) => item.id === id)}
- 					{#if integration}
- 						{@const upToDate = isUpToDate($liveVersions.harper, $liveVersions[integration.id])}
-@@ -108,7 +113,7 @@ function clearFilters() {
- 									{integration.desc}
- 								</small>
- 							</span>
--							<em class="whitespace-nowrap text-[0.78rem] font-extrabold text-[#b06a1b] not-italic dark:text-primary-300">{ctaLabel(integration)} →</em>
-+							<em class="inline-flex items-center gap-1 whitespace-nowrap text-[0.78rem] font-extrabold text-[#b06a1b] not-italic dark:text-primary-300">{ctaLabel(integration)}<Arrow width="1rem" height="1rem" /></em>
- 						</a>
- 					{/if}
- 				{/each}
-@@ -217,7 +222,7 @@ function clearFilters() {
- 								{integration.platform}
- 							</small>
- 						</span>
--						<em class="whitespace-nowrap text-[0.78rem] font-extrabold text-[#b06a1b] not-italic dark:text-primary-300">{ctaLabel(integration)} →</em>
-+						<em class="inline-flex items-center gap-1 whitespace-nowrap text-[0.78rem] font-extrabold text-[#b06a1b] not-italic dark:text-primary-300">{ctaLabel(integration)}<Arrow width="1rem" height="1rem" /></em>
- 						</a>
- 					{/each}
- 				{/if}
+@@ -0,0 +1,16 @@
++expr main <[([single, double][-, ( )]backlashes), (both backlashes), ([enter, entered, insert, inserted, type, typed] two backlashes), (backlashes [character, characters])], backlashes>
++
++let message "Did you mean `backslashes`?"
++let description "Corrects `backlashes` to `backslashes` when it looks like a typo."
++let kind "Typo"
++let becomes "backslashes"
++
++test "Using r-strings is the correct solution if you want unescaped single backlashes" "Using r-strings is the correct solution if you want unescaped single backslashes"
++test "As an aside, it looks like the Markdown extension only interprets double-backlashes as escapes." "As an aside, it looks like the Markdown extension only interprets double-backslashes as escapes."
++test "To make a \“SLSH\” appear in the forum, type TWO backlashes" "To make a \“SLSH\” appear in the forum, type TWO backslashes"
++test "To use a backslash in such shell string, enter two backlashes" "To use a backslash in such shell string, enter two backslashes"
++test "A parameter designator consists of a backlashes character, followed by a digit (0 - 9)" "A parameter designator consists of a backslashes character, followed by a digit (0 - 9)"
++
++# test "Replacing backslash with two backlashes in ansible" "Replacing backslash with two backslashes in ansible"
++
++allows "The two backlashes against globalisation."
 ```
 
 ---
 
-### Incident Patch 3: `76aeedee` (2026-10-29)
-**Commit Message**: fix(web): incorrect date reporting in graphs (#4747)
+### Incident Patch 2: `2a98627f` (2026-10-31)
+**Commit Message**: feat: fan fare/fan-fare → fanfare (#4766)
 
-* fix(web): analytics should include today's partial total
-
-* fix(web): use UTC
-
-**File**: `packages/web/src/lib/components/LineChart.svelte` (modified, +2/-1)
+**File**: `harper-core/default_config.json` (modified, +7/-0)
 ```diff
-@@ -11,7 +11,7 @@ import type { Point } from 'chart.js';
- import Chart from 'chart.js/auto';
- import { onMount } from 'svelte';
- 
--/** Props for a single-series chart. Dates are displayed in the viewer's local timezone. */
-+/** Props for a single-series chart. Dates are displayed in UTC. */
- interface Props {
- 	/** Observations in any order; defaults to empty. Invalid dates and nonfinite values are omitted. */
- 	data?: TimeSeriesPoint[];
-@@ -27,6 +27,7 @@ let points = $derived(toChartPoints(data));
- const dateFormatter = new Intl.DateTimeFormat(undefined, {
- 	dateStyle: 'short',
- 	timeStyle: 'short',
-+	timeZone: 'UTC',
- });
- 
- /** Convert dates to milliseconds and sort chronologically without mutating input or merging duplicates. */
+@@ -495,6 +495,13 @@
+ 								"label": "Everywhere"
+ 							}
+ 						},
++						{
++							"Bool": {
++								"name": "Fanfare",
++								"state": true,
++								"label": "Fanfare"
++							}
++						},
+ 						{
+ 							"Bool": {
+ 								"name": "Furthermore",
 ```
 
-**File**: `packages/web/src/routes/admin/ext-site-problems/[slug]/[domain]/+page.server.ts` (modified, +1/-1)
+**File**: `harper-core/src/linting/closed_compounds.rs` (modified, +19/-0)
 ```diff
-@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ params }) => {
- 	}
- 
- 	const end = new Date();
--	end.setUTCHours(0, 0, 0, 0);
-+	end.setUTCHours(24, 0, 0, 0);
- 	const start = slug === 'all' ? null : new Date(end.getTime() - duration);
- 
- 	return {
-```
-
-**File**: `packages/web/src/routes/admin/ext-uninstall-reasons/[slug]/[reason]/+page.server.ts` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ params }) => {
- 	}
- 
- 	const end = new Date();
--	end.setUTCHours(0, 0, 0, 0);
-+	end.setUTCHours(24, 0, 0, 0);
- 	const start = slug === 'all' ? null : new Date(end.getTime() - duration);
- 
- 	return {
-```
-
-**File**: `packages/web/src/routes/admin/problematic-lints/[slug]/[lintId]/+page.server.ts` (modified, +2/-2)
-```diff
-@@ -4,7 +4,7 @@ import ProblematicLints from '$lib/db/models/ProblematicLints';
- import type { PageServerLoad } from './$types';
- 
- /**
-- * Load one lint ID's counts for complete UTC days, ending with yesterday.
-+ * Load one lint ID's UTC daily counts, including today's partial total.
-  * All-time data starts at its first report's day and is empty if none exist.
-  */
- export const load: PageServerLoad = async ({ params }) => {
-@@ -16,7 +16,7 @@ export const load: PageServerLoad = async ({ params }) => {
- 	}
- 
- 	const end = new Date();
--	end.setUTCHours(0, 0, 0, 0);
-+	end.setUTCHours(24, 0, 0, 0);
- 	const start = slug === 'all' ? null : new Date(end.getTime() - duration);
- 
- 	return {
+@@ -35,6 +35,7 @@ pub fn lint_group() -> LintGroup {
+         "Everybody"       => (&["every body"][..], "everybody"),
+         "Everyone"        => (&["every one"][..], "everyone"),
+         "Everywhere"      => (&["every where"][..], "everywhere"),
++        "Fanfare"         => (&["fan fare", "fan-fare"][..], "fanfare"),
+         "Furthermore"     => (&["further more"][..], "furthermore"),
+         "Guesswork"       => (&["guess work"][..], "guesswork"),
+         "Henceforth"      => (&["hence forth"][..], "henceforth"),
+@@ -418,4 +419,22 @@ mod tests {
+             "the rust compiler is fast, but oftentimes it has to perform a lot of unnecessary checks because crates contain more stuff than needed",
+         );
+     }
++
++    #[test]
++    fn fan_space_fare() {
++        assert_suggestion_result(
++            "There was much fan fare over all the technology Bill Gates put into his house.",
++            lint_group(),
++            "There was much fanfare over all the technology Bill Gates put into his house.",
++        );
++    }
++
++    #[test]
++    fn fan_hyphen_fare() {
++        assert_suggestion_result(
++            "Indeed, most users will experience major version updates with absolutely zero fan-fare.",
++            lint_group(),
++            "Indeed, most users will experience major version updates with absolutely zero fanfare.",
++        );
++    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4768** (2026-10-31): feat: backlash vs backslash (@hippietrail)
+- **PR #4766** (2026-10-31): feat: fan fare/fan-fare → fanfare (@hippietrail)
 - **PR #4763** (2026-10-30): docs(weir): compare wildcards to regex `.` instead of `*` (@costajohnt)
 - **PR #4758** (2026-10-30): feat(web): show browser extension install links on the home page (@elijah-potter)
 - **PR #4757** (2026-10-30): fix(web): show the correct link for the user's browser (@elijah-potter)
 - **PR #4752** (closed): docs(web): fix wildcard comparison in the Weir docs (@techsaurabh-394)
-- **PR #4750** (2026-10-30): feat: "sufficient enough" → "sufficient" or "enough" (@hippietrail)
-- **PR #4747** (2026-10-29): fix(web): incorrect date reporting in graphs (@elijah-potter)
 
 ---
 
@@ -1703,34 +1609,34 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. web): enable platform checkbox by default
+## X. backlash vs backslash (#4768)
 
 **RULE**:
-When implementing operations in `packages/web/src/routes/uninstall-browser-extension/+page.svelte`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `harper-core/default_config.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `26d3b3dd`: web): enable platform checkbox by default. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ea52d606`: backlash vs backslash (#4768). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/web/src/routes/uninstall-browser-extension/+page.svelte`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/default_config.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-					{#if platform}
-						<Checkbox name="platform" value={platform} checked>
-							Include browser type
-						</Checkbox>
-					{/if}
+						{
+							"Bool": {
+								"name": "BacklashBackslash",
+								"state": true,
+								"label": "Backlash / Backslash"
+							}
+						},
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-					<Checkbox name="platform" value={platform} checked>
-						Include browser type
-					</Checkbox>
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `26d3b3dd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ea52d606` are properly handled with clean fallback behavior.

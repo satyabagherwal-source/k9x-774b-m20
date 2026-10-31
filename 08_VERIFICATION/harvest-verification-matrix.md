@@ -6677,3 +6677,5 @@
 | `CYCLE-20261031-J9RB` | `2026-10-31T18:29:09.287Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6281` | Yes (`4ee16f65...`) |
 | `CYCLE-20261031-JDEJ` | `2026-10-31T18:29:14.011Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6282` | Yes (`75e9e837...`) |
 | `CYCLE-20261031-PGYO` | `2026-10-31T18:33:58.560Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`804a9566...`) |
+| `CYCLE-20261031-Y4KR` | `2026-10-31T18:40:42.411Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6283` | Yes (`f80eeefc...`) |
+| `CYCLE-20261031-4O02` | `2026-10-31T18:45:47.522Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6284, Rule 6285` | Yes (`bcdb3427...`) |

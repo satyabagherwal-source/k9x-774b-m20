@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T18:33:58.572Z",
-  "total_cycles_completed": 6654,
-  "total_learnings_persisted": 6654,
-  "total_rules_promoted": 6283,
+  "last_updated": "2026-10-31T18:45:47.531Z",
+  "total_cycles_completed": 6656,
+  "total_learnings_persisted": 6656,
+  "total_rules_promoted": 6286,
   "history": [
-    {
-      "timestamp": "2026-10-31T05:36:02.153Z",
-      "repository": "wasm-bindgen/wasm-pack",
-      "learningId": "learn-github-wasm-bindgen-wasm-pack",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T05:36:06.682Z",
-      "repository": "keybase/client",
-      "learningId": "learn-github-keybase-client",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T05:45:35.088Z",
       "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
@@ -1403,6 +1389,20 @@
       "repository": "intfloat/multilingual-e5-small",
       "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T18:40:42.420Z",
+      "repository": "Automattic/harper",
+      "learningId": "learn-github-automattic-harper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T18:45:47.531Z",
+      "repository": "argmaxinc/whisperkit-coreml",
+      "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

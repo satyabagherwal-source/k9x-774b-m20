@@ -1215,8 +1215,8 @@
     "sourceUrl": "https://huggingface.co/argmaxinc/whisperkit-coreml",
     "sourceVersion": "hf-argmaxinc-whisperkit-coreml",
     "license": "Open-Source",
-    "contentHash": "fa4256a2bc6d88730e453b5c3e4b87a20f1c2fa29a538bc68b51c3ec071193c3",
-    "lastHarvestedAt": "2026-10-28T17:28:12.526Z",
+    "contentHash": "bcdb342705802c15b7960a78fa984f5310a62e11c71cdafe07535fda4d1dd23d",
+    "lastHarvestedAt": "2026-10-31T18:45:47.525Z",
     "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml"
   },
   "hf-qwen-qwen3-8b": {
@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "26d3b3dd",
+    "sourceVersion": "ea52d606",
     "license": "Apache-2.0",
-    "contentHash": "08a13f0043a308364fac1e6d46132ed9ed28a35bfbfdde6831c9dc5466868060",
-    "lastHarvestedAt": "2026-10-30T23:05:17.184Z",
+    "contentHash": "f80eeefc4282b063221581e5f16a6ec63f8ee063a060ec74a7e79d00de9c5d39",
+    "lastHarvestedAt": "2026-10-31T18:40:42.415Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {
