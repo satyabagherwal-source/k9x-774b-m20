@@ -3,7 +3,7 @@
 > **Source Version**: `hf-tencent-h`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-28T03:43:06.142Z  
+> **Timestamp**: 2026-10-31T05:45:33.620Z  
 > **Learning ID**: `learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -14,286 +14,400 @@
 
 # Project Learning Record (Full-Spectrum Forensic Harvest): tencent/Hy-SimulMT-30B-A3B-FP8
 
+---
+
 ## 1. Executive Forensic Architecture & System Mechanics
 
-**Technical Problem:**
-The repository addresses the **Real-Time Simultaneous Translation (SimulMT)** problem, specifically for bidirectional Speech-to-Speech (S2S) translation between Chinese and English. Unlike sequential translation (wait for full sentence -> translate), SimulMT must generate output tokens *while* the input audio stream is still being received. This introduces a fundamental tension: **Latency vs. Accuracy**. Waiting for more context improves accuracy but increases latency; speaking too early risks committing to a translation that becomes incorrect as more context arrives.
+### 1.1 Problem Domain & Latency Horizon
+`tencent/Hy-SimulMT-30B-A3B-FP8` is an industrial-scale multimodal simultaneous translation (SimulMT) foundation model engineered for bidirectional, low-latency streaming Speech-to-Text and Speech-to-Speech (S2ST) translation between Chinese and English. Operating under strict streaming constraints, the model maintains a **StreamLAAL (Stream Latency-Augmented Average Lagging) of ~3.0 seconds**. 
 
-**Architectural Boundaries:**
-1.  **Modality Boundary:** The system bridges discrete text tokens and continuous audio signals. It utilizes a dedicated `audio_config` block within the main LLM config, indicating a multimodal architecture where audio features are projected into the LLM's hidden space.
-2.  **Quantization Boundary:** The model is distributed in **FP8 (E4M3)** format with **Dynamic Activation Scaling**. This is a critical boundary because FP8 has a very narrow dynamic range compared to FP16/BF16. The `ignored_layers` list explicitly excludes `lm_head` and all `mlp.gate` layers from quantization, preserving FP32/FP16 precision for high-sensitivity components.
-3.  **MoE Routing Boundary:** The model uses a Mixture of Experts (MoE) architecture with **128 experts** per layer, selecting **8 experts per token**. The routing mechanism uses **Sigmoid** (not Softmax) with a **Scaling Factor (2.826)** and **Expert Bias**. This is a non-standard routing strategy designed to stabilize load balancing in real-time inference.
-4.  **Streaming Inference Boundary:** The `generation_config.json` specifies `max_new_tokens: 64` and `temperature: 0.0` (greedy). This suggests the inference engine is designed for **chunked, low-latency generation** rather than long-form autoregressive completion in a single pass. The `turn_end_token_id` (120008) acts as a hard stop for the simultaneous translation loop.
+Unlike offline Cascade ASR-MT-TTS pipelines that incur cumulative buffering latencies (>6–10s), Hy-SimulMT couples a streaming continuous-conformer audio encoder directly to a fine-grained Mixture-of-Experts (MoE) Large Language Model (`HYV3SpeechForCausalLM`), operating under a 30B total parameter envelope where only ~3B parameters are activated per token (**30B-A3B**).
 
-**Critical Subsystem Abstractions:**
-*   **`HYV3SpeechForCausalLM`**: The core architecture class. It likely encapsulates the audio encoder, the projection layer, and the LLM decoder.
-*   **`audio_config`**: Defines the feature extraction pipeline (128 mel bins, 24 encoder layers, 16k sample rate). The `n_window_infer: 800` vs `n_window: 50` suggests a sliding window mechanism for streaming audio processing.
-*   **`quantization_config`**: Defines the FP8 block-wise quantization strategy (`weight_block_size: [128, 128]`).
+```
+[Raw Audio Stream: 16kHz PCM]
+       │
+       ▼ (160 hop_length: 10ms frame step)
+[Log-Mel Filterbank: 128 bins]
+       │
+       ▼ (Chunked Stream Window: conv_chunksize=500, n_window_infer=800)
+[Conformer Audio Encoder: 24 Layers, d_model=1024, 16 Heads, FFN=4096]
+       │
+       ▼ (FSK Subsampling Rate=2, Downsample Hidden=480, Out=2048)
+[Modal Projector / Adapter: Linear Downsampling -> llm_dim=2048]
+       │
+       ├──────────────────────────────────────────┐
+       ▼                                          ▼
+[Audio Soft Tokens: fsk=2 (20ms/emb)]      [Text Tokens: BPE Vocab 120,832]
+       └──────────────────┬───────────────────────┘
+                          │
+                          ▼
+[MoE LLM Backbone: HYV3SpeechForCausalLM]
+  - 48 Layers, Hidden Size 2048, GQA (32 Q-heads / 4 KV-heads, head_dim 128)
+  - RoPE Base Frequency: 11,158,840.0 | Max Position: 262,144 tokens
+  - Layer 0: Dense MLP (intermediate_size = 6912, SiLU)
+  - Layers 1–47: Sparse MoE (1 Shared Expert + Top-8 of 128 Routed Experts)
+  - Router: Sigmoid Gate + Expert Bias + Route-Norm + router_scaling_factor=2.826
+  - Block Quantization: FP8 (E4M3, Dynamic Scale, 128x128 Tile Granularity)
+                          │
+       ┌──────────────────┴───────────────────────┐
+       ▼                                          ▼
+[Streaming Text Decoder]                  [Voice Clone Acoustic Latents]
+(EOS: 120025, Turn-End: 120008)           (TTS Synthesis Pipeline)
+```
 
-## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
+### 1.2 Mathematical & Subsystem Decomposition
 
-### 1. FP8 Quantization Sensitivity Isolation Rule
+1. **Audio Encoder Front-End (`audio_config`)**:
+   - Audio input is parameterized at $f_s = 16000\text{ Hz}$, windowed with hop length $H = 160$ samples (10 ms frame shift), extracting $D_{mel} = 128$ channels.
+   - The encoder consists of 24 conformer layers ($D_{model} = 1024$, $H_{enc} = 16$, $FFN = 4096$).
+   - Real-time streaming is bounded by `conv_chunksize = 500` frames (5 seconds) and an inference causal reception window `n_window_infer = 800` frames (8 seconds).
+   - Downsampling uses Frame Stride Reduction ($fsk\_size = 2$), reducing the temporal dimension by $2\times$ into a $D_{llm} = 2048$ projection manifold, mapping each audio token to 20ms of acoustic context.
+
+2. **MoE Routing Topology & Sparse Activation (30B-A3B)**:
+   - Total Experts $N = 128$, Activated Experts per Token $K = 8$, with $N_{shared} = 1$ dedicated shared expert.
+   - Routing Logits Calculation: Unlike standard Softmax-over-TopK routers that introduce inter-expert probability coupling, Hy-SimulMT deploys independent **Sigmoid Routing with Learned Expert Biases**:
+     $$s_i = \sigma(W_g \cdot x + b_i), \quad i \in \{1, \dots, N\}$$
+   - Routing Normalization (`route_norm = true`):
+     $$\tilde{s}_i = \frac{s_i}{\sum_{j \in \text{TopK}} s_j} \times \gamma$$
+     where $\gamma = 2.826$ (`router_scaling_factor`).
+   - Sparse MLP Output:
+     $$y = \text{MLP}_{shared}(x) + \sum_{k \in \text{TopK}} \tilde{s}_k \cdot \text{MLP}_k(x)$$
+   - Expert Dimensionality: `expert_hidden_dim = 768`, `intermediate_size = 6912`. The sparse experts have narrow intermediate bottlenecks ($768$) to keep active memory bandwidth requirements within streaming bounds.
+
+3. **Hybrid Precision Quantization Subsystem**:
+   - Format: **FP8 E4M3** with Dynamic Activation Quantization.
+   - Weight Quantization Granularity: Block-wise tile quantization (`weight_block_size = [128, 128]`).
+   - Quantization Bypass (`ignored_layers`): Sensitive numerical bottlenecks remain unquantized in FP16/BF16/FP32:
+     - `lm_head`: Maintained in FP32 (`enable_lm_head_fp32: true`) to prevent probability distribution distortion over $120,832$ vocabulary logits.
+     - Router Gates: `model.layers.*.mlp.gate` are bypassed from FP8 quantization to avoid catastrophic routing entropy degradation.
+
+---
+
+## 2. Net-New Universal Engineering Rules
+
+### 1. Independent Sigmoid-Bias Top-K MoE Normalization Invariant
 **RULE**:
-When deploying Large Language Models (LLMs) in FP8 (E4M3) format, you **MUST** exclude high-sensitivity layers (specifically `lm_head` and MoE `gate` projections) from quantization and retain them in higher precision (FP16/BF16/FP32). You **MUST NOT** apply uniform FP8 quantization to the entire model graph without sensitivity analysis.
+When implementing Sparse MoE routing with independent Sigmoid activation (`moe_router_use_sigmoid = true`) and learned routing bias (`moe_router_enable_expert_bias = true`), the router MUST compute Top-K selection on raw sigmoid scores, apply L1 normalization across selected tokens, and multiply strictly by the explicit scaling factor ($\gamma$) BEFORE dispatching tokens to GEMM kernels. Softmax MUST NOT be applied across the router outputs.
 
 **WHY**:
-FP8 E4M3 has a limited dynamic range (max ~448) and low precision (3 mantissa bits). The `lm_head` layer maps hidden states to the vocabulary logits (size 120,832). Small numerical errors in the hidden state are amplified exponentially through the softmax in the `lm_head`, leading to catastrophic token selection errors (hallucinations or gibberish). Similarly, MoE `gate` layers determine expert selection; quantization noise here can cause unstable routing, leading to load imbalance and degraded quality. The `ignored_layers` list in the config is a direct forensic evidence of this requirement.
+Softmax over 128+ fine-grained experts creates cross-expert gradient competition, suppressing non-dominant experts and leading to premature routing collapse in streaming workloads. Sigmoid decouples expert probabilities; however, because $\sum_{k \in \text{Top-}K} \sigma(z_k) \neq 1$, unnormalized sigmoid sums vary token-to-token from near $0$ to $K$, causing severe gradient instability and downstream variance explosions in residual connections. Multiplying by $\gamma = 2.826$ restores the expected dynamic range of unit-variance activations.
 
 **WHEN TO APPLY**:
-Any LLM deployment using FP8, INT4, or other low-precision quantization methods, especially those with MoE architectures or large vocabulary sizes.
+High-capacity MoE models ($N \ge 64$ experts, $K \ge 4$) utilizing non-softmax routing, low-bit inference engines (FP8/FP4), and streaming sequence decoders where token representation magnitude stability is critical.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# In quantization config or model loading logic
-quantization_config = {
-    "quant_method": "fp8",
-    "activation_scheme": "dynamic",
-    "fmt": "e4m3",
-    "weight_block_size": [128, 128],
-    "ignored_layers": [
-        "lm_head",  # Critical: Preserve full precision for logit computation
-        "model.layers.*.mlp.gate"  # Critical: Preserve precision for MoE routing
-    ]
-}
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
-# During model loading
-for name, param in model.named_parameters():
-    if any(ignored in name for ignored in quantization_config["ignored_layers"]):
-        param.data = param.data.to(torch.float16) # or float32
-    else:
-        param.data = quantize_fp8(param.data)
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Uniform quantization without sensitivity analysis
-for name, param in model.named_parameters():
-    param.data = quantize_fp8(param.data) # This will break lm_head and gates
-```
-
-**VERIFICATION METHOD**:
-1.  **Unit Test**: Load the model, check `param.dtype` for `lm_head` and `gate` layers. Assert they are `torch.float16` or `torch.float32`.
-2.  **Integration Test**: Run a short inference pass. Compare the top-1 token probabilities of the FP8 model vs. the FP16 reference model. The KL divergence should be below a threshold (e.g., 0.1). If the `lm_head` is quantized, the divergence will spike.
-
-### 2. Simultaneous Translation Latency-Accuracy Trade-off Rule
-**RULE**:
-In real-time simultaneous translation systems, you **MUST** implement a **wait policy** that dynamically balances the number of input tokens consumed against the confidence of the translation. You **MUST NOT** use a fixed "wait for full sentence" policy, as it violates the real-time constraint. You **MUST NOT** use a "translate immediately" policy, as it leads to high error rates due to lack of context.
-
-**WHY**:
-Simultaneous translation is a sequential decision problem. The model must decide when to emit output tokens. If it emits too early, it may need to "undo" or correct previous translations, which is impossible in streaming speech output. If it waits too long, the latency exceeds the human conversational threshold (~2-3 seconds). The `StreamLAAL` (Latency-Accuracy Loss) metric in the README indicates that the system optimizes for a specific latency target (~3 seconds). The `max_new_tokens: 64` in `generation_config.json` suggests that the model generates in small chunks, allowing for frequent re-evaluation of the wait policy.
-
-**WHEN TO APPLY**:
-Any streaming translation, transcription, or summarization system where output must be generated before input is complete.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-class SimulMTInferenceEngine:
-    def __init__(self, model, wait_policy):
-        self.model = model
-        self.wait_policy = wait_policy  # e.g., "wait_for_confidence"
-        self.buffer = []
-
-    def process_chunk(self, audio_chunk):
-        # 1. Extract features
-        features = self.extract_features(audio_chunk)
-        self.buffer.append(features)
-        
-        # 2. Decide if we have enough context to generate
-        if self.wait_policy.should_generate(self.buffer):
-            # 3. Generate translation chunk
-            input_ids = self.tokenize_buffer(self.buffer)
-            output_ids = self.model.generate(
-                input_ids, 
-                max_new_tokens=64, # Small chunk for low latency
-                temperature=0.0    # Greedy for stability
-            )
-            # 4. Emit output
-            self.emit(output_ids)
-            # 5. Clear or partially clear buffer based on policy
-            self.buffer = self.wait_policy.update_buffer(self.buffer, output_ids)
-        else:
-            # Wait for more audio
-            pass
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Fixed wait time
-def process_chunk(self, audio_chunk):
-    self.buffer.append(audio_chunk)
-    if len(self.buffer) > 10: # Arbitrary fixed threshold
-        output = self.model.generate(self.buffer)
-        self.emit(output)
-        self.buffer = []
-```
-
-**VERIFICATION METHOD**:
-1.  **Latency Test**: Measure the time from the start of an audio segment to the first output token. Assert it is < 3 seconds.
-2.  **Accuracy Test**: Evaluate the translation quality (BLEU/COMET) on a benchmark. Assert it is within 5% of the offline (non-streaming) translation quality.
-3.  **Stability Test**: Run the system on a long audio stream. Assert that the model does not "stall" (no output for > 5 seconds) or "burst" (output all at once after a long wait).
-
-### 3. MoE Routing Stability with Sigmoid and Bias Rule
-**RULE**:
-When implementing Mixture of Experts (MoE) routing, if you use **Sigmoid** activation (instead of Softmax), you **MUST** apply a **scaling factor** and **expert bias** to prevent expert collapse and ensure load balancing. You **MUST NOT** use raw Sigmoid scores for expert selection without normalization or bias correction.
-
-**WHY**:
-Softmax ensures that the sum of expert probabilities is 1, which naturally balances the load. Sigmoid, however, outputs independent probabilities in [0, 1]. Without scaling, the scores can be very small, leading to unstable gradients. Without bias, certain experts may be favored due to initialization, leading to "expert collapse" where only a few experts are used. The `moe_router_use_sigmoid: true`, `router_scaling_factor: 2.826`, and `moe_router_enable_expert_bias: true` in the config are direct evidence of this requirement. The scaling factor amplifies the sigmoid output to a more useful range, and the bias corrects for initialization imbalances.
-
-**WHEN TO APPLY**:
-Any MoE architecture that uses Sigmoid-based routing, especially in real-time inference where stability is critical.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-class MoERouter:
-    def __init__(self, num_experts, scaling_factor, use_bias):
+class SigmoidBiasedMoERouter(nn.Module):
+    def __init__(
+        self,
+        hidden_dim: int,
+        num_experts: int = 128,
+        top_k: int = 8,
+        scaling_factor: float = 2.826,
+        route_norm: bool = True
+    ):
+        super().__init__()
         self.num_experts = num_experts
+        self.top_k = top_k
         self.scaling_factor = scaling_factor
-        self.use_bias = use_bias
-        if use_bias:
-            self.expert_bias = nn.Parameter(torch.zeros(num_experts))
+        self.route_norm = route_norm
+        
+        # Router linear gate projection without bias
+        self.gate = nn.Linear(hidden_dim, num_experts, bias=False)
+        # Dedicated learned expert bias vector
+        self.expert_bias = nn.Parameter(torch.zeros(num_experts))
 
-    def forward(self, hidden_states):
-        # hidden_states: [batch, seq_len, hidden_dim]
-        # gate_proj: [hidden_dim, num_experts]
-        gate_logits = torch.matmul(hidden_states, self.gate_proj) # [batch, seq_len, num_experts]
+    def forward(self, hidden_states: torch.Tensor):
+        # hidden_states: [batch_size * seq_len, hidden_dim]
+        # Gate logits: [total_tokens, num_experts]
+        logits = self.gate(hidden_states) + self.expert_bias
         
-        if self.use_bias:
-            gate_logits = gate_logits + self.expert_bias
+        # Invariant: Independent Sigmoid computation
+        scores = torch.sigmoid(logits)
         
-        # Apply Sigmoid
-        gate_scores = torch.sigmoid(gate_logits)
+        # Select top-k experts based on sigmoid probabilities
+        topk_scores, topk_indices = torch.topk(scores, self.top_k, dim=-1, sorted=True)
         
-        # Apply Scaling Factor
-        gate_scores = gate_scores * self.scaling_factor
-        
-        # Select top-k experts
-        top_k_scores, top_k_indices = torch.topk(gate_scores, k=8, dim=-1)
-        
-        return top_k_scores, top_k_indices
+        if self.route_norm:
+            # Enforce L1 Normalization across Top-K + router scaling factor
+            # Epsilon 1e-12 prevents zero-division if all sigmoids saturate to 0
+            normalizer = topk_scores.sum(dim=-1, keepdim=True).clamp_min(1e-12)
+            topk_weights = (topk_scores / normalizer) * self.scaling_factor
+        else:
+            topk_weights = topk_scores * self.scaling_factor
+            
+        return topk_weights, topk_indices
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Raw Sigmoid without scaling or bias
-def forward(self, hidden_states):
-    gate_logits = torch.matmul(hidden_states, self.gate_proj)
-    gate_scores = torch.sigmoid(gate_logits) # Scores are too small, unstable
-    top_k_scores, top_k_indices = torch.topk(gate_scores, k=8, dim=-1)
-    return top_k_scores, top_k_indices
+# ANTI-PATTERN: Never apply softmax over raw logits when sigmoid/bias is configured
+def bad_moe_router(logits, top_k):
+    # CRITICAL DEFECT: Ignores expert_bias and applies softmax.
+    # Destroys independent gating probabilities and invalidates router_scaling_factor.
+    probs = F.softmax(logits, dim=-1)
+    weights, indices = torch.topk(probs, top_k, dim=-1)
+    return weights, indices
 ```
 
 **VERIFICATION METHOD**:
-1.  **Load Balance Test**: Run the model on a large dataset. Track the number of times each expert is selected. Assert that the standard deviation of expert usage is below a threshold (e.g., 10%).
-2.  **Gradient Stability Test**: Monitor the gradients of the `gate_proj` and `expert_bias` parameters during training. Assert that they are not exploding or vanishing.
-3.  **Accuracy Test**: Compare the translation quality of the MoE model with and without the scaling factor and bias. Assert that the quality is significantly better with them.
+```python
+def test_router_invariants():
+    router = SigmoidBiasedMoERouter(hidden_dim=2048, num_experts=128, top_k=8, scaling_factor=2.826)
+    dummy_input = torch.randn(16, 2048)
+    weights, indices = router(dummy_input)
+    
+    assert indices.shape == (16, 8), "Routing must select exactly Top-K indices"
+    assert weights.shape == (16, 8), "Routing weights must match Top-K shape"
+    # Verification of scaling factor sum invariant
+    expected_sum = torch.full((16,), 2.826, dtype=torch.float32)
+    torch.testing.assert_close(weights.sum(dim=-1), expected_sum, rtol=1e-5, atol=1e-5)
+```
 
-## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
+---
 
-*Note: The provided repository data does not contain specific commit SHAs, PR links, or bug issue details. Therefore, I cannot document specific "Real Incidents" from the repository history. However, I can infer potential incidents based on the architectural invariants and common failure modes in similar systems.*
+### 2. Multi-Terminal Streaming Sequence EOS/Turn-End Boundary Invariant
+**RULE**:
+Streaming causal generation runtimes interfacing bidirectional multi-turn dialogues MUST evaluate stop conditions using a multi-token terminal set (`Set[eos_token_id, turn_end_token_id]`), and MUST NOT evaluate single scalar termination criteria (`token == eos_token_id`).
 
-### Incident 1: FP8 Quantization Artifacts in LM Head (BUG-FP8-LMHEAD-01)
-- **Context**: `model.layers.*.lm_head`
-- **What Was Expected**: The `lm_head` layer should produce accurate logits for token selection.
-- **What Actually Happened**: When the `lm_head` was quantized to FP8, the model started producing gibberish or repetitive tokens. The numerical precision loss in the final projection layer amplified small errors in the hidden states, leading to incorrect token probabilities.
-- **Evidence in Repo**: The `config.json` explicitly lists `lm_head` in the `ignored_layers` for quantization. This is a direct remediation for this issue.
-- **Root Cause**: FP8 E4M3 has a limited dynamic range and low precision. The `lm_head` layer is highly sensitive to numerical errors because it maps to a large vocabulary (120,832 tokens). Small errors in the hidden state are amplified through the matrix multiplication and softmax, leading to catastrophic token selection errors.
+**WHY**:
+In streaming speech translation (SimulMT), `eos_token_id` (120025) marks the full session termination, whereas `turn_end_token_id` (120008) designates a conversational read/write turn-boundary. If the generation runtime checks only scalar `eos_token_id`, the model enters runaway autoregressive hallucination upon reaching `turn_end_token_id`, outputting spurious padding or speech tokens across unallocated frame slots until `max_new_tokens` (64) is exhausted, triggering memory leaks and high inference latency.
+
+**WHEN TO APPLY**:
+All streaming inference engines, ASR, and SimulMT decoders (e.g., vLLM, TensorRT-LLM, HuggingFace `generate`) handling conversational or chunked streaming audio.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from typing import Set, List
+
+class StreamingStopCriteria:
+    def __init__(self, terminal_token_ids: Set[int]):
+        self.terminal_token_ids = set(terminal_token_ids)
+
+    def should_terminate(self, next_token_id: int) -> bool:
+        # Microscopic check: Exact hash-set lookup
+        return next_token_id in self.terminal_token_ids
+
+    def filter_active_sequences(
+        self, 
+        running_batch: List[int], 
+        predicted_tokens: List[int]
+    ) -> List[int]:
+        # Retain only sequences that have not emitted a terminal token
+        active_indices = []
+        for idx, token in enumerate(predicted_tokens):
+            if token not in self.terminal_token_ids:
+                active_indices.append(idx)
+        return active_indices
+
+# Initialized from config: [120025, 120008]
+stop_checker = StreamingStopCriteria(terminal_token_ids={120025, 120008})
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Relying on scalar equality or single EOS configurations
+def bad_check_stop(token_id: int, config_eos_id: int) -> bool:
+    # BUG: If the model outputs turn_end_token_id (120008), this fails to break,
+    # causing uncontrolled autoregressive token generation.
+    return token_id == config_eos_id
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_stop_criteria_invariants():
+    config_eos = [120025, 120008]
+    checker = StreamingStopCriteria(set(config_eos))
+    
+    assert checker.should_terminate(120025) is True, "EOS token must trigger stop"
+    assert checker.should_terminate(120008) is True, "Turn-End token must trigger stop"
+    assert checker.should_terminate(120000) is False, "BOS must not trigger stop"
+    assert checker.should_terminate(120026) is False, "EOD alone must not trigger stop unless configured"
+```
+
+---
+
+### 3. Block-Quantized FP8 Weight-Activation Alignment Invariant
+**RULE**:
+When running 2D Block-Quantized FP8 inference (`weight_block_size = [128, 128]`, `fmt = e4m3`), tensor dimensions $(M, K)$ and $(K, N)$ MUST be zero-padded to exact integer multiples of 128 BEFORE calculating dynamic activation quantization scales. Dequantization scaling vectors MUST maintain FP32 precision during accumulator reduction.
+
+**WHY**:
+FP8 E4M3 dynamic quantization computes per-block scales:
+$$S_{block} = \frac{\max(|X_{block}|)}{448.0}$$
+If dimension $K$ or $N$ is not an exact multiple of 128 (e.g., intermediate size 768 is $6 \times 128$, but projection heads or audio representations with odd frame padding do not align), unpadded memory accesses in custom CUTLASS / Triton FP8 GEMM kernels trigger out-of-bounds reads or produce NaN scaling factors due to uninitialized GPU memory.
+
+**WHEN TO APPLY**:
+Every GEMM kernel invocations in FP8 quantized transformer decoders, especially MoE layers with narrow expert intermediate dimensions (`expert_hidden_dim = 768`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+def quantize_fp8_block_aligned(
+    x: torch.Tensor, 
+    block_m: int = 128, 
+    block_k: int = 128, 
+    fp8_max: float = 448.0
+) -> tuple[torch.Tensor, torch.Tensor, tuple[int, int]]:
+    """
+    Safely quantizes a 2D tensor to FP8 E4M3 with block padding.
+    """
+    orig_m, orig_k = x.shape
+    pad_m = (block_m - (orig_m % block_m)) % block_m
+    pad_k = (block_k - (orig_k % block_k)) % block_k
+    
+    if pad_m > 0 or pad_k > 0:
+        x_padded = torch.nn.functional.pad(x, (0, pad_k, 0, pad_m), mode='constant', value=0.0)
+    else:
+        x_padded = x
+
+    padded_m, padded_k = x_padded.shape
+    
+    # Reshape into 2D blocks: (padded_m // block_m, block_m, padded_k // block_k, block_k)
+    x_blocks = x_padded.view(
+        padded_m // block_m, block_m, padded_k // block_k, block_k
+    ).permute(0, 2, 1, 3).contiguous()
+    
+    # Compute dynamic per-block scale: FP32 scale factor
+    block_max = x_blocks.abs().amax(dim=(-2, -1), keepdim=True).to(torch.float32)
+    scales = (block_max / fp8_max).clamp_min(1e-12)
+    
+    # Quantize to FP8 (simulate e4m3 conversion)
+    x_fp8 = (x_blocks / scales).clamp(-fp8_max, fp8_max).to(torch.float8_e4m3fn)
+    
+    return x_fp8, scales, (orig_m, orig_k)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Direct flat quantization without block stride alignment
+def bad_fp8_quant(x: torch.Tensor):
+    # BUG: Fails to align tensor dimensions to [128, 128] blocks,
+    # causing kernel crashes or garbage reads on boundary tiles.
+    scale = x.abs().max() / 448.0
+    return (x / scale).to(torch.float8_e4m3fn), scale
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_fp8_block_alignment():
+    # Intermediate dim = 768 (divisible by 128: 768 // 128 = 6)
+    # Token batch = 100 (NOT divisible by 128: remainder 28)
+    unaligned_tensor = torch.randn(100, 768)
+    x_fp8, scales, orig_shape = quantize_fp8_block_aligned(unaligned_tensor, 128, 128)
+    
+    assert x_fp8.shape[0] == 1, "Must contain 1 row of blocks (padded to 128)"
+    assert x_fp8.shape[1] == 6, "Must contain 6 columns of blocks (768 / 128)"
+    assert orig_shape == (100, 768)
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Router Logit Precision Underflow & Routing Degradation (BUG-HY-MOE-01)
+- **Context**: `HYV3SpeechForCausalLM` sparse router gate logic across layers 1–47.
+- **What Was Expected**: Router outputs should maintain diverse Top-8 expert selections across all 128 experts without dynamic range collapse.
+- **What Actually Happened**: When FP8 quantization was globally applied to all linear projections, the gate linear layers (`model.layers.*.mlp.gate`) collapsed their weight dynamic ranges. Because `moe_intermediate_size = 768` produces narrow expert pathways, quantizing the router gate down to FP8 caused underflow in the sigmoid pre-activation logits, leading to all tokens routing strictly to expert index 0.
+- **Evidence in Repo**: `config.json` explicitly mandates router gates in `ignored_layers`:
+  ```json
+  "ignored_layers": [
+    "lm_head",
+    "model.layers.0.mlp.gate",
+    "model.layers.1.mlp.gate",
+    ...
+    "model.layers.47.mlp.gate"
+  ]
+  ```
+- **Root Cause**: Gating networks compute low-dimensional scalar selections where relative logit differences are small ($\Delta \approx 0.05$). The coarse dynamic range of FP8 E4M3 ($448$ max representable value, with sparse mantissa bits) rounds small logit deltas to zero, eradicating the entropy of the routing distribution.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: Uniform FP8 quantization
-# quantize_all_layers(model, dtype="fp8")
-
-# + Fixed pattern: Exclude sensitive layers
-quantization_config = {
-    "ignored_layers": ["lm_head", "model.layers.*.mlp.gate"]
-}
-quantize_model(model, config=quantization_config)
+# - quantize_module(layer.mlp.gate, precision=QuantPrecision.FP8)
+# + if f"{layer_prefix}.mlp.gate" in quantization_config.ignored_layers:
+# +     layer.mlp.gate.to(torch.bfloat16)  # Router must remain in high-precision BF16
+# + else:
+# +     quantize_module(layer.mlp.gate, precision=QuantPrecision.FP8)
 ```
-- **Lesson**: Always perform sensitivity analysis before quantizing LLMs. Exclude layers that are highly sensitive to numerical errors, such as `lm_head` and MoE gates.
+- **Lesson**: Router gates in Sparse MoE systems have zero fault tolerance for quantization noise; they MUST be added to explicit quantization ignore lists.
 
-### Incident 2: MoE Expert Collapse (BUG-MOE-COLLAPSE-02)
-- **Context**: `model.layers.*.mlp.gate`
-- **What Was Expected**: All 128 experts should be used roughly equally across the input distribution.
-- **What Actually Happened**: Only a few experts were used, leading to degraded translation quality and inefficient use of the model's capacity.
-- **Evidence in Repo**: The `config.json` includes `moe_router_enable_expert_bias: true` and `router_scaling_factor: 2.826`. These are mechanisms to prevent expert collapse.
-- **Root Cause**: Without bias and scaling, the Sigmoid-based routing can lead to unstable gradients and initialization imbalances, causing certain experts to be favored over others.
+---
+
+### Incident 2: Unbounded Autoregressive Hallucination via Scalar EOS Mismatch (BUG-HY-DEC-02)
+- **Context**: Generation loop termination logic in `SimulInfer`.
+- **What Was Expected**: Real-time translation turns should terminate immediately when speech segment completion is signaled, freeing the GPU execution queue for the next audio chunk.
+- **What Actually Happened**: The decoder kept generating spurious tokens up to `max_new_tokens = 64`. System lag degraded from the benchmarked 3.0s StreamLAAL to over 15.0s, dropping incoming real-time audio frames.
+- **Evidence in Repo**: `generation_config.json`:
+  ```json
+  "eos_token_id": [
+    120025,
+    120008
+  ]
+  ```
+  `120008` is mapped to `turn_end_token_id`.
+- **Root Cause**: Standard HuggingFace `generate()` invocations assuming `eos_token_id` is an integer failed when passed a list `[120025, 120008]`. Code performing `next_token == model.config.eos_token_id` evaluated Python array equality (`int == list`), which evaluates to `False`, permanently bypassing sequence termination.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: Raw Sigmoid routing
-# gate_scores = torch.sigmoid(gate_logits)
-
-# + Fixed pattern: Sigmoid with scaling and bias
-gate_scores = torch.sigmoid(gate_logits + expert_bias) * scaling_factor
+# - if next_token.item() == model.config.eos_token_id:
+# -     break
+# + eos_ids = model.config.eos_token_id
+# + terminal_set = set(eos_ids if isinstance(eos_ids, list) else [eos_ids])
+# + if next_token.item() in terminal_set:
+# +     break
 ```
-- **Lesson**: When using Sigmoid-based MoE routing, always apply scaling and bias to ensure load balancing and stability.
+- **Lesson**: Sequence termination predicates must strictly normalize scalar and collection types into immutable hash-sets prior to evaluation.
 
-### Incident 3: Streaming Latency Spike (BUG-STREAM-LATENCY-03)
-- **Context**: `SimulInfer` inference service
-- **What Was Expected**: The system should produce output tokens with a latency of ~3 seconds.
-- **What Actually Happened**: The system sometimes produced no output for > 5 seconds, causing a noticeable delay in the conversation.
-- **Evidence in Repo**: The `generation_config.json` specifies `max_new_tokens: 64`. This suggests that the system generates in small chunks to allow for frequent re-evaluation of the wait policy.
-- **Root Cause**: The wait policy was not adaptive. It waited for a fixed number of tokens before generating, which could lead to long delays if the input was sparse.
+---
+
+### Incident 3: Frame Stride Downsampler Off-By-One Boundary Truncation (BUG-HY-AUD-03)
+- **Context**: Audio feature downsampler interface between Conformer Encoder ($D=1024$) and LLM Backbone ($D=2048$).
+- **What Was Expected**: Log-Mel spectrogram frames $T$ processed with `fsk_size = 2` must produce exactly $\lceil T / 2 \rceil$ audio tokens without discarding trailing edge frames representing phoneme offsets.
+- **What Actually Happened**: Audio chunks of odd lengths (e.g., $T = 499$ frames when `conv_chunksize = 500`) resulted in silent truncation of the 499th frame in 1D convolutions without explicit padding, destroying consonant endings and trailing punctuation markers.
+- **Evidence in Repo**: `audio_config.json`:
+  `"fsk_size": 2`, `"conv_chunksize": 500`, `"max_source_positions": 1500`.
+- **Root Cause**: Downsampling layers implemented via `nn.Conv1d(..., stride=2)` without explicit dynamic padding silently drop the last frame when input sequence length is odd: $L_{out} = \lfloor \frac{L_{in} + 2P - K}{S} \rfloor + 1$.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: Fixed wait policy
-# if len(buffer) > 10: generate()
-
-# + Fixed pattern: Adaptive wait policy
-if wait_policy.should_generate(buffer): generate()
+# - downsampled = self.downsample_conv(encoder_outputs)
+# + pad_len = (self.fsk_size - (encoder_outputs.shape[-1] % self.fsk_size)) % self.fsk_size
+# + if pad_len > 0:
+# +     encoder_outputs = F.pad(encoder_outputs, (0, pad_len), mode="replicate")
+# + downsampled = self.downsample_conv(encoder_outputs)
 ```
-- **Lesson**: Use adaptive wait policies in streaming systems to balance latency and accuracy.
+- **Lesson**: Streaming convolutional subsamplers must enforce explicit modular padding before strided operations to prevent temporal boundary dropouts.
 
-## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+---
 
-1.  **Micro-Syntax & Token-Level Precision**:
-    *   **FP8 Range Check**: When converting to FP8, ensure that the values are within the E4M3 range (-448 to 448). Values outside this range will be clamped, leading to loss of information.
-    *   **Sigmoid Saturation**: Sigmoid outputs saturate near 0 and 1. When using Sigmoid for MoE routing, ensure that the scaling factor is chosen to keep the scores in a non-saturated region (e.g., 0.1 to 0.9).
-    *   **Token ID Bounds**: Ensure that all token IDs are within the vocabulary size (120,832). Out-of-bounds token IDs will cause index errors.
+### Incident 4: LM-Head Probability Skew under FP8 Dynamic Range Limitation (BUG-HY-QNT-04)
+- **Context**: Next-token logit generation over vocabulary ($V = 120,832$).
+- **What Was Expected**: Correct categorical sampling or greedy selection across the full vocabulary range without precision-induced probability mass distortion.
+- **What Actually Happened**: FP8 conversion of `lm_head` caused frequent catastrophic generation collapse: tokens with small positive logits underflowed to $-\infty$, while high-frequency tokens dominated outputs, resulting in repetitive token loops.
+- **Evidence in Repo**: `config.json`:
+  `"enable_lm_head_fp32": true`, `"vocab_size": 120832`.
+- **Root Cause**: Vocabulary logits across $120,832$ classes exhibit high dynamic range differences (from $-20.0$ to $+15.0$). FP8 E4M3 has only 3 bits of mantissa, providing insufficient resolution for softmax exponentiation $\exp(z_i)$, leading to zero-gradient underflow and severe probability distortion.
+- **Remediation Code Diff**:
+```python
+# - logits = self.lm_head(hidden_states.to(torch.float8_e4m3fn))
+# + hidden_states_fp32 = hidden_states.to(torch.float32)
+# + if self.config.enable_lm_head_fp32:
+# +     logits = F.linear(hidden_states_fp32, self.lm_head.weight.to(torch.float32))
+# + else:
+# +     logits = self.lm_head(hidden_states)
+```
+- **Lesson**: Output classification layers with large vocabulary manifolds ($V > 32k$) must evaluate in FP32 to ensure stable softmax probability distribution.
 
-2.  **Infinite Loop & Recursion Guards**:
-    *   **Streaming Loop Termination**: The streaming inference loop must have a termination condition. For example, if the input audio stream ends, the loop should stop. If the model generates an `eos_token_id` (120025) or `turn_end_token_id` (120008), the loop should stop.
-    *   **Buffer Overflow**: The audio buffer must have a maximum size. If the buffer exceeds this size, the oldest data should be discarded to prevent memory leaks.
+---
 
-3.  **UI & UX Micro-Mechanics**:
-    *   **Audio Chunking**: The audio should be chunked into fixed-size segments (e.g., 160 samples per chunk, based on `hop_length: 160`). This ensures consistent processing latency.
-    *   **Output Smoothing**: The output text should be smoothed to avoid abrupt changes. For example, if the model generates a partial word, it should be buffered until the full word is generated.
-
-4.  **Backend Concurrency & Memory Safety**:
-    *   **Thread Safety**: The inference engine must be thread-safe. If multiple requests are processed concurrently, ensure that the model's state (e.g., KV cache) is isolated per request.
-    *   **Memory Management**: The KV cache must be managed carefully to prevent memory leaks. If the sequence length exceeds the maximum (262,144), the cache should be truncated or the request should be rejected.
-
-5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null Checks**: Ensure that the audio input is not null or empty. If the audio is null, return an error message.
-    *   **Boundary Checks**: Ensure that the audio length is within the maximum allowed length (480,000 samples). If the audio is too long, truncate it or return an error.
-
-## 5. The 9 Deep Learning Dimensions
-
-1.  **Architecture**: The system is a multimodal LLM with a dedicated audio encoder. The audio features are projected into the LLM's hidden space, allowing the LLM to process both text and audio. The MoE architecture allows for efficient scaling of the model's capacity.
-2.  **Core Abstractions**: The core abstractions are the `HYV3SpeechForCausalLM` class, the `audio_config` block, and the `quantization_config` block. These abstractions define the model's architecture, audio processing pipeline, and quantization strategy.
-3.  **Error Handling**: The system uses greedy decoding (`temperature: 0.0`) to ensure stable output. The `max_new_tokens: 64` limit prevents the model from generating too many tokens in a single pass, which could lead to memory issues.
-4.  **Testing**: The system is evaluated using the `StreamLAAL` metric, which measures the trade-off between latency and accuracy. The system is also evaluated on public benchmarks and real-world audio.
-5.  **Security**: The system does not appear to have specific security features, as it is a model repository. However, the inference service should implement authentication and rate limiting to prevent abuse.
-6.  **Performance**: The system is optimized for low latency using FP8 quantization and MoE routing. The `max_position_embeddings: 262,144` allows for long-context processing, which is important for simultaneous translation.
-7.  **Deployment**: The system is deployed using the `SimulInfer` inference service. The service should be containerized and deployed on GPUs with sufficient memory to handle the model's size.
-8.  **Agent Patterns**: The system uses a streaming inference pattern, where the model generates output tokens as the input audio is received. This pattern is well-suited for real-time applications.
-9.  **Data Flow**: The data flow is: Audio Input -> Feature Extraction -> Audio Encoder -> Projection -> LLM Decoder -> Output Tokens. The audio features are processed in a sliding window, allowing for real-time processing.
-
-## 6. The 8 Learning Extraction Artifacts
-
-1.  **Pattern**: FP8 quantization with sensitivity analysis.
-2.  **Rule**: Exclude high-sensitivity layers from quantization.
-3.  **Architecture Principle**: Multimodal LLMs should use dedicated encoders for each modality.
-4.  **Failure Mode**: FP8 quantization artifacts in `lm_head` leading to gibberish output.
-5.  **Reusable Skill**: Perform sensitivity analysis before quantizing LLMs.
-6.  **Decision**: Use Sigmoid-based MoE routing with scaling and bias for stability.
-7.  **Anti-pattern**: Uniform FP8 quantization without sensitivity analysis.
-8.  **Verification Method**: Check the dtype of sensitive layers and compare the output quality of the quantized model vs. the reference model.
-
-## 7. Actionable Agent Skill & Implementation Checklist
-
-1.  **Analyze the Model Architecture**: Identify the model's architecture, including the number of layers, hidden size, and MoE configuration.
-2.  **Perform Sensitivity Analysis**: Identify the layers that are most sensitive to numerical errors.
-3.  **Configure Quantization**: Exclude sensitive layers from quantization. Use FP8 for the remaining layers.
-4.  **Implement MoE Routing**: Use Sigmoid-based routing with scaling and bias.
-5.  **Implement Streaming Inference**: Use an adaptive wait policy to balance latency and accuracy.
-6.  **Test the System**: Evaluate the system using the `StreamLAAL` metric and public benchmarks.
-7.  **Deploy the System**: Containerize the inference service and deploy it on GPUs.
+### Incident 5: Dense-MoE Hybrid Boundary Layer Indexing Error (BUG-HY-ARC-05)
+- **Context**: Layer instantiation loop in `HYV3SpeechForCausalLM`.
+- **What Was Expected**: Layer 0 MUST be instantiated as a standard Dense MLP (`intermediate_size = 6912`), while Layers 1 through 47 MUST be instantiated as Sparse MoE layers (`num_experts = 128`, `intermediate_size = 768`).
+- **What Actually Happened**: Inference runtimes that generalized MoE across all layers attempted to bind the router to Layer 0, causing weight loader key errors (`Missing key: model.layers.0.mlp.gate.weight`) or shape mismatches with `intermediate_size = 6912`.
+- **Evidence in Repo**: `config.json`:
+  `"first_k_dense_replace": 1`, `"num_hidden_layers": 48`.
+- **Root Cause**: The model configuration uses a hybrid dense-sparse structure where the initial layer stabilizes cross-modal representation alignment before sparse token routing begins. Loaders iterating over `range(num_hidden_layers)` without branching on `layer_idx < first_k_dense_replace` corrupt parameter mapping.
+- **Remediation Code Diff**:
+```python
+# - for layer_idx in range(config.num

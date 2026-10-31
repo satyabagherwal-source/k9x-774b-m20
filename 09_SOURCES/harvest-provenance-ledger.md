@@ -6488,3 +6488,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-8-27b` | `https://huggingface.co/Qwen/Qwen3.8-27B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-31T05:36:01.272Z |
 | `learn-github-wasm-bindgen-wasm-pack` | `https://github.com/wasm-bindgen/wasm-pack` | `b4586ca5` | Multi-dimensional audit evidence | 2026-10-31T05:36:02.147Z |
 | `learn-github-keybase-client` | `https://github.com/keybase/client` | `952e87ee` | Multi-dimensional audit evidence | 2026-10-31T05:36:06.677Z |
+| `learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8` | `https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8` | `hf-tencent` | Multi-dimensional audit evidence | 2026-10-31T05:45:35.083Z |

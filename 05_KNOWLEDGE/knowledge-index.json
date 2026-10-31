@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T05:36:06.610Z",
+  "last_updated": "2026-10-31T05:45:35.005Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -146000,7 +146000,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
       "source_version": "hf-tencent-hy-simulmt-30b-a3b-fp8",
-      "content_hash": "99608b7009081586baa1bb11f06f5f43568801ae61e393ba1eb87564b6ce4d3a",
+      "content_hash": "afe003ca60c99706e599edb28298f031b6828f80114153bcfdfe075bbbbcc0f3",
       "dossier_path": "07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md",
       "promoted_rules": [
@@ -146018,6 +146018,21 @@
           "number": 5163,
           "title": "MoE Routing Stability with Sigmoid and Bias Rule",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6088,
+          "title": "Independent Sigmoid-Bias Top-K MoE Normalization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6089,
+          "title": "Multi-Terminal Streaming Sequence EOS/Turn-End Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6090,
+          "title": "Block-Quantized FP8 Weight-Activation Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -146025,7 +146040,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T03:43:06.978Z",
+      "verified_at": "2026-10-31T05:45:34.985Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -159834,6 +159849,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T05:36:06.594Z"
+    },
+    "rule-6088": {
+      "learning_id": "rule-6088",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6088,
+      "title": "Independent Sigmoid-Bias Top-K MoE Normalization Invariant",
+      "source_url": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
+      "source_version": "hf-tencent-hy-simulmt-30b-a3b-fp8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T05:45:34.985Z"
+    },
+    "rule-6089": {
+      "learning_id": "rule-6089",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6089,
+      "title": "Multi-Terminal Streaming Sequence EOS/Turn-End Boundary Invariant",
+      "source_url": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
+      "source_version": "hf-tencent-hy-simulmt-30b-a3b-fp8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T05:45:34.985Z"
+    },
+    "rule-6090": {
+      "learning_id": "rule-6090",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6090,
+      "title": "Block-Quantized FP8 Weight-Activation Alignment Invariant",
+      "source_url": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
+      "source_version": "hf-tencent-hy-simulmt-30b-a3b-fp8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T05:45:34.985Z"
     }
   },
   "aliases": {

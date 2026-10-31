@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T05:36:06.682Z",
-  "total_cycles_completed": 6456,
-  "total_learnings_persisted": 6456,
-  "total_rules_promoted": 6073,
+  "last_updated": "2026-10-31T05:45:35.088Z",
+  "total_cycles_completed": 6457,
+  "total_learnings_persisted": 6457,
+  "total_rules_promoted": 6076,
   "history": [
-    {
-      "timestamp": "2026-10-30T19:42:41.912Z",
-      "repository": "preactjs/preact",
-      "learningId": "learn-github-preactjs-preact",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T19:42:44.366Z",
       "repository": "KeyboardKit/KeyboardKit",
@@ -1403,6 +1396,13 @@
       "repository": "keybase/client",
       "learningId": "learn-github-keybase-client",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T05:45:35.088Z",
+      "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
+      "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
