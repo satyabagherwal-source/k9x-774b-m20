@@ -6649,3 +6649,6 @@ Every entry in this ledger must capture:
 | `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `34cbc70f` | Multi-dimensional audit evidence | 2026-10-31T16:39:39.739Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `e7b53052` | Multi-dimensional audit evidence | 2026-10-31T16:39:50.051Z |
 | `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `321ad215` | Multi-dimensional audit evidence | 2026-10-31T16:39:50.266Z |
+| `learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw` | `https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | `hf-infatos` | Multi-dimensional audit evidence | 2026-10-31T16:50:25.604Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `564a2074` | Multi-dimensional audit evidence | 2026-10-31T16:50:26.530Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `299269af` | Multi-dimensional audit evidence | 2026-10-31T16:50:40.225Z |

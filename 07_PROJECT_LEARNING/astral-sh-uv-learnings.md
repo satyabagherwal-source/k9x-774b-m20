@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
-> **Source Version**: `6d74dc11`  
+> **Source Version**: `564a2074`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T20:59:19.560Z  
+> **Timestamp**: 2026-10-31T16:50:25.806Z  
 > **Learning ID**: `learn-github-astral-sh-uv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T20:59:18.408Z  
+> **Harvest Timestamp**: 2026-10-31T16:50:24.467Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python package and project manager, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 91370 stars
+- **Stars / Engagement**: 91394 stars
 
 ---
 
@@ -1496,11 +1496,11 @@ mod types;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #23012** (2026-10-30): **Allow an empty inline sources table in uv remove**
+  *Symptoms*: ## Summary  With the following configuration, `uv add anyio` and `uv lock --check` succeed, but `uv remove anyio` fails with “Sources in `pyproject.toml` are malformed”.  ```toml [tool.uv] sources = {} ```  Source cleanup tries to open the empty inline table as a regular table. We now skip that lookup when the inline table is empty. Removing the dependency leaves `sources = {}` in place. 
+
 - **Issue #23008** (2026-10-30): **Escape literal paths when adding workspace members**
   *Symptoms*: ## Summary  When `uv init '[v2]/api'` adds the project to a workspace, it writes `[v2]/api` directly into `tool.uv.workspace.members`. That field accepts globs, so `uv lock` can silently lock a different project at `v/api` or omit the new project entirely.  We escape glob metacharacters when `uv init` or `uv add` writes a concrete member path. For this example, the generated entry is `[[]v2[]]/api`, which matches the literal directory. 
-
-- **Issue #22990** (2026-10-29): **Deduplicate aliased OSV findings in uv audit**
-  *Symptoms*: ## Summary  For each dependency, keep a list of advisory groups. Merge every group whose IDs overlap the incoming record, so a third record can join two previously separate groups. Grouping runs per package and version before ignore rules, counts and output formatting. All IDs in the group remain available for display and suppression. Both ignore lists record every matching ID before filtering the finding, so only genuinely unmatched IDs produce warnings.  The record with the latest `modified` timestamp supplies the fix versions and advisory details. If timestamps match, uv uses the record whose `id` comes first in string order.  For the SARIF rule ID and fingerprint, uv sorts the returned records’ `id` values as strings and uses the first one. An ID listed in `aliases` qualifies only if OSV also returned a record with that `id`.  Includes the corrected reproducer from astral-sh/uv-dev#3028. For `certifi==2024.12.14`, the PYSEC record lists `2026.10.19` and the newer GHSA record lists `2026.10.18`. The regression test expects one finding with display ID `PYSEC-2026-4320` and fix version `2026.10.18`. SARIF uses `GHSA-6q48-6c7w-9gw2` because it sorts before `PYSEC-2026-4320`, even if the PYSEC record is updated later. [PYSEC record](https://osv.dev/vulnerability/PYSEC-2026-4320) · [GHSA record](https://osv.dev/vulnerability/GHSA-6q48-6c7w-9gw2)  Closes astral-sh/uv-dev#3028.  Fixes astral-sh/uv#22985.  ## Test Plan  - `cargo test --locked -p uv-audit --no-default-f
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1517,534 +1517,301 @@ mod types;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `55de8184` (2026-10-30)
-**Commit Message**: Skip retry backoff in the HTTP read timeout tests (#23002)
+### Incident Patch 1: `564a2074` (2026-10-31)
+**Commit Message**: Consistently use`[expected]` table for packse (#23025)
 
-## Summary
+Use an explicit `[expected]` table in the static provider order test to
+match the other Packse fixtures.
 
-The three HTTP read timeout tests took 3.4–4.1 s each across three
-recent Linux CI runs. Each test deliberately times out twice, then
-checks the retry count and the final error. The extra wait between
-attempts comes from uv’s production backoff policy. [CI run
-1](https://github.com/astral-sh/uv/actions/runs/40961675187/job/123756263005)
-· [CI run
-2](https://github.com/astral-sh/uv/actions/runs/40963020471/job/123760957216)
-· [CI run
-3](https://github.com/astral-sh/uv/actions/runs/40965787492/job/123770364461)
-
-The shared test fixture now uses the existing switch that skips the
-backoff. Both requests still hit the one-second read timeout, and all
-three original error snapshots pass.
-
-| Read timeout | Before | After |
-| --- | ---: | ---: |
-| Package index | 4.09 s | 2.49 s |
-| Wheel stream | 3.62 s | 2.51 s |
-| Python downloads JSON | 3.88 s | 2.43 s |
-
-Times are per-test wall-clock medians from three local Linux runs of
-each revision, using the same uv executable.
-
-On this draft, all three tests passed in 2.28–2.39 s on Linux and
-2.47–2.56 s on Windows.
-[Linux](https://github.com/astral-sh/uv/actions/runs/410733
-
-**File**: `crates/uv-test/src/lib.rs` (modified, +4/-2)
+**File**: `crates/uv/tests/pip_install/wheel_variant_compatibility.rs` (modified, +3/-1)
 ```diff
-@@ -243,10 +243,12 @@ impl TestContext {
-         self
-     }
+@@ -115,7 +115,9 @@ fn select_variant_by_static_provider_order() -> Result<()> {
+     let server = PackseServer::from_toml(indoc! {r#"
+         name = "static-provider-order"
+         root = {}
+-        expected.satisfiable = true
++
++        [expected]
++        satisfiable = true
  
--    /// Configure one HTTP retry with a one-second timeout for all commands in this context.
-+    /// Configure one immediate HTTP retry with a one-second timeout per attempt.
-     #[must_use]
-     pub fn with_fast_http_retry(self) -> Self {
--        self.with_http_timeout("1").with_http_retries("1")
-+        self.with_http_timeout("1")
-+            .with_http_retries("1")
-+            .with_env(EnvVars::UV_INTERNAL__TEST_NO_HTTP_RETRY_DELAY, "true")
-     }
- 
-     /// Omit incidental HTTP retries from a snapshot that asserts the eventual error.
+         [packages.ok.versions."1.0.0"]
+         wheel = false
 ```
 
 ---
 
-### Incident Patch 2: `14b875a8` (2026-10-30)
-**Commit Message**: Use local fixtures for outdated listings and cyclic build dependencies (#23009)
+### Incident Patch 2: `01959f80` (2026-10-31)
+**Commit Message**: Handle project names starting with a digit in `uv init` (#23022)
 
 ## Summary
 
-A TestPyPI 503 on `hatchling` stopped `cyclic_build_dependency` before
-it could check the cycle. That test now serves two wheels and a source
-distribution from localhost. Building `circular-one` still finds the
-cycle through `circular-two`, and installing its wheel succeeds. [Failed
-CI
-job](https://github.com/astral-sh/uv/actions/runs/39258529321/job/118080266795)
+`uv init --package 3d-print` generates a launcher containing `from
+3d_print import main`. The project builds and installs, but running the
+command fails because a Python identifier cannot start with a digit.
 
-Three `uv pip list --outdated` tests now share the local indexes used by
-`uv pip compile`. The default index offers `anyio` 4.3.0, while the
-command-line override offers 3.5.0. The existing column and JSON
-snapshots check the same versions as before.
-
-All four tests and the six resolver tests that share these fixtures
-passed on Linux. Socket tracing recorded only loopback connections.
-
-The three listing tests also pass with only the `test-python` feature
-enabled and are excluded when it is disabled.
-
-**File**: `crates/uv/tests/pip/pip_list.rs` (modified, +15/-7)
-```diff
-@@ -7,6 +7,8 @@ use assert_fs::prelude::*;
- use indoc::{formatdoc, indoc};
- 
- use uv_static::EnvVars;
-+#[cfg(feature = "test-python")]
-+use uv_test::packse::PackseServer;
- use uv_test::uv_snapshot;
- 
- #[test]
-@@ -222,9 +224,11 @@ fn list_single_no_editable() -> Result<()> {
- }
- 
- #[test]
--#[cfg(feature = "test-pypi")]
-+#[cfg(feature = "test-python")]
- fn list_outdated_columns() -> Result<()> {
--    let context = uv_test::test_context!("3.12");
-+    let index = PackseServer::new("indexes/default.toml");
-+    let context =
-+        uv_test::test_context!("3.12").with_env(EnvVars::UV_DEFAULT_INDEX, index.index_url());
- 
-     let requirements_txt = context.temp_dir.child("requirements.txt");
-     requirements_txt.write_str("anyio==3.0.0")?;
-@@ -257,9 +261,11 @@ fn list_outdated_columns() -> Result<()> {
- }
- 
- #[test]
--#[cfg(feature = "test-pypi")]
-+#[cfg(feature = "test-python")]
- fn list_outdated_json() -> Result<()> {
--    let context = uv_test::test_context!("3.12");
-+    let index = PackseServer::new("indexes/default.toml");
-+    let context =
-+        uv_test::test_context!("3.12").with_env(EnvVars::UV_DEFAULT_INDEX, index.index_url());
- 
-     let requirements_txt = context.temp_dir.child("requirements.txt");
-     requirements_txt.write_str("anyio==3.0.0")?;
-@@ -395,9 +401,11 @@ fn list_outdated_git() -> Result<()> {
- }
- 
- #[test]
--#[cfg(feature = "test-pypi")]
-+#[cfg(feature = "test-python")]
- fn list_outdated_index() -> Result<()> {
--    let context = uv_test::test_context!("3.12");
-+    let index = PackseServer::new("indexes/default.toml");
-+    let extra_index = PackseServer::new("indexes/extra.toml");
-+    let context = uv_test::test_context!("3.12").with_env(EnvVars::UV_INDEX_URL, index.index_url());
- 
-     let requirements_txt = context.temp_dir.child("requirements.txt");
-     requirements_txt.write_str("anyio==3.0.0")?;
-@@ -420,7 +428,7 @@ fn list_outdated_index() -> Result<()> {
-     uv_snapshot!(context.pip_list()
-         .arg("--outdated")
-         .arg("--index-url")
--        .arg("https://test.pypi.org/simple"), @"
-+        .arg(extra_index.index_url()), @"
-     exit_code: 0 (success)
-     ----- stdout -----
-     Package Version Latest Type
+```console
+$ uv init --package 3d-print
+$ cd 3d-print
+$ uv run 3d-print
+  ...
+    from 3d_print import main
+         ^
+SyntaxError: invalid decimal literal
 ```
 
-**File**: `crates/uv/tests/pip_compile/pip_compile.rs` (modified, +12/-12)
-```diff
-@@ -14188,8 +14188,8 @@ fn compile_index_url_first_match_marker() -> Result<()> {
- /// should fail by default (even though a compatible version exists on the "primary" index).
- #[test]
- fn compile_index_url_first_match_all_versions() -> Result<()> {
--    let default_index = PackseServer::new("indexes/pip-compile-default.toml");
--    let extra_index = PackseServer::new("indexes/pip-compile-extra.toml");
-+    let default_index = PackseServer::new("indexes/default.toml");
-+    let extra_index = PackseServer::new("indexes/extra.toml");
-     let context = uv_test::test_context!("3.12");
- 
-     let requirements_in = context.temp_dir.child("requirements.in");
-@@ -14258,8 +14258,8 @@ fn compile_index_url_fallback() -> Result<()> {
- /// preferred index.
- #[test]
- fn compile_index_url_fallback_prefer_primary() -> Result<()> {
--    let default_index = PackseServer::new("indexes/pip-compile-default.toml");
--    let extra_index = PackseServer::new("indexes/pip-compile-extra.toml");
-+    let default_index = PackseServer::new("indexes/default.toml");
-+    let extra_index = PackseServer::new("indexes/extra.toml");
-     let context = uv_test::test_context!("3.12");
- 
-     let requirements_in = context.temp_dir.child("requirements.in");
-@@ -14299,8 +14299,8 @@ fn compile_index_url_fallback_prefer_primary() -> Result<()> {
- /// "extra" index being the preferred index.
- #[test]
- fn compile_index_url_unsafe_highest() -> Result<()> {
--    let default_index = PackseServer::new("indexes/pip-compile-default.toml");
--    let extra_index = PackseServer::new("indexes/pip-compile-extra.toml");
-+    let default_index = PackseServer::new("indexes/default.toml");
-+    let extra_index = PackseServer::new("indexes/extra.toml");
-     let context = uv_test::test_context!("3.12");
- 
-     let requirements_in = context.temp_dir.child("requirements.in");
-@@ -14343,8 +14343,8 @@ fn compile_index_url_unsafe_highest() -> Result<()> {
- /// `--resolution lowest`.
- #[test]
- fn compile_index_url_unsafe_lowest() -> Result<()> {
--    let default_index = PackseServer::new("indexes/pip-compile-default.toml");
--    let extra_index = PackseServer::new("indexes/pip-compile-extra.toml");
-+    let default_index = PackseServer::new("indexes/default.toml");
-+    let extra_index = PackseServer::new("indexes/extra.toml");
-     let context = uv_test::test_context!("3.12");
- 
-     let requirements_in = context.temp_dir.child("requirements.in");
-@@ -14534,8 +14534,8 @@ fn emit_index_annotation_line() -> Result<()> {
- /// `--emit-index-annotation` where packages are pulled from two distinct indexes.
- #[test]
- fn emit_index_annotation_multiple_indexes() -> Result<()> {
--    let default_index = PackseServer::new("indexes/pip-compile-default.toml");
--    let extra_index = PackseServer::new("indexes/pip-compile-extra.toml");
-+    let default_index = PackseServer::new("indexes/default.toml");
-+    let extra_index = PackseServer::new("indexes/extra.toml");
-     let context = uv_test::test_context!("3.12");
- 
-     let requirements_in = context.temp_dir.child("requirements.in");
-@@ -16667,8 +16667,8 @@ fn negation_not_imply_prerelease() -> Result<()> {
- /// See: <https://github.com/astral-sh/uv/issues/8922>
- #[test]
- fn same_version_multi_index_incompatibility() -> Result<()> {
--    let default_index = PackseServer::new("indexes/pip-compile-default.toml");
--    let extra_index = PackseServer::new("indexes/pip-compile-extra.toml");
-+    let default_index = PackseServer::new("indexes/default.toml");
-+    let extra_index = PackseServer::new("indexes/extra.toml");
-     let context = uv_test::test_context!("3.10");
-     let requirements_in = context.temp_dir.child("requirements.in");
-     requirements_in.write_str("cffi==1.15.1")?;
-```
+We now generate `src/_3d_print/` and point the `3d-print` entry point at
+`_3d_print:main`. For backends that infer the module name from the
+distribution name, we also configure the module to include in the wheel.
 
-**File**: `crates/uv/tests/pip_install/pip_install.rs` (modified, +37/-12)
+**File**: `crates/uv-project-commands/src/init.rs` (modified, +86/-36)
 ```diff
-@@ -12893,19 +12893,43 @@ fn static_metadata_already_installed() -> Result<()> {
+@@ -1,3 +1,4 @@
++use std::borrow::Cow;
+ use std::fmt::Write;
+ use std::iter;
+ use std::path::{Path, PathBuf};
+@@ -829,21 +830,31 @@ fn init_project_kind(
+             // Add a build system
+             let build_backend = build_backend.unwrap_or(ProjectBuildBackend::Uv);
+             pyproject.push('\n');
+-            pyproject.push_str(&pyproject_build_system(name, build_backend));
++            pyproject.push_str(&pyproject_build_system(
++                &name.as_dist_info_name(),
++                build_backend,
++            ));
+         }
+-        InitProjectKind::ApplicationWithLibrary => {
+-            // Since it'll be packaged, we can add a `[project.scripts]` entry
+-            pyproject.push('\n');
+-            pyproject.push_str(&pyproject_project_scripts(name, name.as_str(), "main"));
+-
+-            // Add a build system
++        InitProjectKind::ApplicationWithLibrary | InitProjectKind::Library => {
+             let build_backend = build_backend.unwrap_or(ProjectBuildBackend::Uv);
+-            pyproject.push('\n');
+-            pyproject.push_str(&pyproject_build_system(name, build_backend));
+-            pyproject_build_backend_prerequisites(name, path, build_backend)?;
++            let module = InitModuleName::from_package(name);
++            let module_name = module.as_str();
++            let is_lib = matches!(project_kind, InitProjectKind::Library);
++
++            if !is_lib {
++                pyproject.push_str(&indoc::formatdoc! {r#"
+ 
+-            // Generate `src` files with app-style `main()` in `__init__.py`
+-            generate_package_scripts(name, path, build_backend, false)?;
++                    [project.scripts]
++                    {name} = "{module_name}:main"
++                "#});
++            }
++            if let Some(explicit) = module.explicit.as_deref() {
++                pyproject.push_str(&pyproject_module_override(explicit, build_backend));
++            }
++            pyproject.push('\n');
++            pyproject.push_str(&pyproject_build_system(module_name, build_backend));
++            pyproject_build_backend_prerequisites(&module, path, build_backend)?;
++            generate_package_scripts(name, module_name, path, build_backend, is_lib)?;
+         }
+         InitProjectKind::Application => {
+             let main_contents = indoc::formatdoc! {r#"
+@@ -863,15 +874,6 @@ fn init_project_kind(
+                 fs_err::write(path.join("main.py"), main_contents)?;
+             }
+         }
+-        InitProjectKind::Library => {
+-            let build_backend = build_backend.unwrap_or(ProjectBuildBackend::Uv);
+-            pyproject.push('\n');
+-            pyproject.push_str(&pyproject_build_system(name, build_backend));
+-            pyproject_build_backend_prerequisites(name, path, build_backend)?;
+-
+-            // Generate `src` files
+-            generate_package_scripts(name, path, build_backend, true)?;
+-        }
+     }
+     fs_err::write(path.join("pyproject.toml"), pyproject)?;
+     Ok(())
+@@ -934,8 +936,7 @@ fn pyproject_project(
+ 
+ /// Generate the `[build-system]` section of a `pyproject.toml`.
+ /// Generate the `[tool.]` section of a `pyproject.toml` where applicable.
+-fn pyproject_build_system(package: &PackageName, build_backend: ProjectBuildBackend) -> String {
+-    let module_name = package.as_dist_info_name();
++fn pyproject_build_system(module_name: &str, build_backend: ProjectBuildBackend) -> String {
+     match build_backend {
+         ProjectBuildBackend::Uv => {
+             // Limit to the stable version range.
+@@ -1018,24 +1019,70 @@ fn pyproject_build_system(package: &PackageName, build_backend: ProjectBuildBack
+     }
  }
  
- /// `circular-one` depends on `circular-two` as a build dependency, but `circular-two` depends on
--/// `circular-one` was a runtime dependency.
-+/// `circular-one` as a runtime dependency.
- #[test]
--fn cyclic_build_dependency() {
--    let context = uv_test::test_context!("3.13").with_exclude_newer("2025-01-02T00:00:00Z");
-+fn cyclic_build_dependency() -> Result<()> {
-+    let context = uv_test::test_context!("3.13");
-+    let packages = context.temp_dir.child("packages");
-+    packages.create_dir_all()?;
+-/// Generate the `[project.scripts]` section of a `pyproject.toml`.
+-fn pyproject_project_scripts(package: &PackageName, executable_name: &str, target: &str) -> String {
+-    let module_name = package.as_dist_info_name();
+-    indoc::formatdoc! {r#"
+-        [project.scripts]
+-        {executable_name} = "{module_name}:{target}"
+-    "#}
++/// The module name inferred from a distribution and any override needed by the scaffold.
++struct InitModuleName<'a> {
++    inferred: Cow<'a, str>,
++    explicit: Option<String>,
++}
 +
-+    let version = "0.2.0".parse()?;
-+    let (filename, wheel) = WheelBuilder::new(&"circular-one".parse()?, &version).build();
-+    fs::write(packages.join(filename), wheel)?;
-+    let (filename, wheel) = WheelBuilder::new(&"circular-two".parse()?, &version)
-+        .requires(&["circular-one".parse()?])
-+        .build();
-+    fs::write(packages.join(filename), wheel)?;
++impl<'a> InitModuleName<'a> {
++    fn from_package(package: &'a PackageName) -> Self {
++        let inferred = package.as_dist_info_name();
++        // Distribution names can start with a digit, but Python identifiers cannot.
++        let explicit = inferred
++            .starts_with(|c: char| c.is_ascii_digit())
++            .then(|| format!("_{inferred}"));
++        Self { inferred, explicit }
++    }
 +
-+    let pyproject = indoc! {r#"
++    fn as_str(&self) -> &str {
++        self.explicit.as_deref().unwrap_or(&self.inferred)
++    }
++}
++
++/// Configure build backends that discover packages by their distribution name.
++fn pyproject_module_override(module_name: &str, build_backend: ProjectBuildBackend) -> String {
++    match build_backend {
++        ProjectBuildBackend::Uv => indoc::formatdoc! {r#"
++
++            [tool.uv.build-backend]
++      
+```
+
+**File**: `crates/uv/tests/project/init.rs` (modified, +106/-0)
+```diff
+@@ -625,6 +625,55 @@ fn init_package() -> Result<()> {
+     Ok(())
+ }
+ 
++/// A launcher for a digit-prefixed distribution must use a valid module name in its import.
++#[test]
++fn init_package_leading_digit() {
++    let context = uv_test::test_context!("3.12");
++
++    uv_snapshot!(context.filters(), context.init().arg("--package").arg("3d-print"), @"
++    exit_code: 0 (success)
++    ----- stderr -----
++    Initialized project `3d-print` at `[TEMP_DIR]/3d-print`
++    ");
++
++    insta::with_settings!({ filters => context.filters() }, {
++        assert_snapshot!(context.read("3d-print/pyproject.toml"), @r#"
 +        [project]
-+        name = "circular-one"
-+        version = "0.2.0"
++        name = "3d-print"
++        version = "0.1.0"
++        description = "Add your description here"
++        readme = "README.md"
++        requires-python = ">=3.12"
++        dependencies = []
++
++        [project.scripts]
++        3d-print = "_3d_print:main"
++
++        [tool.uv.build-backend]
++        module-name = "_3d_print"
 +
 +        [build-system]
-+        requires = ["circular-two"]
-+        build-backend = "circular_two"
-+    "#};
-+    write_tar_gz(
-+        File::create(packages.join("circular_one-0.2.0.tar.gz"))?,
-+        &[("circular_one-0.2.0/pyproject.toml", pyproject)],
-+    )?;
-+    let links = FindLinksServer::new(packages.path());
- 
-     // Installing with `--no-binary circular-one` should fail, since we'll end up in a recursive
-     // build.
-     uv_snapshot!(context.filters(), context.pip_install()
-+        .arg("--no-index")
-+        .arg("--find-links")
-+        .arg(links.url())
-         .arg("circular-one")
--        .arg("--extra-index-url")
--        .arg("https://test.pypi.org/simple")
--        .arg("--index-strategy")
--        .arg("unsafe-best-match")
-         .arg("--no-binary")
-         .arg("circular-one"), @"
-     exit_code: 1 (failure)
-@@ -12919,11 +12943,10 @@ fn cyclic_build_dependency() {
- 
-     // Installing without `--no-binary circular-one` should succeed, since we can use the wheel.
-     uv_snapshot!(context.filters(), context.pip_install()
--        .arg("circular-one")
--        .arg("--extra-index-url")
--        .arg("https://test.pypi.org/simple")
--        .arg("--index-strategy")
--        .arg("unsafe-best-match"), @"
-+        .arg("--no-index")
-+        .arg("--find-links")
-+        .arg(links.url())
-+        .arg("circular-one"), @"
-     exit_code: 0 (success)
-     ----- stderr -----
-     Resolved 1 package in [TIME]
-@@ -12932,6 +12955,8 @@ fn cyclic_build_dependency() {
-      + circular-one==0.2.0
-     "
-     );
++        requires = ["uv_build>=[CURRENT_VERSION],<[NEXT_BREAKING]"]
++        build-backend = "uv_build"
++        "#);
++    });
 +
-+    Ok(())
++    let child = context.temp_dir.child("3d-print");
++    uv_snapshot!(context.filters(), context.run().current_dir(&child).env_remove(EnvVars::VIRTUAL_ENV).arg("3d-print"), @"
++    exit_code: 0 (success)
++    ----- stdout -----
++    Hello from 3d-print!
++
++    ----- stderr -----
++    Using CPython 3.12.[X] interpreter at: [PYTHON-3.12]
++    Creating virtual environment at: .venv
++    Resolved 1 package in [TIME]
++    Prepared 1 package in [TIME]
++    Installed 1 package in [TIME]
++     + 3d-print==0.1.0 (from file://[TEMP_DIR]/3d-print)
++    ");
++}
++
+ #[test]
+ fn init_bare_lib() {
+     let context = uv_test::test_context!("3.12");
+@@ -3756,6 +3805,63 @@ fn init_app_build_backend_scikit() -> Result<()> {
+     Ok(())
  }
  
++/// Scikit must install the native extension into the package imported by the launcher.
++#[test]
++fn init_app_build_backend_scikit_leading_digit() {
++    let context = uv_test::test_context!("3.12");
++
++    uv_snapshot!(context.filters(), context.init().args(["--package", "--build-backend", "scikit", "3d-print"]), @"
++    exit_code: 0 (success)
++    ----- stderr -----
++    Initialized project `3d-print` at `[TEMP_DIR]/3d-print`
++    ");
++
++    assert_snapshot!(context.read("3d-print/pyproject.toml"), @r#"
++    [project]
++    name = "3d-print"
++    version = "0.1.0"
++    description = "Add your description here"
++    readme = "README.md"
++    requires-python = ">=3.12"
++    dependencies = []
++
++    [project.scripts]
++    3d-print = "_3d_print:main"
++
++    [tool.scikit-build.wheel]
++    packages = ["src/_3d_print"]
++
++    [tool.scikit-build]
++    minimum-version = "build-system.requires"
++    build-dir = "build/{wheel_tag}"
++
++    [tool.uv]
++    cache-keys = [{ file = "pyproject.toml" }, { file = "src/**/*.{h,c,hpp,cpp}" }, { file = "CMakeLists.txt" }]
++
++    [build-system]
++    requires = ["scikit-build-core>=0.12", "pybind11>=3"]
++    build-backend = "scikit_build_core.build"
++    "#);
++
++    assert_snapshot!(context.read("3d-print/src/_3d_print/__init__.py"), @"
++    from _3d_print._core import hello_from_bin
++
++
++    def main() -> None:
++        print(hello_from_bin())
++    ");
++
++    assert_snapshot!(context.read("3d-print/CMakeLists.txt"), @"
++    cmake_minimum_required(VERSION 3.15...4.0)
++    project(${SKBUILD_PROJECT_NAME} LANGUAGES CXX)
++
++    find_package(pybind11 CONFIG REQUIRED)
++
++    pybind11_add_module(_core MODULE src/main.cpp)
++    install(TARGETS _core DESTINATION _3d_print)
++    ");
++}
++
+ /// Run `uv init --lib --build-backend maturin` to create a packaged application project
  #[test]
-```
-
-**File**: `test/scenarios/indexes/default.toml` (renamed, +5/-1)
-```diff
-@@ -1,4 +1,4 @@
--name = "pip-compile-default"
-+name = "default-index"
- 
- [root]
- 
-@@ -9,7 +9,11 @@ satisfiable = true
- disable = true
- 
- [packages.anyio.versions."1.0.0"]
-+[packages.anyio.versions."3.0.0"]
-+requires = ["idna", "sniffio"]
- [packages.anyio.versions."4.3.0"]
-+[packages.idna.versions."3.6"]
-+[packages.sniffio.versions."1.3.1"]
- 
- [packages.pandas.versions."2.2.1"]
- 
-```
-
-**File**: `test/scenarios/indexes/extra.toml` (renamed, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--name = "pip-compile-extra"
-+name = "extra-index"
- 
- [root]
- 
-```
-
----
-
-### Incident Patch 3: `b62ca197` (2026-10-30)
-**Commit Message**: Serve pip compile’s multi-index fixtures locally (#23005)
-
-## Summary
-
-Six `uv pip compile` tests depend on the particular distributions
-available on PyPI and TestPyPI. A TestPyPI 503 on `pycparser`, for
-example, failed the regression test for finding a compatible wheel on
-the second index. [Failed
-shard](https://github.com/astral-sh/uv/actions/runs/39258529321/job/118080266795)
-
-We serve the relevant versions and wheel tags from two local Packse
-indexes. The extra index can still have an empty project, a version
-between the lowest and highest versions on the default index, or only an
-incompatible wheel. The annotation snapshot names the indexes separately
-so it checks which one supplied each dependency.
-
-All six tests passed on Linux with socket tracing showing only loopback
-connections.
-
-**File**: `crates/uv/tests/pip_compile/pip_compile.rs` (modified, +41/-17)
-```diff
-@@ -14188,16 +14188,18 @@ fn compile_index_url_first_match_marker() -> Result<()> {
- /// should fail by default (even though a compatible version exists on the "primary" index).
- #[test]
- fn compile_index_url_first_match_all_versions() -> Result<()> {
-+    let default_index = PackseServer::new("indexes/pip-compile-default.toml");
-+    let extra_index = PackseServer::new("indexes/pip-compile-extra.toml");
-     let context = uv_test::test_context!("3.12");
- 
-     let requirements_in = context.temp_dir.child("requirements.in");
-     requirements_in.write_str("pandas")?;
- 
-     uv_snapshot!(context.filters(), context.pip_compile()
-         .arg("--index-url")
--        .arg("https://pypi.org/simple")
-+        .arg(default_index.index_url())
-         .arg("--extra-index-url")
--        .arg("https://test.pypi.org/simple")
-+        .arg(extra_index.index_url())
-         .arg("requirements.in")
-         .arg("--no-deps"), @"
-     exit_code: 1 (failure)
-@@ -14256,6 +14258,8 @@ fn compile_index_url_fallback() -> Result<()> {
- /// preferred index.
- #[test]
- fn compile_index_url_fallback_prefer_primary() -> Result<()> {
-+    let default_index = PackseServer::new("indexes/pip-compile-default.toml");
-+    let extra_index = PackseServer::new("indexes/pip-compile-extra.toml");
-     let context = uv_test::test_context!("3.12");
- 
-     let requirements_in = context.temp_dir.child("requirements.in");
-@@ -14265,9 +14269,9 @@ fn compile_index_url_fallback_prefer_primary() -> Result<()> {
-         .arg("--index-strategy")
-         .arg("unsafe-any-match")
-         .arg("--index-url")
--        .arg("https://pypi.org/simple")
-+        .arg(default_index.index_url())
-         .arg("--extra-index-url")
--        .arg("https://test.pypi.org/simple")
-+        .arg(extra_index.index_url())
-         .arg("requirements.in")
-         .arg("--no-deps"), @"
-     exit_code: 0 (success)
-@@ -14295,6 +14299,8 @@ fn compile_index_url_fallback_prefer_primary() -> Result<()> {
- /// "extra" index being the preferred index.
- #[test]
- fn compile_index_url_unsafe_highest() -> Result<()> {
-+    let default_index = PackseServer::new("indexes/pip-compile-default.toml");
-+    let extra_index = PackseServer::new("indexes/pip-compile-extra.toml");
-     let context = uv_test::test_context!("3.12");
- 
-     let requirements_in = context.temp_dir.child("requirements.in");
-@@ -14304,9 +14310,9 @@ fn compile_index_url_unsafe_highest() -> Result<()> {
-         .arg("--index-strategy")
-         .arg("unsafe-best-match")
-         .arg("--index-url")
--        .arg("https://pypi.org/simple")
-+        .arg(default_index.index_url())
-         .arg("--extra-index-url")
--        .arg("https://test.pypi.org/simple")
-+        .arg(extra_index.index_url())
-         .arg("requirements.in")
-         .arg("--no-deps"), @"
-     exit_code: 0 (success)
-@@ -14337,6 +14343,8 @@ fn compile_index_url_unsafe_highest() -> Result<()> {
- /// `--resolution lowest`.
- #[test]
- fn compile_index_url_unsafe_lowest() -> Result<()> {
-+    let default_index = PackseServer::new("indexes/pip-compile-default.toml");
-+    let extra_index = PackseServer::new("indexes/pip-compile-extra.toml");
-     let context = uv_test::test_context!("3.12");
- 
-     let requirements_in = context.temp_dir.child("requirements.in");
-@@ -14348,9 +14356,9 @@ fn compile_index_url_unsafe_lowest() -> Result<()> {
-         .arg("--index-strategy")
-         .arg("unsafe-best-match")
-         .arg("--index-url")
--        .arg("https://pypi.org/simple")
-+        .arg(default_index.index_url())
-         .arg("--extra-index-url")
--        .arg("https://test.pypi.org/simple")
-+        .arg(extra_index.index_url())
-         .arg("requirements.in")
-         .arg("--no-deps"), @"
-     exit_code: 0 (success)
-@@ -14526,6 +14534,8 @@ fn emit_index_annotation_line() -> Result<()> {
- /// `--emit-index-annotation` where packages are pulled from two distinct indexes.
- #[test]
- fn emit_index_annotation_multiple_indexes() -> Result<()> {
-+    let default_index = PackseServer::new("indexes/pip-compile-default.toml");
-+    let extra_index = PackseServer::new("indexes/pip-compile-extra.toml");
-     let context = uv_test::test_context!("3.12");
- 
-     let requirements_in = context.temp_dir.child("requirements.in");
-@@ -14534,27 +14544,37 @@ fn emit_index_annotation_multiple_indexes() -> Result<()> {
-         requests
-     "})?;
- 
--    uv_snapshot!(context.filters(), context.pip_compile()
-+    let default_url = regex::escape(&default_index.index_url());
-+    let extra_url = regex::escape(&extra_index.index_url());
-+    let mut filters = vec![
-+        (default_url.as_str(), "[DEFAULT_INDEX]"),
-+        (extra_url.as_str(), "[EXTRA_INDEX]"),
-+    ];
-+    filters.extend(context.filters());
-+
-+    uv_snapshot!(filters, context.pip_compile()
-         .arg("requirements.in")
-+        .arg("--index-url")
-+        .arg(default_index.index_url())
-         .arg("--extra-index-url")
--        .arg("https://test.pypi.org/simple")
-+        .arg(extra_index.index_ur
-```
-
-**File**: `test/scenarios/indexes/pip-compile-default.toml` (added, +27/-0)
-```diff
-@@ -0,0 +1,27 @@
-+name = "pip-compile-default"
-+
-+[root]
-+
-+[expected]
-+satisfiable = true
-+
-+[testgen]
-+disable = true
-+
-+[packages.anyio.versions."1.0.0"]
-+[packages.anyio.versions."4.3.0"]
-+
-+[packages.pandas.versions."2.2.1"]
-+
-+[packages.httpcore.versions."1.0.4"]
-+requires = ["certifi", "h11"]
-+[packages.h11.versions."0.14.0"]
-+[packages.certifi.versions."2024.2.2"]
-+[packages.requests.versions."2.31.0"]
-+
-+[packages.cffi.versions."1.15.1"]
-+requires_python = ">=3.8"
-+requires = ["pycparser"]
-+sdist = false
-+[packages.pycparser.versions."2.21"]
-+requires_python = ">=3.8"
-```
-
-**File**: `test/scenarios/indexes/pip-compile-extra.toml` (added, +23/-0)
-```diff
-@@ -0,0 +1,23 @@
-+name = "pip-compile-extra"
-+
-+[root]
-+
-+[expected]
-+satisfiable = true
-+
-+[testgen]
-+disable = true
-+
-+[packages.anyio.versions."3.5.0"]
-+
-+# The project exists on this index but has no distributions.
-+[packages.pandas.versions]
-+
-+[packages.certifi.versions."2016.8.8"]
-+[packages.requests.versions."2.5.4.1"]
-+
-+[packages.cffi.versions."1.15.1"]
-+requires_python = ">=3.8"
-+requires = ["pycparser"]
-+sdist = false
-+wheel_tags = ["cp311-cp311-win_arm64"]
+ #[cfg(feature = "test-crates-io")]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #23027** (closed): feat(export): include license information in CycloneDX export (#21617) (@omid-io)
+- **PR #23025** (2026-10-31): Consistently use`[expected]` table for packse (@konstin)
+- **PR #23022** (2026-10-31): Handle project names starting with a digit in `uv init` (@charliermarsh)
 - **PR #23021** (2026-10-30): Add `PackseServer::from_toml` convenience constructor (@konstin)
-- **PR #23014** (2026-10-30): Use local artifacts in the relative-index lock test (@astral-automations-bot[bot])
-- **PR #23011** (2026-10-30): Mock rejected uploads in publishing tests (@astral-automations-bot[bot])
-- **PR #23009** (2026-10-30): Use local fixtures for outdated listings and cyclic build dependencies (@charliermarsh)
-- **PR #23008** (2026-10-30): Escape literal paths when adding workspace members (@charliermarsh)
-- **PR #23007** (2026-10-30): Separate Python upgrade and reinstall tests (@charliermarsh)
+- **PR #23019** (closed): fix: Annotated-tag object id given as a git rev fails with "Exact Git revision does not match precise commit" (@xixi-box)
+- **PR #23017** (2026-10-30): Preserve inline comments when updating an existing dependency group (@charliermarsh)
 
 ---
 
@@ -2064,32 +1831,30 @@ connections.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Skip retry backoff in the HTTP read timeout tests (#23002)
+## X. Consistently use`[expected]` table for packse (#23025)
 
 **RULE**:
-When implementing operations in `crates/uv-test/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/uv/tests/pip_install/wheel_variant_compatibility.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `55de8184`: Skip retry backoff in the HTTP read timeout tests (#23002). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `564a2074`: Consistently use`[expected]` table for packse (#23025). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/uv-test/src/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/uv/tests/pip_install/wheel_variant_compatibility.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Configure one immediate HTTP retry with a one-second timeout per attempt.
-        self.with_http_timeout("1")
-            .with_http_retries("1")
-            .with_env(EnvVars::UV_INTERNAL__TEST_NO_HTTP_RETRY_DELAY, "true")
+
+        [expected]
+        satisfiable = true
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    /// Configure one HTTP retry with a one-second timeout for all commands in this context.
-        self.with_http_timeout("1").with_http_retries("1")
+        expected.satisfiable = true
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `55de8184` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `564a2074` are properly handled with clean fallback behavior.

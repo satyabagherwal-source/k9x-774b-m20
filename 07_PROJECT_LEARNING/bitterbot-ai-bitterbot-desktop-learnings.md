@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `7a563ca0`  
+> **Source Version**: `299269af`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T13:54:30.448Z  
+> **Timestamp**: 2026-10-31T16:50:39.537Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T13:54:30.441Z  
+> **Harvest Timestamp**: 2026-10-31T16:50:39.529Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,347 +1799,446 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7a563ca0` (2026-10-31)
-**Commit Message**: feat(gateway): attribute event-loop stalls with an on-demand sampling profiler (#341)
+### Incident Patch 1: `299269af` (2026-10-31)
+**Commit Message**: feat(gateway): explain disabled OpenAI-compatible endpoints instead of a bare 404 (#342)
 
-The event-loop monitor said when the loop stalled but not what held it; a
-stall with no RPC in flight (a timer-driven memory sweep, a GC pause) left
-nothing to line up against. The live gateway showed 3-29 s stalls tonight
-with no attributable log line.
+Both `/v1/chat/completions` and `/v1/responses` are off by default. A client
+that pointed an OpenAI SDK at the Gateway got `404 Not Found` with no hint,
+read it as "not an OpenAI-compatible API", and left. An external robotics
+integration documented exactly that in October 2026.
 
-The monitor now arms V8's sampling CPU profiler (inspector Profiler, 10 ms
-samples on its own thread) after the first window that crosses the warn
-threshold, rotates the profile every window, and for each later window whose
-max stall reaches BITTERBOT_EVENT_LOOP_PROFILE_MS (default 1000) logs the
-frames that held the loop as self time per frame with file:line, including
-"(garbage collector)" for GC pauses. After ten quiet windows it disarms, so a
-healthy gateway pays nothing. BITTERBOT_EVENT_LOOP_PROFILE=0 keeps it off.
+The disabled routes now answer 404 with an OpenAI-shaped JSON error
+(`code: endpoint_disabled`) whose message names the config key to flip, the
+CLI command, and the docs page. The gateway log carries the same line once
+per endpoint. Unknown paths keep the plain fallthrough, and enabled routes
+are untouched.
 
-summarizeProfile() and the arm/disarm policy are pure and unit-tested; two
-integration tests drive the monitor with a fake profiler and with the real
-inspector against a synchronous hog.
+Docs: enable steps (CLI and Docker) and a troubleshooting entry on the
+endpoint pages, the Docker guide, and the gateway troubleshooting page; the
+README interoperability paragraph now mentions the endpoint.
 
 Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
-**File**: `docs/gateway/troubleshooting.md` (modified, +16/-0)
+**File**: `README.md` (modified, +2/-2)
 ```diff
-@@ -153,6 +153,22 @@ span. Tune or disable via env: `BITTERBOT_EVENT_LOOP_MONITOR=0` (off),
- `BITTERBOT_EVENT_LOOP_SAMPLE_MS` (window, default 30000),
- `BITTERBOT_EVENT_LOOP_WARN_MS` (threshold, default 250).
+@@ -239,13 +239,13 @@ There is no public feed or follower count. Expense tracking records a shared tab
  
-+Stalls with no RPC in flight (a timer-driven memory sweep, a GC pause) leave
-+nothing to line up against, so the monitor also attributes them. After the
-+first stalled window it arms V8's sampling profiler; every later window whose
-+worst stall reaches `BITTERBOT_EVENT_LOOP_PROFILE_MS` (default 1000) logs the
-+frames that held the loop:
-+
-+```
-+[gateway/event-loop] event loop stall attribution: max=8577ms samples=2400 over 30000ms
-+   27%   8100ms  detectOrphanClusters /home/me/.bitterbot/app/current/dist/entry.js:88123
-+    3%    900ms  (garbage collector)
-+```
-+
-+Self time per frame, heaviest first; `(garbage collector)` means the stall was
-+a GC pause. The profiler disarms after five quiet minutes, so a healthy gateway
-+pays nothing for it. Set `BITTERBOT_EVENT_LOOP_PROFILE=0` to never arm it.
-+
- A healthy build should not exhibit this. If it reappears:
+ The longer-term ambition is a network where agents turn experience into useful capabilities and share those capabilities with evidence attached.
  
- - Watch for RPC durations ballooning in the logs (e.g. `skills.network` taking
+-Bitterbot implements signed skill exchange over a P2P mesh, receiver quarantine and validation, peer reputation, and retractions. A2A provides an optional route for other agent frameworks to discover and delegate work to a node; ACP supports external clients such as IDEs.
++Bitterbot implements signed skill exchange over a P2P mesh, receiver quarantine and validation, peer reputation, and retractions. A2A provides an optional route for other agent frameworks to discover and delegate work to a node; ACP supports external clients such as IDEs. The Gateway can also serve an OpenAI-compatible `/v1/chat/completions` endpoint (off by default), so any tool that speaks the OpenAI API can use a Bitterbot agent as its model.
+ 
+ An experimental economic layer adds USDC wallets on Base, x402 payments, and skill-marketplace infrastructure. **The wallet, payments, A2A HTTP, marketplace, and bounties are opt-in.** The wallet starts on testnet. Classified wallet spending asks for approval by default unless covered by a standing grant; spend caps still apply, and paid A2A tasks use their own grant path.
+ 
+ The marketplace is early and has not carried meaningful paid volume. Payment functionality has not had a third-party audit. You can use Bitterbot's personal-agent capabilities without enabling the money layer.
+ 
+-[Skill marketplace](docs/marketplace/) · [A2A integration](docs/marketplace/a2a-integration.md) · [Wallet](docs/wallet/) · [Action review](docs/tools/action-review.md)
++[Skill marketplace](docs/marketplace/) · [A2A integration](docs/marketplace/a2a-integration.md) · [OpenAI-compatible endpoint](docs/gateway/openai-http-api.md) · [Wallet](docs/wallet/) · [Action review](docs/tools/action-review.md)
+ 
+ ## Models
+ 
 ```
 
-**File**: `docs/observability.md` (modified, +7/-3)
+**File**: `docs/gateway/openai-http-api.md` (modified, +42/-0)
 ```diff
-@@ -97,9 +97,13 @@ enough to risk starving the WebSocket keepalive" — the class of stall
- that bounces the Control UI with a `code=1006` tick-timeout. The sampler
- runs even with OTel disabled (the default), where it still logs a
- structured WARN under the `[gateway/event-loop]` subsystem; the span is
--just the exported form of the same event. Tune it with
--`BITTERBOT_EVENT_LOOP_MONITOR` / `BITTERBOT_EVENT_LOOP_SAMPLE_MS` /
--`BITTERBOT_EVENT_LOOP_WARN_MS`. See
-+just the exported form of the same event. Once a window has stalled, the
-+sampler also arms V8's sampling profiler and logs a stall attribution (the
-+frames that held the loop, self time per frame) for later windows that
-+cross `BITTERBOT_EVENT_LOOP_PROFILE_MS`; it disarms after a quiet period.
-+Tune it with `BITTERBOT_EVENT_LOOP_MONITOR` / `BITTERBOT_EVENT_LOOP_SAMPLE_MS`
-+/ `BITTERBOT_EVENT_LOOP_WARN_MS` / `BITTERBOT_EVENT_LOOP_PROFILE` /
-+`BITTERBOT_EVENT_LOOP_PROFILE_MS`. See
- [/gateway/troubleshooting](/gateway/troubleshooting).
+@@ -59,6 +59,48 @@ Set `gateway.http.endpoints.chatCompletions.enabled` to `true`:
+ }
+ ```
  
- ## What it looks like
++Or from the CLI, then restart the Gateway:
++
++```bash
++bitterbot config set gateway.http.endpoints.chatCompletions.enabled true --json
++```
++
++In Docker, run the same command through the container:
++
++```bash
++docker compose exec -u node bitterbot-gateway \
++  node bitterbot.mjs config set gateway.http.endpoints.chatCompletions.enabled true --json
++docker compose restart bitterbot-gateway
++```
++
++## Troubleshooting
++
++### 404 with `"code": "endpoint_disabled"`
++
++The Gateway is reachable but the endpoint is switched off. Since 1.12 the
++response is a JSON error in the OpenAI shape that names the config key:
++
++```json
++{
++  "error": {
++    "message": "The OpenAI Chat Completions endpoint (/v1/chat/completions) is disabled on this Bitterbot Gateway. Set gateway.http.endpoints.chatCompletions.enabled to true in bitterbot.json (bitterbot config set gateway.http.endpoints.chatCompletions.enabled true --json) and restart the Gateway. Docs: https://docs.bitterbot.ai/gateway/openai-http-api",
++    "type": "invalid_request_error",
++    "param": null,
++    "code": "endpoint_disabled"
++  }
++}
++```
++
++The gateway log carries the same line once per endpoint. Older Gateways
++answered a plain `404 Not Found` with no hint, which read as "not an
++OpenAI-compatible API". Enable the endpoint as shown above and retry.
++
++### 401 Unauthorized
++
++The endpoint is on but the request carried no (or the wrong) bearer token. Send
++the Gateway token as `Authorization: Bearer <token>`; `bitterbot config get
++gateway.auth.token` prints it.
++
+ ## Disabling the endpoint
+ 
+ Set `gateway.http.endpoints.chatCompletions.enabled` to `false`:
 ```
 
-**File**: `src/gateway/event-loop-monitor.test.ts` (modified, +184/-1)
+**File**: `docs/gateway/openresponses-http-api.md` (modified, +8/-0)
 ```diff
-@@ -1,10 +1,14 @@
--import { describe, expect, it } from "vitest";
+@@ -331,3 +331,11 @@ curl -N http://127.0.0.1:19001/v1/responses \
+     "input": "hi"
+   }'
+ ```
++
++## Troubleshooting
++
++A `404` whose JSON body has `"code": "endpoint_disabled"` means the Gateway is
++reachable but `gateway.http.endpoints.responses.enabled` is not set. Enable it
++(`bitterbot config set gateway.http.endpoints.responses.enabled true --json`),
++restart the Gateway, and retry. A plain `404 Not Found` without that body comes
++from a Gateway older than 1.12, where the disabled endpoint gave no hint.
+```
+
+**File**: `docs/gateway/troubleshooting.md` (modified, +18/-0)
+```diff
+@@ -187,6 +187,24 @@ Related:
+ - [/gateway/authentication](/gateway/authentication)
+ - [/gateway/remote](/gateway/remote)
+ 
++## 404 from `/v1/chat/completions` or `/v1/responses`
++
++The Gateway answers but an OpenAI-style client gets `404`. Both OpenAI-compatible
++endpoints are **off by default**. Check the response body: a JSON error with
++`"code": "endpoint_disabled"` names the setting to flip, and the gateway log
++shows the same line once. Enable the one you need and restart:
++
++```bash
++bitterbot config set gateway.http.endpoints.chatCompletions.enabled true --json
++# or, for the OpenResponses API
++bitterbot config set gateway.http.endpoints.responses.enabled true --json
++```
++
++In Docker, prefix the command with
++`docker compose exec -u node bitterbot-gateway node bitterbot.mjs`. A plain
++`404 Not Found` with no JSON body means the Gateway is older than 1.12; the fix
++is the same. See [OpenAI Chat Completions](/gateway/openai-http-api).
++
+ ## Gateway service not running
+ 
+ Use this when service is installed but process does not stay up.
+```
+
+**File**: `docs/platforms/docker.md` (modified, +28/-0)
+```diff
+@@ -192,6 +192,34 @@ it. Safer ways to reach it from elsewhere, in order:
+    past host firewalls such as ufw. Never publish the port to the internet
+    without HTTPS in front of it.
+ 
++## Using it as an OpenAI-compatible model server
++
++Tools that speak the OpenAI Chat Completions API (robotics bridges, Open WebUI,
++LangChain, plain `curl`) can use a Bitterbot agent as their model. The
++endpoint is **off by default**; a request to a Gateway that has not enabled it
++gets a `404` whose JSON body says so and names the setting. Turn it on through
++the container and restart:
++
++```bash
++docker compose exec -u node bitterbot-gateway \
++  node bitterbot.mjs config set gateway.http.endpoints.chatCompletions.enabled true --json
++docker compose restart bitterbot-gateway
++```
++
++Then point the client at `http://127.0.0.1:19001/v1/chat/completions` with the
++Gateway token as the API key and `bitterbot:main` as the model:
++
++```bash
++curl -s http://127.0.0.1:19001/v1/chat/completions \
++  -H "Authorization: Bearer $BITTERBOT_GATEWAY_TOKEN" \
++  -H "Content-Type: application/json" \
++  -d '{"model":"bitterbot:main","messages":[{"role":"user","content":"hello"}]}'
++```
++
++Each call runs a normal agent turn, with the agent's memory and tools, and
++replies in the OpenAI response shape (streaming with `"stream": true`). Details
++and the `/v1/responses` variant: [OpenAI Chat Completions](/gateway/openai-http-api).
++
+ ## The P2P port
+ 
+ By default the P2P port is published on `127.0.0.1` only. The node still joins
+```
+
+**File**: `src/gateway/openai-disabled-http.test.ts` (added, +110/-0)
+```diff
+@@ -0,0 +1,110 @@
++import type { IncomingMessage, ServerResponse } from "node:http";
 +import { describe, expect, it, vi } from "vitest";
- import {
-+  type CpuProfileLike,
-   type EventLoopSample,
-   formatEventLoopWarning,
-+  formatStallAttribution,
-   resolveEventLoopMonitorConfig,
-   shouldWarn,
-+  StallProfilerPolicy,
-   startEventLoopMonitor,
-+  summarizeProfile,
- } from "./event-loop-monitor.js";
- 
- describe("resolveEventLoopMonitorConfig", () => {
-@@ -13,9 +17,20 @@ describe("resolveEventLoopMonitorConfig", () => {
-       enabled: true,
-       sampleIntervalMs: 30_000,
-       warnThresholdMs: 250,
-+      profileEnabled: true,
-+      profileThresholdMs: 1_000,
-     });
-   });
- 
-+  it("reads the stall-profiler switches from env", () => {
-+    const cfg = resolveEventLoopMonitorConfig({
-+      BITTERBOT_EVENT_LOOP_PROFILE: "0",
-+      BITTERBOT_EVENT_LOOP_PROFILE_MS: "2500",
-+    });
-+    expect(cfg.profileEnabled).toBe(false);
-+    expect(cfg.profileThresholdMs).toBe(2500);
-+  });
++import {
++  createDisabledOpenAiEndpointHandler,
++  describeDisabledOpenAiEndpoint,
++  OPENAI_ENDPOINT_DISABLED_CODE,
++} from "./openai-disabled-http.js";
 +
-   it("reads sample interval and threshold from env", () => {
-     const cfg = resolveEventLoopMonitorConfig({
-       BITTERBOT_EVENT_LOOP_SAMPLE_MS: "5000",
-@@ -95,3 +110,171 @@ describe("startEventLoopMonitor", () => {
-     }).not.toThrow();
-   });
- });
-+
-+function syntheticProfile(samples: number[], durationUs: number): CpuProfileLike {
-+  return {
-+    startTime: 1_000_000,
-+    endTime: 1_000_000 + durationUs,
-+    samples,
-+    nodes: [
-+      { id: 1, callFrame: { functionName: "(root)", url: "", lineNumber: -1 } },
-+      { id: 2, callFrame: { functionName: "(idle)", url: "", lineNumber: -1 } },
-+      {
-+        id: 3,
-+        callFrame: {
-+          functionName: "sweepChunks",
-+          url: "file:///app/dist/memory.js",
-+          lineNumber: 41,
-+        },
-+      },
-+      { id: 4, callFrame: { functionName: "", url: "file:///app/dist/rpc.js", lineNumber: 9 } },
-+      { id: 5, callFrame: { functionName: "(garbage collector)", url: "", lineNumber: -1 } },
-+    ],
-+  };
++function fakeReq(url: string, method = "POST"): IncomingMessage {
++  return { url, method, headers: {} } as unknown as IncomingMessage;
 +}
 +
-+describe("summarizeProfile", () => {
-+  it("ranks frames by self time, drops idle, keeps GC, and names anonymous frames", () => {
-+    // 10 samples over 1s: 5 sweep, 2 anonymous rpc, 1 gc, 2 idle.
-+    const profile = syntheticProfile([3, 3, 3, 3, 3, 4, 4, 5, 2, 2], 1_000_000);
-+    const summary = summarizeProfile(profile, 3);
-+    expect(summary.profileDurationMs).toBe(1000);
-+    expect(summary.sampleCount).toBe(8);
-+    expect(summary.frames.map((f) => f.label)).toEqual([
-+      "sweepChunks /app/dist/memory.js:42",
-+      "(anonymous) /app/dist/rpc.js:10",
-+      "(garbage collector)",
-+    ]);
-+    expect(summary.frames[0]).toMatchObject({ percent: 50, ms: 500 });
-+    expect(summary.frames[2]).toMatchObject({ percent: 10, ms: 100 });
++function fakeRes() {
++  const headers: Record<string, string> = {};
++  const state = { statusCode: 0, body: "", headers };
++  const res = {
++    get statusCode() {
++      return state.statusCode;
++    },
++    set statusCode(value: number) {
++      state.statusCode = value;
++    },
++    setHeader(name: string, value: string) {
++      headers[name.toLowerCase()] = value;
++    },
++    end(chunk?: string) {
++      state.body = chunk ?? "";
++    },
++  } as unknown as ServerResponse;
++  return { res, state };
++}
++
++describe("disabled OpenAI-style endpoints", () => {
++  it("answers a disabled chat completions request with an OpenAI-shaped hint", () => {
++    const warn = vi.fn();
++    const handle = createDisabledOpenAiEndpointHandler({
++      chatCompletionsEnabled: false,
++      responsesEnabled: false,
++      warn,
++    });
++    const { res, state } = fakeRes();
++    expect(handle(fakeReq("/v1/chat/completions?x=1"), res)).toBe(true);
++    expect(state.statusCode).toBe(404);
++    expect(state.headers["content-type"]).toContain("application/json");
++    const body = JSON.parse(state.body) as {
++      error: { message: string; type: string; code: string; param: null };
++    };
++    expect(body.error.code).toBe(OPENAI_ENDPOINT_DISABLED_CODE);
++    expect(body.error.type).toBe("invalid_request_error");
++    expect(body.error.param).toBeNull();
++    expect(body.error.message).toContain("gateway.http.endpoints.chatCompletions.enabled");
++    expect(body.error.message).toContain("docs.bitterbot.ai/gateway/openai-http-api");
++    expect(warn).toHaveBeenCalledTimes(1);
++    expect(warn.mock.calls[0]?.[0]).toContain("/v1/chat/completions");
++    expect(warn.mock.calls[0]?.[0]).toContain("chatCompletions.enabled=true");
 +  });
 +
-+  it("ignores samples that point at unknown nodes and handles an empty profile", () => {
-+    expect(summarizeProfile(syntheticProfile([99, 98], 500_000)).frames).toEqual([]);
-+    expect(summarizeProfile(syntheticProfile([], 0))).toEqual({
-+      frames: [],
-+      sampleCount: 0,
-+      profileDurationMs: 0,
++  it("warns once per endpoint, not once per request", () => {
++    const warn = vi.fn();
++    const handle = createDisabledOpenAiEndpointHandler({
++      chatCompletionsEnabled: false,
++      responsesEnabled: false,
++      warn,
 +    });
++    for (let i = 0; i < 3; i += 1) {
++      expect(handle(fakeReq("/v1/chat/completions"), fakeRes().res)).toBe(true);
++    }
++    expect(handle(fakeReq("/v1/responses"), fakeRes().res)).toBe(true);
++    expect(warn).toHaveBeenCalledTimes(2);
++  });
++
++  it("names the responses config key for /v1/responses", () => {
++    const handle = createDisabledOpenAiEndpointHandler({
++      chatCompletionsEnabled: true,
++      responsesEnabled: false,
++      warn: () => {},
++    });
++    const { res, state } = fakeRes();
++    expect(handle(fakeReq("/v1/responses"), res)).toBe(true);
++    const body = JSON.parse(state.body) as { error: { message: string } };
++    expect(body.error.message).toContain("gateway.http.endpoints.responses.enabled");
++    expect(body.error.message).toContain("openresponses-http-api");
++  });
++
++  it("stays out of the way when the endpoint is enabled or the path is unknown", () => {
++    const warn = vi.fn();
++    const handle = createDisabledOpenAiEndpointHandler({
++      chatCompletionsEnabled: true,
++      responsesEnabled: true,
++      warn,
++    });
++    expect(handle(fakeReq("/v1/chat/completions"), fakeRes().res)).toBe(false);
++    expect(handle(fakeReq("/v1/responses"), fakeRes().res)).toBe(false);
++    const disabledHandle = createDisabledOpenAiEndpointHandler({
++      chatCompletionsEnabled: false,
++      responsesEnabled: false,
++      warn,
++    });
++    expect(disabledHandle(fakeReq("/v1/models", "GET"), fakeRes().res)).toBe(false);
++    expect(disabledHandle(fakeReq("/healthz", "GET"), fakeRes().res)).toBe(false);
++    expect(warn).not.toHaveBeenCalled();
++  });
++
++  it("describes only the endpoints it knows", () => {
++    expect(describeDisabledOpenAiEndpoint("/v1/chat/completions")?.configKey).toBe(
++      "gateway.http.endpoints.chatCompletions.enabled",
++    );
++    expect(describeDisabledOpenAiEndpoint("/v1/embeddings")).toBeNull();
 +  });
 +});
-+
-+describe("formatStallAttribution", () => {
-+  it("prints a header plus one aligned line per frame", () => {
-+    const text = formatStallAttribution({
-+      sample: { maxMs: 8123.4, meanMs: 30, p99Ms: 100 },
-+      sampleCount: 800,
-+      profileDurationMs: 30_000,
-+      frames: [
-+        { label: "sweepChunks /app/dist/memory.js:42", percent: 27, ms: 8100 },
-+        { label: "(garbage collector)", percent: 3, ms: 900 },
-+      ],
-+    });
-+    const lines = text.split("\n");
-+    expect(lines[0]).toBe("event loop stall attribution: max=8123ms samples=800 over 30000ms");
-+    expect(lines[1]).toBe("   27%   8100ms  sweepChunks /app/dist/memory.js:42");
-+    expect(lines[2]).toBe("    3%    900ms  (garbage collector)");
-+  });
-+
-+  it("says so when nothing busy was sampled", () => {
-+    const text = formatStallAttribution({
-+      sample: { maxMs: 1200, meanMs: 1, p99Ms: 2 },
-+      sampleCount: 0,
-+      profileDurationMs: 30_000,
-+      frames: [],
-+    });
-+    expect(text).toMatch(/no busy frames sampled$/);
-+  });
-+});
-+
-+describe("StallProfilerPolicy", () => {
-+  it("arms on the first stalled window and disarms after the quiet run", () => {
-+    const policy = new StallProfilerPolicy(3);
-+    expect(policy.observe(false)).toBe("none");
-+    expect(policy.armed).toBe(false);
-+    expect(policy.observe(true)).toBe("arm");
-+    expect(policy.armed).toBe(true);
-+    expect(policy.observe(true)).toBe("none");
-+    expect(policy.observe(false)).toBe("none");
-+    expect(policy.observe(false)).toBe("none");
-+    // A stall inside the quiet run resets the countdown.
-+    expect(policy.observe(true)).toBe("none");
-+    expect(policy.observe(false)).toBe("none");
-+    expect(policy.observe(false)).toBe("none");
-+    expect(policy.observe(false)).toBe("disarm");
-+    expect(policy.armed).toBe(false);
-+    expect(policy.observe(false)).toBe("none");
-+  });
-+});
-+
-+function hogEvent
 ```
 
-**File**: `src/gateway/event-loop-monitor.ts` (modified, +277/-3)
+**File**: `src/gateway/openai-disabled-http.ts` (added, +112/-0)
 ```diff
-@@ -17,12 +17,25 @@
-  * stalled and can line it up against the `res ✓ <method> <ms>` line for the
-  * handler that was running, instead of reverse-engineering it from timestamps.
-  *
-+ * Knowing *when* is not always enough: a stall with no RPC in flight (a timer-
-+ * driven memory sweep, a GC pause) leaves nothing to line up against. So the
-+ * monitor also attributes stalls. Once a window has stalled past the warn
-+ * threshold it arms V8's sampling CPU profiler (`inspector` Profiler, ~10ms
-+ * samples, a separate sampler thread so it observes the blocked main thread).
-+ * Each later window whose max stall crosses the attribution threshold logs the
-+ * frames that held the loop (self time, file:line), including `(garbage
-+ * collector)` when the stall is a GC pause. After enough quiet windows the
-+ * profiler disarms again, so a healthy gateway pays nothing.
+@@ -0,0 +1,112 @@
++import type { IncomingMessage, ServerResponse } from "node:http";
++import { logWarn } from "../logger.js";
++import { sendJson } from "./http-common.js";
++
++/**
++ * Explains, instead of a bare 404, why an OpenAI-style HTTP endpoint that the
++ * Gateway knows about is not being served.
 + *
-  * On by default at gateway boot. Tunable / disengageable via env:
-  *   BITTERBOT_EVENT_LOOP_MONITOR=0        disable entirely
-  *   BITTERBOT_EVENT_LOOP_SAMPLE_MS=30000  sampling window (ms)
-  *   BITTERBOT_EVENT_LOOP_WARN_MS=250      warn when a window's max delay >= this
-+ *   BITTERBOT_EVENT_LOOP_PROFILE=0        never attribute (no profiler)
-+ *   BITTERBOT_EVENT_LOOP_PROFILE_MS=1000  attribute when a window's max >= this
-  */
- 
-+import { Session } from "node:inspector";
- import { monitorEventLoopDelay } from "node:perf_hooks";
- import { createSubsystemLogger } from "../logging/subsystem.js";
- import { startSpan } from "../observability/otel.js";
-@@ -32,19 +45,57 @@ const log = createSubsystemLogger("gateway/event-loop");
- const NS_PER_MS = 1e6;
- const DEFAULT_SAMPLE_INTERVAL_MS = 30_000;
- const DEFAULT_WARN_THRESHOLD_MS = 250;
-+const DEFAULT_PROFILE_THRESHOLD_MS = 1_000;
- /** libuv histogram resolution; the loop is probed every this-many ms. */
- const HISTOGRAM_RESOLUTION_MS = 20;
-+/** V8 sampling interval while the profiler is armed (microseconds). */
-+const PROFILER_SAMPLING_INTERVAL_US = 10_000;
-+/** Consecutive windows below the warn threshold before the profiler disarms. */
-+const QUIET_WINDOWS_TO_DISARM = 10;
-+/** How many frames a stall attribution lists. */
-+const ATTRIBUTION_TOP_FRAMES = 6;
- 
- export type EventLoopSample = { maxMs: number; meanMs: number; p99Ms: number };
- 
- export type EventLoopMonitorConfig = {
-   enabled: boolean;
-   sampleIntervalMs: number;
-   warnThresholdMs: number;
-+  /** Attribute stalls with the sampling profiler (armed after the first warning). */
-+  profileEnabled: boolean;
-+  /** A window's max stall must reach this before its frames are logged. */
-+  profileThresholdMs: number;
- };
- 
- export type EventLoopMonitorHandle = { stop: () => void };
- 
-+/** One line of a stall attribution: where the main thread spent its time. */
-+export type StallFrame = {
++ * Both `/v1/chat/completions` and `/v1/responses` are off by default. An
++ * integrator who points an OpenAI SDK at the Gateway otherwise sees only
++ * `404 Not Found`, concludes the API is incompatible, and leaves (a robotics
++ * project did exactly that in 2026-10). The response here keeps the 404 status,
++ * since the route really is not mounted, but carries an OpenAI-shaped error
++ * body that names the config key to flip and the docs page, and the gateway log
++ * says the same thing once per endpoint so the operator sees it too.
++ */
++
++export const OPENAI_ENDPOINT_DISABLED_CODE = "endpoint_disabled";
++
++export type DisabledOpenAiEndpointOptions = {
++  chatCompletionsEnabled: boolean;
++  responsesEnabled: boolean;
++  /** Test seam; defaults to the gateway warn log. */
++  warn?: (message: string) => void;
++};
++
++type KnownEndpoint = {
++  pathname: string;
 +  label: string;
-+  /** Share of the window's samples that landed in this frame (0-100). */
-+  percent: number;
-+  /** Approximate self time in the window (ms). */
-+  ms: number;
++  configKey: string;
++  docsUrl: string;
++  enabled: (opts: DisabledOpenAiEndpointOptions) => boolean;
 +};
 +
-+export type StallAttribution = {
-+  sample: EventLoopSample;
-+  frames: StallFrame[];
-+  sampleCount: number;
-+  profileDurationMs: number;
-+};
++const KNOWN_ENDPOINTS: readonly KnownEndpoint[] = [
++  {
++    pathname: "/v1/chat/completions",
++    label: "OpenAI Chat Completions",
++    configKey: "gateway.http.endpoints.chatCompletions.enabled",
++    docsUrl: "https://docs.bitterbot.ai/gateway/openai-http-api",
++    enabled: (opts) => opts.chatCompletionsEnabled,
++  },
++  {
++    pathname: "/v1/responses",
++    label: "OpenResponses",
++    configKey: "gateway.http.endpoints.responses.enabled",
++    docsUrl: "https://docs.bitterbot.ai/gateway/openresponses-http-api",
++    enabled: (opts) => opts.responsesEnabled,
++  },
++];
 +
-+/** The subset of a CDP `Profiler.Profile` the attribution uses. */
-+export type CpuProfileLike = {
-+  nodes: Array<{
-+    id: number;
-+    callFrame: { functionName: string; url: string; lineNumber: number };
-+  }>;
-+  samples?: number[];
-+  startTime: number;
-+  endTime: number;
-+};
-+
- function parsePositiveInt(raw: string | undefined, fallback: number): number {
-   if (raw === undefined) {
-     return fallback;
-@@ -77,6 +128,152 @@ export function resolveEventLoopMonitorConfig(
-     warnThresholdMs:
-       overrides?.warnThresholdMs ??
-       parsePositiveInt(env.BITTERBOT_EVENT_LOOP_WARN_MS, DEFAULT_WARN_THRESHOLD_MS),
-+    profileEnabled: overrides?.profileEnabled ?? !parseDisabled(env.BITTERBOT_EVENT_LOOP_PROFILE),
-+    profileThresholdMs:
-+      overrides?.profileThresholdMs ??
-+      parsePositiveInt(env.BITTERBOT_EVENT_LOOP_PROFILE_MS, DEFAULT_PROFILE_THRESHOLD_MS),
++export function describeDisabledOpenAiEndpoint(pathname: string): {
++  label: string;
++  configKey: string;
++  docsUrl: string;
++  message: string;
++} | null {
++  const endpoint = KNOWN_ENDPOINTS.find((candidate) => candidate.pathname === pathname);
++  if (!endpoint) {
++    return null;
++  }
++  const message =
++    `The ${endpoint.label} endpoint (${endpoint.pathname}) is disabled on this Bitterbot Gateway. ` +
++    `Set ${endpoint.configKey} to true in bitterbot.json ` +
++    `(bitterbot config set ${endpoint.configKey} true --json) and restart the Gateway. ` +
++    `Docs: ${endpoint.docsUrl}`;
++  return {
++    label: endpoint.label,
++    configKey: endpoint.configKey,
++    docsUrl: endpoint.docsUrl,
++    message,
 +  };
 +}
 +
 +/**
-+ * Collapse a CPU profile into self-time per frame, heaviest first. Pure, so the
-+ * ranking is unit-testable with a synthetic profile. V8's synthetic nodes keep
-+ * their parenthesised names: `(garbage collector)` is a real answer (the stall
-+ * was a GC pause), `(idle)` is dropped because idle time is not a stall.
++ * Returns a request handler that answers requests for a known-but-disabled
++ * OpenAI-style endpoint and returns `false` for everything else. Mount it after
++ * the enabled handlers and before the generic 404 fallthrough.
 + */
-+export function summarizeProfile(
-+  profile: CpuProfileLike,
-+  top: number = ATTRIBUTION_TOP_FRAMES,
-+): { frames: StallFrame[]; sampleCount: number; profileDurationMs: number } {
-+  const samples = profile.samples ?? [];
-+  const durationMs = Math.max(0, (profile.endTime - profile.startTime) / 1000);
-+  const byId = new Map(profile.nodes.map((node) => [node.id, node]));
-+  const counts = new Map<string, number>();
-+  let counted = 0;
-+  for (const id of samples) {
-+    const node = byId.get(id);
-+    if (!node) {
-+      continue;
++export function createDisabledOpenAiEndpointHandler(
++  opts: DisabledOpenAiEndpointOptions,
++): (req: IncomingMessage, res: ServerResponse) => boolean {
++  const warn = opts.warn ?? logWarn;
++  const warned = new Set<string>();
++  return (req, res) => {
++    const pathname = new URL(req.url ?? "/", "http://localhost").pathname;
++    const endpoint = KNOWN_ENDPOINTS.find((candidate) => candidate.pathname === pathname);
++    if (!endpoint || endpoint.enabled(opts)) {
++      return false;
 +    }
-+    const { functionName, url, lineNumber } = node.callFrame;
-+    if (functionName 
++    const described = describeDisabledOpenAiEndpoint(pathname);
++    if (!described) {
++      return false;
++    }
++    if (!warned.has(pathname)) {
++      warned.add(pathname);
++      warn(
++        `[gateway/http] ${req.method ?? "GET"} ${pathname} refused: ${described.label} endpoint is disabled; ` +
++          `set ${described.configKey}=true to serve it (${described.docsUrl})`,
++      );
++    }
++    sendJson(res, 404, {
++      error: {
++        message: described.message,
++        type: "invalid_request_error",
++        param: null,
++        code: OPENAI_ENDPOINT_DISABLED_CODE,
++      },
++    });
++    return true;
++  };
++}
+```
+
+**File**: `src/gateway/openai-http.e2e.test.ts` (modified, +6/-0)
+```diff
+@@ -74,6 +74,9 @@ describe("OpenAI-compatible HTTP API (e2e)", () => {
+           messages: [{ role: "user", content: "hi" }],
+         });
+         expect(res.status).toBe(404);
++        const body = (await res.json()) as { error?: { code?: string; message?: string } };
++        expect(body.error?.code).toBe("endpoint_disabled");
++        expect(body.error?.message).toContain("gateway.http.endpoints.chatCompletions.enabled");
+       } finally {
+         await server.close({ reason: "test done" });
+       }
+@@ -90,6 +93,9 @@ describe("OpenAI-compatible HTTP API (e2e)", () => {
+           messages: [{ role: "user", content: "hi" }],
+         });
+         expect(res.status).toBe(404);
++        const body = (await res.json()) as { error?: { code?: string; message?: string } };
++        expect(body.error?.code).toBe("endpoint_disabled");
++        expect(body.error?.message).toContain("gateway.http.endpoints.chatCompletions.enabled");
+       } finally {
+         await server.close({ reason: "test done" });
+       }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #342** (2026-10-31): feat(gateway): explain disabled OpenAI-compatible endpoints instead of a bare 404 (@VGIL77)
 - **PR #341** (2026-10-31): feat(gateway): attribute event-loop stalls with an on-demand sampling profiler (@VGIL77)
 - **PR #340** (2026-10-31): fix(acp): migrate to @agentclientprotocol/sdk 2.x and fix the stdio bridge (@VGIL77)
 - **PR #339** (2026-10-30): chore(deps): bump the npm-minor-patch group across 1 directory with 19 updates (@dependabot[bot])
 - **PR #336** (2026-10-30): fix(orchestrator): reconcile Cargo.lock after the ed25519-dalek and sha2 bumps (@VGIL77)
 - **PR #335** (2026-10-30): chore(deps-dev): bump the lint-format group (oxfmt 0.74.0, oxlint 1.90.0, oxlint-tsgolint 7.0.2005) (@VGIL77)
-- **PR #334** (2026-10-30): docs: reboot recovery fix, WSL2 autostart note, LongMemEval in benchmarks index (@VGIL77)
 
 ---
 
@@ -2159,43 +2258,30 @@ Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gateway): attribute event-loop stalls with an on-demand sampling profiler (#341)
+## X. gateway): explain disabled OpenAI-compatible endpoints instead of a bare 404 (#3
 
 **RULE**:
-When implementing operations in `docs/gateway/troubleshooting.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7a563ca0`: gateway): attribute event-loop stalls with an on-demand sampling profiler (#341). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `299269af`: gateway): explain disabled OpenAI-compatible endpoints instead of a bare 404 (#342). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/gateway/troubleshooting.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-Stalls with no RPC in flight (a timer-driven memory sweep, a GC pause) leave
-nothing to line up against, so the monitor also attributes them. After the
-first stalled window it arms V8's sampling profiler; every later window whose
-worst stall reaches `BITTERBOT_EVENT_LOOP_PROFILE_MS` (default 1000) logs the
-frames that held the loop:
-
-```
-[gateway/event-loop] event loop stall attribution: max=8577ms samples=2400 over 30000ms
-   27%   8100ms  detectOrphanClusters /home/me/.bitterbot/app/current/dist/entry.js:88123
-    3%    900ms  (garbage collector)
-```
-
-Self time per frame, heaviest first; `(garbage collector)` means the stall was
-a GC pause. The profiler disarms after five quiet minutes, so a healthy gateway
-pays nothing for it. Set `BITTERBOT_EVENT_LOOP_PROFILE=0` to never arm it.
-
+Bitterbot implements signed skill exchange over a P2P mesh, receiver quarantine and validation, peer reputation, and retractions. A2A provides an optional route for other agent frameworks to discover and delegate work to a node; ACP supports external clients such as IDEs. The Gateway can also serve an OpenAI-compatible `/v1/chat/completions` endpoint (off by default), so any tool that speaks the OpenAI API can use a Bitterbot agent as its model.
+[Skill marketplace](docs/marketplace/) · [A2A integration](docs/marketplace/a2a-integration.md) · [OpenAI-compatible endpoint](docs/gateway/openai-http-api.md) · [Wallet](docs/wallet/) · [Action review](docs/tools/action-review.md)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+Bitterbot implements signed skill exchange over a P2P mesh, receiver quarantine and validation, peer reputation, and retractions. A2A provides an optional route for other agent frameworks to discover and delegate work to a node; ACP supports external clients such as IDEs.
+[Skill marketplace](docs/marketplace/) · [A2A integration](docs/marketplace/a2a-integration.md) · [Wallet](docs/wallet/) · [Action review](docs/tools/action-review.md)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7a563ca0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `299269af` are properly handled with clean fallback behavior.

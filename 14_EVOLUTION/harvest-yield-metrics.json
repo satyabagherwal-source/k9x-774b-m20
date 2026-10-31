@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T16:39:50.272Z",
-  "total_cycles_completed": 6617,
-  "total_learnings_persisted": 6617,
-  "total_rules_promoted": 6251,
+  "last_updated": "2026-10-31T16:50:40.231Z",
+  "total_cycles_completed": 6620,
+  "total_learnings_persisted": 6620,
+  "total_rules_promoted": 6253,
   "history": [
-    {
-      "timestamp": "2026-10-31T03:19:21.912Z",
-      "repository": "HuggingFaceBio/Carbon-X",
-      "learningId": "learn-huggingface-huggingfacebio-carbon-x",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T03:26:04.178Z",
-      "repository": "Nanbeige/Nanbeige4.3-33B",
-      "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T03:26:04.613Z",
-      "repository": "GitoxideLabs/gitoxide",
-      "learningId": "learn-github-gitoxidelabs-gitoxide",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T03:26:12.306Z",
       "repository": "projectcontour/contour",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-31T16:39:50.272Z",
       "repository": "sqlpage/SQLPage",
       "learningId": "learn-github-sqlpage-sqlpage",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:50:25.609Z",
+      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:50:26.535Z",
+      "repository": "astral-sh/uv",
+      "learningId": "learn-github-astral-sh-uv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:50:40.231Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

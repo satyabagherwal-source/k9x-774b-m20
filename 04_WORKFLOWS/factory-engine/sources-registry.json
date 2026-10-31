@@ -1,11 +1,11 @@
 {
   "rustls-rustls": {
-    "name": "rustls/rustls",
+    "name": "rustls",
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T13:06:47.232Z",
-    "lastVerified": "2026-10-31T13:06:47.232Z",
+    "lastChecked": "2026-10-31T16:50:31.571Z",
+    "lastVerified": "2026-10-31T16:50:31.571Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -14,7 +14,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6148ff16"
   },
   "tanstack-router": {
     "name": "router",
@@ -39,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T16:39:52.805Z",
-    "lastVerified": "2026-10-31T16:39:52.805Z",
+    "lastChecked": "2026-10-31T16:50:42.786Z",
+    "lastVerified": "2026-10-31T16:50:42.786Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -140,22 +141,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "bitterbot-desktop",
+    "name": "Bitterbot-AI/bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T16:03:48.263Z",
-    "lastVerified": "2026-10-31T16:03:48.263Z",
+    "lastChecked": "2026-10-31T16:50:39.529Z",
+    "lastVerified": "2026-10-31T16:50:39.529Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "9e7d06fc0e36de1855a0678074e8551e25d1ca3e9fa414cd91ff7cecbb411781",
+    "contentHash": "259d2cc542f888f5c0f76453fbbe89b02de97d0f499be82da735a2522f4b9a51",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "7a563ca0"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -5349,8 +5349,8 @@
     "officialUrl": "https://github.com/etcd-io/etcd",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T00:27:39.999Z",
-    "lastVerified": "2026-10-31T00:27:39.999Z",
+    "lastChecked": "2026-10-31T16:50:34.101Z",
+    "lastVerified": "2026-10-31T16:50:34.101Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-etcd-io-etcd",
@@ -5423,12 +5423,12 @@
     "officialUrl": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T15:43:08.444Z",
-    "lastVerified": "2026-10-28T15:43:08.444Z",
+    "lastChecked": "2026-10-31T16:50:24.139Z",
+    "lastVerified": "2026-10-31T16:50:24.139Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-    "contentHash": "9a3eab5b6e4fb482d6768f054272e74939c555ef21134bc1faf31f67e2d07dad",
+    "contentHash": "efe24c6bc2703e3ed0ba3474d8386aff98197cffcc826ec6cfed3d1e7360fc75",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6546,12 +6546,12 @@
     "lastVerified": "2026-10-31T13:13:56.040Z"
   },
   "rook-rook": {
-    "name": "rook/rook",
+    "name": "rook",
     "officialUrl": "https://github.com/rook/rook",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T01:21:27.297Z",
-    "lastVerified": "2026-10-31T01:21:27.297Z",
+    "lastChecked": "2026-10-31T16:50:29.158Z",
+    "lastVerified": "2026-10-31T16:50:29.158Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rook-rook",
@@ -6560,7 +6560,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "285e01eb"
   },
   "startrail-org-leann": {
     "name": "StarTrail-org/LEANN",
@@ -7922,9 +7923,9 @@
   "touchlab-kampkit": {
     "name": "KaMPKit",
     "officialUrl": "https://github.com/touchlab/KaMPKit",
-    "lastChecked": "2026-10-28T21:37:09.360Z",
+    "lastChecked": "2026-10-31T16:50:26.662Z",
     "revisionIdentifier": "4af02006",
-    "lastVerified": "2026-10-28T21:37:09.360Z"
+    "lastVerified": "2026-10-31T16:50:26.662Z"
   },
   "oxc-project-oxc": {
     "name": "oxc-project/oxc",
@@ -8136,14 +8137,14 @@
     "officialUrl": "https://github.com/astral-sh/uv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T20:59:18.408Z",
-    "lastVerified": "2026-10-30T20:59:18.408Z",
+    "lastChecked": "2026-10-31T16:50:24.467Z",
+    "lastVerified": "2026-10-31T16:50:24.467Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-astral-sh-uv",
-    "contentHash": "63f4f402e5ab4430e3b3cb415c385e660983dcce86a004fff05926d2d13e3ddd",
+    "contentHash": "5ff683874a3c8bc556dacb41736ddaf4e32c539eabc987b2c0fb12949d29fcaa",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

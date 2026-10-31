@@ -1055,8 +1055,8 @@
     "sourceUrl": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
     "sourceVersion": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
     "license": "Open-Source",
-    "contentHash": "9a3eab5b6e4fb482d6768f054272e74939c555ef21134bc1faf31f67e2d07dad",
-    "lastHarvestedAt": "2026-10-28T15:43:08.780Z",
+    "contentHash": "efe24c6bc2703e3ed0ba3474d8386aff98197cffcc826ec6cfed3d1e7360fc75",
+    "lastHarvestedAt": "2026-10-31T16:50:25.604Z",
     "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw"
   },
   "hf-pablodawson-minimax-h3-360-orbit-lora": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "7a563ca0",
+    "sourceVersion": "299269af",
     "license": "MIT",
-    "contentHash": "9e7d06fc0e36de1855a0678074e8551e25d1ca3e9fa414cd91ff7cecbb411781",
-    "lastHarvestedAt": "2026-10-31T13:54:31.203Z",
+    "contentHash": "259d2cc542f888f5c0f76453fbbe89b02de97d0f499be82da735a2522f4b9a51",
+    "lastHarvestedAt": "2026-10-31T16:50:40.225Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "6d74dc11",
+    "sourceVersion": "564a2074",
     "license": "Apache-2.0",
-    "contentHash": "63f4f402e5ab4430e3b3cb415c385e660983dcce86a004fff05926d2d13e3ddd",
-    "lastHarvestedAt": "2026-10-30T20:59:20.209Z",
+    "contentHash": "5ff683874a3c8bc556dacb41736ddaf4e32c539eabc987b2c0fb12949d29fcaa",
+    "lastHarvestedAt": "2026-10-31T16:50:26.530Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {

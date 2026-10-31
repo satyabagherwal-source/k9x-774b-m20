@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T16:39:50.178Z",
+  "last_updated": "2026-10-31T16:50:40.142Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3692,8 +3692,8 @@
       "slug": "astral-sh-uv",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/uv",
-      "source_version": "6d74dc11",
-      "content_hash": "63f4f402e5ab4430e3b3cb415c385e660983dcce86a004fff05926d2d13e3ddd",
+      "source_version": "564a2074",
+      "content_hash": "5ff683874a3c8bc556dacb41736ddaf4e32c539eabc987b2c0fb12949d29fcaa",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "promoted_rules": [
@@ -3761,6 +3761,11 @@
           "number": 5874,
           "title": "Skip retry backoff in the HTTP read timeout tests (#23002)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6253,
+          "title": "Consistently use`[expected]` table for packse (#23025)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3768,7 +3773,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T20:59:20.110Z",
+      "verified_at": "2026-10-31T16:50:26.412Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -4910,8 +4915,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "7a563ca0",
-      "content_hash": "9e7d06fc0e36de1855a0678074e8551e25d1ca3e9fa414cd91ff7cecbb411781",
+      "source_version": "299269af",
+      "content_hash": "259d2cc542f888f5c0f76453fbbe89b02de97d0f499be82da735a2522f4b9a51",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -5074,6 +5079,11 @@
           "number": 6216,
           "title": "gateway): attribute event-loop stalls with an on-demand sampling profiler (#341)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6254,
+          "title": "gateway): explain disabled OpenAI-compatible endpoints instead of a bare 404 (#3",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5081,7 +5091,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T13:54:31.080Z",
+      "verified_at": "2026-10-31T16:50:40.122Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24242,7 +24252,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
       "source_version": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
-      "content_hash": "9a3eab5b6e4fb482d6768f054272e74939c555ef21134bc1faf31f67e2d07dad",
+      "content_hash": "efe24c6bc2703e3ed0ba3474d8386aff98197cffcc826ec6cfed3d1e7360fc75",
       "dossier_path": "07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md",
       "promoted_rules": [
@@ -24294,7 +24304,7 @@
         "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv3xqg2c",
         "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv4cgfx7"
       ],
-      "verified_at": "2026-10-28T15:43:08.674Z",
+      "verified_at": "2026-10-31T16:50:25.489Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -163119,6 +163129,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T16:39:50.149Z"
+    },
+    "rule-6253": {
+      "learning_id": "rule-6253",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6253,
+      "title": "Consistently use`[expected]` table for packse (#23025)",
+      "source_url": "https://github.com/astral-sh/uv",
+      "source_version": "564a2074",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T16:50:26.412Z"
+    },
+    "rule-6254": {
+      "learning_id": "rule-6254",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6254,
+      "title": "gateway): explain disabled OpenAI-compatible endpoints instead of a bare 404 (#3",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "299269af",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T16:50:40.122Z"
     }
   },
   "aliases": {

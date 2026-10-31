@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T16:39:50.276Z",
+  "last_updated": "2026-10-31T16:50:40.235Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1385,14 +1385,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-      "content_hash": "9a3eab5b6e4fb482d6768f054272e74939c555ef21134bc1faf31f67e2d07dad",
-      "verified_at": "2026-10-28T15:43:08.793Z",
+      "content_hash": "efe24c6bc2703e3ed0ba3474d8386aff98197cffcc826ec6cfed3d1e7360fc75",
+      "verified_at": "2026-10-31T16:50:25.613Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T15:43:08.793Z"
+      "last_updated": "2026-10-31T16:50:25.613Z"
     },
     "pablodawson/MiniMax-H3-360-Orbit-LoRA": {
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "9e7d06fc0e36de1855a0678074e8551e25d1ca3e9fa414cd91ff7cecbb411781",
-      "verified_at": "2026-10-31T13:54:31.212Z",
+      "content_hash": "259d2cc542f888f5c0f76453fbbe89b02de97d0f499be82da735a2522f4b9a51",
+      "verified_at": "2026-10-31T16:50:40.235Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T13:54:31.212Z"
+      "last_updated": "2026-10-31T16:50:40.235Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -11766,14 +11766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-uv",
-      "content_hash": "63f4f402e5ab4430e3b3cb415c385e660983dcce86a004fff05926d2d13e3ddd",
-      "verified_at": "2026-10-30T20:59:20.219Z",
+      "content_hash": "5ff683874a3c8bc556dacb41736ddaf4e32c539eabc987b2c0fb12949d29fcaa",
+      "verified_at": "2026-10-31T16:50:26.539Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T20:59:20.219Z"
+      "last_updated": "2026-10-31T16:50:26.539Z"
     },
     "thaw-app/Thaw": {
       "repository": "thaw-app/Thaw",
