@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T18:22:26.389Z",
+  "last_updated": "2026-10-31T18:33:58.478Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13728,8 +13728,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "86db624f",
-      "content_hash": "53e9ed5184fd4e33037fdac27f03569d84614572ef524c244f239e97de7bce41",
+      "source_version": "310e494c",
+      "content_hash": "4ee16f65f0a9e9b57989b3febcdd5351edbcbc656eb417a63e56b3fe265295a2",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -13892,6 +13892,11 @@
           "number": 6226,
           "title": "ci: build Linux x86_64 release for baseline x86-64 (#6061)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6281,
+          "title": "build: release 0.2.153 (#6063)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13899,7 +13904,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T14:39:35.744Z",
+      "verified_at": "2026-10-31T18:29:09.205Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24352,7 +24357,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/intfloat/multilingual-e5-small",
       "source_version": "hf-intfloat-multilingual-e5-small",
-      "content_hash": "30f59f6bfe23ca939bceefada05575e08c8c8bf220308c1b213a1e91396adf36",
+      "content_hash": "804a9566fc93c03a9b5414e8fcd12408ed1f69c96cf8d48e07964952445d4e9c",
       "dossier_path": "07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md",
       "promoted_rules": [
@@ -24418,7 +24423,7 @@
         "learn-huggingface-hf-intfloat-multilingual-e5-small-mv400pp8",
         "learn-huggingface-hf-intfloat-multilingual-e5-small-mv4dz4v0"
       ],
-      "verified_at": "2026-10-28T17:20:36.871Z",
+      "verified_at": "2026-10-31T18:33:58.454Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32151,8 +32156,8 @@
       "slug": "iii-hq-iii",
       "platform": "github",
       "source_url": "https://github.com/iii-hq/iii",
-      "source_version": "c7d88ddc",
-      "content_hash": "c58468e146fd936a10eba11e3947e2a7fc6d2817ba86d6499c22e5b5a366f720",
+      "source_version": "b2854791",
+      "content_hash": "9b016187d39abc6144516172ddb6f89761e4148ffb92efad9db8c10ab021ec9a",
       "dossier_path": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "promoted_rules": [
@@ -32205,6 +32210,11 @@
           "number": 5929,
           "title": "docker): connect the Compose engine to Redis (#2422)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6280,
+          "title": "sdk-node): stop the OTel socket from logging after shutdown resolves (#2438)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32212,7 +32222,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T22:56:32.193Z",
+      "verified_at": "2026-10-31T18:29:00.324Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59216,8 +59226,8 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "41cf0fa6",
-      "content_hash": "8d44c0a20aa209ab5ace2a818e7caab05c37b6c1683081a846220f242cf19893",
+      "source_version": "a762d016",
+      "content_hash": "75e9e837321e5e0bd77de6a903c985ba3ce4ee4d104bde5cdf01603c16d34d1a",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
@@ -59280,6 +59290,11 @@
           "number": 6013,
           "title": "YQ-5796 fix big message topic processing (#57672)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6282,
+          "title": "Enable core/base tests in open-source builds (#57764)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59287,7 +59302,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T02:14:33.662Z",
+      "verified_at": "2026-10-31T18:29:13.920Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -163642,6 +163657,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T18:22:26.371Z"
+    },
+    "rule-6280": {
+      "learning_id": "rule-6280",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6280,
+      "title": "sdk-node): stop the OTel socket from logging after shutdown resolves (#2438)",
+      "source_url": "https://github.com/iii-hq/iii",
+      "source_version": "b2854791",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T18:29:00.324Z"
+    },
+    "rule-6281": {
+      "learning_id": "rule-6281",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6281,
+      "title": "build: release 0.2.153 (#6063)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "310e494c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T18:29:09.205Z"
+    },
+    "rule-6282": {
+      "learning_id": "rule-6282",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6282,
+      "title": "Enable core/base tests in open-source builds (#57764)",
+      "source_url": "https://github.com/ydb-platform/ydb",
+      "source_version": "a762d016",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T18:29:13.920Z"
     }
   },
   "aliases": {

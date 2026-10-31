@@ -6682,3 +6682,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-gemma-4-26b-a4b-it` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-31T18:22:09.316Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `c40e86c6` | Multi-dimensional audit evidence | 2026-10-31T18:22:24.349Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `9cfd9db0` | Multi-dimensional audit evidence | 2026-10-31T18:22:26.458Z |
+| `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `b2854791` | Multi-dimensional audit evidence | 2026-10-31T18:29:00.410Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `310e494c` | Multi-dimensional audit evidence | 2026-10-31T18:29:09.291Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `a762d016` | Multi-dimensional audit evidence | 2026-10-31T18:29:14.014Z |
+| `learn-huggingface-intfloat-multilingual-e5-small` | `https://huggingface.co/intfloat/multilingual-e5-small` | `hf-intfloa` | Multi-dimensional audit evidence | 2026-10-31T18:33:58.567Z |

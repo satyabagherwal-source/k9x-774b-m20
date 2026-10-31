@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T18:22:26.467Z",
+  "last_updated": "2026-10-31T18:33:58.576Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1580,14 +1580,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-intfloat-multilingual-e5-small",
-      "content_hash": "30f59f6bfe23ca939bceefada05575e08c8c8bf220308c1b213a1e91396adf36",
-      "verified_at": "2026-10-28T17:20:37.005Z",
+      "content_hash": "804a9566fc93c03a9b5414e8fcd12408ed1f69c96cf8d48e07964952445d4e9c",
+      "verified_at": "2026-10-31T18:33:58.575Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T17:20:37.005Z"
+      "last_updated": "2026-10-31T18:33:58.575Z"
     },
     "argmaxinc/whisperkit-coreml": {
       "repository": "argmaxinc/whisperkit-coreml",
@@ -3396,14 +3396,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iii-hq-iii",
-      "content_hash": "c58468e146fd936a10eba11e3947e2a7fc6d2817ba86d6499c22e5b5a366f720",
-      "verified_at": "2026-10-30T22:56:32.285Z",
+      "content_hash": "9b016187d39abc6144516172ddb6f89761e4148ffb92efad9db8c10ab021ec9a",
+      "verified_at": "2026-10-31T18:29:00.418Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T22:56:32.285Z"
+      "last_updated": "2026-10-31T18:29:00.418Z"
     },
     "crawlseo/crawlseo": {
       "repository": "crawlseo/crawlseo",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "53e9ed5184fd4e33037fdac27f03569d84614572ef524c244f239e97de7bce41",
-      "verified_at": "2026-10-31T14:39:35.853Z",
+      "content_hash": "4ee16f65f0a9e9b57989b3febcdd5351edbcbc656eb417a63e56b3fe265295a2",
+      "verified_at": "2026-10-31T18:29:09.298Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T14:39:35.853Z"
+      "last_updated": "2026-10-31T18:29:09.298Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -8256,14 +8256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ydb-platform-ydb",
-      "content_hash": "8d44c0a20aa209ab5ace2a818e7caab05c37b6c1683081a846220f242cf19893",
-      "verified_at": "2026-10-31T02:14:33.770Z",
+      "content_hash": "75e9e837321e5e0bd77de6a903c985ba3ce4ee4d104bde5cdf01603c16d34d1a",
+      "verified_at": "2026-10-31T18:29:14.021Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T02:14:33.770Z"
+      "last_updated": "2026-10-31T18:29:14.021Z"
     },
     "arco-design/arco-design-vue": {
       "repository": "arco-design/arco-design-vue",

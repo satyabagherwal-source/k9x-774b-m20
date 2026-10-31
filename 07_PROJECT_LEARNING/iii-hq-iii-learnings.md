@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source**: github ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
-> **Source Version**: `c7d88ddc`  
+> **Source Version**: `b2854791`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T22:56:31.674Z  
+> **Timestamp**: 2026-10-31T18:28:59.826Z  
 > **Learning ID**: `learn-github-iii-hq-iii`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T22:56:29.080Z  
+> **Harvest Timestamp**: 2026-10-31T18:28:58.699Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Effortlessly compose, extend, and observe every service in real-time for the first time ever.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 18877 stars
+- **Stars / Engagement**: 18876 stars
 
 ---
 
@@ -2263,47 +2263,96 @@ pub enum Commands {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `78512c64` (2026-10-29)
-**Commit Message**: fix(docker): connect the Compose engine to Redis (#2422)
+### Incident Patch 1: `b2854791` (2026-10-30)
+**Commit Message**: fix(sdk-node): stop the OTel socket from logging after shutdown resolves (#2438)
 
-**File**: `engine/config.yaml` (modified, +2/-2)
+Co-authored-by: iii harness (claude-opus-5-5) <[REDACTED_EMAIL]>
+
+**File**: `sdk/packages/node/helpers/src/observability/telemetry-system/connection.test.ts` (modified, +26/-0)
 ```diff
-@@ -7,11 +7,11 @@ workers:
-   - name: iii-stream
-     config:
-       port: ${STREAM_PORT:3112}
--      host: 127.0.0.1
-+      host: ${STREAM_HOST:127.0.0.1}
-       adapter:
-         name: redis
-         config:
--          redis_url: redis://localhost:6379
-+          redis_url: ${REDIS_URL:redis://localhost:6379}
- 
-   - name: configuration
-     config:
+@@ -51,3 +51,29 @@ describe('SharedEngineConnection handshake headers', () => {
+     await connection.shutdown()
+   })
+ })
++
++describe('SharedEngineConnection shutdown', () => {
++  it('stays silent when the socket closes after shutdown() resolved', async () => {
++    const connection = new SharedEngineConnection('ws://engine.test/otel')
++    const [socket] = sockets
++    const log = vi.spyOn(console, 'log').mockImplementation(() => {})
++    const error = vi.spyOn(console, 'error').mockImplementation(() => {})
++
++    try {
++      await connection.shutdown()
++      expect(socket.close).toHaveBeenCalledOnce()
++      log.mockClear()
++
++      // ws emits these once the close handshake (or an aborted connect) settles
++      socket.emit('error', new Error('WebSocket was closed before the connection was established'))
++      socket.emit('close')
++
++      expect(log).not.toHaveBeenCalled()
++      expect(error).not.toHaveBeenCalled()
++      expect(connection.getState()).toBe('disconnected')
++    } finally {
++      log.mockRestore()
++      error.mockRestore()
++    }
++  })
++})
 ```
 
-**File**: `engine/docker-compose.yml` (modified, +2/-0)
+**File**: `sdk/packages/node/helpers/src/observability/telemetry-system/connection.ts` (modified, +12/-0)
 ```diff
-@@ -13,6 +13,8 @@ services:
-     environment:
-       - RUST_LOG=info
-       - III_EXECUTION_CONTEXT=docker
-+      - REDIS_URL=redis://redis:6379
-+      - STREAM_HOST=0.0.0.0
-     depends_on:
-       redis:
-         condition: service_healthy
+@@ -15,6 +15,7 @@ export class SharedEngineConnection {
+   private wsUrl: string
+   private connecting = false
+   private shuttingDown = false
++  private closed = false
+   private pendingMessages: Array<{ frame: Buffer; callback?: (err?: Error) => void }> = []
+   private reconnectAttempt = 0
+   private reconnectTimeout: NodeJS.Timeout | null = null
+@@ -75,6 +76,11 @@ export class SharedEngineConnection {
+       })
+ 
+       this.ws.on('close', () => {
++        // shutdown() already closed this socket and reported it
++        if (this.closed) {
++          return
++        }
++
+         this.connecting = false
+         this.ws = null
+ 
+@@ -254,6 +260,10 @@ export class SharedEngineConnection {
+   async shutdown(): Promise<void> {
+     // Set shutdown flag to prevent reconnection attempts
+     this.shuttingDown = true
++    // The close handshake completes after shutdown() has returned: silence the
++    // socket's 'close' listener so nothing logs once the caller has moved on
++    // (a test runner tearing its worker down, a process exiting)
++    this.closed = true
+ 
+     if (this.reconnectTimeout) {
+       clearTimeout(this.reconnectTimeout)
+@@ -263,6 +273,8 @@ export class SharedEngineConnection {
+     if (this.ws) {
+       this.ws.close()
+       this.ws = null
++      this.connecting = false
++      console.log('[OTel] Connection closed during shutdown')
+     }
+ 
+     // Notify pending message callbacks that they won't be delivered
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2438** (2026-10-30): fix(sdk-node): stop the OTel socket from logging after shutdown resolves (@guibeira)
 - **PR #2436** (2026-10-30): ci(install-sh): run the macOS integration job on macos-15 (MOT-5599) (@andersonleal)
 - **PR #2435** (2026-10-30): feat(website): haunted iii logo in the header and footer for Halloween (@arihantcodes)
 - **PR #2429** (2026-10-28): test(go-sdk): fix synchronization race in telemetry reconnect test (@guibeira)
 - **PR #2427** (2026-10-28): feat(website): Contributors section on the landing page (@arihantcodes)
 - **PR #2426** (closed): feat(website): Contributors section on the landing page (@arihantcodes)
-- **PR #2424** (2026-10-28): fix(compose): skip executable integrity marker when selecting worker binary (@guibeira)
 
 ---
 
@@ -2323,30 +2372,53 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docker): connect the Compose engine to Redis (#2422)
+## X. sdk-node): stop the OTel socket from logging after shutdown resolves (#2438)
 
 **RULE**:
-When implementing operations in `engine/config.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sdk/packages/node/helpers/src/observability/telemetry-system/connection.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `78512c64`: docker): connect the Compose engine to Redis (#2422). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b2854791`: sdk-node): stop the OTel socket from logging after shutdown resolves (#2438). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `engine/config.yaml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/packages/node/helpers/src/observability/telemetry-system/connection.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      host: ${STREAM_HOST:127.0.0.1}
-          redis_url: ${REDIS_URL:redis://localhost:6379}
+
+describe('SharedEngineConnection shutdown', () => {
+  it('stays silent when the socket closes after shutdown() resolved', async () => {
+    const connection = new SharedEngineConnection('ws://engine.test/otel')
+    const [socket] = sockets
+    const log = vi.spyOn(console, 'log').mockImplementation(() => {})
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    try {
+      await connection.shutdown()
+      expect(socket.close).toHaveBeenCalledOnce()
+      log.mockClear()
+
+      // ws emits these once the close handshake (or an aborted connect) settles
+      socket.emit('error', new Error('WebSocket was closed before the connection was established'))
+      socket.emit('close')
+
+      expect(log).not.toHaveBeenCalled()
+      expect(error).not.toHaveBeenCalled()
+      expect(connection.getState()).toBe('disconnected')
+    } finally {
+      log.mockRestore()
+      error.mockRestore()
+    }
+  })
+})
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-      host: 127.0.0.1
-          redis_url: redis://localhost:6379
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `78512c64` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b2854791` are properly handled with clean fallback behavior.

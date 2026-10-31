@@ -1205,8 +1205,8 @@
     "sourceUrl": "https://huggingface.co/intfloat/multilingual-e5-small",
     "sourceVersion": "hf-intfloat-multilingual-e5-small",
     "license": "Open-Source",
-    "contentHash": "30f59f6bfe23ca939bceefada05575e08c8c8bf220308c1b213a1e91396adf36",
-    "lastHarvestedAt": "2026-10-28T17:20:36.997Z",
+    "contentHash": "804a9566fc93c03a9b5414e8fcd12408ed1f69c96cf8d48e07964952445d4e9c",
+    "lastHarvestedAt": "2026-10-31T18:33:58.567Z",
     "learningId": "learn-huggingface-intfloat-multilingual-e5-small"
   },
   "hf-argmaxinc-whisperkit-coreml": {
@@ -2173,10 +2173,10 @@
     "repository": "iii-hq/iii",
     "platform": "github",
     "sourceUrl": "https://github.com/iii-hq/iii",
-    "sourceVersion": "c7d88ddc",
+    "sourceVersion": "b2854791",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "c58468e146fd936a10eba11e3947e2a7fc6d2817ba86d6499c22e5b5a366f720",
-    "lastHarvestedAt": "2026-10-30T22:56:32.277Z",
+    "contentHash": "9b016187d39abc6144516172ddb6f89761e4148ffb92efad9db8c10ab021ec9a",
+    "lastHarvestedAt": "2026-10-31T18:29:00.410Z",
     "learningId": "learn-github-iii-hq-iii"
   },
   "crawlseo-crawlseo": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "86db624f",
+    "sourceVersion": "310e494c",
     "license": "NOASSERTION",
-    "contentHash": "53e9ed5184fd4e33037fdac27f03569d84614572ef524c244f239e97de7bce41",
-    "lastHarvestedAt": "2026-10-31T14:39:35.845Z",
+    "contentHash": "4ee16f65f0a9e9b57989b3febcdd5351edbcbc656eb417a63e56b3fe265295a2",
+    "lastHarvestedAt": "2026-10-31T18:29:09.291Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "41cf0fa6",
+    "sourceVersion": "a762d016",
     "license": "Apache-2.0",
-    "contentHash": "8d44c0a20aa209ab5ace2a818e7caab05c37b6c1683081a846220f242cf19893",
-    "lastHarvestedAt": "2026-10-31T02:14:33.761Z",
+    "contentHash": "75e9e837321e5e0bd77de6a903c985ba3ce4ee4d104bde5cdf01603c16d34d1a",
+    "lastHarvestedAt": "2026-10-31T18:29:14.014Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {

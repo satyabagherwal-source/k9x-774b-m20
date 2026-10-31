@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source**: github ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
-> **Source Version**: `41cf0fa6`  
+> **Source Version**: `a762d016`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T02:14:33.118Z  
+> **Timestamp**: 2026-10-31T18:29:13.437Z  
 > **Learning ID**: `learn-github-ydb-platform-ydb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T02:14:32.942Z  
+> **Harvest Timestamp**: 2026-10-31T18:29:13.430Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2067,628 +2067,924 @@ impl Remappable for noncontiguous::NFA {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `95446e4d` (2026-10-30)
-**Commit Message**: YQ-5796 fix big message topic processing (#57672)
+### Incident Patch 1: `a762d016` (2026-10-31)
+**Commit Message**: Enable core/base tests in open-source builds (#57764)
 
-**File**: `ydb/core/kqp/federated_query/kqp_federated_query_helpers.cpp` (modified, +2/-0)
-```diff
-@@ -187,10 +187,12 @@ std::shared_ptr<NYql::IYdbExternalMetadataClientCache> TYdbExternalResources::Ge
- 
- std::unique_ptr<NYdb::TDriver> MakeYdbDriver(NKikimr::TDeferredActorLogBackend::TSharedAtomicActorSystemPtr actorSystemPtr,
-     const NKikimrConfig::TStreamingQueriesConfig::TExternalTopicsSettings& config) {
-+    constexpr ui64 maxMessageSize = 136314880;   //  logbroker default grpc max message size
-     NYdb::TDriverConfig cfg;
-     cfg.SetLog(std::make_unique<NKikimr::TDeferredActorLogBackend>(actorSystemPtr, NKikimrServices::EServiceKikimr::YDB_SDK));
-     cfg.SetDiscoveryMode(NYdb::EDiscoveryMode::Async);
-     cfg.SetMaxQueuedRequests(std::numeric_limits<i64>::max());
-+    cfg.SetMaxMessageSize(maxMessageSize);
- 
-     auto driver = std::make_unique<NYdb::TDriver>(cfg);
- 
-```
+Co-authored-by: iddqdex <[REDACTED_EMAIL]>
 
-**File**: `ydb/core/kqp/ut/federated_query/common/common.cpp` (modified, +6/-0)
+**File**: `ydb/core/base/statestorage_ut.cpp` (modified, +1/-2)
 ```diff
-@@ -123,9 +123,11 @@ std::shared_ptr<TKikimrRunner> MakeKikimrRunner(bool initializeHttpGateway, NYql
-         httpGateway = MakeHttpGateway(queryServiceConfig.GetHttpGateway(), settings.CountersRoot);
+@@ -17,8 +17,7 @@ Y_UNIT_TEST_SUITE(TStateStorageEventScopes) {
+     bool Passes(ui32 type, const TScopeId& origin, const TScopeId& local) {
+         auto filter = std::make_shared<TEventFilter>();
+         RegisterStateStorageEventScopes(filter);
+-        IEventHandle ev(type, 0, TActorId(), TActorId(), nullptr, 0);
+-        ev.OriginScopeId = origin;
++        IEventHandle ev(TActorId(), type, 0, TActorId(), TActorId(), nullptr, 0, origin, {});
+         return filter->CheckIncomingEvent(ev, local);
      }
  
-+    constexpr ui64 maxMessageSize = 136314880;   // logbroker default grpc max message size
-     NYdb::TDriverConfig cfg;
-     cfg.SetDiscoveryMode(NYdb::EDiscoveryMode::Async);
-     cfg.SetMaxQueuedRequests(std::numeric_limits<i64>::max());
-+    cfg.SetMaxMessageSize(maxMessageSize);
-     auto driver = std::make_shared<NYdb::TDriver>(cfg);
- 
-     const auto& s3Config = queryServiceConfig.GetS3();
-@@ -162,6 +164,10 @@ std::shared_ptr<TKikimrRunner> MakeKikimrRunner(bool initializeHttpGateway, NYql
-         .SetUseRealThreads(options.UseRealThreads)
-         .SetInitFederatedQuerySetupFactory(options.InternalInitFederatedQuerySetupFactory);
- 
-+    if (appConfig->GetGRpcConfig().HasMaxMessageSize()) {
-+        settings.SetGrpcServerOptions(NYdbGrpc::TServerOptions().SetMaxMessageSize(appConfig->GetGRpcConfig().GetMaxMessageSize()));
-+    }
-+
-     settings.EnableScriptExecutionBackgroundChecks = options.EnableScriptExecutionBackgroundChecks;
-     federatedQuerySetupFactory->SetScriptExecutionSettings({
-         .EnableBackgroundLeaseChecks = options.EnableScriptExecutionBackgroundChecks,
 ```
 
-**File**: `ydb/core/kqp/ut/federated_query/datastreams/datastreams_ut.cpp` (modified, +82/-0)
+**File**: `ydb/core/base/ut_http_database_param/http_database_param_ut.cpp` (modified, +4/-2)
 ```diff
-@@ -2549,6 +2549,88 @@ Y_UNIT_TEST_SUITE(KqpFederatedQueryDatastreams) {
-         UNIT_ASSERT_GT(evTableReads.load(), 0u);
-         UNIT_ASSERT_VALUES_EQUAL(evTableReadsWithLocks.load(), 0u);
-     }
-+
-+    Y_UNIT_TEST_TWIN_F(ReadLargeTopicMessage, Compressed, TStreamingTestFixture) {
-+        constexpr ui64 maxMessageSize = 136314880;
-+        constexpr ui64 partitionWriteSpeed = 50 * 1024 * 1024;
-+        constexpr size_t inputMessageSize = Compressed ? 200000000 : 130000000;
-+        constexpr size_t outputMessageSize = Compressed ? 70000000 : inputMessageSize;
-+
-+        auto& config = SetupAppConfig();
-+        config.MutableGRpcConfig()->SetMaxMessageSize(maxMessageSize);
-+        config.MutablePQConfig()->SetMaxMessageSizeBytes(maxMessageSize);
-+
-+        constexpr char inputTopicName[] = "largeMessageInputTopic";
-+        constexpr char outputTopicName[] = "largeMessageOutputTopic";
-+        constexpr char sourceName[] = "largeMessageSource";
-+        const auto inputTopicSettings = NTopic::TCreateTopicSettings()
-+                                            .PartitioningSettings(1, 1)
-+                                            .PartitionWriteSpeedBytesPerSecond(partitionWriteSpeed)
-+                                            .PartitionWriteBurstBytes(partitionWriteSpeed);
-+        CreateTopic(inputTopicName, inputTopicSettings, /* local */ true);
-+        const auto outputTopicSettings = NTopic::TCreateTopicSettings()
-+                                             .PartitioningSettings(1, 1)
-+                                             .PartitionWriteSpeedBytesPerSecond(partitionWriteSpeed)
-+                                             .PartitionWriteBurstBytes(partitionWriteSpeed);
-+        CreateTopic(outputTopicName, outputTopicSettings, /* local */ true);
-+        Y_DEFER {
-+            DropTopic(inputTopicName, /* local */ true);
-+            DropTopic(outputTopicName, /* local */ true);
-+        };
-+
-+        ExecQuery(fmt::format(R"sql(
-+            CREATE EXTERNAL DATA SOURCE `{source}` WITH (
-+                SOURCE_TYPE = "Ydb",
-+                LOCATION = "{location}",
-+                DATABASE_NAME = "{database}",
-+                AUTH_METHOD = "NONE"
-+            );
-+        )sql", "source"_a = sourceName, "location"_a = GetKikimrRunner()->GetEndpoint(), "database"_a = TEST_DATABASE));
-+
-+        const auto outputExpression = Compressed ? fmt::format("SUBSTRING(Data, 0, {})", outputMessageSize) : "Data";
-+        const auto operation = ExecScript(fmt::format(R"sql(
-+            INSERT INTO `{source}`.`{output_topic}`
-+            SELECT {output_expression} AS Data
-+            FROM `{source}`.`{input_topic}` WITH (
-+                STREAMING = "TRUE",
-+                FORMAT = "raw",
-+                SCHEMA = (Data String NOT NULL)
-+            )
-+            LIMIT 1;
-+        )sql", "source"_a = sourceName, "input_topic"_a = inputTopicName, "output_topic"_a = outputTopicName,
-+            "output_expression"_a = outputExpression));
-+
-+        NYdb::TDriver topicDriver(
-+            NYdb::TDriverConfig().SetEndpoint(GetKikimrRunner()->GetEndpoint()).SetDatabase(TEST_DATABASE).SetMaxMessageSize(maxMessageSize));
-+        NYdb::NTopic::TTopicClient topicClient(topicDriver);
-+
-+        const std::string inputMessage(inputMessageSize, 'x');
-+        const auto counters = MakeIntrusive<NYdb::NTopic::TWriterCounters>(MakeIntrusive<::NMonitoring::TDynamicCounters>());
-+        auto writeSession =
-+            topicClient.CreateSimpleBlockingWriteSession(NYdb::NTopic::TWriteSessionSettings()
-+                                                             .Path(inputTopicName)
-+                                                             .PartitionId(0)
-+                                                             .Counters(counters)
-+                                                             .Codec(Compressed ? NYdb::NTopic::ECodec::GZIP : NYdb::NTopic::ECodec::RAW));
-+        UNIT_ASSERT(writeSession->Write(NYdb::NTopic::TWriteMessage(inputMessage), nullptr, TDuration::Seconds(30)));
-+        UNIT_ASSERT(writeSession->Close(TDuration::Seconds(30)));
-+        EnsureTopicEndOffset(inputTopicName, 1, topicClient);
-+
-+        if constexpr (Compressed) {
-+            UNIT_ASSERT_VALUES_EQUAL(counters->BytesWritten->Val(), inputMessageSize);
-+            UNIT_ASSERT_GT(counters->BytesWrittenCompressed->Val(), 0);
-+            UNIT_ASSERT_LT(counters->BytesWrittenCompressed->Val(), static_cast<i64>(maxMessageSize));
-+        }
-+
-+        // Avoid logging the full expected payload while polling; compare the data after reading.
-+        const auto messages =
-+            ReadTopicMessages(outputTopicName, { "" }, topicClient, TInstant::Zero(), /* sort */ false, /* checkResult */ false);
-+        UNIT_ASSERT_VALUES_EQUAL(messages.size(), 1);
-+        UNIT_ASSERT_VALUES_EQUAL(messages.front().first.size(), outputMessageSize);
-+        UNIT_ASSERT_C(inputMessage.compare(0, outputMessageSize, messages.fr
-```
-
-**File**: `ydb/tests/fq/streaming/conftest.py` (modified, +5/-1)
-```diff
-@@ -12,8 +12,12 @@
- def kikimr(request):
-     param = getattr(request, "param", {})
-     set_test_env(request)
-+    config = get_ydb_config(request)
-+    if max_message_size := param.get("max_message_size"):
-+        config.yaml_config["grpc_config"]["max_message_size"] = max_message_size
-+        config.yaml_config["pqconfig"]["max_message_size_bytes"] = max_message_size
-     kikimr = Kikimr(
--        get_ydb_config(request),
-+        config,
-         enable_discovery=param.get("enable_discovery", True),
-         tenant_database="/Root/my_tenant",
-     )
-```
-
-**File**: `ydb/tests/fq/streaming/test_streaming.py` (modified, +68/-0)
-```diff
-@@ -3466,3 +3466,71 @@ def retry_count() -> int:
-                 # The fixture is shared: stopping processes does not immediately remove them
-                 # from KQP placement snapshots. Wait before the next case creates a query.
-                 kikimr.wait_kqp_node_count(original_node_count)
-+
-+    @pytest.mark.parametrize("kikimr", [{"max_message_size": 136314880}], indirect=True)
-+    @pytest.mark.parametrize("local_topics", [True, False], ids=["local", "external"])
-+    def test_read_large_topic_message(
-+        self: StreamingTestBase,
-+        kikimr: Kikimr,
-+        entity_name: Callable[[str], str],
-+        local_topics: bool,
-+    ) -> None:
-+        max_message_size = 136314880
-+        partition_write_speed = 50 * 1024 * 1024
-+        timeout = plain_or_under_sanitizer(60, 300)
-+        source_name = entity_name("large_topic_message")
-+        self.init_topics(source_name, endpoint=kikimr.endpoint)
-+        input_name = f"`{self.input_topic}`"
-+        output_name = f"`{self.output_topic}`"
-+        if not local_topics:
-+            # Use the same cluster through gRPC to exercise the C++ SDK driver limits.
-+            self.create_source(kikimr, source_name, endpoint=kikimr.endpoint)
-+            input_name = f"`{source_name}`.{input_name}"
-+            output_name = f"`{source_name}`.{output_name}"
-+
-+        driver_config = ydb.DriverConfig(
-+            endpoint=kikimr.endpoint.endpoint,
-+            database=kikimr.get_database_name(),
-+            auth_token="root@builtin",
-+            channel_options=[
-+                ("grpc.max_receive_message_length", max_message_size),
-+                ("grpc.max_send_message_length", max_message_size),
-+            ],
-+        )
-+        with ydb.Driver(driver_config) as driver:
-+            driver.wait(timeout=10, fail_fast=True)
-+            topic_client = driver.topic_client
-+            for topic in (self.input_topic, self.output_topic):
-+                topic_client.alter_topic(
-+                    topic,
-+                    set_partition_write_speed_bytes_per_second=partition_write_speed,
-+                    set_partition_write_burst_bytes=partition_write_speed,
-+                )
-+
-+            future = kikimr.ydb_client.query_async(
-+                f"""
-+                    INSERT INTO {output_name}
-+                    SELECT Data FROM {input_name} WITH (
-+                        STREAMING = "TRUE",
-+                        FORMAT = "raw",
-+                        SCHEMA = (Data String NOT NULL)
-+                    )
-+                    LIMIT 1;
-+                """,
-+                timeout=timeout,
-+            )
-+            data = b"x" * 130000000
-+            writer = topic_client.writer(self.input_topic, codec=ydb.TopicCodec.RAW)
-+            try:
-+                writer.write_with_ack(data, timeout=timeout)
-+            finally:
-+                writer.close(flush=False, timeout=timeout)
-+
-+            with topic_client.reader(self.output_topic, consumer=self.consumer_name) as reader:
-+                message = reader.receive_message(timeout=timeout)
-+                assert len(message.data) == len(data)
-+                # Keep assertion diagnostics from printing the entire 130 MB payload.
-+                contents_match = message.data == data
-+                assert contents_match, "Large topic message contents differ"
-+                reader.commit_with_ack(message, timeout=timeout)
-+            future.result(timeout=timeout)
-```
-
----
-
-### Incident Patch 2: `58bb50a9` (2026-10-30)
-**Commit Message**: Fix: area_override сравнивать с текущим TESTOWNERS, не со stale Owner: (#57662)
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `.github/scripts/analytics/export_issues_to_ydb.py` (modified, +95/-137)
-```diff
-@@ -13,7 +13,7 @@
- 
- ORG_NAME = 'ydb-platform'
- REPO_NAME = 'ydb'
--PROJECT_ID = None #'45'  # Optional: set to None to skip project data
-+PROJECT_ID = '45'
- ISSUES_PAGE_SIZE = 50  # smaller pages → smaller GraphQL payloads (avoids truncated JSON)
- 
- 
-@@ -353,146 +353,104 @@ def fetch_repository_issues(org_name: str = ORG_NAME, repo_name: str = REPO_NAME
-     return issues
- 
- def get_project_fields_for_issues(org_name: str, project_id: str, issue_numbers: List[int]) -> Dict[int, Dict[str, Any]]:
--    """Get project fields for specific issues from GitHub project"""
-+    """Fetch Status/Owner/… from org project cards for the given issues."""
-     if not project_id:
-         return {}
--    
--    print(f"Fetching project fields for {len(issue_numbers)} issues from project {project_id}...")
-+
-+    numbers = sorted({int(n) for n in issue_numbers if n is not None})
-+    if not numbers:
-+        return {}
-+
-+    print(f"Fetching project fields for {len(numbers)} issues from project {project_id}...")
-     start_time = time.time()
--    
--    project_fields = {}
--    has_next_page = True
--    end_cursor = "null"
--    
--    project_issues_query = """
--    {
--      organization(login: "%s") {
--        projectV2(number: %s) {
--          id
--          title
--          url
--          items(first: 1000, after: %s) {
--            nodes {
--              id
--              content {
--                ... on Issue {
--                  number
--                }
--              }
--              fieldValues(first: 20) {
--                nodes {
--                  ... on ProjectV2ItemFieldSingleSelectValue {
--                    field {
--                      ... on ProjectV2SingleSelectField {
--                        id
--                        name
--                      }
--                    }
--                    name
--                    id
--                    updatedAt
--                  }
--                  ... on ProjectV2ItemFieldTextValue {
--                    field {
--                      ... on ProjectV2Field {
--                        id
--                        name
--                      }
--                    }
--                    text
--                    id
--                    updatedAt
--                    creator {
--                      login
--                    }
--                  }
--                  ... on ProjectV2ItemFieldMilestoneValue {
--                    field {
--                      ... on ProjectV2Field {
--                        id
--                        name
--                      }
--                    }
--                    milestone {
--                      id
--                      title
--                    }
--                  }
--                  ... on ProjectV2ItemFieldDateValue {
--                    field {
--                      ... on ProjectV2Field {
--                        id
--                        name
--                      }
--                    }
--                    date
--                    updatedAt
--                  }
--                  ... on ProjectV2ItemFieldNumberValue {
--                    field {
--                      ... on ProjectV2Field {
--                        id
--                        name
--                      }
--                    }
--                    number
--                    updatedAt
--                  }
--                }
--              }
--            }
--            pageInfo {
--              hasNextPage
--              endCursor
--            }
--          }
--        }
--      }
--    }
--    """
--    
--    issue_numbers_set = set(issue_numbers)
--    
--    while has_next_page:
--        query = project_issues_query % (org_name, project_id, end_cursor)
-+    project_fields: Dict[int, Dict[str, Any]] = {}
-+    target_project_number = int(project_id)
-+    chunk_size = 50
-+
-+    for i in range(0, len(numbers), chunk_size):
-+        chunk = numbers[i : i + chunk_size]
-+        subqueries = []
-+        for n in chunk:
-+            subqueries.append(
-+                f"""
-+                n{n}: issue(number: {n}) {{
-+                  projectItems(first: 40) {{
-+                    nodes {{
-+                      project {{ number }}
-+                      fieldValues(first: 20) {{
-+                        nodes {{
-+                          ... on ProjectV2ItemFieldSingleSelectValue {{
-+                            field {{
-+                              ... on ProjectV2SingleSelectField {{
-+                                name
-+                              }}
-+                            }}
-+                            name
-+                          }}
-+                          ... on ProjectV2ItemFieldTextValue {{
-+                            field {{
-+                              ... on ProjectV2Field {{
-+                                name
-+                              }}
-+                            }}
-+                            text
-+                          }}
-+                          ... on ProjectV2ItemFieldNumberValue {{
-+      
-```
-
-**File**: `.github/scripts/analytics/github_issue_mapping.py` (modified, +100/-38)
-```diff
-@@ -6,20 +6,19 @@
- 
- area_override logic
- -------------------
--Each muted-test issue has a default owner (from TESTOWNERS via the ``Owner:`` line in the
--issue body).  A human can add an ``area/...`` label (e.g. ``area/blobstorage``).  If the
--team behind that area (via ``area_to_owner_mapping``) **differs** from the default owner,
--we store the **area path string** in ``area_override``. ``tests_monitor.py`` reads this table
--(plus ``area_to_owner_mapping``) and fills ``effective_area`` / ``effective_owner_team`` on each
--row; downstream marts use those columns.
-+A human can add an ``area/...`` label on a mute issue. If that area's team (via
-+``area_to_owner_mapping``) differs from the test's current TESTOWNERS owner (first
-+``;;`` token; fallback: ``Owner:`` in the issue body), we store the area path in
-+``area_override``. ``tests_monitor.py`` uses it for ``effective_area`` /
-+``effective_owner_team``.
- 
- Edge cases:
-   * No ``area`` in issue ``info`` → area_override = NULL
-   * Closed **NOT_PLANNED** / **DUPLICATE** → area_override = NULL (issues excluded from mapping query)
-   * Closed **COMPLETED** with ``manual-fast-unmute`` label → override can apply (fast-track window)
-   * Closed **COMPLETED** without that label: override cleared **only** when **project Status** is
-     ``Unmuted`` (do not infer from closer — avoids clearing during the gap before fast-unmute label).
--  * Area resolves to the same team as the default owner → area_override = NULL
-+  * Area resolves to the same team as the TESTOWNERS / body baseline → area_override = NULL
-   * Area not found in mapping → area_override = NULL
-   * Labels change → we always see the *current* ``info`` snapshot
- 
-@@ -57,6 +56,7 @@
-     DEFAULT_BUILD_TYPE,
-     issue_label_names_lower,
-     scan_to_utc_date,
-+    team_slug_from_monitor_owner,
- )
- 
- 
-@@ -305,7 +305,18 @@ def _resolve_area_to_team(area_label: str, area_to_owner: dict) -> str:
-     return best_team
- 
- 
--def resolve_area_override(
-+def _first_owner_team_slug(owners) -> str:
-+    """First ``;;`` TESTOWNERS token as lowercase team slug (same as tests_monitor.compute_owner)."""
-+    if not owners:
-+        return ""
-+    raw = str(owners)
-+    if ";;" in raw:
-+        parts = raw.split(";;", 1)
-+        raw = parts[0] if "TEAM" in parts[0] else parts[1]
-+    return team_slug_from_monitor_owner(raw)
-+
-+
-+def prepare_issue_area_override(
-     body: str,
-     info_raw,
-     area_to_owner: dict,
-@@ -314,18 +325,7 @@ def resolve_area_override(
-     labels_raw=None,
-     project_status=None,
- ):
--    """If GitHub ``area/...`` implies a different team than ``Owner:``, return that area path.
--
--    **Closed issues**
--
--    * ``NOT_PLANNED`` / ``DUPLICATE``: no override.
--    * ``COMPLETED`` (or empty ``state_reason`` on **CLOSED**) + label ``manual-fast-unmute``: override stays (fast-track active).
--    * ``COMPLETED`` (or empty ``state_reason``) without that label: override cleared **only** when **project Status** is ``Unmuted``.
--
--    Open issues: unchanged area logic.
--
--    Stored value matches issue info (e.g. ``area/blobstorage``), not the resolved team slug.
--    """
-+    """Issue-level area context, or None if override cannot apply."""
-     st = (issue_state or "").strip().upper()
-     sr = (state_reason or "").strip().upper()
-     labels_lo = issue_label_names_lower(labels_raw)
-@@ -352,12 +352,66 @@ def resolve_area_override(
-     if not resolved_team:
-         return None
- 
--    default_owner = _extract_default_owner(body)
-+    return {
-+        "area_label": area_label,
-+        "resolved_team": resolved_team.lower(),
-+        "body_owner": _extract_default_owner(body),
-+    }
- 
--    if resolved_team.lower() == default_owner.lower():
-+
-+def area_override_for_baseline(issue_area_ctx, baseline_owner_team=None):
-+    """area path if baseline team differs from issue area team, else None."""
-+    if not issue_area_ctx:
-+        return None
-+    baseline = _first_owner_team_slug(baseline_owner_team)
-+    if not baseline:
-+        baseline = (issue_area_ctx.get("body_owner") or "").lower()
-+    if issue_area_ctx["resolved_team"] == (baseline or "").lower():
-         return None
-+    return issue_area_ctx["area_label"]
- 
--    return area_label
-+
-+def resolve_area_override(
-+    body: str,
-+    info_raw,
-+    area_to_owner: dict,
-+    issue_state=None,
-+    state_reason=None,
-+    labels_raw=None,
-+    project_status=None,
-+    baseline_owner_team=None,
-+):
-+    """Return area path when ``area/...`` team differs from TESTOWNERS / body Owner baseline."""
-+    ctx = prepare_issue_area_override(
-+        body,
-+        info_raw,
-+        area_to_owner,
-+        issue_state=issue_state,
-+        state_reason=state_reason,
-+        labels_raw=labels_raw,
-+        project_status=project_status,
-+    )
-+    return area_override_for_baseline(ctx, baseline_owner_team=baseline_owner_team)
-+
-+
-+def get_testowners_by_full_name(ydb_wrapper) -> dict:
-+    """``full_name`` → raw ``owners`` string from analytics testo
-```
-
----
-
-### Incident Patch 3: `9b28f15c` (2026-10-30)
-**Commit Message**: [HashJoin] Fix MapJoin benchmark dictionary and output (#57684)
-
-**File**: `ydb/library/yql/dq/comp_nodes/ut/join_perf/construct_join_graph.cpp` (modified, +10/-42)
-```diff
-@@ -39,26 +39,6 @@ TRuntimeNode BuildBlockJoin(TDqProgramBuilder& pgmBuilder, EJoinKind joinKind, T
-                                        leftKeyColumns, leftKeyDrops, rightKeyColumns, rightKeyDrops, joinReturnType);
+@@ -58,9 +58,11 @@ Y_UNIT_TEST(PostWithEmptyContentTypeAndJsonBody) {
+         "db-from-body");
  }
  
--struct TRenames {
--    TVector<const ui32> Left;
--    TVector<const ui32> Right;
--};
--
--TRenames MakeScalarMapJoinRenames(int leftSize, int rightDictValueSize) {
--    TRenames ret{};
--    // ScalarMapJoin leftRenames rename list items, rightRenames rename dict
--    // value items(dict value items are all right items without join key  )
--    for (int index = 0; index < leftSize; ++index) {
--        ret.Left.push_back(index);
--        ret.Left.push_back(index);
--    }
--    for (int index = 0; index < rightDictValueSize; ++index) {
--        ret.Right.push_back(index);
--        ret.Right.push_back(index + leftSize);
--    }
--    return ret;
--}
--
- // regular arrow column:
- //
- // [... ... ... ... ...]
-@@ -319,8 +299,9 @@ THolder<IComputationGraph> ConstructJoinGraphStream(EJoinKind joinKind, ETestedJ
-         }
-         case NKikimr::NMiniKQL::ETestedJoinAlgo::kScalarMap: {
-             const auto& rightKeyColumns = descr.RightSource.KeyColumnIndexes;
--            TRuntimeNode rightDict = pb.ToSortedDict(
--                args.Right, true,
-+            const bool withRightSide = !LeftSemiOrOnly(joinKind);
-+            TRuntimeNode rightDict = pb.ToHashedDict(
-+                args.Right, withRightSide,
-                 [&](TRuntimeNode tuple) {
-                     if (rightKeyColumns.size() == 1) {
-                         return pb.Nth(tuple, rightKeyColumns.front());
-@@ -333,16 +314,11 @@ THolder<IComputationGraph> ConstructJoinGraphStream(EJoinKind joinKind, ETestedJ
-                     return pb.NewTuple(keyTupleElements);
-                 },
-                 [&](TRuntimeNode tuple) {
--                    auto types = AS_TYPE(TTupleType, tuple.GetStaticType())->GetElements();
--                    TVector<TRuntimeNode> valueTupleElements;
--                    for (ui32 idx = 0; idx < std::ssize(types); ++idx) {
--                        if (std::find(rightKeyColumns.begin(), rightKeyColumns.end(), idx) ==
--                            rightKeyColumns.end()) {
--                            valueTupleElements.push_back(pb.Nth(tuple, idx));
--                        }
-+                    if (!withRightSide) {
-+                        return pb.NewVoid();
-                     }
--                    return pb.NewTuple(valueTupleElements);
--                });
-+                    return tuple;
-+                }, true);
+-Y_UNIT_TEST(PostWithFormUrlEncodedContentTypeIsIgnored) {
++Y_UNIT_TEST(PostWithFormUrlEncodedContentTypeIsParsed) {
+     TCgiParameters params;
+-    UNIT_ASSERT(ExtractHttpDatabaseParam(params, "POST", "database=db", "application/x-www-form-urlencoded").empty());
++    UNIT_ASSERT_VALUES_EQUAL(
++        ExtractHttpDatabaseParam(params, "POST", "database=db", "application/x-www-form-urlencoded"),
++        "db");
+ }
  
-             TRuntimeNode source = pb.ExpandMap(pb.ToFlow(args.Left, {}), [&pb](TRuntimeNode item) -> TRuntimeNode::TList {
-                 TRuntimeNode::TList values;
-@@ -352,17 +328,9 @@ THolder<IComputationGraph> ConstructJoinGraphStream(EJoinKind joinKind, ETestedJ
-                 return values;
-             });
- 
--            TRenames scalarMapRenames = MakeScalarMapJoinRenames(std::ssize(descr.LeftSource.ColumnTypes),
--                                                                 std::ssize(descr.RightSource.ColumnTypes) -
--                                                                     descr.RightSource.KeyColumnIndexes.size());
--            TRuntimeNode mapJoinSomething =
--                pb.MapJoinCore(source, rightDict, joinKind, descr.LeftSource.KeyColumnIndexes, scalarMapRenames.Left,
--                               scalarMapRenames.Right, pb.NewFlowType(pb.NewTupleType(resultTypesArr)));
--
--            return ToWideStream(
--                pb, pb.Collect(pb.NarrowMap(mapJoinSomething, [&pb](TRuntimeNode::TList items) -> TRuntimeNode {
--                    return pb.NewTuple(items);
--                })));
-+            return pb.FromFlow(pb.MapJoinCore(source, rightDict, joinKind, descr.LeftSource.KeyColumnIndexes,
-+                                              renames.Left, renames.Right,
-+                                              pb.NewFlowType(multiResultType)));
+ Y_UNIT_TEST(QueryParamHasPriorityOverPostBodyWithContentType) {
+```
+
+---
+
+### Incident Patch 2: `c8849250` (2026-10-31)
+**Commit Message**: DQ-169 support upload prefix and upload cluster in dq clique (#57436)
+
+**File**: `ydb/library/yql/providers/dq/actors/executer_actor.cpp` (modified, +12/-9)
+```diff
+@@ -145,14 +145,15 @@ class TDqExecuter: public TRichActor<TDqExecuter>, NYql::TCounters {
+         });
+         ControlId = NActors::ActorIdFromProto(ev->Get()->Record.GetControlId());
+         ResultId = NActors::ActorIdFromProto(ev->Get()->Record.GetResultId());
+-        if (ev->Get()->Record.GetRequest().GetStatsMode() != NYql::NDqProto::EDqStatsMode::DQ_STATS_MODE_UNSPECIFIED) {
+-            StatsMode = ev->Get()->Record.GetRequest().GetStatsMode();
++        const auto& request = ev->Get()->Record.GetRequest();
++        if (request.GetStatsMode() != NYql::NDqProto::EDqStatsMode::DQ_STATS_MODE_UNSPECIFIED) {
++            StatsMode = request.GetStatsMode();
          }
-         case ETestedJoinAlgo::kBlockMap: {
-             TVector<ui32> kEmptyColumnDrops;
+         // These actors will be killed at exit.
+         AddChild(ControlId);
+         AddChild(ResultId);
+ 
+-        int workerCount = ev->Get()->Record.GetRequest().GetTask().size();
++        int workerCount = request.GetTask().size();
+         const bool enableComputeActor = Settings->EnableComputeActor.Get().GetOrElse(false);
+         YQL_CLOG(INFO, ProviderDq) << (TStringBuilder() << "Trying to allocate " << workerCount << " workers [EnableComputeActor=" << enableComputeActor << "]");
+ 
+@@ -166,12 +167,12 @@ class TDqExecuter: public TRichActor<TDqExecuter>, NYql::TCounters {
+                 files.emplace(f.GetObjectId(), f);
+             }
+ 
+-            if (ev->Get()->Record.GetRequest().GetSecureParams().size() > 0) {
+-                *taskMeta.MutableSecureParams() = ev->Get()->Record.GetRequest().GetSecureParams();
++            if (request.GetSecureParams().size() > 0) {
++                *taskMeta.MutableSecureParams() = request.GetSecureParams();
+             }
+ 
+-            if (ev->Get()->Record.GetRequest().GetCommonTaskParams().size() > 0) {
+-                taskMeta.MutableTaskParams()->insert(ev->Get()->Record.GetRequest().GetCommonTaskParams().begin(), ev->Get()->Record.GetRequest().GetCommonTaskParams().end());
++            if (request.GetCommonTaskParams().size() > 0) {
++                taskMeta.MutableTaskParams()->insert(request.GetCommonTaskParams().begin(), request.GetCommonTaskParams().end());
+             }
+ 
+             Settings->Save(taskMeta);
+@@ -185,8 +186,8 @@ class TDqExecuter: public TRichActor<TDqExecuter>, NYql::TCounters {
+ 
+         ExecutionPlanner = THolder<IDqsExecutionPlanner>(new TGraphExecutionPlanner(
+             tasks,
+-            ev->Get()->Record.GetRequest().GetSourceId(),
+-            ev->Get()->Record.GetRequest().GetResultType(),
++            request.GetSourceId(),
++            request.GetResultType(),
+             SelfId(), ResultId));
+ 
+ 
+@@ -202,6 +203,8 @@ class TDqExecuter: public TRichActor<TDqExecuter>, NYql::TCounters {
+             StatsMode));
+         auto allocateRequest = MakeHolder<TEvAllocateWorkersRequest>(workerCount, Username);
+         allocateRequest->Record.SetTraceId(TraceId);
++        allocateRequest->Record.SetUploadPrefix(request.GetUploadPrefix());
++        allocateRequest->Record.SetUploadClusterAddress(request.GetUploadClusterAddress());
+         allocateRequest->Record.SetCreateComputeActor(enableComputeActor);
+         allocateRequest->Record.SetComputeActorType(computeActorType);
+         allocateRequest->Record.SetStatsMode(StatsMode);
+```
+
+**File**: `ydb/library/yql/providers/dq/api/protos/dqs.proto` (modified, +2/-0)
+```diff
+@@ -40,6 +40,8 @@ message TAllocateWorkersRequest {
+     NYql.NDqProto.EDqStatsMode StatsMode = 16;
+     reserved 17;
+     string Scheduler = 18;
++    string UploadPrefix = 19;
++    string UploadClusterAddress = 20;
+ }
+ 
+ message TWorkerGroup {
+```
+
+**File**: `ydb/library/yql/providers/dq/api/protos/service.proto` (modified, +11/-0)
+```diff
+@@ -46,6 +46,12 @@ message TFile {
+     string ContentMd5 = 7;
+ }
+ 
++message TDownloadGroup {
++    string UploadPrefix = 1;
++    string UploadClusterAddress = 2;
++    repeated TFile Files = 3;
++}
++
+ message TWorkerInfo {
+     // TGuid Guid = 1; // reserved
+     uint32 NodeId = 2;
+@@ -94,6 +100,8 @@ message ExecuteGraphRequest {
+     NYql.NDqProto.EDqStatsMode StatsMode = 17;
+     uint64 ExecutionTimeout = 18; // in milliseconds
+     uint64 QuerySeqNo = 19;
++    string UploadPrefix = 20;
++    string UploadClusterAddress = 21;
+ }
+ 
+ message ExecuteGraphResponse {
+@@ -204,6 +212,8 @@ message RegisterNodeRequest {
+ 
+     bool Full = 23; // If Full == false only Guid? present
+     uint32 Pid = 24;
++
++    repeated TDownloadGroup DownloadGroups = 27;
+ }
+ 
+ message RegisterNodeResponse {
+@@ -218,6 +228,7 @@ message RegisterNodeResponse {
+     repeated TFile DownloadList = 3;
+ 
+     string Revision = 4;
++    repeated TDownloadGroup DownloadGroups = 5;
+ }
+ 
+ message JobStopRequest {
+```
+
+**File**: `ydb/library/yql/providers/dq/planner/execution_planner.h` (modified, +6/-4)
+```diff
+@@ -18,6 +18,8 @@ namespace NYql::NDqs {
+         TVector<NDqProto::TDqTask> Tasks;
+         NActors::TActorId SourceID;
+         TString ResultType;
++        TString UploadPrefix;
++        TString UploadClusterAddress;
+     };
+ 
+     class IDqsExecutionPlanner {
+@@ -29,10 +31,10 @@ namespace NYql::NDqs {
+         virtual TString GetResultType() const = 0;
+ 
+         TPlan GetPlan() {
+-            return TPlan {
+-                GetTasks(),
+-                GetSourceID(),
+-                GetResultType()
++            return TPlan{
++                .Tasks = GetTasks(),
++                .SourceID = GetSourceID(),
++                .ResultType = GetResultType(),
+             };
+         }
+     };
+```
+
+**File**: `ydb/library/yql/providers/dq/worker_manager/interface/worker_info.cpp` (modified, +21/-19)
+```diff
+@@ -8,18 +8,18 @@ namespace NYql::NDqs {
+         : InflightLimit(inflightLimit) {
+     }
+ 
+-    bool TInflightLimiter::CanDownload(const TString& id) {
++    bool TInflightLimiter::CanDownload(const TDownloadKey& id) {
+         return !InflightResources.contains(id) || InflightResources.find(id)->second < InflightLimit;
+     }
+ 
+-    void TInflightLimiter::MarkDownloadStarted(const TString& id) {
++    void TInflightLimiter::MarkDownloadStarted(const TDownloadKey& id) {
+         if (!InflightResources.contains(id)) {
+             InflightResources.emplace(id, 0);
+         }
+         InflightResources.find(id)->second++;
+     }
+ 
+-    void TInflightLimiter::MarkDownloadFinished(const TString& id) {
++    void TInflightLimiter::MarkDownloadFinished(const TDownloadKey& id) {
+         auto it = InflightResources.find(id);
+         if (it != InflightResources.end() && it->second > 0) {
+             it->second--;
+@@ -206,8 +206,11 @@ namespace NYql::NDqs {
+         *UsedDiskSizeSum += (request.GetUsedDiskSize() - UsedDiskSize);
+         UsedDiskSize = request.GetUsedDiskSize();
+ 
+-        for (auto md5: Resources) {
+-            RemoveFromDownloadList(md5);
++        for (auto it = DownloadList.begin(); it != DownloadList.end();) {
++            const auto key = (it++)->first;
++            if (Resources.contains(key.ObjectId)) {
++                RemoveFromDownloadList(key);
++            }
+         }
+ 
+         if (*FilesCountMax < static_cast<i64>(Resources.size())) {
+@@ -223,36 +226,35 @@ namespace NYql::NDqs {
+         return needResume;
+     }
+ 
+-    void TWorkerInfo::RemoveFromDownloadList(const TString& objectId) {
+-        auto delta = DownloadList.erase(objectId);
+-        if (delta) {
+-            InflightLimiter->MarkDownloadFinished(objectId);
+-            *ActiveDownloadsSum -= ActiveDownloads.erase(objectId);
++    void TWorkerInfo::RemoveFromDownloadList(const TDownloadKey& key) {
++        if (ActiveDownloads.erase(key)) {
++            InflightLimiter->MarkDownloadFinished(key);
++            *ActiveDownloadsSum -= 1;
+         }
+-        *CurrentDownloadsSum -= delta;
++        *CurrentDownloadsSum -= DownloadList.erase(key);
+     }
+ 
+-    void TWorkerInfo::AddToDownloadList(const THashMap<TString, TFileResource>& downloadList) {
+-        for (const auto& [k, v] : downloadList) {
+-            AddToDownloadList(k, v);
++    void TWorkerInfo::AddToDownloadList(const TDownloadList& downloadList) {
++        for (const auto& [_, resource] : downloadList) {
++            AddToDownloadList(resource);
+         }
+     }
+ 
+-    bool TWorkerInfo::AddToDownloadList(const TString& key, const TFileResource& value) {
+-        if (!Resources.contains(key) && DownloadList.insert({key, value}).second) {
++    bool TWorkerInfo::AddToDownloadList(const TDownloadResource& value) {
++        if (!Resources.contains(value.File.GetObjectId()) && DownloadList.emplace(value.GetKey(), value).second) {
+             *CurrentDownloadsSum += 1;
+             return true;
+         }
+         return false;
+     }
+ 
+-    const THashMap<TString, TWorkerInfo::TFileResource>& TWorkerInfo::GetDownloadList() {
++    const TWorkerInfo::TDownloadList& TWorkerInfo::GetDownloadList() {
+         return DownloadList;
+     }
+ 
+-    THashMap<TString, TWorkerInfo::TFileResource> TWorkerInfo::GetResourcesForDownloading() {
++    TWorkerInfo::TDownloadList TWorkerInfo::GetResourcesForDownloading() {
+         for (const auto& it : DownloadList) {
+-            TString id = it.first;
++            const auto& id = it.first;
+             if (InflightLimiter->CanDownload(id) && !ActiveDownloads.contains(id)) {
+                 ActiveDownloads.emplace(id, it.second);
+                 *ActiveDownloadsSum += 1;
+```
+
+**File**: `ydb/library/yql/providers/dq/worker_manager/interface/worker_info.h` (modified, +42/-11)
+```diff
+@@ -1,6 +1,7 @@
+ #pragma once
+ 
+ #include <utility>
++#include <util/digest/multi.h>
+ #include <util/generic/hash.h>
+ #include <util/generic/guid.h>
+ #include <util/generic/hash_set.h>
+@@ -11,17 +12,31 @@
+ 
+ namespace NYql::NDqs {
+ 
++struct TDownloadKey {
++    TString ObjectId;
++    TString UploadPrefix;
++    TString UploadClusterAddress;
++
++    bool operator==(const TDownloadKey&) const = default;
++};
++
++struct TDownloadKeyHash {
++    size_t operator()(const TDownloadKey& key) const {
++        return MultiHash(key.ObjectId, key.UploadPrefix, key.UploadClusterAddress);
++    }
++};
++
+ class TInflightLimiter: public TThrRefBase {
+ public:
+     using TPtr = TIntrusivePtr<TInflightLimiter>;
+ 
+     TInflightLimiter(i32 inflightLimit);
+-    bool CanDownload(const TString& id);
+-    void MarkDownloadStarted(const TString& id);
+-    void MarkDownloadFinished(const TString& id);
++    bool CanDownload(const TDownloadKey& key);
++    void MarkDownloadStarted(const TDownloadKey& key);
++    void MarkDownloadFinished(const TDownloadKey& key);
+ 
+ private:
+-    THashMap<TString, i32> InflightResources;
++    THashMap<TDownloadKey, i32, TDownloadKeyHash> InflightResources;
+     i32 InflightLimit;
+ };
+ 
+@@ -97,6 +112,22 @@ struct TWorkerInfo: public TThrRefBase {
+     using TPtr = TIntrusivePtr<TWorkerInfo>;
+     using TFileResource = Yql::DqsProto::TFile;
+ 
++    struct TDownloadResource {
++        TFileResource File;
++        TString UploadPrefix;
++        TString UploadClusterAddress;
++
++        TDownloadKey GetKey() const {
++            return {
++                .ObjectId = File.GetObjectId(),
++                .UploadPrefix = UploadPrefix,
++                .UploadClusterAddress = UploadClusterAddress,
++            };
++        }
++    };
++
++    using TDownloadList = THashMap<TDownloadKey, TDownloadResource, TDownloadKeyHash>;
++
+     const ui32 NodeId;
+     const TGUID WorkerId;
+     TInstant LastPingTime;
+@@ -148,15 +179,15 @@ struct TWorkerInfo: public TThrRefBase {
+ 
+     bool Update(const Yql::DqsProto::RegisterNodeRequest& request);
+ 
+-    void RemoveFromDownloadList(const TString& objectId);
++    void RemoveFromDownloadList(const TDownloadKey& key);
+ 
+-    void AddToDownloadList(const THashMap<TString, TFileResource>& downloadList);
++    void AddToDownloadList(const TDownloadList& downloadList);
+ 
+-    bool AddToDownloadList(const TString& key, const TFileResource& value);
++    bool AddToDownloadList(const TDownloadResource& value);
+ 
+-    const THashMap<TString, TFileResource>& GetDownloadList();
++    const TDownloadList& GetDownloadList();
+ 
+-    THashMap<TString, TFileResource> GetResourcesForDownloading();
++    TDownloadList GetResourcesForDownloading();
+ 
+     const THashSet<TString>& GetResources();
+ 
+@@ -177,11 +208,11 @@ struct TWorkerInfo: public TThrRefBase {
+ private:
+     THashSet<TString> Resources;
+     google::protobuf::RepeatedPtrField<::Yql::DqsProto::RegisterNodeRequest_LocalFile> ResourcesOrdered;
+-    THashMap<TString, TFileResource> DownloadList;
++    TDownloadList DownloadList;
+     TSensorsGroupPtr Metrics;
+     TInflightLimiter::TPtr InflightLimiter;
+     TClusterResources ClusterResources;
+-    THashMap<TString, TFileResource> ActiveDownloads;
++    TDownloadList ActiveDownloads;
+ 
+     TSensorCounterPtr CurrentDownloadsSum;
+     TSensorCounterPtr CurrentDownloadsMax;
+```
+
+---
+
+### Incident Patch 3: `f61f98dd` (2026-10-31)
+**Commit Message**: Fix BSC rollback compatibility for PDisk filters (#57702)
+
+**File**: `ydb/core/mind/bscontroller/config.cpp` (modified, +57/-0)
+```diff
+@@ -651,6 +651,11 @@ namespace NKikimr::NBsController {
+             }
+             if (state.StoragePools.Changed()) {
+                 MakeTableMerger<Schema::BoxStoragePool>(&StoragePools, &state.StoragePools.Get(), this)(txc);
++                for (const auto& [previous, current] : Diff(&StoragePools, &state.StoragePools.Get())) {
++                    TStoragePoolInfo::UpdatePDiskFilters(txc.DB,
++                        previous ? &previous->second.PDiskFilters : nullptr,
++                        current ? &current->second.PDiskFilters : nullptr);
++                }
+             }
+             if (state.Nodes.Changed()) {
+                 MakeTableMerger<Schema::Node>(&Nodes, &state.Nodes.Get(), this)(txc);
+@@ -1364,6 +1369,58 @@ namespace NKikimr::NBsController {
+             }
+         }
+ 
++        bool TBlobStorageController::TStoragePoolInfo::LoadPDiskFilters(NIceDb::TNiceDb& db,
++                const TBoxStoragePoolId& id) {
++            PDiskFilters.clear();
++            auto load = [&]<typename T>() {
++                auto rows = db.Table<T>().Range(std::get<0>(id), std::get<1>(id)).Select();
++                if (!rows.IsReady()) {
++                    return false;
++                }
++                while (rows.IsValid()) {
++                    if constexpr (std::is_same_v<T, Schema::BoxStoragePoolPDiskFilter>) {
++                        PDiskFilters.insert(TPDiskFilter::CreateFromRowset(rows));
++                    } else {
++                        PDiskFilters.insert(TPDiskFilter::Parse(std::get<0>(id), std::get<1>(id),
++                            rows.template GetValue<typename T::Filter>()));
++                    }
++                    if (!rows.Next()) {
++                        return false;
++                    }
++                }
++                return true;
++            };
++            return load.template operator()<Schema::BoxStoragePoolPDiskFilter>()
++                && load.template operator()<Schema::BoxStoragePoolPDiskFilterV2>();
++        }
++
++        void TBlobStorageController::TStoragePoolInfo::UpdatePDiskFilters(NTable::TDatabase& db,
++                const TPDiskFilters* previous, const TPDiskFilters* current) {
++            for (const auto& [prev, cur] : Diff(previous, current)) {
++                if (prev && cur) {
++                    continue;
++                }
++                const auto op = cur ? NTable::ERowOp::Upsert : NTable::ERowOp::Erase;
++                const auto& filter = cur ? *cur : *prev;
++                auto update = [&]<typename T>(const auto& key) {
++                    auto keyTuple = NTableAdapter::PrepareKeyTuple<T>(&key);
++                    TStackVec<TRawTypeValue, std::tuple_size_v<decltype(keyTuple)>> rawKey;
++                    NTableAdapter::MapKey<T>(&keyTuple, rawKey);
++                    db.Update(T::TableId, op, rawKey, {});
++                };
++                if (filter.Location) {
++                    // Serialize the parsed filter in a fixed property order: request ordering
++                    // must not change its persistent identity, including when deleting a row.
++                    NKikimrBlobStorage::TPDiskFilter proto;
++                    Serialize(&proto, filter);
++                    update.template operator()<Schema::BoxStoragePoolPDiskFilterV2>(
++                        std::make_tuple(filter.BoxId, filter.StoragePoolId, proto.SerializeAsString()));
++                } else {
++                    update.template operator()<Schema::BoxStoragePoolPDiskFilter>(filter.GetLegacyKey());
++                }
++            }
++        }
++
+         TBlobStorageController::TStoragePoolInfo::TPDiskFilter
+         TBlobStorageController::TStoragePoolInfo::TPDiskFilter::Parse(ui64 boxId, ui64 storagePoolId,
+                 const NKikimrBlobStorage::TPDiskFilter& proto) {
+```
+
+**File**: `ydb/core/mind/bscontroller/impl.h` (modified, +13/-10)
+```diff
+@@ -1266,7 +1266,7 @@ class TBlobStorageController : public TActor<TBlobStorageController>, public TTa
+             TMaybe<Schema::BoxStoragePoolPDiskFilter::SharedWithOs::Type> SharedWithOs;
+             TMaybe<Schema::BoxStoragePoolPDiskFilter::ReadCentric::Type> ReadCentric;
+             TMaybe<Schema::BoxStoragePoolPDiskFilter::Kind::Type> Kind;
+-            TMaybe<Schema::BoxStoragePoolPDiskFilter::Location::Type> Location; // set only through SetLocation
++            TMaybe<TString> Location; // set only through SetLocation
+             std::shared_ptr<const TNodeLocation> RequiredLocation; // parsed Location, kept for matching
+ 
+             void SetLocation(const TString& serialized) {
+@@ -1294,9 +1294,6 @@ class TBlobStorageController : public TActor<TBlobStorageController>, public TTa
+                 if (rowset.template HaveValue<T::Kind>()) {
+                     result.Kind = rowset.template GetValue<T::Kind>();
+                 }
+-                if (rowset.template HaveValue<T::Location>()) {
+-                    result.SetLocation(rowset.template GetValue<T::Location>());
+-                }
+                 return result;
+             }
+ 
+@@ -1352,8 +1349,12 @@ class TBlobStorageController : public TActor<TBlobStorageController>, public TTa
+                 return s.Str();
+             }
+ 
++            auto GetLegacyKey() const {
++                return std::tie(BoxId, StoragePoolId, Type, SharedWithOs, ReadCentric, Kind);
++            }
++
+             auto GetKey() const {
+-                return std::tie(BoxId, StoragePoolId, Type, SharedWithOs, ReadCentric, Kind, Location);
++                return std::tuple_cat(GetLegacyKey(), std::tie(Location));
+             }
+ 
+             friend bool operator <(const TPDiskFilter &x, const TPDiskFilter &y) {
+@@ -1365,7 +1366,7 @@ class TBlobStorageController : public TActor<TBlobStorageController>, public TTa
+             }
+ 
+             void Load(IInputStream* s) {
+-                TMaybe<Schema::BoxStoragePoolPDiskFilter::Location::Type> location;
++                TMaybe<TString> location;
+                 ::LoadMany(s, Type, SharedWithOs, ReadCentric, Kind, location);
+                 Location.Clear();
+                 RequiredLocation.reset();
+@@ -1489,6 +1490,10 @@ class TBlobStorageController : public TActor<TBlobStorageController>, public TTa
+         TUserIds UserIds;
+         TPDiskFilters PDiskFilters;
+ 
++        bool LoadPDiskFilters(NIceDb::TNiceDb& db, const TBoxStoragePoolId& id);
++        static void UpdatePDiskFilters(NTable::TDatabase& db, const TPDiskFilters* previous,
++            const TPDiskFilters* current);
++
+         template<typename T>
+         static void Apply(TBlobStorageController* /*controller*/, T&& callback) {
+             static TTableAdapter<Table, TStoragePoolInfo,
+@@ -1520,8 +1525,7 @@ class TBlobStorageController : public TActor<TBlobStorageController>, public TTa
+                     Table::DDisk,
+                     Table::VDiskHeapAllocatorNumLeadingDisks,
+                     Table::PersistentBufferAllocationMode,
+-                    TInlineTable<TUserIds, Schema::BoxStoragePoolUser>,
+-                    TInlineTable<TPDiskFilters, Schema::BoxStoragePoolPDiskFilter>
++                    TInlineTable<TUserIds, Schema::BoxStoragePoolUser>
+                 > adapter(
+                     &TStoragePoolInfo::Name,
+                     &TStoragePoolInfo::ErasureSpecies,
+@@ -1551,8 +1555,7 @@ class TBlobStorageController : public TActor<TBlobStorageController>, public TTa
+                     &TStoragePoolInfo::DDisk,
+                     &TStoragePoolInfo::VDiskHeapAllocatorNumLeadingDisks,
+                     &TStoragePoolInfo::PersistentBufferAllocationMode,
+-                    &TStoragePoolInfo::UserIds,
+-                    &TStoragePoolInfo::PDiskFilters
++                    &TStoragePoolInfo::UserIds
+                 );
+             callback(&adapter);
+         }
+```
+
+**File**: `ydb/core/mind/bscontroller/load_everything.cpp` (modified, +6/-1)
+```diff
+@@ -44,6 +44,7 @@ class TBlobStorageController::TTxLoadEverything : public TTransactionBase<TBlobS
+             auto boxStoragePool = db.Table<Schema::BoxStoragePool>().Range().Select();
+             auto boxStoragePoolUser = db.Table<Schema::BoxStoragePoolUser>().Range().Select();
+             auto boxStoragePoolPDiskFilter = db.Table<Schema::BoxStoragePoolPDiskFilter>().Range().Select();
++            auto boxStoragePoolPDiskFilterV2 = db.Table<Schema::BoxStoragePoolPDiskFilterV2>().Range().Select();
+             auto groupStoragePool = db.Table<Schema::GroupStoragePool>().Range().Select();
+             auto groupLatencies = db.Table<Schema::GroupLatencies>().Select();
+             auto scrubState = db.Table<Schema::ScrubState>().Select();
+@@ -66,6 +67,7 @@ class TBlobStorageController::TTxLoadEverything : public TTransactionBase<TBlobS
+                     || !boxStoragePool.IsReady()
+                     || !boxStoragePoolUser.IsReady()
+                     || !boxStoragePoolPDiskFilter.IsReady()
++                    || !boxStoragePoolPDiskFilterV2.IsReady()
+                     || !groupStoragePool.IsReady()
+                     || !groupLatencies.IsReady()
+                     || !scrubState.IsReady()
+@@ -306,7 +308,10 @@ class TBlobStorageController::TTxLoadEverything : public TTransactionBase<TBlobS
+                 || !NTableAdapter::FetchTable<Schema::BlobDepotDeleteQueue>(db, Self, Self->BlobDepotDeleteQueue)) {
+             return false;
+         }
+-        for (const auto& [storagePoolId, storagePool] : Self->StoragePools) {
++        for (auto& [storagePoolId, storagePool] : Self->StoragePools) {
++            if (!storagePool.LoadPDiskFilters(db, storagePoolId)) {
++                return false;
++            }
+             Self->SysViewChangedStoragePools.insert(storagePoolId);
+         }
+ 
+```
+
+**File**: `ydb/core/mind/bscontroller/scheme.h` (modified, +15/-6)
+```diff
+@@ -376,11 +376,9 @@ struct Schema : NIceDb::Schema {
+         struct ReadCentric : Column<5, HostConfigDrive::ReadCentric::ColumnType> {};
+         struct Kind : Column<6, HostConfigDrive::Kind::ColumnType> {};
+ 
+-        // Serialized TNodeLocation; null preserves filters written before location support.
+-        struct Location : Column<7, NScheme::NTypeIds::String> {};
+-
+-        using TKey = TableKey<BoxId, StoragePoolId, TypeCol, SharedWithOs, ReadCentric, Kind, Location>;
+-        using TColumns = TableColumns<BoxId, StoragePoolId, TypeCol, SharedWithOs, ReadCentric, Kind, Location>;
++        // Keep the legacy key unchanged: older controllers use its length for prefix scans.
++        using TKey = TableKey<BoxId, StoragePoolId, TypeCol, SharedWithOs, ReadCentric, Kind>;
++        using TColumns = TableColumns<BoxId, StoragePoolId, TypeCol, SharedWithOs, ReadCentric, Kind>;
+     };
+ 
+     struct GroupStoragePool : Table<123> {
+@@ -519,6 +517,16 @@ struct Schema : NIceDb::Schema {
+         using TColumns = TableColumns<BoxId, StoragePoolId>;
+     };
+ 
++    struct BoxStoragePoolPDiskFilterV2 : Table<136> {
++        using BoxId = BoxStoragePoolPDiskFilter::BoxId;
++        using StoragePoolId = BoxStoragePoolPDiskFilter::StoragePoolId;
++        // A protobuf key allows adding filter properties without extending the table key.
++        struct Filter : Column<3, NScheme::NTypeIds::String> { using Type = NKikimrBlobStorage::TPDiskFilter; };
++
++        using TKey = TableKey<BoxId, StoragePoolId, Filter>;
++        using TColumns = TableColumns<BoxId, StoragePoolId, Filter>;
++    };
++
+ 
+     using TTables = SchemaTables<
+         Node,
+@@ -547,7 +555,8 @@ struct Schema : NIceDb::Schema {
+         BridgeSyncState,
+         DirectBlockGroupTabletState,
+         DirectBlockGroupClaims,
+-        DatabaseSpaceExhaustedPool
++        DatabaseSpaceExhaustedPool,
++        BoxStoragePoolPDiskFilterV2
+     >;
+ 
+     using TSettings = SchemaSettings<
+```
+
+**File**: `ydb/core/mind/bscontroller/ut_bscontroller/main.cpp` (modified, +40/-0)
+```diff
+@@ -1352,6 +1352,46 @@ Y_UNIT_TEST_SUITE(BsControllerConfig) {
+         UNIT_ASSERT_C(response.GetSuccess(), response.DebugString());
+         checkPlacement(1, "1", 2);
+         checkPlacement(2, "2", 1);
++
++        // Exercise persistence through configuration commits when filters move
++        // between the legacy and location tables, including mixed filter sets.
++        const auto plainPool = readPool(3);
++        pool = plainPool;
++        location(pool.MutablePDiskFilter(0))->SetDataCenter("1");
++        *pool.AddPDiskFilter() = plainPool.GetPDiskFilter(0);
++        response = definePool(pool);
++        UNIT_ASSERT_C(response.GetSuccess(), response.DebugString());
++        RebootTablet(*env.Runtime, env.TabletId, env.Runtime->AllocateEdgeActor());
++        UNIT_ASSERT_VALUES_EQUAL(readPool(3).PDiskFilterSize(), 2);
++
++        pool = readPool(3);
++        pool.ClearPDiskFilter();
++        *pool.AddPDiskFilter() = plainPool.GetPDiskFilter(0);
++        response = definePool(pool);
++        UNIT_ASSERT_C(response.GetSuccess(), response.DebugString());
++        RebootTablet(*env.Runtime, env.TabletId, env.Runtime->AllocateEdgeActor());
++        UNIT_ASSERT_VALUES_EQUAL(readPool(3).PDiskFilterSize(), 1);
++        UNIT_ASSERT_VALUES_EQUAL(readPool(3).GetPDiskFilter(0).PropertySize(), 2);
++
++        pool = readPool(3);
++        location(pool.MutablePDiskFilter(0))->SetDataCenter("2");
++        response = definePool(pool);
++        UNIT_ASSERT_C(response.GetSuccess(), response.DebugString());
++        request.Clear();
++        auto* remove = request.AddCommand()->MutableDeleteStoragePool();
++        remove->SetBoxId(1);
++        remove->SetStoragePoolId(3);
++        remove->SetItemConfigGeneration(readPool(3).GetItemConfigGeneration());
++        response = env.Invoke(request);
++        UNIT_ASSERT_C(response.GetSuccess(), response.DebugString());
++
++        pool = plainPool;
++        pool.SetItemConfigGeneration(0);
++        response = definePool(pool);
++        UNIT_ASSERT_C(response.GetSuccess(), response.DebugString());
++        RebootTablet(*env.Runtime, env.TabletId, env.Runtime->AllocateEdgeActor());
++        UNIT_ASSERT_VALUES_EQUAL(readPool(3).PDiskFilterSize(), 1);
++        UNIT_ASSERT_VALUES_EQUAL(readPool(3).GetPDiskFilter(0).PropertySize(), 2);
+     }
+ 
+     Y_UNIT_TEST(Basic) {
+```
+
+**File**: `ydb/core/mind/bscontroller/ut_bscontroller/pdisk_filter_compatibility_ut.cpp` (added, +215/-0)
+```diff
+@@ -0,0 +1,215 @@
++#include <ydb/core/mind/bscontroller/impl.h>
++#include <ydb/core/tablet_flat/test/libs/table/test_dummy.h>
++
++#include <library/cpp/testing/unittest/registar.h>
++
++namespace NKikimr::NBsController {
++namespace {
++
++// Frozen stable-26-3-1 definition. Do not inherit the current schema: this reader
++// must keep constructing six-column lower bounds after the schema is upgraded.
++struct TLegacySchema : NIceDb::Schema {
++    struct BoxStoragePoolPDiskFilter : Table<122> {
++        struct BoxId : Column<1, NScheme::NTypeIds::Uint64> {};
++        struct StoragePoolId : Column<2, NScheme::NTypeIds::Uint64> {};
++        struct TypeCol : Column<3, NScheme::NTypeIds::Int32> {
++            static TString GetColumnName(const TString&) { return "Type"; }
++        };
++        struct SharedWithOs : Column<4, NScheme::NTypeIds::Bool> {};
++        struct ReadCentric : Column<5, NScheme::NTypeIds::Bool> {};
++        struct Kind : Column<6, NScheme::NTypeIds::Uint64> {};
++
++        using TKey = TableKey<BoxId, StoragePoolId, TypeCol, SharedWithOs, ReadCentric, Kind>;
++        using TColumns = TableColumns<BoxId, StoragePoolId, TypeCol, SharedWithOs, ReadCentric, Kind>;
++    };
++
++    using TTables = SchemaTables<BoxStoragePoolPDiskFilter>;
++};
++
++using TPool = TBlobStorageController::TStoragePoolInfo;
++using TFilter = TPool::TPDiskFilter;
++using TFilters = TPool::TPDiskFilters;
++using TLegacyTable = TLegacySchema::BoxStoragePoolPDiskFilter;
++
++struct TFixture {
++    NTable::TDatabase Database;
++    NTable::TDummyEnv Env;
++    NIceDb::TNiceDb Db{Database};
++    ui64 Stamp = 0;
++
++    template<typename TCallback>
++    void Transaction(TCallback&& callback) {
++        Database.Begin(++Stamp, Env);
++        callback();
++        Database.Commit(Stamp, true);
++    }
++
++    TFilters Load(ui64 boxId, ui64 poolId) {
++        TPool pool;
++        Transaction([&] {
++            UNIT_ASSERT(pool.LoadPDiskFilters(Db, {boxId, poolId}));
++        });
++        return std::move(pool.PDiskFilters);
++    }
++
++    void Update(const TFilters& previous, const TFilters& current) {
++        Transaction([&] {
++            TPool::UpdatePDiskFilters(Database, &previous, &current);
++        });
++    }
++
++    template<typename T>
++    size_t Count(ui64 boxId, ui64 poolId) {
++        size_t count = 0;
++        Transaction([&] {
++            auto rows = Db.Table<T>().Range(boxId, poolId).Select();
++            UNIT_ASSERT(rows.IsReady());
++            while (rows.IsValid()) {
++                ++count;
++                UNIT_ASSERT(rows.Next());
++            }
++        });
++        return count;
++    }
++};
++
++TFilter MakeFilter(NKikimrBlobStorage::EPDiskType type, TMaybe<TString> dataCenter = {}) {
++    NKikimrBlobStorage::TPDiskFilter proto;
++    proto.AddProperty()->SetType(type);
++    if (dataCenter) {
++        proto.AddProperty()->MutableLocation()->SetDataCenter(*dataCenter);
++    }
++    return TFilter::Parse(7, 11, proto);
++}
++
++void CheckFilters(const TFilters& actual, const TFilters& expected) {
++    UNIT_ASSERT_VALUES_EQUAL(actual.size(), expected.size());
++    auto a = actual.begin();
++    auto e = expected.begin();
++    for (; a != actual.end(); ++a, ++e) {
++        UNIT_ASSERT(a->GetKey() == e->GetKey());
++        UNIT_ASSERT_VALUES_EQUAL(bool(a->RequiredLocation), bool(a->Location));
++    }
++}
++
++} // namespace
++
++Y_UNIT_TEST_SUITE(BsControllerPDiskFilterCompatibility) {
++    Y_UNIT_TEST(LegacyReadAndWriteAfterUpgrade) {
++        TFixture f;
++        f.Transaction([&] {
++            f.Db.Materialize<TLegacySchema>();
++            f.Db.Table<TLegacyTable>().Key(7, 11, i32(NKikimrBlobStorage::ROT), false, true, 3).Update();
++        });
++        f.Transaction([&] {
++            f.Db.Materialize<Schema>();
++        });
++        UNIT_ASSERT_VALUES_EQUAL(f.Database.GetScheme().GetTableInfo(122)->KeyColumns.size(), 6);
++
++        auto original = MakeFilter(NKikimrBlobStorage::ROT);
++        original.SharedWithOs = false;
++        original.ReadCentric = true;
++        original.Kind = 3;
++        const TFilters oldFilters{original};
++        CheckFilters(f.Load(7, 11), oldFilters);
++
++        // A current controller writes a filter with nullable key fields. The old
++        // reader must see it, and its prefix scan must not abort after upgrade.
++        const auto added = MakeFilter(NKikimrBlobStorage::SSD);
++        const TFilters newFilters{original, added};
++        f.Update(oldFilters, newFilters);
++        f.Transaction([&] {
++            f.Db.Materialize<TLegacySchema>();
++        });
++        UNIT_ASSERT_VALUES_EQUAL(f.Count<TLegacyTable>(7, 11), 2);
++        UNIT_ASSERT_VALUES_EQUAL(f.Count<Schema::BoxStoragePoolPDiskFilterV2>(7, 11), 0);
++
++        // Stable can change the filters after downgrade; a subsequent upgrade
++        // must read those changes, rather than resurrecting a separate copy.
++        f.Transaction([&] {
++            f.Db.Table<TLegacyTable>().Key(7, 11, i32(NKikimrBlobStorage::ROT), false, true, 3).Delet
+```
+
+**File**: `ydb/core/mind/bscontroller/ut_bscontroller/ya.make` (modified, +2/-0)
+```diff
+@@ -11,6 +11,7 @@ ENDIF()
+ 
+ SRCS(
+     main.cpp
++    pdisk_filter_compatibility_ut.cpp
+ )
+ 
+ PEERDIR(
+@@ -20,6 +21,7 @@ PEERDIR(
+     ydb/core/blobstorage/dsproxy/mock
+     ydb/core/mind/bscontroller
+     ydb/core/protos
++    ydb/core/tablet_flat/test/libs/table
+     ydb/core/testlib/default
+     ydb/core/testlib/basics
+ )
+```
+
+**File**: `ydb/tests/functional/scheme_tests/canondata/tablet_scheme_tests.TestTabletSchemes.test_tablet_schemes_flat_bs_controller_/flat_bs_controller.schema` (modified, +53/-8)
+```diff
+@@ -1090,15 +1090,9 @@
+             3,
+             4,
+             5,
+-            6,
+-            7
++            6
+         ],
+         "ColumnsAdded": [
+-            {
+-                "ColumnId": 7,
+-                "ColumnName": "Location",
+-                "ColumnType": "String"
+-            },
+             {
+                 "ColumnId": 1,
+                 "ColumnName": "BoxId",
+@@ -1134,7 +1128,6 @@
+         "ColumnFamilies": {
+             "0": {
+                 "Columns": [
+-                    7,
+                     1,
+                     2,
+                     3,
+@@ -2250,5 +2243,57 @@
+                 ]
+             }
+         }
++    },
++    {
++        "TableId": 136,
++        "TableName": "BoxStoragePoolPDiskFilterV2",
++        "TableKey": [
++            1,
++            2,
++            3
++        ],
++        "ColumnsAdded": [
++            {
++                "ColumnId": 1,
++                "ColumnName": "BoxId",
++                "ColumnType": "Uint64"
++            },
++            {
++                "ColumnId": 2,
++                "ColumnName": "StoragePoolId",
++                "ColumnType": "Uint64"
++            },
++            {
++                "ColumnId": 3,
++                "ColumnName": "Filter",
++                "ColumnType": "String"
++            }
++        ],
++        "ColumnsDropped": [],
++        "ColumnFamilies": {
++            "0": {
++                "Columns": [
++                    1,
++                    2,
++                    3
++                ],
++                "RoomID": 0,
++                "Codec": 0,
++                "InMemory": false,
++                "Cache": 0,
++                "Small": 4294967295,
++                "Large": 4294967295
++            }
++        },
++        "Rooms": {
++            "0": {
++                "Main": 1,
++                "Outer": 1,
++                "Blobs": 1,
++                "ExternalBlobs": [
++                    1
++                ]
++            }
++        }
+     }
+ ]
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #57725** (2026-10-31): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
-- **PR #57724** (2026-10-31): Update muted_ya (release-asan) in main (@ydbot)
-- **PR #57723** (2026-10-31): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #57722** (2026-10-31): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
-- **PR #57721** (2026-10-31): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
-- **PR #57719** (2026-10-30): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
+- **PR #57768** (2026-10-31): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
+- **PR #57766** (2026-10-31): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #57765** (2026-10-31): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
+- **PR #57764** (2026-10-31): Enable core/base tests in open-source builds (@iddqdex)
+- **PR #57762** (2026-10-31): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
+- **PR #57761** (2026-10-31): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
 
 ---
 
@@ -2708,29 +3004,29 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. YQ-5796 fix big message topic processing (#57672)
+## X. Enable core/base tests in open-source builds (#57764)
 
 **RULE**:
-When implementing operations in `ydb/core/kqp/federated_query/kqp_federated_query_helpers.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/core/base/statestorage_ut.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `95446e4d`: YQ-5796 fix big message topic processing (#57672). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a762d016`: Enable core/base tests in open-source builds (#57764). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/kqp/federated_query/kqp_federated_query_helpers.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/base/statestorage_ut.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    constexpr ui64 maxMessageSize = 136314880;   //  logbroker default grpc max message size
-    cfg.SetMaxMessageSize(maxMessageSize);
+        IEventHandle ev(TActorId(), type, 0, TActorId(), TActorId(), nullptr, 0, origin, {});
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        IEventHandle ev(type, 0, TActorId(), TActorId(), nullptr, 0);
+        ev.OriginScopeId = origin;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `95446e4d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a762d016` are properly handled with clean fallback behavior.

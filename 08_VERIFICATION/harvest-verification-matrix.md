@@ -6673,3 +6673,7 @@
 | `CYCLE-20261031-A9P7` | `2026-10-31T18:22:09.307Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md` | Yes (`e0d94369...`) |
 | `CYCLE-20261031-ALAY` | `2026-10-31T18:22:24.346Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6278` | Yes (`cc61f407...`) |
 | `CYCLE-20261031-AMXJ` | `2026-10-31T18:22:26.455Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6279` | Yes (`1162a8d8...`) |
+| `CYCLE-20261031-J2WN` | `2026-10-31T18:29:00.407Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6280` | Yes (`9b016187...`) |
+| `CYCLE-20261031-J9RB` | `2026-10-31T18:29:09.287Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6281` | Yes (`4ee16f65...`) |
+| `CYCLE-20261031-JDEJ` | `2026-10-31T18:29:14.011Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6282` | Yes (`75e9e837...`) |
+| `CYCLE-20261031-PGYO` | `2026-10-31T18:33:58.560Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`804a9566...`) |
