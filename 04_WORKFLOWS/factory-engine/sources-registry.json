@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T05:07:21.702Z",
-    "lastVerified": "2026-10-31T05:07:21.702Z",
+    "lastChecked": "2026-10-31T05:14:26.823Z",
+    "lastVerified": "2026-10-31T05:14:26.823Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -141,12 +141,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T04:38:48.644Z",
-    "lastVerified": "2026-10-31T04:38:48.644Z",
+    "lastChecked": "2026-10-31T05:14:21.991Z",
+    "lastVerified": "2026-10-31T05:14:21.991Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -155,7 +155,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "687e906e"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -360,13 +361,13 @@
     "officialUrl": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T03:11:15.932Z",
-    "lastVerified": "2026-10-28T03:11:15.932Z",
+    "lastChecked": "2026-10-31T05:14:09.636Z",
+    "lastVerified": "2026-10-31T05:14:09.636Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-    "contentHash": "14ba29c79d03a04b711d69f5ab35dd18015998e50b831966483427c7a068e6d3",
-    "promotedRulesCount": 2,
+    "contentHash": "d2200d483591e512da029f3d4e199f70e506de3aa35acedf2ec6cc7717068e31",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -504,8 +505,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T01:28:21.000Z",
-    "lastVerified": "2026-10-31T01:28:21.000Z",
+    "lastChecked": "2026-10-31T05:14:17.187Z",
+    "lastVerified": "2026-10-31T05:14:17.187Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -1685,9 +1686,9 @@
   "kubesphere-kubesphere": {
     "name": "kubesphere",
     "officialUrl": "https://github.com/kubesphere/kubesphere",
-    "lastChecked": "2026-10-30T12:58:27.641Z",
+    "lastChecked": "2026-10-31T05:14:14.557Z",
     "revisionIdentifier": "04a29b5c",
-    "lastVerified": "2026-10-30T12:58:27.641Z"
+    "lastVerified": "2026-10-31T05:14:14.557Z"
   },
   "zama-ai-tfhe-rs": {
     "name": "tfhe-rs",
@@ -3389,11 +3390,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "margelo-react-native-vision-camera": {
-    "name": "react-native-vision-camera",
+    "name": "margelo/react-native-vision-camera",
     "officialUrl": "https://github.com/margelo/react-native-vision-camera",
-    "lastChecked": "2026-10-28T11:32:15.667Z",
-    "revisionIdentifier": "1a69f290",
-    "lastVerified": "2026-10-28T11:32:15.667Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-31T05:14:15.927Z",
+    "lastVerified": "2026-10-31T05:14:15.927Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-margelo-react-native-vision-camera",
+    "contentHash": "8e4b7dffd916889de6c6d66ab9117d6e013ec3f22d83b718b57df34dc4faf3c5",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "okteto-okteto": {
     "name": "okteto/okteto",
@@ -3854,9 +3865,9 @@
   "timvisee-ffsend": {
     "name": "ffsend",
     "officialUrl": "https://github.com/timvisee/ffsend",
-    "lastChecked": "2026-10-30T05:09:43.802Z",
+    "lastChecked": "2026-10-31T05:14:06.992Z",
     "revisionIdentifier": "85aae2f3",
-    "lastVerified": "2026-10-30T05:09:43.802Z"
+    "lastVerified": "2026-10-31T05:14:06.992Z"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -7287,14 +7298,14 @@
     "officialUrl": "https://github.com/volcengine/OpenViking",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-30T10:07:50.875Z",
-    "lastVerified": "2026-10-30T10:07:50.875Z",
+    "lastChecked": "2026-10-31T05:14:23.385Z",
+    "lastVerified": "2026-10-31T05:14:23.385Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "680dc689f89a437efade3f95239d225feb76efcf64a548b97fd5764e2cd52a40",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 16,
+    "contentHash": "be5dfca20c209c5c0a1f4e8f735984322c37a1dd49adfb843cf4d4d0e5971ee4",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

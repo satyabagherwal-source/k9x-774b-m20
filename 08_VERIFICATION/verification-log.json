@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-5OBV",
-    "timestamp": "2026-10-28T22:39:30.667Z",
-    "repository": "apache/arrow",
-    "learningId": "learn-github-apache-arrow",
-    "contentHash": "1922c1b72749667a2b67e022d3d85a44c1f182dbf7aa1d65eb025a02be66f319",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-5UP6",
-    "timestamp": "2026-10-28T22:39:38.922Z",
-    "repository": "chaos-mesh/chaos-mesh",
-    "learningId": "learn-github-chaos-mesh-chaos-mesh",
-    "contentHash": "020f7c2eeae254a2b9e9c2ae592a1425cea775a1d03847d103f30699a4d799ea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-DNTV",
-    "timestamp": "2026-10-28T22:45:43.267Z",
-    "repository": "meta/folly",
-    "learningId": "learn-github-meta-folly",
-    "contentHash": "bf94f8eaae2a0793584929119d488296d28d72e74fafc34a18a2c9d5cd6156dc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-DPW1",
     "timestamp": "2026-10-28T22:45:45.938Z",
     "repository": "meshtastic/Meshtastic-Android",
@@ -7490,6 +7445,51 @@
     "repository": "nats-io/nats-server",
     "learningId": "learn-github-nats-io-nats-server",
     "contentHash": "13e757876e912d413f1fe1796fabbfa66a13a8b382339bb68873c1d34eb9340d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-51NO",
+    "timestamp": "2026-10-31T05:14:16.356Z",
+    "repository": "margelo/react-native-vision-camera",
+    "learningId": "learn-github-margelo-react-native-vision-camera",
+    "contentHash": "8e4b7dffd916889de6c6d66ab9117d6e013ec3f22d83b718b57df34dc4faf3c5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-55WF",
+    "timestamp": "2026-10-31T05:14:21.855Z",
+    "repository": "sentence-transformers/all-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+    "contentHash": "d2200d483591e512da029f3d4e199f70e506de3aa35acedf2ec6cc7717068e31",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-57RC",
+    "timestamp": "2026-10-31T05:14:24.264Z",
+    "repository": "volcengine/OpenViking",
+    "learningId": "learn-github-volcengine-openviking",
+    "contentHash": "be5dfca20c209c5c0a1f4e8f735984322c37a1dd49adfb843cf4d4d0e5971ee4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

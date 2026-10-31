@@ -6478,3 +6478,6 @@ Every entry in this ledger must capture:
 | `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `bd173ed4` | Multi-dimensional audit evidence | 2026-10-31T05:00:56.329Z |
 | `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-31T05:07:17.205Z |
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `d163ae74` | Multi-dimensional audit evidence | 2026-10-31T05:07:18.919Z |
+| `learn-github-margelo-react-native-vision-camera` | `https://github.com/margelo/react-native-vision-camera` | `6624e8cd` | Multi-dimensional audit evidence | 2026-10-31T05:14:16.360Z |
+| `learn-huggingface-sentence-transformers-all-minilm-l6-v2` | `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-31T05:14:21.859Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `7aef6cbb` | Multi-dimensional audit evidence | 2026-10-31T05:14:24.268Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T05:07:18.925Z",
+  "last_updated": "2026-10-31T05:14:24.278Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -81,14 +81,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-      "content_hash": "14ba29c79d03a04b711d69f5ab35dd18015998e50b831966483427c7a068e6d3",
-      "verified_at": "2026-10-28T03:11:26.780Z",
+      "content_hash": "d2200d483591e512da029f3d4e199f70e506de3aa35acedf2ec6cc7717068e31",
+      "verified_at": "2026-10-31T05:14:21.867Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T03:11:26.780Z"
+      "last_updated": "2026-10-31T05:14:21.867Z"
     },
     "cross-encoder/ms-marco-MiniLM-L6-v2": {
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -2541,14 +2541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-volcengine-openviking",
-      "content_hash": "680dc689f89a437efade3f95239d225feb76efcf64a548b97fd5764e2cd52a40",
-      "verified_at": "2026-10-30T10:10:00.293Z",
+      "content_hash": "be5dfca20c209c5c0a1f4e8f735984322c37a1dd49adfb843cf4d4d0e5971ee4",
+      "verified_at": "2026-10-31T05:14:24.277Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T10:10:00.293Z"
+      "last_updated": "2026-10-31T05:14:24.277Z"
     },
     "Saffsanity/sill": {
       "repository": "Saffsanity/sill",
@@ -6426,14 +6426,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-margelo-react-native-vision-camera",
-      "content_hash": "d9c99f20f2d60efdcd07974d47f3e986228a98a165852e33aae273ff8c804748",
-      "verified_at": "2026-10-19T00:48:21.144Z",
+      "content_hash": "8e4b7dffd916889de6c6d66ab9117d6e013ec3f22d83b718b57df34dc4faf3c5",
+      "verified_at": "2026-10-31T05:14:16.368Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T00:48:21.144Z"
+      "last_updated": "2026-10-31T05:14:16.368Z"
     },
     "vinceanalytics/vince": {
       "repository": "vinceanalytics/vince",
