@@ -1225,8 +1225,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-8B",
     "sourceVersion": "hf-qwen-qwen3-8b",
     "license": "Open-Source",
-    "contentHash": "d273ba9f2f8df9c32ba33afc4c1d683885f5acf29e15d125ed569ca8e4399052",
-    "lastHarvestedAt": "2026-10-28T17:35:08.897Z",
+    "contentHash": "270a069314ac1c3ed2428df7c6fb333ce40f913dc678152799162a4a068ed708",
+    "lastHarvestedAt": "2026-10-31T18:52:36.617Z",
     "learningId": "learn-huggingface-qwen-qwen3-8b"
   },
   "hf-google-vit-base-patch16-224": {
@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "4907d2dd",
+    "sourceVersion": "2c04fb37",
     "license": "NOASSERTION",
-    "contentHash": "5eba1cd958ab7e21cd338798bd27e05b9c641518775587a16886f5dfead9dd2d",
-    "lastHarvestedAt": "2026-10-30T23:15:03.248Z",
+    "contentHash": "c02b328f1ee68721c6f1c6d37388994e64c83911cebbd20dd49f28f9ff2abb68",
+    "lastHarvestedAt": "2026-10-31T18:53:42.557Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {

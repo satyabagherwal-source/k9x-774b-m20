@@ -6688,3 +6688,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-intfloat-multilingual-e5-small` | `https://huggingface.co/intfloat/multilingual-e5-small` | `hf-intfloa` | Multi-dimensional audit evidence | 2026-10-31T18:33:58.567Z |
 | `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `ea52d606` | Multi-dimensional audit evidence | 2026-10-31T18:40:42.415Z |
 | `learn-huggingface-argmaxinc-whisperkit-coreml` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-10-31T18:45:47.525Z |
+| `learn-huggingface-qwen-qwen3-8b` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-31T18:52:36.617Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `2c04fb37` | Multi-dimensional audit evidence | 2026-10-31T18:53:42.557Z |

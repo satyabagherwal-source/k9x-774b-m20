@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T18:45:47.442Z",
+  "last_updated": "2026-10-31T18:53:42.474Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -28282,7 +28282,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-8B",
       "source_version": "hf-qwen-qwen3-8b",
-      "content_hash": "d273ba9f2f8df9c32ba33afc4c1d683885f5acf29e15d125ed569ca8e4399052",
+      "content_hash": "270a069314ac1c3ed2428df7c6fb333ce40f913dc678152799162a4a068ed708",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md",
       "promoted_rules": [
@@ -28319,7 +28319,7 @@
         "learn-huggingface-hf-qwen-qwen3-8b-mv407vz0",
         "learn-huggingface-hf-qwen-qwen3-8b-mv4e6vig"
       ],
-      "verified_at": "2026-10-28T17:35:08.784Z",
+      "verified_at": "2026-10-31T18:52:36.502Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38185,8 +38185,8 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "4907d2dd",
-      "content_hash": "5eba1cd958ab7e21cd338798bd27e05b9c641518775587a16886f5dfead9dd2d",
+      "source_version": "2c04fb37",
+      "content_hash": "c02b328f1ee68721c6f1c6d37388994e64c83911cebbd20dd49f28f9ff2abb68",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
@@ -38234,6 +38234,21 @@
           "number": 5933,
           "title": "remove): find Linux reap candidates through procfs (#4631)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6286,
+          "title": "Two-Phase Authorization Boundary (Frozen Plan TOCTOU Guard)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6287,
+          "title": "External Subcommand Literal Preserving Parser (Argv Forwarding Guard)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6288,
+          "title": "Inspection-Mutation Parity Contract (State Leak Shield)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38241,7 +38256,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T23:15:03.165Z",
+      "verified_at": "2026-10-31T18:53:42.454Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -163756,6 +163771,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T18:45:47.422Z"
+    },
+    "rule-6286": {
+      "learning_id": "rule-6286",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6286,
+      "title": "Two-Phase Authorization Boundary (Frozen Plan TOCTOU Guard)",
+      "source_url": "https://github.com/max-sixty/worktrunk",
+      "source_version": "2c04fb37",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T18:53:42.454Z"
+    },
+    "rule-6287": {
+      "learning_id": "rule-6287",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6287,
+      "title": "External Subcommand Literal Preserving Parser (Argv Forwarding Guard)",
+      "source_url": "https://github.com/max-sixty/worktrunk",
+      "source_version": "2c04fb37",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T18:53:42.454Z"
+    },
+    "rule-6288": {
+      "learning_id": "rule-6288",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6288,
+      "title": "Inspection-Mutation Parity Contract (State Leak Shield)",
+      "source_url": "https://github.com/max-sixty/worktrunk",
+      "source_version": "2c04fb37",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T18:53:42.454Z"
     }
   },
   "aliases": {

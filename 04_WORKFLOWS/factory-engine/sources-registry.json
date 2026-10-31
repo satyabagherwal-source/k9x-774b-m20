@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T18:45:50.072Z",
-    "lastVerified": "2026-10-31T18:45:50.072Z",
+    "lastChecked": "2026-10-31T18:53:45.120Z",
+    "lastVerified": "2026-10-31T18:53:45.120Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -430,8 +430,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T18:15:32.214Z",
-    "lastVerified": "2026-10-31T18:15:32.214Z",
+    "lastChecked": "2026-10-31T18:52:42.113Z",
+    "lastVerified": "2026-10-31T18:52:42.113Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -581,9 +581,9 @@
   "open-policy-agent-gatekeeper": {
     "name": "gatekeeper",
     "officialUrl": "https://github.com/open-policy-agent/gatekeeper",
-    "lastChecked": "2026-10-31T03:19:19.551Z",
+    "lastChecked": "2026-10-31T18:52:34.683Z",
     "revisionIdentifier": "e492e24c",
-    "lastVerified": "2026-10-31T03:19:19.551Z"
+    "lastVerified": "2026-10-31T18:52:34.683Z"
   },
   "nolabs-ai-nono": {
     "name": "nono",
@@ -904,14 +904,14 @@
     "officialUrl": "https://github.com/max-sixty/worktrunk",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T23:15:01.350Z",
-    "lastVerified": "2026-10-30T23:15:01.350Z",
+    "lastChecked": "2026-10-31T18:52:30.664Z",
+    "lastVerified": "2026-10-31T18:52:30.664Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-max-sixty-worktrunk",
-    "contentHash": "5eba1cd958ab7e21cd338798bd27e05b9c641518775587a16886f5dfead9dd2d",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "contentHash": "c02b328f1ee68721c6f1c6d37388994e64c83911cebbd20dd49f28f9ff2abb68",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1406,9 +1406,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-10-31T14:52:38.240Z",
+    "lastChecked": "2026-10-31T18:52:37.233Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-10-31T14:52:38.240Z"
+    "lastVerified": "2026-10-31T18:52:37.233Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -6307,9 +6307,9 @@
   "olric-data-olric": {
     "name": "olric",
     "officialUrl": "https://github.com/olric-data/olric",
-    "lastChecked": "2026-10-31T02:27:59.499Z",
+    "lastChecked": "2026-10-31T18:52:39.620Z",
     "revisionIdentifier": "c49c44a8",
-    "lastVerified": "2026-10-31T02:27:59.499Z"
+    "lastVerified": "2026-10-31T18:52:39.620Z"
   },
   "graphprotocol-graph-node": {
     "name": "graph-node",
@@ -6378,12 +6378,12 @@
     "officialUrl": "https://huggingface.co/Qwen/Qwen3-8B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T17:35:07.612Z",
-    "lastVerified": "2026-10-28T17:35:07.612Z",
+    "lastChecked": "2026-10-31T18:52:29.740Z",
+    "lastVerified": "2026-10-31T18:52:29.740Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen3-8b",
-    "contentHash": "d273ba9f2f8df9c32ba33afc4c1d683885f5acf29e15d125ed569ca8e4399052",
+    "contentHash": "270a069314ac1c3ed2428df7c6fb333ce40f913dc678152799162a4a068ed708",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -8536,9 +8536,9 @@
   "sindresorhus-gifski": {
     "name": "Gifski",
     "officialUrl": "https://github.com/sindresorhus/Gifski",
-    "lastChecked": "2026-10-28T23:42:59.235Z",
+    "lastChecked": "2026-10-31T18:52:32.109Z",
     "revisionIdentifier": "e184b284",
-    "lastVerified": "2026-10-28T23:42:59.235Z"
+    "lastVerified": "2026-10-31T18:52:32.109Z"
   },
   "hf-meta-models-muse-spark-open-816b-a42b": {
     "name": "meta-models/Muse-Spark-Open-816B-A42B",

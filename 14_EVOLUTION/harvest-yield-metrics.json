@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T18:45:47.531Z",
-  "total_cycles_completed": 6656,
-  "total_learnings_persisted": 6656,
-  "total_rules_promoted": 6286,
+  "last_updated": "2026-10-31T18:53:42.562Z",
+  "total_cycles_completed": 6658,
+  "total_learnings_persisted": 6658,
+  "total_rules_promoted": 6289,
   "history": [
-    {
-      "timestamp": "2026-10-31T05:45:35.088Z",
-      "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
-      "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T05:52:33.747Z",
-      "repository": "black-forest-labs/FLUX.1-dev",
-      "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T05:52:39.587Z",
       "repository": "milvus-io/milvus",
@@ -1403,6 +1389,20 @@
       "repository": "argmaxinc/whisperkit-coreml",
       "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T18:52:36.623Z",
+      "repository": "Qwen/Qwen3-8B",
+      "learningId": "learn-huggingface-qwen-qwen3-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T18:53:42.562Z",
+      "repository": "max-sixty/worktrunk",
+      "learningId": "learn-github-max-sixty-worktrunk",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

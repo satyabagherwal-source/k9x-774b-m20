@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T18:45:47.535Z",
+  "last_updated": "2026-10-31T18:53:42.567Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1610,14 +1610,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
-      "content_hash": "d273ba9f2f8df9c32ba33afc4c1d683885f5acf29e15d125ed569ca8e4399052",
-      "verified_at": "2026-10-28T17:35:08.910Z",
+      "content_hash": "270a069314ac1c3ed2428df7c6fb333ce40f913dc678152799162a4a068ed708",
+      "verified_at": "2026-10-31T18:52:36.626Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T17:35:08.910Z"
+      "last_updated": "2026-10-31T18:52:36.626Z"
     },
     "google/vit-base-patch16-224": {
       "repository": "google/vit-base-patch16-224",
@@ -3621,14 +3621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-max-sixty-worktrunk",
-      "content_hash": "5eba1cd958ab7e21cd338798bd27e05b9c641518775587a16886f5dfead9dd2d",
-      "verified_at": "2026-10-30T23:15:03.255Z",
+      "content_hash": "c02b328f1ee68721c6f1c6d37388994e64c83911cebbd20dd49f28f9ff2abb68",
+      "verified_at": "2026-10-31T18:53:42.566Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T23:15:03.255Z"
+      "last_updated": "2026-10-31T18:53:42.566Z"
     },
     "mattermost/mattermost": {
       "repository": "mattermost/mattermost",
