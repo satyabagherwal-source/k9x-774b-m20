@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-PFF2",
-    "timestamp": "2026-10-28T19:38:54.926Z",
-    "repository": "canberkkkkkk/ema-lightning",
-    "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
-    "contentHash": "2ff5e1043683e9eb168ee210d0a3cea8c0f1a16e6c6cf81f797755a2076337df",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-ZEUI",
-    "timestamp": "2026-10-28T19:46:40.746Z",
-    "repository": "unsloth/embeddinggemma-2-GGUF",
-    "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-    "contentHash": "0b4ecab20085c0a2b9057c6d6a1f3aad7417c40963f118a6ce95222539ea08dc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-ZKLB",
-    "timestamp": "2026-10-28T19:46:48.191Z",
-    "repository": "Tencent-TDS/KuiklyUI",
-    "learningId": "learn-github-tencent-tds-kuiklyui",
-    "contentHash": "94c7021ac105ad56ad310d8fbb63456c8fe0f6a1812080936b4ebd651e7dffc1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-ZMC1",
     "timestamp": "2026-10-28T19:46:50.449Z",
     "repository": "nginx/kubernetes-ingress",
@@ -7490,6 +7445,51 @@
     "repository": "orcarouter/OrcaCyber-Nano-1.0",
     "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
     "contentHash": "f3e81fcb70265f77f4b9c3172eed206b884aff2bd71e2f45cecd2c253ac5f2df",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-Q8E0",
+    "timestamp": "2026-10-31T01:46:47.928Z",
+    "repository": "pubkey/rxdb",
+    "learningId": "learn-github-pubkey-rxdb",
+    "contentHash": "c40ffb01a0b75350c1869da51be667410ad3fede0d9b57da015fd3c9f36ac9fd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-QCJL",
+    "timestamp": "2026-10-31T01:46:53.313Z",
+    "repository": "RecursiveSI/flint",
+    "learningId": "learn-huggingface-recursivesi-flint",
+    "contentHash": "2ab90870e8fd926964198e84c2d15f200ac6bac46efaddaba3bb5dc23999d605",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-QF94",
+    "timestamp": "2026-10-31T01:46:56.824Z",
+    "repository": "StarRocks/starrocks",
+    "learningId": "learn-github-starrocks-starrocks",
+    "contentHash": "b5cc2aa96264e9b861571ce460bec93cd2b0a5137d6ec1230c7267641cb15d44",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

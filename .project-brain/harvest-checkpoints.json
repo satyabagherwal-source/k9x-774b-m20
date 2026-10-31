@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T01:40:03.474Z",
+  "last_updated": "2026-10-31T01:46:56.835Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4326,14 +4326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pubkey-rxdb",
-      "content_hash": "b1e188ead9309c39eed696d6b55a820f5b28e4c123dc7f340b5cc231158853b6",
-      "verified_at": "2026-10-28T05:03:43.363Z",
+      "content_hash": "c40ffb01a0b75350c1869da51be667410ad3fede0d9b57da015fd3c9f36ac9fd",
+      "verified_at": "2026-10-31T01:46:47.938Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T05:03:43.363Z"
+      "last_updated": "2026-10-31T01:46:47.938Z"
     },
     "karmada-io/karmada": {
       "repository": "karmada-io/karmada",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "1815c077b520ce845bcd61f60c361ec30d9dbaf0e25b8890d07723b43d1374f3",
-      "verified_at": "2026-10-30T05:19:39.601Z",
+      "content_hash": "b5cc2aa96264e9b861571ce460bec93cd2b0a5137d6ec1230c7267641cb15d44",
+      "verified_at": "2026-10-31T01:46:56.834Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T05:19:39.602Z"
+      "last_updated": "2026-10-31T01:46:56.834Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",
@@ -15801,14 +15801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-recursivesi-flint",
-      "content_hash": "60c25a6de6221ab360e4a38dadd476c58bc799b3b31bf49a2f5cc29a480a21bc",
-      "verified_at": "2026-10-26T13:40:39.405Z",
+      "content_hash": "2ab90870e8fd926964198e84c2d15f200ac6bac46efaddaba3bb5dc23999d605",
+      "verified_at": "2026-10-31T01:46:53.324Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T13:40:39.405Z"
+      "last_updated": "2026-10-31T01:46:53.324Z"
     },
     "Qwen/Qwen3-14B": {
       "repository": "Qwen/Qwen3-14B",

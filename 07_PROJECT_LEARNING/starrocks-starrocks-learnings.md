@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source**: github ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
-> **Source Version**: `a2cbe29a`  
+> **Source Version**: `9fd19cdd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T05:19:39.020Z  
+> **Timestamp**: 2026-10-31T01:46:56.185Z  
 > **Learning ID**: `learn-github-starrocks-starrocks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T05:19:37.999Z  
+> **Harvest Timestamp**: 2026-10-31T01:46:55.279Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12218 stars
+- **Stars / Engagement**: 12221 stars
 
 ---
 
@@ -1818,535 +1818,486 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5618f1a4` (2026-10-30)
-**Commit Message**: [BugFix][RB-833][CVE] Bump guava to 33.7.2 and snappy-java to 1.1.10.9 (#81859)
+### Incident Patch 1: `8805a623` (2026-10-30)
+**Commit Message**: [BugFix][RB-760] Invalidate Iceberg, Delta and Hudi INSERT sources instead of refreshing them under the table lock (#81923)
+
+Co-authored-by: tqqq <[REDACTED_EMAIL]>
+Co-authored-by: tqqq <[REDACTED_EMAIL]>
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/connector/delta/DeltaLakeCacheUpdateProcessor.java` (modified, +4/-0)
+```diff
+@@ -33,6 +33,10 @@ public void refreshTable(String dbName, Table table, boolean onlyCachedPartition
+         cachingMetastore.refreshTable(dbName, table.getName(), onlyCachedPartitions);
+     }
+ 
++    public void invalidateTable(String dbName, String tableName) {
++        cachingMetastore.invalidateTable(dbName, tableName);
++    }
++
+     @Override
+     public Set<DatabaseTableName> getCachedTableNames() {
+         return cachingMetastore.getCachedTableNames();
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/connector/delta/DeltaLakeMetadata.java` (modified, +15/-0)
+```diff
+@@ -485,6 +485,21 @@ public void refreshTable(String srDbName, Table table, List<String> partitionNam
+         }
+     }
+ 
++    /**
++     * Drops this table's snapshot from both cache levels instead of reloading it, with no remote I/O and without the
++     * catalog's per-table refresh lock: the planner's next getTable then loads the latest snapshot. A refresh would
++     * read the Delta log under that lock, so concurrent INSERTs reading the same source would queue behind it.
++     */
++    @Override
++    public void invalidateTableForRead(String srDbName, Table table) {
++        String dbName = table.getCatalogDBName();
++        String tableName = table.getCatalogTableName();
++        deltaOps.invalidateTable(dbName, tableName);
++        if (cacheUpdateProcessor != null) {
++            cacheUpdateProcessor.invalidateTable(dbName, tableName);
++        }
++    }
++
+     @Override
+     public void clear() {
+         deltaOps.invalidateAll();
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/connector/delta/DeltaMetastoreOperations.java` (modified, +4/-0)
+```diff
+@@ -63,4 +63,8 @@ public MetastoreType getMetastoreType() {
+     public void invalidateAll() {
+         this.metastore.invalidateAll();
+     }
++
++    public void invalidateTable(String dbName, String tableName) {
++        this.metastore.invalidateTable(dbName, tableName);
++    }
+ }
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/connector/hudi/HudiMetadata.java` (modified, +11/-0)
+```diff
+@@ -235,6 +235,17 @@ public void refreshTable(String srDbName, Table table, List<String> partitionNam
+         }
+     }
+ 
++    /**
++     * Drops this table from both cache levels instead of reloading it, as HiveMetadata does: the table, its
++     * partitions, statistics and file lists. No remote I/O and no per-table refresh lock, so concurrent INSERTs
++     * reading the same source do not queue behind each other's metastore load; planning loads what it reads.
++     */
++    @Override
++    public void invalidateTableForRead(String srDbName, Table table) {
++        hmsOps.invalidateTable(table.getCatalogDBName(), table.getCatalogTableName());
++        cacheUpdateProcessor.ifPresent(processor -> processor.invalidateTableForRead(table));
++    }
++
+     @Override
+     public void dropTable(ConnectContext context, DropTableStmt stmt) throws DdlException {
+         String dbName = stmt.getDbName();
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/connector/iceberg/IcebergMetadata.java` (modified, +19/-0)
+```diff
+@@ -2584,6 +2584,25 @@ public void refreshTable(String srDbName, Table table, List<String> partitionNam
+         }
+     }
+ 
++    /**
++     * Drop only the cached table object, with no remote I/O and without the catalog's per-table refresh lock: the
++     * planner's next getTable then loads the table as it is now. A refresh would load it remotely under that lock,
++     * so concurrent INSERTs reading the same source queue behind each other's remote load. The partition and
++     * manifest caches are keyed by snapshot and file path, so they stay valid for whatever snapshot is loaded.
++     */
++    @Override
++    public void invalidateTableForRead(String srDbName, Table table) {
++        if (isResourceMappingCatalog(catalogName)) {
++            refreshTable(srDbName, table, new ArrayList<>(), false);
++            return;
++        }
++        IcebergTable icebergTable = (IcebergTable) table;
++        String dbName = icebergTable.getCatalogDBName();
++        String tableName = icebergTable.getCatalogTableName();
++        tables.remove(TableIdentifier.of(dbName, tableName));
++        icebergCatalog.invalidateTableCache(dbName, tableName);
++    }
++
+     private void refreshTableWithResource(Table table) {
+         IcebergTable icebergTable = (IcebergTable) table;
+         org.apache.iceberg.Table nativeTable = icebergTable.getNativeTable();
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/connector/delta/DeltaLakeMetadataTest.java` (modified, +42/-0)
+```diff
+@@ -64,6 +64,8 @@
+ 
+ import java.util.List;
+ import java.util.Optional;
++import java.util.concurrent.Executors;
++import java.util.concurrent.atomic.AtomicInteger;
+ 
+ public class DeltaLakeMetadataTest {
+     private HiveMetaClient client;
+@@ -280,4 +282,44 @@ public void testIdentityStringPartitionColumns() {
+         Assertions.assertEquals(Sets.newHashSet("c2"),
+                 DeltaLakeMetadata.identityStringPartitionColumns(table, Sets.newHashSet("c2", "c3")));
+     }
++
++    @Test
++    public void testInvalidateTableForReadDoesNoRemoteLoad() {
++        AtomicInteger snapshotLoads = new AtomicInteger();
++        new MockUp<DeltaLakeMetastore>() {
++            @Mock
++            public DeltaLakeSnapshot getLatestSnapshot(String dbName, String tableName) {
++                snapshotLoads.incrementAndGet();
++                return new DeltaLakeSnapshot(dbName, tableName, null, null,
++                        new MetastoreTable(dbName, tableName, "s3://bucket/path/to/table", 123));
++            }
++        };
++        new MockUp<DeltaUtils>() {
++            @Mock
++            public DeltaLakeTable convertDeltaSnapshotToSRTable(String catalog, DeltaLakeSnapshot snapshot) {
++                return new DeltaLakeTable(1, "delta0", "db1", "table1", Lists.newArrayList(), Lists.newArrayList(),
++                        null, null, new MetastoreTable("db1", "table1", "s3://bucket/path/to/table", 123));
++            }
++        };
++        HMSBackedDeltaMetastore hmsBackedDeltaMetastore = new HMSBackedDeltaMetastore("delta0",
++                new HiveMetastore(client, "delta0", MetastoreType.HMS), new Configuration(),
++                new DeltaLakeCatalogProperties(Maps.newHashMap()));
++        CachingDeltaLakeMetastore catalogLevel = CachingDeltaLakeMetastore.createCatalogLevelInstance(
++                hmsBackedDeltaMetastore, Executors.newSingleThreadExecutor(), 3600, -1, 100);
++        DeltaMetastoreOperations deltaOps = new DeltaMetastoreOperations(
++                CachingDeltaLakeMetastore.createQueryLevelInstance(catalogLevel, 100), true, MetastoreType.HMS);
++        DeltaLakeMetadata metadata = new DeltaLakeMetadata(new HdfsEnvironment(Maps.newHashMap()), "delta0",
++                deltaOps, new DeltaLakeCacheUpdateProcessor(catalogLevel), new ConnectorProperties(ConnectorType.DELTALAKE));
++
++        Table table = metadata.getTable(new ConnectContext(), "db1", "table1");
++        Assertions.assertEquals(1, snapshotLoads.get());
++
++        // Invalidating for a read only drops the cached snapshot, at both cache levels; it does not read the log.
++        metadata.invalidateTableForRead("db1", table);
++        Assertions.assertEquals(1, snapshotLoads.get());
++
++        // The next read loads the latest snapshot, past the query-level cache too.
++        metadata.getTable(new ConnectContext(), "db1", "table1");
++        Assertions.assertEquals(2, snapshotLoads.get());
++    }
+ }
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/connector/hudi/HudiMetadataTest.java` (modified, +36/-1)
+```diff
+@@ -16,17 +16,20 @@
+ 
+ import com.google.common.collect.Lists;
+ import com.starrocks.catalog.Database;
++import com.starrocks.catalog.Table;
+ import com.starrocks.common.FeConstants;
+ import com.starrocks.common.util.LogUtil;
+ import com.starrocks.connector.CachingRemoteFileIO;
+ import com.starrocks.connector.ConnectorMetadataRequestContext;
+ import com.starrocks.connector.ConnectorProperties;
+ import com.starrocks.connector.ConnectorType;
++import com.starrocks.connector.DatabaseTableName;
+ import com.starrocks.connector.HdfsEnvironment;
+ import com.starrocks.connector.MetastoreType;
+ import com.starrocks.connector.RemoteFileOperations;
+ import com.starrocks.connector.exception.StarRocksConnectorException;
+ import com.starrocks.connector.hive.CachingHiveMetastore;
++import com.starrocks.connector.hive.HiveCacheUpdateProcessor;
+ import com.starrocks.connector.hive.HiveMetaClient;
+ import com.starrocks.connector.hive.HiveMetastore;
+ import com.starrocks.connector.hive.HiveMetastoreOperations;
+@@ -38,6 +41,9 @@
+ import com.starrocks.sql.optimizer.base.ColumnRefFactory;
+ import com.starrocks.utframe.UtFrameUtils;
+ import mockit.Expectations;
++import mockit.Invocation;
++import mockit.Mock;
++import mockit.MockUp;
+ import mockit.Mocked;
+ import org.apache.hadoop.conf.Configuration;
+ import org.junit.jupiter.api.AfterEach;
+@@ -49,6 +55,7 @@
+ import java.util.Optional;
+ import java.util.concurrent.ExecutorService;
+ import java.util.concurrent.Executors;
++import java.util.concurrent.atomic.AtomicInteger;
+ 
+ public class HudiMetadataTest {
+     private HiveMetaClient client;
+@@ -159,4 +166,32 @@ public void testGetCloudConfiguration() {
+         CloudConfiguration cc = hudiMetadata.getCloudConfiguration();
+         Assertions.assertEquals(cc.getCloudType(), CloudType.DEFAULT);
+     }
+-}
+\ No newline at end of file
++
++    @Test
++    public void testInvalidateTableForReadDoesNoRemoteLoad() {
++        AtomicInteger remoteTableLoads = new AtomicInteger();
++        new MockUp<HiveMetastore>() {
++            @Mock
++            public Table getTable(Invocation inv, String dbName, String tableName) {
++                remoteTableLoads.incrementAndGet();
++                return inv.proceed(dbName, tableName);
++            }
++        };
++        HiveCacheUpdateProcessor processor = new HiveCacheUpdateProcessor("hive_catalog", cachingHiveMetastore,
++                cachingRemoteFileIO, executorForPullFiles, false, false);
++        HudiMetadata metadata = new HudiMetadata("hive_catalog", new HdfsEnvironment(), hmsOps, fileOps,
++                statisticsProvider, Optional.of(processor), new ConnectorProperties(ConnectorType.HUDI));
++
++        Table table = hmsOps.getTable("db1", "table1");
++        Assertions.assertEquals(1, remoteTableLoads.get());
++        Assertions.assertTrue(cachingHiveMetastore.isTablePresent(DatabaseTableName.of("db1", "table1")));
++
++        // Invalidating for a read only drops what is cached; it does not reload the table from the metastore.
++        metadata.invalidateTableForRead("db1", table);
++        Assertions.assertEquals(1, remoteTableLoads.get());
++        Assertions.assertFalse(cachingHiveMetastore.isTablePresent(DatabaseTableName.of("db1", "table1")));
++
++        hmsOps.getTable("db1", "table1");
++        Assertions.assertEquals(2, remoteTableLoads.get());
++    }
++}
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/connector/iceberg/IcebergMetadataTest.java` (modified, +33/-0)
+```diff
+@@ -2904,6 +2904,39 @@ public void testRefreshTableException(@Mocked CachingIcebergCatalog icebergCatal
+         metadata.refreshTable("db", icebergTable, null, true);
+     }
+ 
++    @Test
++    public void testInvalidateTableForReadDoesNoRemoteLoad() {
++        AtomicInteger remoteLoads = new AtomicInteger();
++        AtomicReference<org.apache.iceberg.Table> remoteTable = new AtomicReference<>(mockedNativeTableA);
++        new MockUp<IcebergHiveCatalog>() {
++            @Mock
++            org.apache.iceberg.Table getTable(ConnectContext context, String dbName, String tableName)
++                    throws StarRocksConnectorException {
++                remoteLoads.incrementAndGet();
++                return remoteTable.get();
++            }
++        };
++        IcebergHiveCatalog icebergHiveCatalog = new IcebergHiveCatalog(CATALOG_NAME, new Configuration(), DEFAULT_CONFIG);
++        CachingIcebergCatalog cachingIcebergCatalog = new CachingIcebergCatalog(CATALOG_NAME, icebergHiveCatalog,
++                DEFAULT_CATALOG_PROPERTIES, Executors.newSingleThreadExecutor());
++        IcebergMetadata metadata = new IcebergMetadata(CATALOG_NAME, HDFS_ENVIRONMENT, cachingIcebergCatalog,
++                Executors.newSingleThreadExecutor(), null);
++
++        Assertions.assertSame(mockedNativeTableA, cachingIcebergCatalog.getTable(connectContext, "db", "table"));
++        Assertions.assertEquals(1, remoteLoads.get());
++
++        // The remote table moves on; invalidating it for a read must not load it, only drop the cached object.
++        remoteTable.set(mockedNativeTableB);
++        IcebergTable icebergTable = new IcebergTable(1, "srTableName", CATALOG_NAME, "resource_name", "db",
++                "table", "", new ArrayList<>(), mockedNativeTableA, Maps.newHashMap());
++        metadata.invalidateTableForRead("db", icebergTable);
++        Assertions.assertEquals(1, remoteLoads.get());
++
++        // The next read loads the table as it is now.
++        Assertions.assertSame(mockedNativeTableB, cachingIcebergCatalog.getTable(connectContext, "db", "table"));
++        Assertions.assertEquals(2, remoteLoads.get());
++    }
++
+     @Test
+     public void testAlterTable(@Mocked IcebergHiveCatalog icebergHiveCatalog) throws StarRocksException {
+         IcebergMetadata metadata = new IcebergMetadata(CATALOG_NAME, HDFS_ENVIRONMENT, icebergHiveCatalog,
+```
+
+---
+
+### Incident Patch 2: `4aa3dd33` (2026-10-30)
+**Commit Message**: [UT] Check whole result columns with debug_string in a few more BE tests (#81950)
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `be/test/column/variant_merger_test.cpp` (modified, +1/-4)
+```diff
+@@ -277,10 +277,7 @@ PARALLEL_TEST(VariantColumnMergerTest, cast_variant_typed_column_to_varchar_form
+     ASSERT_TRUE(casted.ok()) << casted.status().to_string();
+ 
+     const auto* nullable = down_cast<const NullableColumn*>(casted.value().get());
+-    ASSERT_EQ(3, nullable->size());
+-    EXPECT_EQ("dept_0", nullable->get(0).get_slice().to_string());
+-    EXPECT_EQ("100", nullable->get(1).get_slice().to_string());
+-    EXPECT_TRUE(nullable->get(2).is_null());
++    ASSERT_EQ("['dept_0', '100', NULL]", nullable->debug_string());
+ }
+ 
+ PARALLEL_TEST(VariantColumnMergerTest, cast_variant_typed_column_to_datetime_requires_explicit_timezone_context) {
+```
+
+**File**: `be/test/exprs/array_functions_test.cpp` (modified, +1/-7)
+```diff
+@@ -175,13 +175,7 @@ TEST_F(ArrayFunctionsTest, array_length) {
+                 TYPE_ARRAY_INT_DESC, true, {{}, NullArrayRow{}, {std::nullopt}, {1}, {1, 2}});
+ 
+         auto result = ArrayFunctions::array_length(nullptr, {c}).value();
+-        EXPECT_EQ(5, result->size());
+-
+-        EXPECT_EQ(result->get(0), Datum(0));
+-        EXPECT_EQ(result->get(1), kNullDatum);
+-        EXPECT_EQ(result->get(2), Datum(1));
+-        EXPECT_EQ(result->get(3), Datum(1));
+-        EXPECT_EQ(result->get(4), Datum(2));
++        EXPECT_EQ("[0, NULL, 1, 1, 2]", result->debug_string());
+ 
+         // array_length should not mutate input nullable null bitmap.
+         auto* nullable = down_cast<NullableColumn*>(c.get());
+```
+
+**File**: `be/test/formats/parquet/group_reader_test.cpp` (modified, +1/-3)
+```diff
+@@ -3004,9 +3004,7 @@ TEST_F(GroupReaderTest, FillDstChunkProjectsVirtualVarcharColumnFromPhysicalSour
+ 
+     ASSERT_OK(fill_dst_chunk_without_projected(group_reader, read_chunk, &dst_chunk));
+     const auto& result = dst_chunk->get_column_by_slot_id(virtual_slot->id());
+-    ASSERT_EQ(2, result->size());
+-    EXPECT_EQ("11", result->get(0).get_slice().to_string());
+-    EXPECT_EQ("22", result->get(1).get_slice().to_string());
++    ASSERT_EQ("['11', '22']", result->debug_string());
+ }
+ 
+ TEST_F(GroupReaderTest, FillDstChunkProjectsVirtualColumnFromHiddenVariantSource) {
+```
+
+**File**: `be/test/storage/rowset/binary_dict_page_test.cpp` (modified, +3/-16)
+```diff
+@@ -145,12 +145,7 @@ class BinaryDictPageTest : public testing::Test {
+         read_range.add(Range<>(4, 7));
+         status = page_decoder.next_batch(read_range, column.get());
+         ASSERT_TRUE(status.ok());
+-        ASSERT_EQ(5, column->size());
+-        ASSERT_EQ("Individual", column->get(0).get_slice().to_string());
+-        ASSERT_EQ("Lifetime", column->get(1).get_slice().to_string());
+-        ASSERT_EQ("Evolution", column->get(2).get_slice().to_string());
+-        ASSERT_EQ("Nature", column->get(3).get_slice().to_string());
+-        ASSERT_EQ("Captain", column->get(4).get_slice().to_string());
++        ASSERT_EQ("['Individual', 'Lifetime', 'Evolution', 'Nature', 'Captain']", column->debug_string());
+     }
+ 
+     void test_with_large_data_size(const std::vector<Slice>& contents) {
+@@ -368,10 +363,7 @@ TEST_F(BinaryDictPageTest, TestNextBatchWithFilter) {
+         ASSERT_EQ(1, selection[3]);
+         ASSERT_EQ(1, selection[4]);
+ 
+-        ASSERT_EQ(3, column->size());
+-        ASSERT_EQ("c_300", column->get(0).get_slice().to_string());
+-        ASSERT_EQ("d_400", column->get(1).get_slice().to_string());
+-        ASSERT_EQ("e_500", column->get(2).get_slice().to_string());
++        ASSERT_EQ("['c_300', 'd_400', 'e_500']", column->debug_string());
+     }
+ 
+     // Reset decoder state
+@@ -529,12 +521,7 @@ TEST_F(BinaryDictPageTest, TestReadByRowids) {
+     st = page_decoder.read_by_rowids(0, rowids, &num_read, column.get());
+     ASSERT_TRUE(st.ok());
+     ASSERT_EQ(4, num_read);
+-    ASSERT_EQ(4, column->size());
+-
+-    ASSERT_EQ("val_1", column->get(0).get_slice().to_string());
+-    ASSERT_EQ("val_3", column->get(1).get_slice().to_string());
+-    ASSERT_EQ("val_5", column->get(2).get_slice().to_string());
+-    ASSERT_EQ("val_8", column->get(3).get_slice().to_string());
++    ASSERT_EQ("['val_1', 'val_3', 'val_5', 'val_8']", column->debug_string());
+ }
+ 
+ // A predicate that rejects every dictionary entry used to make next_batch_with_filter return before consuming the
+```
+
+---
+
+### Incident Patch 3: `8845bbed` (2026-10-30)
+**Commit Message**: [BugFix][RB-882] Avoid recursion in MV force drop when retention period is 0 (#81953)
 
 Signed-off-by: Kevin Cai <[REDACTED_EMAIL]>
 Co-authored-by: Kevin Cai <[REDACTED_EMAIL]>
 
-**File**: `fe/build.gradle.kts` (modified, +3/-2)
+**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/OlapTable.java` (modified, +3/-2)
 ```diff
-@@ -124,8 +124,9 @@ subprojects {
-             implementation("com.github.oshi:oshi-core:6.2.1")
-             implementation("com.github.seancfoley:ipaddress:5.4.2")
-             implementation("com.google.cloud.bigdataoss:gcs-connector:${project.ext["gcs.connector.version"]}")
-+            implementation("com.google.code.findbugs:jsr305:3.0.2")
-             implementation("com.google.code.gson:gson:2.8.9")
--            implementation("com.google.guava:guava:32.0.1-jre")
-+            implementation("com.google.guava:guava:33.7.2-jre")
-             implementation("com.google.protobuf:protobuf-java:${project.ext["protobuf-java.version"]}")
-             implementation("com.google.protobuf:protobuf-java-util:${project.ext["protobuf-java.version"]}")
-             implementation("com.microsoft.sqlserver:mssql-jdbc:12.4.2.jre11")
-@@ -264,7 +265,7 @@ subprojects {
-             implementation("org.roaringbitmap:RoaringBitmap:0.8.13")
-             implementation("org.scala-lang:scala-library:2.12.10")
-             implementation("org.slf4j:slf4j-api:1.7.30")
--            implementation("org.xerial.snappy:snappy-java:1.1.10.5")
-+            implementation("org.xerial.snappy:snappy-java:1.1.10.9")
-             implementation("software.amazon.awssdk:dynamodb:${project.ext["aws-v2-sdk.version"]}")
-             implementation("software.amazon.awssdk:glue:${project.ext["aws-v2-sdk.version"]}")
-             implementation("software.amazon.awssdk:kms:${project.ext["aws-v2-sdk.version"]}")
-```
-
-**File**: `fe/fe-core/build.gradle.kts` (modified, +1/-0)
-```diff
-@@ -93,6 +93,7 @@ dependencies {
-     implementation("com.github.oshi:oshi-core")
-     implementation("com.github.seancfoley:ipaddress")
-     implementation("com.google.cloud.bigdataoss:gcs-connector")
-+    implementation("com.google.code.findbugs:jsr305")
-     implementation("com.google.code.gson:gson")
-     implementation("com.google.guava:guava")
-     implementation("com.google.protobuf:protobuf-java")
-```
-
-**File**: `fe/fe-core/pom.xml` (modified, +6/-0)
-```diff
-@@ -235,6 +235,12 @@ under the License.
-             <artifactId>guava</artifactId>
-         </dependency>
+@@ -1510,8 +1510,9 @@ public void dropPartitionWithRetention(long dbId, String partitionName, long par
  
-+        <!-- https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305 -->
-+        <dependency>
-+            <groupId>com.google.code.findbugs</groupId>
-+            <artifactId>jsr305</artifactId>
-+        </dependency>
-+
-         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
-         <dependency>
-             <groupId>com.fasterxml.jackson.core</groupId>
-```
-
-**File**: `fe/fe-parser/build.gradle.kts` (modified, +1/-0)
-```diff
-@@ -31,6 +31,7 @@ dependencies {
-     implementation("org.antlr:antlr4-runtime")
-     implementation("org.apache.commons:commons-lang3")
-     implementation("com.google.guava:guava")
-+    implementation("com.google.code.findbugs:jsr305")
-     implementation("javax.validation:validation-api")
- 
-     testImplementation("org.junit.jupiter:junit-jupiter")
-```
-
-**File**: `fe/fe-parser/pom.xml` (modified, +4/-0)
-```diff
-@@ -40,6 +40,10 @@
-             <groupId>com.google.guava</groupId>
-             <artifactId>guava</artifactId>
-         </dependency>
-+        <dependency>
-+            <groupId>com.google.code.findbugs</groupId>
-+            <artifactId>jsr305</artifactId>
-+        </dependency>
-         <dependency>
-             <groupId>javax.validation</groupId>
-             <artifactId>validation-api</artifactId>
-```
-
-**File**: `fe/pom.xml` (modified, +9/-2)
-```diff
-@@ -367,7 +367,14 @@ under the License.
-             <dependency>
-                 <groupId>com.google.guava</groupId>
-                 <artifactId>guava</artifactId>
--                <version>32.0.1-jre</version>
-+                <version>33.7.2-jre</version>
-+            </dependency>
-+
-+            <!-- https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305 -->
-+            <dependency>
-+                <groupId>com.google.code.findbugs</groupId>
-+                <artifactId>jsr305</artifactId>
-+                <version>3.0.2</version>
-             </dependency>
- 
-             <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
-@@ -1648,7 +1655,7 @@ under the License.
-             <dependency>
-                 <groupId>org.xerial.snappy</groupId>
-                 <artifactId>snappy-java</artifactId>
--                <version>1.1.10.5</version>
-+                <version>1.1.10.9</version>
-             </dependency>
- 
-             <dependency>
-```
-
-**File**: `fs_brokers/apache_hdfs_broker/src/pom.xml` (modified, +8/-1)
-```diff
-@@ -41,7 +41,7 @@ under the License.
-         <maven.compiler.source>1.8</maven.compiler.source>
-         <maven.compiler.target>1.8</maven.compiler.target>
-         <hadoop.version>3.4.3</hadoop.version>
--        <guava.version>32.0.1-jre</guava.version>
-+        <guava.version>33.7.2-jre</guava.version>
-         <zookeeper.version>3.9.6</zookeeper.version>
-         <protobuf.version>3.25.5</protobuf.version>
-         <thrift.version>0.24.0</thrift.version>
-@@ -56,6 +56,7 @@ under the License.
-         <bouncycastle.version>1.86</bouncycastle.version>
-         <httpclient5.version>5.6.4</httpclient5.version>
-         <httpcore5.version>5.4.3</httpcore5.version>
-+        <snappy-java.version>1.1.10.9</snappy-java.version>
-     </properties>
- 
-     <profiles>
-@@ -151,6 +152,12 @@ under the License.
-                 <version>${httpcore5.version}</version>
-             </dependency>
- 
-+            <dependency>
-+                <groupId>org.xerial.snappy</groupId>
-+                <artifactId>snappy-java</artifactId>
-+                <version>${snappy-java.version}</version>
-+            </dependency>
-+
-             <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
-             <dependency>
-                 <groupId>commons-cli</groupId>
-```
-
-**File**: `java-extensions/hive-reader/pom.xml` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@
-     <packaging>jar</packaging>
- 
-     <properties>
--        <guava.version>32.0.1-jre</guava.version>
-+        <guava.version>33.7.2-jre</guava.version>
-         <java-extensions.home>${basedir}/../</java-extensions.home>
-         <avro.version>1.11.4</avro.version>
-     </properties>
-```
-
----
-
-### Incident Patch 2: `ced99d45` (2026-10-30)
-**Commit Message**: [BugFix][RB-726] Release idle Iceberg commit executor threads (#81805)
-
-Signed-off-by: GavinMar <[REDACTED_EMAIL]>
-Co-authored-by: Gavin <[REDACTED_EMAIL]>
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/connector/iceberg/IcebergCommitQueueManager.java` (modified, +8/-2)
-```diff
-@@ -62,6 +62,8 @@ public class IcebergCommitQueueManager {
- 
-     private static final Logger LOG = LogManager.getLogger(IcebergCommitQueueManager.class);
- 
-+    private static final long EXECUTOR_IDLE_THREAD_TIMEOUT_SECONDS = 60L;
-+
-     /**
-      * Configuration for the commit queue manager.
-      */
-@@ -235,6 +237,8 @@ public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
-                             " seconds but queue still at capacity. Consider increasing iceberg_commit_queue_max_size " +
-                             "or iceberg_commit_queue_timeout_seconds.");
-                 }
-+                // the idle worker may have timed out before the offer, leaving the task without a thread
-+                executor.prestartCoreThread();
-             } catch (InterruptedException e) {
-                 Thread.currentThread().interrupt();
-                 throw new RejectedExecutionException("Interrupted while waiting for commit queue capacity", e);
-@@ -418,13 +422,15 @@ private TableCommitExecutor getOrCreateTableExecutor(TableCommitKey key) {
-                 // When queue is full, block until capacity is available.
-                 // The wait time is set to half of the commit timeout to leave room for actual execution.
-                 long maxQueueWaitSeconds = config.getTimeoutSeconds() / 2;
--                ExecutorService executor = new ThreadPoolExecutor(
-+                ThreadPoolExecutor executor = new ThreadPoolExecutor(
-                         1,  // corePoolSize
-                         1,  // maximumPoolSize
--                        0L, TimeUnit.MILLISECONDS,  // idle thread timeout
-+                        EXECUTOR_IDLE_THREAD_TIMEOUT_SECONDS, TimeUnit.SECONDS,  // idle thread timeout
-                         new LinkedBlockingQueue<>(config.getMaxQueueSize()),  // bounded queue
-                         threadFactory,
-                         new BlockWhenQueueFullPolicy(maxQueueWaitSeconds));
-+                // release the thread of an idle table (e.g. dropped) instead of holding it until cache eviction
-+                executor.allowCoreThreadTimeOut(true);
-                 LOG.info("Created commit queue executor for {}.{}.{}, max queue size: {}, " +
-                                 "max queue wait: {} seconds (commit timeout: {} seconds)",
-                         key.catalogName, key.dbName, key.tableName, config.getMaxQueueSize(),
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/connector/iceberg/IcebergCommitQueueManagerTest.java` (modified, +38/-0)
-```diff
-@@ -315,6 +315,23 @@ public void testBlockWhenQueueFullPolicyTimesOutWhenQueueFull() throws Exception
-         executor.shutdownNow();
-     }
- 
-+    @Test
-+    public void testBlockWhenQueueFullPolicyStartsWorkerWhenPoolIsEmpty() throws Exception {
-+        // the idle worker may time out while the handler is about to enqueue
-+        RejectedExecutionHandler policy = newBlockWhenQueueFullPolicy(1);
-+        ThreadPoolExecutor executor = new ThreadPoolExecutor(
-+                1, 1, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(1));
-+        executor.allowCoreThreadTimeOut(true);
-+        assertEquals(0, executor.getPoolSize());
-+        CountDownLatch done = new CountDownLatch(1);
-+        try {
-+            policy.rejectedExecution(done::countDown, executor);
-+            assertTrue(done.await(5, TimeUnit.SECONDS));
-+        } finally {
-+            executor.shutdownNow();
-+        }
-+    }
-+
-     @Test
-     public void testBlockWhenQueueFullPolicyWithInterrupted() throws Exception {
-         RejectedExecutionHandler policy = newBlockWhenQueueFullPolicy(1);
-@@ -633,6 +650,27 @@ public void testDisableCommitQueue() throws Exception {
+             removePartitionFromInnerState(partition);
+         } else {
+-            // if `partitionRetentionPeriod` is not valid, fallback to drop partition forcefully
+-            dropPartition(dbId, partitionName, true);
++            // if `partitionRetentionPeriod` is not valid, fallback to drop partition forcefully.
++            // Call the private variant: MaterializedView overrides the public one to call back here.
++            dropPartition(dbId, partitionName, true, false);
          }
      }
  
-+    @Test
-+    public void testIdleTableExecutorReleasesThread() throws Exception {
-+        manager.submitCommit("catalog", "db", "table", () -> {});
-+        ThreadPoolExecutor executor = (ThreadPoolExecutor) getExecutorForKey(manager,
-+                newTableCommitKey("catalog", "db", "table"));
-+        assertEquals(1, executor.getPoolSize());
-+
-+        // shorten the idle timeout so the test does not wait for the production value
-+        executor.setKeepAliveTime(50, TimeUnit.MILLISECONDS);
-+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
-+        while (executor.getPoolSize() > 0 && System.nanoTime() < deadline) {
-+            Thread.sleep(20);
-+        }
-+        assertEquals(0, executor.getPoolSize());
-+
-+        // the executor stays usable after its thread exits
-+        AtomicInteger counter = new AtomicInteger();
-+        assertTrue(manager.submitCommit("catalog", "db", "table", counter::incrementAndGet).isSuccess());
-+        assertEquals(1, counter.get());
-+    }
-+
-     @Test
-     public void testShutdownTableExecutor() {
-         // Create a table executor by submitting a commit
 ```
 
----
-
-### Incident Patch 3: `4276cd4c` (2026-10-30)
-**Commit Message**: [BugFix] Cap JSON parse nesting depth to stop a BE crash (#79338)
-
-Signed-off-by: Alberic <[REDACTED_EMAIL]>
-
-**File**: `be/src/column/variant_encoder.cpp` (modified, +4/-1)
+**File**: `fe/fe-core/src/test/java/com/starrocks/catalog/DropPartitionWithExprRangeTest.java` (modified, +39/-0)
 ```diff
-@@ -818,7 +818,10 @@ StatusOr<VariantRowValue> VariantEncoder::encode_json_text_to_variant(std::strin
-     // error-code API: a throw per non-JSON row would be far too expensive. The catch only remains as a safety
-     // net for exceptions that are not caused by the input, so it costs nothing on the hot path.
-     try {
--        auto builder = vpack::Parser::tryFromJson(json_text.data(), json_text.size(), nullptr);
-+        // Honor the shared JSON nesting-depth cap here too; over-deep input then fails to parse and
-+        // falls back to string storage below, like any other non-JSON text.
-+        auto options = JsonValue::parse_options_from_config();
-+        auto builder = vpack::Parser::tryFromJson(json_text.data(), json_text.size(), nullptr, &options);
-         if (builder == nullptr) {
-             return encode_json_to_variant(JsonValue::from_string(Slice(json_text.data(), json_text.size())));
+@@ -16,6 +16,7 @@
+ 
+ import com.google.common.collect.ImmutableList;
+ import com.starrocks.clone.DynamicPartitionScheduler;
++import com.starrocks.common.Config;
+ import com.starrocks.scheduler.mv.pct.MVPCTRefreshProcessor;
+ import com.starrocks.server.GlobalStateMgr;
+ import com.starrocks.sql.ast.StatementBase;
+@@ -430,4 +431,42 @@ public void testMVRefreshWithTTLCondition2() {
+                     });
          }
-```
-
-**File**: `be/src/common/config.h` (modified, +7/-0)
-```diff
-@@ -2329,6 +2329,13 @@ CONF_mDouble(json_flat_sparsity_factor, "0.3");
- // the maximum number of extracted JSON sub-field
- CONF_mInt32(json_flat_column_max, "100");
- 
-+// Maximum object/array nesting depth accepted when parsing JSON (parse_json, CAST AS JSON, JSON
-+// column ingest, ...). The velocypack parser recurses once per level, so an unbounded depth lets a
-+// crafted document overflow the thread stack and abort the BE. A positive value sets the cap; 0 or
-+// below keeps the parser's built-in default (1024) rather than disabling the check, so the guard
-+// cannot be silently turned off by leaving it unset. Mutable so it can be tuned without a restart.
-+CONF_mInt32(json_max_parse_nesting_depth, "1024");
+     }
 +
- // for whitelist on flat json remain data, max set 1kb
- CONF_mInt32(json_flat_remain_filter_max_bytes, "1024");
- // ======================= FLAT JSON end ==============================================
-```
-
-**File**: `be/src/common/config_fwd_headers_manifest.json` (modified, +1/-0)
-```diff
-@@ -345,6 +345,7 @@
-         "json_flat_null_factor",
-         "json_flat_sparsity_factor",
-         "json_flat_column_max",
-+        "json_max_parse_nesting_depth",
-         "json_flat_remain_filter_max_bytes"
-       ]
-     },
-```
-
-**File**: `be/src/common/config_json_flat_fwd.h` (modified, +7/-0)
-```diff
-@@ -64,6 +64,13 @@ CONF_mDouble(json_flat_sparsity_factor, "0.3");
- // the maximum number of extracted JSON sub-field
- CONF_mInt32(json_flat_column_max, "100");
- 
-+// Maximum object/array nesting depth accepted when parsing JSON (parse_json, CAST AS JSON, JSON
-+// column ingest, ...). The velocypack parser recurses once per level, so an unbounded depth lets a
-+// crafted document overflow the thread stack and abort the BE. A positive value sets the cap; 0 or
-+// below keeps the parser's built-in default (1024) rather than disabling the check, so the guard
-+// cannot be silently turned off by leaving it unset. Mutable so it can be tuned without a restart.
-+CONF_mInt32(json_max_parse_nesting_depth, "1024");
++    @Test
++    public void testForceDropMVPartitionWithoutRetention() {
++        starRocksAssert.withTable(R2,
++                (obj) -> {
++                    String tableName = (String) obj;
++                    withTablePartitions(tableName);
++                    String mvCreateDdl = String.format("create materialized view test_mv1\n" +
++                            "partition by (dt) \n" +
++                            "distributed by random \n" +
++                            "REFRESH DEFERRED MANUAL \n" +
++                            "AS select * from %s;", tableName);
++                    starRocksAssert.withMaterializedView(mvCreateDdl,
++                            () -> {
++                                MaterializedView mv = starRocksAssert.getMv("test", "test_mv1");
++                                refreshMV("test", mv);
++                                Assertions.assertEquals(4, mv.getVisiblePartitions().size());
++                                Database db = GlobalStateMgr.getCurrentState().getLocalMetastore().getDb("test");
 +
- // for whitelist on flat json remain data, max set 1kb
- CONF_mInt32(json_flat_remain_filter_max_bytes, "1024");
- 
-```
-
-**File**: `be/src/exprs/ai/ai_function_result.cpp` (modified, +9/-4)
-```diff
-@@ -64,10 +64,14 @@ StatusOr<JsonValue> parse_object(std::string_view text) {
-     if (text.size() > kJSONLengthLimit) {
-         return Status::CapacityLimitExceed("AI JSON result exceeds maximum JSON length");
-     }
--    // VPack's conversion is recursive and has no nesting limit. Validate the
--    // provider-controlled JSON with the bounded, non-recursive DOM parser first.
-+    // VPack's conversion is recursive. Validate the provider-controlled JSON with the bounded,
-+    // non-recursive DOM parser first, then parse under the same cap. The depth limit follows
-+    // json_max_parse_nesting_depth, but this provider-controlled path never allows more than 64
-+    // levels, which also bounds VPack's recursion.
-+    int max_depth = JsonValue::max_nesting_depth();
-+    size_t simdjson_depth = max_depth < 64 ? static_cast<size_t>(max_depth) : 64;
-     simdjson::dom::parser parser;
--    auto error = parser.allocate(text.size(), 64);
-+    auto error = parser.allocate(text.size(), simdjson_depth);
-     if (error == simdjson::SUCCESS) {
-         error = parser.parse(text.data(), text.size()).error();
-     }
-@@ -78,7 +82,8 @@ StatusOr<JsonValue> parse_object(std::string_view text) {
-         return malformed_result();
-     }
-     try {
--        auto builder = vpack::Parser::fromJson(text.data(), text.size());
-+        vpack::Options options = JsonValue::parse_options_from_config();
-+        auto builder = vpack::Parser::fromJson(text.data(), text.size(), &options);
-         JsonValue json;
-         json.assign(*builder);
-         return json;
-```
-
-**File**: `be/src/types/json_value.cpp` (modified, +16/-1)
-```diff
-@@ -21,6 +21,7 @@
- 
- #include "base/status.h"
- #include "base/statusor.h"
-+#include "common/config_json_flat_fwd.h"
- #include "types/json_value_converter.h"
- #include "velocypack/ValueType.h"
- #include "velocypack/vpack.h"
-@@ -88,6 +89,19 @@ static bool is_json_start_char(char ch) {
-     return ch == '{' || ch == '[' || ch == '"';
++                                // without a retention period, a force drop falls back to a plain force drop
++                                // instead of recursing between MaterializedView and OlapTable
++                                Partition partition = mv.getPartitions().iterator().next();
++                                long retentionPeriod = Config.partition_recycle_retention_period_secs;
++                                Config.partition_recycle_retention_period_secs = 0;
++                                try {
++                                    mv.dropPartition(db.getId(), partition.getName(), true);
++                                } finally {
++                                    Config.partition_recycle_retention_period_secs = retentionPeriod;
++                                }
++                                Assertions.assertNull(mv.getPartition(partition.getName()));
++                                RecyclePartitionInfo recycled = GlobalStateMgr.getCurrentState().getRecycleBin()
++                                        .getRecyclePartitionInfo(partition.getId());
++                                Assertions.assertNotNull(recycled);
++                                Assertions.assertFalse(recycled.isRecoverable());
++                                Assertions.assertEquals(0, recycled.getRetentionPeriod());
++                            });
++                });
++    }
  }
- 
-+int JsonValue::max_nesting_depth() {
-+    // A positive config value sets the cap; 0 or below falls back to the built-in default so the
-+    // guard cannot be silently disabled (e.g. before config::init() runs the value is still 0).
-+    int cap = config::json_max_parse_nesting_depth;
-+    return cap > 0 ? cap : 1024;
-+}
-+
-+vpack::Options JsonValue::parse_options_from_config() {
-+    vpack::Options options = vpack::Options::Defaults;
-+    options.maxNestingDepth = static_cast<unsigned int>(max_nesting_depth());
-+    return options;
-+}
-+
- StatusOr<JsonValue> JsonValue::parse_json_or_string(const Slice& src) {
-     if (src.size > kJSONLengthLimit) {
-         return Status::NotSupported("JSON string exceed maximum length 16MB");
-@@ -104,7 +118,8 @@ StatusOr<JsonValue> JsonValue::parse_json_or_string(const Slice& src) {
-             // error-code API: reporting it by throwing costs a full C++ unwind per row and serializes all
-             // threads on the unwinder lock.
-             vpack::Exception error(vpack::Exception::InternalError);
--            auto b = vpack::Parser::tryFromJson(src.get_data(), src.get_size(), &error);
-+            vpack::Options options = parse_options_from_config();
-+            auto b = vpack::Parser::tryFromJson(src.get_data(), src.get_size(), &error, &options);
-             if (b == nullptr) {
-                 return fromVPackException(error);
-             }
-```
-
-**File**: `be/src/types/json_value.h` (modified, +8/-0)
-```diff
-@@ -33,6 +33,7 @@ namespace arangodb::velocypack {
- class Slice;
- class Builder;
- class Exception;
-+struct Options;
- enum class ValueType : uint8_t;
- } // namespace arangodb::velocypack
- 
-@@ -124,6 +125,13 @@ class JsonValue {
-     static StatusOr<JsonValue> parse(const Slice& src);
-     // Try to parse it as JSON object, otherwise consider it as a string
-     static StatusOr<JsonValue> parse_json_or_string(const Slice& src);
-+    // Effective JSON nesting-depth cap from config (json_max_parse_nesting_depth), with a built-in
-+    // fallback (1024) so it is never silently disabled. Single source of truth shared by the
-+    // velocypack parse path (parse_options_from_config) and the simdjson ingest path (SimdJsonConverter).
-+    static int max_nesting_depth();
-+    // Build velocypack parse options from config (applies json_max_parse_nesting_depth). Shared by
-+    // every JSON parse entrypoint so the nesting-depth cap stays uniform and honors the config.
-+    static vpack::Options parse_options_from_config();
- 
-     ////////////////// serialization  //////////////////////
-     size_t serialize(uint8_t* dst) const;
-```
-
-**File**: `be/src/types/json_value_converter.cpp` (modified, +21/-9)
-```diff
-@@ -37,7 +37,7 @@ class SimdJsonConverter {
-     static StatusOr<JsonValue> create(SimdJsonValue value) {
-         try {
-             vpack::Builder builder;
--            RETURN_IF_ERROR(convert(value, {}, false, &builder));
-+            RETURN_IF_ERROR(convert(value, {}, false, &builder, 0, JsonValue::max_nesting_depth()));
-             return JsonValue(builder.slice());
-         } catch (simdjson::simdjson_error& e) {
-             // raw_json_token() returns a bounded string_view into the input buffer. Constructing a
-@@ -61,7 +61,7 @@ class SimdJsonConverter {
-     static StatusOr<JsonValue> create(SimdJsonObject value) {
-         try {
-             vpack::Builder builder;
--            RETURN_IF_ERROR(convert(value, {}, false, &builder));
-+            RETURN_IF_ERROR(convert(value, {}, false, &builder, 0, JsonValue::max_nesting_depth()));
-             return JsonValue(builder.slice());
-         } catch (simdjson::simdjson_error& e) {
-             // raw_json() spans the object but consume()s it, so on a malformed document (iterate()
-@@ -80,14 +80,18 @@ class SimdJsonConverter {
-     }
- 
- private:
--    static Status convert(SimdJsonValue value, std::string_view field_name, bool is_object, vpack::Builder* builder) {
-+    // This path recurses once per JSON nesting level and builds the vpack::Builder directly, never
-+    // through vpack::Parser, so the parser's maxNestingDepth cap does not reach it. Apply the shared
-+    // JSON depth cap (JsonValue::max_nesting_depth()) here too, resolved once and threaded down.
-+    static Status convert(SimdJsonValue value, std::string_view field_name, bool is_object, vpack::Builder* builder,
-+                          int depth, int max_depth) {
-         switch (value.type()) {
-         case so::json_type::array: {
--            RETURN_IF_ERROR(convert(value.get_array().value(), field_name, is_object, builder));
-+            RETURN_IF_ERROR(convert(value.get_array().value(), field_name, is_object, builder, depth, max_depth));
-             break;
-         }
-         case so::json_type::object: {
--            RETURN_IF_ERROR(convert(value.get_object().value(), field_name, is_object, builder));
-+            RETURN_IF_ERROR(convert(value.get_object().value(), field_name, is_object, builder, depth, max_depth));
-             break;
-         }
-         case so::json_type::number: {
-@@ -116,7 +120,11 @@ class SimdJsonConverter {
-         return Status::OK();
-     }
- 
--    static Status convert(SimdJsonObject obj, std::string_view field_name, bool is_object, vpack::Builder* builder) {
-+    static Status convert(SimdJsonObject obj, std::string_view field_name, bool is_object, vpack::Builder* builder,
-+                          int depth, int max_depth) {
-+        if (depth + 1 > max_depth) {
-+            return Status::DataQualityError(strings::Substitute("JSON nesting depth exceeds maximum $0", max_depth));
-+        }
-         if (is_object) {
-             builder->add(toStringRef(field_name), vpack::Value(vpack::ValueType::Object));
-         } else {
-@@ -126,20 +134,24 @@ class SimdJsonConverter {
-             faststring buffer;
-             auto key = field_unescaped_key_safe(field, &buffer);
-             auto value = field.value().value();
--            RETURN_IF_ERROR(convert(value, key.value(), true, builder));
-+            RETURN_IF_ERROR(convert(value, key.value(), true, builder, depth + 1, max_depth));
-         }
-         builder->close();
-         return Status::OK();
-     }
- 
--    static Status convert(SimdJsonArray arr, std::string_view field_name, bool is_object, vpack::Builder* builder) {
-+    static Status convert(SimdJsonArray arr, std::string_view field_name, bool is_object, vpack::Builder* builder,
-+                          int depth, int max_depth) {
-+        if (depth + 1 > max_depth) {
-+            return Status::DataQualityError(strings::Substitute("JSON nesting depth exceeds maximum $0", max_depth));
-+        }
-         if (is_object) {
-             builder->add(toStringRef(field_name), vpack::Value(vpack::ValueType::Array));
-         } else {
-             builder->add(vpack::Value(vpack::ValueType::Array));
-         }
-         for (auto element : arr) {
--            RETURN_IF_ERROR(convert(element.value(), {}, false, builder));
-+            RETURN_IF_ERROR(convert(element.value(), {}, false, builder, depth + 1, max_depth));
-         }
-         builder->close();
-         return Status::OK();
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #81911** (closed): [UT] Check whole result columns with debug_string in BE tests (@trueeyu)
-- **PR #81907** (2026-10-30): [UT] Use ColumnTestHelper::build_column in BE tests (backport #81898) (@mergify[bot])
-- **PR #81898** (2026-10-30): [UT] Use ColumnTestHelper::build_column in BE tests (@trueeyu)
-- **PR #81896** (2026-10-30): [Tool] Codex review: recognize private StarRocks org members as trusted authors (@huailiu1122)
-- **PR #81895** (2026-10-30): [UT] Add ColumnTestHelper::build_array_column and use it in array function tests (backport #81890) (@mergify[bot])
-- **PR #81894** (2026-10-30): [BugFix][RB-841] Keep const IN-predicate value lists free of column refs (backport #81825) (@mergify[bot])
+- **PR #81966** (closed): [BugFix] Keep online optimize correct and loads flowing under concurrent writes (@meegoo)
+- **PR #81964** (2026-10-30): [Enhancement][RB-882] Retain TTL-dropped partitions for running statements (backport #81954) (@mergify[bot])
+- **PR #81963** (2026-10-30): [Tool] Codex review: post an In progress summary comment when the review starts (@huailiu1122)
+- **PR #81962** (2026-10-30): [UT] Check whole result columns with debug_string in a few more BE tests (backport #81950) (@mergify[bot])
+- **PR #81961** (closed): [Tool] Codex review: show an in-progress status on the PR (@huailiu1122)
+- **PR #81960** (2026-10-30): [BugFix][RB-882] Avoid recursion in MV force drop when retention period is 0 (backport #81953) (@mergify[bot])
 
 ---
 
@@ -2366,31 +2317,31 @@ Signed-off-by: Alberic <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [BugFix][RB-833][CVE] Bump guava to 33.7.2 and snappy-java to 1.1.10.9 (#81859)
+## X. [BugFix][RB-760] Invalidate Iceberg, Delta and Hudi INSERT sources instead of re
 
 **RULE**:
-When implementing operations in `fe/build.gradle.kts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fe/fe-core/src/main/java/com/starrocks/connector/delta/DeltaLakeCacheUpdateProcessor.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5618f1a4`: [BugFix][RB-833][CVE] Bump guava to 33.7.2 and snappy-java to 1.1.10.9 (#81859). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8805a623`: [BugFix][RB-760] Invalidate Iceberg, Delta and Hudi INSERT sources instead of refreshing them under the table lock (#81923). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/build.gradle.kts`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/fe-core/src/main/java/com/starrocks/connector/delta/DeltaLakeCacheUpdateProcessor.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-            implementation("com.google.code.findbugs:jsr305:3.0.2")
-            implementation("com.google.guava:guava:33.7.2-jre")
-            implementation("org.xerial.snappy:snappy-java:1.1.10.9")
+    public void invalidateTable(String dbName, String tableName) {
+        cachingMetastore.invalidateTable(dbName, tableName);
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-            implementation("com.google.guava:guava:32.0.1-jre")
-            implementation("org.xerial.snappy:snappy-java:1.1.10.5")
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5618f1a4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8805a623` are properly handled with clean fallback behavior.

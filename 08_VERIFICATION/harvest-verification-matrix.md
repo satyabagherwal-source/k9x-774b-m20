@@ -6405,3 +6405,6 @@
 | `CYCLE-20261031-HFTN` | `2026-10-31T01:39:57.659Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5994` | Yes (`f710c126...`) |
 | `CYCLE-20261031-HJTL` | `2026-10-31T01:40:02.841Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5995` | Yes (`9d57da20...`) |
 | `CYCLE-20261031-HKAV` | `2026-10-31T01:40:03.463Z` | `orcarouter/OrcaCyber-Nano-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5996` | Yes (`f3e81fcb...`) |
+| `CYCLE-20261031-Q8E0` | `2026-10-31T01:46:47.928Z` | `pubkey/rxdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5997` | Yes (`c40ffb01...`) |
+| `CYCLE-20261031-QCJL` | `2026-10-31T01:46:53.313Z` | `RecursiveSI/flint` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4612, Rule 5998, Rule 5999` | Yes (`2ab90870...`) |
+| `CYCLE-20261031-QF94` | `2026-10-31T01:46:56.824Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6000` | Yes (`b5cc2aa9...`) |

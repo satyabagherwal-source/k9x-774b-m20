@@ -2793,10 +2793,10 @@
     "repository": "pubkey/rxdb",
     "platform": "github",
     "sourceUrl": "https://github.com/pubkey/rxdb",
-    "sourceVersion": "159a4a8c",
+    "sourceVersion": "e344f15d",
     "license": "Apache-2.0",
-    "contentHash": "b1e188ead9309c39eed696d6b55a820f5b28e4c123dc7f340b5cc231158853b6",
-    "lastHarvestedAt": "2026-10-28T05:03:43.354Z",
+    "contentHash": "c40ffb01a0b75350c1869da51be667410ad3fede0d9b57da015fd3c9f36ac9fd",
+    "lastHarvestedAt": "2026-10-31T01:46:47.931Z",
     "learningId": "learn-github-pubkey-rxdb"
   },
   "karmada-io-karmada": {
@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "a2cbe29a",
+    "sourceVersion": "9fd19cdd",
     "license": "Apache-2.0",
-    "contentHash": "1815c077b520ce845bcd61f60c361ec30d9dbaf0e25b8890d07723b43d1374f3",
-    "lastHarvestedAt": "2026-10-30T05:19:39.593Z",
+    "contentHash": "b5cc2aa96264e9b861571ce460bec93cd2b0a5137d6ec1230c7267641cb15d44",
+    "lastHarvestedAt": "2026-10-31T01:46:56.827Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {
@@ -10515,8 +10515,8 @@
     "sourceUrl": "https://huggingface.co/RecursiveSI/flint",
     "sourceVersion": "hf-recursivesi-flint",
     "license": "Open-Source",
-    "contentHash": "60c25a6de6221ab360e4a38dadd476c58bc799b3b31bf49a2f5cc29a480a21bc",
-    "lastHarvestedAt": "2026-10-26T13:40:39.397Z",
+    "contentHash": "2ab90870e8fd926964198e84c2d15f200ac6bac46efaddaba3bb5dc23999d605",
+    "lastHarvestedAt": "2026-10-31T01:46:53.317Z",
     "learningId": "learn-huggingface-recursivesi-flint"
   },
   "hf-qwen-qwen3-14b": {

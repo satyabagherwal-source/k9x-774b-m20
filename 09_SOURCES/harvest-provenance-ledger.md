@@ -6414,3 +6414,6 @@ Every entry in this ledger must capture:
 | `learn-github-flox-flox` | `https://github.com/flox/flox` | `da039c11` | Multi-dimensional audit evidence | 2026-10-31T01:39:57.662Z |
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `786d6bf7` | Multi-dimensional audit evidence | 2026-10-31T01:40:02.844Z |
 | `learn-huggingface-orcarouter-orcacyber-nano-1-0` | `https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-31T01:40:03.466Z |
+| `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `e344f15d` | Multi-dimensional audit evidence | 2026-10-31T01:46:47.931Z |
+| `learn-huggingface-recursivesi-flint` | `https://huggingface.co/RecursiveSI/flint` | `hf-recursi` | Multi-dimensional audit evidence | 2026-10-31T01:46:53.317Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `9fd19cdd` | Multi-dimensional audit evidence | 2026-10-31T01:46:56.827Z |
