@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T06:24:59.759Z",
+  "last_updated": "2026-10-31T06:32:12.243Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3934,8 +3934,8 @@
       "slug": "authzed-spicedb",
       "platform": "github",
       "source_url": "https://github.com/authzed/spicedb",
-      "source_version": "aa5046f0",
-      "content_hash": "d99339b2cb43e2b7e2f4326322248389ed0ce543306c534eadc83259bed8d255",
+      "source_version": "a87308b0",
+      "content_hash": "81044e7e1a7151b5f59521cc33103032c78d3ec2ff0b670b652078b61fd948fb",
       "dossier_path": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "promoted_rules": [
@@ -3973,6 +3973,11 @@
           "number": 5774,
           "title": "query): isolate optimizations and add semantic properties",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6104,
+          "title": "schema): preserve annotations on unchanged definitions during schema writes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3980,7 +3985,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T14:33:33.993Z",
+      "verified_at": "2026-10-31T06:32:08.883Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25105,7 +25110,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
       "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
-      "content_hash": "729119fec601a54b415c11f8aafb0d941cb326455f647b9720c14b4886a0b6e7",
+      "content_hash": "c42b524c39f900f609f691a31ed8f6832787f91000957a32661816555fcc0d0b",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -25235,6 +25240,21 @@
           "number": 5169,
           "title": "The Tokenizer-Model Alignment Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6105,
+          "title": "KV-Cache Memory Bound & Context Window Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6106,
+          "title": "Tokenizer Detokenization Round-Trip Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6107,
+          "title": "Weight Loading & Device Placement Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -25255,7 +25275,7 @@
         "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv44az1j",
         "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv4hk7rf"
       ],
-      "verified_at": "2026-10-28T04:10:10.996Z",
+      "verified_at": "2026-10-31T06:32:12.215Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57412,13 +57432,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "slug": "wcandillon-react-native-skia",
+      "slug": "shopify-react-native-skia",
       "platform": "github",
-      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_url": "https://github.com/Shopify/react-native-skia",
       "source_version": "3184116c",
-      "content_hash": "85eedc7def2054974e5baac468e211057ecfbdc18f0b11d2a9de32cdcb753cd7",
-      "dossier_path": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+      "content_hash": "eb6062760e0dce1df1c479a61081e750099d9eb298e4b45db9c4c6b6dccb0f55",
+      "dossier_path": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
       "promoted_rules": [
         {
           "number": 2002,
@@ -57463,7 +57483,7 @@
         {
           "number": 5879,
           "title": "🗿): log a canvas's failure to begin a frame instead of dropping it (#4317)",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -57471,7 +57491,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T21:13:08.617Z",
+      "verified_at": "2026-10-31T06:32:06.260Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -156890,14 +156910,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 5879,
       "title": "🗿): log a canvas's failure to begin a frame instead of dropping it (#4317)",
-      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_url": "https://github.com/Shopify/react-native-skia",
       "source_version": "3184116c",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-30T21:13:08.617Z"
+      "verified_at": "2026-10-31T06:32:06.260Z"
     },
     "rule-5880": {
       "learning_id": "rule-5880",
@@ -160138,6 +160158,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T06:24:59.746Z"
+    },
+    "rule-6104": {
+      "learning_id": "rule-6104",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6104,
+      "title": "schema): preserve annotations on unchanged definitions during schema writes",
+      "source_url": "https://github.com/authzed/spicedb",
+      "source_version": "a87308b0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T06:32:08.883Z"
+    },
+    "rule-6105": {
+      "learning_id": "rule-6105",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6105,
+      "title": "KV-Cache Memory Bound & Context Window Integrity",
+      "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
+      "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T06:32:12.215Z"
+    },
+    "rule-6106": {
+      "learning_id": "rule-6106",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6106,
+      "title": "Tokenizer Detokenization Round-Trip Integrity",
+      "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
+      "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T06:32:12.215Z"
+    },
+    "rule-6107": {
+      "learning_id": "rule-6107",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6107,
+      "title": "Weight Loading & Device Placement Consistency",
+      "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
+      "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T06:32:12.215Z"
     }
   },
   "aliases": {

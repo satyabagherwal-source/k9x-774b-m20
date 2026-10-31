@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md`  
 > **Source**: github ([https://github.com/Shopify/react-native-skia](https://github.com/Shopify/react-native-skia))  
-> **Source Version**: `8e30d2ee`  
+> **Source Version**: `3184116c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T12:57:05.944Z  
+> **Timestamp**: 2026-10-31T06:32:05.892Z  
 > **Learning ID**: `learn-github-wcandillon-react-native-skia`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Shopify/react-native-skia](https://github.com/Shopify/react-native-skia))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T12:57:05.937Z  
+> **Harvest Timestamp**: 2026-10-31T06:32:05.705Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High-performance React Native Graphics using Skia
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 8757 stars
+- **Stars / Engagement**: 8764 stars
 
 ---
 
@@ -1254,6 +1254,8 @@ private:
 
 #pragma once
 
+#include <cstdarg>
+#include <cstdio>
 #include <jsi/jsi.h>
 #include <string>
 
@@ -1294,7 +1296,7 @@ public:
     va_list args;
     va_start(args, fmt);
 
-    static char buffer[512];
+    char buffer[512];
     vsnprintf(buffer, sizeof(buffer), fmt, args);
 #if defined(ANDROID) || defined(__ANDROID__)
     __android_log_write(ANDROID_LOG_INFO, "RNSkia", buffer);
@@ -1515,317 +1517,310 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ccc90416` (2026-10-27)
-**Commit Message**: fix(🤖): use one Vulkan pipeline cache per device (#4341)
+### Incident Patch 1: `4d50b934` (2026-10-29)
+**Commit Message**: fix(🗿): log a canvas's failure to begin a frame instead of dropping it (#4317)
 
-Enable Dawn's vulkan_monolithic_pipeline_cache toggle on Android, as Chrome
-does for every Vulkan device. Without it Dawn creates a VkPipelineCache for
-each pipeline it compiles, serializes it for a blob cache this device does
-not have, and destroys it, on each of its worker threads at once. That
-destructor is where the Imagination PowerVR driver (MediaTek mt6855)
-segfaults while Graphite compiles its pipelines (#4340). With one cache the
-only vkDestroyPipelineCache runs at device teardown, and pipelines that
-share binaries compile faster.
+* fix(🗿): log a canvas's failure to begin a frame instead of dropping it
 
-**File**: `packages/skia/cpp/rnskia/RNDawnUtils.h` (modified, +12/-0)
+The producer dropped every exception beginning a recording threw as if the
+view had no size yet or the device had no GPU. Neither is a failure: a view
+without a size asks for a frame once it has one, and Skia.gpu says why there
+is no GPU. So no frame begins without a GPU, the target's
+tryBeginRecording() returns no canvas while the view has no size (JS's
+beginRecording() still throws for it), and a recording that cannot begin
+otherwise (one already open, no Graphite recorder or deferred canvas) is
+logged like a failed replay or snap, where the canvas drew no new frame and
+nothing said why. beginFrame (RNSkFrameStart.h) decides what a job does
+with each way beginning ends, cpp-tests/FrameStartTest.cpp checks it on the
+host, and a GraphiteView e2e case pins the error JS gets.
+
+* refactor(🗿): begin the frame in produce() and keep beginRecording's name
+
+produce() begins the frame itself, without RNSkFrameStart.h and its host
+test: no frame without a GPU, none while the view has no size, and any
+other failure to begin is logged. try
+
+**File**: `packages/skia/cpp/api/JsiSkGraphiteContext.h` (modified, +4/-0)
 ```diff
-@@ -334,6 +334,18 @@ requestDevice(dawn::native::Adapter &nativeAdapter,
-       // Robustness only adds bounds checks to shader buffer and texture
-       // accesses; Chrome ships WebGPU with it on.
-       "disable_robustness",
-+#endif
-+#if defined(__ANDROID__)
-+      // One VkPipelineCache per device, as Chrome configures Dawn on every
-+      // Vulkan device. Without it Dawn creates a VkPipelineCache for each
-+      // pipeline it compiles, serializes it (for a blob cache this device
-+      // does not have) and destroys it, on each of its worker threads at
-+      // once: that destructor is where the Imagination PowerVR driver
-+      // (MediaTek mt6855) segfaults while Graphite compiles its pipelines
-+      // (#4340). With one cache the only vkDestroyPipelineCache runs at
-+      // device teardown, and pipelines that share binaries compile faster.
-+      // PerformIdleTasks is not needed: nothing persists the cache.
-+      "vulkan_monolithic_pipeline_cache",
- #endif
-   };
- #if defined(NDEBUG)
+@@ -1,6 +1,7 @@
+ #pragma once
+ 
+ #include <memory>
++#include <stdexcept>
+ #include <utility>
+ 
+ #include <jsi/jsi.h>
+@@ -37,6 +38,9 @@ class JsiSkGraphiteContext
+ 
+   std::shared_ptr<JsiSkCanvas> beginRecording() {
+     auto *canvas = getObject()->beginRecording();
++    if (canvas == nullptr) {
++      throw std::runtime_error("SkiaGraphiteView: the view has no size yet.");
++    }
+     auto jsiCanvas = std::make_shared<JsiSkCanvas>(getContext(), canvas);
+     _canvas = jsiCanvas;
+     return jsiCanvas;
+```
+
+**File**: `packages/skia/cpp/rnskia/RNSkGraphiteProducer.cpp` (modified, +10/-8)
+```diff
+@@ -220,14 +220,16 @@ void RNSkGraphiteProducer::produce() {
+   std::shared_ptr<RNSkGraphiteRecording> recording;
+   if (target && (recorder || picture)) {
+     SkCanvas *canvas = nullptr;
+-    try {
+-      // On the recorder of this pool thread: a view holds no recorder of
+-      // its own (see RNSkGraphiteTarget::beginRecording).
+-      canvas = target->beginRecording(
+-          DawnContext::getInstance().getThreadRecorder());
+-    } catch (const std::exception &) {
+-      // No surface and no layout yet: the view asks for a frame once it
+-      // has a size. Or no GPU at all.
++    // Without a GPU nothing records, and Skia.gpu says why.
++    if (auto *context = DawnContext::tryGetInstance()) {
++      try {
++        // On the recorder of this pool thread: a view holds no recorder of
++        // its own (see RNSkGraphiteTarget::beginRecording).
++        canvas = target->beginRecording(context->getThreadRecorder());
++      } catch (const std::exception &e) {
++        RNSkLogger::logToConsole("Canvas: beginning the frame failed: %s",
++                                 e.what());
++      }
+     }
+     if (canvas != nullptr) {
+       try {
+```
+
+**File**: `packages/skia/cpp/rnskia/RNSkGraphiteTarget.h` (modified, +7/-6)
+```diff
+@@ -177,8 +177,9 @@ class RNSkGraphiteTarget {
+    and the recorders of a few threads serve every view, with their caches
+    and atlases. finishRecording() snaps it, on the same thread, before the
+    thread records anything else (a recorder takes one deferred canvas at a
+-   time). The canvas is deleted by finishRecording(). Throws while a
+-   recording is already open, or while the view has no size.
++   time). The canvas is deleted by finishRecording(). Returns nullptr while
++   the view has no size. Throws while a recording is already open, or when
++   no deferred canvas can be made.
+    */
+   SkCanvas *beginRecording(const DawnContext::RecorderRef &recorder) {
+     auto target = resolveTargetInfo();
+@@ -192,7 +193,7 @@ class RNSkGraphiteTarget {
+    once the GPU device it was made for is lost: for JS, which records across
+    calls (SkiaViewApi.makeGraphiteContext) and may open a recording on
+    another target before finishing this one. Throws while a recording is
+-   already open, while the view has no size, or when no recorder can be made.
++   already open, or when no recorder or deferred canvas can be made.
+    */
+   SkCanvas *beginRecording() {
+     auto target = resolveTargetInfo();
+@@ -330,8 +331,8 @@ class RNSkGraphiteTarget {
+ private:
+   /**
+    Opens a recording on `recorder`, made for `generation`; `owner` keeps the
+-   recorder alive when it is the target's own. Called with the state lock
+-   held.
++   recorder alive when it is the target's own. Returns nullptr while the view
++   has no size. Called with the state lock held.
+    */
+   SkCanvas *openRecordingLocked(skgpu::graphite::Recorder *recorder,
+                                 uint64_t generation,
+@@ -342,7 +343,7 @@ class RNSkGraphiteTarget {
+                                "call finishRecording() first.");
+     }
+     if (target.width <= 0 || target.height <= 0) {
+-      throw std::runtime_error("SkiaGraphiteView: the view has no size yet.");
++      return nullptr;
+     }
+     auto imageInfo = SkImageInfo::Make(
+         target.width, target.height, target.colorType, kPremul_SkAlphaType,
+```
+
+**File**: `packages/skia/cpp/utils/RNSkLog.h` (modified, +3/-1)
+```diff
+@@ -4,6 +4,8 @@
+ 
+ #pragma once
+ 
++#include <cstdarg>
++#include <cstdio>
+ #include <jsi/jsi.h>
+ #include <string>
+ 
+@@ -44,7 +46,7 @@ class RNSkLogger {
+     va_list args;
+     va_start(args, fmt);
+ 
+-    static char buffer[512];
++    char buffer[512];
+     vsnprintf(buffer, sizeof(buffer), fmt, args);
+ #if defined(ANDROID) || defined(__ANDROID__)
+     __android_log_write(ANDROID_LOG_INFO, "RNSkia", buffer);
+```
+
+**File**: `packages/skia/src/renderer/__tests__/e2e/GraphiteView.spec.tsx` (modified, +30/-0)
+```diff
+@@ -26,6 +26,36 @@ describe("SkiaGraphiteView", () => {
+     }
+   );
+ 
++  // A canvas waits for its size before it records; JS, which asks for the
++  // recording itself, is told why it cannot have one yet.
++  itRunsE2eOnly(
++    "tells JS that a view without a size cannot record",
++    async () => {
++      const outcome = await surface.eval(() => {
++        // An id no view takes: theirs count up from 1000, one per mount.
++        const nativeId = 2 ** 31;
++        const { SkiaViewApi } = globalThis;
++        const context = SkiaViewApi.makeGraphiteContext(
++          nativeId,
++          0,
++          0,
++          false,
++          false
++        );
++        try {
++          context.beginRecording();
++          context.finishRecording();
++          return "recorded";
++        } catch (e) {
++          return (e as Error).message;
++        } finally {
++          SkiaViewApi.destroyGraphiteContext(nativeId);
++        }
++      });
++      expect(outcome).toContain("SkiaGraphiteView: the view has no size yet.");
++    }
++  );
++
+   // StrictMode runs the view's unmount cleanup once right after mount and
+   // keeps the context the first effect run made. A native view registering
+   // after that cleanup binds the target that context holds, not a new one:
 ```
 
 ---
 
-### Incident Patch 2: `8e30d2ee` (2026-10-28)
-**Commit Message**: fix(⚛️): keep the scene nodes a re-render leaves unchanged (#4308)
+### Incident Patch 2: `d4a36ca4` (2026-10-29)
+**Commit Message**: fix(📱): probe the GPU on first use rather than on a thread of its own (#4366)
 
-* fix(⚛️): keep the scene nodes a re-render leaves unchanged
+* fix(📱): probe the GPU on first use rather than on a thread of its own
 
-cloneInstance returned a new node for every update, so every re-render
-cloned each host node on its path and replaced the container's children,
-and a re-render inside the Canvas that changed nothing recorded the scene
-again. It now returns the node when React keeps its children and its
-props are shallow-equal; React 19 keeps a returned instance as it is.
+DawnContext::probe() is a function-local static: it already runs once and
+serialises concurrent first callers. The detached thread started by
+RNSkManager only moved the probe earlier, during JS startup, at the cost
+of constructing the context on a thread the library has no other use for.
 
-shallowEq returns at the first value that differs and counts the other
-side's keys only once every value matched, so a node a re-render changes
-costs no array.
+The context is now created by whichever caller needs it first (a view's
+window, a GPU call, or reading Skia.gpu, which NativeSetup does once JS is
+idle). A device without a GPU still gets the error logged once and
+reported through Skia.gpu, and tryGetInstance() still returns null on the
+Java and Objective-C paths, so nothing crashes.
 
-* fix(⚛️): make shallowEq check key presence and ignore children
+* feat(🖼️): asynchronous readbacks
 
-shallowEq held for { r: 5, start: undefined } against { r: 5, end: 0.5 }:
-both declare two keys, and the undefined start read equal to the start
-the other side lacks, so cloneInstance kept the node without applying
-end. A key the other props lack now fails the comparison, and children
-are skipped on both sides, as suggested in review.
+Graphite reads pixels back asynchronously, and the JS API now says so:
+encodeToBytes(), encodeToBase64() and readPixels() on SkImage, and
+readPixels() on SkCanvas, return promises, like makeRasterImage(). The
+pixels are read back from the GPU without blocking the calling thread,
+an encoded image is decoded and the encoding runs on the worker thread.
+makeRasterImageSync() is gone:
 
----------
-
-Co-authored-by: William Candillon <[REDACTED_EMAIL]>
-
-**File**: `packages/skia/src/renderer/__tests__/typeddash.spec.ts` (added, +40/-0)
+**File**: `packages/skia/cpp/rnskia/RNDawnContext.h` (modified, +3/-20)
 ```diff
-@@ -0,0 +1,40 @@
-+import { shallowEq } from "../typeddash";
-+
-+describe("shallowEq", () => {
-+  it("holds for props whose every value is the same", () => {
-+    const paint = {};
-+    expect(
-+      shallowEq({ color: "red", cx: 1, paint }, { color: "red", cx: 1, paint })
-+    ).toBe(true);
-+  });
-+
-+  it("fails for a value that differs", () => {
-+    expect(shallowEq({ cx: 1, r: 4 }, { cx: 1, r: 5 })).toBe(false);
-+  });
-+
-+  it("fails for an object made again, however equal its contents", () => {
-+    expect(shallowEq({ points: [1, 2] }, { points: [1, 2] })).toBe(false);
-+  });
-+
-+  it("skips children", () => {
-+    expect(shallowEq({ children: "a", r: 4 }, { children: "b", r: 4 })).toBe(
-+      true
-+    );
-+  });
-+
-+  it("ignores children on either side", () => {
-+    expect(shallowEq({ r: 5, children: [] }, { r: 5 })).toBe(true);
-+    expect(shallowEq({ r: 5 }, { r: 5, children: [] })).toBe(true);
-+  });
-+
-+  it("fails for a key only one side declares", () => {
-+    expect(shallowEq({ r: 4 }, { cx: 1, r: 4 })).toBe(false);
-+    expect(shallowEq({ cx: undefined, r: 4 }, { r: 4 })).toBe(false);
-+  });
-+
-+  it("fails when keys differ but counts match", () => {
-+    expect(shallowEq({ r: 5, start: undefined }, { r: 5, end: 0.5 })).toBe(
-+      false
-+    );
-+  });
-+});
+@@ -69,9 +69,9 @@ class DawnContext {
+   /**
+    The GPU Skia renders with, or why there is none: a device without a
+    Vulkan 1.1 driver on Android, a driver short of the WebGPU core
+-   requirements, a device creation failure. Probed once per process, the
+-   first time the context is asked for (RNSkManager does so when the module
+-   is installed), and reported to JS as Skia.gpu.
++   requirements, a device creation failure. Probed once per process, on
++   whichever thread asks for the context first (a view's window, a GPU call,
++   Skia.gpu), and reported to JS as Skia.gpu.
+    */
+   struct GpuInfo {
+     bool available = false;
+@@ -137,23 +137,6 @@ class DawnContext {
+     return info;
+   }
+ 
+-  /**
+-   Starts the probe on a thread of its own, so that installing the module
+-   does not wait for the GPU (drivers load, a device and a Graphite context
+-   are created). Whoever needs the context first (a view's window, a GPU
+-   call, Skia.gpu) waits for the probe to finish instead.
+-   */
+-  static void probeInBackground() {
+-    std::thread([]() {
+-#if defined(__APPLE__)
+-      pthread_setname_np("RNSkia GPU Probe");
+-#elif defined(__ANDROID__)
+-      pthread_setname_np(pthread_self(), "RNSkia GPU Probe");
+-#endif
+-      probe();
+-    }).detach();
+-  }
+-
+   // Generations ---------------------------------------------------------------
+ 
+   /**
 ```
 
-**File**: `packages/skia/src/renderer/typeddash.ts` (modified, +21/-0)
+**File**: `packages/skia/cpp/rnskia/RNSkManager.cpp` (modified, +0/-6)
 ```diff
-@@ -7,3 +7,24 @@ export const exhaustiveCheck = (a: never): never => {
-   "worklet";
-   throw new Error(`Unexhaustive handling for ${a}`);
- };
-+
-+// Shallow eq on props (without children)
-+export const shallowEq = <P extends object>(p1: P, p2: P): boolean => {
-+  let count1 = 0;
-+  for (const key in p1) {
-+    if (key === "children") {
-+      continue;
-+    }
-+    if (!(key in p2) || p1[key] !== p2[key]) {
-+      return false;
-+    }
-+    count1++;
-+  }
-+  let count2 = 0;
-+  for (const key in p2) {
-+    if (key !== "children") {
-+      count2++;
-+    }
-+  }
-+  return count1 === count2;
-+};
+@@ -25,12 +25,6 @@ RNSkManager::RNSkManager(
+     : _jsRuntime(jsRuntime), _platformContext(platformContext),
+       _jsCallInvoker(jsCallInvoker),
+       _viewApi(std::make_shared<RNSkJsiViewApi>(platformContext)) {
+-  // The GPU is probed now, once, rather than by whichever view or image call
+-  // comes first: a device without one (no Vulkan 1.1 on Android) is logged
+-  // and reported to JS as Skia.gpu, instead of failing in different places
+-  // depending on what the app does first. On a thread of its own: the
+-  // module installs during JS startup, which does not wait for the GPU.
+-  DawnContext::probeInBackground();
+   // A lost GPU device is replaced by a new one (see DawnContext), on which
+   // the windows hold nothing yet: every view records its content again for
+   // it. The redraw waits for the main thread, and for the window to be able
 ```
 
-**File**: `packages/skia/src/sksg/HostConfig.ts` (modified, +6/-1)
+**File**: `packages/skia/src/skia/NativeSetup.ts` (modified, +2/-2)
 ```diff
-@@ -4,6 +4,7 @@ import type { Fiber, HostConfig, ReactContext } from "react-reconciler";
- import { DefaultEventPriority } from "react-reconciler/constants";
- 
- import { NodeType } from "../dom/types";
-+import { shallowEq } from "../renderer/typeddash";
- 
- import type { Node } from "./Node";
- import type { Container } from "./StaticContainer";
-@@ -186,12 +187,16 @@ export const sksgHostConfig: SkiaHostConfig = {
-   cloneInstance(
-     instance,
-     _type,
--    _oldProps,
-+    oldProps,
-     newProps,
-     keepChildren,
-     _newChildSet
-   ) {
-     debug("cloneInstance");
-+    // React keeps the instance unchanged when cloneInstance returns it.
-+    if (keepChildren && shallowEq(oldProps, newProps)) {
-+      return instance;
-+    }
-     return {
-       type: instance.type,
-       props: { ...newProps },
+@@ -24,8 +24,8 @@ if (Platform.OS !== "web" && global.SkiaApi == null) {
+   // No GPU (no Vulkan 1.1 on Android, for instance): the module is installed
+   // and the app runs, but every canvas stays blank and the GPU APIs throw.
+   // Said once, with the reason, rather than left to the first blank screen.
+-  // Once the JS thread is idle, after startup: the GPU is probed on a native
+-  // thread of its own, and reading Skia.gpu waits for it. (globalThis:
++  // Once the JS thread is idle, after startup: reading Skia.gpu probes the
++  // GPU if nothing did yet, which startup should not wait for. (globalThis:
+   // `global.SkiaApi` is narrowed to null by the check above, install() having
+   // set it behind the compiler's back; optional, for a test stubbing
+   // install().)
 ```
 
-**File**: `packages/skia/src/sksg/__tests__/Reconciler.spec.tsx` (modified, +86/-0)
+**File**: `packages/skia/src/skia/types/Skia.ts` (modified, +2/-2)
 ```diff
-@@ -208,4 +208,90 @@ describe("SkiaSGRoot", () => {
-     error.mockRestore();
-     await root.unmount();
-   });
-+  it("keeps the nodes and the scene of a re-render that changes no prop", async () => {
-+    const { Skia } = importSkia();
-+    let rerender: () => void = () => {};
-+    const Scene = () => {
-+      const [, setRenders] = React.useState(0);
-+      rerender = () => setRenders((renders) => renders + 1);
-+      return (
-+        <skGroup>
-+          <skCircle r={5} color="red" />
-+        </skGroup>
-+      );
-+    };
-+    const root = new SkiaSGRoot(Skia);
-+    const { container } = root as unknown as {
-+      container: { redraw: () => void };
-+    };
-+    const redraw = jest.spyOn(container, "redraw");
-+    await root.render(<Scene />);
-+    const [group] = root.sg.children;
-+    Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
-+    await act(() => {
-+      rerender();
-+    });
-+    Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: false });
-+    expect(root.sg.children[0] === group).toBe(true);
-+    expect(redraw).toHaveBeenCalledTimes(1);
-+    await root.unmount();
-+  });
-+
-+  it("clones the parent of a node a re-render changes, and keeps its siblings", async () => {
-+    const { Skia } = importSkia();
-+    let resize: (radius: number) => void = () => {};
-+    const Scene = () => {
-+      const [radius, setRadius] = React.useState(2);
-+      resize = setRadius;
-+      return (
-+        <skGroup>
-+          <skCircle r={1} color="red" />
-+          <skCircle r={radius} color="red" />
-+        </skGroup>
-+      );
-+    };
-+    const root = new SkiaSGRoot(Skia);
-+    await root.render(<Scene />);
-+    const [group] = root.sg.children;
-+    const [sibling] = group.children;
-+    Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
-+    await act(() => {
-+      resize(3);
-+    });
-+    Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: false });
-+    const [clonedGroup] = root.sg.children;
-+    expect(clonedGroup === group).toBe(false);
-+    expect(clonedGroup.children[0] === sibling).toBe(true);
-+    expect(clonedGroup.children.map(({ props }) => props)).toMatchObject([
-+      { r: 1 },
-+      { r: 3 },
-+    ]);
-+    await root.unmount();
-+  });
-+
-+  it("clones the node and records a re-render that changes a prop", async () => {
-+    const { Skia } = importSkia();
-+    let recolor: (color: string) => void = () => {};
-+    const Scene = () => {
-+      const [color, setColor] = React.useState("red");
-+      recolor = setColor;
-+      return <skCircle r={5} color={color} />;
-+    };
-+    const root = new SkiaSGRoot(Skia);
-+    const { container } = root as unknown as {
-+      container: { redraw: () => void };
-+    };
-+    const redraw = jest.spyOn(container, "redraw");
-+    await root.render(<Scene />);
-+    const [circle] = root.sg.children;
-+    Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
-+    await act(() => {
-+      recolor("blue");
-+    });
-+    Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: false });
-+    expect(root.sg.children[0] === circle).toBe(false);
-+    expect(root.sg.children[0].props).toMatchObject({ color: "blue" });
-+    expect(redraw).toHaveBeenCalledTimes(2);
-+    await root.unmount();
-+  });
- });
-```
-
----
-
-### Incident Patch 3: `feee40af` (2026-10-28)
-**Commit Message**: chore(deps): bump postcss-selector-parser from 6.1.4 to 6.1.5 (#4343)
-
-Bumps [postcss-selector-parser](https://github.com/postcss/postcss-selector-parser) from 6.1.4 to 6.1.5.
-- [Release notes](https://github.com/postcss/postcss-selector-parser/releases)
-- [Changelog](https://github.com/postcss/postcss-selector-parser/blob/6.1.5/CHANGELOG.md)
-- [Commits](https://github.com/postcss/postcss-selector-parser/compare/6.1.4...6.1.5)
-
----
-updated-dependencies:
-- dependency-name: postcss-selector-parser
-  dependency-version: 6.1.5
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: William Candillon <[REDACTED_EMAIL]>
-
-**File**: `yarn.lock` (modified, +3/-3)
-```diff
-@@ -24366,12 +24366,12 @@ __metadata:
-   linkType: hard
+@@ -48,8 +48,8 @@ export interface SkGpuLostInfo {
+ }
  
- "postcss-selector-parser@npm:^6.0.11, postcss-selector-parser@npm:^6.0.16":
--  version: 6.1.4
--  resolution: "postcss-selector-parser@npm:6.1.4"
-+  version: 6.1.5
-+  resolution: "postcss-selector-parser@npm:6.1.5"
-   dependencies:
-     cssesc: ^3.0.0
-     util-deprecate: ^1.0.2
--  checksum: 6dac8996778480a4cd274d2588cccfd989f38c40853b7b83dc31c90ce6ba32e1e1b89811ad3beafdee72887fac9ddf9f1fca3876dc17467eed62d6a825d54bfb
-+  checksum: 48092b9e8d6b0b7470e460e5dd8922dad59404e73c7f3423e1bc32e14ad76140fc50812d38023259225f306e4a316c49528c75b2171955bbaa0b56894c0135f7
-   languageName: node
-   linkType: hard
- 
+ /**
+- * The GPU Skia renders with, probed once when the module is installed (on
+- * a native thread; the first read waits for the probe). On Android Skia
++ * The GPU Skia renders with, probed once, the first time something needs
++ * it (a canvas, a GPU call, or reading this property). On Android Skia
+  * renders with Vulkan (1.1 or later), on iOS with Metal. When the device has
+  * none, `isAvailable` is false and `error` says why: every `Canvas` stays
+  * blank, CPU work (paths, decoding, encoding, raster images) still runs, and
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4344** (2026-10-28): chore(deps): bump qs from 6.16.0 to 6.16.2 (@dependabot[bot])
-- **PR #4343** (2026-10-28): chore(deps): bump postcss-selector-parser from 6.1.4 to 6.1.5 (@dependabot[bot])
-- **PR #4342** (2026-10-27): chore(🍎): build the macOS example only when a pull request can affect it (@wcandillon)
-- **PR #4341** (2026-10-27): fix(🤖): use one Vulkan pipeline cache per device (@wcandillon)
-- **PR #4338** (2026-10-27): fix(🔤): apply TextStyle fontVariations on native (@LESANF)
-- **PR #4337** (2026-10-27): fix(🎨): honor the source alpha in plusLighter and plusDarker (@LESANF)
+- **PR #4372** (2026-10-30): chore(🐙): run android tests on main  (@wcandillon)
+- **PR #4368** (2026-10-30): feat(🖼️): asynchronous readbacks (@wcandillon)
+- **PR #4367** (2026-10-29): feat(🎨): bring back the colorSpace prop of the Canvas (@wcandillon)
+- **PR #4366** (2026-10-29): fix(📱): probe the GPU on first use rather than on a thread of its own (@wcandillon)
+- **PR #4365** (2026-10-29): fix(🍏): round the canvas size to the pixel grid instead of truncating it (2.x) (@ArnaudDerosin)
+- **PR #4363** (closed): fix(🤖): create the GPU device on a thread that never exits (@YevheniiKotyrlo)
 
 ---
 
@@ -1845,32 +1840,24 @@ Co-authored-by: William Candillon <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🤖): use one Vulkan pipeline cache per device (#4341)
+## X. 🗿): log a canvas's failure to begin a frame instead of dropping it (#4317)
 
 **RULE**:
-When implementing operations in `packages/skia/cpp/rnskia/RNDawnUtils.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/skia/cpp/api/JsiSkGraphiteContext.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ccc90416`: 🤖): use one Vulkan pipeline cache per device (#4341). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4d50b934`: 🗿): log a canvas's failure to begin a frame instead of dropping it (#4317). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/skia/cpp/rnskia/RNDawnUtils.h`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/skia/cpp/api/JsiSkGraphiteContext.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-#endif
-#if defined(__ANDROID__)
-      // One VkPipelineCache per device, as Chrome configures Dawn on every
-      // Vulkan device. Without it Dawn creates a VkPipelineCache for each
-      // pipeline it compiles, serializes it (for a blob cache this device
-      // does not have) and destroys it, on each of its worker threads at
-      // once: that destructor is where the Imagination PowerVR driver
-      // (MediaTek mt6855) segfaults while Graphite compiles its pipelines
-      // (#4340). With one cache the only vkDestroyPipelineCache runs at
-      // device teardown, and pipelines that share binaries compile faster.
-      // PerformIdleTasks is not needed: nothing persists the cache.
-      "vulkan_monolithic_pipeline_cache",
+#include <stdexcept>
+    if (canvas == nullptr) {
+      throw std::runtime_error("SkiaGraphiteView: the view has no size yet.");
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1880,4 +1867,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ccc90416` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4d50b934` are properly handled with clean fallback behavior.

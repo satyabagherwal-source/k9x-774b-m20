@@ -295,8 +295,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
     "sourceVersion": "hf-meta-llama-llama-3.1-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "729119fec601a54b415c11f8aafb0d941cb326455f647b9720c14b4886a0b6e7",
-    "lastHarvestedAt": "2026-10-28T04:10:11.077Z",
+    "contentHash": "c42b524c39f900f609f691a31ed8f6832787f91000957a32661816555fcc0d0b",
+    "lastHarvestedAt": "2026-10-31T06:32:12.328Z",
     "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct"
   },
   "hf-xingchen-agi-teleocr": {
@@ -2503,10 +2503,10 @@
     "repository": "authzed/spicedb",
     "platform": "github",
     "sourceUrl": "https://github.com/authzed/spicedb",
-    "sourceVersion": "aa5046f0",
+    "sourceVersion": "a87308b0",
     "license": "Apache-2.0",
-    "contentHash": "d99339b2cb43e2b7e2f4326322248389ed0ce543306c534eadc83259bed8d255",
-    "lastHarvestedAt": "2026-10-30T14:33:34.057Z",
+    "contentHash": "81044e7e1a7151b5f59521cc33103032c78d3ec2ff0b670b652078b61fd948fb",
+    "lastHarvestedAt": "2026-10-31T06:32:09.005Z",
     "learningId": "learn-github-authzed-spicedb"
   },
   "hashicorp-boundary": {
@@ -4753,10 +4753,10 @@
     "repository": "wcandillon/react-native-skia",
     "platform": "github",
     "sourceUrl": "https://github.com/Shopify/react-native-skia",
-    "sourceVersion": "8e30d2ee",
+    "sourceVersion": "3184116c",
     "license": "MIT",
-    "contentHash": "881ab398fbf0ab727661534579e38efa81e9c3de1ac178d77815b2db3fa96be7",
-    "lastHarvestedAt": "2026-10-28T12:57:06.551Z",
+    "contentHash": "eb6062760e0dce1df1c479a61081e750099d9eb298e4b45db9c4c6b6dccb0f55",
+    "lastHarvestedAt": "2026-10-31T06:32:06.378Z",
     "learningId": "learn-github-wcandillon-react-native-skia"
   },
   "saltstack-salt": {

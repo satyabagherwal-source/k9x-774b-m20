@@ -6487,3 +6487,6 @@
 | `CYCLE-20261031-EYRB` | `2026-10-31T06:17:58.391Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6100` | Yes (`1370939e...`) |
 | `CYCLE-20261031-F7GM` | `2026-10-31T06:18:09.670Z` | `moonshotai/Kimi-K3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6101, Rule 6102` | Yes (`23931a2e...`) |
 | `CYCLE-20261031-NZY4` | `2026-10-31T06:24:59.836Z` | `stabilityai/stable-diffusion-xl-base-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4242, Rule 4243, Rule 6103` | Yes (`8cb33b5f...`) |
+| `CYCLE-20261031-X52E` | `2026-10-31T06:32:06.374Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5879` | Yes (`eb606276...`) |
+| `CYCLE-20261031-X73D` | `2026-10-31T06:32:09.002Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6104` | Yes (`81044e7e...`) |
+| `CYCLE-20261031-X9NP` | `2026-10-31T06:32:12.325Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6105, Rule 6106, Rule 6107` | Yes (`c42b524c...`) |

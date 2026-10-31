@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source**: github ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
-> **Source Version**: `aa5046f0`  
+> **Source Version**: `a87308b0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T14:33:33.631Z  
+> **Timestamp**: 2026-10-31T06:32:08.252Z  
 > **Learning ID**: `learn-github-authzed-spicedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T14:33:31.436Z  
+> **Harvest Timestamp**: 2026-10-31T06:32:08.243Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open Source, Google Zanzibar-inspired database for scalably storing and querying fine-grained authorization data
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 7179 stars
+- **Stars / Engagement**: 7180 stars
 
 ---
 
@@ -1086,13 +1086,13 @@ func inputMessagesForService[S any](
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3437** (2026-10-28): **chore: bump go-jose to v4.1.6 for CVE-2026-116587**
-  *Symptoms*: ## Description  Trivy fails on `github.com/go-jose/go-jose/v4` v4.1.4: CVE-2026-116587 (HIGH), a denial of service when parsing JWKs that contain RSA keys, fixed in v4.1.6. go-jose is an indirect dependency, pulled in through `google.golang.org/grpc/xds` → `grpc/credentials/tls/certprovider` → `github.com/spiffe/go-spiffe/v2/bundle/spiffebundle`.  ## Changes  Bump go-jose to v4.1.6 in `go.mod`/`go.sum` and `e2e/go.sum`. No other dependency changes.  ## Testing  - `go build ./...` in the root and `e2e` modules. - `trivy fs --scanners vuln --severity CRITICAL,HIGH,MEDIUM .` reports the CVE before the bump and nothing after. 
-
-- **Issue #3435** (2026-10-28): **fix(dispatch): lock LookupResources cursors to the dispatcher that produced them**
-  *Symptoms*: ## Description  With secondary dispatchers configured, a paginated LookupResources could fail with an invalid cursor error partway through. The cluster dispatcher is meant to lock a cursor to the dispatcher that produced it, but the lock never took effect:  - When a secondary won the hedged race, `dispatchStreamingRequest` published its results without tagging their cursors. Only `publishClient`, the path taken when there are no secondaries, added the tag. - LookupResources3 requests were never checked: their cursor is a `[]string`, not a `*v1.Cursor`, so they don't implement `requestMessageWithCursor`.  So every page raced the primary against the secondaries again, and a cursor produced by one could be resumed by the other.  ## Changes  - `tagCursorWithSecondary` tags a winning secondary's cursors in the hedged path: at the front of LookupResources2 cursor sections, and at the head (last section) of each LookupResources3 cursor stack. Tagging the head of the LR3 stack keeps a tag nested under a primary-produced head with the sub-dispatch it belongs to. - `stripCursorDispatcherTag` reads the tag from the request, for both cursor shapes:   - Tagged: the tag is stripped and the request goes only to that secondary.   - Untagged: the cursor came from the primary, so it goes only to the primary.   - No cursor: the dispatch expression picks the secondaries, as before. - The unused tagging in `publishClient` is removed.  Behaviour change: previously an untagged cursor could be dispa
+- **Issue #3444** (2026-10-30): **feat(query): add reusable planning signals**
+  *Symptoms*: Add a common foundation for query-planner optimizations to learn from previous requests. Each signal declares whether its observations apply to one datastore revision or can be reused across revisions, keeping recommendations tied to compatible data and schema versions.  Retained evidence has explicit memory limits, and estimates stay stable while a plan is being prepared. Schema changes can preserve compatible evidence, reduce its weight, or discard it. This establishes the foundation for subsequent signal-driven optimizations without changing permission results.  Validated with race detection, generated tests for revision isolation and snapshot stability, query and optimizer regression tests, and lint checks. 
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/authzed/spicedb/pull/3435?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed) Report :x: Patch coverage is `85.07463%` with `10 lines` in your changes missing coverage. Please review. | [Files with missing lines](https://app.codecov.io/gh/authzed/spicedb/pull/3435?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed) | Patch % | Lines | |---|---|---| | [internal/dispatch/remote/cluster.go](https://app.codecov.io/gh/authzed/spicedb/pull/3435?src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed#diff-aW50ZXJuYWwvZGlzcGF0Y2gvcmVtb3RlL2NsdXN0ZXIuZ28=) | 85.08% | [6 Missing and 4 partials :warning: ](https://app.codecov.io/gh/authzed/spicedb/pull/3435?src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign
+  > ## [Codecov](https://app.codecov.io/gh/authzed/spicedb/pull/3444?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed) Report :x: Patch coverage is `90.66986%` with `78 lines` in your changes missing coverage. Please review. | [Files with missing lines](https://app.codecov.io/gh/authzed/spicedb/pull/3444?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed) | Patch % | Lines | |---|---|---| | [pkg/query/signals/owner.go](https://app.codecov.io/gh/authzed/spicedb/pull/3444?src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed#diff-cGtnL3F1ZXJ5L3NpZ25hbHMvb3duZXIuZ28=) | 85.64% | [35 Missing and 14 partials :warning: ](https://app.codecov.io/gh/authzed/spicedb/pull/3444?src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_te
+
+- **Issue #3440** (2026-10-30): **fix(schema): preserve annotations on unchanged definitions during schema writes**
+  *Symptoms*: Fixes #3412  ## Description  Since v1.49.0, every schema write has stripped the `aliasing_relation` and `canonical_cache_key` annotations from definitions that did not change. The write path annotated only definitions with a semantic diff, but then wrote every compiled definition, so unchanged ones replaced their stored, annotated copies. This happens in both the legacy and single-store schema modes.  Without the annotations, permissions that alias a relation are dispatched as separate subproblems, and equivalent permissions stop sharing dispatch cache entries. Affected deployments see more dispatches, higher check latency and more datastore load, with no errors.  ## Changes  - Annotate every definition before writing the schema, not only changed ones. Both storage paths write from the same set of definitions, so this fixes legacy and single-store writes alike. It also repairs datastores that were already stripped: writing the schema again restores the annotations. - Size the BDD operation caches used to compute canonical cache keys to the expression being canonicalized, instead of rudd's 10,000-entry default per cache. Annotating every definition otherwise raised memory allocated per schema write by about 80%; with this change the increase is about 3–5%, and annotation itself is about 40% faster. The caches only memoize operations, so the computed keys are unchanged.  ## Testing  A new test writes a schema, then rewrites it, in all four schema modes, and checks that annotati
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1109,945 +1109,900 @@ func inputMessagesForService[S any](
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aa5046f0` (2026-10-05)
-**Commit Message**: refactor(query): isolate optimizations and add semantic properties
+### Incident Patch 1: `2eb05375` (2026-10-29)
+**Commit Message**: fix(schema): preserve annotations on unchanged definitions during schema writes
 
-**File**: `internal/dispatch/dispatch_optimizer.go` (modified, +3/-84)
+Schema writes passed every compiled definition to WriteSchema, but only
+annotated those with a semantic diff. Unchanged definitions were therefore
+written without their aliasing_relation and canonical_cache_key
+annotations, in both the legacy and unified schema storage paths.
+
+Annotate every definition before writing, which also restores annotations
+on datastores already affected. Size the BDD operation caches used for
+canonical cache keys to the expression, rather than the 10,000-entry
+default, so annotating every definition does not add significant
+allocation.
+
+Fixes #3412
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -1,6 +1,7 @@
- package dispatch
+@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
  
- import (
-+	"github.com/authzed/spicedb/internal/dispatch/queryopt/dispatchwrap"
- 	"github.com/authzed/spicedb/pkg/query"
- 	"github.com/authzed/spicedb/pkg/query/queryopt"
- )
-@@ -9,91 +10,9 @@ import (
- // dispatch-wrap-alias optimization. Callers fetch the registered Optimizer by
- // this name when they want to apply the wrap as a standalone step after the
- // usual queryopt.OptimizersForRequest set.
--const DispatchWrapAliasOptimizationName = "dispatch-wrap-alias"
-+const DispatchWrapAliasOptimizationName = dispatchwrap.Name
- 
--func init() {
--	queryopt.MustRegisterOptimization(queryopt.Optimizer{
--		Name: DispatchWrapAliasOptimizationName,
--		Description: `
--		Wraps every AliasIteratorType node in a DispatchIteratorType passthrough
--		so the dispatch layer can recognize the (definition, relation) boundary
--		as a dispatch candidate without re-deriving it at runtime. Aliases whose
--		subtree contains an unmatched RecursiveSentinel are left unwrapped — the
--		sentinel must execute inside the collection context established by its
--		matching RecursiveIterator, which is broken by an RPC hop.
--		`,
--		NewTransform: func(_ queryopt.RequestParams) queryopt.OutlineTransform {
--			return func(outline query.Outline) query.Outline {
--				return query.MutateOutline(outline, []query.OutlineMutation{wrapAliasWithDispatch})
--			}
--		},
--	})
--}
--
--// wrapAliasWithDispatch is a bottom-up OutlineMutation that wraps each
--// AliasIteratorType node in a DispatchIteratorType node. The wrap is the
--// static portion of the old DispatchExecutor.shouldDispatchAlias check:
--//   - the "is this an alias" test becomes "is this outline node an alias?"
--//   - the sentinel-recursion guard runs over the outline subtree
--//
--// The remaining runtime guard (in-progress dispatch-key cycle break) cannot
--// be made static and stays in the executor.
--func wrapAliasWithDispatch(outline query.Outline) query.Outline {
--	if outline.Type != query.AliasIteratorType {
--		return outline
--	}
--	if containsUnmatchedRecursiveSentinelOutline(outline) {
--		return outline
--	}
--	// New node has ID==0; ApplyOptimizations runs FillMissingNodeIDs after the
--	// transform, which assigns it a fresh ID and records its canonical key.
--	return query.Outline{
--		Type:        DispatchIteratorType,
--		SubOutlines: []query.Outline{outline},
--	}
--}
--
--// containsUnmatchedRecursiveSentinelOutline is the outline-time mirror of
--// containsUnmatchedRecursiveSentinel (executor.go): it walks an outline
--// subtree and reports whether any RecursiveSentinel has no RecursiveIterator
--// with the same (definition, relation) key in the same subtree. An unmatched
--// sentinel means dispatching this subtree would sever the sentinel from the
--// collection context its iterator establishes.
--func containsUnmatchedRecursiveSentinelOutline(root query.Outline) bool {
--	var iteratorKeys map[recursiveKey]struct{}
--	var sentinelKeys map[recursiveKey]struct{}
--
--	var walk func(query.Outline)
--	walk = func(node query.Outline) {
--		switch node.Type {
--		case query.RecursiveIteratorType:
--			if node.Args != nil {
--				if iteratorKeys == nil {
--					iteratorKeys = make(map[recursiveKey]struct{})
--				}
--				iteratorKeys[recursiveKey{node.Args.DefinitionName, node.Args.RelationName}] = struct{}{}
--			}
--		case query.RecursiveSentinelIteratorType:
--			if node.Args != nil {
--				if sentinelKeys == nil {
--					sentinelKeys = make(map[recursiveKey]struct{})
--				}
--				sentinelKeys[recursiveKey{node.Args.DefinitionName, node.Args.RelationName}] = struct{}{}
--			}
--		}
--		for _, sub := range node.SubOutlines {
--			walk(sub)
--		}
--	}
--	walk(root)
--
--	for k := range sentinelKeys {
--		if _, managed := iteratorKeys[k]; !managed {
--			return true
--		}
--	}
--	return false
--}
-+func init() { queryopt.MustRegisterOptimization(dispatchwrap.New(DispatchIteratorType)) }
- 
- // ApplyDispatchWrap runs only the dispatch-wrap-alias optimization on the
- // given CanonicalOutline. It exists for callers (dispatch service handlers,
+ ## [Unreleased]
+ ### Fixed
++- Schema: writing a schema no longer strips the `aliasing_relation` and `canonical_cache_key` annotations from definitions that did not change. Since v1.49.0, every schema write replaced unchanged definitions with unannotated copies, in both the legacy and single-store schema modes, so permissions that alias a relation were dispatched as separate subproblems and equivalent permissions stopped sharing dispatch cache entries, increasing dispatch count, latency and datastore load. All definitions are now annotated on write, and writing the schema again restores annotations already lost. Computing the annotations also allocates far less memory. (https://github.com/authzed/spicedb/issues/3412)
+ - LookupResources and Expand: the read connection pool can no longer deadlock because a request held one connection while waiting for another. LookupResources dispatched further lookups while its relationships query still held its connection, so on a schema of several levels every connection in the pool could end up held by a request waiting for another one. Since client cancellation does not reach the pool, the server stayed stuck until restarted. LookupResources now reads the relationships for each query in full before dispatching, with a single query when the request has no limit, and in pages when it does. Expand over an arrow now reads the schema before reading relationships, instead of once per relationship. With the single-store schema (`--experimental-schema-mode` set to `read-new-write-both` or `read-new-write-new`), caveat and namespace definitions are loaded before relationships are read, which also resolves the caveated LookupResources deadlock reported in the issue. The default legacy schema mode still loads definitions while relationships are being read, and is not fixed by this change. (https://github.com/authzed/spicedb/issues/3433)
+ - Dispatch: LookupResources cursors are now locked to the dispatcher that produced them when secondary dispatchers are configured. Previously a cursor returned by a secondary was never tagged, and LookupResources3 cursors were never checked at all, so every page raced the primary against the secondaries and a cursor produced by one could be sent to the other, failing the request with an invalid cursor error. A cursor without a secondary tag is now resumed by the primary only.
+ - Dispatch and telemetry: CA bundles read from disk via `--dispatch-upstream-ca-path` and the telemetry client's CA path are now re-read on every outbound TLS handshake, so a rotated certificate authority is picked up without a process restart. Previously the CA pool was set once at startup and stayed fixed for the life of the process, causing handshakes to fail with "certificate signed by unknown authority" after the old CA was retired. (https://github.com/authzed/spicedb/pull/3296)
 ```
 
-**File**: `internal/dispatch/dispatch_optimizer_test.go` (modified, +1/-121)
+**File**: `internal/namespace/canonicalization.go` (modified, +5/-1)
 ```diff
-@@ -21,27 +21,6 @@ func aliasOutline(defName, relName string, child query.Outline) query.Outline {
+@@ -67,7 +67,11 @@ func computeCanonicalCacheKeys(typeDef *schema.ValidatedDefinition, aliasMap map
+ 		return map[string]string{}, nil
  	}
- }
  
--func recursiveOutline(defName, relName string, child query.Outline) query.Outline {
--	return query.Outline{
--		Type: query.RecursiveIteratorType,
--		Args: &query.IteratorArgs{
--			DefinitionName: defName,
--			RelationName:   relName,
--		},
--		SubOutlines: []query.Outline{child},
--	}
--}
--
--func sentinelOutline(defName, relName string) query.Outline {
--	return query.Outline{
--		Type: query.RecursiveSentinelIteratorType,
--		Args: &query.IteratorArgs{
--			DefinitionName: defName,
--			RelationName:   relName,
--		},
--	}
--}
--
- func dsOutline() query.Outline {
- 	rel := schema.NewTestBaseRelationWithFeatures("document", "viewer", "user", "", "", false)
- 	return query.Outline{
-@@ -50,106 +29,7 @@ func dsOutline() query.Outline {
+-	bdd, err := rudd.New(varMap.Len())
++	// The default operation cache holds 10,000 entries per cache, far more than the small
++	// expressions of a single definition need, and is allocated anew for every definition
++	// annotated. Instead, size the caches to match the node table and grow alongside it.
++	// The caches only memoize operations, so their size does not affect the resulting keys.
++	bdd, err := rudd.New(varMap.Len(), rudd.Cachesize(2*varMap.Len()+2), rudd.Cacheratio(100))
+ 	if err != nil {
+ 		return nil, err
  	}
- }
- 
--// runDispatchWrap canonicalizes outline then runs only the dispatch-wrap
--// optimization on it, returning the resulting root outline.
--func runDispatchWrap(t *testing.T, outline query.Outline) query.Outline {
--	t.Helper()
--	co, err := query.CanonicalizeOutline(outline)
--	require.NoError(t, err)
--	res, err := ApplyDispatchWrap(co, queryopt.RequestParams{})
--	require.NoError(t, err)
--	return res.Root
--}
--
--func TestDispatchWrapOptimizer(t *testing.T) {
--	t.Run("wraps a single alias", func(t *testing.T) {
--		input := aliasOutline("document", "viewer", dsOutline())
--		got := runDispatchWrap(t, input)
--
--		require.Equal(t, DispatchIteratorType, got.Type)
--		require.Len(t, got.SubOutlines, 1)
--		require.Equal(t, query.AliasIteratorType, got.SubOutlines[0].Type)
--		require.Equal(t, "viewer", got.SubOutlines[0].Args.RelationName)
--		// child unchanged
--		require.Len(t, got.SubOutlines[0].SubOutlines, 1)
--		require.Equal(t, query.DatastoreIteratorType, got.SubOutlines[0].SubOutlines[0].Type)
--	})
--
--	t.Run("leaves non-alias outlines alone", func(t *testing.T) {
--		input := dsOutline()
--		got := runDispatchWrap(t, input)
--		require.Equal(t, query.DatastoreIteratorType, got.Type)
--	})
--
--	t.Run("wraps nested aliases at every level", func(t *testing.T) {
--		// Alias("perm")(Union[ Alias("view")(DS), DS ])
--		inner := aliasOutline("document", "view", dsOutline())
--		union := query.Outline{
--			Type:        query.UnionIteratorType,
--			SubOutlines: []query.Outline{inner, dsOutline()},
--		}
--		input := aliasOutline("document", "perm", union)
--
--		got := runDispatchWrap(t, input)
--
--		// Outer alias is wrapped
--		require.Equal(t, DispatchIteratorType, got.Type)
--		outerAlias := got.SubOutlines[0]
--		require.Equal(t, query.AliasIteratorType, outerAlias.Type)
--		require.Equal(t, "perm", outerAlias.Args.RelationName)
--
--		// Inner alias inside the union is also wrapped
--		gotUnion := outerAlias.SubOutlines[0]
--		require.Equal(t, query.UnionIteratorType, gotUnion.Type)
--		require.Len(t, gotUnion.SubOutlines, 2)
--		require.Equal(t, DispatchIteratorType, gotUnion.SubOutlines[0].Type)
--		require.Equal(t, query.AliasIteratorType, gotUnion.SubOutlines[0].SubOutlines[0].Type)
--		require.Equal(t, "view", gotUnion.SubOutlines[0].SubOutlines[0].Args.RelationName)
--	})
--
--	t.Run("wraps alias whose subtree has a matched sentinel/iterator pair", func(t *testing.T) {
--		// Alias("view")(Recursive("folder","viewer")(Sentinel("folder","viewer")))
--		// The recursive iterator inside the alias matches the sentinel's key, so
--		// the dispatch boundary is safe.
--		input := aliasOutline("document", "view",
--			recursiveOutline("folder", "viewer", sentinelOutline("folder", "viewer")),
--		)
--		got := runDispatchWrap(t, input)
--		require.Equal(t, DispatchIteratorType, got.Type, "expected wrap; matched sentinel/iterator pair is dispatch-safe")
--	})
--
--	t.Run("does NOT wrap alias whose subtree contains an unmatched sentinel", func(t *testing.T) {
--		// Alias("view")(Union[ Sentinel("folder","viewer"), DS ])
--		// No RecursiveIterator with key folder#viewer exists in the alias's
--		// subtree, so dispatching the alias would sever the sentinel from its
--		// collection context.
--		input := aliasOutline("document", "view",
--			query.Outline{
--				Type: query.UnionIteratorType,
--				SubOutlines: []query.Outline{
--					sentinelOutline("folder", "viewer"),
--					dsOutline(),
--				},
--			},
--		)
--		got := runDispatchWrap(t, input)
--		require.Equal(t, query.AliasIteratorType, got.Type,
--			"alias with unmatched sentinel should remain unwrapped to preserve sentinel collection context")
--	})
--
--	t.Run("assigns IDs and canonical keys to newly-wrapped nodes", func(t *testing.T) {
--		input := aliasOutline("document", "viewer", dsOutline())
--		co, err := query.CanonicalizeOutline(input)
--		require.NoError(t, err)
--		res, err := ApplyDispatchWrap(co, queryopt.RequestParams{})
--		require.NoError(t, err)
--
--		require.NotZero(t, res.Root.ID, "Dispatch root must have an ID assigned by FillMissingNodeIDs")
--		key, ok := res.CanonicalKeys[res.Root.ID]
--		require.True(t, ok, "Dispatch root must have a canonical key recorded")
--		require.N
 ```
 
-**File**: `internal/dispatch/queryopt/dispatchwrap/README.md` (added, +47/-0)
+**File**: `internal/services/shared/schema.go` (modified, +12/-9)
 ```diff
-@@ -0,0 +1,47 @@
-+# Dispatch alias wrapping
+@@ -192,17 +192,20 @@ func ApplySchemaChangesOverExisting(
+ 			return nil, err
+ 		}
+ 
+-		if len(diff.Deltas()) > 0 {
+-			objectDefsWithChanges = append(objectDefsWithChanges, nsdef)
++		// Annotate every definition, not only changed ones: the non-additive path below
++		// writes all compiled definitions, so an unannotated copy of an unchanged
++		// definition would overwrite the stored, annotated one.
++		vts, ok := validated.validatedDefinitions[nsdef.Name]
++		if !ok {
++			return nil, spiceerrors.MustBugf("validated type system not found for namespace `%s`", nsdef.Name)
++		}
+ 
+-			vts, ok := validated.validatedDefinitions[nsdef.Name]
+-			if !ok {
+-				return nil, spiceerrors.MustBugf("validated type system not found for namespace `%s`", nsdef.Name)
+-			}
++		if err := namespace.AnnotateNamespace(vts); err != nil {
++			return nil, err
++		}
+ 
+-			if err := namespace.AnnotateNamespace(vts); err != nil {
+-				return nil, err
+-			}
++		if len(diff.Deltas()) > 0 {
++			objectDefsWithChanges = append(objectDefsWithChanges, nsdef)
+ 		}
+ 	}
+ 
+```
+
+**File**: `internal/services/shared/schema_annotations_test.go` (added, +163/-0)
+```diff
+@@ -0,0 +1,163 @@
++package shared
 +
-+Registered name: `dispatch-wrap-alias`. Factory:
-+`New(iteratorType query.IteratorType) optimization.Optimizer`.
-+The dispatch package supplies its real DispatchIteratorType and registers the pass.
++import (
++	"context"
++	"strings"
++	"testing"
 +
-+## Transformation
++	"github.com/stretchr/testify/require"
 +
-+`Alias(view)(child)` becomes `Dispatch(Alias(view)(child))` for eligible aliases.
-+The wrapper is a local passthrough iterator marking a potential RPC boundary.
++	"github.com/authzed/spicedb/internal/datastore/dsfortesting"
++	"github.com/authzed/spicedb/internal/datastore/memdb"
++	caveattypes "github.com/authzed/spicedb/pkg/caveats/types"
++	"github.com/authzed/spicedb/pkg/datalayer"
++	"github.com/authzed/spicedb/pkg/datastore"
++	"github.com/authzed/spicedb/pkg/schemadsl/compiler"
++	"github.com/authzed/spicedb/pkg/schemadsl/input"
++)
 +
-+## Inputs and signals
++const annotationsTestSchema = `
++definition user {}
 +
-+Alias shape and recursive iterator/sentinel identities drive this pass. It uses
-+neither request parameters nor observed execution statistics. The supplied
-+iterator type avoids a dependency on the parent dispatch package.
++definition document {
++	relation viewer: user
++	permission view = viewer
++	permission read = viewer
++}`
 +
-+## Correctness and applicability
++// TestApplySchemaChangesPreservesAnnotations ensures that rewriting a schema does not
++// strip the aliasing_relation and canonical_cache_key annotations from definitions
++// that are unchanged, and that a rewrite restores them if they are missing.
++// See https://github.com/authzed/spicedb/issues/3412
++func TestApplySchemaChangesPreservesAnnotations(t *testing.T) {
++	modes := []datalayer.SchemaMode{
++		datalayer.SchemaModeReadLegacyWriteLegacy,
++		datalayer.SchemaModeReadLegacyWriteBoth,
++		datalayer.SchemaModeReadNewWriteBoth,
++		datalayer.SchemaModeReadNewWriteNew,
++	}
 +
-+An alias with an unmatched recursive sentinel stays unwrapped: an RPC could
-+separate the sentinel from its collection context. A matching recursive
-+iterator inside the subtree makes the static boundary eligible. Runtime
-+in-progress dispatch-key cycle checks remain the executor's responsibility.
-+New wrappers receive IDs and canonical keys through ApplyOptimizations.
++	tcs := []struct {
++		name               string
++		seedUnannotated    bool
++		secondSchema       string
++		expectedAliasing   int
++		expectedCanonicals int
++	}{
++		{
++			name:               "identical rewrite",
++			secondSchema:       annotationsTestSchema,
++			expectedAliasing:   2,
++			expectedCanonicals: 3,
++		},
++		{
++			name:               "rewrite adding another definition",
++			secondSchema:       annotationsTestSchema + "\n\ndefinition folder {\n\trelation owner: user\n}",
++			expectedAliasing:   2,
++			expectedCanonicals: 3,
++		},
++		{
++			name:               "identical rewrite repairs unannotated definitions",
++			seedUnannotated:    true,
++			secondSchema:       annotationsTestSchema,
++			expectedAliasing:   2,
++			expectedCanonicals: 3,
++		},
++	}
 +
-+## Ordering and expected performance
++	for _, mode := range modes {
++		for _, tc := range tcs {
++			t.Run(mode.String()+"/"+tc.name, func(t *testing.T) {
++				require := require.New(t)
++				rawDS, err := dsfortesting.NewMemDBDatastoreForTesting(t, 0, 0, memdb.DisableGC)
++				require.NoError(err)
++				dl := datalayer.NewDataLayer(rawDS, datalayer.WithSchemaMode(mode))
 +
-+Applied separately after standard queryopt passes and before advising. Marking
-+boundaries during planning avoids rediscovering them during execution. Walking
-+alias subtrees adds planning cost; RPC/caching benefits require dispatch-layer
-+measurements. Reapplying this pass is not an idempotent operation.
++				compile := func(schema string) *compiler.CompiledSchema {
++					compiled, err := compiler.Compile(compiler.InputSchema{
++						Source:       input.Source("schema"),
++						SchemaString: schema,
++					}, compiler.AllowUnprefixedObjectType())
++					require.NoError(err)
++					return compiled
++				}
++
++				readAnnotations := func() map[string]string {
++					annotations := map[string]string{}
++					_, err := dl.ReadWriteTx(t.Context(), func(ctx context.Context, rwt datalayer.ReadWriteTransaction) error {
++						sr, err := rwt.ReadSchema(ctx)
++						require.NoError(err)
++						def, found, err := sr.LookupTypeDefByName(ctx, "document")
++						require.NoError(err)
++						require.True(found)
++						for _, rel := range def.Definition.Relation {
++							if rel.AliasingRelation != "" {
++								annotations[rel.Name+"#alias"] = rel.AliasingRelation
++							}
++							if rel.CanonicalCacheKey != "" {
++								annotations[rel.Name+"#key"] = rel.CanonicalCacheKey
++							}
++						}
++						return nil
++					})
++					require.NoError(err)
++					return annotations
++				}
++
++				countAnnotations := func(annotations map[string]string) (aliasing, canonicals int) {
++					for k := range annotations {
++						if strings.HasSuffix(k, "#alias") {
++							aliasing++
++						} else {
++							canonicals++
++						}
++					}
++					return aliasing, canonicals
++				}
++
++				// Seed the starting schema, either through the normal write path or, to
++				// simulate a datastore stripped by the bug, by writing unannotated definitions.
++				compiled := compile(annotationsTestSchema)
++				_, err = dl.ReadWriteTx(t.Context(), func(ctx context.Context, rwt datalayer.ReadWriteTransaction) error {
++					if tc.seedUnannotated {
++						defs := make([]datastore.SchemaDefinition, 0, len(compiled.ObjectDefinitions))
++						for _, def := range compiled.ObjectDefinitions {
++							defs = append(defs, def)
++						}
++						_, err := rwt.WriteSchema(ctx, defs, annotationsTestSchema, caveattypes.Default.TypeSet)
++						return err
++					}
++
++					validated, err := ValidateSchemaChanges(ctx, compiled, caveattypes.Default.TypeSet, false, annotationsTestSchema)
++					require.NoError(err)
++					_, err = ApplySchemaChanges(ctx, rwt, caveattypes.Default.TypeSet, validated)
++					return err
++				})
++				require.NoError(err)
++
++				startingAnnotations := readAnnotations()
++				if tc.seedUnannotated {
++					require.Empty(startingAnnotations)
++				}
++
++				_, err = dl.ReadWriteTx(t.Context(), func(ctx context.Context, rwt datalayer.ReadWriteTransaction) error {
++					validated, err := ValidateSchemaChanges(ctx, compile(tc.secondSchema), caveattypes.Default.TypeS
+```
+
+---
+
+### Incident Patch 2: `a87308b0` (2026-10-30)
+**Commit Message**: docs(query): distinguish signal identity from canonical keys
+
+**File**: `pkg/query/signals/signal/execution.go` (modified, +2/-0)
+```diff
+@@ -38,6 +38,8 @@ const (
+ // ExecutionKey identifies an observed execution population independently of dispatch keys.
+ type ExecutionKey struct {
+ 	// Identity is the full structural identity of the observed subtree.
++	// It must include all descendants, unlike query.CanonicalKey, which omits
++	// children of caveat nodes.
+ 	Identity string
+ 
+ 	// Operation identifies the execution operation represented by evidence.
+```
+
+---
+
+### Incident Patch 3: `8e3a1226` (2026-10-30)
+**Commit Message**: fix(query): harden signal storage bounds and lifecycle coverage
+
+**File**: `pkg/query/signals/README.md` (added, +74/-0)
+```diff
+@@ -0,0 +1,74 @@
++# Planning signals
++
++Signals store observations that can inform query-planner choices. Each provider
++owns a named definition, typed population key, observation and estimate, and an
++accumulator. This package supplies registration, bounded storage and scoped reads;
++it does not change query execution or enable a particular optimization.
++
++## Registration and scope
++
++Construct descriptors with `signal.NewSource` or `signal.NewDerived`, register
++all dependencies, and create one `Owner` for the datalayer using `NewOwner`.
++Registration rejects duplicate names, incompatible bindings and dependency cycles.
++Freeze a registry before sharing it concurrently. Provider callbacks must follow
++the accumulator contract: clones and returned values are independent snapshots.
++
++Bind the owner to a loaded stored schema and the request's selected datastore
++revision. A provider explicitly chooses `RevisionBound` or `CrossRevision`:
++
++- Revision-bound evidence stays at that exact revision, including a quantized
++  revision selected for checks. Neighboring revisions do not share that evidence.
++- Cross-revision evidence can be reused within the same schema. Its provider owns
++  aging and availability; storage does not infer how much the data changed.
++- On a schema change, only cross-revision providers with an explicit compatibility
++  callback can transfer evidence. `signal.Unchanged` compares their declared
++  dependencies against the schema diff. A transfer may retain, discount or reset
++  evidence. It preserves observation times but starts a distinct publication epoch.
++
++For example, checks of `document:report#view@user:alice` at revision R may record
++an observation under a population key for the `document#view` subtree. A second
++subject can contribute to the same population if the provider's key excludes the
++subject. A revision-bound lookup at R+1 is missing; a cross-revision provider may
++return historical evidence. Adding an unrelated schema definition can preserve
++that historical evidence, while changing a declared dependency resets it.
++
++Consumers use `signal.Observe(view, input, key, observation)` and
++`signal.Lookup(view, reference, key)`. Check `estimate.IsAvailable()` before using
++the value. Missing, expired and disabled evidence are distinct from a measured
++zero. `LookupFirst` tries compatible references in order and reports which one
++supplied the first available estimate; a lookup error stops that search.
++
++`view.ForPlan()` memoizes each population's first independent snapshot for one
++planning run. Further observations or store eviction cannot change that snapshot.
++Different populations are read independently, not as one transactional snapshot.
++
++## Ownership and bounds
++
++Defaults are 16 MiB total estimated resident storage, 256 KiB per entry, four
++schemas, 64 exact revisions per schema, and 64 weak owner handles per stored
++schema. Options can override these limits. Storage accounts for retained schemas,
++entry and key storage, dependency footprints, and accumulator-reported bytes.
++Providers must include all their retained state in `Size()`.
++
++Keys support scalar values, strings, and arrays or structs recursively containing
++those values. Struct fields must be exported. Pointers, interfaces, channels and
++other reference graphs are rejected, as are nonreflexive values such as NaN.
++Retained keys and footprint strings are copied so a substring cannot retain an
++unaccounted backing buffer. Footprint slices are copied before retention.
++
++Oversized or evicted evidence becomes unavailable; it does not affect permission
++semantics. The schema cache holds only bounded weak owner references. Owners and
++schemas do not leak learning state between independent datalayers. Legacy readers
++can use an isolated local view instead of a shared stored-schema attachment.
++
++Derived providers consume accepted source increments in dependency order, not
++cumulative snapshots. Source publication is serialized through derived delivery.
++They cannot be written directly through the public observation API.
 +
 +## Tests
 +
-+Colocated unit tests cover eligible aliases, matching/unmatched recursion and
-+new node identities. A parent integration test exercises ApplyDispatchWrap and
-+compilation to the real DispatchIterator. Shared properties run with that real
-+iterator in local mode over arbitrary generated schemas, nested aliases and
-+recursive boundaries. RPC behavior remains covered by dispatch tests.
-+
-+```sh
-+go test ./internal/dispatch ./internal/dispatch/queryopt/dispatchwrap
-+go test ./internal/dispatch/queryopt/dispatchwrap -run TestSemanticEquivalence -rapid.checks=1000
-+```
-+
-+Use Rapid's emitted seed/failure-file command for replay. See the
-+[shared harness](../../../queryopttest/README.md).
++Package tests use synthetic providers and stored-schema fixtures to cover scope
++isolation, publication, snapshots, eviction, schema compatibility and concurrency.
++The shared `internal/querysignalstest` helpers provide a fake clock and schema
++builders for provider-specific tests. Numeric distribution helpers are tested in
++`signal` without depending on a built-in provider.
 ```
 
-**File**: `internal/dispatch/queryopt/dispatchwrap/optimization.go` (added, +95/-0)
+**File**: `pkg/query/signals/key.go` (added, +144/-0)
 ```diff
-@@ -0,0 +1,95 @@
-+package dispatchwrap
+@@ -0,0 +1,144 @@
++package signals
 +
 +import (
-+	"github.com/authzed/spicedb/pkg/query"
-+	"github.com/authzed/spicedb/pkg/query/queryopt/optimization"
++	"errors"
++	"reflect"
++	"strings"
++
++	"github.com/ccoveille/go-safecast/v2"
++
++	"github.com/authzed/spicedb/pkg/query/signals/signal"
 +)
 +
-+const Name = "dispatch-wrap-alias"
-+
-+type recursiveKey struct{ definition, relation string }
-+
-+// New returns a dispatch-boundary optimization using the supplied iterator type.
-+func New(iteratorType query.IteratorType) optimization.Optimizer {
-+	return optimization.Optimizer{
-+		Name: Name,
-+		Description: `
-+		Wraps every AliasIteratorType node in a DispatchIteratorType passthrough
-+		so the dispatch layer can recognize the (definition, relation) boundary
-+		as a dispatch candidate without re-deriving it at runtime. Aliases whose
-+		subtree contains an unmatched RecursiveSentinel are left unwrapped — the
-+		sentinel must execute inside the collection context established by its
-+		matching RecursiveIterator, which is broken by an RPC hop.
-+		`,
-+		NewTransform: func(_ optimization.RequestParams) optimization.OutlineTransform {
-+			return func(outline query.Outline) query.Outline {
-+				return query.MutateOutline(outline, []query.OutlineMutation{func(node query.Outline) query.Outline { return wrapAliasWithDispatch(node, iteratorType) }})
++// Value-only keys make retention predictable: no mutable object graph can hide
++// behind a pointer or interface. Exported fields let the store own string data.
++func supportedKey(t reflect.Type) bool {
++	switch t.Kind() {
++	case reflect.Bool, reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
++		reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr,
++		reflect.Float32, reflect.Float64, reflect.Complex64, reflect.Complex128, reflect.String:
++		return true
++	case reflect.Array:
++		return supportedKey(t.Elem())
++	case reflect.Struct:
++		for i := range t.NumField() {
++			f := t.Field(i)
++			if !f.IsExported() || !supportedKey(f.Type) {
++				return false
 +			}
-+		},
++		}
++
++		return true
++	default:
++		return false
 +	}
 +}
 +
-+// wrapAliasWithDispatch is a bottom-up OutlineMutation that wraps each
-+// AliasIteratorType node in a DispatchIteratorType node. The wrap is the
-+// static portion of the old DispatchExecutor.shouldDispatchAlias check:
-+//   - the "is this an alias" test becomes "is this outline node an alias?"
-+//   - the sentinel-recursion guard runs over the outline subtree
-+//
-+// The remaining runtime guard (in-progress dispatch-key cycle break) cannot
-+// be made static and stays in the executor.
-+func wrapAliasWithDispatch(outline query.Outline, iteratorType query.IteratorType) query.Outline {
-+	if outline.Type != query.AliasIteratorType {
-+		return outline
++func validateKey(key any, expected reflect.Type) error {
++	if reflect.TypeOf(key) != expected || !reflect.ValueOf(key).Comparable() {
++		return errors.New("invalid signal key type")
 +	}
-+	if containsUnmatchedRecursiveSentinelOutline(outline) {
-+		return outline
++
++	// NaN, including a NaN inside an array or struct, cannot be found or deleted
++	// from a map. Reject it before lookup as well as before admission.
++	if !reflect.ValueOf(key).Equal(reflect.ValueOf(key)) {
++		return errors.New("nonreflexive signal key")
 +	}
-+	// New node has ID==0; ApplyOptimizations runs FillMissingNodeIDs after the
-+	// transform, which assigns it a fresh ID and records its canonical key.
-+	return query.Outline{
-+		Type:        iteratorType,
-+		SubOutlines: []query.Outline{outline},
++
++	return nil
++}
++
++func ownedKey(value reflect.Value) reflect.Value {
++	switch value.Kind() {
++	case reflect.String:
++		snapshot := reflect.New(value.Type()).Elem()
++		snapshot.SetString(strings.Clone(value.String()))
++		return snapshot
++	case reflect.Struct:
++		snapshot := reflect.New(value.Type()).Elem()
++
++		for i := range value.NumField() {
++			snapshot.Field(i).Set(ownedKey(value.Field(i)))
++		}
++
++		return snapshot
++	case reflect.Array:
++		snapshot := reflect.New(value.Type()).Elem()
++
++		for i := range value.Len() {
++			snapshot.Index(i).Set(ownedKey(value.Index(i)))
++		}
++
++		return snapshot
++	default:
++		return value
 +	}
 +}
 +
-+// containsUnmatchedRecursiveSentinelOutline is the outline-time mirror of
-+// containsUnmatchedRecursiveSentinel (executor.go): it walks an outline
-+// subtree and reports whether any RecursiveSentinel has no RecursiveIterator
-+// with the same (definition, relation) key in the same subtree. An unmatched
-+// sentinel means dispatching this subtree would sever the sentinel from the
-+// collection context its iterator establishes.
-+func containsUnmatchedRecursiveSentinelOutline(root query.Outline) bool {
-+	var iteratorKeys map[recursiveKey]struct{}
-+	var sentinelKeys map[recursiveKey]struct{}
++// String headers and inline fields are in Type.Size; only backing bytes are extra.
++func keyStringBytes(value reflect.Value) int64 {
++	switch value.Kind() {
++	case reflect.String:
++		return int64(value.Len())
++	case reflect.Struct:
++		var size int64
 +
-+	var walk func(query.Outline)
-+	walk = func(node query.Outline) {
-+		switch node.Type {
-+		case query.RecursiveIteratorType:
-+			if node.Args != nil {
-+				if iteratorKeys == nil {
-+					iteratorKeys = make(map[recursiveKey]struct{})
-+				}
-+				iteratorKeys[recursiveKey{node.Args.DefinitionName, node.Args.RelationName}] = struct{}{}
-+			}
-+		case query.RecursiveSentinelIteratorType:
-+			if node.Args != nil {
-+				if sentinelKeys == nil {
-+					sentinelKeys = make(map[recursiveKey]struct{})
-+				}
-+				sentinelKeys[recursiveKey{node.Args.DefinitionName, node.Args.RelationName}] = struct{}{}
-+			}
++		for i := range value.NumField() {
++			size += keyStringBytes(value.Field(i))
 +		}
-+		for _, sub := range node.SubOutlines {
-+			walk(sub)
++
++		return size
++	case reflect.Array:
++		var size int64
++
++		for i := range value.Len() {
++			size += keyStringBytes(value.Index(i))
++		}
++
++		return size
++	default:
++		return 0
++	}
++}
++
++func ownedFootprint(f signal.Footprint) signal.Footprint {
++	result := signal.Footprint{
++		Elements: make([]signal.Element, len(f.Elements)),
++		Caveats:  make([]string, len(f.Caveats)),
++	}
++
++	for i, e := range f.Elements {
++		result.Elements[i] = signal.Element{
++			Namespace: strings.Clone(e.Namespace),
++			Relation:  strings.Clone(e.Relation),
 +		}
 +	}
-+	walk(root)
 +
-+	for k := range sentinelKeys {
-+		if _, managed := iteratorKeys[k]; !managed {
-+			return true
-+		}
++	for i, name := range f.Caveats {
++		result.Caveats[i] = strings.Clone(name)
 +	}
-+	return false
++
++	return result
++}
++
++func entryCost(key entryKey, state signal.State, footprint signal.Footprint) int64 {
++	// Include map/entry overhead, retained names, inline key storage, string
++	// backing bytes and the dependency slices as well as provider-owned state.
++	size := int64(256)
++	size += safecast.MustConvert[int64](len(key.schema))
++	size += safecast.MustConvert[int64](len(key.name))
++	size += safecast.MustConvert[int64](len(key.revision))
++	size += safecast.MustConvert[int64](reflect.TypeOf(key.key).Size()) + keyStringBytes(reflect.ValueOf(key.key))
++	size += safecast.MustConvert[int64](len(footprint.Elements)) * safecast.MustConvert[int64](reflect.TypeFor[signal.Element]().Size())
++	size += safecast.MustConvert[int64](len(footprint.Caveats)) * safecast.MustConvert[int64](reflect.TypeFor[string]().Size())
++
++	for _, e := range footprint.Elements {
++		size += safecast.MustConvert[int64](len(e.Namespace)) + safecast.MustConvert[int64](len(e.Relation))
++	}
++
++	for _, name := range footprint.Caveats {
++		size += safecast.MustConvert[int64](len(name))
++	}
++
++	return size + state.Size()
 +}
 ```
 
-**File**: `internal/dispatch/queryopt/dispatchwrap/optimization_test.go` (added, +172/-0)
+**File**: `pkg/query/signals/owner.go` (modified, +19/-13)
 ```diff
-@@ -0,0 +1,172 @@
-+package dispatchwrap_test
+@@ -4,12 +4,11 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"reflect"
++	"strings"
+ 	"sync"
+ 	"sync/atomic"
+ 	"weak"
+ 
+-	"github.com/ccoveille/go-safecast/v2"
+-
+ 	"github.com/authzed/spicedb/pkg/datastore"
+ 	core "github.com/authzed/spicedb/pkg/proto/core/v1"
+ 	"github.com/authzed/spicedb/pkg/query/signals/signal"
+@@ -23,13 +22,14 @@ type entryKey struct {
+ }
+ 
+ type entry struct {
+-	publicationMu sync.Mutex
+-	mu            sync.Mutex
+-	state         signal.State    // GUARDED_BY(mu)
+-	evidence      signal.Evidence // GUARDED_BY(publicationMu)
+-	footprint     signal.Footprint
+-	cost          int64
+-	used          uint64
++	publicationMu      sync.Mutex
++	publicationVersion uint64 // GUARDED_BY(publicationMu)
++	mu                 sync.Mutex
++	state              signal.State    // GUARDED_BY(mu)
++	evidence           signal.Evidence // GUARDED_BY(mu)
++	footprint          signal.Footprint
++	cost               int64
++	used               uint64
+ }
+ 
+ type schemaState struct {
+@@ -330,7 +330,7 @@ func (o *Owner) touch(k entryKey, create bool, d signal.Descriptor) *entry {
+ 		state = d.New()
+ 	}
+ 
+-	cost := 128 + safecast.MustConvert[int64](len(fmt.Sprint(k.key))) + state.Size()
++	cost := entryCost(k, state, signal.Footprint{})
+ 	o.mu.Lock()
+ 
+ 	if _, ok := o.schemas[k.schema]; !ok {
+@@ -391,6 +391,11 @@ func (o *Owner) touch(k entryKey, create bool, d signal.Descriptor) *entry {
+ 		return nil
+ 	}
+ 
++	// Copy string backing only when admitting a new population. Lookup hits do
++	// not allocate, and a short substring cannot retain an unaccounted buffer.
++	k.key = ownedKey(reflect.ValueOf(k.key)).Interface()
++	k.schema = strings.Clone(k.schema)
++	k.revision = strings.Clone(k.revision)
+ 	o.entries[k] = e
+ 	o.bytes += e.cost
+ 	o.trimLocked()
+@@ -466,14 +471,15 @@ func (o *Owner) write(scope signal.Scope, d signal.Descriptor, key, observation
+ 	}
+ 
+ 	e.evidence.PublishedAt = now
+-	e.evidence.ID.Version++
++	e.publicationVersion++
++	e.evidence.ID.Version = e.publicationVersion
+ 	update := signal.UpdateID{Epoch: e.evidence.ID.Epoch, Sequence: e.evidence.ID.Version}
+ 
+ 	if d.Footprint != nil {
+-		e.footprint = d.Footprint(key)
++		e.footprint = ownedFootprint(d.Footprint(key))
+ 	}
+ 
+-	cost := 128 + safecast.MustConvert[int64](len(fmt.Sprint(key))) + e.state.Size()
++	cost := entryCost(k, e.state, e.footprint)
+ 	e.mu.Unlock()
+ 	o.mu.Lock()
+ 	resident := o.entries[k] == e
+```
+
+**File**: `pkg/query/signals/property_test.go` (added, +60/-0)
+```diff
+@@ -0,0 +1,60 @@
++package signals_test
 +
 +import (
 +	"testing"
 +
 +	"github.com/stretchr/testify/require"
-+
-+	"github.com/authzed/spicedb/internal/dispatch"
-+	"github.com/authzed/spicedb/internal/dispatch/queryopt/dispatchwrap"
-+	"github.com/authzed/spicedb/pkg/query"
-+	"github.com/authzed/spicedb/pkg/query/queryopt"
-+	"github.com/authzed/spicedb/pkg/schema/v2"
-+)
-+
-+func aliasOutline(defName, relName string, child query.Outline) query.Outline {
-+	return query.Outline{
-+		Type: query.AliasIteratorType,
-+		Args: &query.IteratorArgs{
-+			DefinitionName: defName,
-+			RelationName:   relName,
-+		},
-+		SubOutlines: []query.Outline{child},
-+	}
-+}
-+
-+func recursiveOutline(defName, relName string, child query.Outline) query.Outline {
-+	return query.Outline{
-+		Type: query.RecursiveIteratorType,
-+		Args: &query.IteratorArgs{
-+			DefinitionName: defName,
-+			RelationName:   relName,
-+		},
-+		SubOutlines: []query.Outline{child},
-+	}
-+}
-+
-+func sentinelOutline(defName, relName string) query.Outline {
-+	return query.Outline{
-+		Type: query.RecursiveSentinelIteratorType,
-+		Args: &query.IteratorArgs{
-+			DefinitionName: defName,
-+			RelationName:   relName,
-+		},
-+	}
-+}
-+
-+func dsOutline() query.Outline {
-+	rel := schema.NewTestBaseRelationWithFeatures("document", "viewer", "user", "", "", false)
-+	return query.Outline{
-+		Type: query.DatastoreIteratorType,
-+		Args: &query.IteratorArgs{Relation: rel},
-+	}
-+}
-+
-+// runDispatchWrap canonicalizes outline then runs only the dispatch-wrap
-+// optimization on it, returning the resulting root outline.
-+func runDispatchWrap(t *testing.T, outline query.Outline) query.Outline {
-+	t.Helper()
-+	co, err := query.CanonicalizeOutline(outline)
-+	require.NoError(t, err)
-+	res, err := queryopt.ApplyOptimizations(co, []queryopt.Optimizer{dispatchwrap.New(dispatch.DispatchIteratorType)}, queryopt.RequestParams{})
-+	require.NoError(t, err)
-+	return res.Root
-+}
-+
-+func TestDispatchWrapOptimizer(t *testing.T) {
-+	t.Run("wraps a single alias", func(t *testing.T) {
-+		input := aliasOutline("document", "viewer", dsOutline())
-+		got := runDispatchWrap(t, input)
-+
-+		require.Equal(t, dispatch.DispatchIteratorType, got.Type)
-+		require.Len(t, got.SubOutlines, 1)
-+		require.Equal(t, query.AliasIteratorType, got.SubOutlines[0].Type)
-+		require.Equal(t, "viewer", got.SubOutlines[0].Args.RelationName)
-+		// child unchanged
-+		require.Len(t, got.SubOutlines[0].SubOutlines, 1)
-+		require.Equal(t, query.DatastoreIteratorType, got.SubOutlines[0].SubOutlines[0].Type)
-+	})
-+
-+	t.Run("leaves non-alias outlines alone", func(t *testing.T) {
-+		input := dsOutline()
-+		got := runDispatchWrap(t, input)
-+		require.Equal(t, query.DatastoreIteratorType, got.Type)
-+	})
-+
-+	t.Run("wraps nested aliases at every level", func(t *testing.T) {
-+		// Alias("perm")(Union[ Alias("view")(DS), DS ])
-+		inner := aliasOutline("document", "view", dsOutline())
-+		union := query.Outline{
-+			Type:        query.UnionIteratorType,
-+			SubOutlines: []query.Outline{inner, dsOutline()},
-+		}
-+		input := aliasOutline("document", "perm", union)
-+
-+		got := runDispatchWrap(t, input)
-+
-+		// Outer alias is wrapped
-+		require.Equal(t, dispatch.DispatchIteratorType, got.Type)
-+		outerAlias := got.SubOutlines[0]
-+		require.Equal(t, query.AliasIteratorType, outerAlias.Type)
-+		require.Equal(t, "perm", outerAlias.Args.RelationName)
-+
-+		// Inner alias inside the union is also wrapped
-+		gotUnion := outerAlias.SubOutlines[0]
-+		require.Equal(t, query.UnionIteratorType, gotUnion.Type)
-+		require.Len(t, gotUnion.SubOutlines, 2)
-+		require.Equal(t, dispatch.DispatchIteratorType, gotUnion.SubOutlines[0].Type)
-+		require.Equal(t, query.AliasIteratorType, gotUnion.SubOutlines[0].SubOutlines[0].Type)
-+		require.Equal(t, "view", gotUnion.SubOutlines[0].SubOutlines[0].Args.RelationName)
-+	})
-+
-+	t.Run("wraps alias whose subtree has a matched sentinel/iterator pair", func(t *testing.T) {
-+		// Alias("view")(Recursive("folder","viewer")(Sentinel("folder","viewer")))
-+		// The recursive iterator inside the alias matches the sentinel's key, so
-+		// the dispatch boundary is safe.
-+		input := aliasOutline("document", "view",
-+			recursiveOutline("folder", "viewer", sentinelOutline("folder", "viewer")),
-+		)
-+		got := runDispatchWrap(t, input)
-+		require.Equal(t, dispatch.DispatchIteratorType, got.Type, "expected wrap; matched sentinel/iterator pair is dispatch-safe")
-+	})
-+
-+	t.Run("does NOT wrap alias whose subtree contains an unmatched sentinel", func(t *testing.T) {
-+		// Alias("view")(Union[ Sentinel("folder","viewer"), DS ])
-+		// No RecursiveIterator with key folder#viewer exists in the alias's
-+		// subtree, so dispatching the alias would sever the sentinel from its
-+		// collection context.
-+		input := aliasOutline("document", "view",
-+			query.Outline{
-+				Type: query.UnionIteratorType,
-+				SubOutlines: []query.Outline{
-+					sentinelOutline("folder", "viewer"),
-+					dsOutline(),
-+				},
-+			},
-+		)
-+		got := runDispatchWrap(t, input)
-+		require.
-```
-
-**File**: `internal/dispatch/queryopt/dispatchwrap/property_test.go` (added, +47/-0)
-```diff
-@@ -0,0 +1,47 @@
-+package dispatchwrap_test
-+
-+import (
-+	"testing"
-+
 +	"pgregory.net/rapid"
 +
-+	"github.com/authzed/spicedb/internal/dispatch"
-+	"github.com/authzed/spicedb/internal/dispatch/queryopt/dispatchwrap"
-+	"github.com/authzed/spicedb/internal/queryopttest"
++	"github.com/authzed/spicedb/internal/datastore/revisions"
++	"github.com/authzed/spicedb/pkg/query/signals"
++	"github.com/authzed/spicedb/pkg/query/signals/signal"
 +)
 +
-+func TestSemanticEquivalence(t *testing.T) {
-+	queryopttest.Check(t, queryopttest.Config{
-+		Optimizer: dispatchwrap.New(dispatch.DispatchIteratorType),
++func TestRevisionEvictionPreservesPlanningSnapshots(t *testing.T) {
++	rapid.Check(t, func(rt *rapid.T) {
++		observations := rapid.SliceOfN(rapid.IntRange(-100, 100), 1, 20).Draw(rt, "observations")
++		revision := rapid.Uint64Range(1, 1000).Draw(rt, "revision")
++		key := rapid.StringMatching(`[a-z]{1,20}`).Draw(rt, "population")
++		r, err := signals.NewRegistry(definition("sum"))
 +
-+		Cases: map[string]func(*rapid.T) queryopttest.Case{
-+			"nested-aliases": func(t *rapid.T) queryopttest.Case {
-+				c := queryopttest.ParseCase(t, `definition user {}
-+definition document {
-+ relation viewer: user
-+ permission read = viewer
-+ permission view = read
-+}`)
-+				c.Relationships = queryopttest.Relationships(t, "document:o_a#viewer@user:o_a", "document:o_b#viewer@user:o_b")
-+				c.Requests = queryopttest.Requests("document", "view", "user")
-+				c.RequireChange = true
++		require.NoError(rt, err)
++		o, err := signals.NewOwner(r, signals.Options{MaxRevisions: 1, MaxBytes: 4096})
 +
-+				return c
-+			},
-+			"recursive-boundaries": func(t *rapid.T) queryopttest.Case {
-+				c := queryopttest.ParseCase(t, `definition user {}
-+definition group {
-+ relation direct: user
-+ relation parent: group
-+ permission member = direct + parent->member
-+ permission view = member
-+}`)
-+				c.Relationships = queryopttest.Relationships(t, "group:o_a#direct@user:o_a", "group:o_b#parent@group:o_a", "group:o_a#parent@group:o_b")
-+				c.Requests = queryopttest.Requests("group", "view", "user")
-+				c.RequireChange = true
++		require.NoError(rt, err)
++		a, err := o.Bind(stored("schema"), signal.Scope{
++			SchemaHash: "schema",
++			Revision:   revisions.NewForTransactionID(revision),
++		})
 +
-+				return c
-+			},
-+		},
++		require.NoError(rt, err)
++		total := 0
++
++		for _, observation := range observations {
++			require.NoError(rt, signal.Observe(a, sumInput, key, observation))
++			total += observation
++		}
++
++		plan := a.ForPlan()
++		before, err := signal.Lookup(plan, sumRef, key)
++
++		require.NoError(rt, err)
++		require.Equal(rt, total, before.Value)
++		b, err := o.Bind(stored("schema"), signal.Scope{
++			SchemaHash: "schema",
++			Revision:   revisions.NewForTransactionID(revision + 1),
++		})
++
++		require.NoError(rt, err)
++		require.NoError(rt, signal.Observe(b, sumInput, key, 1))
++		after, err := signal.Lookup(plan, sumRef, key)
++
++		require.NoError(rt, err)
++		require.Equal(rt, before, after)
++		evicted, err := signal.Lookup(a, sumRef, key)
++
++		require.NoError(rt, err)
++		require.False(rt, evicted.IsAvailable())
++		require.LessOrEqual(rt, o.ResidentBytes(), int64(4096))
 +	})
 +}
 ```
 
-**File**: `internal/queryopttest/README.md` (added, +78/-0)
+**File**: `pkg/query/signals/registry.go` (modified, +5/-1)
 ```diff
-@@ -0,0 +1,78 @@
-+# Per-optimization semantic properties
+@@ -40,10 +40,14 @@ func (r *Registry) Register(d signal.Descriptor) error {
+ 	}
+ 
+ 	if d.Name == "" || d.KeyType == nil || !d.KeyType.Comparable() ||
+-		d.ObservationType == nil || d.ValueType == nil || d.New == nil || d.Policy > signal.CrossRevision {
++		d.ObservationType == nil || d.ValueType == nil || (d.New == nil && d.Build == nil) || d.Policy > signal.CrossRevision {
+ 		return fmt.Errorf("invalid signal descriptor %q", d.Name)
+ 	}
+ 
++	if !supportedKey(d.KeyType) {
++		return fmt.Errorf("unsupported signal key type for %q", d.Name)
++	}
 +
-+This test-only package runs Rapid properties over the repository's generated
-+schemas/relationships and pass-specific targeted cases. It applies exactly
-+one descriptor and compares independent unmodified/optimized plans against the
-+same memdb revision, with fresh iterators, contexts and caveat runners.
-+
-+## Using the runner
-+
-+Call Check from an external test package with Config{Optimizer: pass.New(),
-+Cases: ...}. Add Applicable when the pass is safe only for certain requests.
-+Optional Setup runs once before properties for iterator registration/setup;
-+the harness itself does not import dispatch. See each optimization's
-+property_test.go for runnable examples.
-+
-+The broad suite uses schema/v2/testing.CheckWithSchema, at most 20 relationships,
-+a connected three-ID pool plus an absent query ID, and two sampled targets with
-+all three operations (six requests). Named subject relations are sampled too.
-+Schema generation is already bounded to three expression levels.
-+
-+Cases maps names to Rapid generators returning Case. ParseCase compiles a DSL
-+schema and retains original caveat definitions: Schema.ToDefinitions currently
-+omits their parameter types, so caveated cases must carry CaveatDefinitions.
-+Relationships selects valid candidate tuples with randomized inclusion, always
-+keeping the first. Requests supplies nine requests covering all three operations
-+and positive/negative anchors. Generators may construct their own schemas,
-+relationships, requests and contexts for more varied shapes.
-+
-+RequireChange rejects a targeted case unless an applicable request changes its
-+outline. No-applicable-request cases fail. Unsupported operations, compilation,
-+datastore and execution errors fail rather than counting as equivalence.
-+
-+## What is compared
-+
-+Check compares effective membership and partial-context state. Lookups compare
-+order-independent endpoint/relation membership after OR-merging duplicate grants.
-+Caveat expressions are evaluated with the same complete or partial context;
-+raw syntax and path provenance are not semantic equality requirements.
-+
-+For IterSubjects, the runner seals operation/target state before invoking the
-+context, following existing wildcard tests and dispatch receivers. This observes
-+the iterator set before the public API wrapper strips wildcard paths. Public
-+LookupSubjects projection behavior is a separate API concern; a redundant
-+conditional concrete path can change that projection even when the underlying
-+wildcard set is equivalent. These properties assert iterator permission
-+semantics, not equality of that lossy projection.
-+
-+Wildcards are expanded over every explicitly mentioned ID
-+(including exclusions) and a generic unmentioned-subject class. This checks
-+finite subjects and preserves the wildcard's meaning beyond the sampled object
-+pool. Conditional exclusions subtract their caveat from the wildcard grant.
-+Subject type/relation and resource/relation identities remain part of lookup keys.
-+This comparator targets permission semantics, not pagination, metadata,
-+expiration time transitions or relationship-read/performance equivalence.
-+
-+Supply contexts that exercise all relevant caveat outcomes. Sampled equivalence
-+is not a proof for arbitrary caveat expressions or object populations. The broad
-+schema generator currently lacks caveats, wildcards, permission alias chains and
-+recursive permissions; local targeted families fill those gaps for each pass.
-+Native-vs-planner integration properties remain a separate independent oracle.
-+
-+## Replay and extending coverage
-+
-+```sh
-+go test ./pkg/query/queryopt/caveatpushdown -run TestSemanticEquivalence
-+go test ./pkg/query/queryopt/caveatpushdown -run TestSemanticEquivalence -rapid.checks=1000
-+```
-+
-+Rapid prints a minimized failure-file command and a seed. Replay with the emitted
-+-run and -rapid.failfile, or -rapid.seed. Only pass Rapid flags to test packages
-+that import Rapid (the catalog's own test binary does not). Diagnostics include
-+the optimization, schema, relationships, request, context and before/after outlines.
-+Persist semantic regression cases as explicit unit tests or useful replay files;
-+setup-error artifacts do not belong in the shipped regression corpus.
-+
-+Harness self-tests deliberately add/remove access and strip conditional access.
-+Comparator tests pin order/duplicate invariance, subject identities, missing
-+context and wildcard exclusion behavior.
+ 	if _, ok := r.definitions[d.Name]; ok {
+ 		return fmt.Errorf("duplicate signal %q", d.Name)
+ 	}
 ```
 
-**File**: `internal/queryopttest/compare.go` (added, +131/-0)
+**File**: `pkg/query/signals/safety_test.go` (added, +216/-0)
 ```diff
-@@ -0,0 +1,131 @@
-+package queryopttest
+@@ -0,0 +1,216 @@
++package signals_test
 +
 +import (
-+	"context"
-+	"fmt"
-+	"maps"
++	"math"
 +	"reflect"
-+	"slices"
++	"strings"
++	"testing"
++	"time"
 +
-+	"github.com/authzed/spicedb/internal/caveats"
-+	"github.com/authzed/spicedb/pkg/caveats/types"
-+	core "github.com/authzed/spicedb/pkg/proto/core/v1"
-+	"github.com/authzed/spicedb/pkg/query"
-+	"github.com/authzed/spicedb/pkg/tuple"
++	"github.com/stretchr/testify/require"
++
++	"github.com/authzed/spicedb/internal/datastore/revisions"
++	"github.com/authzed/spicedb/internal/querysignalstest"
++	"github.com/authzed/spicedb/pkg/query/signals"
++	"github.com/authzed/spicedb/pkg/query/signals/signal"
 +)
 +
-+// decision distinguishes denial, unconditional access and residual partial access.
-+type decision struct {
-+	Allowed bool
-+	Missing []string
++func TestNonreflexiveKeyIsRejected(t *testing.T) {
++	type key struct{ Value [1]float64 }
++
++	d := signal.NewSource[key, int, int]("sum", signal.SourceConfig[key, int, int]{
++		New: func() signal.Accumulator[int, int] { return &sum{} },
++	})
++	r, err := signals.NewRegistry(d)
++	require.NoError(t, err)
++	o, err := signals.NewOwner(r, signals.Options{})
++	require.NoError(t, err)
++	v := view(t, o, "a", 1)
++	invalid := key{Value: [1]float64{math.NaN()}}
++
++	require.ErrorContains(t, signal.Observe(v, signal.Input[key, int]{Name: "sum"}, invalid, 1), "key")
++	_, err = signal.Lookup(v, signal.Reference[key, int]{Name: "sum"}, invalid)
++	require.ErrorContains(t, err, "key")
++	_, err = signal.Lookup(v.ForPlan(), signal.Reference[key, int]{Name: "sum"}, invalid)
++	require.ErrorContains(t, err, "key")
 +}
 +
-+func evaluate(ctx context.Context, reader caveats.CaveatDefinitionLookup, expr *core.CaveatExpression, values map[string]any) (decision, error) {
-+	if expr == nil {
-+		return decision{Allowed: true}, nil
++func TestRegistryRejectsReferenceKeys(t *testing.T) {
++	for _, keyType := range []reflect.Type{
++		reflect.TypeFor[*string](),
++		reflect.TypeFor[any](),
++		reflect.TypeFor[struct{ Value any }](),
++		reflect.TypeFor[[1]chan int](),
++	} {
++		t.Run(keyType.String(), func(t *testing.T) {
++			d := definition("sum")
++			d.KeyType = keyType
++			_, err := signals.NewRegistry(d)
++
++			require.ErrorContains(t, err, "key")
++		})
 +	}
-+	result, err := caveats.RunSingleCaveatExpression(ctx, types.Default.TypeSet, expr, values, reader, caveats.RunCaveatExpressionNoDebugging)
-+	if err != nil {
-+		return decision{}, err
-+	}
-+	if result.IsPartial() {
-+		missing, err := result.MissingVarNames()
-+		if err != nil {
-+			return decision{}, err
-+		}
-+		slices.Sort(missing)
-+		return decision{Allowed: true, Missing: missing}, nil
-+	}
-+	return decision{Allowed: result.Value()}, nil
 +}
 +
-+func orExpr(a, b *core.CaveatExpression) *core.CaveatExpression {
-+	if a == nil || b == nil {
-+		return nil
-+	}
-+	return caveats.Or(a, b)
++func TestSourceRequiresConstructor(t *testing.T) {
++	d := signal.NewSource[string, int, int]("sum", signal.SourceConfig[string, int, int]{})
++	_, err := signals.NewRegistry(d)
++
++	require.Error(t, err)
 +}
 +
-+func compareResults(ctx context.Context, reader caveats.CaveatDefinitionLookup, op query.Operation, left, right []*query.Path, values map[string]any) error {
-+	// All explicitly mentioned IDs, including excluded ones, plus '*' as the
-+	// generic unmentioned subject class. This checks wildcard meaning without
-+	// depending on how an iterator splits wildcard and concrete grants.
-+	ids := map[string]bool{}
-+	var collect func(*query.Path)
-+	collect = func(p *query.Path) {
-+		if p.Subject.ObjectID != tuple.PublicWildcard {
-+			ids[p.Subject.ObjectID] = true
-+		}
-+		for _, e := range p.ExcludedSubjects {
-+			collect(e)
-+		}
++func TestSchemaTransferHasIndependentPublicationIdentity(t *testing.T) {
++	d := definition("sum")
++	d.Policy = signal.CrossRevision
++	d.Transfer = func(signal.SchemaChange, signal.Footprint) signal.TransferDecision {
++		return signal.TransferDecision{Action: signal.Retain}
 +	}
-+	for _, p := range left {
-+		collect(p)
-+	}
-+	for _, p := range right {
-+		collect(p)
-+	}
-+	domain := slices.Sorted(maps.Keys(ids))
-+	domain = append(domain, tuple.PublicWildcard)
-+	normalize := func(paths []*query.Path) (map[string]decision, error) {
-+		exprs := map[string]*core.CaveatExpression{}
-+		for _, p := range paths {
-+			subjects := []string{p.Subject.ObjectID}
-+			if p.Subject.ObjectID == tuple.PublicWildcard && op == query.OperationIterSubjects {
-+				subjects = domain
-+			}
-+			for _, id := range subjects {
-+				expr, present := p.Caveat, true
-+				if p.Subject.ObjectID == tuple.PublicWildcard && id != tuple.PublicWildcard {
-+					for _, excluded := range p.ExcludedSubjects {
-+						if excluded.Subject.ObjectType != p.Subject.ObjectType || excluded.Subject.Relation != p.Subject.Relation || excluded.Subject.ObjectID != id {
-+							continue
-+						}
-+						if excluded.Caveat == nil {
-+							present = false
-+							break
-+						}
-+						expr = caveats.And(expr, caveats.Invert(excluded.Caveat))
-+					}
-+				}
-+				if !present {
-+					continue
-+				}
-+				subject := p.Subject
-+				subject.ObjectID = id
-+				key := fmt.Sprintf("%s#%s@%s", p.Resource.Key(), p.Relation, tuple.StringONR(subject))
-+				if op == query.OperationCheck {
-+					key = "check"
-+				}
-+				if previous, ok := exprs[key]; ok {
-+					expr = orExpr(previous, expr)
-+				}
-+				exprs[key] = expr
-+			}
-+		}
-+		result := map[string]decision{}
-+		for _, key := range slices.Sorted(maps.Keys(exprs)) {
-+			d, err := evaluate(ctx, reader, exprs[key], values)
-+			if err != nil {
-+				return nil, err
-+			}
-+			if d.Allowed {
-+				result[key] = d
-+			}
-+		}
-+		return result, nil
-+	}
-+	a, err := normalize(left)
-+	if err != nil {
-+		return err
-+	}
-+	b, err := normalize(right)
-+	if err != nil {
-+		return err
-+	}
-+	if !reflect.DeepEqual(a, b) {
-+		return fmt.Errorf("results differ: before=%v after=%v", a, b)
-+	}
-+	return nil
++	r, err := signals.NewRegistry(d)
++	require.NoError(t, err)
++	o, err := signals.NewOwner(r, signals.Options{})
++	require.NoError(t, err)
++	a := view(t, o, "a", 1)
++
++	require.NoError(t, signal.Observe(a, sumInput, "x", 1))
++	b := view(t, o, "b", 2)
++	require.NoError(t, signal.Observe(a, sumInput, "x", 2))
++	require.NoError(t, signal.Observe(b, sumInput, "x", 5))
++	av, err := signal.Lookup(a, sumRef, "x")
++	require.NoError(t, err)
++	bv, err := signal.Lookup(b, sumRef, "x")
++	require.NoError(t, err)
++	require.Equal(t, 3, av.Value)
++	require.Equal(t, 6, bv.Value)
++	require.NotEqual(t, av.Evidence.ID, bv.Evidence.ID)
 +}
++
++func TestFootprintCountsTowardEntryBudget(t *testing.T) {
++	d := definition("sum")
++	d.Footprint = func(any) signal.Footprint {
++		return signal.Footprint{Caveats: []string{strings.Repeat("x", 4096)}}
++	}
++	r, err := signals.NewRegistry(d)
++	require.NoError(t, err)
++	o, err := signals.NewOwner(r, signals.Options{MaxEntryBytes: 1024})
++	require.NoError(t, err)
++	v := view(t, o, "a", 1)
++
++	require.NoError(t, signal.Observe(v, sumInput, "x", 1))
++	e, err := signal.Lookup(v, sumRef, "x")
++
++	require.NoError(t, err)
++	require.False(t, e.IsAvailable())
++}
++
++func TestFootprintIsOwnedByEntry(t *testing.T) {
++	footprint := signal.Footprint{Elements: []signal.Element{{Namespace: "doc", Relation: "read"}}}
++	d := definition("sum")
++	d.Policy = signal.CrossRevision
++	d.Footprint = func(any) signal.Footprint { return footprint }
++	d.Transfer = func(_ signal.SchemaChange, f signal.Footprint) signal.TransferDecision {
++		require.Equal(t, "read", f.Elements[0].Relation)
++		return signal.TransferDecision{Action: signal.Retain}
++	}
++	r, err := signals.NewRegistry(d)
++	require.NoError(t, err)
++	o, err := signals.NewOwner(r, signals.Options{})
++	require.NoError(t, err)
++	a := view(t, o, "a", 1)
++
++	require.NoError(t, signal.Observe(a, sumInput, "x", 1))
++	footprint.Elements[0].Relation = "edited"
++	b := view(t, o, "b", 2)
++	e, err := signal.Lookup(b, sumRef, "x")
++
++	require.NoError(t, err)
++	require.Equal(t, 1, e.Value)
++}
++
++func TestBuildOnlySource(t *testing.T) {
++	d := signal.NewSource[string, int, int]("sum", signal.SourceConfig[string, int, int]{
++		Build: func(now func() time.Time) signal.Accumulator[int, int] {
++			require.Equal(t, time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC), now())
++			return &sum{}
++		},
++	})
++	clock := querysignalstest.NewClock()
++	o := querysignalstest.Owner(t, clock, d)
++	v := querysignalstest.View(t, o, "a", 1)
++
++	require.NoError(t, signal.Observe(v, sumInput, "x", 4))
++	e, err := signal.Lookup(v, sumRef, "x")
++
++	require.NoError(t, err)
++	require.Equal(t, 4, e.Value)
++}
++
++func TestDerivedSignalsReceiveIncrementsAcrossRevisions(t *testing.T) {
++	source := definition("sum")
++	derived := signal.NewDerived("history", sumInput, signal.SourceConfig[string, int, int]{
++		Policy: signal.CrossRevision,
++		New:    func() 
 ```
 
----
-
-### Incident Patch 2: `ee09063a` (2026-10-29)
-**Commit Message**: test(datastores): stop a slow write failing the quantized revision test (#3368)
-
-* test(datastores): stop a slow write failing the quantized revision test
-
-The test writes a relationship and immediately checks that its revision is
-readable, against a two second GC window. CockroachDB's write revision is the
-transaction's own timestamp, so a write transaction that runs for longer than
-that window hands back a revision which is already expired when it returns -
-before quantization comes into it at all. On a loaded runner, where around a
-hundred subtests share one database container, writes do get that slow.
-
-The property being guarded is real, and sound by construction: the revision
-advertised at the end of a bucket is at most the follower read delay plus one
-quantization old, which here is one second against a two second window. What
-the test could not guarantee was that its own steps ran fast enough for the
-result to mean anything.
-
-Each pass now times its steps. When the write, or the read of the advertised
-revision, took long enough to age that revision out on its own, the pass is
-retried instead of failed - five times, after which the test fails and says the
-machine never gave i
-
-**File**: `pkg/datastore/test/revisions.go` (modified, +69/-20)
+**File**: `pkg/query/signals/signal/definition.go` (modified, +5/-4)
 ```diff
-@@ -339,6 +339,10 @@ func QuantizedRevisionStaysReadableTest(t *testing.T, tester DatastoreTester) {
- 		// before it in the datastore, which would put it in the previous bucket
- 		// and test nothing. This margin absorbs any skew smaller than itself.
- 		clockSkewBuffer = 100 * time.Millisecond
+@@ -143,10 +143,11 @@ func NewSource[K comparable, O, V any](name Name, c SourceConfig[K, O, V]) Descr
+ 		KeyType:         reflect.TypeFor[K](),
+ 		ObservationType: reflect.TypeFor[O](),
+ 		ValueType:       reflect.TypeFor[V](),
+-		New: func() State {
+-			return adapter[O, V]{c.New()}
+-		},
+-		Transfer: c.Transfer,
++		Transfer:        c.Transfer,
++	}
 +
-+		// How many times to retry a pass that ran too slowly to conclude
-+		// anything. See onePass below.
-+		maxAttempts = 5
- 	)
++	if c.New != nil {
++		d.New = func() State { return adapter[O, V]{c.New()} }
+ 	}
  
- 	require := require.New(t)
-@@ -348,34 +352,79 @@ func QuantizedRevisionStaysReadableTest(t *testing.T, tester DatastoreTester) {
- 		WithGCRetentionWindow(GCRetentionWindow(gcWindow)), 1)
- 	require.NoError(err)
- 
--	ctx, cancel := context.WithTimeout(t.Context(), 30*time.Second)
-+	// Only here so a hung call fails the test instead of hanging it, with room
-+	// for every attempt below.
-+	ctx, cancel := context.WithTimeout(t.Context(), 2*time.Minute)
- 	defer cancel()
- 
- 	setupDatastore(t, ds)
- 
--	// Land just inside a fresh bucket and write there, so that what gets
--	// advertised for the rest of the bucket dates from the top of it. Postgres
--	// and MySQL advertise the first transaction in the bucket, which is this
--	// write; memdb, CRDB and Spanner advertise the bucket start itself.
--	time.Sleep(time.Until(nextQuantizationBoundary(time.Now(), quantization)) + clockSkewBuffer)
-+	// onePass writes at the top of a quantization bucket and then, at the far end
-+	// of that same bucket, checks that the revision advertised there is still
-+	// readable.
-+	//
-+	// Every revision goes stale once it is older than the GC window, so a step of
-+	// this test that takes that long ages its own revision out whatever
-+	// quantization does. onePass therefore times its steps and returns a reason
-+	// rather than failing when they ran too slowly to conclude anything: the GC
-+	// window is deliberately only twice the quantization, and a loaded machine
-+	// overshoots that on its own.
-+	onePass := func(attempt int) (tuple.Relationship, datastore.Revision, string) {
-+		// Land just inside a fresh bucket and write there, so that what gets
-+		// advertised for the rest of the bucket dates from the top of it. Postgres
-+		// and MySQL advertise the first transaction in the bucket, which is this
-+		// write; memdb, CRDB and Spanner advertise the bucket start itself.
-+		time.Sleep(time.Until(nextQuantizationBoundary(time.Now(), quantization)) + clockSkewBuffer)
+ 	if c.Build != nil {
+```
+
+**File**: `pkg/query/signals/signal/distribution_test.go` (added, +62/-0)
+```diff
+@@ -0,0 +1,62 @@
++package signal_test
 +
-+		rel := makeTestRel(fmt.Sprintf("photo%d", attempt), "owner")
-+		started := time.Now()
-+		writtenAt, err := common.WriteRelationships(ctx, ds, tuple.UpdateOperationCreate, rel)
-+		require.NoError(err)
- 
--	rel := makeTestRel("photo", "owner")
--	writtenAt, err := common.WriteRelationships(ctx, ds, tuple.UpdateOperationCreate, rel)
--	require.NoError(err)
--	require.NoError(ds.CheckRevision(ctx, writtenAt))
-+		// The write's revision was assigned somewhere inside that call, so it is
-+		// at most this old once the check has run.
-+		checkErr := ds.CheckRevision(ctx, writtenAt)
-+		if elapsed := time.Since(started); checkErr != nil && elapsed >= gcWindow {
-+			return rel, writtenAt, fmt.Sprintf("writing a relationship and checking its revision took %s, a whole %s GC window", elapsed, gcWindow)
-+		}
-+		require.NoError(checkErr, "a revision that was just written must be readable")
- 
--	// Sleep to the far end of the bucket, where the advertised revision is at
--	// its oldest and closest to aging out.
--	time.Sleep(time.Until(nextQuantizationBoundary(time.Now(), quantization)) - clockSkewBuffer)
-+		// Sleep to the far end of the bucket, where the advertised revision is at
-+		// its oldest and closest to aging out.
-+		time.Sleep(time.Until(nextQuantizationBoundary(time.Now(), quantization)) - clockSkewBuffer)
- 
--	// Sample a few times: every request in this bucket gets the same revision,
--	// so an aged-out one fails for all of them, not just one.
--	for range 5 {
--		optimized, err := ds.OptimizedRevision(ctx)
--		require.NoError(err)
--		require.NoError(ds.CheckRevision(ctx, optimized.Revision),
--			"revision advertised at the end of the quantization window must still be within the GC window")
-+		// Sample a few times: every request in this bucket gets the same revision,
-+		// so an aged-out one fails for all of them, not just one.
-+		for range 5 {
-+			started := time.Now()
-+			optimized, err := ds.OptimizedRevision(ctx)
-+			require.NoError(err)
++import (
++	"math"
++	"testing"
 +
-+			// The advertised revision dates from the start of its bucket at the
-+			// oldest, so it is at most a quantization plus this sample old.
-+			checkErr := ds.CheckRevision(ctx, optimized.Revision)
-+			if elapsed := time.Since(started); checkErr != nil && quantization+elapsed >= gcWindow {
-+				return rel, writtenAt, fmt.Sprintf("reading the advertised revision and checking it took %s, which on top of the %s quantization reaches the %s GC window", elapsed, quantization, gcWindow)
-+			}
-+			require.NoError(checkErr,
-+				"revision advertised at the end of the quantization window must still be within the GC window")
-+		}
++	"github.com/caio/go-tdigest/v4"
++	"github.com/stretchr/testify/require"
 +
-+		ret
++	"github.com/authzed/spicedb/pkg/query/signals/signal"
++)
++
++func TestDistributionRetainsIndependentSnapshot(t *testing.T) {
++	digest, err := tdigest.New()
++
++	require.NoError(t, err)
++	require.NoError(t, digest.AddWeighted(10, 100))
++	require.NoError(t, digest.AddWeighted(20, 100))
++	snapshot := signal.DigestDistribution(digest, 10, 20)
++
++	require.NoError(t, digest.AddWeighted(1000, 10000))
++	require.InDelta(t, 10.0, snapshot.Quantile(0), 1e-9)
++	require.InDelta(t, 20.0, snapshot.Quantile(1), 1e-9)
++	require.InDelta(t, 15.0, snapshot.Quantile(0.5), 1)
++	require.Zero(t, snapshot.CDF(9))
++	require.InDelta(t, 1.0, snapshot.CDF(20), 1e-9)
++
++	for _, q := range []float64{-1, 2, math.NaN()} {
++		require.True(t, math.IsNaN(snapshot.Quantile(q)))
++	}
++}
++
++func TestWeightedMixtureOwnsParts(t *testing.T) {
++	low, err := tdigest.New()
++
++	require.NoError(t, err)
++	require.NoError(t, low.AddWeighted(1, 100))
++	high, err := tdigest.New()
++
++	require.NoError(t, err)
++	require.NoError(t, high.AddWeighted(9, 100))
++	parts := []signal.WeightedDistribution{
++		{Distribution: signal.DigestDistribution(low, 1, 1), Weight: 1},
++		{Distribution: signal.DigestDistribution(high, 9, 9), Weight: 3},
++	}
++	mixture := signal.Mixture(parts, 1, 9)
++	parts[0].Weight = 1000
++
++	require.InDelta(t, 0.25, mixture.CDF(5), 1e-9)
++	require.InDelta(t, 9.0, mixture.Quantile(0.5), 1e-6)
++}
++
++func TestExecutionFootprintRoundTrip(t *testing.T) {
++	footprint := signal.Footprint{
++		Elements: []signal.Element{{Namespace: "doc", Relation: "view"}},
++		Caveats:  []string{"allowed"},
++	}
++	key := signal.ExecutionKey{Dependencies: signal.EncodeFootprint(footprint)}
++
++	require.Equal(t, footprint, key.Footprint())
++	require.Empty(t, (signal.ExecutionKey{Dependencies: "invalid"}).Footprint())
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3444** (2026-10-30): feat(query): add reusable planning signals (@josephschorr)
+- **PR #3440** (2026-10-30): fix(schema): preserve annotations on unchanged definitions during schema writes (@josephschorr)
 - **PR #3437** (2026-10-28): chore: bump go-jose to v4.1.6 for CVE-2026-116587 (@vroldanbet)
 - **PR #3435** (2026-10-28): fix(dispatch): lock LookupResources cursors to the dispatcher that produced them (@vroldanbet)
 - **PR #3434** (2026-10-28): fix(graph): prevent read pool deadlocks from nested connection acquisition (@josephschorr)
 - **PR #3432** (2026-10-26): fix(cache): expire dispatch cache entries a fixed TTL after they are written (@josephschorr)
-- **PR #3429** (closed): chore(deps): bump the docker group with 2 updates (@dependabot[bot])
-- **PR #3424** (2026-10-21): chore: bump grpc_health_probe to v0.4.60 and the base images for CVE-2026-111943 (@vroldanbet)
 
 ---
 
@@ -2067,54 +2022,28 @@ machine never gave i
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): isolate optimizations and add semantic properties
+## X. schema): preserve annotations on unchanged definitions during schema writes
 
 **RULE**:
-When implementing operations in `internal/dispatch/dispatch_optimizer.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aa5046f0`: query): isolate optimizations and add semantic properties. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2eb05375`: schema): preserve annotations on unchanged definitions during schema writes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/dispatch/dispatch_optimizer.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/authzed/spicedb/internal/dispatch/queryopt/dispatchwrap"
-const DispatchWrapAliasOptimizationName = dispatchwrap.Name
-func init() { queryopt.MustRegisterOptimization(dispatchwrap.New(DispatchIteratorType)) }
+- Schema: writing a schema no longer strips the `aliasing_relation` and `canonical_cache_key` annotations from definitions that did not change. Since v1.49.0, every schema write replaced unchanged definitions with unannotated copies, in both the legacy and single-store schema modes, so permissions that alias a relation were dispatched as separate subproblems and equivalent permissions stopped sharing dispatch cache entries, increasing dispatch count, latency and datastore load. All definitions are now annotated on write, and writing the schema again restores annotations already lost. Computing the annotations also allocates far less memory. (https://github.com/authzed/spicedb/issues/3412)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-const DispatchWrapAliasOptimizationName = "dispatch-wrap-alias"
-func init() {
-	queryopt.MustRegisterOptimization(queryopt.Optimizer{
-		Name: DispatchWrapAliasOptimizationName,
-		Description: `
-		Wraps every AliasIteratorType node in a DispatchIteratorType passthrough
-		so the dispatch layer can recognize the (definition, relation) boundary
-		as a dispatch candidate without re-deriving it at runtime. Aliases whose
-		subtree contains an unmatched RecursiveSentinel are left unwrapped — the
-		sentinel must execute inside the collection context established by its
-		matching RecursiveIterator, which is broken by an RPC hop.
-		`,
-		NewTransform: func(_ queryopt.RequestParams) queryopt.OutlineTransform {
-			return func(outline query.Outline) query.Outline {
-				return query.MutateOutline(outline, []query.OutlineMutation{wrapAliasWithDispatch})
-			}
-		},
-	})
-}
-
-// wrapAliasWithDispatch is a bottom-up OutlineMutation that wraps each
-// AliasIteratorType node in a DispatchIteratorType node. The wrap is the
-// static portion of the old DispatchExecutor.shouldDispatchAlias check:
-//   - the "is this an alias" test becomes "is this outline node an alias?"
-//   - the sentinel-recursion guard runs
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aa5046f0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2eb05375` are properly handled with clean fallback behavior.
