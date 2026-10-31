@@ -255,8 +255,8 @@
     "sourceUrl": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
     "sourceVersion": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
     "license": "Open-Source",
-    "contentHash": "e121d93db0747f24e2f1a65c66e0fcfc6e7c9bd829c9e9f964611118b21c1717",
-    "lastHarvestedAt": "2026-10-28T20:37:51.363Z",
+    "contentHash": "e5cbc5aafd1e84cc35d75c4c6ef3ebeb06a037b6cc990bc1cb0858d4a28bd784",
+    "lastHarvestedAt": "2026-10-31T22:05:19.804Z",
     "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf"
   },
   "hf-deepseek-ai-deepseek-r1": {
@@ -3553,10 +3553,10 @@
     "repository": "ratatui/ratatui",
     "platform": "github",
     "sourceUrl": "https://github.com/ratatui/ratatui",
-    "sourceVersion": "cdcb0c01",
+    "sourceVersion": "21bf834c",
     "license": "MIT",
-    "contentHash": "b025385b59c48242629bd45a2983410122e23571270a54abda87ec3cd9eedc85",
-    "lastHarvestedAt": "2026-10-28T06:52:40.395Z",
+    "contentHash": "5dc17fbf29412b5265e588565586ec065d96036329a12f57a2bcfee5ad3a09ea",
+    "lastHarvestedAt": "2026-10-31T22:03:49.842Z",
     "learningId": "learn-github-ratatui-ratatui"
   },
   "invertase-react-native-firebase": {

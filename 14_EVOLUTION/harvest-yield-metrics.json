@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T21:56:56.953Z",
-  "total_cycles_completed": 6708,
-  "total_learnings_persisted": 6708,
-  "total_rules_promoted": 6347,
+  "last_updated": "2026-10-31T22:05:19.810Z",
+  "total_cycles_completed": 6710,
+  "total_learnings_persisted": 6710,
+  "total_rules_promoted": 6350,
   "history": [
-    {
-      "timestamp": "2026-10-31T10:27:16.926Z",
-      "repository": "paradedb/paradedb",
-      "learningId": "learn-github-paradedb-paradedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T10:33:48.752Z",
-      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T10:33:57.407Z",
       "repository": "fabio-rovai/open-ontologies",
@@ -1403,6 +1389,20 @@
       "repository": "vanniktech/gradle-maven-publish-plugin",
       "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:03:49.847Z",
+      "repository": "ratatui/ratatui",
+      "learningId": "learn-github-ratatui-ratatui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:05:19.810Z",
+      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

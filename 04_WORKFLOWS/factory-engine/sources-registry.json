@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T21:56:59.504Z",
-    "lastVerified": "2026-10-31T21:56:59.504Z",
+    "lastChecked": "2026-10-31T22:05:22.351Z",
+    "lastVerified": "2026-10-31T22:05:22.351Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -145,8 +145,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T21:26:54.380Z",
-    "lastVerified": "2026-10-31T21:26:54.380Z",
+    "lastChecked": "2026-10-31T22:03:58.274Z",
+    "lastVerified": "2026-10-31T22:03:58.274Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -230,8 +230,8 @@
     "officialUrl": "https://github.com/meilisearch/meilisearch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T05:29:33.461Z",
-    "lastVerified": "2026-10-31T05:29:33.461Z",
+    "lastChecked": "2026-10-31T22:03:55.779Z",
+    "lastVerified": "2026-10-31T22:03:55.779Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meilisearch-meilisearch",
@@ -879,9 +879,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-10-31T18:01:38.992Z",
+    "lastChecked": "2026-10-31T22:03:53.211Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-10-31T18:01:38.992Z"
+    "lastVerified": "2026-10-31T22:03:53.211Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "NirDiamant/RAG_Techniques",
@@ -2410,9 +2410,9 @@
   "alexellis-k3sup": {
     "name": "k3sup",
     "officialUrl": "https://github.com/alexellis/k3sup",
-    "lastChecked": "2026-10-31T06:24:47.686Z",
+    "lastChecked": "2026-10-31T22:03:50.794Z",
     "revisionIdentifier": "07ee3911",
-    "lastVerified": "2026-10-31T06:24:47.686Z"
+    "lastVerified": "2026-10-31T22:03:50.794Z"
   },
   "paradedb-paradedb": {
     "name": "paradedb/paradedb",
@@ -2629,22 +2629,21 @@
     "lastVerified": "2026-10-31T10:47:20.899Z"
   },
   "ratatui-ratatui": {
-    "name": "ratatui",
+    "name": "ratatui/ratatui",
     "officialUrl": "https://github.com/ratatui/ratatui",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T02:14:13.620Z",
-    "lastVerified": "2026-10-31T02:14:13.620Z",
+    "lastChecked": "2026-10-31T22:03:48.157Z",
+    "lastVerified": "2026-10-31T22:03:48.157Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ratatui-ratatui",
-    "contentHash": "b025385b59c48242629bd45a2983410122e23571270a54abda87ec3cd9eedc85",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "5dc17fbf29412b5265e588565586ec065d96036329a12f57a2bcfee5ad3a09ea",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "cdcb0c01"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-inclusionai-ming-image-0.1-design": {
     "name": "inclusionAI/Ming-Image-0.1-Design",
@@ -7635,12 +7634,12 @@
     "officialUrl": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T20:37:40.664Z",
-    "lastVerified": "2026-10-28T20:37:40.664Z",
+    "lastChecked": "2026-10-31T22:03:45.973Z",
+    "lastVerified": "2026-10-31T22:03:45.973Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-    "contentHash": "e121d93db0747f24e2f1a65c66e0fcfc6e7c9bd829c9e9f964611118b21c1717",
+    "contentHash": "e5cbc5aafd1e84cc35d75c4c6ef3ebeb06a037b6cc990bc1cb0858d4a28bd784",
     "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9021,9 +9020,9 @@
   "gitliveapp-firebase-kotlin-sdk": {
     "name": "firebase-kotlin-sdk",
     "officialUrl": "https://github.com/GitLiveApp/firebase-kotlin-sdk",
-    "lastChecked": "2026-10-29T12:08:40.663Z",
+    "lastChecked": "2026-10-31T22:03:48.240Z",
     "revisionIdentifier": "077d6624",
-    "lastVerified": "2026-10-29T12:08:40.663Z"
+    "lastVerified": "2026-10-31T22:03:48.240Z"
   },
   "jeffli1993-seo-audit-skill": {
     "name": "seo-audit-skill",

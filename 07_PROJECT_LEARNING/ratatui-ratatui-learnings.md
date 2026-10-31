@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ratatui-ratatui-learnings.md`  
 > **Source**: github ([https://github.com/ratatui/ratatui](https://github.com/ratatui/ratatui))  
-> **Source Version**: `cdcb0c01`  
+> **Source Version**: `21bf834c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T06:52:40.142Z  
+> **Timestamp**: 2026-10-31T22:03:49.138Z  
 > **Learning ID**: `learn-github-ratatui-ratatui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ratatui-ratatui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ratatui/ratatui](https://github.com/ratatui/ratatui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T06:52:40.037Z  
+> **Harvest Timestamp**: 2026-10-31T22:03:48.157Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Rust crate for cooking up terminal user interfaces (TUIs) 👨‍🍳🐀 https://ratatui.rs
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 23105 stars
+- **Stars / Engagement**: 23138 stars
 
 ---
 
@@ -940,13 +940,14 @@ impl StatefulWidget for CounterWidget {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2867** (2026-10-28): **docs(layout): recommend layout-cache for no_std**
-  *Symptoms*: Turning off default features to build Ratatui for `no_std` also turns off `layout-cache`. Nothing in the docs says so, or that you probably want it back on. On a microcontroller without a double-precision FPU, the kasuari solver's `f64` arithmetic is emulated in software, so every uncached `Layout::split` is expensive. With the cache back on, the default `DEFAULT_CACHE_SIZE` of 500 entries can then exhaust a small heap.  Measured on an RP2350 (Cortex-M33 at 200 MHz, single-precision FPU only) with Mousefood and a 160 KB heap:  - without `layout-cache`: a near-empty page took ~15 ms per frame of widget rendering; busier pages took 35-52 ms - with `layout-cache`: ~2.2 ms and ~5 ms respectively (3-7x faster) - with the default 500-entry cache the device ran out of heap (`memory allocation of 1668 bytes failed`); `Layout::init_cache(NonZeroUsize::new(64).unwrap())` fixed it and heap use settled around 81 KB  This PR changes docs only:  - `ratatui` crate docs: a new "Using Ratatui without std" section with the recommended `Cargo.toml` line, `Layout::init_cache` sizing, and the `critical-section` requirement (including the `std` dev-dependency for host tests) - README: a short "Embedded and `no_std`" section linking to the crate docs - `Layout`, `Layout::init_cache`, `Layout::DEFAULT_CACHE_SIZE`, and the `layout` module docs: what the cache costs in memory, how to size it, and that it is a critical-section global (not thread-local) without `std`; the `split` docs no longer say the 
-
-- **Issue #2866** (2026-10-26): **build(deps): bump taiki-e/install-action from 2.87.29 to 2.87.31**
-  *Symptoms*: Bumps [taiki-e/install-action](https://github.com/taiki-e/install-action) from 2.87.29 to 2.87.31. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/taiki-e/install-action/releases">taiki-e/install-action's releases</a>.</em></p> <blockquote> <h2>2.87.31</h2> <ul> <li> <p>Downgrade <code>cargo-sort@latest</code> to 2.1.3.</p> </li> <li> <p>Update <code>vacuum@latest</code> to 0.35.0.</p> </li> <li> <p>Update <code>xh@latest</code> to 0.26.3.</p> </li> <li> <p>Update <code>uv@latest</code> to 0.13.5.</p> </li> <li> <p>Update <code>ubi@latest</code> to 0.13.0.</p> </li> <li> <p>Update <code>trivy@latest</code> to 0.76.1.</p> </li> <li> <p>Update <code>tombi@latest</code> to 1.9.0.</p> </li> <li> <p>Update <code>release-plz@latest</code> to 0.3.174.</p> </li> <li> <p>Update <code>prek@latest</code> to 0.5.7.</p> </li> <li> <p>Update <code>mise@latest</code> to 2026.10.17.</p> </li> <li> <p>Update <code>jaq@latest</code> to 3.1.2.</p> </li> <li> <p>Update <code>espup@latest</code> to 0.17.1.</p> </li> <li> <p>Update <code>cargo-zigbuild@latest</code> to 0.24.0.</p> </li> <li> <p>Update <code>cargo-nextest@latest</code> to 0.9.149.</p> </li> <li> <p>Update <code>biome@latest</code> to 2.6.2.</p> </li> </ul> <h2>2.87.30</h2> <ul> <li> <p>Update <code>zizmor@latest</code> to 1.31.1.</p> </li> <li> <p>Update <code>wasmtime@latest</code> to 50.0.0.</p> </li> <li> <p>Update <code>vacuum@latest</code> to 0.33.2.</p> </li> <li> <p>Update <code>uv@
+- **Issue #2881** (2026-10-31): **docs(text): explain storing styled text**
+  *Symptoms*: ## Why  "How do I keep styled text in my app state without a lifetime parameter?" comes up regularly, for example in [#649] and [#1486], and in discussion [#652]. There is no single place in the docs that answers it.  [#649]: https://github.com/ratatui/ratatui/issues/649 [#1486]: https://github.com/ratatui/ratatui/issues/1486 [#652]: https://github.com/ratatui/ratatui/discussions/652  ## What  Adds two linkable sections to the `ratatui_core::text` module docs:  - **Storing styled text**: `Span<'static>`, `Line<'static>` and `Text<'static>` own their strings   and can be stored without a lifetime. `String`/`format!` input gives `'static` directly, and   `into_owned()` converts borrowed text. - **Rendering stored text**: render by reference (`&Text` implements `Widget`), and build widgets   each frame from a reference, e.g. `Paragraph::new(&app.log)`, which borrows the content instead   of cloning the strings.  The `Paragraph` docs get a short pointer to the section. `Paragraph::new` already shows passing a reference (added in #2878), so this doesn't repeat that example. 
   **Post-Mortem & Fix Analysis**:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/ratatui/ratatui/pull/2866?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review.  <details> <summary><strong><picture><img src="https://storage.googleapis.com/coderabbit_public_assets
+  > ## [Codecov](https://app.codecov.io/gh/ratatui/ratatui/pull/2881?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 93.1%. Comparing base ([`3e059b8`](https://app.codecov.io/gh/ratatui/ratatui/commit/3e059b8c335569bcd6997bde26e9df8fcf2ab6f1?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)) to head ([`61ee309`](https://app.codecov.io/gh/ratatui/ratatui/commit/61ee3090c58a75fc77cac6ccfc3538ec7f86515d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)).  <details><summary>Additional details and impacted files</summary>    ```diff @@          Coverage Diff          @@ ##            main   #2881   +/-   ## ====================================
+  > nice
+
+- **Issue #2880** (2026-10-31): **perf(text): reuse owned String in Line::raw and Text::raw**
+  *Symptoms*: `Line::from(String)` and `Text::from(String)` (and `Text::raw` with an owned string) now reuse the `String`'s buffer when it holds a single line, instead of allocating a new one and copying into it. Owned multi-line `Text` also stops copying each line twice.  ## Why  `Line::from(format!(..))` is a common pattern in render loops, and it paid for an allocation and a copy of a `String` it already owned. `cow_to_spans` and `Text::raw` split owned input with `str::lines` and copied every piece with `to_string`/`to_owned`, even when the only piece was the whole string. `Text::raw` then passed each copy to `Line::from(String)`, which copied it again.  ## What  - A private `into_single_line` helper takes an owned `String` and returns it as the one line, if   `str::lines` would yield exactly one line:   - no `\n`: returned as-is   - a single trailing `\n` or `\r\n`: truncated in place   - any other `\n`: returned in `Err` so the caller falls back to splitting - `cow_to_spans` (behind `Line::from(String)`) and `Text::raw` use it before falling back. - Behaviour is unchanged, including the empty-string cases: an empty owned string still gives a line   with no spans, and `Text::raw` still gives one empty line. A lone trailing `\r` is kept, as   `str::lines` keeps it.  ## Tests  - `Line::from(String)` and `Text::raw`/`Text::from(String)` are compared with their `&str`   counterparts across nine cases: empty, one line, trailing `\n`, trailing `\r\n`, trailing lone   `\r`, a bare `\n`, a ba
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -963,268 +964,557 @@ impl StatefulWidget for CounterWidget {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cdcb0c01` (2026-10-28)
-**Commit Message**: docs(layout): recommend layout-cache for no_std (#2867)
+### Incident Patch 1: `0ce9cff0` (2026-10-31)
+**Commit Message**: docs(buffer): clarify rendering and bounds (#2814)
 
-Turning off default features to build Ratatui for `no_std` also turns
-off `layout-cache`. Nothing in the docs says so, or that you probably
-want it back on. On a microcontroller without a double-precision FPU,
-the kasuari solver's `f64` arithmetic is emulated in software, so every
-uncached `Layout::split` is expensive. With the cache back on, the
-default `DEFAULT_CACHE_SIZE` of 500 entries can then exhaust a small
-heap.
+Explains which buffer operations return None, panic, or do nothing and recommends text widgets for rendering.
 
-Measured on an RP2350 (Cortex-M33 at 200 MHz, single-precision FPU only)
-with Mousefood and a 160 KB heap:
+---------
 
-- without `layout-cache`: a near-empty page took ~15 ms per frame of
-widget rendering; busier pages took 35-52 ms
-- with `layout-cache`: ~2.2 ms and ~5 ms respectively (3-7x faster)
-- with the default 500-entry cache the device ran out of heap (`memory
-allocation of 1668 bytes failed`);
-`Layout::init_cache(NonZeroUsize::new(64).unwrap())` fixed it and heap
-use settled around 81 KB
+Co-authored-by: Orhun Parmaksız <[REDACTED_EMAIL]>
 
-This PR changes docs only:
-
-- `ratatui` crate docs: a new "Using Ratatui without std" section with
-the recommended `Cargo.toml` line, `Layout::init_cache` sizing, and the
-`critical-section` requirement (including the `std` de
-
-**File**: `README.md` (modified, +14/-0)
+**File**: `ratatui-core/src/buffer/buffer.rs` (modified, +417/-19)
 ```diff
-@@ -89,6 +89,18 @@ If you're looking to get started quickly, you can use one of the available templ
- cargo generate ratatui/templates
- ```
- 
-+## Embedded and `no_std`
-+
-+Ratatui also runs on `no_std` targets such as microcontrollers, using a backend like [Mousefood].
-+Turning off default features also turns off the layout cache, which matters most on these
-+targets, so enable it again and size it for the device:
-+
-+```toml
-+ratatui = { version = "0.30", default-features = false, features = ["layout-cache"] }
-+```
-+
-+See [Using Ratatui without std] in the docs for details.
-+
- ## Built with Ratatui
- 
- [![Awesome](https://awesome.re/badge-flat2.svg)][awesome-ratatui]
-@@ -141,6 +153,8 @@ This project is licensed under the [MIT License][License].
- [Ratatui Website]: https://ratatui.rs/
- [Ratatui Forum]: https://forum.ratatui.rs
- [Docs]: https://docs.rs/ratatui
-+[Mousefood]: https://github.com/ratatui/mousefood
-+[Using Ratatui without std]: https://docs.rs/ratatui/latest/ratatui/#using-ratatui-without-std
- [Widget Examples]: https://github.com/ratatui/ratatui/tree/main/ratatui-widgets/examples
- [App Examples]: https://github.com/ratatui/ratatui/tree/main/examples
- [ARCHITECTURE.md]: https://github.com/ratatui/ratatui/blob/main/ARCHITECTURE.md
-```
-
-**File**: `ratatui-core/Cargo.toml` (modified, +2/-1)
-```diff
-@@ -41,7 +41,8 @@ std = [
- ]
- 
- ## enables layout cache; uses thread_local when std is available,
--## critical-section::Mutex otherwise (for no_std/embedded targets).
-+## critical-section::Mutex otherwise (for no_std/embedded targets, which must link a
-+## critical-section implementation).
- layout-cache = ["dep:critical-section"]
- 
- ## enables conversions to / from colors, modifiers, and styles in the ['anstyle'] crate
-```
-
-**File**: `ratatui-core/src/layout.rs` (modified, +5/-0)
-```diff
-@@ -286,6 +286,11 @@
- //! explicitly enabling the `layout-cache` feature when using `ratatui-core` directly. When
- //! enabled, layout results are cached based on the area and layout configuration.
- //!
-+//! The cache matters most on targets without a double-precision FPU, such as many
-+//! microcontrollers, where the layout solver's `f64` arithmetic is emulated in software. Building
-+//! `ratatui` with `default-features = false` for `no_std` also turns off `layout-cache`, so enable
-+//! it again explicitly and size it for the device with [`Layout::init_cache()`].
-+//!
- //! # Related Documentation
- //!
- //! For more detailed information and practical examples:
-```
-
-**File**: `ratatui-core/src/layout/layout.rs` (modified, +47/-11)
-```diff
-@@ -137,9 +137,12 @@ impl From<i16> for Spacing {
- /// solver that computes positions and sizes to satisfy as many constraints as possible in order of
- /// their priorities.
+@@ -17,12 +17,23 @@ use crate::text::{Line, Span};
+ /// a grapheme, a foreground color and a background color. This grid will then be used to output
+ /// the appropriate escape sequences and characters to draw the UI as the user has defined it.
  ///
--/// When the layout is computed, the result is cached in a thread-local cache, so that subsequent
--/// calls with the same parameters are faster. The cache is a `LruCache`, and the size of the cache
--/// can be configured using [`Layout::init_cache()`] when the `layout-cache` feature is enabled.
-+/// When the `layout-cache` feature is enabled, the result is cached so that subsequent calls with
-+/// the same parameters are faster. The cache is a `LruCache` that is thread-local when the `std`
-+/// feature is enabled, and a global behind a [`critical-section`] mutex otherwise. The size of the
-+/// cache can be configured using [`Layout::init_cache()`].
+-/// # Examples:
++/// For text rendering, prefer rendering [`Span`], [`Line`], or [`Text`](crate::text::Text) as
++/// widgets. These text widgets restrict rendering to the intersection of the requested area and
++/// the buffer's area. For unstyled text in an area known to be inside the buffer, a [`&str`](str)
++/// or [`String`](alloc::string::String) can also be rendered directly. Their widget implementations
++/// currently delegate to [`set_stringn`](Self::set_stringn) and retain its bounds behavior.
++/// The coordinate-based text setters retain historical behavior for compatibility. For individual
++/// cells, use [`cell`](Self::cell) and [`cell_mut`](Self::cell_mut) when a position might be
++/// outside the buffer, or indexing when the position is known to be inside it.
 +///
-+/// [`critical-section`]: https://docs.rs/critical-section
++/// # Examples
  ///
- /// # Construction
+ /// ```
+ /// use ratatui_core::buffer::{Buffer, Cell};
+ /// use ratatui_core::layout::{Position, Rect};
+ /// use ratatui_core::style::{Color, Style};
++/// use ratatui_core::text::Span;
++/// use ratatui_core::widgets::Widget;
  ///
-@@ -216,6 +219,9 @@ impl Layout {
-     /// row and every column, twice over, which should be enough for most apps. For those that need
-     /// more, the cache size can be set with `Layout::init_cache()` (requires the `layout-cache`
-     /// feature).
-+    ///
-+    /// On memory-constrained targets this default is usually too large. See
-+    /// [`Layout::init_cache()`] for how to choose a smaller size.
-     #[cfg(feature = "layout-cache")]
-     pub const DEFAULT_CACHE_SIZE: usize = 500;
- 
-@@ -309,6 +315,34 @@ impl Layout {
-     /// grows until `cache_size` is reached.
+ /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+ /// let mut buf = Buffer::empty(Rect {
+@@ -59,6 +70,10 @@ use crate::text::{Line, Span};
+ /// assert_eq!(cell.symbol(), "r");
+ /// assert_eq!(cell.fg, Color::Red);
+ /// assert_eq!(cell.bg, Color::White);
++///
++/// // Preferred for general text rendering: express the position and width as an area.
++/// let span = Span::styled("string", Style::default().fg(Color::Red).bg(Color::White));
++/// span.render(Rect::new(3, 0, 7, 1), &mut buf);
+ /// # Ok(())
+ /// # }
+ /// ```
+@@ -124,7 +139,26 @@ impl Buffer {
      ///
-     /// By default, the cache size is [`Self::DEFAULT_CACHE_SIZE`].
+     /// # Panics
+     ///
+-    /// Panics if the index is out of bounds.
++    /// Panics if the position is outside the buffer's area.
 +    ///
-+    /// The cache reserves space for `cache_size` entries when it is created, and each entry stores
-+    /// a copy of the layout and the areas it produced. Memory use therefore grows with both the
-+    /// cache size and the number of constraints in your layouts. This doesn't matter much on a
-+    /// desktop, but on a microcontroller the default size can take tens of kilobytes of heap.
++    /// # Examples
 +    ///
-+    /// For memory-constrained targets, call this once before the first draw with a size a little
-+    /// larger than the number of distinct layout and area combinations your app computes per frame
-+    /// (often a few dozen). Each cache miss falls back to running the layout solver, so a cache
-+    /// that is too small is slower but still correct.
-+    ///
-+    /// Without the `std` feature, the cache is a global shared by every thread or core and is
-+    /// guarded by a [`critical-section`] mutex. Your binary must link a `critical-section`
-+    /// implementation; most embedded HALs and runtimes provide one through a feature flag. Host
-+    /// tests for a `no_std` crate can use the `std` feature of `critical-section` as a
-+    /// dev-dependency.
-+    ///
-+    /// # Example
++    /// Compare this method with [`Buffer::cell`], which also handles positions outside the buffer
++    /// without panicking:
 +    ///
 +    /// ```
-+    /// use core::num::NonZeroUsize;
++    /// use ratatui_core::buffer::Buffer;
++    /// use ratatui_core::layout::Rect;
 +    ///
-+    /// use ratatui_core::layout::Layout;
++    /// let buffer = Buffer::empty(Rect::new(0, 0, 57, 1));
++    /// # #[allow(deprecated)]
++    /// let cell = buffer.get(1, 0);
++    /// assert_eq!(cell.symbol(), " ");
 +    ///
-+    /// Layout::init_cache(NonZeroUsize::new(64).unwrap());
++    /// // Preferred: return an Option when the position might be outside the buffer.
++    /// assert_eq!(buffer.cell((1, 0)).map(|cell| cell.symbol()), Some(" "));
++    /// assert_eq!(buffer.cell((1, 1)).map(|cell| cell.symbol()), None);
++    /// ```
+     #[track_caller]
+     #[deprecated = "use `Buffer[(x, y)]` instead. To avoid panicking, use `Buffer::cell((x, y))`. Both methods take `impl Into<Position>`."]
+     #[must_use]
+@@ -145,6 +179,28 @@ impl Buffer {
+     /// # Panics
+     ///
+     /// Panics if the position is outside the `Buffer`'s area.
++    ///
++    /// # Examples
++    ///
++    /// Compare this method with [`Buffer::cell_mut`], which also handles positions outside the
++    /// buffer without panicking:
++    ///
++    /// ```
++    /// use ratatui_core::buffer::Buffer;
++    /// use ratatui_core::layout::Rect;
++    ///
++    /// let mut buffer = Buffer::empty(Rect::new(0, 0, 57, 1));
++    /// # #[allow(deprecated)]
++    /// let cell = buffer.get_mut(1, 0);
++    /// cell.set_symbol("A");
++    ///
++    /// // Preferred: handle a missing cell without panicking.
++    /// if let Some(cell) = buffer.cell_mut((1, 0)) {
++    ///     cell.set_symbol("B");
++    /// }
++    /// assert_eq!(buffer[(1, 0)].symbol(), "B");
++    /// assert_eq!(buffer.cell_mut((1, 1)), None);
++    /// ```
+     #[track_caller]
+     #[deprecated = "use `Buffer[(x, y)]` instead. To avoid panicking, use `Buffer::cell_mut((x, y))`. Both methods take `impl Into<Position>`."]
+     #[must_use]
+@@ -231,9 +287,21 @@ impl Buffer {
+     /// assert_eq!(buffer.index_of(200, 100), 0);
+     /// ```
+     ///
++    /// Prefer [`Buffer::cell`] when accessing a cell, avoiding an intermediate index and returning
++    /// `None` for positions outside the buffer:
++    ///
++    /// ```
++    /// use ratatui_core::buffer::Buffer;
++    /// use ratatui_core::layout::Rect;
++    ///
++    /// let buffer = Buffer::empty(Rect::new(200, 100, 10, 10));
++    /// assert!(buffer.cell((200, 100)).is_some());
++    /// assert_eq!(buffer.cell((0, 0)), None);
 +    /// ```
 +    ///
-+    /// [`critical-section`]: https://docs.rs/critical-section
-     #[cfg(feature = "layout-cache")]
-     pub fn init_cache(cache_size: NonZeroUsize) {
-         Self::resize_cache(cache_size);
-@@ -661,10 +695,11 @@ impl Layout {
-     /// splitting the area up. (e.g. splitting 100 into [min 20, 50%, 50%], may not result in [20,
-     /// 40, 40] but rather an indeterminate result between [20, 50, 30] and [20, 30, 50]).
+     /// # Panics
      ///
--    /// This method stores the result of the computation in a thread-local cache keyed on the layout
--    /// and area, so that subsequent calls with the same parameters are faster. The cache is a
--    /// `LruCache`, and grows until [`Self::DEFAULT_CACHE_SIZE`] is reached by default. If the cache
--    /// is initialized with [`Layout::init_cache()`], it grows until the initialized cache size.
-+    /// When the `layout-cache` feature is enabled, this method stores the result of the computation
-+    /// in a cache keyed on the layout and area, so that subsequent calls with the same parameters
-+    /// are faster. The cache is a `LruCache`, and grows until [`Self::DEFAULT_CACHE_SIZE`] is
-+    /// reached by default. If the cache is initialized with [`Layout::init_cache()`], it grows
-+    /// until the initialized cache size.
+-    /// Panics when given an coordinate that is outside of this Buffer's area.
++    /// Panics when given a coordinate that is outside the buffer's area.
      ///
-     /// There is a helper method that can be used to split the whole area into smaller ones based on
-     /// the layout: [`Layout::areas()`]. That method is a shortcut for calling this method. It
-@@ -698,10 +733,11 @@ impl Layout {
-     /// This method is similar to `split`, but it returns two sets of rectangles: one for the areas
-     /// and one for the spacers.
+     /// ```should_panic
+     /// use ratatui_core::buffer::Buffer;
+@@ -292,19 +360,22 @@ impl Buffer {
+     /// assert_eq!(buffer.pos_of(14), (204, 101));
+     /// ```
      ///
--    /// This method stores the result of the computation in a thread-local cache keyed on the layout
--    /// and area, so that subsequent calls with the same parameters are faster. The cache is a
--    /// `LruCache`, and grows until [`Self::DEFAULT_CACHE_SIZE`] is reached by default. If the cache
--    /// is initialized with [`Layout::init_cache()`]
+-    /// # Panics
+-    ///
+-    /// Panics when given an index that is outside the Buffer's content.
++    /// Prefe
 ```
 
-**File**: `ratatui/Cargo.toml` (modified, +3/-1)
+**File**: `ratatui-core/src/text/line.rs` (modified, +14/-4)
 ```diff
-@@ -57,7 +57,9 @@ serde = [
-   "ratatui-widgets/serde",
- ]
+@@ -1331,10 +1331,20 @@ mod tests {
+         }
  
--## enables layout cache
-+## enables the layout cache, which avoids rerunning the layout solver for repeated layouts. Keep this
-+## enabled when building with `default-features = false` for `no_std` targets; without `std` it
-+## needs a [`critical-section`](https://docs.rs/critical-section) implementation.
- layout-cache = ["ratatui-core/layout-cache"]
+         #[rstest]
+-        fn render_out_of_bounds(hello_world: Line<'static>, mut small_buf: Buffer) {
+-            let out_of_bounds = Rect::new(20, 20, 10, 1);
+-            hello_world.render(out_of_bounds, &mut small_buf);
+-            assert_eq!(small_buf, Buffer::empty(small_buf.area));
++        #[case::right(Rect::new(0, 0, 15, 1), Rect::new(20, 0, 10, 1))]
++        #[case::bottom(Rect::new(0, 0, 15, 1), Rect::new(0, 20, 10, 1))]
++        #[case::both(Rect::new(0, 0, 15, 1), Rect::new(20, 20, 10, 1))]
++        #[case::single_row(Rect::new(0, 0, 57, 1), Rect::new(1, 1, 10, 1))]
++        #[case::zero_width_buffer(Rect::new(10, 10, 0, 1), Rect::new(10, 10, 10, 1))]
++        #[case::zero_height_buffer(Rect::new(10, 10, 10, 0), Rect::new(10, 10, 10, 1))]
++        #[case::empty_buffer(Rect::ZERO, Rect::new(0, 0, 10, 1))]
++        #[case::zero_width_area(Rect::new(0, 0, 15, 1), Rect::new(0, 0, 0, 1))]
++        #[case::zero_height_area(Rect::new(0, 0, 15, 1), Rect::new(0, 0, 10, 0))]
++        fn render_out_of_bounds(#[case] buffer_area: Rect, #[case] render_area: Rect) {
++            let mut buf = Buffer::empty(buffer_area);
++            let expected = buf.clone();
++            Line::raw("Hello, world!").render(render_area, &mut buf);
++            assert_eq!(buf, expected);
+         }
  
- ## enables conversions from colors in the [`palette`] crate to [`Color`](crate::style::Color).
+         #[test]
 ```
 
-**File**: `ratatui/src/lib.rs` (modified, +36/-0)
+**File**: `ratatui-core/src/text/span.rs` (modified, +14/-7)
 ```diff
-@@ -85,6 +85,38 @@
- //! - [`ratatui-crossterm`], [`ratatui-termion`], [`ratatui-termina`], or [`ratatui-termwiz`] when
- //!   your application needs backend-specific APIs or a direct backend dependency
- //!
-+//! ## Using Ratatui without std
-+//!
-+//! Ratatui can run on `no_std` targets such as microcontrollers, with a backend like
-+//! [Mousefood]. Turning off default features removes the terminal backends and `std`, but it also
-+//! turns off the `layout-cache` feature. Without the cache, every layout is recomputed by the
-+//! constraint solver on each frame. That solver uses `f64` arithmetic, which is slow on chips
-+//! without a double-precision FPU, so turn the cache back on:
-+//!
-+//! ```toml
-+//! [dependencies]
-+//! ratatui = { version = "0.30", default-features = false, features = ["layout-cache"] }
-+//! ```
-+//!
-+//! The default cache holds [`Layout::DEFAULT_CACHE_SIZE`] entries, which can exhaust a small heap.
-+//! Call [`Layout::init_cache()`] once before the first draw with a size that fits your app,
-+//! for example a few dozen entries:
-+//!
-+//! ```rust
-+//! # #[cfg(feature = "layout-cache")] {
-+//! use core::num::NonZeroUsize;
-+//!
-+//! use ratatui::layout::Layout;
-+//!
-+//! Layout::init_cache(NonZeroUsize::new(64).unwrap());
-+//! # }
-+//! ```
-+//!
-+//! Without `std`, the cache is guarded by a [`critical-section`] mutex, so your binary must link a
-+//! `critical-section` implementation. Most embedded HALs and runtimes provide one through a
-+//! feature flag. To run host tests for a `no_std` crate, add `critical-section` with its `std`
-+//! feature as a dev-dependency.
-+//!
- //! # Other documentation
- //!
- //! - [Ratatui Website] - explains the library's concepts and provides step-by-step tutorials
-@@ -390,6 +422,8 @@
- //! [Counter App]: https://ratatui.rs/tutorials/counter-app/
- //! [Recipes]: https://ratatui.rs/recipes/
- //! [FAQ]: https://ratatui.rs/faq/
-+//! [Mousefood]: https://github.com/ratatui/mousefood
-+//! [`critical-section`]: https://docs.rs/critical-section
- //! [Templates]: https://ratatui.rs/templates/
- //! [Cargo Generate]: https://cargo-generate.github.io/cargo-generate/
- //! [Showcase]: https://ratatui.rs/showcase/
-@@ -421,6 +455,8 @@
- //! [`render_widget`]: Frame::render_widget
- //! [`Widget`]: widgets::Widget
- //! [`Layout`]: layout::Layout
-+//! [`Layout::DEFAULT_CACHE_SIZE`]: layout::Layout::DEFAULT_CACHE_SIZE
-+//! [`Layout::init_cache()`]: layout::Layout::init_cache
- //! [`Text`]: text::Text
- //! [`Line`]: text::Line
- //! [`Span`]: text::Span
+@@ -723,13 +723,20 @@ mod tests {
+         }
+ 
+         #[rstest]
+-        #[case::x(20, 0)]
+-        #[case::y(0, 20)]
+-        #[case::both(20, 20)]
+-        fn render_out_of_bounds(mut small_buf: Buffer, #[case] x: u16, #[case] y: u16) {
+-            let out_of_bounds = Rect::new(x, y, 10, 1);
+-            Span::raw("Hello, World!").render(out_of_bounds, &mut small_buf);
+-            assert_eq!(small_buf, Buffer::empty(small_buf.area));
++        #[case::right(Rect::new(0, 0, 15, 1), Rect::new(20, 0, 10, 1))]
++        #[case::bottom(Rect::new(0, 0, 15, 1), Rect::new(0, 20, 10, 1))]
++        #[case::both(Rect::new(0, 0, 15, 1), Rect::new(20, 20, 10, 1))]
++        #[case::single_row(Rect::new(0, 0, 57, 1), Rect::new(1, 1, 10, 1))]
++        #[case::zero_width_buffer(Rect::new(10, 10, 0, 1), Rect::new(10, 10, 10, 1))]
++        #[case::zero_height_buffer(Rect::new(10, 10, 10, 0), Rect::new(10, 10, 10, 1))]
++        #[case::empty_buffer(Rect::ZERO, Rect::new(0, 0, 10, 1))]
++        #[case::zero_width_area(Rect::new(0, 0, 15, 1), Rect::new(0, 0, 0, 1))]
++        #[case::zero_height_area(Rect::new(0, 0, 15, 1), Rect::new(0, 0, 10, 0))]
++        fn render_out_of_bounds(#[case] buffer_area: Rect, #[case] render_area: Rect) {
++            let mut buf = Buffer::empty(buffer_area);
++            let expected = buf.clone();
++            Span::raw("Hello, world!").render(render_area, &mut buf);
++            assert_eq!(buf, expected);
+         }
+ 
+         /// When the content of the span is longer than the area passed to render, the content
+```
+
+**File**: `ratatui-core/src/text/text.rs` (modified, +14/-4)
+```diff
+@@ -1285,10 +1285,20 @@ mod tests {
+         }
+ 
+         #[rstest]
+-        fn render_out_of_bounds(mut small_buf: Buffer) {
+-            let out_of_bounds_area = Rect::new(20, 20, 10, 1);
+-            Text::from("Hello, world!").render(out_of_bounds_area, &mut small_buf);
+-            assert_eq!(small_buf, Buffer::empty(small_buf.area));
++        #[case::right(Rect::new(0, 0, 15, 1), Rect::new(20, 0, 10, 1))]
++        #[case::bottom(Rect::new(0, 0, 15, 1), Rect::new(0, 20, 10, 1))]
++        #[case::both(Rect::new(0, 0, 15, 1), Rect::new(20, 20, 10, 1))]
++        #[case::single_row(Rect::new(0, 0, 57, 1), Rect::new(1, 1, 10, 1))]
++        #[case::zero_width_buffer(Rect::new(10, 10, 0, 1), Rect::new(10, 10, 10, 1))]
++        #[case::zero_height_buffer(Rect::new(10, 10, 10, 0), Rect::new(10, 10, 10, 1))]
++        #[case::empty_buffer(Rect::ZERO, Rect::new(0, 0, 10, 1))]
++        #[case::zero_width_area(Rect::new(0, 0, 15, 1), Rect::new(0, 0, 0, 1))]
++        #[case::zero_height_area(Rect::new(0, 0, 15, 1), Rect::new(0, 0, 10, 0))]
++        fn render_out_of_bounds(#[case] buffer_area: Rect, #[case] render_area: Rect) {
++            let mut buf = Buffer::empty(buffer_area);
++            let expected = buf.clone();
++            Text::raw("Hello, world!").render(render_area, &mut buf);
++            assert_eq!(buf, expected);
+         }
+ 
+         #[test]
+```
+
+---
+
+### Incident Patch 2: `7cf10be7` (2026-10-31)
+**Commit Message**: fix(buffer): repaint cells uncovered by an overwritten wide glyph (#2804)
+
+When a wide glyph is replaced by a narrow cell, the terminal clears the
+columns the glyph covered. BufferDiff can then skip a column if the previous
+buffer still holds unchanged content that was hidden behind the glyph.
+
+Treat those covered cells as empty during diffing so they are repainted. Keep
+the covered range monotonic to handle cells with an explicit width greater
+than two columns.
+
+---------
+
+Co-authored-by: Orhun Parmaksız <[REDACTED_EMAIL]>
+Co-authored-by: Orhun Parmaksız <[REDACTED_EMAIL]>
+
+**File**: `ratatui-core/src/buffer/diff.rs` (modified, +42/-2)
+```diff
+@@ -19,6 +19,9 @@ pub struct BufferDiff<'prev, 'next> {
+     pos: usize,
+     /// Tracks trailing cells and a leading cell that may be deferred until after they are cleared.
+     trailing: Option<TrailingState>,
++    /// End of the previous cells that sat under a wide glyph which has since been overwritten.
++    /// The terminal shows blanks there, whatever the previous buffer holds.
++    covered: usize,
+ }
+ 
+ /// Tracks pending trailing-cell yields for a wide character update.
+@@ -70,6 +73,7 @@ impl<'prev, 'next> BufferDiff<'prev, 'next> {
+             area,
+             pos: 0,
+             trailing: None,
++            covered: 0,
+         }
+     }
+ 
+@@ -128,7 +132,11 @@ impl<'next> Iterator for BufferDiff<'_, 'next> {
+             self.pos += 1;
+ 
+             let current = &self.next[i];
+-            let previous = &self.prev[i];
++            let previous = if i < self.covered {
++                &Cell::EMPTY
++            } else {
++                &self.prev[i]
++            };
+ 
+             match current.diff_option {
+                 CellDiffOption::Skip => {}
+@@ -201,6 +209,7 @@ impl<'next> Iterator for BufferDiff<'_, 'next> {
+                         });
+                     } else {
+                         // single-width character, no position adjustment needed
++                        self.covered = self.covered.max(i + previous_width).min(len);
+                     }
+ 
+                     let (x, y) = self.pos_of(i);
+@@ -761,11 +770,12 @@ mod terminal_model {
+     use alloc::string::{String, ToString};
+     use alloc::vec;
+     use alloc::vec::Vec;
++    use core::num::NonZeroU16;
+ 
+     use rstest::rstest;
+ 
+     use super::*;
+-    use crate::buffer::Buffer;
++    use crate::buffer::{Buffer, CellDiffOption};
+     use crate::style::Style;
+ 
+     /// What is visibly occupying one terminal column.
+@@ -975,4 +985,34 @@ mod terminal_model {
+         assert_no_artifacts_for_both_widths("a❤️b漢c😀d", "int value8;;", 12);
+         assert_no_artifacts_for_both_widths("a❤️b漢c😀d", "漢a❤️b😀c", 12);
+     }
++
++    /// A widget that writes cells directly can leave old content in a cell after a wide glyph,
++    /// but such cells won't actually be displayed.  If the wide glyph is later replaced with a
++    /// single-column glyph, these trailing glyphs must be redrawn.
++    #[rstest]
++    #[case::keycap("1️⃣")]
++    #[case::fullwidth("＋")]
++    fn stale_cell_after_wide_glyph_is_repainted(#[case] glyph: &str) {
++        let next = row(4, "────");
++        let mut prev = next.clone();
++        prev.content[1].set_symbol(glyph);
++
++        for vs16_width in VS16_WIDTHS {
++            assert_no_artifacts(vs16_width, &prev, &next);
++        }
++    }
++
++    /// A covered range must remain covered when the old cell uses an explicit width > 2.
++    #[test]
++    fn stale_cells_after_forced_width_are_repainted() {
++        let next = row(4, "abcd");
++        let mut prev = next.clone();
++        prev.content[0]
++            .set_symbol("image")
++            .set_diff_option(CellDiffOption::ForcedWidth(NonZeroU16::new(4).unwrap()));
++
++        for vs16_width in VS16_WIDTHS {
++            assert_no_artifacts(vs16_width, &prev, &next);
++        }
++    }
+ }
+```
+
+**File**: `ratatui-widgets/src/paragraph.rs` (modified, +14/-0)
+```diff
+@@ -498,6 +498,7 @@ impl Styled for Paragraph<'_> {
+ #[cfg(test)]
+ mod tests {
+     use alloc::vec;
++    use alloc::vec::Vec;
+ 
+     use ratatui_core::buffer::{Buffer, CellWidth};
+     use ratatui_core::layout::{Alignment, Rect};
+@@ -1034,6 +1035,19 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn repaints_cell_after_wide_grapheme() {
++        let next = Buffer::with_lines(["────"]);
++        let mut prev = next.clone();
++        Paragraph::new("1️⃣").render(Rect::new(1, 0, 2, 1), &mut prev);
++
++        assert_eq!(prev[(1, 0)].symbol(), "1️⃣");
++
++        let diff = prev.diff(&next);
++        let cols: Vec<_> = diff.iter().map(|(x, _, _)| *x).collect();
++        assert_eq!(cols, [1, 2]);
++    }
++
+     #[test]
+     fn can_be_stylized() {
+         assert_eq!(
+```
+
+---
+
+### Incident Patch 3: `dacaaa39` (2026-10-31)
+**Commit Message**: test(bench): benchmark rendering stored owned text (#2877)
+
+Adds a `stored_text` criterion group that measures rendering owned,
+multi-span text kept in app state. This gives a baseline for a follow-up
+PR that adds `From<&'b Text<'a>> for Text<'b>`, so
+`Paragraph::new(&text)` can borrow stored text instead of cloning it
+every frame.
+
+## Why
+
+Apps often keep long, owned `Text<'static>` in their state (log viewers,
+text built by a scripting layer, widget property maps). Because
+`Paragraph` takes ownership of its text, they clone it on every frame.
+See [#2027](https://github.com/ratatui/ratatui/discussions/2027) (Use
+Cow more liberally) and
+[#2280](https://github.com/ratatui/ratatui/discussions/2280)
+(Borrow-Clone `{Span, Line, Text}`).
+
+The existing benches don't cover this. `paragraph` builds from one
+`&str` with a borrowed span per line, and `text` clones in criterion's
+setup, outside the timed part. Here the clone is inside the timed
+closure, because it is the cost being measured.
+
+## What
+
+- Input: owned `Text<'static>` where every span is its own `String` with
+a varied style. Sizes are {100, 10,000} lines × {5, 50} spans per line,
+rendered to a 200×50 area (10k cells) with `Wrap 
+
+**File**: `ratatui/benches/main.rs` (modified, +2/-0)
+```diff
+@@ -10,6 +10,7 @@ pub mod main {
+     pub mod paragraph;
+     pub mod rect;
+     pub mod sparkline;
++    pub mod stored_text;
+     pub mod table;
+     pub mod text;
+ }
+@@ -25,6 +26,7 @@ criterion::criterion_main!(
+     paragraph::benches,
+     rect::benches,
+     sparkline::benches,
++    stored_text::benches,
+     table::benches,
+     text::benches,
+     constraints::benches,
+```
+
+**File**: `ratatui/benches/main/stored_text.rs` (added, +174/-0)
+```diff
+@@ -0,0 +1,174 @@
++use std::hint::black_box;
++
++use criterion::{Bencher, BenchmarkId, Criterion, criterion_group};
++use ratatui::buffer::Buffer;
++use ratatui::layout::Rect;
++use ratatui::style::{Color, Modifier, Style};
++use ratatui::text::{Line, Span, Text};
++use ratatui::widgets::{Paragraph, Widget, Wrap};
++
++const WIDTH: u16 = 200;
++const HEIGHT: u16 = 50;
++const AREA: Rect = Rect::new(0, 0, WIDTH, HEIGHT);
++const WRAP: Wrap = Wrap { trim: false };
++
++/// Every span is a fixed width word plus a trailing space (e.g. `"w00042-07 "`), so the number of
++/// rows each line wraps to is known up front.
++const SPAN_WIDTH: usize = 10;
++
++/// Benchmark for rendering owned text that is stored in application state.
++///
++/// Applications often keep a long, multi-span `Text<'static>` (log viewers, text built by a
++/// scripting layer, widget property maps) and render it every frame. Because `Paragraph` takes
++/// ownership of its text, the stored text has to be cloned on each frame. The clone is part of the
++/// per-frame cost, so unlike the `paragraph` and `text` benchmarks, it is measured inside the timed
++/// closure here.
++fn stored_text(c: &mut Criterion) {
++    let mut group = c.benchmark_group("stored_text");
++    for (line_count, span_count) in [(100, 5), (100, 50), (10_000, 5), (10_000, 50)] {
++        let input = StoredText::new(line_count, span_count);
++        let id = format!("{line_count}x{span_count}");
++
++        // Criterion runs at least one iteration per sample, so slow cases take
++        // `sample_size * iteration time` regardless of the target measurement time.
++        group.sample_size(match line_count * span_count {
++            0..1_000 => 100,
++            1_000..10_000 => 50,
++            _ => 20,
++        });
++
++        let clone_id = BenchmarkId::new("clone", &id);
++        group.bench_with_input(clone_id, &input, clone);
++        let clone_render_id = BenchmarkId::new("clone_render", &id);
++        group.bench_with_input(clone_render_id, &input, clone_render);
++        let clone_render_end_id = BenchmarkId::new("clone_render_end", &id);
++        group.bench_with_input(clone_render_end_id, &input, clone_render_end);
++        let slice_render_id = BenchmarkId::new("slice_render", &id);
++        group.bench_with_input(slice_render_id, &input, slice_render);
++    }
++    group.finish();
++}
++
++/// The cost of cloning the stored text by itself.
++fn clone(bencher: &mut Bencher, input: &StoredText) {
++    bencher.iter(|| black_box(&input.text).clone());
++}
++
++/// Clone the stored text into a paragraph and render it.
++fn clone_render(bencher: &mut Bencher, input: &StoredText) {
++    let mut buffer = Buffer::empty(AREA);
++    bencher.iter(|| {
++        Paragraph::new(input.text.clone())
++            .wrap(WRAP)
++            .render(AREA, &mut buffer);
++    });
++}
++
++/// Clone the stored text into a paragraph and render it scrolled to the end, like a log viewer
++/// following its output.
++fn clone_render_end(bencher: &mut Bencher, input: &StoredText) {
++    let mut buffer = Buffer::empty(AREA);
++    bencher.iter(|| {
++        Paragraph::new(input.text.clone())
++            .wrap(WRAP)
++            .scroll((input.scroll_end, 0))
++            .render(AREA, &mut buffer);
++    });
++}
++
++/// Reference: clone and render only the lines that are visible when scrolled to the end.
++fn slice_render(bencher: &mut Bencher, input: &StoredText) {
++    let mut buffer = Buffer::empty(AREA);
++    bencher.iter(|| {
++        Paragraph::new(Text::from(input.text.lines[input.visible_start..].to_vec()))
++            .wrap(WRAP)
++            .scroll((input.visible_scroll, 0))
++            .render(AREA, &mut buffer);
++    });
++}
++
++/// Owned text as an application would store it, along with the scroll offsets that show its last
++/// screen.
++struct StoredText {
++    text: Text<'static>,
++    /// The scroll offset that shows the last screen of `text`.
++    scroll_end: u16,
++    /// The first line that can be visible when scrolled to the end. Every line takes up at least
++    /// one row, so only the last `HEIGHT` lines can be visible.
++    visible_start: usize,
++    /// The scroll offset that shows the last screen of the lines from `visible_start`.
++    visible_scroll: u16,
++}
++
++impl StoredText {
++    fn new(line_count: usize, span_count: usize) -> Self {
++        let text = owned_text(line_count, span_count);
++        let rows_per_line = (span_count * SPAN_WIDTH).div_ceil(usize::from(WIDTH));
++        let visible_start = line_count.saturating_sub(usize::from(HEIGHT));
++        let input = Self {
++            scroll_end: end_offset(line_count * rows_per_line),
++            visible_start,
++            visible_scroll: end_offset((line_count - visible_start) * rows_per_line),
++            text,
++        };
++        assert_same_output(
++            &Paragraph::new(input.text.clone())
++                .wrap(WRAP)
++                .scroll((input.scroll_end, 0)),
++            &Paragraph::new(Text::from(input.text.lines[visible_s
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2867** (2026-10-28): docs(layout): recommend layout-cache for no_std (@joshka)
-- **PR #2866** (2026-10-26): build(deps): bump taiki-e/install-action from 2.87.29 to 2.87.31 (@dependabot[bot])
-- **PR #2865** (2026-10-26): build(deps): bump octocrab from 0.54.4 to 0.54.5 (@dependabot[bot])
-- **PR #2864** (2026-10-26): build(deps): bump lru from 0.18.5 to 0.19.0 (@dependabot[bot])
-- **PR #2863** (2026-10-26): build(deps): bump rust-lang/crates-io-auth-action from 1.0.5 to 1.0.6 (@dependabot[bot])
-- **PR #2862** (2026-10-26): build(deps): bump zizmorcore/zizmor-action from 0.7.1 to 0.8.0 (@dependabot[bot])
+- **PR #2881** (2026-10-31): docs(text): explain storing styled text (@joshka)
+- **PR #2880** (2026-10-31): perf(text): reuse owned String in Line::raw and Text::raw (@joshka)
+- **PR #2879** (2026-10-31): feat(text): add into_owned for Span, Line and Text (@joshka)
+- **PR #2878** (2026-10-31): feat(text): convert borrowed Text, Line and Span references (@joshka)
+- **PR #2877** (2026-10-31): test(bench): benchmark rendering stored owned text (@joshka)
+- **PR #2875** (2026-10-31): docs: link prelude re-exports to their canonical paths (@joshka)
 
 ---
 
@@ -1244,41 +1534,53 @@ the recommended `Cargo.toml` line, `Layout::init_cache` sizing, and the
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(layout): recommend layout-cache for no_std (#2867)
+## X. docs(buffer): clarify rendering and bounds (#2814)
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ratatui/ratatui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ratatui-core/src/buffer/buffer.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ratatui/ratatui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cdcb0c01`: docs(layout): recommend layout-cache for no_std (#2867). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0ce9cff0`: docs(buffer): clarify rendering and bounds (#2814). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ratatui-core/src/buffer/buffer.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## Embedded and `no_std`
-
-Ratatui also runs on `no_std` targets such as microcontrollers, using a backend like [Mousefood].
-Turning off default features also turns off the layout cache, which matters most on these
-targets, so enable it again and size it for the device:
-
-```toml
-ratatui = { version = "0.30", default-features = false, features = ["layout-cache"] }
-```
-
-See [Using Ratatui without std] in the docs for details.
-
-[Mousefood]: https://github.com/ratatui/mousefood
-[Using Ratatui without std]: https://docs.rs/ratatui/latest/ratatui/#using-ratatui-without-std
+/// For text rendering, prefer rendering [`Span`], [`Line`], or [`Text`](crate::text::Text) as
+/// widgets. These text widgets restrict rendering to the intersection of the requested area and
+/// the buffer's area. For unstyled text in an area known to be inside the buffer, a [`&str`](str)
+/// or [`String`](alloc::string::String) can also be rendered directly. Their widget implementations
+/// currently delegate to [`set_stringn`](Self::set_stringn) and retain its bounds behavior.
+/// The coordinate-based text setters retain historical behavior for compatibility. For individual
+/// cells, use [`cell`](Self::cell) and [`cell_mut`](Self::cell_mut) when a position might be
+/// outside the buffer, or indexing when the position is known to be inside it.
+///
+/// # Examples
+/// use ratatui_core::text::Span;
+/// use ratatui_core::widgets::Widget;
+///
+/// // Preferred for general text rendering: express the position and width as an area.
+/// let span = Span::styled("string", Style::default().fg(Color::Red).bg(Color::White));
+/// span.render(Rect::new(3, 0, 7, 1), &mut buf);
+    /// Panics if the position is outside the buffer's area.
+    ///
+    /// # Examples
+    ///
+    /// Compare this me
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+/// # Examples:
+    /// Panics if the index is out of bounds.
+    /// Panics when given an coordinate that is outside of this Buffer's area.
+    /// # Panics
+    ///
+    /// Panics when given an index that is outside the Buffer's content.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cdcb0c01` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0ce9cff0` are properly handled with clean fallback behavior.

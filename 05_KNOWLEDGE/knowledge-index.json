@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T21:56:56.876Z",
+  "last_updated": "2026-10-31T22:05:19.722Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -28689,7 +28689,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
-      "content_hash": "e121d93db0747f24e2f1a65c66e0fcfc6e7c9bd829c9e9f964611118b21c1717",
+      "content_hash": "e5cbc5aafd1e84cc35d75c4c6ef3ebeb06a037b6cc990bc1cb0858d4a28bd784",
       "dossier_path": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
       "promoted_rules": [
@@ -28729,6 +28729,16 @@
           "number": 5399,
           "title": "Quantized Model Abliteration Consistency Rule",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6344,
+          "title": "In-Place Binary Model Container Tensor Transplant Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6345,
+          "title": "Mixed-Quant Sub-3-Bit Scale Invariance",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -28749,7 +28759,7 @@
         "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv43ve6m",
         "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv4h47ur"
       ],
-      "verified_at": "2026-10-28T20:37:51.267Z",
+      "verified_at": "2026-10-31T22:05:19.701Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47710,8 +47720,8 @@
       "slug": "ratatui-ratatui",
       "platform": "github",
       "source_url": "https://github.com/ratatui/ratatui",
-      "source_version": "cdcb0c01",
-      "content_hash": "b025385b59c48242629bd45a2983410122e23571270a54abda87ec3cd9eedc85",
+      "source_version": "21bf834c",
+      "content_hash": "5dc17fbf29412b5265e588565586ec065d96036329a12f57a2bcfee5ad3a09ea",
       "dossier_path": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
       "promoted_rules": [
@@ -47749,6 +47759,11 @@
           "number": 5075,
           "title": "build(deps): bump release-plz/action from 0.5.142 to 0.5.145 (#2860)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6343,
+          "title": "docs(buffer): clarify rendering and bounds (#2814)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47756,7 +47771,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T06:52:40.296Z",
+      "verified_at": "2026-10-31T22:03:49.739Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -164854,6 +164869,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T21:56:56.864Z"
+    },
+    "rule-6343": {
+      "learning_id": "rule-6343",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6343,
+      "title": "docs(buffer): clarify rendering and bounds (#2814)",
+      "source_url": "https://github.com/ratatui/ratatui",
+      "source_version": "21bf834c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T22:03:49.739Z"
+    },
+    "rule-6344": {
+      "learning_id": "rule-6344",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6344,
+      "title": "In-Place Binary Model Container Tensor Transplant Invariant",
+      "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T22:05:19.701Z"
+    },
+    "rule-6345": {
+      "learning_id": "rule-6345",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6345,
+      "title": "Mixed-Quant Sub-3-Bit Scale Invariance",
+      "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T22:05:19.702Z"
     }
   },
   "aliases": {

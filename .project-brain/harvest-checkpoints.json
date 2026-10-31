@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T21:56:56.956Z",
+  "last_updated": "2026-10-31T22:05:19.814Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -275,14 +275,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-      "content_hash": "e121d93db0747f24e2f1a65c66e0fcfc6e7c9bd829c9e9f964611118b21c1717",
-      "verified_at": "2026-10-28T20:37:51.372Z",
+      "content_hash": "e5cbc5aafd1e84cc35d75c4c6ef3ebeb06a037b6cc990bc1cb0858d4a28bd784",
+      "verified_at": "2026-10-31T22:05:19.813Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T20:37:51.372Z"
+      "last_updated": "2026-10-31T22:05:19.813Z"
     },
     "deepseek-ai/DeepSeek-R1": {
       "repository": "deepseek-ai/DeepSeek-R1",
@@ -5451,14 +5451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ratatui-ratatui",
-      "content_hash": "b025385b59c48242629bd45a2983410122e23571270a54abda87ec3cd9eedc85",
-      "verified_at": "2026-10-28T06:52:40.412Z",
+      "content_hash": "5dc17fbf29412b5265e588565586ec065d96036329a12f57a2bcfee5ad3a09ea",
+      "verified_at": "2026-10-31T22:03:49.851Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T06:52:40.412Z"
+      "last_updated": "2026-10-31T22:03:49.851Z"
     },
     "invertase/react-native-firebase": {
       "repository": "invertase/react-native-firebase",

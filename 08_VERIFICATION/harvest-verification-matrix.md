@@ -6731,3 +6731,5 @@
 | `CYCLE-20261031-KPVP` | `2026-10-31T21:46:14.149Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1514, Rule 6336, Rule 6337` | Yes (`3aea0b12...`) |
 | `CYCLE-20261031-WAAT` | `2026-10-31T21:55:13.829Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6338, Rule 6339` | Yes (`e678fc1c...`) |
 | `CYCLE-20261031-YHV7` | `2026-10-31T21:56:56.947Z` | `vanniktech/gradle-maven-publish-plugin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6340, Rule 6341, Rule 6342` | Yes (`921cae95...`) |
+| `CYCLE-20261031-7CGE` | `2026-10-31T22:03:49.838Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6343` | Yes (`5dc17fbf...`) |
+| `CYCLE-20261031-99VC` | `2026-10-31T22:05:19.800Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6344, Rule 6345` | Yes (`e5cbc5aa...`) |
