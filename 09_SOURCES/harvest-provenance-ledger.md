@@ -6672,3 +6672,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-facebookai-xlm-roberta-base` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-31T17:50:09.275Z |
 | `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `41e69122` | Multi-dimensional audit evidence | 2026-10-31T17:50:10.911Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `c8d414db` | Multi-dimensional audit evidence | 2026-10-31T17:50:25.218Z |
+| `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `1709a9ce` | Multi-dimensional audit evidence | 2026-10-31T18:01:39.400Z |
+| `learn-huggingface-openai-community-gpt2` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-31T18:01:42.409Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `90b24cce` | Multi-dimensional audit evidence | 2026-10-31T18:01:47.346Z |

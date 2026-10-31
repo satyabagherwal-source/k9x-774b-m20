@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source**: github ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
-> **Source Version**: `9fd19cdd`  
+> **Source Version**: `90b24cce`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T01:46:56.185Z  
+> **Timestamp**: 2026-10-31T18:01:46.901Z  
 > **Learning ID**: `learn-github-starrocks-starrocks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T01:46:55.279Z  
+> **Harvest Timestamp**: 2026-10-31T18:01:46.617Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1818,486 +1818,388 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8805a623` (2026-10-30)
-**Commit Message**: [BugFix][RB-760] Invalidate Iceberg, Delta and Hudi INSERT sources instead of refreshing them under the table lock (#81923)
+### Incident Patch 1: `ec9a17ed` (2026-10-31)
+**Commit Message**: [BugFix][RB-689] Stop rewriting month-based date arithmetic as if it were invertible (#81979)
 
+Signed-off-by: tqqq <[REDACTED_EMAIL]>
 Co-authored-by: tqqq <[REDACTED_EMAIL]>
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/connector/delta/DeltaLakeCacheUpdateProcessor.java` (modified, +4/-0)
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/rewrite/scalar/ArithmeticCommutativeRule.java` (modified, +2/-4)
 ```diff
-@@ -33,6 +33,10 @@ public void refreshTable(String dbName, Table table, boolean onlyCachedPartition
-         cachingMetastore.refreshTable(dbName, table.getName(), onlyCachedPartitions);
-     }
+@@ -32,14 +32,12 @@
  
-+    public void invalidateTable(String dbName, String tableName) {
-+        cachingMetastore.invalidateTable(dbName, tableName);
-+    }
-+
-     @Override
-     public Set<DatabaseTableName> getCachedTableNames() {
-         return cachingMetastore.getCachedTableNames();
+ public class ArithmeticCommutativeRule extends BottomUpScalarOperatorRewriteRule {
+     // Don't support DIVIDE, because DIVIDE will use double type, Double is not efficient and will lose precision
++    // Don't support years/months add/sub: they clamp to the month end, so they are not invertible, e.g.
++    // months_add(c, 1) = '2024-02-29' holds for c in 2024-01-29..31, not only for months_sub('2024-02-29', 1)
+     private static final Map<String, String> LEFT_COMMUTATIVE_MAP = ImmutableMap.<String, String>builder()
+             .put(FunctionSet.ADD, FunctionSet.SUBTRACT)
+             .put(FunctionSet.SUBTRACT, FunctionSet.ADD)
+             .put(FunctionSet.DIVIDE, FunctionSet.MULTIPLY)
+-            .put(FunctionSet.YEARS_ADD, FunctionSet.YEARS_SUB)
+-            .put(FunctionSet.YEARS_SUB, FunctionSet.YEARS_ADD)
+-            .put(FunctionSet.MONTHS_ADD, FunctionSet.MONTHS_SUB)
+-            .put(FunctionSet.MONTHS_SUB, FunctionSet.MONTHS_ADD)
+             .put(FunctionSet.DAYS_ADD, FunctionSet.DAYS_SUB)
+             .put(FunctionSet.DAYS_SUB, FunctionSet.DAYS_ADD)
+             .put(FunctionSet.ADDDATE, FunctionSet.SUBDATE)
 ```
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/connector/delta/DeltaLakeMetadata.java` (modified, +15/-0)
-```diff
-@@ -485,6 +485,21 @@ public void refreshTable(String srDbName, Table table, List<String> partitionNam
-         }
-     }
- 
-+    /**
-+     * Drops this table's snapshot from both cache levels instead of reloading it, with no remote I/O and without the
-+     * catalog's per-table refresh lock: the planner's next getTable then loads the latest snapshot. A refresh would
-+     * read the Delta log under that lock, so concurrent INSERTs reading the same source would queue behind it.
-+     */
-+    @Override
-+    public void invalidateTableForRead(String srDbName, Table table) {
-+        String dbName = table.getCatalogDBName();
-+        String tableName = table.getCatalogTableName();
-+        deltaOps.invalidateTable(dbName, tableName);
-+        if (cacheUpdateProcessor != null) {
-+            cacheUpdateProcessor.invalidateTable(dbName, tableName);
-+        }
-+    }
-+
-     @Override
-     public void clear() {
-         deltaOps.invalidateAll();
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/connector/delta/DeltaMetastoreOperations.java` (modified, +4/-0)
-```diff
-@@ -63,4 +63,8 @@ public MetastoreType getMetastoreType() {
-     public void invalidateAll() {
-         this.metastore.invalidateAll();
-     }
-+
-+    public void invalidateTable(String dbName, String tableName) {
-+        this.metastore.invalidateTable(dbName, tableName);
-+    }
- }
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/connector/hudi/HudiMetadata.java` (modified, +11/-0)
-```diff
-@@ -235,6 +235,17 @@ public void refreshTable(String srDbName, Table table, List<String> partitionNam
-         }
-     }
- 
-+    /**
-+     * Drops this table from both cache levels instead of reloading it, as HiveMetadata does: the table, its
-+     * partitions, statistics and file lists. No remote I/O and no per-table refresh lock, so concurrent INSERTs
-+     * reading the same source do not queue behind each other's metastore load; planning loads what it reads.
-+     */
-+    @Override
-+    public void invalidateTableForRead(String srDbName, Table table) {
-+        hmsOps.invalidateTable(table.getCatalogDBName(), table.getCatalogTableName());
-+        cacheUpdateProcessor.ifPresent(processor -> processor.invalidateTableForRead(table));
-+    }
-+
-     @Override
-     public void dropTable(ConnectContext context, DropTableStmt stmt) throws DdlException {
-         String dbName = stmt.getDbName();
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/connector/iceberg/IcebergMetadata.java` (modified, +19/-0)
-```diff
-@@ -2584,6 +2584,25 @@ public void refreshTable(String srDbName, Table table, List<String> partitionNam
-         }
-     }
- 
-+    /**
-+     * Drop only the cached table object, with no remote I/O and without the catalog's per-table refresh lock: the
-+     * planner's next getTable then loads the table as it is now. A refresh would load it remotely under that lock,
-+     * so concurrent INSERTs reading the same source queue behind each other's remote load. The partition and
-+     * manifest caches are keyed by snapshot and file path, so they stay valid for whatever snapshot is loaded.
-+     */
-+    @Override
-+    public void invalidateTableForRead(String srDbName, Table table) {
-+        if (isResourceMappingCatalog(catalogName)) {
-+            refreshTable(srDbName, table, new ArrayList<>(), false);
-+            return;
-+        }
-+        IcebergTable icebergTable = (IcebergTable) table;
-+        String dbName = icebergTable.getCatalogDBName();
-+        String tableName = icebergTable.getCatalogTableName();
-+        tables.remove(TableIdentifier.of(dbName, tableName));
-+        icebergCatalog.invalidateTableCache(dbName, tableName);
-+    }
-+
-     private void refreshTableWithResource(Table table) {
-         IcebergTable icebergTable = (IcebergTable) table;
-         org.apache.iceberg.Table nativeTable = icebergTable.getNativeTable();
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/connector/delta/DeltaLakeMetadataTest.java` (modified, +42/-0)
-```diff
-@@ -64,6 +64,8 @@
- 
- import java.util.List;
- import java.util.Optional;
-+import java.util.concurrent.Executors;
-+import java.util.concurrent.atomic.AtomicInteger;
- 
- public class DeltaLakeMetadataTest {
-     private HiveMetaClient client;
-@@ -280,4 +282,44 @@ public void testIdentityStringPartitionColumns() {
-         Assertions.assertEquals(Sets.newHashSet("c2"),
-                 DeltaLakeMetadata.identityStringPartitionColumns(table, Sets.newHashSet("c2", "c3")));
-     }
-+
-+    @Test
-+    public void testInvalidateTableForReadDoesNoRemoteLoad() {
-+        AtomicInteger snapshotLoads = new AtomicInteger();
-+        new MockUp<DeltaLakeMetastore>() {
-+            @Mock
-+            public DeltaLakeSnapshot getLatestSnapshot(String dbName, String tableName) {
-+                snapshotLoads.incrementAndGet();
-+                return new DeltaLakeSnapshot(dbName, tableName, null, null,
-+                        new MetastoreTable(dbName, tableName, "s3://bucket/path/to/table", 123));
-+            }
-+        };
-+        new MockUp<DeltaUtils>() {
-+            @Mock
-+            public DeltaLakeTable convertDeltaSnapshotToSRTable(String catalog, DeltaLakeSnapshot snapshot) {
-+                return new DeltaLakeTable(1, "delta0", "db1", "table1", Lists.newArrayList(), Lists.newArrayList(),
-+                        null, null, new MetastoreTable("db1", "table1", "s3://bucket/path/to/table", 123));
-+            }
-+        };
-+        HMSBackedDeltaMetastore hmsBackedDeltaMetastore = new HMSBackedDeltaMetastore("delta0",
-+                new HiveMetastore(client, "delta0", MetastoreType.HMS), new Configuration(),
-+                new DeltaLakeCatalogProperties(Maps.newHashMap()));
-+        CachingDeltaLakeMetastore catalogLevel = CachingDeltaLakeMetastore.createCatalogLevelInstance(
-+                hmsBackedDeltaMetastore, Executors.newSingleThreadExecutor(), 3600, -1, 100);
-+        DeltaMetastoreOperations deltaOps = new DeltaMetastoreOperations(
-+                CachingDeltaLakeMetastore.createQueryLevelInstance(catalogLevel, 100), true, MetastoreType.HMS);
-+        DeltaLakeMetadata metadata = new DeltaLakeMetadata(new HdfsEnvironment(Maps.newHashMap()), "delta0",
-+                deltaOps, new DeltaLakeCacheUpdateProcessor(catalogLevel), new ConnectorProperties(ConnectorType.DELTALAKE));
-+
-+        Table table = metadata.getTable(new ConnectContext(), "db1", "table1");
-+        Assertions.assertEquals(1, snapshotLoads.get());
-+
-+        // Invalidating for a read only drops the cached snapshot, at both cache levels; it does not read the log.
-+        metadata.invalidateTableForRead("db1", table);
-+        Assertions.assertEquals(1, snapshotLoads.get());
-+
-+        // The next read loads the latest snapshot, past the query-level cache too.
-+        metadata.getTable(new ConnectContext(), "db1", "table1");
-+        Assertions.assertEquals(2, snapshotLoads.get());
-+    }
- }
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/connector/hudi/HudiMetadataTest.java` (modified, +36/-1)
-```diff
-@@ -16,17 +16,20 @@
- 
- import com.google.common.collect.Lists;
- import com.starrocks.catalog.Database;
-+import com.starrocks.catalog.Table;
- import com.starrocks.common.FeConstants;
- import com.starrocks.common.util.LogUtil;
- import com.starrocks.connector.CachingRemoteFileIO;
- import com.starrocks.connector.ConnectorMetadataRequestContext;
- import com.starrocks.connector.ConnectorProperties;
- import com.starrocks.connector.ConnectorType;
-+import com.starrocks.connector.DatabaseTableName;
- import com.starrocks.connector.HdfsEnvironment;
- import com.starrocks.connector.MetastoreType;
- import com.starrocks.connector.RemoteFileOperations;
- import com.starrocks.connector.exception.StarRocksConnectorException;
- import com.starrocks.connector.hive.CachingHiveMetastore;
-+import com.starrocks.connector.hive.HiveCacheUpdateProcessor;
- import com.starrocks.connector.hive.HiveMetaClient;
- import com.starrocks.connector.hive.HiveMetastore;
- import com.starrocks.connector.hive.HiveMetastoreOperations;
-@@ -38,6 +41,9 @@
- import com.starrocks.sql.optimizer.base.ColumnRefFactory;
- import com.starrocks.utframe.UtFrameUtils;
- import mockit.Expectations;
-+import mockit.Invocation;
-+import mockit.Mock;
-+import mockit.MockUp;
- import mockit.Mocked;
- import org.apache.hadoop.conf.Configuration;
- import org.junit.jupiter.api.AfterEach;
-@@ -49,6 +55,7 @@
- import java.util.Optional;
- import java.util.concurrent.ExecutorService;
- import java.util.concurrent.Executors;
-+import java.util.concurrent.atomic.AtomicInteger;
- 
- public class HudiMetadataTest {
-     private HiveMetaClient client;
-@@ -159,4 +166,32 @@ public void testGetCloudConfiguration() {
-         CloudConfiguration cc = hudiMetadata.getCloudConfiguration();
-         Assertions.assertEquals(cc.getCloudType(), CloudType.DEFAULT);
-     }
--}
-\ No newline at end of file
-+
-+    @Test
-+    public void testInvalidateTableForReadDoesNoRemoteLoad() {
-+        AtomicInteger remoteTableLoads = new AtomicInteger();
-+        new MockUp<HiveMetastore>() {
-+            @Mock
-+            public Table getTable(Invocation inv, String dbName, String tableName) {
-+                remoteTableLoads.incrementAndGet();
-+                return inv.proceed(dbName, tableName);
-+            }
-+        };
-+        HiveCacheUpdateProcessor processor = new HiveCacheUpdateProcessor("hive_catalog", cachingHiveMetastore,
-+                cachingRemoteFileIO, executorForPullFiles, false, false);
-+        HudiMetadata metadata = new HudiMetadata("hive_catalog", new HdfsEnvironment(), hmsOps, fileOps,
-+                statisticsProvider, Optional.of(processor), new ConnectorProperties(ConnectorType.HUDI));
-+
-+        Table table = hmsOps.getTable("db1", "table1");
-+        Assertions.assertEquals(1, remoteTableLoads.get());
-+        Assertions.assertTrue(cachingHiveMetastore.isTablePresent(DatabaseTableName.of("db1", "table1")));
-+
-+        // Invalidating for a read only drops what is cached; it does not reload the table from the metastore.
-+        metadata.invalidateTableForRead("db1", table);
-+        Assertions.assertEquals(1, remoteTableLoads.get());
-+        Assertions.assertFalse(cachingHiveMetastore.isTablePresent(DatabaseTableName.of("db1", "table1")));
-+
-+        hmsOps.getTable("db1", "table1");
-+        Assertions.assertEquals(2, remoteTableLoads.get());
-+    }
-+}
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/connector/iceberg/IcebergMetadataTest.java` (modified, +33/-0)
-```diff
-@@ -2904,6 +2904,39 @@ public void testRefreshTableException(@Mocked CachingIcebergCatalog icebergCatal
-         metadata.refreshTable("db", icebergTable, null, true);
-     }
- 
-+    @Test
-+    public void testInvalidateTableForReadDoesNoRemoteLoad() {
-+        AtomicInteger remoteLoads = new AtomicInteger();
-+        AtomicReference<org.apache.iceberg.Table> remoteTable = new AtomicReference<>(mockedNativeTableA);
-+        new MockUp<IcebergHiveCatalog>() {
-+            @Mock
-+            org.apache.iceberg.Table getTable(ConnectContext context, String dbName, String tableName)
-+                    throws StarRocksConnectorException {
-+                remoteLoads.incrementAndGet();
-+                return remoteTable.get();
-+            }
-+        };
-+        IcebergHiveCatalog icebergHiveCatalog = new IcebergHiveCatalog(CATALOG_NAME, new Configuration(), DEFAULT_CONFIG);
-+        CachingIcebergCatalog cachingIcebergCatalog = new CachingIcebergCatalog(CATALOG_NAME, icebergHiveCatalog,
-+                DEFAULT_CATALOG_PROPERTIES, Executors.newSingleThreadExecutor());
-+        IcebergMetadata metadata = new IcebergMetadata(CATALOG_NAME, HDFS_ENVIRONMENT, cachingIcebergCatalog,
-+                Executors.newSingleThreadExecutor(), null);
-+
-+        Assertions.assertSame(mockedNativeTableA, cachingIcebergCatalog.getTable(connectContext, "db", "table"));
-+        Assertions.assertEquals(1, remoteLoads.get());
-+
-+        // The remote table moves on; invalidating it for a read must not load it, only drop the cached object.
-+        remoteTable.set(mockedNativeTableB);
-+        IcebergTable icebergTable = new IcebergTable(1, "srTableName", CATALOG_NAME, "resource_name", "db",
-+                "table", "", new ArrayList<>(), mockedNativeTableA, Maps.newHashMap());
-+        metadata.invalidateTableForRead("db", icebergTable);
-+        Assertions.assertEquals(1, remoteLoads.get());
-+
-+        // The next read loads the table as it is now.
-+        Assertions.assertSame(mockedNativeTableB, cachingIcebergCatalog.getTable(connectContext, "db", "table"));
-+        Assertions.assertEquals(2, remoteLoads.get());
-+    }
-+
-     @Test
-     public void testAlterTable(@Mocked IcebergHiveCatalog icebergHiveCatalog) throws StarRocksException {
-         IcebergMetadata metadata = new IcebergMetadata(CATALOG_NAME, HDFS_ENVIRONMENT, icebergHiveCatalog,
-```
-
----
-
-### Incident Patch 2: `4aa3dd33` (2026-10-30)
-**Commit Message**: [UT] Check whole result columns with debug_string in a few more BE tests (#81950)
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `be/test/column/variant_merger_test.cpp` (modified, +1/-4)
-```diff
-@@ -277,10 +277,7 @@ PARALLEL_TEST(VariantColumnMergerTest, cast_variant_typed_column_to_varchar_form
-     ASSERT_TRUE(casted.ok()) << casted.status().to_string();
- 
-     const auto* nullable = down_cast<const NullableColumn*>(casted.value().get());
--    ASSERT_EQ(3, nullable->size());
--    EXPECT_EQ("dept_0", nullable->get(0).get_slice().to_string());
--    EXPECT_EQ("100", nullable->get(1).get_slice().to_string());
--    EXPECT_TRUE(nullable->get(2).is_null());
-+    ASSERT_EQ("['dept_0', '100', NULL]", nullable->debug_string());
- }
- 
- PARALLEL_TEST(VariantColumnMergerTest, cast_variant_typed_column_to_datetime_requires_explicit_timezone_context) {
-```
-
-**File**: `be/test/exprs/array_functions_test.cpp` (modified, +1/-7)
-```diff
-@@ -175,13 +175,7 @@ TEST_F(ArrayFunctionsTest, array_length) {
-                 TYPE_ARRAY_INT_DESC, true, {{}, NullArrayRow{}, {std::nullopt}, {1}, {1, 2}});
- 
-         auto result = ArrayFunctions::array_length(nullptr, {c}).value();
--        EXPECT_EQ(5, result->size());
--
--        EXPECT_EQ(result->get(0), Datum(0));
--        EXPECT_EQ(result->get(1), kNullDatum);
--        EXPECT_EQ(result->get(2), Datum(1));
--        EXPECT_EQ(result->get(3), Datum(1));
--        EXPECT_EQ(result->get(4), Datum(2));
-+        EXPECT_EQ("[0, NULL, 1, 1, 2]", result->debug_string());
- 
-         // array_length should not mutate input nullable null bitmap.
-         auto* nullable = down_cast<NullableColumn*>(c.get());
-```
-
-**File**: `be/test/formats/parquet/group_reader_test.cpp` (modified, +1/-3)
-```diff
-@@ -3004,9 +3004,7 @@ TEST_F(GroupReaderTest, FillDstChunkProjectsVirtualVarcharColumnFromPhysicalSour
- 
-     ASSERT_OK(fill_dst_chunk_without_projected(group_reader, read_chunk, &dst_chunk));
-     const auto& result = dst_chunk->get_column_by_slot_id(virtual_slot->id());
--    ASSERT_EQ(2, result->size());
--    EXPECT_EQ("11", result->get(0).get_slice().to_string());
--    EXPECT_EQ("22", result->get(1).get_slice().to_string());
-+    ASSERT_EQ("['11', '22']", result->debug_string());
- }
- 
- TEST_F(GroupReaderTest, FillDstChunkProjectsVirtualColumnFromHiddenVariantSource) {
-```
-
-**File**: `be/test/storage/rowset/binary_dict_page_test.cpp` (modified, +3/-16)
-```diff
-@@ -145,12 +145,7 @@ class BinaryDictPageTest : public testing::Test {
-         read_range.add(Range<>(4, 7));
-         status = page_decoder.next_batch(read_range, column.get());
-         ASSERT_TRUE(status.ok());
--        ASSERT_EQ(5, column->size());
--        ASSERT_EQ("Individual", column->get(0).get_slice().to_string());
--        ASSERT_EQ("Lifetime", column->get(1).get_slice().to_string());
--        ASSERT_EQ("Evolution", column->get(2).get_slice().to_string());
--        ASSERT_EQ("Nature", column->get(3).get_slice().to_string());
--        ASSERT_EQ("Captain", column->get(4).get_slice().to_string());
-+        ASSERT_EQ("['Individual', 'Lifetime', 'Evolution', 'Nature', 'Captain']", column->debug_string());
-     }
- 
-     void test_with_large_data_size(const std::vector<Slice>& contents) {
-@@ -368,10 +363,7 @@ TEST_F(BinaryDictPageTest, TestNextBatchWithFilter) {
-         ASSERT_EQ(1, selection[3]);
-         ASSERT_EQ(1, selection[4]);
- 
--        ASSERT_EQ(3, column->size());
--        ASSERT_EQ("c_300", column->get(0).get_slice().to_string());
--        ASSERT_EQ("d_400", column->get(1).get_slice().to_string());
--        ASSERT_EQ("e_500", column->get(2).get_slice().to_string());
-+        ASSERT_EQ("['c_300', 'd_400', 'e_500']", column->debug_string());
-     }
- 
-     // Reset decoder state
-@@ -529,12 +521,7 @@ TEST_F(BinaryDictPageTest, TestReadByRowids) {
-     st = page_decoder.read_by_rowids(0, rowids, &num_read, column.get());
-     ASSERT_TRUE(st.ok());
-     ASSERT_EQ(4, num_read);
--    ASSERT_EQ(4, column->size());
--
--    ASSERT_EQ("val_1", column->get(0).get_slice().to_string());
--    ASSERT_EQ("val_3", column->get(1).get_slice().to_string());
--    ASSERT_EQ("val_5", column->get(2).get_slice().to_string());
--    ASSERT_EQ("val_8", column->get(3).get_slice().to_string());
-+    ASSERT_EQ("['val_1', 'val_3', 'val_5', 'val_8']", column->debug_string());
- }
- 
- // A predicate that rejects every dictionary entry used to make next_batch_with_filter return before consuming the
-```
-
----
-
-### Incident Patch 3: `8845bbed` (2026-10-30)
-**Commit Message**: [BugFix][RB-882] Avoid recursion in MV force drop when retention period is 0 (#81953)
-
-Signed-off-by: Kevin Cai <[REDACTED_EMAIL]>
-Co-authored-by: Kevin Cai <[REDACTED_EMAIL]>
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/OlapTable.java` (modified, +3/-2)
-```diff
-@@ -1510,8 +1510,9 @@ public void dropPartitionWithRetention(long dbId, String partitionName, long par
- 
-             removePartitionFromInnerState(partition);
-         } else {
--            // if `partitionRetentionPeriod` is not valid, fallback to drop partition forcefully
--            dropPartition(dbId, partitionName, true);
-+            // if `partitionRetentionPeriod` is not valid, fallback to drop partition forcefully.
-+            // Call the private variant: MaterializedView overrides the public one to call back here.
-+            dropPartition(dbId, partitionName, true, false);
-         }
-     }
- 
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/catalog/DropPartitionWithExprRangeTest.java` (modified, +39/-0)
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/rewrite/scalar/SimplifiedPredicateRule.java` (modified, +7/-0)
 ```diff
 @@ -16,6 +16,7 @@
  
  import com.google.common.collect.ImmutableList;
- import com.starrocks.clone.DynamicPartitionScheduler;
-+import com.starrocks.common.Config;
- import com.starrocks.scheduler.mv.pct.MVPCTRefreshProcessor;
- import com.starrocks.server.GlobalStateMgr;
- import com.starrocks.sql.ast.StatementBase;
-@@ -430,4 +431,42 @@ public void testMVRefreshWithTTLCondition2() {
-                     });
+ import com.google.common.collect.ImmutableMap;
++import com.google.common.collect.ImmutableSet;
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Sets;
+ import com.starrocks.catalog.Function;
+@@ -66,6 +67,7 @@ public class SimplifiedPredicateRule extends BottomUpScalarOperatorRewriteRule {
+             .put("microseconds_", ImmutableList.of(FunctionSet.MICROSECONDS_ADD, FunctionSet.MICROSECONDS_SUB))
+             .put("date", ImmutableList.of(FunctionSet.DATE_ADD, FunctionSet.DATE_SUB))
+             .build();
++    private static final Set<String> MONTH_BASED_TIME_FNS = ImmutableSet.of("years_", "quarters_", "months_");
+     private static final List<String> TIME_FN_NAMES = ImmutableList.<String>builder()
+             .add(FunctionSet.YEARS_ADD).add(FunctionSet.YEARS_SUB)
+             .add(FunctionSet.QUARTERS_ADD).add(FunctionSet.QUARTERS_SUB)
+@@ -464,6 +466,11 @@ private ScalarOperator simplifiedTimeFns(CallOperator call) {
+         if (l1.isNull() || l2.isNull()) {
+             return ConstantOperator.createNull(call.getType());
+         }
++        // years/quarters/months clamp to the month end, so they do not compose:
++        // months_add(months_add('2024-01-31', 1), 1) = '2024-03-29' but months_add('2024-01-31', 2) = '2024-03-31'
++        if (MONTH_BASED_TIME_FNS.contains(fn)) {
++            return call;
++        }
+ 
+         int i1 = call.getFnName().contains("add") ? l1.getInt() : l1.getInt() * -1;
+         int i2 = child.getFnName().contains("add") ? l2.getInt() : l2.getInt() * -1;
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/sql/plan/ExpressionTest.java` (modified, +19/-4)
+```diff
+@@ -1012,13 +1012,22 @@ public void testArithmeticCommutative() throws Exception {
+         planFragment = getFragmentPlan(sql);
+         assertContains(planFragment, "PREDICATES: 8: id_datetime = '2020-12-23 00:00:00'");
+ 
++        // years/months add/sub clamp to the month end and are not invertible: keep the predicate as is
+         sql = "select t1a from test_all_type where years_sub(id_datetime, 2) = '2020-12-21'";
+         planFragment = getFragmentPlan(sql);
+-        assertContains(planFragment, "PREDICATES: 8: id_datetime = '2022-12-21 00:00:00'");
++        assertContains(planFragment, "PREDICATES: years_sub(8: id_datetime, 2) = '2020-12-21 00:00:00'");
+ 
+-        sql = "select t1a from test_all_type where years_add(id_datetime, 2) = '2020-12-21'";
++        sql = "select t1a from test_all_type where years_add(id_datetime, 1) = '2025-02-28'";
+         planFragment = getFragmentPlan(sql);
+-        assertContains(planFragment, "PREDICATES: 8: id_datetime = '2018-12-21 00:00:00'");
++        assertContains(planFragment, "PREDICATES: years_add(8: id_datetime, 1) = '2025-02-28 00:00:00'");
++
++        sql = "select t1a from test_all_type where months_add(id_datetime, 1) = '2024-02-29'";
++        planFragment = getFragmentPlan(sql);
++        assertContains(planFragment, "PREDICATES: months_add(8: id_datetime, 1) = '2024-02-29 00:00:00'");
++
++        sql = "select t1a from test_all_type where date_add(id_datetime, interval 1 month) < '2024-02-29'";
++        planFragment = getFragmentPlan(sql);
++        assertContains(planFragment, "PREDICATES: months_add(8: id_datetime, 1) < '2024-02-29 00:00:00'");
+     }
+ 
+     @Test
+@@ -1802,9 +1811,15 @@ public void testDateAddReduce() throws Exception {
+         plan = getFragmentPlan(sql);
+         assertContains(plan, "days_sub(CAST(2: v2 AS DATETIME), 6)");
+ 
++        // years/quarters/months clamp to the month end and do not compose: 2020-02-29 + 1 + 2 - 3 years = 2020-02-28
+         sql = "select years_add(years_sub(years_sub(v2, -1), -2), -3) from t0";
+         plan = getFragmentPlan(sql);
+-        assertContains(plan, "<slot 4> : CAST(2: v2 AS DATETIME)");
++        assertContains(plan, "years_add(years_sub(years_sub(CAST(2: v2 AS DATETIME), -1), -2), -3)");
++
++        sql = "select months_sub(months_add(v2, 1), 1), quarters_add(quarters_add(v2, 1), 1) from t0";
++        plan = getFragmentPlan(sql);
++        assertContains(plan, "months_sub(months_add(6: cast, 1), 1)");
++        assertContains(plan, "quarters_add(quarters_add(6: cast, 1), 1)");
+ 
+         sql = "select date_add(date_add(date_sub(v2, -1), -2), -3) from t0";
+         plan = getFragmentPlan(sql);
+```
+
+---
+
+### Incident Patch 2: `3e3d88cd` (2026-10-31)
+**Commit Message**: [BugFix][RB-225] Keep array<struct> rows when unnest reads only an element subfield missing from the file (#81971)
+
+Co-authored-by: tqqq <[REDACTED_EMAIL]>
+Co-authored-by: tqqq <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `be/src/exec/pipeline/table_function_operator.cpp` (modified, +4/-4)
+```diff
+@@ -319,10 +319,10 @@ void TableFunctionOperator::_copy_result(Columns& columns, uint32_t max_output_s
+         }
+ 
+         uint32_t copy_rows = std::min(end - start, max_output_size - curr_output_size);
+-        VLOG(2) << "_next_output_row=" << _next_output_row << " start=" << start << " end=" << end
+-                << " copy_rows=" << copy_rows << " input_size=" << offsets_data.back()
+-                << " _next_output_row_offset=" << _next_output_row_offset
+-                << " _input_index_of_first_result=" << _input_index_of_first_result;
++        VLOG_ROW << "_next_output_row=" << _next_output_row << " start=" << start << " end=" << end
++                 << " copy_rows=" << copy_rows << " input_size=" << offsets_data.back()
++                 << " _next_output_row_offset=" << _next_output_row_offset
++                 << " _input_index_of_first_result=" << _input_index_of_first_result;
+ 
+         if (copy_rows > 0) {
+             append_outer(copy_rows);
+```
+
+**File**: `be/src/exprs/table_function/multi_unnest.h` (modified, +4/-4)
+```diff
+@@ -174,10 +174,10 @@ class MultiUnnest final : public TableFunction {
+         // the batch's input-row range plus the intra-row offset it stopped at is exactly what the
+         // operator pairs its outer columns against. Same VLOG level as TableFunctionOperator's own
+         // per-bracket trace, so both sides of the contract can be read together.
+-        VLOG(2) << "MultiUnnest batch: input_rows=" << input_rows << " first_row=" << first_row
+-                << " processed_rows=" << state->processed_rows() << " offset=" << state->get_offset()
+-                << " emitted=" << emitted << " max_output_rows=" << max_output_rows
+-                << " required=" << fn_result_required;
++        VLOG_ROW << "MultiUnnest batch: input_rows=" << input_rows << " first_row=" << first_row
++                 << " processed_rows=" << state->processed_rows() << " offset=" << state->get_offset()
++                 << " emitted=" << emitted << " max_output_rows=" << max_output_rows
++                 << " required=" << fn_result_required;
+ 
+         Columns result;
+         result.reserve(num_args);
+```
+
+**File**: `be/src/formats/parquet/column_reader_factory.cpp` (modified, +58/-5)
+```diff
+@@ -14,6 +14,8 @@
+ 
+ #include "formats/parquet/column_reader_factory.h"
+ 
++#include <optional>
++
+ #include "base/failpoint/fail_point.h"
+ #include "column/column_helper.h"
+ #include "column/datum_convert.h"
+@@ -391,6 +393,43 @@ static const ParquetField* find_readable_struct_leaf(const ParquetField& field)
+     return nullptr;
+ }
+ 
++// The type a level source is read as: a scalar as itself; a list, map or struct down to a single readable leaf, so
++// that only that leaf's column is read. nullopt when no leaf under `field` is readable.
++static std::optional<TypeDescriptor> level_source_read_type(const ParquetField& field) {
++    if (is_readable_level_source(field)) {
++        return variant_typed_desc_from_parquet_field(&field);
++    }
++    switch (field.type) {
++    case ColumnType::ARRAY:
++        if (!field.children.empty()) {
++            if (auto element = level_source_read_type(field.children[0]); element.has_value()) {
++                return TypeDescriptor::create_array_type(*element);
++            }
++        }
++        return std::nullopt;
++    case ColumnType::MAP:
++        // An unknown key or value type is not read (see ColumnReaderFactory::create).
++        if (field.children.size() >= 2) {
++            if (auto key = level_source_read_type(field.children[0]); key.has_value()) {
++                return TypeDescriptor::create_map_type(*key, TypeDescriptor(TYPE_UNKNOWN));
++            }
++            if (auto value = level_source_read_type(field.children[1]); value.has_value()) {
++                return TypeDescriptor::create_map_type(TypeDescriptor(TYPE_UNKNOWN), *value);
++            }
++        }
++        return std::nullopt;
++    case ColumnType::STRUCT:
++        for (const auto& child : field.children) {
++            if (auto child_type = level_source_read_type(child); child_type.has_value()) {
++                return TypeDescriptor::create_struct_type({child.name}, {*child_type});
++            }
++        }
++        return std::nullopt;
++    default:
++        return std::nullopt;
++    }
++}
++
+ const ParquetField* ColumnReaderFactory::find_struct_level_source(const ParquetField& field) {
+     // Its values are read and dropped, so prefer a fixed-width one over a byte array.
+     const ParquetField* byte_array = nullptr;
+@@ -410,7 +449,7 @@ const ParquetField* ColumnReaderFactory::find_struct_level_source(const ParquetF
+         return byte_array;
+     }
+     // No direct scalar subfield: a leaf under a struct subfield also has one value per row and carries this
+-    // struct's def levels. A struct whose stored subfields are only lists or maps keeps reading NULL.
++    // struct's def levels.
+     for (const auto& child : field.children) {
+         if (child.type != ColumnType::STRUCT) {
+             continue;
+@@ -419,6 +458,22 @@ const ParquetField* ColumnReaderFactory::find_struct_level_source(const ParquetF
+             return leaf;
          }
      }
-+
-+    @Test
-+    public void testForceDropMVPartitionWithoutRetention() {
-+        starRocksAssert.withTable(R2,
-+                (obj) -> {
-+                    String tableName = (String) obj;
-+                    withTablePartitions(tableName);
-+                    String mvCreateDdl = String.format("create materialized view test_mv1\n" +
-+                            "partition by (dt) \n" +
-+                            "distributed by random \n" +
-+                            "REFRESH DEFERRED MANUAL \n" +
-+                            "AS select * from %s;", tableName);
-+                    starRocksAssert.withMaterializedView(mvCreateDdl,
-+                            () -> {
-+                                MaterializedView mv = starRocksAssert.getMv("test", "test_mv1");
-+                                refreshMV("test", mv);
-+                                Assertions.assertEquals(4, mv.getVisiblePartitions().size());
-+                                Database db = GlobalStateMgr.getCurrentState().getLocalMetastore().getDb("test");
-+
-+                                // without a retention period, a force drop falls back to a plain force drop
-+                                // instead of recursing between MaterializedView and OlapTable
-+                                Partition partition = mv.getPartitions().iterator().next();
-+                                long retentionPeriod = Config.partition_recycle_retention_period_secs;
-+                                Config.partition_recycle_retention_period_secs = 0;
-+                                try {
-+                                    mv.dropPartition(db.getId(), partition.getName(), true);
-+                                } finally {
-+                                    Config.partition_recycle_retention_period_secs = retentionPeriod;
-+                                }
-+                                Assertions.assertNull(mv.getPartition(partition.getName()));
-+                                RecyclePartitionInfo recycled = GlobalStateMgr.getCurrentState().getRecycleBin()
-+                                        .getRecyclePartitionInfo(partition.getId());
-+                                Assertions.assertNotNull(recycled);
-+                                Assertions.assertFalse(recycled.isRecoverable());
-+                                Assertions.assertEquals(0, recycled.getRetentionPeriod());
-+                            });
-+                });
++    // Only lists or maps are stored: one of them, read through its own list or map reader down to one leaf, still
++    // gives one entry per row, and its levels carry this struct's def levels (the extra repetition levels are
++    // skipped by the struct and by any enclosing list). Without it, a struct in a list would make the whole list
++    // NULL.
++    for (const auto& child : field.children) {
++        if ((child.type == ColumnType::ARRAY || child.type == ColumnType::MAP) &&
++            level_source_read_type(child).has_value()) {
++            return &child;
++        }
 +    }
++    // No direct list or map: a struct subfield holding one is read the same way through its struct reader.
++    for (const auto& child : field.children) {
++        if (child.type == ColumnType::STRUCT && level_source_read_type(child).has_value()) {
++            return &child;
++        }
++    }
+     return nullptr;
  }
-\ No newline at end of file
+ 
+@@ -542,8 +597,7 @@ StatusOr<ColumnReaderPtr> ColumnReaderFactory::create(const ColumnReaderOptions&
+         if (level_source_field != nullptr) {
+             // Iceberg subfields added after the file was written: keep the struct's nulls and fill the defaults.
+             // Readers keep a pointer to their type, so it lives in the struct reader.
+-            auto level_source_type =
+-                    std::make_unique<TypeDescriptor>(variant_typed_desc_from_parquet_field(level_source_field));
++            auto level_source_type = std::make_unique<TypeDescriptor>(*level_source_read_type(*level_source_field));
+             ASSIGN_OR_RETURN(ColumnReaderPtr level_source, create(opts, level_source_field, *level_source_type));
+             return std::make_unique<StructColumnReader>(field, std::move(children_readers), std::move(default_columns),
+                                                         std::move(level_source), std::move(level_source_type));
+@@ -581,8 +635,7 @@ StatusOr<ColumnReaderPtr> ColumnReaderFactory::create_array_offsets_only(const C
+     for (const auto& name : col_type.children[0].field_names) {
+         children_readers.emplace(
+```
+
+**File**: `be/src/formats/parquet/column_reader_factory.h` (modified, +3/-3)
+```diff
+@@ -94,9 +94,9 @@ class ColumnReaderFactory {
+                                                           const TIcebergSchemaField* lake_schema_field,
+                                                           bool parquet_has_field_id);
+ 
+-    // For an Iceberg struct none of whose used subfields is in the file: a stored scalar column read only for the
+-    // struct's levels (a direct subfield, else a leaf under a struct subfield), or nullptr if there is none. The
+-    // reader factory and LakeMetaHelper use the same choice.
++    // For an Iceberg struct none of whose used subfields is in the file: a stored field read only for the struct's
++    // levels (a direct scalar subfield, else a leaf under a struct subfield, else a subfield holding a list or map,
++    // read down to one leaf), or nullptr if there is none. The reader factory and LakeMetaHelper use the same choice.
+     static const ParquetField* find_struct_level_source(const ParquetField& field);
+ 
+     // For an array<struct> column whose consumers need only its offsets (access path /<col>/OFFSET, e.g.
+```
+
+**File**: `be/test/formats/parquet/iceberg_schema_evolution_file_reader_test.cpp` (modified, +97/-0)
+```diff
+@@ -25,6 +25,7 @@
+ #include "exprs/expr_executor.h"
+ #include "exprs/expr_factory.h"
+ #include "formats/parquet/column_chunk_reader.h"
++#include "formats/parquet/column_reader_factory.h"
+ #include "formats/parquet/file_reader.h"
+ #include "formats/parquet/metadata.h"
+ #include "formats/parquet/page_reader.h"
+@@ -1612,4 +1613,100 @@ TEST_F(IcebergSchemaEvolutionTest, TestInnerStructWithoutSubfield) {
+     }
+ }
+ 
++TEST_F(IcebergSchemaEvolutionTest, TestArrayStructOnlyMissingSubfieldWithListSibling) {
++    // The element struct's stored subfields hold only lists and the only used subfield was added after the file was
++    // written: a list still gives the element levels, so the array keeps its rows and the subfield reads NULL.
++    // Files (written by pyarrow, field ids as in the comments):
++    //   required int32 id = 1;
++    //   optional group arr (LIST) = 2 { repeated group list { optional group element = 3 {
++    //     optional group items (LIST) = 4 { repeated group list { optional int32 element = 5; } } } } }
++    //   with rows (1, [{[1,2]}, {[3]}]), (2, []), (3, NULL), (4, [NULL, {NULL}, {[]}]);
++    // and the same with `items` wrapped in `optional group s = 7`, so the list is reached only through a struct.
++    for (const std::string file_name : {"array_struct_only_list_subfield", "array_struct_only_nested_list_subfield"}) {
++        SCOPED_TRACE(file_name);
++        const std::string file_path =
++                "./be/test/formats/parquet/test_data/iceberg_schema_evolution/" + file_name + ".parquet";
++        auto file = _create_file(file_path);
++        auto file_reader = std::make_shared<FileReader>(config::vector_chunk_size, file.get(),
++                                                        std::filesystem::file_size(file_path));
++
++        // --------------init context---------------
++        auto ctx = _create_scan_context();
++        TIcebergSchema schema = TIcebergSchema{};
++
++        TIcebergSchemaField field_id{};
++        field_id.__set_field_id(1);
++        field_id.__set_name("id");
++
++        TIcebergSchemaField field_b{};
++        field_b.__set_field_id(6);
++        field_b.__set_name("b");
++
++        TIcebergSchemaField field_element{};
++        field_element.__set_field_id(3);
++        field_element.__set_name("element");
++        field_element.__set_children({field_b});
++
++        TIcebergSchemaField field_arr{};
++        field_arr.__set_field_id(2);
++        field_arr.__set_name("arr");
++        field_arr.__set_children({field_element});
++
++        schema.__set_fields({field_id, field_arr});
++        ctx->format_scan_context.lake_schema = &schema;
++
++        TypeDescriptor id = TypeDescriptor::from_logical_type(LogicalType::TYPE_INT);
++        TypeDescriptor element = TypeDescriptor::create_struct_type({"b"}, {TypeDescriptor(LogicalType::TYPE_INT)});
++        TypeDescriptor arr = TypeDescriptor::create_array_type(element);
++
++        Utils::SlotDesc slot_descs[] = {{"id", id}, {"arr", arr}, {""}};
++
++        TupleDescriptor* tuple_desc = parquet::Utils::create_tuple_descriptor(_runtime_state, &_pool, slot_descs);
++        Utils::make_column_info_vector(tuple_desc, &ctx->format_scan_context.materialized_columns);
++        ctx->slot_descs = tuple_desc->slots();
++        _set_scan_range(ctx, _create_scan_range(file_path));
++        // --------------finish init context---------------
++
++        ASSERT_OK(file_reader->init(&ctx->format_scan_context));
++
++        auto chunk = std::make_shared<Chunk>();
++        chunk->append_column(ColumnHelper::create_column(id, true), chunk->num_columns());
++        chunk->append_column(ColumnHelper::create_column(arr, true), chunk->num_columns());
++
++        ASSERT_OK(file_reader->get_next(&chunk));
++        ASSERT_EQ(4, chunk->num_rows());
++
++        EXPECT_EQ("[1, [{b:NULL},{b:NULL}]]", chunk->debug_row(0));
++        EXPECT_EQ("[2, []]", chunk->debug_row(1));
++        EXPECT_EQ("[3, NULL]", chunk->debug_row(2));
++        EXPECT_EQ("[4, [NULL,{b:NULL},{b:NULL}]]", chunk->debug_row(3));
++    }
++}
++
++TEST_F(IcebergSchemaEvolutionTest, TestStructLevelSourcePrefersDirectList) {
++    // A list under a struct subfield is the last resort: a direct list subfield is taken even when it comes later.
++    auto make_field = [](std::string name, ColumnType type, std::vector<ParquetField> children = {}) {
++        ParquetField field{};
++        field.name = std::move(name);
++        field.type = type;
++        field.physical_type = tparquet::Type::INT32;
++        field.children = std::move(children);
++        return field;
++    };
++    auto make_list = [&](std::string name) {
++        return make_field(std::move(name), ColumnType::ARRAY, {make_field("element", ColumnType::SCALAR)});
++    };
++
++    ParquetField element = make_field("element", ColumnType::STRUCT,
++                                      {make_field("s", ColumnType::STRUCT, {make_list("items")}), make_list("tiny")});
++    const ParquetField* source = ColumnReaderFactory::find_struct_level_source(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #81966** (closed): [BugFix] Keep online optimize correct and loads flowing under concurrent writes (@meegoo)
-- **PR #81964** (2026-10-30): [Enhancement][RB-882] Retain TTL-dropped partitions for running statements (backport #81954) (@mergify[bot])
-- **PR #81963** (2026-10-30): [Tool] Codex review: post an In progress summary comment when the review starts (@huailiu1122)
-- **PR #81962** (2026-10-30): [UT] Check whole result columns with debug_string in a few more BE tests (backport #81950) (@mergify[bot])
-- **PR #81961** (closed): [Tool] Codex review: show an in-progress status on the PR (@huailiu1122)
-- **PR #81960** (2026-10-30): [BugFix][RB-882] Avoid recursion in MV force drop when retention period is 0 (backport #81953) (@mergify[bot])
+- **PR #81992** (closed): [BugFix] Fail a Fluss log read that stops making progress (@fresh-borzoni)
+- **PR #81985** (closed): [BugFix][RB-912] Fix tenann compile issue (@starrocks-bot[bot])
+- **PR #81981** (2026-10-31): [BugFix][RB-689] Stop rewriting month-based date arithmetic as if it were invertible (backport #81979) (@mergify[bot])
+- **PR #81980** (2026-10-31): [BugFix][RB-689] Stop rewriting month-based date arithmetic as if it were invertible (backport #81979) (@mergify[bot])
+- **PR #81979** (2026-10-31): [BugFix][RB-689] Stop rewriting month-based date arithmetic as if it were invertible (@starrocks-bot[bot])
+- **PR #81977** (2026-10-31): [Tool] release-freeze: a patch branch takes no merges without QA approval (@huailiu1122)
 
 ---
 
@@ -2317,31 +2219,32 @@ Co-authored-by: Kevin Cai <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [BugFix][RB-760] Invalidate Iceberg, Delta and Hudi INSERT sources instead of re
+## X. [BugFix][RB-689] Stop rewriting month-based date arithmetic as if it were invert
 
 **RULE**:
-When implementing operations in `fe/fe-core/src/main/java/com/starrocks/connector/delta/DeltaLakeCacheUpdateProcessor.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/rewrite/scalar/ArithmeticCommutativeRule.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8805a623`: [BugFix][RB-760] Invalidate Iceberg, Delta and Hudi INSERT sources instead of refreshing them under the table lock (#81923). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ec9a17ed`: [BugFix][RB-689] Stop rewriting month-based date arithmetic as if it were invertible (#81979). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/fe-core/src/main/java/com/starrocks/connector/delta/DeltaLakeCacheUpdateProcessor.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/rewrite/scalar/ArithmeticCommutativeRule.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    public void invalidateTable(String dbName, String tableName) {
-        cachingMetastore.invalidateTable(dbName, tableName);
-    }
-
+    // Don't support years/months add/sub: they clamp to the month end, so they are not invertible, e.g.
+    // months_add(c, 1) = '2024-02-29' holds for c in 2024-01-29..31, not only for months_sub('2024-02-29', 1)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            .put(FunctionSet.YEARS_ADD, FunctionSet.YEARS_SUB)
+            .put(FunctionSet.YEARS_SUB, FunctionSet.YEARS_ADD)
+            .put(FunctionSet.MONTHS_ADD, FunctionSet.MONTHS_SUB)
+            .put(FunctionSet.MONTHS_SUB, FunctionSet.MONTHS_ADD)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8805a623` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ec9a17ed` are properly handled with clean fallback behavior.

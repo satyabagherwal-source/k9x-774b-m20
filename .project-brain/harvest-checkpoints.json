@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T17:50:25.246Z",
+  "last_updated": "2026-10-31T18:01:47.353Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1520,14 +1520,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-community-gpt2",
-      "content_hash": "b00c64df90d7c4392946c76847eefb3a4f2a26fe58a6f5646e3dc42285b7e580",
-      "verified_at": "2026-10-28T16:52:00.489Z",
+      "content_hash": "fc564f9e494d7b9a7a35e4c0d93a92d3c8f06a7cd5ad6c06024f4e522d502a9d",
+      "verified_at": "2026-10-31T18:01:42.416Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T16:52:00.489Z"
+      "last_updated": "2026-10-31T18:01:42.416Z"
     },
     "Qwen/Qwen3-VL-8B-Instruct": {
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "b5cc2aa96264e9b861571ce460bec93cd2b0a5137d6ec1230c7267641cb15d44",
-      "verified_at": "2026-10-31T01:46:56.834Z",
+      "content_hash": "f1f053395f3afe43b11d345812b40da1146678ada93448cc39dba15ed920f5f9",
+      "verified_at": "2026-10-31T18:01:47.352Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T01:46:56.834Z"
+      "last_updated": "2026-10-31T18:01:47.352Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",
@@ -11751,14 +11751,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshtastic-meshtastic-android",
-      "content_hash": "f31856bc72fb68d81bc28e84b25205690875f2ab06c93f4c31baa0e009ad15f2",
-      "verified_at": "2026-10-28T22:45:45.946Z",
+      "content_hash": "a7ffcdc25316083cd828f2ef4bf11d945323fe4e316aa6c5461668d0451a761b",
+      "verified_at": "2026-10-31T18:01:39.407Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T22:45:45.946Z"
+      "last_updated": "2026-10-31T18:01:39.407Z"
     },
     "astral-sh/uv": {
       "repository": "astral-sh/uv",
