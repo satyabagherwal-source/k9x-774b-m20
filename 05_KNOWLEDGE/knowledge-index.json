@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T23:08:37.955Z",
+  "last_updated": "2026-10-31T23:16:01.635Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14597,8 +14597,8 @@
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "e0be1edf",
-      "content_hash": "fd68fa5231c67d589fc5de9ac4fe88c67e8a5a04bb4c98be6aa1b9574d3d3c5d",
+      "source_version": "95194788",
+      "content_hash": "d4df086adba5f5ccb0e24466a92ec462c285e63d0e408ea82a607519f091fd90",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "promoted_rules": [
@@ -14651,6 +14651,11 @@
           "number": 6043,
           "title": "gix): recompute trust when staging embedded repositories",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6358,
+          "title": "gix-dir): keep all conflict stages tracked (#3134)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14658,7 +14663,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T03:26:04.504Z",
+      "verified_at": "2026-10-31T23:16:01.615Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23288,7 +23293,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/facebook/sam3",
       "source_version": "hf-facebook-sam3",
-      "content_hash": "2ddc61fc2125208cc1309cd9554c1e40c3ea1a4f2c1f40ce7444b077e3cbcd10",
+      "content_hash": "0fda490d665a2de1fc60db337bb0bdf477949584ff270c2fe7b88b260626982b",
       "dossier_path": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
       "promoted_rules": [
@@ -23345,7 +23350,7 @@
         "learn-huggingface-hf-facebook-sam3-mv47u4yi",
         "learn-huggingface-hf-facebook-sam3-mv4l4ga1"
       ],
-      "verified_at": "2026-10-28T21:43:27.694Z",
+      "verified_at": "2026-10-31T23:15:59.821Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -165121,6 +165126,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T23:08:37.942Z"
+    },
+    "rule-6358": {
+      "learning_id": "rule-6358",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6358,
+      "title": "gix-dir): keep all conflict stages tracked (#3134)",
+      "source_url": "https://github.com/GitoxideLabs/gitoxide",
+      "source_version": "95194788",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T23:16:01.615Z"
     }
   },
   "aliases": {

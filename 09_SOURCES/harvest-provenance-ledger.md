@@ -6758,3 +6758,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2` | `https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | `hf-nerkyor` | Multi-dimensional audit evidence | 2026-10-31T23:08:22.228Z |
 | `learn-github-o2sh-onefetch` | `https://github.com/o2sh/onefetch` | `8d71e7f5` | Multi-dimensional audit evidence | 2026-10-31T23:08:22.714Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `9f6fa547` | Multi-dimensional audit evidence | 2026-10-31T23:08:38.016Z |
+| `learn-huggingface-facebook-sam3` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-31T23:15:59.936Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `95194788` | Multi-dimensional audit evidence | 2026-10-31T23:16:01.720Z |

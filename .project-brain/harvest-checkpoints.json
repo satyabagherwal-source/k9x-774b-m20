@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T23:08:38.022Z",
+  "last_updated": "2026-10-31T23:16:01.729Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1909,14 +1909,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-facebook-sam3",
-      "content_hash": "2ddc61fc2125208cc1309cd9554c1e40c3ea1a4f2c1f40ce7444b077e3cbcd10",
-      "verified_at": "2026-10-28T21:43:27.764Z",
+      "content_hash": "0fda490d665a2de1fc60db337bb0bdf477949584ff270c2fe7b88b260626982b",
+      "verified_at": "2026-10-31T23:15:59.946Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T21:43:27.764Z"
+      "last_updated": "2026-10-31T23:15:59.946Z"
     },
     "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF": {
       "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
@@ -6186,14 +6186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gitoxidelabs-gitoxide",
-      "content_hash": "fd68fa5231c67d589fc5de9ac4fe88c67e8a5a04bb4c98be6aa1b9574d3d3c5d",
-      "verified_at": "2026-10-31T03:26:04.616Z",
+      "content_hash": "d4df086adba5f5ccb0e24466a92ec462c285e63d0e408ea82a607519f091fd90",
+      "verified_at": "2026-10-31T23:16:01.728Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T03:26:04.616Z"
+      "last_updated": "2026-10-31T23:16:01.728Z"
     },
     "devhubapp/devhub": {
       "repository": "devhubapp/devhub",

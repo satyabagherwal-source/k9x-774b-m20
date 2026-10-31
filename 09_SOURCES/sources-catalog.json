@@ -625,8 +625,8 @@
     "sourceUrl": "https://huggingface.co/facebook/sam3",
     "sourceVersion": "hf-facebook-sam3",
     "license": "Open-Source",
-    "contentHash": "2ddc61fc2125208cc1309cd9554c1e40c3ea1a4f2c1f40ce7444b077e3cbcd10",
-    "lastHarvestedAt": "2026-10-28T21:43:27.754Z",
+    "contentHash": "0fda490d665a2de1fc60db337bb0bdf477949584ff270c2fe7b88b260626982b",
+    "lastHarvestedAt": "2026-10-31T23:15:59.936Z",
     "learningId": "learn-huggingface-facebook-sam3"
   },
   "hf-unsloth-qwen3.8-27b-gguf": {
@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "e0be1edf",
+    "sourceVersion": "95194788",
     "license": "Apache-2.0",
-    "contentHash": "fd68fa5231c67d589fc5de9ac4fe88c67e8a5a04bb4c98be6aa1b9574d3d3c5d",
-    "lastHarvestedAt": "2026-10-31T03:26:04.607Z",
+    "contentHash": "d4df086adba5f5ccb0e24466a92ec462c285e63d0e408ea82a607519f091fd90",
+    "lastHarvestedAt": "2026-10-31T23:16:01.720Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {

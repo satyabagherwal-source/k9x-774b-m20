@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T23:08:40.564Z",
-    "lastVerified": "2026-10-31T23:08:40.564Z",
+    "lastChecked": "2026-10-31T23:16:10.866Z",
+    "lastVerified": "2026-10-31T23:16:10.866Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -247,8 +247,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T22:46:56.344Z",
-    "lastVerified": "2026-10-31T22:46:56.344Z",
+    "lastChecked": "2026-10-31T23:16:10.855Z",
+    "lastVerified": "2026-10-31T23:16:10.855Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -967,12 +967,12 @@
     "revisionIdentifier": "867d27e8"
   },
   "weaviate-weaviate": {
-    "name": "weaviate/weaviate",
+    "name": "weaviate",
     "officialUrl": "https://github.com/weaviate/weaviate",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T06:45:28.502Z",
-    "lastVerified": "2026-10-31T06:45:28.502Z",
+    "lastChecked": "2026-10-31T23:16:08.322Z",
+    "lastVerified": "2026-10-31T23:16:08.322Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-weaviate-weaviate",
@@ -981,7 +981,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5ef8d0c3"
   },
   "ducaale-xh": {
     "name": "xh",
@@ -1640,9 +1641,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-10-31T19:23:48.875Z",
+    "lastChecked": "2026-10-31T23:16:05.824Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-10-31T19:23:48.875Z"
+    "lastVerified": "2026-10-31T23:16:05.824Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -2974,9 +2975,9 @@
   "openkruise-kruise": {
     "name": "kruise",
     "officialUrl": "https://github.com/openkruise/kruise",
-    "lastChecked": "2026-10-31T08:13:45.124Z",
+    "lastChecked": "2026-10-31T23:16:03.375Z",
     "revisionIdentifier": "4fdf516e",
-    "lastVerified": "2026-10-31T08:13:45.124Z"
+    "lastVerified": "2026-10-31T23:16:03.375Z"
   },
   "pingcap-autoflow": {
     "name": "autoflow",
@@ -3239,14 +3240,14 @@
     "officialUrl": "https://github.com/GitoxideLabs/gitoxide",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T03:26:03.906Z",
-    "lastVerified": "2026-10-31T03:26:03.906Z",
+    "lastChecked": "2026-10-31T23:16:01.008Z",
+    "lastVerified": "2026-10-31T23:16:01.008Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gitoxidelabs-gitoxide",
-    "contentHash": "fd68fa5231c67d589fc5de9ac4fe88c67e8a5a04bb4c98be6aa1b9574d3d3c5d",
+    "contentHash": "d4df086adba5f5ccb0e24466a92ec462c285e63d0e408ea82a607519f091fd90",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7969,12 +7970,12 @@
     "officialUrl": "https://huggingface.co/facebook/sam3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T21:43:26.983Z",
-    "lastVerified": "2026-10-28T21:43:26.983Z",
+    "lastChecked": "2026-10-31T23:15:58.540Z",
+    "lastVerified": "2026-10-31T23:15:58.540Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-facebook-sam3",
-    "contentHash": "2ddc61fc2125208cc1309cd9554c1e40c3ea1a4f2c1f40ce7444b077e3cbcd10",
+    "contentHash": "0fda490d665a2de1fc60db337bb0bdf477949584ff270c2fe7b88b260626982b",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9229,9 +9230,9 @@
   "jinxiansen-swiftui": {
     "name": "SwiftUI",
     "officialUrl": "https://github.com/Jinxiansen/SwiftUI",
-    "lastChecked": "2026-10-29T17:23:31.026Z",
+    "lastChecked": "2026-10-31T23:16:00.807Z",
     "revisionIdentifier": "d8192c12",
-    "lastVerified": "2026-10-29T17:23:31.026Z"
+    "lastVerified": "2026-10-31T23:16:00.807Z"
   },
   "iaincollins-structured-data-testing-tool": {
     "name": "structured-data-testing-tool",

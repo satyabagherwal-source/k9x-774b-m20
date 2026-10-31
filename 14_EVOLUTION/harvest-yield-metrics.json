@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T23:08:38.019Z",
-  "total_cycles_completed": 6726,
-  "total_learnings_persisted": 6726,
-  "total_rules_promoted": 6364,
+  "last_updated": "2026-10-31T23:16:01.725Z",
+  "total_cycles_completed": 6728,
+  "total_learnings_persisted": 6728,
+  "total_rules_promoted": 6365,
   "history": [
-    {
-      "timestamp": "2026-10-31T11:46:46.328Z",
-      "repository": "callstack/agent-device",
-      "learningId": "learn-github-callstack-agent-device",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T11:53:30.105Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T11:53:43.335Z",
       "repository": "xerj-org/xerj",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-31T23:08:38.019Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T23:15:59.942Z",
+      "repository": "facebook/sam3",
+      "learningId": "learn-huggingface-facebook-sam3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T23:16:01.725Z",
+      "repository": "GitoxideLabs/gitoxide",
+      "learningId": "learn-github-gitoxidelabs-gitoxide",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
