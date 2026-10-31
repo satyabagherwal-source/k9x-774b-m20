@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T05:14:24.273Z",
-  "total_cycles_completed": 6449,
-  "total_learnings_persisted": 6449,
-  "total_rules_promoted": 6066,
+  "last_updated": "2026-10-31T05:21:18.644Z",
+  "total_cycles_completed": 6451,
+  "total_learnings_persisted": 6451,
+  "total_rules_promoted": 6067,
   "history": [
-    {
-      "timestamp": "2026-10-30T19:05:44.826Z",
-      "repository": "xerj-org/xerj",
-      "learningId": "learn-github-xerj-org-xerj",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T19:12:25.947Z",
-      "repository": "rollup/rollup",
-      "learningId": "learn-github-rollup-rollup",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T19:19:15.901Z",
       "repository": "LiquidAI/LFM3-1.7B-GGUF",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-31T05:14:24.273Z",
       "repository": "volcengine/OpenViking",
       "learningId": "learn-github-volcengine-openviking",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T05:21:04.577Z",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T05:21:18.644Z",
+      "repository": "Mintplex-Labs/anything-llm",
+      "learningId": "learn-github-mintplex-labs-anything-llm",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

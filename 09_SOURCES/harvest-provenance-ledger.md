@@ -6481,3 +6481,5 @@ Every entry in this ledger must capture:
 | `learn-github-margelo-react-native-vision-camera` | `https://github.com/margelo/react-native-vision-camera` | `6624e8cd` | Multi-dimensional audit evidence | 2026-10-31T05:14:16.360Z |
 | `learn-huggingface-sentence-transformers-all-minilm-l6-v2` | `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-31T05:14:21.859Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `7aef6cbb` | Multi-dimensional audit evidence | 2026-10-31T05:14:24.268Z |
+| `learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-10-31T05:21:04.571Z |
+| `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `9caf2b4c` | Multi-dimensional audit evidence | 2026-10-31T05:21:18.639Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T05:14:24.182Z",
+  "last_updated": "2026-10-31T05:21:18.559Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -21584,7 +21584,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
       "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
-      "content_hash": "2057185c2b7c52a5f3ca0df96ed92d6c564558fd5d917ec6a5033714acf885e7",
+      "content_hash": "f1bc3cfaa6abc89679e9d64efe1de55b572387a645f2bad786994a816f504153",
       "dossier_path": "07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
       "promoted_rules": [
@@ -21984,7 +21984,7 @@
         "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv42syia",
         "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv4g0ye2"
       ],
-      "verified_at": "2026-10-28T03:18:04.182Z",
+      "verified_at": "2026-10-31T05:21:04.461Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39472,8 +39472,8 @@
       "slug": "mintplex-labs-anything-llm",
       "platform": "github",
       "source_url": "https://github.com/Mintplex-Labs/anything-llm",
-      "source_version": "3661da4c",
-      "content_hash": "44c4526fbc2a7889187c73344f583aec113ab0b3c45299e340c3c0e856ed6fc0",
+      "source_version": "9caf2b4c",
+      "content_hash": "73b5a687922b999307e285d984df222fe9d8ea677c5823a245d10039de052eab",
       "dossier_path": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "promoted_rules": [
@@ -39531,6 +39531,11 @@
           "number": 5719,
           "title": "Bitonal 1-Bit DeviceGray Ingestion Pipeline Preservation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6081,
+          "title": "filter ineligible Lance candidates before reranking (#6908)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39538,7 +39543,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T10:25:35.005Z",
+      "verified_at": "2026-10-31T05:21:18.539Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -159701,6 +159706,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T05:14:24.155Z"
+    },
+    "rule-6081": {
+      "learning_id": "rule-6081",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6081,
+      "title": "filter ineligible Lance candidates before reranking (#6908)",
+      "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+      "source_version": "9caf2b4c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T05:21:18.539Z"
     }
   },
   "aliases": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T05:14:24.278Z",
+  "last_updated": "2026-10-31T05:21:18.648Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -96,14 +96,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-      "content_hash": "2057185c2b7c52a5f3ca0df96ed92d6c564558fd5d917ec6a5033714acf885e7",
-      "verified_at": "2026-10-28T03:18:04.287Z",
+      "content_hash": "f1bc3cfaa6abc89679e9d64efe1de55b572387a645f2bad786994a816f504153",
+      "verified_at": "2026-10-31T05:21:04.580Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T03:18:04.287Z"
+      "last_updated": "2026-10-31T05:21:04.580Z"
     },
     "epicweb-dev/advanced-react-patterns": {
       "repository": "epicweb-dev/advanced-react-patterns",
@@ -9801,14 +9801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mintplex-labs-anything-llm",
-      "content_hash": "44c4526fbc2a7889187c73344f583aec113ab0b3c45299e340c3c0e856ed6fc0",
-      "verified_at": "2026-10-30T10:25:35.071Z",
+      "content_hash": "73b5a687922b999307e285d984df222fe9d8ea677c5823a245d10039de052eab",
+      "verified_at": "2026-10-31T05:21:18.647Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T10:25:35.071Z"
+      "last_updated": "2026-10-31T05:21:18.647Z"
     },
     "shadcn-ui/taxonomy": {
       "repository": "shadcn-ui/taxonomy",

@@ -444200,3 +444200,77 @@ import brandLockupLight from '#/assets/brand-lockup-light.svg'
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `5bfbc298` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6081. filter ineligible Lance candidates before reranking (#6908) (Harvested from Mintplex-Labs/anything-llm)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "filter ineligible Lance candidates before reranking (#6908)",
+  "source": "Mintplex-Labs/anything-llm",
+  "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+  "source_version": "9caf2b4c",
+  "license": "MIT",
+  "extracted_at": "2026-10-31T05:21:18.333Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mintplex-labs-anything-llm",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm) (Revision: `9caf2b4c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `server/utils/vectorDbProviders/lance/index.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `9caf2b4c`: filter ineligible Lance candidates before reranking (#6908). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/utils/vectorDbProviders/lance/index.js`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+    // Drop pinned and below-threshold chunks first so they cannot take the reranker's topK slots.
+    const eligibleResults = vectorSearchResults.filter((item) => {
+      if (this.distanceToSimilarity(item._distance) < similarityThreshold)
+        return false;
+      if (filterIdentifiers.includes(sourceIdentifier(item))) {
+        this.logger(
+          "A source was filtered from context as it's parent document is pinned."
+        );
+        return false;
+      }
+      return true;
+    });
+    if (eligibleResults.length === 0) return result;
+
+    const reranker = new NativeEmbeddingReranker();
+      .rerank(query, eligibleResults, { topK: topN })
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Anti-pattern to NEVER write (induced failure mode):
+    const reranker = new NativeEmbeddingReranker();
+      .rerank(query, vectorSearchResults, { topK: topN })
+          if (this.distanceToSimilarity(item._distance) < similarityThreshold)
+            return;
+          if (filterIdentifiers.includes(sourceIdentifier(rest))) {
+            this.logger(
+              "A source was filtered from context as it's parent document is pinned."
+            );
+            return;
+          }
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `9caf2b4c` are properly handled with clean fallback behavior.

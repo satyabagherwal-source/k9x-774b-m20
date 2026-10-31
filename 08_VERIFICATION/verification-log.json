@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-DPW1",
-    "timestamp": "2026-10-28T22:45:45.938Z",
-    "repository": "meshtastic/Meshtastic-Android",
-    "learningId": "learn-github-meshtastic-meshtastic-android",
-    "contentHash": "f31856bc72fb68d81bc28e84b25205690875f2ab06c93f4c31baa0e009ad15f2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-DUDY",
-    "timestamp": "2026-10-28T22:45:51.766Z",
-    "repository": "LiquidAI/LFM2.5-24B-A2B",
-    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
-    "contentHash": "d3a7e2ee09e363efd68166336f0f723c7953e25465e3b19a04dd0e1b15af3c5a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-DURV",
     "timestamp": "2026-10-28T22:45:52.267Z",
     "repository": "cilium/cilium",
@@ -7490,6 +7460,36 @@
     "repository": "volcengine/OpenViking",
     "learningId": "learn-github-volcengine-openviking",
     "contentHash": "be5dfca20c209c5c0a1f4e8f735984322c37a1dd49adfb843cf4d4d0e5971ee4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-DSMQ",
+    "timestamp": "2026-10-31T05:21:04.562Z",
+    "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
+    "contentHash": "f1bc3cfaa6abc89679e9d64efe1de55b572387a645f2bad786994a816f504153",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-E3HN",
+    "timestamp": "2026-10-31T05:21:18.635Z",
+    "repository": "Mintplex-Labs/anything-llm",
+    "learningId": "learn-github-mintplex-labs-anything-llm",
+    "contentHash": "73b5a687922b999307e285d984df222fe9d8ea677c5823a245d10039de052eab",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

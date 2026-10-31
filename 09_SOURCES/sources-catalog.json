@@ -155,8 +155,8 @@
     "sourceUrl": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
     "sourceVersion": "hf-cross-encoder-ms-marco-minilm-l6-v2",
     "license": "Open-Source",
-    "contentHash": "2057185c2b7c52a5f3ca0df96ed92d6c564558fd5d917ec6a5033714acf885e7",
-    "lastHarvestedAt": "2026-10-28T03:18:04.278Z",
+    "contentHash": "f1bc3cfaa6abc89679e9d64efe1de55b572387a645f2bad786994a816f504153",
+    "lastHarvestedAt": "2026-10-31T05:21:04.571Z",
     "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2"
   },
   "hf-baai-bge-small-en-v1.5": {
@@ -6473,10 +6473,10 @@
     "repository": "Mintplex-Labs/anything-llm",
     "platform": "github",
     "sourceUrl": "https://github.com/Mintplex-Labs/anything-llm",
-    "sourceVersion": "3661da4c",
+    "sourceVersion": "9caf2b4c",
     "license": "MIT",
-    "contentHash": "44c4526fbc2a7889187c73344f583aec113ab0b3c45299e340c3c0e856ed6fc0",
-    "lastHarvestedAt": "2026-10-30T10:25:35.065Z",
+    "contentHash": "73b5a687922b999307e285d984df222fe9d8ea677c5823a245d10039de052eab",
+    "lastHarvestedAt": "2026-10-31T05:21:18.639Z",
     "learningId": "learn-github-mintplex-labs-anything-llm"
   },
   "shadcn-ui-taxonomy": {
