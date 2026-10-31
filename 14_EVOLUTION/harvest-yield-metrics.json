@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T08:54:54.747Z",
-  "total_cycles_completed": 6491,
-  "total_learnings_persisted": 6491,
-  "total_rules_promoted": 6134,
+  "last_updated": "2026-10-31T09:22:45.320Z",
+  "total_cycles_completed": 6492,
+  "total_learnings_persisted": 6492,
+  "total_rules_promoted": 6137,
   "history": [
-    {
-      "timestamp": "2026-10-30T21:19:29.586Z",
-      "repository": "hashicorp/terraform",
-      "learningId": "learn-github-hashicorp-terraform",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T21:19:31.442Z",
       "repository": "microsoft/agent-governance-toolkit",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-31T08:54:54.747Z",
       "repository": "apple/LensVLM-9B",
       "learningId": "learn-huggingface-apple-lensvlm-9b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T09:22:45.320Z",
+      "repository": "fastino/GLiNER2.5-Decide",
+      "learningId": "learn-huggingface-fastino-gliner2-5-decide",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

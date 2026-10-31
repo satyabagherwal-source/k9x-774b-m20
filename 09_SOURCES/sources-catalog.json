@@ -425,8 +425,8 @@
     "sourceUrl": "https://huggingface.co/fastino/GLiNER2.5-Decide",
     "sourceVersion": "hf-fastino-gliner2.5-decide",
     "license": "Open-Source",
-    "contentHash": "75b594533d6999e0a098e75f9afae0653a9f1f990730b1e26c176c3bd93a01d1",
-    "lastHarvestedAt": "2026-10-28T05:42:11.394Z",
+    "contentHash": "447f8362eb8b809b3e5aac37a567a3bcc3fe238f86f2e8f8e97a26f94c21ad84",
+    "lastHarvestedAt": "2026-10-31T09:22:45.314Z",
     "learningId": "learn-huggingface-fastino-gliner2-5-decide"
   },
   "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {

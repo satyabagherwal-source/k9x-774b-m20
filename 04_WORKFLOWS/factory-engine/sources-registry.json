@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T08:54:57.304Z",
-    "lastVerified": "2026-10-31T08:54:57.304Z",
+    "lastChecked": "2026-10-31T09:22:47.874Z",
+    "lastVerified": "2026-10-31T09:22:47.874Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -145,8 +145,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T08:03:16.699Z",
-    "lastVerified": "2026-10-31T08:03:16.699Z",
+    "lastChecked": "2026-10-31T09:20:13.024Z",
+    "lastVerified": "2026-10-31T09:20:13.024Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1725,9 +1725,9 @@
   "memvid-memvid": {
     "name": "memvid",
     "officialUrl": "https://github.com/memvid/memvid",
-    "lastChecked": "2026-10-30T15:37:08.000Z",
+    "lastChecked": "2026-10-31T09:20:10.502Z",
     "revisionIdentifier": "e6bd9f7b",
-    "lastVerified": "2026-10-30T15:37:08.000Z"
+    "lastVerified": "2026-10-31T09:20:10.502Z"
   },
   "falkordb-falkordb": {
     "name": "FalkorDB/FalkorDB",
@@ -2031,13 +2031,13 @@
     "officialUrl": "https://huggingface.co/fastino/GLiNER2.5-Decide",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T05:42:10.094Z",
-    "lastVerified": "2026-10-28T05:42:10.094Z",
+    "lastChecked": "2026-10-31T09:20:00.988Z",
+    "lastVerified": "2026-10-31T09:20:00.988Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-fastino-gliner2-5-decide",
-    "contentHash": "75b594533d6999e0a098e75f9afae0653a9f1f990730b1e26c176c3bd93a01d1",
-    "promotedRulesCount": 0,
+    "contentHash": "447f8362eb8b809b3e5aac37a567a3bcc3fe238f86f2e8f8e97a26f94c21ad84",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -2240,8 +2240,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-31T04:09:33.755Z",
-    "lastVerified": "2026-10-31T04:09:33.755Z",
+    "lastChecked": "2026-10-31T09:20:08.050Z",
+    "lastVerified": "2026-10-31T09:20:08.050Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -3145,9 +3145,9 @@
   "sorintlab-stolon": {
     "name": "stolon",
     "officialUrl": "https://github.com/sorintlab/stolon",
-    "lastChecked": "2026-10-30T16:51:24.071Z",
+    "lastChecked": "2026-10-31T09:20:05.513Z",
     "revisionIdentifier": "bcea7a75",
-    "lastVerified": "2026-10-30T16:51:24.071Z"
+    "lastVerified": "2026-10-31T09:20:05.513Z"
   },
   "milvus-io-bootcamp": {
     "name": "bootcamp",
@@ -4622,9 +4622,9 @@
   "ivpusic-react-native-image-crop-picker": {
     "name": "react-native-image-crop-picker",
     "officialUrl": "https://github.com/ivpusic/react-native-image-crop-picker",
-    "lastChecked": "2026-10-28T14:15:19.820Z",
+    "lastChecked": "2026-10-31T09:20:03.013Z",
     "revisionIdentifier": "a18a50d4",
-    "lastVerified": "2026-10-28T14:15:19.820Z"
+    "lastVerified": "2026-10-31T09:20:03.013Z"
   },
   "vinceanalytics-vince": {
     "name": "vince",
@@ -5068,9 +5068,9 @@
   "async-rs-async-std": {
     "name": "async-std",
     "officialUrl": "https://github.com/async-rs/async-std",
-    "lastChecked": "2026-10-30T08:36:16.925Z",
+    "lastChecked": "2026-10-31T09:19:58.048Z",
     "revisionIdentifier": "844b5525",
-    "lastVerified": "2026-10-30T08:36:16.925Z"
+    "lastVerified": "2026-10-31T09:19:58.048Z"
   },
   "hf-meta-llama-llama-2-7b": {
     "name": "meta-llama/Llama-2-7b",

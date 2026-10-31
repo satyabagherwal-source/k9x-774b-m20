@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T08:54:54.659Z",
+  "last_updated": "2026-10-31T09:22:45.232Z",
   "total_verified_learnings": 1181,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -23107,7 +23107,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/fastino/GLiNER2.5-Decide",
       "source_version": "hf-fastino-gliner2.5-decide",
-      "content_hash": "75b594533d6999e0a098e75f9afae0653a9f1f990730b1e26c176c3bd93a01d1",
+      "content_hash": "447f8362eb8b809b3e5aac37a567a3bcc3fe238f86f2e8f8e97a26f94c21ad84",
       "dossier_path": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
       "promoted_rules": [
@@ -23130,6 +23130,21 @@
           "number": 3309,
           "title": "Bounded Span-Width Vectorization In Zero-Shot Extractors",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6144,
+          "title": "First-Subtoken Pooling Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6145,
+          "title": "Explicit Structural Separator Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6146,
+          "title": "Flash/SDPA Hardware-Dispatched Kernel Fallback Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -23150,7 +23165,7 @@
         "learn-huggingface-hf-fastino-gliner2-5-decide-mv45omuu",
         "learn-huggingface-hf-fastino-gliner2-5-decide-mv4iyd2f"
       ],
-      "verified_at": "2026-10-28T05:42:11.266Z",
+      "verified_at": "2026-10-31T09:22:45.213Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -160926,6 +160941,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T08:54:54.639Z"
+    },
+    "rule-6144": {
+      "learning_id": "rule-6144",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6144,
+      "title": "First-Subtoken Pooling Alignment Invariant",
+      "source_url": "https://huggingface.co/fastino/GLiNER2.5-Decide",
+      "source_version": "hf-fastino-gliner2.5-decide",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T09:22:45.213Z"
+    },
+    "rule-6145": {
+      "learning_id": "rule-6145",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6145,
+      "title": "Explicit Structural Separator Boundary Invariant",
+      "source_url": "https://huggingface.co/fastino/GLiNER2.5-Decide",
+      "source_version": "hf-fastino-gliner2.5-decide",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T09:22:45.213Z"
+    },
+    "rule-6146": {
+      "learning_id": "rule-6146",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6146,
+      "title": "Flash/SDPA Hardware-Dispatched Kernel Fallback Invariant",
+      "source_url": "https://huggingface.co/fastino/GLiNER2.5-Decide",
+      "source_version": "hf-fastino-gliner2.5-decide",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T09:22:45.213Z"
     }
   },
   "aliases": {

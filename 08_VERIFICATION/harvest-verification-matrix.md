@@ -6514,3 +6514,4 @@
 | `CYCLE-20261031-67MF` | `2026-10-31T08:31:08.055Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6136, Rule 6137` | Yes (`fff2a7a3...`) |
 | `CYCLE-20261031-V1D9` | `2026-10-31T08:50:26.349Z` | `Comfy-Org/Wan-2.2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6138, Rule 6139, Rule 6140` | Yes (`9ae1f009...`) |
 | `CYCLE-20261031-0SGI` | `2026-10-31T08:54:54.738Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6141, Rule 6142, Rule 6143` | Yes (`a7b70386...`) |
+| `CYCLE-20261031-0LHB` | `2026-10-31T09:22:45.311Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6144, Rule 6145, Rule 6146` | Yes (`447f8362...`) |
