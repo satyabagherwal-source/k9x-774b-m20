@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T13:47:25.266Z",
+  "last_updated": "2026-10-31T13:54:31.213Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1085,14 +1085,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-whisper-large-v3",
-      "content_hash": "51c38df9690d79279bba4ffad29544bcb278d7a7c5647d91ef96665c960ff033",
-      "verified_at": "2026-10-28T13:30:06.887Z",
+      "content_hash": "55c0f368aa4414e05528e2a9d910a1dc075f18a2bb6a859a4b23b07389b4b298",
+      "verified_at": "2026-10-31T13:54:15.129Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T13:30:06.887Z"
+      "last_updated": "2026-10-31T13:54:15.129Z"
     },
     "black-forest-labs/FLUX.1-schnell": {
       "repository": "black-forest-labs/FLUX.1-schnell",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "5a7a4fe271f49221658f09295130854814d65903b0028c9c4da4f4968a3c47ed",
-      "verified_at": "2026-10-31T04:38:50.197Z",
+      "content_hash": "9e7d06fc0e36de1855a0678074e8551e25d1ca3e9fa414cd91ff7cecbb411781",
+      "verified_at": "2026-10-31T13:54:31.212Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T04:38:50.197Z"
+      "last_updated": "2026-10-31T13:54:31.212Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -5781,14 +5781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-risingwavelabs-risingwave",
-      "content_hash": "1512d836a72b4f177916acd6bc419ee9c847478063ea56b6c3a4ff6a0f38e781",
-      "verified_at": "2026-10-30T21:41:19.994Z",
+      "content_hash": "b61c90fe42c6c3e70cf940cf07f8384f7261a675f0dbf4884046bc52fe784b6c",
+      "verified_at": "2026-10-31T13:54:28.744Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T21:41:19.994Z"
+      "last_updated": "2026-10-31T13:54:28.744Z"
     },
     "mertJF/tailblocks": {
       "repository": "mertJF/tailblocks",
@@ -7626,14 +7626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshery-meshery",
-      "content_hash": "839a6ac8a62e4b59d0b79dd4da9f1b29cfd85a015fc05184bcc8f30440965519",
-      "verified_at": "2026-10-30T22:34:34.285Z",
+      "content_hash": "a22f19ff8d8fb88ecb7829c058f77a44a8377e7d6595eff8cf34a8a0754169dc",
+      "verified_at": "2026-10-31T13:54:25.147Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T22:34:34.285Z"
+      "last_updated": "2026-10-31T13:54:25.147Z"
     },
     "arangodb/arangodb": {
       "repository": "arangodb/arangodb",

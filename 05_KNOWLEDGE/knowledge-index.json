@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T13:47:25.189Z",
+  "last_updated": "2026-10-31T13:54:31.114Z",
   "total_verified_learnings": 1183,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4890,8 +4890,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "687e906e",
-      "content_hash": "5a7a4fe271f49221658f09295130854814d65903b0028c9c4da4f4968a3c47ed",
+      "source_version": "7a563ca0",
+      "content_hash": "9e7d06fc0e36de1855a0678074e8551e25d1ca3e9fa414cd91ff7cecbb411781",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -5049,6 +5049,11 @@
           "number": 6072,
           "title": "acp): migrate to @agentclientprotocol/sdk 2.x and fix the stdio bridge (#340)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6216,
+          "title": "gateway): attribute event-loop stalls with an on-demand sampling profiler (#341)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5056,7 +5061,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T04:38:50.080Z",
+      "verified_at": "2026-10-31T13:54:31.080Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26899,7 +26904,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/whisper-large-v3",
       "source_version": "hf-openai-whisper-large-v3",
-      "content_hash": "51c38df9690d79279bba4ffad29544bcb278d7a7c5647d91ef96665c960ff033",
+      "content_hash": "55c0f368aa4414e05528e2a9d910a1dc075f18a2bb6a859a4b23b07389b4b298",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md",
       "promoted_rules": [],
@@ -26921,7 +26926,7 @@
         "learn-huggingface-hf-openai-whisper-large-v3-mv4a7pcw",
         "learn-huggingface-hf-openai-whisper-large-v3-mv4nl1uq"
       ],
-      "verified_at": "2026-10-28T13:30:06.756Z",
+      "verified_at": "2026-10-31T13:54:14.994Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38637,8 +38642,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "1fd4bee8",
-      "content_hash": "839a6ac8a62e4b59d0b79dd4da9f1b29cfd85a015fc05184bcc8f30440965519",
+      "source_version": "ae3f91c1",
+      "content_hash": "a22f19ff8d8fb88ecb7829c058f77a44a8377e7d6595eff8cf34a8a0754169dc",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -38696,6 +38701,11 @@
           "number": 5925,
           "title": "[Docs] Auto-merge meeting minutes (#22673)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6214,
+          "title": "Merge pull request #22441 from ayanasarkar/docs/fix-broken-anchor-links",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38703,7 +38713,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T22:34:34.171Z",
+      "verified_at": "2026-10-31T13:54:24.971Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48511,8 +48521,8 @@
       "slug": "risingwavelabs-risingwave",
       "platform": "github",
       "source_url": "https://github.com/risingwavelabs/risingwave",
-      "source_version": "d8c0731a",
-      "content_hash": "1512d836a72b4f177916acd6bc419ee9c847478063ea56b6c3a4ff6a0f38e781",
+      "source_version": "f572af7e",
+      "content_hash": "b61c90fe42c6c3e70cf940cf07f8384f7261a675f0dbf4884046bc52fe784b6c",
       "dossier_path": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "promoted_rules": [
@@ -48570,6 +48580,11 @@
           "number": 5895,
           "title": "frontend): reject iceberg pk-index sink with auto schema change (#27729)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6215,
+          "title": "box AWS SDK config loading since its futures are large (#27741)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48577,7 +48592,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T21:41:19.884Z",
+      "verified_at": "2026-10-31T13:54:28.617Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162318,6 +162333,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T13:47:25.172Z"
+    },
+    "rule-6214": {
+      "learning_id": "rule-6214",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6214,
+      "title": "Merge pull request #22441 from ayanasarkar/docs/fix-broken-anchor-links",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "ae3f91c1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T13:54:24.971Z"
+    },
+    "rule-6215": {
+      "learning_id": "rule-6215",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6215,
+      "title": "box AWS SDK config loading since its futures are large (#27741)",
+      "source_url": "https://github.com/risingwavelabs/risingwave",
+      "source_version": "f572af7e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T13:54:28.617Z"
+    },
+    "rule-6216": {
+      "learning_id": "rule-6216",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6216,
+      "title": "gateway): attribute event-loop stalls with an on-demand sampling profiler (#341)",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "7a563ca0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T13:54:31.080Z"
     }
   },
   "aliases": {

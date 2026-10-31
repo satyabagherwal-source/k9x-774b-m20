@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `d8c0731a`  
+> **Source Version**: `f572af7e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T21:41:19.316Z  
+> **Timestamp**: 2026-10-31T13:54:27.977Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T21:41:19.020Z  
+> **Harvest Timestamp**: 2026-10-31T13:54:27.970Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1077,322 +1077,96 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a9122f14` (2026-10-30)
-**Commit Message**: fix(frontend): reject iceberg pk-index sink with auto schema change (#27729)
+### Incident Patch 1: `f572af7e` (2026-10-30)
+**Commit Message**: refactor: box AWS SDK config loading since its futures are large (#27741)
 
-**File**: `e2e_test/iceberg/test_case/pure_slt/iceberg_v2_with_pk_index.slt` (modified, +12/-0)
+**File**: `src/connector/src/connector_common/common.rs` (modified, +3/-3)
 ```diff
-@@ -133,6 +133,18 @@ with(
- statement ok
- insert into t_v2_storage values(1, 'alice'), (2, 'bob');
- 
-+statement error Iceberg sink with `enable_pk_index='true'` does not support `auto\.schema\.change='true'`
-+create sink pk_index_auto_schema_change from t_v2_storage with (
-+    connector = 'iceberg',
-+    connection = storage_catalog_conn,
-+    database.name = 'public',
-+    table.name = 'pk_index_auto_schema_change',
-+    type = 'upsert',
-+    create_table_if_not_exists = 'true',
-+    enable_pk_index = 'true',
-+    auto.schema.change = 'true'
-+);
-+
- statement ok
- flush;
- 
-```
-
-**File**: `src/frontend/src/optimizer/mod.rs` (modified, +9/-0)
-```diff
-@@ -1266,6 +1266,15 @@ impl LogicalPlanRoot {
-             && properties
-                 .get(ENABLE_PK_INDEX)
-                 .is_some_and(|value| value.eq_ignore_ascii_case("true"));
-+
-+        if is_iceberg_v3 && auto_refresh_schema_from_table.is_some() {
-+            return Err(ErrorCode::InvalidInputSyntax(
-+                "Iceberg sink with `enable_pk_index='true'` does not support `auto.schema.change='true'`."
-+                    .to_owned(),
-+            )
-+            .into());
-+        }
-+
-         let backfill_type = if is_iceberg_v3 {
-             if without_snapshot || since_timestamp {
-                 return Err(ErrorCode::InvalidInputSyntax(
-```
-
----
-
-### Incident Patch 2: `7761fd84` (2026-10-30)
-**Commit Message**: fix(meta): reject pending inputs in manual L0 compaction (#27738)
-
-**File**: `src/meta/src/hummock/compaction/picker/manual_compaction_picker.rs` (modified, +8/-0)
-```diff
-@@ -82,12 +82,16 @@ impl ManualCompactionPicker {
+@@ -153,7 +153,7 @@ impl AwsAuthProps {
+             ))
+         } else if !env_var_is_true(DISABLE_DEFAULT_CREDENTIAL) {
+             Ok(SharedCredentialsProvider::new(
+-                aws_config::default_provider::credentials::default_provider().await,
++                Box::pin(aws_config::default_provider::credentials::default_provider()).await,
+             ))
+         } else {
+             bail!("Both `access_key` and `secret_key` must be provided")
+@@ -172,7 +172,7 @@ impl AwsAuthProps {
+             if let Some(id) = &self.external_id {
+                 role = role.external_id(id);
              }
-         };
-         // Construct input.
-+        // The interval may include sublevels that did not match the option filter.
-         for level in l0
-             .sub_levels
-             .iter()
-             .skip(start_idx as usize)
-             .take((end_idx - start_idx + 1) as usize)
-         {
-+            if level_handlers[0].is_level_pending_compact(level) {
-+                return None;
-+            }
-             input_levels.push(InputLevel {
-                 level_idx: 0,
-                 level_type: level.level_type,
-@@ -136,6 +140,10 @@ impl ManualCompactionPicker {
+-            let provider = role.build_from_provider(credential).await;
++            let provider = Box::pin(role.build_from_provider(credential)).await;
+             Ok(SharedCredentialsProvider::new(provider))
+         } else {
+             Ok(credential)
+@@ -192,7 +192,7 @@ impl AwsAuthProps {
+             config_loader = config_loader.endpoint_url(endpoint);
          }
-         // Construct input.
-         for idx in 0..=max_sub_level_idx {
-+            // The prefix may include sublevels that did not match the option filter.
-+            if level_handlers[0].is_level_pending_compact(&l0.sub_levels[idx]) {
-+                return None;
-+            }
-             for table in &l0.sub_levels[idx].table_infos {
-                 info.update(&table.key_range);
-             }
-```
-
-**File**: `src/meta/src/hummock/manager/tests.rs` (modified, +140/-0)
-```diff
-@@ -1307,6 +1307,146 @@ async fn test_invalid_sst_id() {
-         .unwrap();
+ 
+-        Ok(config_loader.load().await)
++        Ok(Box::pin(config_loader.load()).await)
+     }
  }
  
-+#[tokio::test]
-+async fn test_manual_l0_compaction_rejects_pending_middle_sublevel() {
-+    let (_, hummock_manager, _, worker_id) = setup_compute_env(80).await;
-+    let hummock_meta_client: Arc<dyn HummockMetaClient> = Arc::new(MockHummockMetaClient::new(
-+        hummock_manager.clone(),
-+        worker_id as _,
-+    ));
-+    let compaction_group_id = StaticCompactionGroupId::StateDefault;
-+    register_table_ids_to_compaction_group(&hummock_manager, &[1, 2, 3], compaction_group_id).await;
-+    let sst_ids = get_sst_ids(&hummock_manager, 3).await;
-+    for (index, &sst_id) in sst_ids.iter().enumerate() {
-+        let table_id = TableId::new(index as u32 + 1);
-+        let epoch = test_epoch(index as u64 + 1);
-+        let sst = SstableInfoInner {
-+            object_id: sst_id.into(),
-+            sst_id: sst_id.into(),
-+            key_range: KeyRange::new(
-+                FullKey::new(table_id, gen_key_from_str(VirtualNode::ZERO, "a"), epoch)
-+                    .encode()
-+                    .into(),
-+                FullKey::new(table_id, gen_key_from_str(VirtualNode::ZERO, "z"), epoch)
-+                    .encode()
-+                    .into(),
-+            ),
-+            table_ids: vec![table_id],
-+            file_size: 128,
-+            sst_size: 128,
-+            uncompressed_file_size: 128,
-+            total_key_count: 1,
-+            min_epoch: epoch,
-+            max_epoch: epoch,
-+            ..Default::default()
-+        }
-+        .into();
-+        hummock_meta_client
-+            .commit_epoch(
-+                epoch,
-+                SyncResult {
-+                    uncommitted_ssts: to_local_sstable_info(&[sst]),
-+                    ..Default::default()
-+                },
-+            )
-+            .await
-+            .unwrap();
-+    }
-+
-+    let version = hummock_manager.get_current_version().await;
-+    let sub_levels = &version
-+        .get_compaction_group_levels(compaction_group_id)
-+        .l0
-+        .sub_levels;
-+    assert_eq!(sub_levels.len(), 3);
-+    let middle_task = hummock_manager
-+        .manual_get_compact_task(
-+            compaction_group_id,
-+            ManualCompactionOption {
-+                level: 0,
-+                sst_ids: vec![sst_ids[1].into()],
-+                exclusive: false,
-+                ..Default::default()
-+            },
-+        )
-+        .await
-+        .unwrap()
-+        .unwrap();
-+    assert_eq!(middle_task.target_sub_level_id, sub_levels[1].sub_level_id);
-+
-+    // Both requests expand their input to include the unhinted, pending middle sublevel.
-+    let options = [
-+        ManualCompactionOption {
-+            level: 0,
-+            sst_ids: vec![sst_ids[0].into(), sst_ids[2].into()],
-+            exclusive: false,
-+            ..Default::default()
-+        },
-+        ManualCompactionOption {
-+            level: 0,
-+            internal_table_id: HashSet::from([3.into()]),
-+            exclusive: false,
-+            ..Default::default()
-+        },
-+    ];
-+    for option in &options {
-+        let task = hummock_manager
-+            .manual_get_compact_task(compaction_group_id, option.clone())
-+            .await
-+            .unwrap();
-+        assert!(
-+            task.is_none(),
-+            "selected the pending middle sublevel: {task:?}"
-+        );
-+    }
-+    {
-+        let compaction = hummock_manager.compaction.read().await;
-+        assert_eq!(compaction.compact_task_assignment.len(), 1);
-+        let pending = compaction.compaction_statuses[&compaction_group_id].level_handlers[0]
-+            .compacting_files();
-+        assert_eq!(pending.len(), 1);
-+        assert_eq!(
-+            pending[&HummockSstableId::from(sst_ids[1])],
-+            middle_task.task_id
-+        );
-+    }
-+
-+    assert!(
-+        hummock_manager
-+            .cancel_compact_task(middle_task.task_id, TaskStatus::ManualCanceled)
-+            .await
-+            .unwrap()
-+    );
-+    for option in options {
-+        let to_l0 = !option.sst_ids.is_empty();
-+        let task = hummock_manager
-+            .manual_get_compact_task(compaction_group_id, option)
-+            .await
-+            .unwrap()
-+            .unwrap();
-+        assert_eq!(task.target_level == 0, to_l0);
-+        // Once the reservation is released, keep the complete consecutive input interval.
-+        assert_eq!(
-+            task.read_input_ssts().map(|sst| sst.sst_id).collect_vec(),
-+            sst_ids
-+                .iter()
-+                .rev()
-+                .copied()
-+                .map(HummockSstableId::from)
-+                .collect_vec()
-+        );
-+        if task.target_level == 0 {
-+            assert_eq!(task.target_sub_level_id, sub_levels[0].sub_level_id);
-+        }
-+        assert!(
-+            hummock_manager
-+                .cancel_compact_task(task.task_id, TaskStatus::ManualCanceled)
-+                .await
-+                .unwrap()
-+        );
-+  
 ```
 
----
-
-### Incident Patch 3: `1286f38a` (2026-10-30)
-**Commit Message**: fix(optimizer): infer exactly one row for simple aggregation (#27717)
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `e2e_test/batch/aggregate/empty_input.slt.part` (added, +28/-0)
+**File**: `src/object_store/src/object/s3.rs` (modified, +13/-11)
 ```diff
-@@ -0,0 +1,28 @@
-+# A simple aggregation yields exactly one row even when its input is provably empty,
-+# including when the outer query prunes the aggregate result. See #27666.
-+
-+query I
-+SELECT NULL::INT AS col_0 FROM (SELECT SUM(DISTINCT INT '822') AS s WHERE false) AS q;
-+----
-+NULL
-+
-+query I
-+SELECT 1 FROM (SELECT SUM(INT '822') AS s WHERE false) AS q;
-+----
-+1
-+
-+statement ok
-+CREATE TABLE empty_input_t (v INT);
-+
-+query I
-+SELECT 1 FROM (SELECT SUM(v) AS s FROM empty_input_t WHERE false) AS q;
-+----
-+1
-+
-+query I
-+SELECT 1 FROM (SELECT COUNT(*) AS c FROM empty_input_t) AS q;
-+----
-+1
-+
-+statement ok
-+DROP TABLE empty_input_t;
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/output/dynamic_filter.yaml` (modified, +1/-1)
-```diff
-@@ -77,7 +77,7 @@
-   optimized_logical_plan_for_stream: |-
-     LogicalJoin { type: Inner, on: (t1.v1 > max_v2.max), output: [t1.v1] }
-     ├─LogicalScan { table: t1, columns: [t1.v1] }
--    └─LogicalScan { table: max_v2, columns: [max_v2.max], cardinality: 0..=1 }
-+    └─LogicalScan { table: max_v2, columns: [max_v2.max], cardinality: 1..=1 }
-   stream_plan: |-
-     StreamMaterialize { columns: [v1, t1._row_id(hidden)], stream_key: [t1._row_id], pk_columns: [t1._row_id], pk_conflict: NoCheck }
-     └─StreamDynamicFilter { predicate: (t1.v1 > max_v2.max), output: [t1.v1, t1._row_id] }
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/output/functional_dependency.yaml` (modified, +1/-1)
-```diff
-@@ -48,7 +48,7 @@
-     select cnt from v order by cnt;
-   logical_plan: |-
-     LogicalProject { exprs: [v.cnt] }
--    └─LogicalScan { table: v, columns: [v.cnt, v._rw_timestamp], cardinality: 0..=1 }
-+    └─LogicalScan { table: v, columns: [v.cnt, v._rw_timestamp], cardinality: 1..=1 }
-   batch_plan: |-
-     BatchExchange { order: [v.cnt ASC], dist: Single }
-     └─BatchSort { order: [v.cnt ASC] }
-```
-
-**File**: `src/frontend/src/optimizer/plan_visitor/cardinality_visitor.rs` (modified, +2/-1)
-```diff
-@@ -88,7 +88,8 @@ impl LogicalPlanVisitor for CardinalityVisitor {
-         let input = self.visit(plan.input());
+@@ -695,7 +695,7 @@ impl S3ObjectStore {
+                     Err(_) => false,
+                 };
  
-         if plan.group_key().is_empty() {
--            input.min(1)
-+            // A simple agg always yields exactly one row, even over an empty input.
-+            1.into()
-         } else {
-             input.min(1..)
-         }
+-                let sdk_config = sdk_config_loader.load().await;
++                let sdk_config = Box::pin(sdk_config_loader.load()).await;
+                 #[cfg(madsim)]
+                 let client = Client::new(&sdk_config);
+                 #[cfg(not(madsim))]
+@@ -719,7 +719,7 @@ impl S3ObjectStore {
+             }
+             Err(_) => {
+                 // s3
+-                let sdk_config = sdk_config_loader.load().await;
++                let sdk_config = Box::pin(sdk_config_loader.load()).await;
+                 #[cfg(madsim)]
+                 let client = Client::new(&sdk_config);
+                 #[cfg(not(madsim))]
+@@ -776,15 +776,17 @@ impl S3ObjectStore {
+         );
+         #[cfg(not(madsim))]
+         let builder = aws_sdk_s3::config::Builder::from(
+-            &aws_config::ConfigLoader::default()
+-                // FIXME: https://github.com/awslabs/aws-sdk-rust/issues/973
+-                .credentials_provider(Credentials::from_keys(
+-                    access_key_id,
+-                    secret_access_key,
+-                    None,
+-                ))
+-                .load()
+-                .await,
++            &Box::pin(
++                aws_config::ConfigLoader::default()
++                    // FIXME: https://github.com/awslabs/aws-sdk-rust/issues/973
++                    .credentials_provider(Credentials::from_keys(
++                        access_key_id,
++                        secret_access_key,
++                        None,
++                    ))
++                    .load(),
++            )
++            .await,
+         )
+         .force_path_style(true)
+         .identity_cache(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #27741** (2026-10-31): refactor: box AWS SDK config loading since its futures are large (@maybe-vibe)
 - **PR #27738** (2026-10-30): fix(meta): reject pending inputs in manual L0 compaction (@Li0k)
 - **PR #27737** (closed): cherry-pick fix(frontend): reject iceberg pk-index sink with auto schema change (#27729) to branch release-3.0 (@howenyap)
 - **PR #27736** (closed): cherry-pick fix(frontend): reject iceberg pk-index sink with auto schema change (#27729) to branch release-3.1 (@howenyap)
 - **PR #27733** (closed): perf(meta): simplify Hummock TTL and task-status queries (@Li0k)
 - **PR #27729** (2026-10-30): fix(frontend): reject iceberg pk-index sink with auto schema change (@howenyap)
-- **PR #27725** (2026-10-30): refactor(cdc): move CDC source DDL validation into CdcSourceDdlValidator (@anlowee)
 
 ---
 
@@ -1412,39 +1186,32 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. frontend): reject iceberg pk-index sink with auto schema change (#27729)
+## X. box AWS SDK config loading since its futures are large (#27741)
 
 **RULE**:
-When implementing operations in `e2e_test/iceberg/test_case/pure_slt/iceberg_v2_with_pk_index.slt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/connector/src/connector_common/common.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a9122f14`: frontend): reject iceberg pk-index sink with auto schema change (#27729). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f572af7e`: box AWS SDK config loading since its futures are large (#27741). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e_test/iceberg/test_case/pure_slt/iceberg_v2_with_pk_index.slt`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/connector/src/connector_common/common.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-statement error Iceberg sink with `enable_pk_index='true'` does not support `auto\.schema\.change='true'`
-create sink pk_index_auto_schema_change from t_v2_storage with (
-    connector = 'iceberg',
-    connection = storage_catalog_conn,
-    database.name = 'public',
-    table.name = 'pk_index_auto_schema_change',
-    type = 'upsert',
-    create_table_if_not_exists = 'true',
-    enable_pk_index = 'true',
-    auto.schema.change = 'true'
-);
-
+                Box::pin(aws_config::default_provider::credentials::default_provider()).await,
+            let provider = Box::pin(role.build_from_provider(credential)).await;
+        Ok(Box::pin(config_loader.load()).await)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                aws_config::default_provider::credentials::default_provider().await,
+            let provider = role.build_from_provider(credential).await;
+        Ok(config_loader.load().await)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a9122f14` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f572af7e` are properly handled with clean fallback behavior.

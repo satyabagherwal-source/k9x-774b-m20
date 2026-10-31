@@ -845,8 +845,8 @@
     "sourceUrl": "https://huggingface.co/openai/whisper-large-v3",
     "sourceVersion": "hf-openai-whisper-large-v3",
     "license": "Open-Source",
-    "contentHash": "51c38df9690d79279bba4ffad29544bcb278d7a7c5647d91ef96665c960ff033",
-    "lastHarvestedAt": "2026-10-28T13:30:06.879Z",
+    "contentHash": "55c0f368aa4414e05528e2a9d910a1dc075f18a2bb6a859a4b23b07389b4b298",
+    "lastHarvestedAt": "2026-10-31T13:54:15.120Z",
     "learningId": "learn-huggingface-openai-whisper-large-v3"
   },
   "hf-black-forest-labs-flux.1-schnell": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "687e906e",
+    "sourceVersion": "7a563ca0",
     "license": "MIT",
-    "contentHash": "5a7a4fe271f49221658f09295130854814d65903b0028c9c4da4f4968a3c47ed",
-    "lastHarvestedAt": "2026-10-31T04:38:50.187Z",
+    "contentHash": "9e7d06fc0e36de1855a0678074e8551e25d1ca3e9fa414cd91ff7cecbb411781",
+    "lastHarvestedAt": "2026-10-31T13:54:31.203Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "d8c0731a",
+    "sourceVersion": "f572af7e",
     "license": "Apache-2.0",
-    "contentHash": "1512d836a72b4f177916acd6bc419ee9c847478063ea56b6c3a4ff6a0f38e781",
-    "lastHarvestedAt": "2026-10-30T21:41:19.985Z",
+    "contentHash": "b61c90fe42c6c3e70cf940cf07f8384f7261a675f0dbf4884046bc52fe784b6c",
+    "lastHarvestedAt": "2026-10-31T13:54:28.735Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {
@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "1fd4bee8",
+    "sourceVersion": "ae3f91c1",
     "license": "Apache-2.0",
-    "contentHash": "839a6ac8a62e4b59d0b79dd4da9f1b29cfd85a015fc05184bcc8f30440965519",
-    "lastHarvestedAt": "2026-10-30T22:34:34.275Z",
+    "contentHash": "a22f19ff8d8fb88ecb7829c058f77a44a8377e7d6595eff8cf34a8a0754169dc",
+    "lastHarvestedAt": "2026-10-31T13:54:25.138Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {

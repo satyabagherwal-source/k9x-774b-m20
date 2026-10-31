@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `1fd4bee8`  
+> **Source Version**: `ae3f91c1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T22:34:33.581Z  
+> **Timestamp**: 2026-10-31T13:54:24.346Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T22:34:32.417Z  
+> **Harvest Timestamp**: 2026-10-31T13:54:24.339Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12089 stars
+- **Stars / Engagement**: 12091 stars
 
 ---
 
@@ -804,11 +804,14 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #22696** (2026-10-31): **Docs(meeting): add Shukria Sultani's introduction**
+  *Symptoms*: **Description**  This PR adds my Markdown introduction, including my background, technical skills, areas of interest, and open-source contribution goals.  **Notes for Reviewers**  - This PR adds a personal introduction to the Meshery community. - No application code or existing functionality has been modified.   <!-- This is an auto-generated comment: release notes by coderabbit.ai --> <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Added a profile outlining Shukria Sultani’s background, interests, technical skills, and goals for contributing to Meshery through LFX Mentorship. <!-- end of auto-generated comment: release notes by coderabbit.ai -->
+  **Post-Mortem & Fix Analysis**:
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/meshery/meshery/pull/22696?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review.  <details> <summary><strong><picture><img src="https://storage.googleapis.com/coderabbit_public_asset
+  > 📖 Docs preview: https://docs.meshery.io/pr-preview/pr-22696/ <!-- Sticky Pull Request Commentpr-preview -->
+
 - **Issue #22680** (2026-10-30): **Add Harpal's introduction to meetings documentation**
   *Symptoms*: Added introductory message from Harpal to the meetings documentation.  **Notes for Reviewers**  - This PR fixes #  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [ ] Yes, I signed my commits.  <!-- Thank you for contributing to Meshery!   Contributing Conventions:  1. Include descriptive PR titles with [<component-name>] prepended. 2. Build and test your changes before submitting a PR.  3. Sign your commits. 4. Include before and after screenshots/terminal output.  By following the community's contribution conventions upfront, the review process will  be accelerated and your PR merged more quickly. -->   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Added an introduction expressing enthusiasm for joining the Meshery community, learning, connecting, and contributing.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
-
-- **Issue #22679** (2026-10-30): **Create introduction for Emmanuel Wilson Dismas. Computer engineer.**
-  *Symptoms*: Added a personal introduction and contact information for Emmanuel Wilson Dismas.  **Notes for Reviewers**  - This PR fixes #  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.  <!-- Thank you for contributing to Meshery!   Contributing Conventions:  1. Include descriptive PR titles with [<component-name>] prepended. 2. Build and test your changes before submitting a PR.  3. Sign your commits. 4. Include before and after screenshots/terminal output.  By following the community's contribution conventions upfront, the review process will  be accelerated and your PR merged more quickly. -->   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Added an introduction for Emmanuel Wilson Dismas, including his programming interests, technologies and projects explored, links to his LinkedIn and GitHub profiles, and a sign-off.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -825,63 +828,313 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1fd4bee8` (2026-10-30)
-**Commit Message**: [Docs] Auto-merge meeting minutes (#22673)
+### Incident Patch 1: `110376e8` (2026-10-31)
+**Commit Message**: fix: change the file extension to md
 
-Auto-merged meeting minutes update.
+Signed-off-by: Shukria Sultani <[REDACTED_EMAIL]>
 
-This PR contained only changes to `docs/meetings/` and was auto-merged by the community manager workflow.
 
-**File**: `docs/meetings/2026/week-of-10-29-2026/prashanth-manchala.md` (added, +15/-0)
+
+---
+
+### Incident Patch 2: `ae3f91c1` (2026-10-31)
+**Commit Message**: Merge pull request #22441 from ayanasarkar/docs/fix-broken-anchor-links
+
+[Docs] Fix broken in-page anchor links across docs
+
+**File**: `docs/content/en/concepts/architecture/_index.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,15 @@
-+# Prashanth Kumar Manchala
-+
-+Hi everyone! 👋 I'm Prashanth, a software engineer with over a year of professional experience. I love **systems and backend engineering**, especially understanding how things work under the hood, debugging complex problems, and building reliable software.
-+
-+My current focus is **AI Platform Engineering**, where I'm exploring AI agents, infrastructure, observability, and reliable AI-powered systems.
-+
-+A couple of projects I've been working on:
-+- **[trade-rs](https://github.com/knocBack/trade-matching-engine-rs)** — A deterministic trading order-matching engine built in Rust, with HTTP APIs and WebSocket market updates.
-+- **[Incident Investigator](https://github.com/knocBack/incident-investigator)** — A multi-agent system built with LangGraph that investigates simulated production incidents using logs, metrics, and evidence-based reasoning.
-+
-+I'm excited to explore Meshery, learn more about cloud-native infrastructure, and contribute to open source!
-+
-+**Portfolio:** https://manchala.dev  
-+**GitHub:** https://github.com/knocBack  
-+**LinkedIn:** https://www.linkedin.com/in/prashanth-kumar-manchala
+@@ -55,7 +55,7 @@ Meshery's REST API may be consumed by any number of clients. Clients need to pre
+ <a href="images/Meshery-client-architecture.webp" class="lightbox-image">
+ <img src="images/Meshery-client-architecture.webp" width="50%" /></a>
+ 
+-_Figure: Clients use Meshery's [REST API]({{< ref "reference/extensibility/api.md#rest" >}}), [GraphQL API]({{< ref "reference/extensibility/api.md#graphql" >}}), or a combination of both._
++_Figure: Clients use Meshery's [REST API]({{< ref "reference/rest-apis/_index.md" >}}), [GraphQL API]({{< ref "reference/graphql-apis.md" >}}), or a combination of both._
+ 
+ ### Providers
+ 
+```
+
+**File**: `docs/content/en/concepts/architecture/catalog/index.md` (modified, +1/-1)
+```diff
+@@ -36,7 +36,7 @@ Meshery Catalog supports a collaborative environment, where DevOps engineers can
+     - View design file:  `mesheryctl design view [design name | ID]`
+     - List all designs: `mesheryctl design list`
+ 5. [Importing]({{< ref "reference/mesheryctl/_index.md#infrastructure-design-configuration-and-management" >}}) a design. `mesheryctl design import -f [file-path] -s [manifest | compose | helm]`
+-6. Applying [WASM Filter]({{< ref "guides/configuration-management/_index.md#wasm-filters" >}}). `mesheryctl filter import [file | URL] --wasm-config [filepath|string]`
++6. Applying [WASM Filter]({{< ref "guides/infrastructure-management/filter-management.md#import-a-filter" >}}). `mesheryctl filter import [file | URL] --wasm-config [filepath|string]`
+ 
+ 
+ ### Publishing a Design to Meshery Catalog
+```
+
+**File**: `docs/content/en/extensions/adapters/cilium/index.md` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@ aliases:
+ - /extensibility/adapters/cilium
+ ---
+ 
+-The Meshery Adapter for Cilium Service Mesh is currently under construction (stable state), which means that the adapter is not functional and cannot be interacted with through the <a href="{{< ref "installation/_index.md#6-you-will-now-be-directed-to-the-meshery-ui" >}}"> Meshery UI </a>at the moment. Check back here to see updates.
++The Meshery Adapter for Cilium Service Mesh is currently under construction (stable state), which means that the adapter is not functional and cannot be interacted with through the <a href="{{< ref "installation/quick-start/index.md#2-access-meshery" >}}"> Meshery UI </a>at the moment. Check back here to see updates.
+ 
+ Want to contribute? Check our [progress](https://github.com/meshery/meshery-cilium).
+ 
+```
+
+**File**: `docs/content/en/project/contributing/_index.md` (modified, +1/-1)
+```diff
+@@ -161,7 +161,7 @@ git sparse-checkout disable
+   <li><strong>Familiarize</strong> yourself with the broader set of projects in Meshery's ecosystem, including the <a href="https://github.com/meshery-extensions">meshery-extensions</a> repositories (the <a href="https://meshery.io/community">community handbook</a> is a helpful resource): Spend time understanding each of the initiatives through high-level overviews available in the community drive and through discussions with your MeshMate.</li>
+   <li><strong>Identify</strong> your area of interest: Use the time with your MeshMate to familiarize yourself with the architecture and technologies used in the projects. Inform your MeshMate of your current skills and what skills you aim to develop.</li>
+   <li><strong><a href="https://play.meshery.io">Play with Meshery</a></strong>: Put on your user hat and walk-through all of Meshery’s features and functions as a user.</li>
+-  <li><strong>Build Meshery Server and UI</strong>: Confirm that you have a usable development environment. See <a href="#contributing-guides">Guides</a> below.</li>
++  <li><strong>Build Meshery Server and UI</strong>: Confirm that you have a usable development environment. See <a href="#specific-contribution-guides">Guides</a> below.</li>
+   <li><strong>Discuss</strong> with the community by engaging in the <a href="https://discuss.meshery.io/">discussion forum</a>.</li>
+   <li><strong>Contribute</strong> by grabbing any open issue with the <a href="https://github.com/issues?q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Ameshery+org%3Ameshery-extensions+org%3Aservice-mesh-performance+org%3Aservice-mesh-patterns+label%3A%22help+wanted%22+">help-wanted label</a> and jump in. If needed, create a <a href="https://github.com/meshery/meshery/issues/new/choose">new issue</a>. All <a href="https://github.com/meshery/meshery/pulls">pull requests</a> should reference an open issue. Include keywords in your pull request descriptions, as well as commit messages, to <a href="https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords">automatically close issues in GitHub</a>.</li>
+   <li><strong>Fill in</strong> a <a href="https://meshery.io/newcomers">community member form</a> to gain access to community resources.</li>
+```
+
+**File**: `docs/content/en/project/contributing/contributing-docs-structure.md` (modified, +1/-1)
+```diff
+@@ -30,7 +30,7 @@ After defining our audience, we introduce the **overall structure** of Meshery
+ 
+ 1. [Overview and Installation (User Persona)](#overview-and-installation-user-persona)
+ 2. [Tasks & Operations (User Guide)](#tasks--operations-user-guide)
+-3. [Administrator’s Guide (Advanced Topics)](#administrators-guide-advanced-topics)
++3. [Administrator’s Guide (Advanced Topics)](#administrators-guide-platform-engineer--operator-persona-advanced-topics)
+ 4. [Integrations and Extensions (All Personas)](#integrations-and-extensions-all-personas)
+ 5. [Tutorials (All Personas)](#tutorials-all-personas)
+ 6. [Reference & Resources (All Personas)](#reference--resources-all-personas)
+```
+
+**File**: `docs/content/en/project/contributing/contributing-docs/docs.md` (modified, +1/-1)
+```diff
+@@ -273,7 +273,7 @@ The following is a concise summary of the steps to contribute to Meshery documen
+ 5. Add redirect link on the old page (only when a new page is created that replaces the old page). In Hugo, use the `aliases` frontmatter field.
+ 6. Run site locally to preview changes.
+    `make site`
+-7. Commit, [sign-off](#commit-signing), and push changes to your remote branch.
++7. Commit, [sign-off]({{< ref "project/contributing/_index.md" >}}), and push changes to your remote branch.
+    `git push origin <my-changes>`
+ 8. Open a pull request (in your web browser) against the repo: https://github.com/meshery/meshery.
+ 
+```
+
+**File**: `docs/content/en/project/contributing/contributing-policies.md` (modified, +1/-1)
+```diff
+@@ -16,7 +16,7 @@ Rego policies are the declarative logic behind the policy engine. These policies
+ 
+ Currently the Rego policies are invoked from the Go code in Meshery Server. This requires configuring the OPA context as seen [here](https://github.com/meshery/meshkit/blob/master/models/meshmodel/core/policies/rego_policy_relationship.go).
+ 
+-The Meshery Policy Engine is invoked by calling the [evaluation endpoint](https://docs.meshery.io/reference/rest-apis#api-meshmodels-relationships-evaluate). This endpoint is passed a Meshery Design in JSON which it passes to the Meshery Policy Engine for validation.
++The Meshery Policy Engine is invoked by calling the [evaluation endpoint]({{< ref "reference/rest-apis/_index.md" >}}). This endpoint is passed a Meshery Design in JSON which it passes to the Meshery Policy Engine for validation.
+ 
+ ## Working with Meshery Policy Engine
+ 
+```
+
+**File**: `docs/content/en/project/contributing/contributing-server-events/index.md` (modified, +1/-1)
+```diff
+@@ -133,7 +133,7 @@ To gain a deeper understanding and examine events more closely, you can explore
+ 
+ Meshery has two primary clients: Mesheryctl and Meshery UI. Both clients will produce multiple events throughout their lifecycle. Meshery Server is designed to accept these client-generated events and broadcast them using the [Broadcaster](https://github.com/meshery/meshery/blob/1b5d78ed34648e0a91df8c2273026b930f748fbc/server/models/event_broadcast.go#L14).
+ 
+-Clients can send HTTP POST requests to [`api/events`](https://docs.meshery.io/reference/rest-apis#api-events) with the event encapsulated in a JSON request body. Upon receiving an event, the server processes, validates, and broadcasts it using the Broadcaster. This ensures that all relevant events generated by Mesheryctl and Meshery UI are effectively communicated and managed by the Meshery Server.
++Clients can send HTTP POST requests to [`api/events`]({{< ref "reference/rest-apis/_index.md" >}}) with the event encapsulated in a JSON request body. Upon receiving an event, the server processes, validates, and broadcasts it using the Broadcaster. This ensures that all relevant events generated by Mesheryctl and Meshery UI are effectively communicated and managed by the Meshery Server.
+ 
+ ### Example
+ 
 ```
 
 ---
 
-### Incident Patch 2: `13da1f26` (2026-10-30)
-**Commit Message**: [Docs] Auto-merge meeting minutes (#22676)
+### Incident Patch 3: `3bfe29f4` (2026-10-31)
+**Commit Message**: Merge branch 'master' into docs/fix-broken-anchor-links
 
-Auto-merged meeting minutes update.
+Signed-off-by: APIPAWE KATOTO <[REDACTED_EMAIL]>
 
-This PR contained only changes to `docs/meetings/` and was auto-merged by the community manager workflow.
-
-**File**: `docs/meetings/2026/week-of-10-29-2026/Yoshita Dwivedi` (added, +2/-0)
+**File**: `.github/label-commenter-config.yml` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,2 @@
-+Hi I am Yoshita Dwivedi , an ECE undergrad from University Of Lucknow. I am interested in contributing to open-souce , this is my first organization.
-+Here's my linkedin profile - https://www.linkedin.com/in/yoshita-dwivedi/
+@@ -14,10 +14,10 @@ labels:
+   - name: issue/remind
+     labeled:
+       issue:
+-        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community#meshmates/) or any other [community member](https://meshery.io/community/members) for assistance.
++        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community/meshmates/) or any other [community member](https://meshery.io/community) for assistance.
+         action: open
+       pr:
+-        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community#meshmates/) or any other [community member](https://meshery.io/community/members) for assistance.
++        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community/meshmates/) or any other [community member](https://meshery.io/community) for assistance.
+         action: open
+   - name: issue/dco
+     labeled:
 ```
 
-**File**: `docs/meetings/2026/week-of-10-29-2026/Yoshita_Dwivedi` (added, +2/-0)
+**File**: `.github/meetings/archive/2026-10-29-8172.md` (added, +30/-0)
 ```diff
-@@ -0,0 +1,2 @@
-+Hi I am Yoshita Dwivedi , an ECE undergrad from University Of Lucknow. I am interested in contributing to open-souce , this is my first organization.
-+Here's my linkedin profile - https://www.linkedin.com/in/yoshita-dwivedi/
+@@ -0,0 +1,30 @@
++# New Contributor Intro: Vedit Agrawal (@BugHunterX2101) | Looking to pair with a MeshMate for Meshery UI & AI Adapter
++
++**Date:** 2026-10-29
++**Source:** http://discuss.meshery.io//t/new-contributor-intro-vedit-agrawal-bughunterx2101-looking-to-pair-with-a-meshmate-for-meshery-ui-ai-adapter/8172
++
++---
++
++<p>Hi all, I’m Vedit Agrawal (<span class="mention">@BugHunterX2101</span> on GitHub), a final-year CS Undergrad and an Oracle Cloud Certified Data Science &amp; Generative AI Professional<sup></sup>. I’m joining Layer5 to contribute to Meshery’s core repositories and looking to pair with a MeshMate<sup></sup>.</p>
++<p>My engineering background spans production AI infrastructure, distributed systems, and full-stack TypeScript/Python/C++<sup></sup>:</p>
++<ul>
++<li>
++<p><strong>ScaleDux (Applied AI Intern):</strong> Cut production API latency by 40% by refactoring synchronous FastAPI inference into asynchronous Celery and Redis worker queues monitored via Prometheus and Grafana; improved XGBoost/scikit-learn accuracy by 18% through Pandas/NumPy feature pipelines; and automated containerized YOLOv8/TensorFlow deployments on AWS EC2 and Lambda via GitHub Actions<sup></sup>.</p>
++</li>
++<li>
++<p><strong>Systems &amp; Full-Stack Projects:</strong> Engineered Sentinel Gateway (Next.js, TypeScript, Drizzle ORM, Neon PostgreSQL) with a SENSE-DECIDE-ACT-EXPLAIN loop, 1.5s SSE p99 telemetry, blast-radius estimation, and zero-restart circuit breaking; built a <em>Jenkins Log Intelligence Engine</em> running 3-attempt Celery/Redis TF-IDF retrieval over 10 MB build logs with Llama 3.3 70B for root-cause diagnosis; created a 24-language <em>Enterprise Privacy Suite</em> using RapidOCR bounding-box geometry, Presidio, spaCy NER, and Auth0 RS256 JWKS caching; and built <em>Quantum Sentinel</em>, accelerating Level-2 order-book simulation in C++ via pybind11.</p>
++</li>
++<li>
++<p><strong>Multimodal Edge Research:</strong> Designed a 2.5M-parameter network (eGeMAPS, BiLSTM, MobileNetV3, adaptive attention for missing-modality drops) achieving 94.2% attack detection and 89.4% emotion classification accuracy across SWaT, IEMOCAP, and AMI inside 10.2 MB / 2 GB VRAM at 70 ms latency<sup></sup>.</p>
++</li>
++</ul>
++<p>I’ve explored the Meshery Playground and local setup, and I want to focus my contributions on:</p>
++<ol>
++<li>
++<p><strong>Meshery UI (React / Next.js / TypeScript):</strong> State handling, schema validation forms, and visual components<sup></sup>.</p>
++</li>
++<li>
++<p><strong>AI/LLM Adapter (<span class="hashtag-raw">#20994</span>) &amp; MCP Server (<span class="hashtag-raw">#19446</span>):</strong> Provider connection lifecycle, credential isolation, tool definitions, and token-budgeted context assembly<sup></sup>.</p>
++</li>
++</ol>
++<p>I’d appreciate being paired with a MeshMate to review my dev setup and help point me toward an open issue in Meshery UI or the AI adapter tracks to submit my first PR<sup></sup>. Looking forward to meeting everyone on the Thursday Newcomers call!</p>
+```
+
+**File**: `AGENTS.md` (modified, +17/-0)
+```diff
+@@ -474,6 +474,23 @@ touching any of them.
+ - Hooks in `.agents/hooks/`: `format-frontend.sh` (post-edit Prettier) and
+   `block-lockfiles.sh` (pre-edit lock-file guard).
+ 
++## Worktrees and landing a change
++
++- **Work in a treehouse worktree, never in the main clone.** Other agent sessions and the
++  no-mistakes pipeline share the main clone. Take a worktree with
++  `treehouse get --lease -b <branch>` (it prints the path; `--base <branch>` starts it from
++  another branch), work there, and release it with `treehouse return <path>` once the change
++  has merged. `treehouse status` lists the pool. Never make one with `git worktree add` or a
++  second clone.
++- **Land every change through no-mistakes, at most three runs per pull request.** Commit in
++  the worktree, then run `no-mistakes axi run --intent "<goal>"` (a clone without a
++  `no-mistakes` remote needs `no-mistakes init` once). `no-mistakes axi status` shows the step
++  and its findings, and `no-mistakes axi respond` answers a review gate. The pipeline reviews,
++  tests, pushes and opens the pull request. After the third run, open an issue for anything
++  still flagged and merge the pull request as it stands only if CI is green and it touches no
++  "Require Human Review" area; otherwise hand it to a human. A run that stopped on a usage limit
++  counts; one cancelled before it did anything does not.
++
+ ## Reusable Workflows Consumed by Other Repos
+ 
+ `.github/workflows/*.{yml,yaml}` here are called by repos across `meshery` and
+```
+
+**File**: `CLAUDE.md` (removed, +0/-1)
+```diff
+@@ -1 +0,0 @@
+-@AGENTS.md
+```
+
+**File**: `CLAUDE.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++AGENTS.md
+\ No newline at end of file
+```
+
+**File**: `GOVERNANCE.md` (modified, +2/-2)
+```diff
+@@ -267,7 +267,7 @@ First-time contributors are encouraged to start with issues labeled
+ 
+ A current list of contributors is published at
+ [the project's contributor list](https://github.com/meshery/meshery/graphs/contributors)
+-and celebrated through [meshery.io/community/members](https://meshery.io/community/members).
++and celebrated through [meshery.io/community](https://meshery.io/community).
+ 
+ **Reviewing work in progress.** Everyone is welcome to review and comment on open
+ pull requests and issues. The project does not maintain a separate, gated "Reviewer"
+@@ -891,7 +891,7 @@ and [OWNERS](https://www.kubernetes.dev/docs/guide/owners/) model.
+ ## Appendix A: Mapping to CNCF Incubation Governance Review Criteria
+ 
+ This appendix maps each consideration in the CNCF TOC
+-[Governance Review Template](https://github.com/cncf/toc/blob/main/toc_subprojects/project-reviews-subproject/governance-review-template.md)
++[Governance Review Template](https://github.com/cncf/toc/blob/main/operations/project-reviews/governance-review-template.md)
+ to where it is addressed, so the project and reviewers can confirm coverage during
+ Incubation diligence. It is a self-assessment companion to this document and may be
+ maintained as part of the project's Incubation self-assessment rather than published
+```
+
+**File**: `docs/CONTRIBUTING-gitflow.md` (modified, +22/-0)
+```diff
+@@ -132,6 +132,28 @@ Now, it may be desirable to squash some of your smaller commits down into a smal
+ 
+ This will open up a text editor where you can specify which commits to squash.
+ <br><br>
++## <a name="markdown-export">LLM-friendly page output</a>
++
++Every documentation page is also published as Markdown at `<page-url>/index.md`,
++with the page title, description, and body content and no navigation, sidebar,
++footer, or styling. A **View as Markdown** link to it appears in the page's
++right-hand meta column (wide screens). The home page shows no link, but its Markdown is still
++published and listed in `llms.txt`. Hugo also generates
++[`/llms.txt`](https://llmstxt.org/) (an index of pages) and `/llms-full.txt`
++(full content of every page) at the site root for AI agents.
++
++The `llms.txt`, `llms-full.txt`, and home-page Markdown layouts are provided by
++the existing [Layer5 docs Hugo module](https://github.com/layer5io/docs), pinned
++in `go.mod`. Since `hugo.toml` sets `ignoreConfig = true` for that module and
++selects explicit mounts, it mounts `layouts/index.llms`, `layouts/index.llmsfull`,
++and `layouts/index.md` from the module and declares their output formats locally.
++
++To leave a path out of `llms.txt` and `llms-full.txt`, add it to `exclude` under
++`[params.llms]` in `hugo.toml`. To keep only the newest N pages of a section in `llms.txt`, add it to
++`[params.llms.limit_sections]`; Meshery releases under `/project/releases/` are
++capped at 5 this way. The limit is implemented by the Layer5 module's
++`layouts/index.llms` template.
++
+ <li><h3>References</h3></li>
+ <a href="https://git-scm.com/docs">Git Reference Docs</a>
+ <br>
+```
+
+**File**: `docs/catalog/deployment/2acfea0e-f26c-4d1c-b602-eb1c2aff279e.md` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++---
++layout: item
++name: Load- Balancer-AWS-Architecture
++publishedVersion: 0.0.12
++userId: 6d8f0768-ad93-4eaa-8ba2-81d733dd694e
++userName: Brian Kioko
++userAvatarURL: 
++type: deployment
++compatibility:
++    - aws-apigatewayv2-controller
++patternId: 2acfea0e-f26c-4d1c-b602-eb1c2aff279e
++image: /assets/images/logos/service-mesh-pattern.svg
++patternInfo: |
++  This%20design%20illustrates%20a%20robust%20and%20scalable%20architecture%20for%20deploying%20applications%20on%20Amazon%20Web%20Services%20(AWS)%20with%20load%20balancing%20capabilities.%20This%20design%20leverages%20AWS%20Elastic%20Load%20Balancers%20(ELB)%20to%20distribute%20incoming%20traffic%20across%20multiple%20instances%20of%20your%20application%2C%20ensuring%20high%20availability%20and%20reliability.%20The%20architecture%20typically%20includes%20Auto%20Scaling%20groups%20to%20automatically%20adjust%20the%20number%20of%20running%20instances%20based%20on%20traffic%20demand%2C%20further%20enhancing%20the%20system%E2%80%99s%20ability%20to%20handle%20varying%20loads.
++patternCaveats: |
++  1.%20AWS%20services%20can%20accumulate%20costs%20quickly%2C%20especially%20with%20high%20traffic%20volumes%20and%20large-scale%20deployments.%20It's%20essential%20to%20monitor%20and%20manage%20usage%20to%20avoid%20unexpected%20expenses.%0A%0A2.%20Network%20latency%20can%20be%20introduced%20by%20load%20balancers%20and%20cross-region%20data%20transfers.%20It's%20important%20to%20design%20your%20architecture%20to%20minimize%20latency%2C%20particularly%20for%20latency-sensitive%20applications.
++createdAt: 2026-10-23T08:17:27Z
++permalink: catalog/deployment/load-balancer-aws-architecture-2acfea0e-f26c-4d1c-b602-eb1c2aff279e.html
++URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/2acfea0e-f26c-4d1c-b602-eb1c2aff279e/0.0.12/design.yml'
++downloadLink: 2acfea0e-f26c-4d1c-b602-eb1c2aff279e/design.yml
++---
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22696** (2026-10-31): Docs(meeting): add Shukria Sultani's introduction (@shukria-sultani)
 - **PR #22680** (2026-10-30): Add Harpal's introduction to meetings documentation (@Hpsingh26)
 - **PR #22679** (2026-10-30): Create introduction for Emmanuel Wilson Dismas. Computer engineer. (@dismasdev)
 - **PR #22678** (2026-10-30): My introduction (@merytpeters)
 - **PR #22677** (2026-10-30): Aravind's Attendance (@Aravind226)
 - **PR #22676** (2026-10-30): Yoshita dwivedi patch 2 (@Yoshita-Dwivedi)
-- **PR #22675** (2026-10-30): Yoshita Dwivedi (@Yoshita-Dwivedi)
 
 ---
 
@@ -901,42 +1154,28 @@ This PR contained only changes to `docs/meetings/` and was auto-merged by the co
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [Docs] Auto-merge meeting minutes (#22673)
+## X. Merge pull request #22441 from ayanasarkar/docs/fix-broken-anchor-links
 
 **RULE**:
-When implementing operations in `docs/meetings/2026/week-of-10-29-2026/prashanth-manchala.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/content/en/concepts/architecture/_index.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1fd4bee8`: [Docs] Auto-merge meeting minutes (#22673). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae3f91c1`: Merge pull request #22441 from ayanasarkar/docs/fix-broken-anchor-links. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/meetings/2026/week-of-10-29-2026/prashanth-manchala.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/content/en/concepts/architecture/_index.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-# Prashanth Kumar Manchala
-
-Hi everyone! 👋 I'm Prashanth, a software engineer with over a year of professional experience. I love **systems and backend engineering**, especially understanding how things work under the hood, debugging complex problems, and building reliable software.
-
-My current focus is **AI Platform Engineering**, where I'm exploring AI agents, infrastructure, observability, and reliable AI-powered systems.
-
-A couple of projects I've been working on:
-- **[trade-rs](https://github.com/knocBack/trade-matching-engine-rs)** — A deterministic trading order-matching engine built in Rust, with HTTP APIs and WebSocket market updates.
-- **[Incident Investigator](https://github.com/knocBack/incident-investigator)** — A multi-agent system built with LangGraph that investigates simulated production incidents using logs, metrics, and evidence-based reasoning.
-
-I'm excited to explore Meshery, learn more about cloud-native infrastructure, and contribute to open source!
-
-**Portfolio:** https://manchala.dev  
-**GitHub:** https://github.com/knocBack  
-**LinkedIn:** https://www.linkedin.com/in/prashanth-kumar-manchala
+_Figure: Clients use Meshery's [REST API]({{< ref "reference/rest-apis/_index.md" >}}), [GraphQL API]({{< ref "reference/graphql-apis.md" >}}), or a combination of both._
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+_Figure: Clients use Meshery's [REST API]({{< ref "reference/extensibility/api.md#rest" >}}), [GraphQL API]({{< ref "reference/extensibility/api.md#graphql" >}}), or a combination of both._
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1fd4bee8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae3f91c1` are properly handled with clean fallback behavior.

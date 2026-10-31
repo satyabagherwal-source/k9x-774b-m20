@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-WKJO",
-    "timestamp": "2026-10-30T00:40:04.356Z",
-    "repository": "gocd/gocd",
-    "learningId": "learn-github-gocd-gocd",
-    "contentHash": "e3fb7162431fa253be18959e029d7fbc007f312cf304b246db6dc56c47cf9da8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-5B6H",
-    "timestamp": "2026-10-30T00:46:52.121Z",
-    "repository": "zama-ai/tfhe-rs",
-    "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "2d547157429a25812a13a88fa2d0641dba4b69f58bc01836e267a54d0c178031",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-KS8J",
-    "timestamp": "2026-10-30T03:18:52.147Z",
-    "repository": "LiconStudio/Minimax-H3-VBVR",
-    "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr",
-    "contentHash": "4a2f4c0b7787fe31e5162e1f32ff4c77016bb870d5f7f543d54ca85ad725fc4c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-847W",
-    "timestamp": "2026-10-30T03:37:00.764Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "05e5361b342a66c7a1fa4a9ff9710a4fbd08580ba27a7b842b0ae1acee581d36",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-86ZC",
     "timestamp": "2026-10-30T03:37:04.344Z",
     "repository": "yuezhiai/jonex",
@@ -7490,6 +7430,66 @@
     "repository": "pixeltable/pixeltable",
     "learningId": "learn-github-pixeltable-pixeltable",
     "contentHash": "864ffa72f40a269d175c8c13645c0994b4857a076a2df2ba2dcc25ce71474c57",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-PQRP",
+    "timestamp": "2026-10-31T13:54:15.109Z",
+    "repository": "openai/whisper-large-v3",
+    "learningId": "learn-huggingface-openai-whisper-large-v3",
+    "contentHash": "55c0f368aa4414e05528e2a9d910a1dc075f18a2bb6a859a4b23b07389b4b298",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-PYI6",
+    "timestamp": "2026-10-31T13:54:25.134Z",
+    "repository": "meshery/meshery",
+    "learningId": "learn-github-meshery-meshery",
+    "contentHash": "a22f19ff8d8fb88ecb7829c058f77a44a8377e7d6595eff8cf34a8a0754169dc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-Q1A2",
+    "timestamp": "2026-10-31T13:54:28.730Z",
+    "repository": "risingwavelabs/risingwave",
+    "learningId": "learn-github-risingwavelabs-risingwave",
+    "contentHash": "b61c90fe42c6c3e70cf940cf07f8384f7261a675f0dbf4884046bc52fe784b6c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-Q36N",
+    "timestamp": "2026-10-31T13:54:31.199Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "9e7d06fc0e36de1855a0678074e8551e25d1ca3e9fa414cd91ff7cecbb411781",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

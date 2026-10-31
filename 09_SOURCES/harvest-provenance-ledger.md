@@ -6598,3 +6598,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-31T13:47:17.814Z |
 | `learn-github-onejs-one` | `https://github.com/onejs/one` | `834340ac` | Multi-dimensional audit evidence | 2026-10-31T13:47:18.306Z |
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `7822c1b1` | Multi-dimensional audit evidence | 2026-10-31T13:47:25.258Z |
+| `learn-huggingface-openai-whisper-large-v3` | `https://huggingface.co/openai/whisper-large-v3` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-31T13:54:15.120Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `ae3f91c1` | Multi-dimensional audit evidence | 2026-10-31T13:54:25.138Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `f572af7e` | Multi-dimensional audit evidence | 2026-10-31T13:54:28.735Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `7a563ca0` | Multi-dimensional audit evidence | 2026-10-31T13:54:31.203Z |

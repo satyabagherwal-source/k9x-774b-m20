@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T13:47:27.808Z",
-    "lastVerified": "2026-10-31T13:47:27.808Z",
+    "lastChecked": "2026-10-31T13:54:33.752Z",
+    "lastVerified": "2026-10-31T13:54:33.752Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -140,22 +140,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "bitterbot-desktop",
+    "name": "Bitterbot-AI/bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T13:27:18.676Z",
-    "lastVerified": "2026-10-31T13:27:18.676Z",
+    "lastChecked": "2026-10-31T13:54:30.441Z",
+    "lastVerified": "2026-10-31T13:54:30.441Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "5a7a4fe271f49221658f09295130854814d65903b0028c9c4da4f4968a3c47ed",
+    "contentHash": "9e7d06fc0e36de1855a0678074e8551e25d1ca3e9fa414cd91ff7cecbb411781",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "687e906e"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -690,9 +689,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-10-31T10:33:55.182Z",
+    "lastChecked": "2026-10-31T13:54:21.003Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-10-31T10:33:55.182Z"
+    "lastVerified": "2026-10-31T13:54:21.003Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -4106,14 +4105,14 @@
     "officialUrl": "https://github.com/risingwavelabs/risingwave",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T21:41:19.020Z",
-    "lastVerified": "2026-10-30T21:41:19.020Z",
+    "lastChecked": "2026-10-31T13:54:27.970Z",
+    "lastVerified": "2026-10-31T13:54:27.970Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-risingwavelabs-risingwave",
-    "contentHash": "1512d836a72b4f177916acd6bc419ee9c847478063ea56b6c3a4ff6a0f38e781",
+    "contentHash": "b61c90fe42c6c3e70cf940cf07f8384f7261a675f0dbf4884046bc52fe784b6c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4241,12 +4240,12 @@
     "officialUrl": "https://huggingface.co/openai/whisper-large-v3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T13:30:05.492Z",
-    "lastVerified": "2026-10-28T13:30:05.492Z",
+    "lastChecked": "2026-10-31T13:54:13.716Z",
+    "lastVerified": "2026-10-31T13:54:13.716Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openai-whisper-large-v3",
-    "contentHash": "51c38df9690d79279bba4ffad29544bcb278d7a7c5647d91ef96665c960ff033",
+    "contentHash": "55c0f368aa4414e05528e2a9d910a1dc075f18a2bb6a859a4b23b07389b4b298",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -5255,14 +5254,14 @@
     "officialUrl": "https://github.com/meshery/meshery",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T22:34:32.417Z",
-    "lastVerified": "2026-10-30T22:34:32.417Z",
+    "lastChecked": "2026-10-31T13:54:24.339Z",
+    "lastVerified": "2026-10-31T13:54:24.339Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meshery-meshery",
-    "contentHash": "839a6ac8a62e4b59d0b79dd4da9f1b29cfd85a015fc05184bcc8f30440965519",
+    "contentHash": "a22f19ff8d8fb88ecb7829c058f77a44a8377e7d6595eff8cf34a8a0754169dc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6920,9 +6919,9 @@
   "tangshimin-mujing": {
     "name": "MuJing",
     "officialUrl": "https://github.com/tangshimin/MuJing",
-    "lastChecked": "2026-10-28T18:41:47.971Z",
+    "lastChecked": "2026-10-31T13:54:15.842Z",
     "revisionIdentifier": "9ca8c14e",
-    "lastVerified": "2026-10-28T18:41:47.971Z"
+    "lastVerified": "2026-10-31T13:54:15.842Z"
   },
   "temporalio-temporal": {
     "name": "temporalio/temporal",
@@ -7322,9 +7321,9 @@
   "bgreenwell-doxx": {
     "name": "doxx",
     "officialUrl": "https://github.com/bgreenwell/doxx",
-    "lastChecked": "2026-10-30T17:59:53.213Z",
+    "lastChecked": "2026-10-31T13:54:10.821Z",
     "revisionIdentifier": "062819a1",
-    "lastVerified": "2026-10-30T17:59:53.213Z"
+    "lastVerified": "2026-10-31T13:54:10.821Z"
   },
   "hf-unsloth-embeddinggemma-2-gguf": {
     "name": "unsloth/embeddinggemma-2-GGUF",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `687e906e`  
+> **Source Version**: `7a563ca0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T04:38:49.491Z  
+> **Timestamp**: 2026-10-31T13:54:30.448Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T04:38:48.644Z  
+> **Harvest Timestamp**: 2026-10-31T13:54:30.441Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,642 +1799,347 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `687e906e` (2026-10-31)
-**Commit Message**: fix(acp): migrate to @agentclientprotocol/sdk 2.x and fix the stdio bridge (#340)
+### Incident Patch 1: `7a563ca0` (2026-10-31)
+**Commit Message**: feat(gateway): attribute event-loop stalls with an on-demand sampling profiler (#341)
 
-The 2.x SDK removes the class-based Agent, AgentSideConnection and
-ClientSideConnection API in favour of app builders. AcpGatewayAgent now
-holds only gateway state and pushes session updates through a notifier
-sink bound at connection time; createAcpAgentApp() registers the protocol
-handlers on an SDK agent() app, and the interactive client uses client()
-with typed handlers. Wire protocol is unchanged (ACP v1).
+The event-loop monitor said when the loop stalled but not what held it; a
+stall with no RPC in flight (a timer-driven memory sweep, a GC pause) left
+nothing to line up against. The live gateway showed 3-29 s stalls tonight
+with no attributable log line.
 
-Fixes found while smoke-testing the built CLI over stdio:
+The monitor now arms V8's sampling CPU profiler (inspector Profiler, 10 ms
+samples on its own thread) after the first window that crosses the warn
+threshold, rotates the profile every window, and for each later window whose
+max stall reaches BITTERBOT_EVENT_LOOP_PROFILE_MS (default 1000) logs the
+frames that held the loop as self time per frame with file:line, including
+"(garbage collector)" for GC pauses. After ten quiet windows it disarms, so a
+healthy gateway pays nothing. BITTERBOT_EVENT_LOOP_PROFILE=0 keeps it off.
 
-- server.ts carried a "run when executed directly" block guarded by
-  isMainModule(import.meta.url). Inside the esbuild bundle that URL is
-  dist/entry.js, which is also argv[1], so every `bitterbot acp` started a
-  second server on the same stdin and answered each request twice. The
-  standalone block, its argv parser and help text are removed.
-- The gateway canonicalizes session keys before emitting chat/tool events
-  (acp:<id> comes back as agent:main:acp:<id>); the bridge compared the raw
-  key, so prompts on the default per-session key never resolved.
-  sessionKeysMatch() accepts either spelling for the same agent.
-- initialize w
+summarizeProfile() and the arm/disarm policy are pure and unit-tested; two
+integration tests drive the monitor with a fake profiler and with the real
+inspector against a synchronous hog.
 
-**File**: `docs/cli/acp.md` (modified, +2/-1)
+Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+**File**: `docs/gateway/troubleshooting.md` (modified, +16/-0)
 ```diff
-@@ -11,7 +11,8 @@ title: "acp"
- Run the ACP (Agent Client Protocol) bridge that talks to a Bitterbot Gateway.
+@@ -153,6 +153,22 @@ span. Tune or disable via env: `BITTERBOT_EVENT_LOOP_MONITOR=0` (off),
+ `BITTERBOT_EVENT_LOOP_SAMPLE_MS` (window, default 30000),
+ `BITTERBOT_EVENT_LOOP_WARN_MS` (threshold, default 250).
  
- This command speaks ACP over stdio for IDEs and forwards prompts to the Gateway
--over WebSocket. It keeps ACP sessions mapped to Gateway session keys.
-+over WebSocket. It keeps ACP sessions mapped to Gateway session keys. When the
-+IDE closes the stdio pipe, the bridge disconnects from the Gateway and exits.
++Stalls with no RPC in flight (a timer-driven memory sweep, a GC pause) leave
++nothing to line up against, so the monitor also attributes them. After the
++first stalled window it arms V8's sampling profiler; every later window whose
++worst stall reaches `BITTERBOT_EVENT_LOOP_PROFILE_MS` (default 1000) logs the
++frames that held the loop:
++
++```
++[gateway/event-loop] event loop stall attribution: max=8577ms samples=2400 over 30000ms
++   27%   8100ms  detectOrphanClusters /home/me/.bitterbot/app/current/dist/entry.js:88123
++    3%    900ms  (garbage collector)
++```
++
++Self time per frame, heaviest first; `(garbage collector)` means the stall was
++a GC pause. The profiler disarms after five quiet minutes, so a healthy gateway
++pays nothing for it. Set `BITTERBOT_EVENT_LOOP_PROFILE=0` to never arm it.
++
+ A healthy build should not exhibit this. If it reappears:
  
- ## Usage
- 
+ - Watch for RPC durations ballooning in the logs (e.g. `skills.network` taking
 ```
 
-**File**: `package.json` (modified, +1/-1)
+**File**: `docs/observability.md` (modified, +7/-3)
 ```diff
-@@ -157,7 +157,7 @@
-     "version:sync": "node scripts/bump-version.mjs"
-   },
-   "dependencies": {
--    "@agentclientprotocol/sdk": "0.14.1",
-+    "@agentclientprotocol/sdk": "2.0.2",
-     "@anthropic-ai/claude-agent-sdk": "^0.3.296",
-     "@anthropic-ai/sdk": "^0.133.0",
-     "@aws-sdk/client-bedrock": "^3.1146.0",
+@@ -97,9 +97,13 @@ enough to risk starving the WebSocket keepalive" — the class of stall
+ that bounces the Control UI with a `code=1006` tick-timeout. The sampler
+ runs even with OTel disabled (the default), where it still logs a
+ structured WARN under the `[gateway/event-loop]` subsystem; the span is
+-just the exported form of the same event. Tune it with
+-`BITTERBOT_EVENT_LOOP_MONITOR` / `BITTERBOT_EVENT_LOOP_SAMPLE_MS` /
+-`BITTERBOT_EVENT_LOOP_WARN_MS`. See
++just the exported form of the same event. Once a window has stalled, the
++sampler also arms V8's sampling profiler and logs a stall attribution (the
++frames that held the loop, self time per frame) for later windows that
++cross `BITTERBOT_EVENT_LOOP_PROFILE_MS`; it disarms after a quiet period.
++Tune it with `BITTERBOT_EVENT_LOOP_MONITOR` / `BITTERBOT_EVENT_LOOP_SAMPLE_MS`
++/ `BITTERBOT_EVENT_LOOP_WARN_MS` / `BITTERBOT_EVENT_LOOP_PROFILE` /
++`BITTERBOT_EVENT_LOOP_PROFILE_MS`. See
+ [/gateway/troubleshooting](/gateway/troubleshooting).
+ 
+ ## What it looks like
 ```
 
-**File**: `pnpm-lock.yaml` (modified, +6/-6)
+**File**: `src/gateway/event-loop-monitor.test.ts` (modified, +184/-1)
 ```diff
-@@ -17,8 +17,8 @@ importers:
-   .:
-     dependencies:
-       '@agentclientprotocol/sdk':
--        specifier: 0.14.1
--        version: 0.14.1(zod@4.6.7)
-+        specifier: 2.0.2
-+        version: 2.0.2(zod@4.6.7)
-       '@anthropic-ai/claude-agent-sdk':
-         specifier: ^0.3.296
-         version: 0.3.296(@anthropic-ai/sdk@0.133.0(zod@4.6.7))(@modelcontextprotocol/sdk@1.32.2(zod@4.6.7))(zod@4.6.7)
-@@ -567,10 +567,10 @@ packages:
-   '@adraffy/ens-normalize@1.11.1':
-     resolution: {integrity: sha512-nhCBV3quEgesuf7c7KYfperqSS14T8bYuvJ8PcLJp6znkZpFc0AuW4qBtr8eKVyPPe/8RSr7sglCWPU5eaxwKQ==}
- 
--  '@agentclientprotocol/sdk@0.14.1':
--    resolution: {integrity: sha512-b6r3PS3Nly+Wyw9U+0nOr47bV8tfS476EgyEMhoKvJCZLbgqoDFN7DJwkxL88RR0aiOqOYV1ZnESHqb+RmdH8w==}
-+  '@agentclientprotocol/sdk@2.0.2':
-+    resolution: {integrity: sha512-jLywRB42hZMRMc4aUgt0uRjkY9FQnMdybv4XgLl+ddi75QuJn8Vbl0+CHcVHJDC0+WDfi1KQXRWtHaR5vp6gHw==}
-     peerDependencies:
--      zod: ^3.25.0 || ^4.0.0
-+      zod: ^3.25.76 || ^4.0.0
- 
-   '@alloc/quick-lru@5.3.0':
-     resolution: {integrity: sha512-U4+70Pc5ZS9osnCBCE5Jha/ciHM+Yp+CNMNC/7HvYbNRk1Ldd+f7qO65W5qfhu/TCv+/ozljlXXe9Nj8419DMA==}
-@@ -10353,7 +10353,7 @@ snapshots:
- 
-   '@adraffy/ens-normalize@1.11.1': {}
- 
--  '@agentclientprotocol/sdk@0.14.1(zod@4.6.7)':
-+  '@agentclientprotocol/sdk@2.0.2(zod@4.6.7)':
-     dependencies:
-       zod: 4.6.7
- 
-```
-
-**File**: `src/acp/client.test.ts` (modified, +2/-2)
-```diff
-@@ -145,8 +145,8 @@ describe("acp event mapper", () => {
-   it("extracts text and resource blocks into prompt text", () => {
-     const text = extractTextFromPrompt([
-       { type: "text", text: "Hello" },
--      { type: "resource", resource: { text: "File contents" } },
--      { type: "resource_link", uri: "https://example.com", title: "Spec" },
-+      { type: "resource", resource: { uri: "file:///notes.txt", text: "File contents" } },
-+      { type: "resource_link", uri: "https://example.com", name: "spec", title: "Spec" },
-       { type: "image", data: "abc", mimeType: "image/png" },
-     ]);
- 
-```
-
-**File**: `src/acp/client.ts` (modified, +24/-18)
-```diff
-@@ -5,9 +5,12 @@ import * as readline from "node:readline";
- import { Readable, Writable } from "node:stream";
- import { fileURLToPath } from "node:url";
- import {
--  ClientSideConnection,
-+  client as createClientApp,
-+  methods,
-   PROTOCOL_VERSION,
-   ndJsonStream,
-+  type ClientConnection,
-+  type ClientContext,
-   type RequestPermissionRequest,
-   type RequestPermissionResponse,
-   type SessionNotification,
-@@ -244,7 +247,10 @@ export type AcpClientOptions = {
- };
- 
- export type AcpClientHandle = {
--  client: ClientSideConnection;
-+  /** The ACP connection to the spawned agent process. */
-+  connection: ClientConnection;
-+  /** Peer context for calling agent-side methods (initialize, session/*). */
-+  peer: ClientContext;
-   agent: ChildProcess;
-   sessionId: string;
- };
-@@ -345,20 +351,18 @@ export async function createAcpClient(opts: AcpClientOptions = {}): Promise<AcpC
-   const output = Readable.toWeb(agent.stdout) as unknown as ReadableStream<Uint8Array>;
-   const stream = ndJsonStream(input, output);
- 
--  const client = new ClientSideConnection(
--    () => ({
--      sessionUpdate: async (params: SessionNotification) => {
--        printSessionUpdate(params);
--      },
--      requestPermission: async (params: RequestPermissionRequest) => {
--        return resolvePermissionRequest(params);
--      },
--    }),
--    stream,
--  );
-+  const app = createClientApp({ name: "bitterbot-acp-client" })
-+    .onNotification(methods.client.session.update, ({ params }) => {
-+      printSessionUpdate(params);
-+    })
-+    .onRequest(methods.client.session.requestPermission, ({ params }) =>
-+      resolvePermissionRequest(params),
-+    );
-+  const connection = app.connect(stream);
-+  const peer = connection.agent;
- 
-   log("initializing");
--  await client.initialize({
-+  await peer.request(methods.agent.initialize, {
-     protocolVersion: PROTOCOL_VERSION,
-     clientCapabilities: {
-       fs: { readTextFile: true, writeTextFile: true },
-@@ -368,20 +372,21 @@ export async function createAcpClient(opts: AcpClientOptions = {}): Promise<AcpC
-   });
- 
-   log("creating session");
--  const session = await client.newSession({
-+  const session = await peer.request(methods.agent.session.new, {
-     cwd,
-     mcpServers: [],
-   });
- 
-   return {
--    client,
-+    connection,
-+    peer,
-     agent,
-     sessionId: session.sessionId,
-   };
- }
- 
- export async function runAcpClientInteractive(opts: AcpClientOptions = {}): Promise<void> {
--  const { client, agent, sessionId } = await createAcpClient(opts);
-+  const { connection, peer, agent, sessionId } = await createAcpClient(opts);
- 
-   const rl = readline.createInterface({
-     input: process.stdin,
-@@ -400,13 +405,14 @@ export async function runAcpClientInteractive(opts: AcpClientOptions = {}): Prom
-         return;
-       }
-       if (text === "exit" || text === "quit") {
-+        connection.close();
-         agent.kill();
-         rl.close();
-         process.exit(0);
-       }
- 
-       try {
--        const response = await client.prompt({
-+        const response = await peer.request(methods.agent.session.prompt, {
-           sessionId,
-           prompt: [{ type: "text", text }],
-         });
-```
-
-**File**: `src/acp/server.ts` (modified, +16/-90)
-```diff
-@@ -1,14 +1,11 @@
--#!/usr/bin/env node
- import { Readable, Writable } from "node:stream";
--import { fileURLToPath } from "node:url";
--import { AgentSideConnection, ndJsonStream } from "@agentclientprotocol/sdk";
-+import { ndJsonStream } from "@agentclientprotocol/sdk";
- import { loadConfig } from "../config/config.js";
- import { resolveGatewayAuth } from "../gateway/auth.js";
- import { buildGatewayConnectionDetails } from "../gateway/call.js";
- import { GatewayClient } from "../gateway/client.js";
--import { isMainModule } from "../infra/is-main.js";
- import { GATEWAY_CLIENT_MODES, GATEWAY_CLIENT_NAMES } from "../utils/message-channel.js";
--import { AcpGatewayAgent } from "./translator.js";
-+import { AcpGatewayAgent, createAcpAgentApp } from "./translator.js";
- import type { AcpServerOptions } from "./types.js";
- 
- export function serveAcpGateway(opts: AcpServerOptions = {}): Promise<void> {
-@@ -39,6 +36,13 @@ export function serveAcpGateway(opts: AcpServerOptions = {}): Promise<void> {
-     onClosed = resolve;
-   });
-   let stopped = false;
-+  // Resolves on the first successful gateway handshake so `initialize` can
-+  // hold the IDE briefly instead of failing its first prompt with
-+  // "gateway not connected" while the WebSocket is still coming up.
-+  let onGatewayReady!: () => void;
-+  const gatewayReady = new Promise<void>((resolve) => {
-+    onGatewayReady = resolve;
-+  });
- 
-   const gateway = new GatewayClient({
-     url: connection.url,
-@@ -52,6 +56,7 @@ export function serveAcpGateway(opts: AcpServerOptions = {}): Promise<void> {
-       void agent?.handleGatewayEvent(evt);
-     },
-     onHelloOk: () => {
-+      onGatewayReady();
-       agent?.handleGatewayReconnect();
-     },
-     onClose: (code, reason) => {
-@@ -83,92 +88,13 @@ export function serveAcpGateway(opts: AcpServerOptions = {}): Promise<void> {
-   const output = Readable.toWeb(process.stdin) as unknown as ReadableStream<Uint8Array>;
-   const stream = ndJsonStream(input, output);
- 
--  new AgentSideConnection((conn: AgentSideConnection) => {
--    agent = new AcpGatewayAgent(conn, gateway, opts);
--    agent.start();
--    return agent;
--  }, stream);
-+  agent = new AcpGatewayAgent(gateway, { ...opts, gatewayReady });
-+  const acpConnection = createAcpAgentApp(agent).connect(stream);
-+  agent.start();
-+  // When the IDE closes the stdio pipe, stop the bridge instead of lingering
-+  // on the gateway WebSocket with nobody to deliver to.
-+  void acpConnection.closed.then(shutdown);
- 
-   gateway.start();
-   return closed;
- }
--
--function parseArgs(args: string[]): AcpServerOptions {
--  const opts: AcpServerOptions = {};
--  for (let i = 0; i < args.length; i += 1) {
--    const arg = args[i];
--    if (arg === "--url" || arg === "--gateway-url") {
--      opts.gatewayUrl = args[i + 1];
--      i += 1;
--      continue;
--    }
--    if (arg === "--token" || arg === "--gateway-token") {
--      opts.gatewayToken = args[i + 1];
--      i += 1;
--      continue;
--    }
--    if (arg === "--password" || arg === "--gateway-password") {
--      opts.gatewayPassword = args[i + 1];
--      i += 1;
--      continue;
--    }
--    if (arg === "--session") {
--      opts.defaultSessionKey = args[i + 1];
--      i += 1;
--      continue;
--    }
--    if (arg === "--session-label") {
--      opts.defaultSessionLabel = args[i + 1];
--      i += 1;
--      continue;
--    }
--    if (arg === "--require-existing") {
--      opts.requireExistingSession = true;
--      continue;
--    }
--    if (arg === "--reset-session") {
--      opts.resetSession = true;
--      continue;
--    }
--    if (arg === "--no-prefix-cwd") {
--      opts.prefixCwd = false;
--      continue;
--    }
--    if (arg === "--verbose" || arg === "-v") {
--      opts.verbose = true;
--      continue;
--    }
--    if (arg === "--help" || arg === "-h") {
--      printHelp();
--      process.exit(0);
--    }
--  }
--  return opts;
--}
--
--function printHelp(): void {
--  console.log(`Usage: bitterbot acp [options]
--
--Gateway-backed ACP server for IDE integration.
--
--Options:
--  --url <url>             Gateway WebSocket URL
--  --token <token>         Gateway auth token
--  --password <password>   Gateway auth password
--  --session <key>         Default session key (e.g. "agent:main:main")
--  --session-label <label> Default session label to resolve
--  --require-existing      Fail if the session key/label does not exist
--  --reset-session         Reset the session key before first use
--  --no-prefix-cwd         Do not prefix prompts with the working directory
--  --verbose, -v           Verbose logging to stderr
--  --help, -h              Show this help message
--`);
--}
--
--if (isMainModule({ currentFile: fileURLToPath(import.meta.url) })) {
--  const opts = parseArgs(process.argv.slice(2));
--  serveAcpGateway(opts).catch((err) => {
--    console.error(String(err));
--    process.exit(1);
--  });
--}
-```
-
-**File**: `src/acp/translator.test.ts` (added, +320/-0)
-```diff
-@@ -0,0 +1,320 @@
-+import {
-+  client as createClientApp,
-+  methods,
-+  PROTOCOL_VERSION,
-+  type SessionNotification,
-+} from "@agentclientprotocol/sdk";
+@@ -1,10 +1,14 @@
+-import { describe, expect, it } from "vitest";
 +import { describe, expect, it, vi } from "vitest";
-+import type { GatewayClient } from "../gateway/client.js";
-+import type { EventFrame } from "../gateway/protocol/index.js";
-+import { createInMemorySessionStore } from "./session.js";
-+import { AcpGatewayAgent, createAcpAgentApp, sessionKeysMatch } from "./translator.js";
-+
-+type RecordedRequest = { method: string; params: Record<string, unknown> };
-+
-+function makeGateway(recorded: RecordedRequest[]) {
-+  const request = vi.fn(async (method: string, params?: unknown) => {
-+    recorded.push({ method, params: (params ?? {}) as Record<string, unknown> });
-+    if (method === "sessions.list") {
-+      return {
-+        sessions: [
-+          {
-+            key: "agent:main:main",
-+            displayName: "Main",
-+            kind: "direct",
-+            updatedAt: 1_700_000_000_000,
-+          },
-+          { key: "agent:main:side", label: "side", kind: "group" },
-+        ],
-+      };
-+    }
-+    return {};
+ import {
++  type CpuProfileLike,
+   type EventLoopSample,
+   formatEventLoopWarning,
++  formatStallAttribution,
+   resolveEventLoopMonitorConfig,
+   shouldWarn,
++  StallProfilerPolicy,
+   startEventLoopMonitor,
++  summarizeProfile,
+ } from "./event-loop-monitor.js";
+ 
+ describe("resolveEventLoopMonitorConfig", () => {
+@@ -13,9 +17,20 @@ describe("resolveEventLoopMonitorConfig", () => {
+       enabled: true,
+       sampleIntervalMs: 30_000,
+       warnThresholdMs: 250,
++      profileEnabled: true,
++      profileThresholdMs: 1_000,
+     });
+   });
+ 
++  it("reads the stall-profiler switches from env", () => {
++    const cfg = resolveEventLoopMonitorConfig({
++      BITTERBOT_EVENT_LOOP_PROFILE: "0",
++      BITTERBOT_EVENT_LOOP_PROFILE_MS: "2500",
++    });
++    expect(cfg.profileEnabled).toBe(false);
++    expect(cfg.profileThresholdMs).toBe(2500);
 +  });
-+  return { gateway: { request } as unknown as GatewayClient, request };
++
+   it("reads sample interval and threshold from env", () => {
+     const cfg = resolveEventLoopMonitorConfig({
+       BITTERBOT_EVENT_LOOP_SAMPLE_MS: "5000",
+@@ -95,3 +110,171 @@ describe("startEventLoopMonitor", () => {
+     }).not.toThrow();
+   });
+ });
++
++function syntheticProfile(samples: number[], durationUs: number): CpuProfileLike {
++  return {
++    startTime: 1_000_000,
++    endTime: 1_000_000 + durationUs,
++    samples,
++    nodes: [
++      { id: 1, callFrame: { functionName: "(root)", url: "", lineNumber: -1 } },
++      { id: 2, callFrame: { functionName: "(idle)", url: "", lineNumber: -1 } },
++      {
++        id: 3,
++        callFrame: {
++          functionName: "sweepChunks",
++          url: "file:///app/dist/memory.js",
++          lineNumber: 41,
++        },
++      },
++      { id: 4, callFrame: { functionName: "", url: "file:///app/dist/rpc.js", lineNumber: 9 } },
++      { id: 5, callFrame: { functionName: "(garbage collector)", url: "", lineNumber: -1 } },
++    ],
++  };
 +}
 +
-+function chatEvent(payload: Record<string, unknown>): EventFrame {
-+  return { type: "event", event: "chat", payload };
-+}
-+
-+async function connectHarness(agentOpts: { gatewayReady?: Promise<void> } = {}) {
-+  const recorded: RecordedRequest[] = [];
-+  const { gateway, request } = makeGateway(recorded);
-+  const agent = new AcpGatewayAgent(gateway, {
-+    sessionStore: createInMemorySessionStore(),
-+    ...agentOpts,
-+  });
-+  const updates: SessionNotification[] = [];
-+  const clientApp = createClientApp({ name: "test-client" }).onNotification(
-+    methods.client.session.update,
-+    ({ params }) => {
-+      updates.push(params);
-+    },
-+  );
-+  const connection = clientApp.connect(createAcpAgentApp(agent));
-+  const peer = connection.agent;
-+
-+  const init = await peer.request(methods.agent.initialize, {
-+    protocolVersion: PROTOCOL_VERSION,
-+    clientCapabilities: {},
-+  });
-+  const session = await peer.request(methods.agent.session.new, {
-+    cwd: "/work/project",
-+    mcpServers: [],
-+  });
-+  const chatSend = () => recorded.find((r) => r.method === "chat.send");
-+  return { agent, peer, connection, updates, recorded, request, init, session, chatSend };
-+}
-+
-+describe("AcpGatewayAgent over the SDK app API", () => {
-+  it("initializes, creates a session, and pushes available commands", async () => {
-+    const h = await connectHarness();
-+    try {
-+      expect(h.init.protocolVersion).toBe(PROTOCOL_VERSION);
-+      expect(h.init.agentInfo?.name).toBeTruthy();
-+      expect(h.init.agentCapabilities?.loadSession).toBe(true);
-+      expect(h.session.sessionId).toMatch(/[0-9a-f-]{36}/);
-+      await vi.waitFor(() => expect(h.updates.length).toBeGreaterThan(0));
-+      expect(h.updates[0]?.sessionId).toBe(h.session.sessionId);
-+      expect(h.updates[0]?.update.sessionUpdate).toBe("available_commands_update");
-+      // Exactly one handler answers each request: a request must never be
-+      // dispatched to two agent instances (regression for the doubled stdio server).
-+      expect(
-+        h.updates.filter((u) => u.update.sessionUpdate === "available_commands_update"),
-+      ).toHaveLength(1);
-+      expect(h.recorded.filter((r) => r.method === "sessions.resolve")).toHaveLength(0);
-+    } finally {
-+      h.connection.close();
-+    }
++describe("summarizeProfile", () => {
++  it("ranks frames by self time, drops idle, keeps GC, and names anonymous frames", () => {
++    // 10 samples over 1s: 5 sweep, 2 anonymous rpc, 1 gc, 2 idle.
++    const profile = syntheticProfile([3, 3, 3, 3, 3, 4, 4, 5, 2, 2], 1_000_000);
++    const summary = summarizeProfile(profile, 3);
++    expect(summary.profileDurationMs).toBe(1000);
++    expect(summary.sampleCount).toBe(8);
++    expect(summary.frames.map((f) => f.label)).toEqual([
++      "sweepChunks /app/dist/memory.js:42",
++      "(anonymous) /app/dist/rpc.js:10",
++      "(garbage collector)",
++    ]);
++    expect(summary.frames[0]).toMatchObject({ percent: 50, ms: 500 });
++    expect(summary.frames[2]).toMatchObject({ percent: 10, ms: 100 });
 +  });
 +
-+  it("streams gateway chat deltas as agent_message_chunk updates and ends the turn", async () => {
-+    const h = await connectHarness();
-+    try {
-+      const promptPromise = h.peer.request(methods.agent.session.prompt, {
-+        sessionId: h.session.sessionId,
-+        prompt: [{ type: "text", text: "hello there" }],
-+      });
-+      await vi.waitFor(() => expect(h.chatSend()).toBeDefined());
-+      const send = h.chatSend()!;
-+      const sessionKey = send.params.sessionKey as string;
-+      const runId = send.params.idempotencyKey as string;
-+      expect(sessionKey).toBe(`acp:${h.session.sessionId}`);
-+      expect(send.params.message).toBe("[Working directory: /work/project]\n\nhello there");
++  it("ignores samples that point at unknown nodes and handles an empty profile", () => {
++    expect(summarizeProfile(syntheticProfile([99, 98], 500_000)).frames).toEqual([]);
++    expect(summarizeProfile(syntheticProfile([], 0))).toEqual({
++      frames: [],
++      sampleCount: 0,
++      profileDurationMs: 0,
++    });
++  });
++});
 +
-+      // The gateway emits events under the canonical key, not the raw one we sent.
-+      const canonicalKey = `agent:main:${sessionKey}`;
-+      const delta = (text: string) =>
-+        h.agent.handleGatewayEvent(
-+          chatEvent({
-+            sessionKey: canonicalKey,
-+            runId,
-+            state: "delta",
-+            message: { content: [{ type: "text", text }] },
-+          }),
-+        );
-+      await delta("Hel");
-+      await delta("Hello world");
-+      // A delta for a different run must be ignored.
-+      await h.agent.handleGatewayEvent(
-+        chatEvent({
-+          sessionKey: canonicalKey,
-+          runId: "other-run",
-+          state: "delta",
-+          message: { content: [{ type: "text", text: "WRONG" }] },
-+        }),
-+ 
++describe("formatStallAttribution", () => {
++  it("prints a header plus one aligned line per frame", () => {
++    const text = formatStallAttribution({
++      sample: { maxMs: 8123.4, meanMs: 30, p99Ms: 100 },
++      sampleCount: 800,
++      profileDurationMs: 30_000,
++      frames: [
++        { label: "sweepChunks /app/dist/memory.js:42", percent: 27, ms: 8100 },
++        { label: "(garbage collector)", percent: 3, ms: 900 },
++      ],
++    });
++    const lines = text.split("\n");
++    expect(lines[0]).toBe("event loop stall attribution: max=8123ms samples=800 over 30000ms");
++    expect(lines[1]).toBe("   27%   8100ms  sweepChunks /app/dist/memory.js:42");
++    expect(lines[2]).toBe("    3%    900ms  (garbage collector)");
++  });
++
++  it("says so when nothing busy was sampled", () => {
++    const text = formatStallAttribution({
++      sample: { maxMs: 1200, meanMs: 1, p99Ms: 2 },
++      sampleCount: 0,
++      profileDurationMs: 30_000,
++      frames: [],
++    });
++    expect(text).toMatch(/no busy frames sampled$/);
++  });
++});
++
++describe("StallProfilerPolicy", () => {
++  it("arms on the first stalled window and disarms after the quiet run", () => {
++    const policy = new StallProfilerPolicy(3);
++    expect(policy.observe(false)).toBe("none");
++    expect(policy.armed).toBe(false);
++    expect(policy.observe(true)).toBe("arm");
++    expect(policy.armed).toBe(true);
++    expect(policy.observe(true)).toBe("none");
++    expect(policy.observe(false)).toBe("none");
++    expect(policy.observe(false)).toBe("none");
++    // A stall inside the quiet run resets the countdown.
++    expect(policy.observe(true)).toBe("none");
++    expect(policy.observe(false)).toBe("none");
++    expect(policy.observe(false)).toBe("none");
++    expect(policy.observe(false)).toBe("disarm");
++    expect(policy.armed).toBe(false);
++    expect(policy.observe(false)).toBe("none");
++  });
++});
++
++function hogEvent
 ```
 
-**File**: `src/acp/translator.ts` (modified, +168/-22)
+**File**: `src/gateway/event-loop-monitor.ts` (modified, +277/-3)
 ```diff
-@@ -1,7 +1,7 @@
- import { randomUUID } from "node:crypto";
- import type {
--  Agent,
--  AgentSideConnection,
-+  AgentApp,
-+  AgentContext,
-   AuthenticateRequest,
-   AuthenticateResponse,
-   CancelNotification,
-@@ -16,10 +16,16 @@ import type {
-   PromptRequest,
-   PromptResponse,
-   SetSessionModeRequest,
-+  SessionNotification,
-   SetSessionModeResponse,
-   StopReason,
- } from "@agentclientprotocol/sdk";
--import { PROTOCOL_VERSION } from "@agentclientprotocol/sdk";
-+import {
-+  agent as createAgentApp,
-+  methods,
-+  PROTOCOL_VERSION,
-+  RequestError,
-+} from "@agentclientprotocol/sdk";
- import type { GatewayClient } from "../gateway/client.js";
- import type { EventFrame } from "../gateway/protocol/index.js";
- import type { SessionsListResult } from "../gateway/session-utils.js";
-@@ -48,22 +54,76 @@ type PendingPrompt = {
+@@ -17,12 +17,25 @@
+  * stalled and can line it up against the `res ✓ <method> <ms>` line for the
+  * handler that was running, instead of reverse-engineering it from timestamps.
+  *
++ * Knowing *when* is not always enough: a stall with no RPC in flight (a timer-
++ * driven memory sweep, a GC pause) leaves nothing to line up against. So the
++ * monitor also attributes stalls. Once a window has stalled past the warn
++ * threshold it arms V8's sampling CPU profiler (`inspector` Profiler, ~10ms
++ * samples, a separate sampler thread so it observes the blocked main thread).
++ * Each later window whose max stall crosses the attribution threshold logs the
++ * frames that held the loop (self time, file:line), including `(garbage
++ * collector)` when the stall is a GC pause. After enough quiet windows the
++ * profiler disarms again, so a healthy gateway pays nothing.
++ *
+  * On by default at gateway boot. Tunable / disengageable via env:
+  *   BITTERBOT_EVENT_LOOP_MONITOR=0        disable entirely
+  *   BITTERBOT_EVENT_LOOP_SAMPLE_MS=30000  sampling window (ms)
+  *   BITTERBOT_EVENT_LOOP_WARN_MS=250      warn when a window's max delay >= this
++ *   BITTERBOT_EVENT_LOOP_PROFILE=0        never attribute (no profiler)
++ *   BITTERBOT_EVENT_LOOP_PROFILE_MS=1000  attribute when a window's max >= this
+  */
  
- type AcpGatewayAgentOptions = AcpServerOptions & {
-   sessionStore?: AcpSessionStore;
-+  /** Resolves once the gateway WebSocket has completed its handshake. */
-+  gatewayReady?: Promise<void>;
-+  /** Upper bound on how long `initialize` waits for the gateway (ms). */
-+  gatewayReadyTimeoutMs?: number;
++import { Session } from "node:inspector";
+ import { monitorEventLoopDelay } from "node:perf_hooks";
+ import { createSubsystemLogger } from "../logging/subsystem.js";
+ import { startSpan } from "../observability/otel.js";
+@@ -32,19 +45,57 @@ const log = createSubsystemLogger("gateway/event-loop");
+ const NS_PER_MS = 1e6;
+ const DEFAULT_SAMPLE_INTERVAL_MS = 30_000;
+ const DEFAULT_WARN_THRESHOLD_MS = 250;
++const DEFAULT_PROFILE_THRESHOLD_MS = 1_000;
+ /** libuv histogram resolution; the loop is probed every this-many ms. */
+ const HISTOGRAM_RESOLUTION_MS = 20;
++/** V8 sampling interval while the profiler is armed (microseconds). */
++const PROFILER_SAMPLING_INTERVAL_US = 10_000;
++/** Consecutive windows below the warn threshold before the profiler disarms. */
++const QUIET_WINDOWS_TO_DISARM = 10;
++/** How many frames a stall attribution lists. */
++const ATTRIBUTION_TOP_FRAMES = 6;
+ 
+ export type EventLoopSample = { maxMs: number; meanMs: number; p99Ms: number };
+ 
+ export type EventLoopMonitorConfig = {
+   enabled: boolean;
+   sampleIntervalMs: number;
+   warnThresholdMs: number;
++  /** Attribute stalls with the sampling profiler (armed after the first warning). */
++  profileEnabled: boolean;
++  /** A window's max stall must reach this before its frames are logged. */
++  profileThresholdMs: number;
  };
  
--export class AcpGatewayAgent implements Agent {
--  private connection: AgentSideConnection;
-+const DEFAULT_GATEWAY_READY_TIMEOUT_MS = 10_000;
-+
-+/**
-+ * The gateway canonicalizes session keys before it emits chat/agent events:
-+ * a prompt sent for `acp:<id>` comes back tagged `agent:<agentId>:acp:<id>`.
-+ * Match either spelling so pending prompts resolve regardless of which form
-+ * the event carries.
-+ */
-+export function sessionKeysMatch(eventKey: string, pendingKey: string): boolean {
-+  const event = eventKey.trim().toLowerCase();
-+  const pending = pendingKey.trim().toLowerCase();
-+  if (!event || !pending) {
-+    return false;
-+  }
-+  if (event === pending) {
-+    return true;
-+  }
-+  const stripAgentPrefix = (key: string): string | null => {
-+    if (!key.startsWith("agent:")) {
-+      return null;
-+    }
-+    const rest = key.slice("agent:".length);
-+    const sep = rest.indexOf(":");
-+    return sep >= 0 ? rest.slice(sep + 1) : null;
-+  };
-+  const eventBare = stripAgentPrefix(event);
-+  const pendingBare = stripAgentPrefix(pending);
-+  if (eventBare !== null && pendingBare === null) {
-+    return eventBare === pending;
-+  }
-+  if (eventBare === null && pendingBare !== null) {
-+    return event === pendingBare;
-+  }
-+  return false;
-+}
-+
-+/**
-+ * The client-side sink the agent pushes `session/update` notifications into.
-+ * Backed by the SDK's AgentContext in production; tests can supply a stub.
-+ */
-+export type AcpClientNotifier = {
-+  sessionUpdate(params: SessionNotification): Promise<void>;
+ export type EventLoopMonitorHandle = { stop: () => void };
+ 
++/** One line of a stall attribution: where the main thread spent its time. */
++export type StallFrame = {
++  label: string;
++  /** Share of the window's samples that landed in this frame (0-100). */
++  percent: number;
++  /** Approximate self time in the window (ms). */
++  ms: number;
 +};
 +
-+export function notifierFromContext(client: AgentContext): AcpClientNotifier {
-+  return {
-+    sessionUpdate: (params) => client.notify(methods.client.session.update, params),
++export type StallAttribution = {
++  sample: EventLoopSample;
++  frames: StallFrame[];
++  sampleCount: number;
++  profileDurationMs: number;
++};
++
++/** The subset of a CDP `Profiler.Profile` the attribution uses. */
++export type CpuProfileLike = {
++  nodes: Array<{
++    id: number;
++    callFrame: { functionName: string; url: string; lineNumber: number };
++  }>;
++  samples?: number[];
++  startTime: number;
++  endTime: number;
++};
++
+ function parsePositiveInt(raw: string | undefined, fallback: number): number {
+   if (raw === undefined) {
+     return fallback;
+@@ -77,6 +128,152 @@ export function resolveEventLoopMonitorConfig(
+     warnThresholdMs:
+       overrides?.warnThresholdMs ??
+       parsePositiveInt(env.BITTERBOT_EVENT_LOOP_WARN_MS, DEFAULT_WARN_THRESHOLD_MS),
++    profileEnabled: overrides?.profileEnabled ?? !parseDisabled(env.BITTERBOT_EVENT_LOOP_PROFILE),
++    profileThresholdMs:
++      overrides?.profileThresholdMs ??
++      parsePositiveInt(env.BITTERBOT_EVENT_LOOP_PROFILE_MS, DEFAULT_PROFILE_THRESHOLD_MS),
 +  };
 +}
 +
 +/**
-+ * Gateway-backed ACP agent. Protocol dispatch lives in {@link createAcpAgentApp};
-+ * this class holds the session/prompt state and translates gateway events into
-+ * ACP session updates.
++ * Collapse a CPU profile into self-time per frame, heaviest first. Pure, so the
++ * ranking is unit-testable with a synthetic profile. V8's synthetic nodes keep
++ * their parenthesised names: `(garbage collector)` is a real answer (the stall
++ * was a GC pause), `(idle)` is dropped because idle time is not a stall.
 + */
-+export class AcpGatewayAgent {
-+  private client: AcpClientNotifier | null = null;
-   private gateway: GatewayClient;
-   private opts: AcpGatewayAgentOptions;
-   private log: (msg: string) => void;
-   private sessionStore: AcpSessionStore;
-   private pendingPrompts = new Map<string, PendingPrompt>();
- 
--  constructor(
--    connection: AgentSideConnection,
--    gateway: GatewayClient,
--    opts: AcpGatewayAgentOptions = {},
--  ) {
--    this.connection = connection;
-+  constructor(gateway: GatewayClient, opts: AcpGatewayAgentOptions = {}) {
-     this.gateway = gateway;
-     this.opts = opts;
-     this.log = opts.verbose ? (msg: string) => process.stderr.write(`[acp] ${msg}\n`) : () => {};
-@@ -74,14 +134,31 @@ export class AcpGatewayAgent implements Agent {
-     this.log("ready");
-   }
- 
-+  /** Bind the connected ACP client so session updates have somewhere to go. */
-+  attach(client: AcpClientNotifier): void {
-+    this.client = client;
-+  }
-+
-+  /** Called when the ACP connection closes: fail any in-flight prompts. */
-+  handleAcpClosed(): void {
-+    this.log("acp connection closed");
-+    this.client = null;
-+    for (const pending of this.pendingPrompts.values()) {
-+      pending.reject(new Error("ACP connection closed"));
-+      this.sessionStore.clearActiveRun(pending.sessionId);
++export function summarizeProfile(
++  profile: CpuProfileLike,
++  top: number = ATTRIBUTION_TOP_FRAMES,
++): { frames: StallFrame[]; sampleCount: number; profileDurationMs: number } {
++  const samples = profile.samples ?? [];
++  const durationMs = Math.max(0, (profile.endTime - profile.startTime) / 1000);
++  const byId = new Map(profile.nodes.map((node) => [node.id, node]));
++  const counts = new Map<string, number>();
++  let counted = 0;
++  for (const id of samples) {
++    const node = byId.get(id);
++    if (!node) {
++      continue;
 +    }
-+    this.pendingPrompts.clear();
-+  }
-+
-   handleGatewayReconnect(): void {
-     this.log("gateway reconnected");
-   }
- 
-   handleGatewayDisconnect(reason: string): void {
-     this.log(`gateway disconnected: ${reason}`);
-     for (const pending of this.pendingPrompts.values()) {
--      pending.reject(new Error(`Gateway disconnected: ${reason}`));
-+      const message = `Gateway disconnected: ${reason}`;
-+      pending.reject(RequestError.internalError({ details: message }, message));
-       this.sessionStore.clearActiveRun(pending.sessionId);
-     }
-     this.pendingPrompts.clear();
-@@ -98,6 +175,7 @@ 
++    const { functionName, url, lineNumber } = node.callFrame;
++    if (functionName 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #341** (2026-10-31): feat(gateway): attribute event-loop stalls with an on-demand sampling profiler (@VGIL77)
 - **PR #340** (2026-10-31): fix(acp): migrate to @agentclientprotocol/sdk 2.x and fix the stdio bridge (@VGIL77)
 - **PR #339** (2026-10-30): chore(deps): bump the npm-minor-patch group across 1 directory with 19 updates (@dependabot[bot])
 - **PR #336** (2026-10-30): fix(orchestrator): reconcile Cargo.lock after the ed25519-dalek and sha2 bumps (@VGIL77)
 - **PR #335** (2026-10-30): chore(deps-dev): bump the lint-format group (oxfmt 0.74.0, oxlint 1.90.0, oxlint-tsgolint 7.0.2005) (@VGIL77)
 - **PR #334** (2026-10-30): docs: reboot recovery fix, WSL2 autostart note, LongMemEval in benchmarks index (@VGIL77)
-- **PR #333** (2026-10-30): feat(gateway): WSL2 autostart and crash supervision without systemd (@VGIL77)
 
 ---
 
@@ -2454,29 +2159,43 @@ Fixes found while smoke-testing the built CLI over stdio:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. acp): migrate to @agentclientprotocol/sdk 2.x and fix the stdio bridge (#340)
+## X. gateway): attribute event-loop stalls with an on-demand sampling profiler (#341)
 
 **RULE**:
-When implementing operations in `docs/cli/acp.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/gateway/troubleshooting.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `687e906e`: acp): migrate to @agentclientprotocol/sdk 2.x and fix the stdio bridge (#340). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7a563ca0`: gateway): attribute event-loop stalls with an on-demand sampling profiler (#341). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/cli/acp.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/gateway/troubleshooting.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-over WebSocket. It keeps ACP sessions mapped to Gateway session keys. When the
-IDE closes the stdio pipe, the bridge disconnects from the Gateway and exits.
+Stalls with no RPC in flight (a timer-driven memory sweep, a GC pause) leave
+nothing to line up against, so the monitor also attributes them. After the
+first stalled window it arms V8's sampling profiler; every later window whose
+worst stall reaches `BITTERBOT_EVENT_LOOP_PROFILE_MS` (default 1000) logs the
+frames that held the loop:
+
+```
+[gateway/event-loop] event loop stall attribution: max=8577ms samples=2400 over 30000ms
+   27%   8100ms  detectOrphanClusters /home/me/.bitterbot/app/current/dist/entry.js:88123
+    3%    900ms  (garbage collector)
+```
+
+Self time per frame, heaviest first; `(garbage collector)` means the stall was
+a GC pause. The profiler disarms after five quiet minutes, so a healthy gateway
+pays nothing for it. Set `BITTERBOT_EVENT_LOOP_PROFILE=0` to never arm it.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-over WebSocket. It keeps ACP sessions mapped to Gateway session keys.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `687e906e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7a563ca0` are properly handled with clean fallback behavior.

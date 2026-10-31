@@ -6589,3 +6589,7 @@
 | `CYCLE-20261031-GSRW` | `2026-10-31T13:47:17.804Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | Yes (`d8324353...`) |
 | `CYCLE-20261031-GT5R` | `2026-10-31T13:47:18.303Z` | `onejs/one` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6212` | Yes (`3ff050ba...`) |
 | `CYCLE-20261031-GYIV` | `2026-10-31T13:47:25.255Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6213` | Yes (`864ffa72...`) |
+| `CYCLE-20261031-PQRP` | `2026-10-31T13:54:15.109Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`55c0f368...`) |
+| `CYCLE-20261031-PYI6` | `2026-10-31T13:54:25.134Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6214` | Yes (`a22f19ff...`) |
+| `CYCLE-20261031-Q1A2` | `2026-10-31T13:54:28.730Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6215` | Yes (`b61c90fe...`) |
+| `CYCLE-20261031-Q36N` | `2026-10-31T13:54:31.199Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6216` | Yes (`9e7d06fc...`) |
