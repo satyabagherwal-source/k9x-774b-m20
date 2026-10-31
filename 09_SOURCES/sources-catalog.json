@@ -215,8 +215,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
     "sourceVersion": "hf-black-forest-labs-flux.1-dev",
     "license": "Open-Source",
-    "contentHash": "2526bce89eca70f058ec16bdc08429e0f72dcd7e90c1e696bae7fc40f7fce4d2",
-    "lastHarvestedAt": "2026-10-28T03:38:06.172Z",
+    "contentHash": "0528ba3f337a07b34e4b9eae85c1adfa6286695c9baf2fd35dba7f3e4af93aaf",
+    "lastHarvestedAt": "2026-10-31T05:52:33.742Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-1-dev"
   },
   "hf-francisring-prism": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "eb9f5b29",
+    "sourceVersion": "32e53bb3",
     "license": "Apache-2.0",
-    "contentHash": "f1b258acd6df8d5c1b6a3a1987a66c5c938ce7e046829f14f04f77a374d77305",
-    "lastHarvestedAt": "2026-10-30T11:28:19.519Z",
+    "contentHash": "efac298a24bb094bb3683b992327cdcb37383e07bab4e60b76b010d8a2911918",
+    "lastHarvestedAt": "2026-10-31T05:52:39.581Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {

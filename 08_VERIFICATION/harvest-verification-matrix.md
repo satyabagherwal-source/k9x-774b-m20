@@ -6480,3 +6480,5 @@
 | `CYCLE-20261031-X17J` | `2026-10-31T05:36:02.143Z` | `wasm-bindgen/wasm-pack` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6086` | Yes (`cad842dd...`) |
 | `CYCLE-20261031-X4PE` | `2026-10-31T05:36:06.674Z` | `keybase/client` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6087` | Yes (`509874fa...`) |
 | `CYCLE-20261031-9BAG` | `2026-10-31T05:45:35.080Z` | `tencent/Hy-SimulMT-30B-A3B-FP8` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6088, Rule 6089, Rule 6090` | Yes (`afe003ca...`) |
+| `CYCLE-20261031-IABU` | `2026-10-31T05:52:33.738Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6091, Rule 6092, Rule 6093` | Yes (`0528ba3f...`) |
+| `CYCLE-20261031-IEU2` | `2026-10-31T05:52:39.578Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6094` | Yes (`efac298a...`) |

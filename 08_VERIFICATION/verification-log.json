@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-UVO3",
-    "timestamp": "2026-10-28T22:59:06.579Z",
-    "repository": "authzed/spicedb",
-    "learningId": "learn-github-authzed-spicedb",
-    "contentHash": "d285d027494ac53b7635c474bcd7b18d6335a61bf06235674d0ba56f449345b4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-UZFG",
-    "timestamp": "2026-10-28T22:59:11.452Z",
-    "repository": "langchain4j/langchain4j",
-    "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "24db3cda644cef48be90c37bda4832d6fd6f0133f782776dc5a37588644c2b37",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-2U3X",
     "timestamp": "2026-10-28T23:05:17.805Z",
     "repository": "vllm-sr/d3",
@@ -7492,6 +7462,36 @@
     "contentHash": "afe003ca60c99706e599edb28298f031b6828f80114153bcfdfe075bbbbcc0f3",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-IABU",
+    "timestamp": "2026-10-31T05:52:33.738Z",
+    "repository": "black-forest-labs/FLUX.1-dev",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
+    "contentHash": "0528ba3f337a07b34e4b9eae85c1adfa6286695c9baf2fd35dba7f3e4af93aaf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-IEU2",
+    "timestamp": "2026-10-31T05:52:39.578Z",
+    "repository": "milvus-io/milvus",
+    "learningId": "learn-github-milvus-io-milvus",
+    "contentHash": "efac298a24bb094bb3683b992327cdcb37383e07bab4e60b76b010d8a2911918",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T05:45:35.005Z",
+  "last_updated": "2026-10-31T05:52:39.500Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -19541,7 +19541,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
       "source_version": "hf-black-forest-labs-flux.1-dev",
-      "content_hash": "2526bce89eca70f058ec16bdc08429e0f72dcd7e90c1e696bae7fc40f7fce4d2",
+      "content_hash": "0528ba3f337a07b34e4b9eae85c1adfa6286695c9baf2fd35dba7f3e4af93aaf",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "promoted_rules": [
@@ -19675,6 +19675,21 @@
           "number": 5157,
           "title": "Deterministic Reproducibility Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6091,
+          "title": "Tensor Shape Invariance in Diffusion Transformer (DiT) Pipelines",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6092,
+          "title": "Deterministic Noise Scheduling in Latent Space",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6093,
+          "title": "Memory-Efficient Attention in DiT",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -19695,7 +19710,7 @@
         "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv43g3lp",
         "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv4goq8m"
       ],
-      "verified_at": "2026-10-28T03:38:06.094Z",
+      "verified_at": "2026-10-31T05:52:33.642Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39329,8 +39344,8 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "eb9f5b29",
-      "content_hash": "f1b258acd6df8d5c1b6a3a1987a66c5c938ce7e046829f14f04f77a374d77305",
+      "source_version": "32e53bb3",
+      "content_hash": "efac298a24bb094bb3683b992327cdcb37383e07bab4e60b76b010d8a2911918",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
@@ -39388,6 +39403,11 @@
           "number": 5745,
           "title": "Bound Python E2E collection cleanup and report failures (#54349)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6094,
+          "title": "stop a late import result from reviving segments that DropCollection already dro",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39395,7 +39415,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T11:28:19.438Z",
+      "verified_at": "2026-10-31T05:52:39.480Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -159891,6 +159911,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T05:45:34.985Z"
+    },
+    "rule-6091": {
+      "learning_id": "rule-6091",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6091,
+      "title": "Tensor Shape Invariance in Diffusion Transformer (DiT) Pipelines",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
+      "source_version": "hf-black-forest-labs-flux.1-dev",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T05:52:33.642Z"
+    },
+    "rule-6092": {
+      "learning_id": "rule-6092",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6092,
+      "title": "Deterministic Noise Scheduling in Latent Space",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
+      "source_version": "hf-black-forest-labs-flux.1-dev",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T05:52:33.642Z"
+    },
+    "rule-6093": {
+      "learning_id": "rule-6093",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6093,
+      "title": "Memory-Efficient Attention in DiT",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
+      "source_version": "hf-black-forest-labs-flux.1-dev",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T05:52:33.642Z"
+    },
+    "rule-6094": {
+      "learning_id": "rule-6094",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6094,
+      "title": "stop a late import result from reviving segments that DropCollection already dro",
+      "source_url": "https://github.com/milvus-io/milvus",
+      "source_version": "32e53bb3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T05:52:39.480Z"
     }
   },
   "aliases": {

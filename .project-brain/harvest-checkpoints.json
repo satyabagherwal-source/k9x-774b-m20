@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T05:45:35.092Z",
+  "last_updated": "2026-10-31T05:52:39.591Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -230,14 +230,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-1-dev",
-      "content_hash": "2526bce89eca70f058ec16bdc08429e0f72dcd7e90c1e696bae7fc40f7fce4d2",
-      "verified_at": "2026-10-28T03:38:06.181Z",
+      "content_hash": "0528ba3f337a07b34e4b9eae85c1adfa6286695c9baf2fd35dba7f3e4af93aaf",
+      "verified_at": "2026-10-31T05:52:33.750Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T03:38:06.181Z"
+      "last_updated": "2026-10-31T05:52:33.750Z"
     },
     "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF": {
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -10071,14 +10071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-milvus-io-milvus",
-      "content_hash": "f1b258acd6df8d5c1b6a3a1987a66c5c938ce7e046829f14f04f77a374d77305",
-      "verified_at": "2026-10-30T11:28:19.527Z",
+      "content_hash": "efac298a24bb094bb3683b992327cdcb37383e07bab4e60b76b010d8a2911918",
+      "verified_at": "2026-10-31T05:52:39.590Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T11:28:19.527Z"
+      "last_updated": "2026-10-31T05:52:39.590Z"
     },
     "ynqa/jnv": {
       "repository": "ynqa/jnv",

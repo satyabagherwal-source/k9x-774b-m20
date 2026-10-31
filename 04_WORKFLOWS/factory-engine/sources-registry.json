@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T05:45:37.624Z",
-    "lastVerified": "2026-10-31T05:45:37.624Z",
+    "lastChecked": "2026-10-31T05:52:42.134Z",
+    "lastVerified": "2026-10-31T05:52:42.134Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -247,8 +247,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T05:21:16.021Z",
-    "lastVerified": "2026-10-31T05:21:16.021Z",
+    "lastChecked": "2026-10-31T05:52:35.487Z",
+    "lastVerified": "2026-10-31T05:52:35.487Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -524,14 +524,14 @@
     "officialUrl": "https://github.com/milvus-io/milvus",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T11:28:17.822Z",
-    "lastVerified": "2026-10-30T11:28:17.822Z",
+    "lastChecked": "2026-10-31T05:52:38.143Z",
+    "lastVerified": "2026-10-31T05:52:38.143Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "f1b258acd6df8d5c1b6a3a1987a66c5c938ce7e046829f14f04f77a374d77305",
+    "contentHash": "efac298a24bb094bb3683b992327cdcb37383e07bab4e60b76b010d8a2911918",
     "promotedRulesCount": 1,
-    "recentFixesCount": 13,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -706,12 +706,12 @@
     "officialUrl": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T03:37:56.906Z",
-    "lastVerified": "2026-10-28T03:37:56.906Z",
+    "lastChecked": "2026-10-31T05:52:23.036Z",
+    "lastVerified": "2026-10-31T05:52:23.036Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
-    "contentHash": "2526bce89eca70f058ec16bdc08429e0f72dcd7e90c1e696bae7fc40f7fce4d2",
+    "contentHash": "0528ba3f337a07b34e4b9eae85c1adfa6286695c9baf2fd35dba7f3e4af93aaf",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -949,8 +949,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T02:07:25.064Z",
-    "lastVerified": "2026-10-31T02:07:25.064Z",
+    "lastChecked": "2026-10-31T05:52:30.366Z",
+    "lastVerified": "2026-10-31T05:52:30.366Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -2144,9 +2144,9 @@
   "fission-fission": {
     "name": "fission",
     "officialUrl": "https://github.com/fission/fission",
-    "lastChecked": "2026-10-30T13:46:21.811Z",
+    "lastChecked": "2026-10-31T05:52:27.953Z",
     "revisionIdentifier": "ae2aabf5",
-    "lastVerified": "2026-10-30T13:46:21.811Z"
+    "lastVerified": "2026-10-31T05:52:27.953Z"
   },
   "tailscale-tailscale": {
     "name": "tailscale",
@@ -3722,9 +3722,9 @@
   "gorhom-react-native-bottom-sheet": {
     "name": "react-native-bottom-sheet",
     "officialUrl": "https://github.com/gorhom/react-native-bottom-sheet",
-    "lastChecked": "2026-10-28T12:15:32.688Z",
+    "lastChecked": "2026-10-31T05:52:25.407Z",
     "revisionIdentifier": "9bfbeb52",
-    "lastVerified": "2026-10-28T12:15:32.688Z"
+    "lastVerified": "2026-10-31T05:52:25.407Z"
   },
   "alibaba-sentinel-golang": {
     "name": "sentinel-golang",
@@ -4184,9 +4184,9 @@
   "sharkdp-pastel": {
     "name": "pastel",
     "officialUrl": "https://github.com/sharkdp/pastel",
-    "lastChecked": "2026-10-30T06:01:38.545Z",
+    "lastChecked": "2026-10-31T05:52:20.337Z",
     "revisionIdentifier": "01d4252a",
-    "lastVerified": "2026-10-30T06:01:38.545Z"
+    "lastVerified": "2026-10-31T05:52:20.337Z"
   },
   "hf-openai-whisper-large-v3": {
     "name": "openai/whisper-large-v3",
