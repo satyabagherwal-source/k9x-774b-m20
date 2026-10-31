@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T14:19:44.482Z",
+  "last_updated": "2026-10-31T14:25:55.552Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1145,14 +1145,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
-      "content_hash": "dab231a811db22c4c3b462a261e594183091e6e470ebb19b249452f92aeb40b3",
-      "verified_at": "2026-10-28T13:56:46.506Z",
+      "content_hash": "ca4d5869449bd4464959650facaf9e9f1753ff1a95e5d7bd4252ee56775adca6",
+      "verified_at": "2026-10-31T14:25:54.194Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T13:56:46.506Z"
+      "last_updated": "2026-10-31T14:25:54.194Z"
     },
     "Tongyi-MAI/Z-Image-Turbo": {
       "repository": "Tongyi-MAI/Z-Image-Turbo",
@@ -11001,14 +11001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zenbu-labs-terminal-browser",
-      "content_hash": "6d1a6b3d33f754dd36c4d254eae3ef6bdb150aa9ec41dac7fa0b1e57b1f6c83f",
-      "verified_at": "2026-10-30T18:25:28.450Z",
+      "content_hash": "77152442d63909abe3e3df90f32c4c7189b9cdee3e6c6db2646b9e882e60142a",
+      "verified_at": "2026-10-31T14:25:55.551Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T18:25:28.450Z"
+      "last_updated": "2026-10-31T14:25:55.551Z"
     },
     "kosi-libs/Kodein": {
       "repository": "kosi-libs/Kodein",

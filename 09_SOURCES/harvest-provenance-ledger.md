@@ -6610,3 +6610,5 @@ Every entry in this ledger must capture:
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `758c46de` | Multi-dimensional audit evidence | 2026-10-31T14:19:37.029Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `07eda4c6` | Multi-dimensional audit evidence | 2026-10-31T14:19:42.358Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `279a17f6` | Multi-dimensional audit evidence | 2026-10-31T14:19:44.472Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-pro` | `https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-31T14:25:54.189Z |
+| `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `69c6653a` | Multi-dimensional audit evidence | 2026-10-31T14:25:55.545Z |

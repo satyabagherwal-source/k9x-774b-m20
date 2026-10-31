@@ -885,8 +885,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4-pro",
     "license": "Open-Source",
-    "contentHash": "dab231a811db22c4c3b462a261e594183091e6e470ebb19b249452f92aeb40b3",
-    "lastHarvestedAt": "2026-10-28T13:56:46.498Z",
+    "contentHash": "ca4d5869449bd4464959650facaf9e9f1753ff1a95e5d7bd4252ee56775adca6",
+    "lastHarvestedAt": "2026-10-31T14:25:54.189Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro"
   },
   "hf-tongyi-mai-z-image-turbo": {
@@ -7303,10 +7303,10 @@
     "repository": "zenbu-labs/terminal-browser",
     "platform": "github",
     "sourceUrl": "https://github.com/zenbu-labs/terminal-browser",
-    "sourceVersion": "9067b20c",
+    "sourceVersion": "69c6653a",
     "license": "MIT",
-    "contentHash": "6d1a6b3d33f754dd36c4d254eae3ef6bdb150aa9ec41dac7fa0b1e57b1f6c83f",
-    "lastHarvestedAt": "2026-10-30T18:25:28.441Z",
+    "contentHash": "77152442d63909abe3e3df90f32c4c7189b9cdee3e6c6db2646b9e882e60142a",
+    "lastHarvestedAt": "2026-10-31T14:25:55.545Z",
     "learningId": "learn-github-zenbu-labs-terminal-browser"
   },
   "kosi-libs-kodein": {

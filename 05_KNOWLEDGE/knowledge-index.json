@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T14:19:44.385Z",
+  "last_updated": "2026-10-31T14:25:55.497Z",
   "total_verified_learnings": 1184,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -22436,7 +22436,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
       "source_version": "hf-deepseek-ai-deepseek-v4-pro",
-      "content_hash": "dab231a811db22c4c3b462a261e594183091e6e470ebb19b249452f92aeb40b3",
+      "content_hash": "ca4d5869449bd4464959650facaf9e9f1753ff1a95e5d7bd4252ee56775adca6",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md",
       "promoted_rules": [
@@ -22489,7 +22489,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv4anlp3",
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv4o0odx"
       ],
-      "verified_at": "2026-10-28T13:56:46.373Z",
+      "verified_at": "2026-10-31T14:25:54.119Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59788,8 +59788,8 @@
       "slug": "zenbu-labs-terminal-browser",
       "platform": "github",
       "source_url": "https://github.com/zenbu-labs/terminal-browser",
-      "source_version": "9067b20c",
-      "content_hash": "6d1a6b3d33f754dd36c4d254eae3ef6bdb150aa9ec41dac7fa0b1e57b1f6c83f",
+      "source_version": "69c6653a",
+      "content_hash": "77152442d63909abe3e3df90f32c4c7189b9cdee3e6c6db2646b9e882e60142a",
       "dossier_path": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
       "promoted_rules": [
@@ -59827,6 +59827,11 @@
           "number": 5825,
           "title": "Implmenet markdown rendering on .md files (#218)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6222,
+          "title": "Add Zoom to the … menu and remove menu icons (#226)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59834,7 +59839,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T18:25:28.339Z",
+      "verified_at": "2026-10-31T14:25:55.485Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162498,6 +162503,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T14:19:44.364Z"
+    },
+    "rule-6222": {
+      "learning_id": "rule-6222",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6222,
+      "title": "Add Zoom to the … menu and remove menu icons (#226)",
+      "source_url": "https://github.com/zenbu-labs/terminal-browser",
+      "source_version": "69c6653a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T14:25:55.485Z"
     }
   },
   "aliases": {

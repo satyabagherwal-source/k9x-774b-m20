@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T14:19:44.477Z",
-  "total_cycles_completed": 6578,
-  "total_learnings_persisted": 6578,
-  "total_rules_promoted": 6218,
+  "last_updated": "2026-10-31T14:25:55.549Z",
+  "total_cycles_completed": 6580,
+  "total_learnings_persisted": 6580,
+  "total_rules_promoted": 6219,
   "history": [
-    {
-      "timestamp": "2026-10-31T01:28:23.307Z",
-      "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
-      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T01:39:57.667Z",
-      "repository": "flox/flox",
-      "learningId": "learn-github-flox-flox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T01:40:02.849Z",
       "repository": "open-policy-agent/opa",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-31T14:19:44.477Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T14:25:54.192Z",
+      "repository": "deepseek-ai/DeepSeek-V4-Pro",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T14:25:55.549Z",
+      "repository": "zenbu-labs/terminal-browser",
+      "learningId": "learn-github-zenbu-labs-terminal-browser",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

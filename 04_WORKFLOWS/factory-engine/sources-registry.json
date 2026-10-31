@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T14:19:47.032Z",
-    "lastVerified": "2026-10-31T14:19:47.032Z",
+    "lastChecked": "2026-10-31T14:26:05.620Z",
+    "lastVerified": "2026-10-31T14:26:05.620Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -140,12 +140,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T13:54:30.441Z",
-    "lastVerified": "2026-10-31T13:54:30.441Z",
+    "lastChecked": "2026-10-31T14:26:05.599Z",
+    "lastVerified": "2026-10-31T14:26:05.599Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -154,7 +154,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7a563ca0"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1050,9 +1051,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-10-31T11:09:29.545Z",
+    "lastChecked": "2026-10-31T14:26:00.703Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-10-31T11:09:29.545Z"
+    "lastVerified": "2026-10-31T14:26:00.703Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -4321,12 +4322,12 @@
     "lastVerified": "2026-10-31T12:08:55.153Z"
   },
   "helixdb-helix-db": {
-    "name": "HelixDB/helix-db",
+    "name": "helix-db",
     "officialUrl": "https://github.com/HelixDB/helix-db",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T22:20:26.756Z",
-    "lastVerified": "2026-10-30T22:20:26.756Z",
+    "lastChecked": "2026-10-31T14:26:03.207Z",
+    "lastVerified": "2026-10-31T14:26:03.207Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-helixdb-helix-db",
@@ -4335,7 +4336,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6f2a6965"
   },
   "kucherenko-jscpd": {
     "name": "kucherenko/jscpd",
@@ -4480,12 +4482,12 @@
     "officialUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T13:56:45.426Z",
-    "lastVerified": "2026-10-28T13:56:45.426Z",
+    "lastChecked": "2026-10-31T14:25:53.227Z",
+    "lastVerified": "2026-10-31T14:25:53.227Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
-    "contentHash": "dab231a811db22c4c3b462a261e594183091e6e470ebb19b249452f92aeb40b3",
+    "contentHash": "ca4d5869449bd4464959650facaf9e9f1753ff1a95e5d7bd4252ee56775adca6",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -5524,9 +5526,9 @@
   "aquasecurity-tfsec": {
     "name": "tfsec",
     "officialUrl": "https://github.com/aquasecurity/tfsec",
-    "lastChecked": "2026-10-30T23:05:18.820Z",
+    "lastChecked": "2026-10-31T14:25:58.212Z",
     "revisionIdentifier": "b692c20b",
-    "lastVerified": "2026-10-30T23:05:18.820Z"
+    "lastVerified": "2026-10-31T14:25:58.212Z"
   },
   "rqlite-rqlite": {
     "name": "rqlite",
@@ -7208,9 +7210,9 @@
   "hasaneyldrm-exercises-dataset": {
     "name": "exercises-dataset",
     "officialUrl": "https://github.com/hasaneyldrm/exercises-dataset",
-    "lastChecked": "2026-10-28T19:24:26.710Z",
+    "lastChecked": "2026-10-31T14:25:55.586Z",
     "revisionIdentifier": "7455efae",
-    "lastVerified": "2026-10-28T19:24:26.710Z"
+    "lastVerified": "2026-10-31T14:25:55.586Z"
   },
   "libsql-libsql": {
     "name": "libsql",
@@ -7475,14 +7477,14 @@
     "officialUrl": "https://github.com/zenbu-labs/terminal-browser",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T18:25:26.505Z",
-    "lastVerified": "2026-10-30T18:25:26.505Z",
+    "lastChecked": "2026-10-31T14:25:55.070Z",
+    "lastVerified": "2026-10-31T14:25:55.070Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zenbu-labs-terminal-browser",
-    "contentHash": "6d1a6b3d33f754dd36c4d254eae3ef6bdb150aa9ec41dac7fa0b1e57b1f6c83f",
+    "contentHash": "77152442d63909abe3e3df90f32c4c7189b9cdee3e6c6db2646b9e882e60142a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

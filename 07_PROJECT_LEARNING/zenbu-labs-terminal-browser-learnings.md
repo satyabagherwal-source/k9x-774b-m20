@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source**: github ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
-> **Source Version**: `9067b20c`  
+> **Source Version**: `69c6653a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T18:25:27.769Z  
+> **Timestamp**: 2026-10-31T14:25:55.075Z  
 > **Learning ID**: `learn-github-zenbu-labs-terminal-browser`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T18:25:26.505Z  
+> **Harvest Timestamp**: 2026-10-31T14:25:55.070Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A real browser inside your terminal
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4356 stars
+- **Stars / Engagement**: 4367 stars
 
 ---
 
@@ -1532,560 +1532,433 @@ impl Tree {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2c175622` (2026-10-29)
-**Commit Message**: Implmenet markdown rendering on .md files (#218)
+### Incident Patch 1: `69c6653a` (2026-10-30)
+**Commit Message**: Add Zoom to the … menu and remove menu icons (#226)
 
-* implmenet markdown rendering on .md files
-
-* sec
-
-* comments
-
-**File**: `browser/package.json` (modified, +15/-3)
+**File**: `browser/src/session/session.tsx` (modified, +9/-9)
 ```diff
-@@ -12,14 +12,26 @@
-   },
-   "dependencies": {
-     "@zenbu-labs/pixel": "workspace:*",
--    "micromark": "^4.0.2",
--    "micromark-extension-gfm": "^3.0.0",
--    "shared": "workspace:*",
-+    "pele": "1.12.0",
-     "react": "^18.3.1",
-     "react-grab": "0.2.0",
-+    "rehype-highlight": "7.0.2",
-+    "rehype-katex": "7.0.1",
-+    "rehype-raw": "7.0.0",
-+    "rehype-sanitize": "6.0.0",
-+    "rehype-slug": "6.0.0",
-+    "rehype-stringify": "10.0.1",
-+    "remark-frontmatter": "5.0.0",
-+    "remark-gfm": "4.0.1",
-+    "remark-math": "6.0.0",
-+    "remark-parse": "11.0.0",
-+    "remark-rehype": "11.1.2",
-+    "shared": "workspace:*",
-+    "unified": "11.0.5",
-     "zod": "^4.4.3"
-   },
-   "devDependencies": {
-+    "@types/hast": "3.0.5",
-     "@types/node": "^22.0.0",
-     "@types/react": "^18.3.0",
-     "typescript": "^5.5.0"
-```
-
-**File**: `browser/src/pages/markdown.ts` (modified, +233/-15)
-```diff
-@@ -1,34 +1,252 @@
-+import type { Element, ElementContent, Root } from "hast";
-+import type { Options as SanitizeSchema } from "rehype-sanitize" with { "resolution-mode": "import" };
-+
- import type { Theme } from "../ui/theme";
- import { escape, pageColors } from "./scheme";
+@@ -55,7 +55,6 @@ import { RecordSession } from "../record/session";
+ import type { RecordActions } from "../record/types";
+ import { Registry } from "../registry";
+ import { Chrome } from "../ui/chrome";
+-import { ICONS } from "../ui/icons";
+ import type {
+   ChromeActions,
+   ChromeLayout,
+@@ -261,7 +260,6 @@ class Session {
+   private grabs = new Map<number, Grab>();
+   private copyWatchers = new Map<number, CopyOnSelect>();
+   private readonly copyOnSelect: boolean;
+-  private readonly inspectIcon = bundledAsset(path.join("chromium", "logo.png"));
+   private readonly agentPanes: AgentPaneFinder;
+   private shownRecord: RecordSession | null = null;
+   private recordStarting = false;
+@@ -325,7 +323,8 @@ class Session {
+         onActiveState: (state, urlChanged) => {
+           if (urlChanged) rememberUrl(state.url);
+           this.ensureCopyWatcher();
+-          if (Math.abs(state.zoom - this.lastZoom) > 0.001) this.showZoomHud(state.zoom);
++          const zoomed = Math.abs(state.zoom - this.lastZoom) > 0.001;
++          if (zoomed && this.pageMenu?.kind !== "toolbar") this.showZoomHud(state.zoom);
+           this.lastZoom = state.zoom;
+           this.registry?.update();
+           this.syncTitle();
+@@ -688,6 +687,7 @@ class Session {
+     },
+     pageMenuAction: (id) => this.runPageMenu(id),
+     pageMenuClose: () => this.closePageMenu(),
++    pageMenuZoom: (direction) => this.applyZoom(direction),
+     settings: this.settings.actions,
+     record: this.recordActions(),
+   };
+@@ -1378,7 +1378,6 @@ class Session {
+       label: this.activeGrab()?.active ? "Stop selection" : "Send to agent",
+       enabled: true,
+       shortcut: this.keymap.label("grab.toggle"),
+-      icon: { kind: "path", d: ICONS.select },
+     };
+   }
  
--// forcing esm
--const parser = Promise.all([import("micromark"), import("micromark-extension-gfm")]).then(
--  ([{ micromark }, { gfm, gfmHtml }]) =>
--    (source: string) => micromark(source, { extensions: [gfm()], htmlExtensions: [gfmHtml()] }),
--);
-+export const MARKDOWN_CSP = [
-+  "default-src 'none'",
-+  "script-src 'none'",
-+  "style-src 'unsafe-inline'",
-+  "img-src 'self' https: http: data:",
-+  "media-src 'self' https: http: data:",
-+  "font-src 'self' data:",
-+  "frame-src 'none'",
-+  "object-src 'none'",
-+  "form-action 'none'",
-+  "base-uri 'none'",
-+].join("; ");
-+
-+const VIDEO = /\.(?:mp4|m4v|webm|mov|ogv)$/i;
-+const AUDIO = /\.(?:mp3|m4a|wav|ogg|oga|flac|aac)$/i;
-+const ALERT = /^\[!(note|tip|important|warning|caution)\]\s*/i;
-+// fixme: placeholder copy
-+const ALERT_TITLES: Record<string, string> = {
-+  note: "Note",
-+  tip: "Tip",
-+  important: "Important",
-+  warning: "Warning",
-+  caution: "Caution",
-+};
-+const BODY_FONT = `-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`;
-+const MONO_FONT = `ui-monospace, SFMono-Regular, Menlo, monospace`;
-+
-+const SVG_TAGS = [
-+  "svg", "g", "defs", "symbol", "use", "title", "desc",
-+  "path", "rect", "circle", "ellipse", "line", "polyline", "polygon",
-+  "text", "tspan", "textPath", "marker", "pattern", "clipPath", "mask",
-+  "linearGradient", "radialGradient", "stop", "image",
-+];
-+
-+const SVG_ATTRIBUTES = [
-+  "className", "id", "viewBox", "preserveAspectRatio", "xmlns", "width", "height", "transform",
-+  "x", "y", "x1", "y1", "x2", "y2", "cx", "cy", "r", "rx", "ry", "dx", "dy", "d", "points",
-+  "fill", "fillOpacity", "fillRule", "clipRule", "stroke", "strokeWidth", "strokeOpacity",
-+  "strokeLinecap", "strokeLinejoin", "strokeDasharray", "strokeDashoffset", "strokeMiterlimit",
-+  "opacity", "clipPath", "mask", "markerStart", "markerMid", "markerEnd",
-+  "markerWidth", "markerHeight", "refX", "refY", "orient", "markerUnits",
-+  "fontFamily", "fontSize", "fontWeight", "fontStyle", "textAnchor", "dominantBaseline", "letterSpacing",
-+  "offset", "stopColor", "stopOpacity", "gradientUnits", "gradientTransform", "spreadMethod", "fx", "fy",
-+  "patternUnits", "patternTransform", "patternContentUnits", "clipPathUnits", "maskUnits", "maskContentUnits",
-+  "href", "xLinkHref", "visibility", "display", "vectorEffect", "pathLength",
-+];
-+
-+const pipeline = buildPipeline();
-+
-+// look into me: why can't we import esm packages (this is why we are forcing through dynamic import)
-+async function buildPipeline() {
-+  const { unified } = await import("unified");
-+  const { default: remarkParse } = await import("remark-parse");
-+  const { default: remarkFrontmatter } = await import("remark-frontmatter");
-+  const { default: remarkGfm } = await import("remark-gfm");
-+  const { default: remarkMath } = await import("remark-math");
-+  const { default: remarkRehype } = await import("remark-rehype");
-+  const { default: rehypeRaw } = await import("rehype-raw");
-+  const { default: rehypeSanitize, defaultSchema } = await import("rehype-sanitize");
-+  const { default: rehypeSlug } = await import("rehype-slug");
-+  const { default: rehypeKatex } = await import("rehype-katex");
-+  const { default: rehypeHighlight } = await import("rehype-highlight");
-+  const { default: rehypeStringify } = await import("rehype-stringify");
-+  const pele = await import("pele");
-+
-+  const base = defaultSchema.attributes ?? {};
-+  const schema: SanitizeSchema = {
-+    ...defaultSchema,
-+    // the page cannot run scripts, so nothing can be confused by ids that
-+    // collide with globals; keeping them intact makes #anchors work
-+    clobber: [],
-+    strip: ["script", "style", "template", "noscript"],
-+    tagNames: [
-+      ...(defaultSchema.tagNames ?? []),
-+      "video", "audio", "source", "track", "picture", "figure", "figcaption",
-+      "mark", "abbr", "u", "small", "center",
-+      ...SVG_TAGS,
-+    ],
-+    attributes: {
-+      ...base,
-+      "*": [...(base["*"] ?? []), "className"],
-+      a: [...(base.a ?? []), "target"],
-+      code: [["className", /^language-./, "math-inline", "math-display"]],
-+      img: [...(base.img ?? []), "loading"],
-+      video: ["src", "poster", "controls", "loop", "muted", "autoPlay", "playsInline", "preload"],
-+      audio: ["src", "controls", "loop", "muted", "preload"],
-+      source: ["src", "srcSet", "type", "media", "sizes"],
-+      track: ["src", "kind", "srcLang", "label", "default"],
-+      ...Object.fromEntries(SVG_TAGS.map((tag) => [tag, SVG_ATTRIBUTES])),
-+    },
-+    protocols: {
-+      ...defaultSchema.protocols,
-+      src: ["http", "https", "data"],
-+      poster: ["http", "https", "data"],
-+      xLinkHref: ["http", "https"],
-+    },
-+  };
-+
-+  
-```
-
-**File**: `browser/src/pages/scheme.ts` (modified, +56/-20)
-```diff
-@@ -1,18 +1,17 @@
- import fs from "node:fs";
- import path from "node:path";
-+import { Readable } from "node:stream";
+@@ -1389,14 +1388,12 @@ class Session {
+         label: this.activeRecord() ? "Complete recording" : "Record",
+         enabled: true,
+         shortcut: this.activeRecord() ? "" : this.keymap.label("record.toggle"),
+-        icon: { kind: "path", d: ICONS.record, tint: "red", weight: 8 },
+       },
+       {
+         id: "inspect",
+         label: "Inspect",
+         enabled: true,
+         shortcut: this.keymap.label("devtools.toggle"),
+-        icon: this.inspectIcon ? { kind: "image", src: this.inspectIcon } : undefined,
+       },
+     ];
+   }
+@@ -1409,22 +1406,25 @@ class Session {
+         label: CLEAR_DATA_LABEL,
+         enabled: true,
+         shortcut: "",
+-        icon: { kind: "path", d: ICONS.trash },
+       },
+       {
+         id: "settings",
+         label: commandLabel("settings.open"),
+         enabled: true,
+         shortcut: this.keymap.label("settings.open"),
+-        icon: { kind: "path", d: ICONS.settings },
+       },
+     ];
+   }
  
- import { protocol } from "electron";
- 
--import { renderMarkdown } from "./markdown";
-+import { MARKDOWN_CSP, renderMarkdown } from "./markdown";
- import { renderStartPage } from "./start";
- import type { Theme } from "../ui/theme";
-+import { DOC_SCHEME } from "../url";
- 
- 
- 
- export const SCHEME = "terminal-browser";
--// local file previews get their own scheme without fetch/CORS, so a page opened
--// from disk can run its scripts but cannot read other local files
--export const DOC_SCHEME = "terminal-browser-file";
- export const START_URL = `${SCHEME}://start`;
- export const HOME_URL = "https://terminal-browser.com";
- 
-@@ -36,6 +35,21 @@ const CONTENT_TYPES: Record<string, string> = {
-   ".jpeg": "image/jpeg",
-   ".gif": "image/gif",
-   ".webp": "image/webp",
-+  ".avif": "image/avif",
-+  ".ico": "image/x-icon",
-+  ".mp4": "video/mp4",
-+  ".m4v": "video/mp4",
-+  ".webm": "video/webm",
-+  ".mov": "video/quicktime",
-+  ".ogv": "video/ogg",
-+  ".mp3": "audio/mpeg",
-+  ".m4a": "audio/mp4",
-+  ".aac": "audio/aac",
-+  ".wav": "audio/wav",
-+  ".ogg": "audio/ogg",
-+  ".oga": "audio/ogg",
-+  ".flac": "audio/flac",
-+  ".vtt": "text/vtt; charset=utf-8",
-   ".woff2": "font/woff2",
-   ".woff": "font/woff",
-   ".txt": "text/plain; charset=utf-8",
-@@ -45,7 +59,7 @@ const CONTENT_TYPES: Record<string, string> = {
- export function registerScheme() {
-   protocol.registerSchemesAsPrivileged([
-     { scheme: SCHEME, privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true } },
--    { scheme: DOC_SCHEME, privileges: { standard: true, secure: true } },
-+    { scheme: DOC_SCHEME, privileges: { standard: true, secure: true, stream: true } },
-   ]);
- }
- 
-@@ -57,36 +71,52 @@ export function servePages(context: () => PageContext) {
-   });
-   protocol.handle(DOC_SCHEME, async (request) => {
-     const url = new URL(request.url);
--    return serveDocument(decodeURIComponent(url.pathname), context().theme);
-+    return serveDocument(decodeURIComponent(url.pathname), request.headers.get("range"), context().theme);
-   });
- }
- 
--export function documentUrl(file: string): string {
--  return `${DOC_SCHEME}://file${file.split(path.sep).map(encodeURIComponent).join("/")}`;
--}
--
--// a previewed file may embed remote frames but not other local files, so it
--// cannot reach a same-origin local document to read its DOM
--const DOC_CSP = "frame-src https: http: data:; object-src 'none'";
-+const DOC_CSP =
-+  "sandbox allow-scripts allow-forms allow-popups allow-modals allow-downloads; frame-src https: http: data:; object-src 'none'";
- 
--async function serveDocument(file: string, theme: Theme | null): Promise<Response> {
-+async function serveDocument(file: string, range: string | null, theme: Theme | null): Promise<Response> {
-   try {
-     const stat = await fs.promises.stat(file);
-     if (!stat.isFile()) return new Response("", { status: 404 });
--    const body = await fs.promises.readFile(file);
-     const extension = path.extname(file).toLowerCase();
--    const headers: Record<string, string> = { "content-security-policy": DOC_CSP };
-     if (extension === ".md" || extension === ".markdown") {
--      headers["content-type"] = "text/html; charset=utf-8";
--      return new Response(await renderMarkdown(body.toString("utf8"), path.basename(file), theme), { headers });
-+      const source = await fs.promises.readFile(file, "utf8");
-+      return new Response(await renderMarkdown(source, path.basename(file), theme), {
-+        headers: { "content-type": "text/html; charset=utf-8", "content-security-policy": MARKDOWN_CSP },
-+      });
-+    }
-+    const headers: Record<string, string> = {
-+      "content-security-policy": DOC_CSP,
-+      "content-type": CONTENT_TYPES[extension] ?? "application/octet-stream",
-+      "accept-ranges": "bytes",
-+    };
-+    const bytes = range ? byteRange(range, stat.size) : null;
-+    if (bytes === "unsatisfiable") {
-+      return new Response(null, { status: 416, headers: { ...headers, "content-range": `bytes */${stat.size}` } });
+   private pageMenuView(): PageMenuView | null {
+     if (!this.pageMenu || !this.layout) return null;
+     if (this.pageMenu.kind === "toolbar") {
+-      return { x: this.layout.width, y: this.layout.toolbarHeight, items: this.toolbarMenuItems() };
++      return {
++        x: this.layout.width,
++        y: this.layout.toolbarHeight,
++        zoomPercent: Math.round((this.tabs.activeState?.zoom ?? 1) * 100),
++        items: this.toolbarMenuItems(),
++      };
      }
--    headers["content-type"] = CONTENT_TYPES[extension] ?? "application/octet-stream";
--    return new Response(body, { headers });
-+    const [start, end] = bytes ?? [0, stat.size - 1];
-+    if (bytes) headers["content-range"] = `bytes ${start}-${end}/${stat.size}`;
-+    headers["content-length"] = String(Math.max(0, end - start + 1));
-+    const body = stat.size === 0 ? null : (Readable.toWeb(fs.createReadStream(file, { start, end })) as ReadableStream);
-+    return new Response(body, { status: bytes ? 206 : 200, headers });
-   } catch {
-     return new Response("", { status: 404 });
-   }
+     const items: PageMenuItem[] = [
+       ...(this.pageMenu.selectionText
+```
+
+**File**: `browser/src/ui/context-menu.tsx` (modified, +82/-44)
+```diff
+@@ -1,6 +1,8 @@
+-import { Box, Image, Path, Text } from "@zenbu-labs/pixel";
++import { Box, Text } from "@zenbu-labs/pixel";
++import { Icon } from "./icons";
++import type { IconName } from "./icons";
+ import type { Theme } from "./theme";
+-import type { ChromeActions, ChromeLayout, PageMenuIcon, PageMenuItem, PageMenuView } from "./types";
++import type { ChromeActions, ChromeLayout, PageMenuItem, PageMenuView } from "./types";
+ 
+ export function PageContextMenu({
+   view,
+@@ -18,16 +20,15 @@ export function PageContextMenu({
+   const menuPad = Math.round(rem * 0.25);
+   const charW = rem * 0.82 * 0.6;
+   const shortcutW = rem * 0.72 * 0.6;
+-  const hasIcons = view.items.some((item) => item.icon);
+   const width = Math.round(
+     view.items.reduce((widest, item) => {
+       let row = rem * 1.8 + menuPad * 2 + item.label.length * charW;
+-      if (hasIcons) row += rem * 1.5;
+       if (item.shortcut) row += rem * 1 + item.shortcut.length * shortcutW;
+       return Math.max(widest, row);
+-    }, rem * 10),
++    }, view.zoomPercent === undefined ? rem * 10 : rem * 14),
+   );
+-  const height = view.items.length * rowH + menuPad * 2;
++  const dividerH = menuPad * 2 + 1;
++  const height = view.items.length * rowH + menuPad * 2 + (view.zoomPercent === undefined ? 0 : rowH + dividerH);
+   const x = Math.max(2, Math.min(view.x, layout.width - width - 4));
+   const y = Math.max(2, Math.min(view.y, layout.height - height - 4));
+   return (
+@@ -55,8 +56,14 @@ export function PageContextMenu({
+         }}
+       >
+         {view.items.map((item) => (
+-          <MenuRow key={item.id} item={item} rowH={rowH} rem={rem} theme={theme} actions={actions} alignIcons={hasIcons} />
++          <MenuRow key={item.id} item={item} rowH={rowH} rem={rem} theme={theme} actions={actions} />
+         ))}
++        {view.zoomPercent !== undefined && (
++          <>
++            <Box style={{ height: 1, margin: { top: menuPad, bottom: menuPad }, background: theme.hairline, flexShrink: 0 }} />
++            <ZoomRow percent={view.zoomPercent} rowH={rowH} rem={rem} theme={theme} actions={actions} />
++          </>
++        )}
+       </Box>
+     </>
+   );
+@@ -68,14 +75,12 @@ function MenuRow({
+   rem,
+   theme,
+   actions,
+-  alignIcons,
+ }: {
+   item: PageMenuItem;
+   rowH: number;
+   rem: number;
+   theme: Theme;
+   actions: ChromeActions;
+-  alignIcons: boolean;
+ }) {
+   return (
+     <Box
+@@ -90,11 +95,6 @@ function MenuRow({
+       }}
+       onClick={item.enabled ? () => actions.pageMenuAction(item.id) : undefined}
+     >
+-      {item.icon ? (
+-        <MenuIcon icon={item.icon} enabled={item.enabled} rem={rem} theme={theme} />
+-      ) : (
+-        alignIcons && <Box style={{ width: rem * 1, flexShrink: 0 }} />
+-      )}
+       <Text
+         style={{
+           flexGrow: 1,
+@@ -123,41 +123,79 @@ function MenuRow({
+   );
  }
  
-+function byteRange(header: string, size: number): [number, number] | "unsatisfiable" | null {
-+  const match = /^bytes=(\d*)-(\d*)$/.exec(header.trim());
-+  if (!match || (!match[1] && !match[2])) return null;
-+  if (match[1] && match[2] && Number(matc
-```
-
-**File**: `browser/src/pages/start.ts` (modified, +2/-1)
-```diff
-@@ -7,7 +7,8 @@ import { promisify } from "node:util";
- import { z } from "zod";
- 
- import type { Theme } from "../ui/theme";
--import { documentUrl, escape, html, json, pageColors } from "./scheme";
-+import { documentUrl } from "../url";
-+import { escape, html, json, pageColors } from "./scheme";
- import type { PageContext } from "./scheme";
- 
- 
-```
-
-**File**: `browser/src/session/session.tsx` (modified, +1/-1)
-```diff
-@@ -481,7 +481,7 @@ class Session {
-       proxy: this.socksPort ? `socks5://127.0.0.1:${this.socksPort}` : null,
-       preload: this.browserPreload,
-       clipboardRead: this.sessionFlags.clipboardRead,
--      transparent: this.sessionFlags.transparent || this.settings.get("window.transparent") === "on",
-+      transparent: tab.transparent || this.sessionFlags.transparent || this.settings.get("window.transparent") === "on",
-     }));
-   }
- 
-```
-
-**File**: `browser/src/session/tabs.ts` (modified, +8/-2)
-```diff
-@@ -4,13 +4,13 @@ import { initialWebViewState } from "@zenbu-labs/pixel";
- import type { OpenWindowDecision, WebViewHandle, WebViewState } from "@zenbu-labs/pixel";
- 
- import type { TabRow } from "../ui/types";
--import { displayUrl } from "../url";
--import { DOC_SCHEME } from "../pages/scheme";
-+import { DOC_SCHEME, displayUrl, isMarkdownDocument } from "../url";
- 
- export interface Tab {
-   readonly id: number;
-   readonly url: string;
-   readonly ref: RefObject<WebViewHandle>;
-+  readonly transparent: boolean;
-   state: WebViewState;
-   targetId: string | null;
-   agentControlAt: number | null;
-@@ -73,10 +73,16 @@ export class TabManager {
-   }
- 
-   create(url: string, activate = true): Tab {
-+    const first = this.seq === 1;
-     const tab: Tab = {
-       id: this.seq++,
-       url,
-       ref: createRef<WebViewHandle>(),
-+      // we apply transparency on the tab only if the webview was created with the initial url being a ".md", and
-+      // intentionally don't detect if a new .md tab was loaded because it would force us to destroy the webview and
-+      // recreate it to apply transparency. The most clever implementation simply rebuilds browser state when this
-+      // happens, but it's a little complex and this case is much less often than initially spawning on .md for our users
-+      transparent: first && isMarkdownDocument(url),
-       state: initialWebViewState(url),
-       targetId: null,
-       agentControlAt: null,
-```
-
-**File**: `browser/src/url.ts` (modified, +20/-1)
-```diff
-@@ -3,6 +3,14 @@ import os from "node:os";
- import path from "node:path";
- import { fileURLToPath, pathToFileURL } from "node:url";
- 
-+// local files are served through this scheme so markdown can be rendered and
-+// html previews can be sandboxed
-+export const DOC_SCHEME = "terminal-browser-file";
-+
-+export function documentUrl(file: string): string {
-+  return `${DOC_SCHEME}://file${file.split(path.sep).map(encodeURIComponent).join("/")}`;
+-function MenuIcon({
++function ZoomRow({
++  percent,
++  rowH,
++  rem,
++  theme,
++  actions,
++}: {
++  percent: number;
++  rowH: number;
++  rem: number;
++  theme: Theme;
++  actions: ChromeActions;
++}) {
++  const controlH = Math.round(rem * 1.3);
++  const divider = <Box style={{ width: 1, height: controlH, background: theme.fieldBorder, flexShrink: 0 }} />;
++  return (
++    <Box
++      style={{ height: rowH, alignItems: "center", gap: rem * 0.45, padding: { left: rem * 0.4, right: rem * 0.4 }, flexShrink: 0 }}
++      onClick={() => {}}
++    >
++      <Text style={{ flexGrow: 1, flexBasis: 0, fontSize: rem * 0.82, color: theme.fg, wrap: false, selectable: false }}>
++        Zoom
++      </Text>
++      <Box
++        style={{
++          height: controlH,
++          alignItems: "center",
++          cornerRadius: rem * 0.35,
++          border: { width: 1, color: theme.fieldBorder },
++          background: theme.field,
++          overflow: "hidden",
++          flexShrink: 0,
++        }}
++      >
++        <ZoomButton icon="minus" size={controlH} rem={rem} theme={theme} onClick={() => actions.pageMenuZoom(-1)} />
++        {divider}
++        <Box style={{ width: rem * 3, height: controlH, alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
++          <Text style={{ fontSize: rem * 0.75, color: theme.fg, wrap: false, selectable: false }}>{`${percent}%`}</Text>
++        </Box>
++        {divider}
++        <ZoomButton icon="plus" size={controlH} rem={rem} theme={theme} onClick={() => actions.pageMenuZoom(1)} />
++      </Box>
++    </Box>
++  );
 +}
 +
- function localFile(input: string, cwd?: string): string | null {
-   const expanded =
-     input === "~" || input.startsWith("~/") ? path.join(os.homedir(), input.slice(1)) : input;
-@@ -36,10 +44,15 @@ export function normalizeUrl(value: string, cwd: string | undefined, search: Sea
-   if (!input) return "about:blank";
-   if (HAS_AUTHORITY.test(input) || SCHEMES_WITHOUT_HOST.test(input)) {
++function ZoomButton({
+   icon,
+-  enabled,
++  size,
+   rem,
+   theme,
++  onClick,
+ }: {
+-  icon: PageMenuIcon;
+-  enabled: boolean;
++  icon: IconName;
++  size: number;
+   rem: number;
+   theme: Theme;
++  onClick(): void;
+ }) {
+-  switch (icon.kind) {
+-    case "image": {
+-      const size = rem * 1;
+-      return (
+-        <Image
+-          src={icon.src}
+-          error={<Box style={{ width: size, height: size }} />}
+-          style={{ width: size, height: size, flexShrink: 0 }}
+-        />
+-      );
+-    }
+-    case "path":
+-      return (
+-        <Path
+-          d={ico
+```
+
+**File**: `browser/src/ui/icons.tsx` (modified, +1/-4)
+```diff
+@@ -41,6 +41,7 @@ export const ICONS = {
+     "M 21 5 L 14 5 M 10 5 L 3 5 M 21 12 L 12 12 M 8 12 L 3 12 M 21 19 L 16 19 M 12 19 L 3 19 " +
+     "M 14 3 L 14 7 M 8 10 L 8 14 M 16 17 L 16 21",
+   plus: "M 12 5.5 L 12 18.5 M 5.5 12 L 18.5 12",
++  minus: "M 5.5 12 L 18.5 12",
+   reload: `${arcPath(12, 12, 7, 0, 270)} C 13.96 5 15.83 5.78 17.24 7.13 L 19 8.89 M 19 5 L 19 8.89 L 15.11 8.89`,
+   search: `${arcPath(11, 11, 5.75, 0, 360)} M 15.4 15.4 L 19.25 19.25`,
+   download: "M 12 4.5 L 12 14.5 M 7.75 10.5 L 12 14.75 L 16.25 10.5 M 5.5 18.5 L 18.5 18.5",
+@@ -56,7 +57,6 @@ export const ICONS = {
+   oval: arcPath(12, 12, 7.5, 0, 360),
+   text: "M 5.5 6 L 18.5 6 M 12 6 L 12 19",
+   crop: "M 7 3 L 7 17 L 21 17 M 3 7 L 17 7 L 17 21",
+-  record: arcPath(12, 12, 4.5, 0, 360),
+   play: "M 9 6.5 L 17.5 12 L 9 17.5 Z",
+   bolt: "M 13.2 3.5 L 6.5 13.5 L 11.2 13.5 L 10.4 20.5 L 17.5 10.2 L 12.4 10.2 Z",
+   camera:
+@@ -108,9 +108,6 @@ export const ICONS = {
+   volumeOff:
+     "M 11 4.7 L 6.4 7.6 L 5.4 8 L 3 8 C 2.45 8 2 8.45 2 9 L 2 15 C 2 15.55 2.45 16 3 16 " +
+     "L 5.4 16 L 6.4 16.4 L 11 19.3 Z M 22 9 L 16 15 M 16 9 L 22 15",
+-  trash:
+-    "M 3 6 L 21 6 M 19 6 L 19 20 C 19 21 18 22 17 22 L 7 22 C 6 22 5 21 5 20 L 5 6 " +
+-    "M 8 6 L 8 4 C 8 3 9 2 10 2 L 14 2 C 15 2 16 3 16 4 L 16 6 M 10 11 L 10 17 M 14 11 L 14 17",
+   monitor:
+     "M 4 4 L 20 4 C 21.1 4 22 4.9 22 6 L 22 15 C 22 16.1 21.1 17 20 17 L 4 17 " +
+     "C 2.9 17 2 16.1 2 15 L 2 6 C 2 4.9 2.9 4 4 4 Z M 8 21 L 16 21 M 12 17 L 12 21",
+```
+
+**File**: `browser/src/ui/types.ts` (modified, +3/-5)
+```diff
+@@ -10,6 +10,7 @@ import type {
+   PointerEvent,
+   WebViewHandle,
+   WebViewState,
++  ZoomDirection,
+ } from "@zenbu-labs/pixel";
+ import type { RecordActions } from "../record/types";
+ import type { BrowsingDataKind } from "../session/browsing-data";
+@@ -62,16 +63,11 @@ export interface DownloadView {
+   state: "progressing" | "done" | "failed";
+ }
+ 
+-export type PageMenuIcon =
+-  | { kind: "path"; d: string; tint?: "red"; weight?: number }
+-  | { kind: "image"; src: string };
+-
+ export interface PageMenuItem {
+   id: string;
+   label: string;
+   enabled: boolean;
+   shortcut: string;
+-  icon?: PageMenuIcon;
+ }
+ 
+ export interface ClearDataView {
+@@ -82,6 +78,7 @@ export interface ClearDataView {
+ export interface PageMenuView {
+   x: number;
+   y: number;
++  zoomPercent?: number;
+   items: PageMenuItem[];
+ }
+ 
+@@ -177,6 +174,7 @@ export interface ChromeActions {
+   devtoolsDividerHover(hovering: boolean): void;
+   pageMenuAction(id: string): void;
+   pageMenuClose(): void;
++  pageMenuZoom(direction: ZoomDirection): void;
+   permissionDecide(decision: PermissionDecision): void;
+   toastDismiss(): void;
+   clearDataToggle(kind: BrowsingDataKind): void;
+```
+
+**File**: `scripts/release.sh` (modified, +0/-3)
+```diff
+@@ -55,9 +55,6 @@ cp "$ROOT/assets/react-grab/"* "$STAGE/assets/react-grab/"
+ mkdir -p "$STAGE/assets/search"
+ cp "$ROOT/assets/search/"* "$STAGE/assets/search/"
+ 
+-mkdir -p "$STAGE/assets/chromium"
+-cp "$ROOT/assets/chromium/"* "$STAGE/assets/chromium/"
+-
+ ELECTRON_DIST="$(node -e '
+   const p = require("path");
+   const lib = require.resolve("@zenbu-labs/pixel/package.json", { paths: [process.argv[1]] });
+```
+
+---
+
+### Incident Patch 2: `2c6ff1c7` (2026-10-30)
+**Commit Message**: Clear cached favicons with Cached images and files (#225)
+
+**File**: `browser/src/session/browsing-data.ts` (modified, +2/-0)
+```diff
+@@ -1,3 +1,4 @@
++import { clearFavicons } from "@zenbu-labs/pixel";
+ import { session as electronSession } from "electron";
+ import type { Session } from "electron";
+ 
+@@ -22,6 +23,7 @@ export async function clearBrowsingData(session: Session, kinds: readonly Browsi
+   }
+   if (kinds.includes("cache")) {
+     await session.clearCache();
++    await clearFavicons();
+     await session.clearCodeCaches({});
+   }
+ }
+```
+
+**File**: `pixel/packages/pixel/src/index.ts` (modified, +1/-0)
+```diff
+@@ -27,6 +27,7 @@ export type { DevtoolsDock } from "./web/types";
+ export type { ZoomDirection } from "./web/zoom";
+ export type { TerminalTheme } from "./web/session";
+ export { QUIT_URL, defaultOpenWindow } from "./web/host";
++export { clearFavicons } from "./web/favicon";
+ 
+ export {
+   Box,
+```
+
+**File**: `pixel/packages/pixel/src/web/favicon.ts` (modified, +12/-1)
+```diff
+@@ -11,12 +11,19 @@ function isIco(data: Buffer): boolean {
+   return data.length > 4 && data[0] === 0 && data[1] === 0 && data[2] === 1 && data[3] === 0;
+ }
+ 
++let clears = 0;
++
++export async function clearFavicons(): Promise<void> {
++  clears++;
++  await fs.promises.rm(path.join(app.getPath("userData"), "favicons"), { recursive: true, force: true });
++}
+ 
+ export class FaviconCache {
+   constructor(private readonly dir: string = path.join(app.getPath("userData"), "favicons")) {}
+ 
+   async resolve(urls: string[], ses: Session): Promise<string | null> {
+     if (urls.length === 0) return null;
++    const clearsBefore = clears;
+     const candidates = [...urls].sort((a, b) => Number(RASTER_URL.test(b)) - Number(RASTER_URL.test(a)));
      try {
--      return new URL(input).toString();
-+      const url = new URL(input);
-+      if (url.protocol === "file:" && MARKDOWN.test(url.pathname)) {
-+        return `${documentUrl(fileURLToPath(url))}${url.search}${url.hash}`;
+       const fallback = new URL("/favicon.ico", urls[0]).toString();
+@@ -26,14 +33,18 @@ export class FaviconCache {
+       this.dir,
+       crypto
+         .createHash("sha1")
+-        .update(`${ses.storagePath ?? ""}\0${candidates.join("\n")}`)
++        .update(`${ses.storagePath ?? ""}\0${clearsBefore}\0${candidates.join("\n")}`)
+         .digest("hex")
+         .slice(0, 16),
+     );
+     const cached = [`${stem}.png`, `${stem}.ico`].find((file) => fs.existsSync(file));
+     if (cached) return cached;
+     for (const url of candidates) {
+       const file = await this.fetchDecodable(url, ses, stem);
++      if (file && clears !== clearsBefore) {
++        await fs.promises.rm(file, { force: true });
++        return null;
 +      }
-+      return url.toString();
-     } catch {}
-   }
-   const file = localFile(input, cwd);
-+  if (file && MARKDOWN.test(file)) return documentUrl(file);
-   if (file) return pathToFileURL(file).toString();
-   if (/^[\w.-]+(?::\d+)?(?:\/.*)?$/.test(input)) {
-     const host = input.split(/[:/]/)[0].toLowerCase();
-@@ -49,12 +62,14 @@ export function normalizeUrl(value: string, cwd: string | undefined, search: Sea
-   return search(input);
- }
- 
-+const MARKDOWN = /\.(?:md|markdown)$/i;
- const HAS_AUTHORITY = /^[a-z][a-z0-9+.-]*:\/\//i;
- const SCHEMES_WITHOUT_HOST = /^(?:data|mailto|tel|about|blob|chrome|view-source):/i;
- 
- export function displayUrl(url: string): string {
-   if (!url) return "about:blank";
-   if (url.startsWith("file://")) return homeRelative(url);
-+  if (url.startsWith(`${DOC_SCHEME}://`)) return homeRelative(`file://${url.slice(`${DOC_SCHEME}://file`.length)}`);
-   return url.replace(/^https?:\/\//, "").replace(/\/$/, "");
- }
- 
-@@ -69,6 +84,10 @@ function homeRelative(url: string): string {
-   }
- }
- 
-+export function isMarkdownDocument(url: string): boolean {
-+  return url.startsWith(`${DOC_SCHEME}://`) && MARKDOWN.test(url.split(/[?#]/)[0]);
-+}
-+
- export function urlHost(url: string): string {
-   try {
-     return new URL(url).host;
-```
-
-**File**: `pnpm-lock.yaml` (modified, +813/-6)
-```diff
-@@ -4,6 +4,9 @@ settings:
-   autoInstallPeers: true
-   excludeLinksFromLockfile: false
- 
-+overrides:
-+  katex: 0.18.11
-+
- importers:
- 
-   .:
-@@ -20,25 +23,61 @@ importers:
-       '@zenbu-labs/pixel':
-         specifier: workspace:*
-         version: link:../pixel/packages/pixel
--      micromark:
--        specifier: ^4.0.2
--        version: 4.0.2
--      micromark-extension-gfm:
--        specifier: ^3.0.0
--        version: 3.0.0
-+      pele:
-+        specifier: 1.12.0
-+        version: 1.12.0
-       react:
-         specifier: ^18.3.1
-         version: 18.3.1
-       react-grab:
-         specifier: 0.2.0
-         version: 0.2.0(react@18.3.1)
-+      rehype-highlight:
-+        specifier: 7.0.2
-+        version: 7.0.2
-+      rehype-katex:
-+        specifier: 7.0.1
-+        version: 7.0.1
-+      rehype-raw:
-+        specifier: 7.0.0
-+        version: 7.0.0
-+      rehype-sanitize:
-+        specifier: 6.0.0
-+        version: 6.0.0
-+      rehype-slug:
-+        specifier: 6.0.0
-+        version: 6.0.0
-+      rehype-stringify:
-+        specifier: 10.0.1
-+        version: 10.0.1
-+      remark-frontmatter:
-+        specifier: 5.0.0
-+        version: 5.0.0
-+      remark-gfm:
-+        specifier: 4.0.1
-+        version: 4.0.1
-+      remark-math:
-+        specifier: 6.0.0
-+        version: 6.0.0
-+      remark-parse:
-+        specifier: 11.0.0
-+        version: 11.0.0
-+      remark-rehype:
-+        specifier: 11.1.2
-+        version: 11.1.2
-       shared:
-         specifier: workspace:*
-         version: link:../shared
-+      unified:
-+        specifier: 11.0.5
-+        version: 11.0.5
-       zod:
-         specifier: ^4.4.3
-         version: 4.4.3
-     devDependencies:
-+      '@types/hast':
-+        specifier: 3.0.5
-+        version: 3.0.5
-       '@types/node':
-         specifier: ^22.0.0
-         version: 22.20.1
-@@ -818,6 +857,15 @@ packages:
-   '@types/debug@4.1.13':
-     resolution: {integrity: sha512-KSVgmQmzMwPlmtljOomayoR89W4FynCAi3E8PPs7vmDVPe84hT+vGPKkJfThkmXs0x0jAaa9U8uW8bbfyS2fWw==}
- 
-+  '@types/hast@3.0.5':
-+    resolution: {integrity: sha512-rp/ezSWaD1m44dPKICGhiskI13nVr7qTloFwDa/IYkhhf5nzwP+zIQcIJh3WIFSBOy/H1PzB40jPjMDksN4F+g==}
-+
-+  '@types/katex@0.16.8':
-+    resolution: {integrity: sha512-trgaNyfU+Xh2Tc+ABIb44a5AYUpicB3uwirOioeOkNPPbmgRNtcWyDeeFRzjPZENO9Vq8gvVqfhaaXWLlevVwg==}
-+
-+  '@types/mdast@4.0.4':
-+    resolution: {integrity: sha512-kGaNbPh1k7AFzgpud/gMdvIm5xuECykRR+JnWKQno9TAXVa6WIVCGTPvYGekIDL4uwCZQSYbUxNBSb1aUo79oA==}
-+
-   '@types/ms@2.1.0':
-     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
- 
-@@ -835,6 +883,12 @@ packages:
-   '@types/react@18.3.31':
-     resolution: {integrity: sha512-vfEqpXTvwT91yhmwdfouStN2hSKwTvyRs8qpLfADyrq/kxDw0hZM7Wk9Ug1FELj8hIby+S/+kQCSRFF32nv2Qw==}
- 
-+  '@types/unist@3.0.3':
-+    resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
-+
-+  '@ungap/structured-clone@1.4.0':
-+    resolution: {integrity: sha512-1mEZtMKPM09vDmQt5y7YvmN2+DFTP7Tg0EWXdic8/C6VRnpb33e4ghisCIE3WZjsE2N8mf+QV1Zqh7ZFYLWInQ==}
-+
-   '@xmldom/xmldom@0.9.12':
-     resolution: {integrity: sha512-5AXjrcMClTryPe9LgZrygpB1lj7s0S9E0+W+AHaVKAVyHanafK86iPSvG5xHVSp/jC+VH1UXu0TAEmY279xH7A==}
-     engines: {node: '>=14.6'}
-@@ -847,6 +901,9 @@ packages:
-     resolution: {integrity: sha512-WpDfL7NO6j7tH88IDBNVdUJxDh9nmCteAVW9dsep846XdwF4naCBK+/tGLX3KJgcpgMRXCFlTM2hKGoK9FsdrQ==}
-     engines: {node: '>=12'}
- 
-+  bail@2.0.2:
-+    resolution: {integrity: sha512-0xO6mYd7JB2YesxDKplafRpsiOzPt9V02ddPCLbY1xYGPOX24NTyN50qnUxgCPcSoYMhKpAuBTjQoRZCAkUDRw==}
-+
-   base64-js@1.5.1:
-     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
- 
-@@ -871,10 +928,19 @@ packages:
-   buffer@5.7.1:
-     resolution: {integrity: sha512-EHcyIPBQ4BSGlvjB16k5KgAJ27CIsHY/2JBmCRReo48y9rQ3MaUzWX3KVlBa4U7MyX02HdVj0K7C3WaB3ju7FQ==}
- 
-+  ccount@2.0.1:
-+    resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
-+
-   chalk@5.6.2:
-     resolution: {integrity: sha512-7NzBL0rN6fMUW+f7A6Io4h40qQlG+xGmtMxfbnH/K7TAtt8JQWVQK+6g0UXKMeVJoyV5EkkNsErQ8pVD3bLHbA==}
-     engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
- 
-+  character-entities-html4@2.1.0:
-+    resolution: {integrity: sha512-1v7fgQRj6hnSwFpq1Eu0ynr/CDEw0rXo2B61qXrLNdHZmPKgb7fqS1a2JwF0rISo9q77jDI8VMEHoApn8qDoZA==}
-+
-+  character-entities-legacy@3.0.0:
-+    resolution: {integrity: sha512-RpPp0asT/6ufRm//AJVwpViZbGM/MkjQFxJccQRHmISF/22NBtsHqAWmL+/pmkPWoIUJdWyeVleTl1wydHATVQ==}
-+
-   character-entities@2.0.2:
-     resolution: {integrity: sha512-shx7oQ0Awen/BRIdkjkvz54PnEEI/EjwXDSIZp86/KKdbafHh1Df/RYGBhn4hbe2+uKC9FnT5UCEdyPz3ai9hQ==}
- 
-@@ -889,10 +955,17 @@ packages:
-     resolution: {integrity: sha512-bXfOC4QcT1tKXGorxL3wbJm6XJPDqEnij2gQ2m7ESQuE+/z9YFIWnl/5RpTiKWbMq3EVKR4fRLJGn6DVfu0mpw==}
-     engines: {node: '>=18.20'}
- 
-+  comma-separated-
+       if (file) return file;
+     }
+     return null;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #226** (2026-10-30): Add Zoom to the … menu and drop menu icons (@RobPruzan)
+- **PR #225** (2026-10-30): Clear cached favicons with Cached images and files (@RobPruzan)
+- **PR #224** (2026-10-30): Add Clear browsing data (@RobPruzan)
 - **PR #223** (2026-10-30): Fix Continue with Google doing nothing (disable FedCM) (@RobPruzan)
 - **PR #218** (2026-10-29): Implmenet markdown rendering on .md files (@RobPruzan)
 - **PR #217** (2026-10-28): Add flag to remove chrome (@RobPruzan)
-- **PR #213** (2026-10-28): Stop registering the browser font by path (@Userfrom1995)
-- **PR #211** (2026-10-27): fix events not passing through iframes, add permission dialogue (@RobPruzan)
-- **PR #210** (2026-10-26): Fix input focus (@RobPruzan)
 
 ---
 
@@ -2105,44 +1978,44 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Implmenet markdown rendering on .md files (#218)
+## X. Add Zoom to the … menu and remove menu icons (#226)
 
 **RULE**:
-When implementing operations in `browser/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `browser/src/session/session.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2c175622`: Implmenet markdown rendering on .md files (#218). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `69c6653a`: Add Zoom to the … menu and remove menu icons (#226). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `browser/package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `browser/src/session/session.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "pele": "1.12.0",
-    "rehype-highlight": "7.0.2",
-    "rehype-katex": "7.0.1",
-    "rehype-raw": "7.0.0",
-    "rehype-sanitize": "6.0.0",
-    "rehype-slug": "6.0.0",
-    "rehype-stringify": "10.0.1",
-    "remark-frontmatter": "5.0.0",
-    "remark-gfm": "4.0.1",
-    "remark-math": "6.0.0",
-    "remark-parse": "11.0.0",
-    "remark-rehype": "11.1.2",
-    "shared": "workspace:*",
-    "unified": "11.0.5",
-    "@types/hast": "3.0.5",
+          const zoomed = Math.abs(state.zoom - this.lastZoom) > 0.001;
+          if (zoomed && this.pageMenu?.kind !== "toolbar") this.showZoomHud(state.zoom);
+    pageMenuZoom: (direction) => this.applyZoom(direction),
+      return {
+        x: this.layout.width,
+        y: this.layout.toolbarHeight,
+        zoomPercent: Math.round((this.tabs.activeState?.zoom ?? 1) * 100),
+        items: this.toolbarMenuItems(),
+      };
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "micromark": "^4.0.2",
-    "micromark-extension-gfm": "^3.0.0",
-    "shared": "workspace:*",
+import { ICONS } from "../ui/icons";
+  private readonly inspectIcon = bundledAsset(path.join("chromium", "logo.png"));
+          if (Math.abs(state.zoom - this.lastZoom) > 0.001) this.showZoomHud(state.zoom);
+      icon: { kind: "path", d: ICONS.select },
+        icon: { kind: "path", d: ICONS.record, tint: "red", weight: 8 },
+        icon: this.inspectIcon ? { kind: "image", src: this.inspectIcon } : undefined,
+        icon: { kind: "path", d: ICONS.trash },
+        icon: { kind: "path", d: ICONS.settings },
+      return { x: this.layout.width, y: this.layout.toolbarHeight, items: this.toolbarMenuItems() };
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2c175622` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `69c6653a` are properly handled with clean fallback behavior.
