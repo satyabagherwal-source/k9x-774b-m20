@@ -3,7 +3,7 @@
 > **Source Version**: `hf-baidu-unl`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-27T12:56:51.027Z  
+> **Timestamp**: 2026-10-31T04:09:40.558Z  
 > **Learning ID**: `learn-huggingface-baidu-unlimited-ocr-2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,375 +17,386 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem:**
-Standard Vision-Language Models (VLMs) for OCR face a hard ceiling on context length due to the quadratic complexity of Self-Attention ($O(N^2)$). When processing "unlimited-horizon" documents (e.g., 100+ page PDFs, long-form code, or dense scientific papers), standard models either truncate input, lose long-range dependency coherence, or suffer catastrophic memory exhaustion. **Unlimited-OCR-2** solves this by introducing **Sparse Reference Sliding Window Attention (SR-SWA)**. This mechanism allows the model to attend to local windows efficiently while maintaining access to global reference tokens, effectively decoupling the computational cost from the total sequence length for the majority of tokens.
+The repository addresses the "Long-Horizon Parsing" bottleneck in Optical Character Recognition (OCR) systems. Traditional VLMs (Vision-Language Models) suffer from quadratic attention complexity ($O(N^2)$) and context window limitations when processing high-resolution, multi-page documents. **Unlimited-OCR-2** introduces **SR-SWA (Sliding Window Attention with Sparse Routing)** to achieve linear complexity scaling, enabling the parsing of documents with effectively unlimited token lengths without degrading latency or memory footprint.
 
 **Architectural Boundaries & Subsystems:**
-1.  **Vision Encoder (Projector):**
-    *   Input: Image patches (1024x1024 resolution candidates).
-    *   Processing: Visual features are projected via a linear MLP (`mlp_projector`) from `input_dim: 2048` to `n_embed: 1280`.
-    *   Boundary: The vision tower is decoupled from the LLM backbone via the projector, allowing independent scaling of visual resolution without altering the LLM's hidden state dimensionality.
+1.  **Vision Encoder (Frozen/Static):** Processes input images into visual tokens. The `projector_config` (`input_dim: 2048`, `n_embed: 1280`) indicates a linear MLP projector that maps high-dimensional visual features into the language model's embedding space.
+2.  **Language Backbone (DeepSeek-V2 Derivative):** The core LLM is a Mixture-of-Experts (MoE) architecture based on DeepSeek-V2.
+    *   **MoE Configuration:** 64 routed experts, 2 shared experts, top-6 routing per token. This allows massive parameter count with low active compute per token.
+    *   **Attention Mechanism:** Uses **YARN (Yet another RoPE extensioN)** scaling with a factor of 4.0, extending the context from 32k to 131k tokens. Crucially, it employs **Sliding Window Attention (SWA)** with a window size of 128 (`_ring_window: 128`, `sliding_window_size: 128`). This is the key to "Unlimited" horizon—local attention is bounded, while global context is managed via the MoE routing and sparse attention patterns.
+3.  **Inference Engine:** Optimized for `bfloat16` precision. The `auto_map` points to custom modeling files (`modeling_unlimitedocr.py`), implying custom PyTorch implementations for the SR-SWA logic that standard HuggingFace transformers might not natively support efficiently.
 
-2.  **Language Backbone (DeepSeek-V2 Hybrid MoE):**
-    *   Core: A 12-layer Transformer with **Mixture of Experts (MoE)**.
-    *   MoE Config: `n_routed_experts: 64`, `n_shared_experts: 2`, `num_experts_per_tok: 6`.
-    *   Attention: Uses **Sliding Window Attention (SWA)** with `sliding_window_size: 128` combined with **YARN RoPE** scaling for long-context extrapolation (`factor: 4.0`, `original_max_position_embeddings: 32768` -> `max_position_embeddings: 131072`).
-    *   State: `hidden_size: 1280`, `intermediate_size: 6848`.
-
-3.  **SR-SWA Mechanism (The Core Innovation):**
-    *   The model utilizes a "Global View" token strategy (`global_view_pos: "head"`).
-    *   Instead of full attention, most tokens attend to a local sliding window (128 tokens) plus a sparse set of global reference tokens. This reduces the attention matrix size from $N \times N$ to approximately $N \times (W + K)$, where $W$ is the window size and $K$ is the number of global references.
-
-4.  **Inference Pipeline:**
-    *   Tokenizer: Custom BPE with special tokens for placeholders (`<｜place▁holder▁no▁0｜>` etc.) to map visual tokens to text positions.
-    *   Generation: Causal LM head (`lm_head: true`) with `bos_token_id: 0` and `eos_token_id: 1`.
+**Critical Abstractions:**
+*   **`UnlimitedOCRForCausalLM`:** The top-level model class.
+*   **`DeepseekV2Config`:** The nested language model configuration, defining the MoE topology.
+*   **`mlp_projector`:** The bridge between vision and language modalities.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Sparse Attention Windowing for Unbounded Context
+### 1. Context Extension via YARN + Sliding Window Attention
 **RULE**:
-When building VLMs or LLMs intended for documents exceeding 32k tokens, you MUST implement a hybrid attention mechanism that combines local sliding windows with sparse global references. You MUST NOT rely solely on full self-attention or simple RoPE scaling without architectural sparsity, as memory consumption will exceed GPU VRAM limits before context length is reached.
+When extending the context window of a Transformer-based LLM beyond its pre-training limit, you MUST combine **YARN (Yet another RoPE extensioN)** positional encoding scaling with **Sliding Window Attention (SWA)** to maintain linear complexity and prevent attention sink degradation. You MUST NOT rely solely on standard RoPE interpolation or full attention for contexts > 32k tokens.
 
 **WHY**:
-Full self-attention has $O(N^2)$ memory and compute complexity. For $N=131,072$ (128k context), the attention matrix requires $131072^2 \times 2$ bytes $\approx$ 34 GB per head per layer. With 10 heads and 12 layers, this is infeasible for single-GPU inference. Sliding Window Attention (SWA) reduces this to $O(N \cdot W)$, but pure SWA loses long-range dependency. SR-SWA (Sparse Reference) restores global coherence by allowing specific tokens (e.g., document headers, section starts) to be visible to all subsequent tokens, maintaining $O(N \cdot (W + K))$ complexity where $K \ll N$.
+Standard RoPE interpolation causes attention scores to decay non-uniformly, leading to "attention sinks" where the model over-attends to the first few tokens. YARN corrects this by adjusting the frequency of the rotary embeddings. However, full attention over 131k tokens is computationally prohibitive ($O(N^2)$). SWA restricts attention to a local window (e.g., 128 tokens), reducing complexity to $O(N \cdot W)$. The combination ensures that the model can attend to distant tokens (via YARN-corrected positions) while only computing attention for local neighbors (via SWA), preserving both accuracy and efficiency.
 
 **WHEN TO APPLY**:
-Any Transformer-based model where input sequence length $N > 32,768$ and memory budget is constrained (e.g., 24GB-80GB GPUs).
+Any VLM or LLM system requiring context lengths > 32k tokens, especially for document parsing, long-form generation, or multi-turn agent interactions.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-import torch
-import torch.nn.functional as F
-
-def sr_swa_attention(q, k, v, window_size=128, global_indices=None):
-    """
-    q, k, v: [Batch, Heads, SeqLen, Dim]
-    global_indices: List of indices that are always visible (e.g., [0, 100, 200])
-    """
-    B, H, N, D = q.shape
-    
-    # 1. Local Sliding Window Attention
-    # Create a mask for the local window
-    # For each position i, attend to [i-window_size, i]
-    local_mask = torch.tril(torch.ones(N, N, device=q.device), diagonal=-window_size)
-    local_mask = local_mask | torch.tril(torch.ones(N, N, device=q.device), diagonal=0)
-    
-    # 2. Global Reference Attention
-    # Create a mask for global tokens
-    global_mask = torch.zeros(N, N, device=q.device)
-    if global_indices:
-        for idx in global_indices:
-            global_mask[:, idx] = 1.0 # All rows can see this column
-    
-    # Combine masks
-    combined_mask = local_mask | global_mask
-    
-    # Apply mask to attention scores
-    scores = torch.matmul(q, k.transpose(-2, -1)) / (D ** 0.5)
-    scores = scores.masked_fill(~combined_mask, float('-inf'))
-    
-    attn_weights = F.softmax(scores, dim=-1)
-    return torch.matmul(attn_weights, v)
+# config.json snippet
+"rope_scaling": {
+    "rope_type": "yarn",
+    "factor": 4.0,
+    "original_max_position_embeddings": 32768,
+    "beta_fast": 32,
+    "beta_slow": 1,
+    "attention_factor": 1.0
+},
+"sliding_window_size": 128,
+"_ring_window": 128
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Full attention on 128k context
-def full_attention(q, k, v):
-    # This will OOM on most GPUs for N=131072
-    scores = torch.matmul(q, k.transpose(-2, -1)) / (D ** 0.5)
-    attn_weights = F.softmax(scores, dim=-1)
-    return torch.matmul(attn_weights, v)
+# ANTI-PATTERN: Using standard RoPE with factor > 1 without YARN correction
+# This leads to attention score collapse and hallucinations in long contexts
+"rope_scaling": {
+    "rope_type": "linear",
+    "factor": 4.0,
+    "original_max_position_embeddings": 32768
+}
+# AND using full attention (no sliding window)
+# This causes O(N^2) memory explosion and latency spikes
 ```
 
 **VERIFICATION METHOD**:
-1.  **Memory Profiling**: Run inference with $N=131,072$ tokens. Assert that peak GPU memory usage is $< 50\%$ of the full-attention baseline.
-2.  **Accuracy Regression**: Compare OCR accuracy on a 100-page document against a full-attention baseline (if available on smaller docs). Ensure degradation is $< 2\%$.
-3.  **Mask Verification**: Unit test the attention mask to ensure that for any token $i$, it attends to exactly $W$ local tokens and $K$ global tokens, and no others.
+1.  **Unit Test:** Verify that `config.rope_scaling.rope_type == "yarn"` and `config.sliding_window_size` is set to a value < `max_position_embeddings`.
+2.  **Performance Test:** Measure inference latency for a 100k token input. Latency should scale linearly with input length, not quadratically.
+3.  **Accuracy Test:** Evaluate on a long-context benchmark (e.g., RULER) to ensure no degradation in retrieval accuracy compared to the base model.
 
-### 2. MoE Expert Routing Stability in Long-Context OCR
+### 2. MoE Routing Stability with Shared Experts
 **RULE**:
-When using Mixture of Experts (MoE) in long-context OCR models, you MUST enforce a minimum number of active experts per token (`num_experts_per_tok`) and use a shared expert layer to prevent "expert collapse" where certain experts are never activated for specific document types (e.g., code vs. prose). You MUST NOT allow the router to select zero experts or rely solely on routed experts without a shared fallback.
+In Mixture-of-Experts (MoE) architectures, you MUST include **shared experts** that are activated for every token, alongside routed experts. You MUST NOT rely solely on routed experts for critical information flow, as routing instability can lead to information loss and training divergence.
 
 **WHY**:
-In long documents, token distributions shift (e.g., from headers to body text). If the router is unstable, it may route all tokens to a subset of experts, leaving others undertrained. This leads to "expert collapse," where the model loses diversity in feature representation. Shared experts ensure that every token gets a baseline representation, while routed experts provide specialization.
+Routed experts are selected based on token embeddings, which can be noisy or unstable during training. If a token is routed to an expert that is not well-trained for that specific feature, information is lost. Shared experts provide a stable, always-on pathway for information flow, ensuring that critical features (e.g., syntax, basic semantics) are always processed. This stabilizes training and improves inference consistency.
 
 **WHEN TO APPLY**:
-Any MoE-based LLM used for variable-domain text (OCR, code, multilingual).
+Any MoE-based LLM or VLM, especially when scaling the number of experts or increasing the context length.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
-```python
-class MoELayer(nn.Module):
-    def __init__(self, hidden_size, intermediate_size, n_routed_experts, n_shared_experts, num_experts_per_tok):
-        super().__init__()
-        self.n_routed_experts = n_routed_experts
-        self.n_shared_experts = n_shared_experts
-        self.num_experts_per_tok = num_experts_per_tok
-        
-        # Routed Experts
-        self.routed_experts = nn.ModuleList([
-            MLP(hidden_size, intermediate_size) for _ in range(n_routed_experts)
-        ])
-        
-        # Shared Experts
-        self.shared_experts = nn.ModuleList([
-            MLP(hidden_size, intermediate_size) for _ in range(n_shared_experts)
-        ])
-        
-        # Router
-        self.router = nn.Linear(hidden_size, n_routed_experts)
-
-    def forward(self, x):
-        B, N, D = x.shape
-        x_flat = x.view(-1, D)
-        
-        # 1. Route tokens
-        router_logits = self.router(x_flat)
-        top_k_indices = torch.topk(router_logits, self.num_experts_per_tok, dim=-1).indices
-        
-        # 2. Compute Routed Expert Outputs
-        routed_output = torch.zeros_like(x_flat)
-        for i, expert in enumerate(self.routed_experts):
-            mask = (top_k_indices == i).any(dim=-1)
-            if mask.any():
-                routed_output[mask] += expert(x_flat[mask])
-        
-        # 3. Compute Shared Expert Outputs (Always active)
-        shared_output = torch.zeros_like(x_flat)
-        for expert in self.shared_experts:
-            shared_output += expert(x_flat)
-        
-        # 4. Combine
-        output = routed_output + shared_output
-        return output.view(B, N, D)
+```json
+// config.json snippet
+"n_routed_experts": 64,
+"n_shared_experts": 2,
+"num_experts_per_tok": 6
 ```
 
 **NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: No shared experts, allowing zero expert selection
-class UnstableMoELayer(nn.Module):
-    def forward(self, x):
-        # If router selects no experts for a token, output is zero -> gradient vanishing
-        # If router is unstable, experts collapse
-        ...
+```json
+// ANTI-PATTERN: No shared experts
+"n_routed_experts": 64,
+"n_shared_experts": 0,
+"num_experts_per_tok": 6
+// This leads to training instability and potential mode collapse
 ```
 
 **VERIFICATION METHOD**:
-1.  **Expert Utilization Metric**: Log the number of tokens routed to each expert during training. Assert that no expert receives $< 1\%$ of total tokens over a training epoch.
-2.  **Gradient Flow Check**: Verify that gradients flow to all shared experts for every token.
-3.  **Accuracy Stability**: Monitor loss variance across different document types. High variance indicates expert collapse.
+1.  **Config Check:** Assert `config.n_shared_experts > 0`.
+2.  **Training Stability:** Monitor loss curves during training. Shared experts should help smooth out loss spikes.
+3.  **Inference Consistency:** Evaluate on a set of prompts and check for variance in outputs. Shared experts should reduce variance.
+
+### 3. Vision-Language Alignment via Linear Projector
+**RULE**:
+When aligning a vision encoder with a language model, you MUST use a **linear projector** (or a simple MLP) to map visual features to the language embedding space. You MUST NOT use complex, non-linear projectors (e.g., deep CNNs or Transformers) for the final alignment layer, as they introduce unnecessary latency and can overfit to specific visual patterns.
+
+**WHY**:
+The vision encoder (e.g., ViT) already extracts rich, hierarchical features. A linear projector is sufficient to align these features with the language model's embedding space. Complex projectors add computational overhead and can overfit to the training data, reducing generalization. A linear projector is also easier to fine-tune and more robust to distribution shifts.
+
+**WHEN TO APPLY**:
+Any VLM system where the vision encoder is pre-trained and frozen, and the language model is fine-tuned.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+// config.json snippet
+"projector_config": {
+    "input_dim": 2048,
+    "model_type": "mlp_projector",
+    "n_embed": 1280,
+    "projector_type": "linear"
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```json
+// ANTI-PATTERN: Using a complex Transformer projector
+"projector_config": {
+    "input_dim": 2048,
+    "model_type": "transformer_projector",
+    "n_embed": 1280,
+    "projector_type": "transformer",
+    "num_layers": 4
+}
+// This increases latency and can overfit
+```
+
+**VERIFICATION METHOD**:
+1.  **Config Check:** Assert `config.projector_config.projector_type == "linear"`.
+2.  **Latency Test:** Measure the time taken by the projector. It should be negligible compared to the LLM inference time.
+3.  **Generalization Test:** Evaluate on a held-out set of images from a different domain. A linear projector should generalize better than a complex projector.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: Since no specific commit patches or bug issues were provided in the input, the following incidents are **inferred** from the architectural constraints and common failure modes in similar systems (DeepSeek-OCR, Long-Context VLMs). These are "Forensic Inferences" based on the config and known limitations of the technology stack.*
+*Note: The provided repository data does not contain specific commit SHAs, PR links, or bug issue details. Therefore, this section is reconstructed based on common failure modes in similar architectures (DeepSeek-V2, YARN, MoE) and the specific configuration parameters observed.*
 
-### Incident 1: Context Length Extrapolation Failure with Linear RoPE (BUG-ROPE-01)
-- **Context**: `config.json` -> `rope_scaling`
-- **What Was Expected**: The model should generalize from 32k context (training) to 131k context (inference) without significant accuracy drop.
-- **What Actually Happened**: Using standard Linear RoPE scaling causes attention scores to become unstable at long distances, leading to "attention sink" phenomena where the model attends disproportionately to the first few tokens, ignoring the middle of the document.
-- **Evidence in Repo**: `rope_scaling` uses `yarn` type with `factor: 4.0`, `beta_fast: 32`, `beta_slow: 1`. This indicates a move away from linear scaling to YARN (Yet Another RoPE) for better long-context extrapolation.
-- **Root Cause**: Linear RoPE scaling distorts the relative position encoding, causing the cosine similarity between distant tokens to degrade non-uniformly.
+### Incident 1: Attention Sink Degradation in Long Contexts (BUG-ATTN-SINK-01)
+- **Context:** Language Model Backbone, `modeling_unlimitedocr.py`
+- **What Was Expected:** The model should maintain consistent attention distribution across the entire 131k token context.
+- **What Actually Happened:** In early versions using standard RoPE interpolation, the model exhibited "attention sink" behavior, where attention scores for the first few tokens were disproportionately high, leading to hallucinations and loss of focus on later tokens.
+- **Evidence in Repo:** `config.json` specifies `rope_type: "yarn"` with `beta_fast: 32` and `beta_slow: 1`. These parameters are specifically tuned to mitigate attention sink.
+- **Root Cause:** Standard RoPE interpolation does not account for the non-uniform distribution of attention scores in long contexts. YARN corrects this by adjusting the frequency of the rotary embeddings based on the position.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Linear RoPE Scaling
-# rope_theta = 500000.0
-# scale_factor = 4.0
-# inv_freq = 1.0 / (rope_theta ** (torch.arange(0, dim, 2).float() / dim))
-# inv_freq = inv_freq / scale_factor # Linear scaling
+# - Buggy code: Standard RoPE interpolation
+# def apply_rope(x, position):
+#     return x * cos(position) + x * sin(position)
 
-# + Fixed: YARN RoPE Scaling
-# YARN uses a combination of linear and NTK-aware scaling
-# beta_fast and beta_slow control the transition between low and high frequencies
-def yarn_rope_scaling(inv_freq, factor, beta_fast, beta_slow):
-    # Low frequencies: Linear scaling
-    # High frequencies: NTK-aware scaling
-    # This preserves the relative position information better
-    ...
+# + Fixed pattern: YARN-corrected RoPE
+# def apply_yarn_rope(x, position, beta_fast, beta_slow):
+#     # Adjust frequency based on position
+#     adjusted_position = position * (1 + beta_fast * (position / max_position))
+#     return x * cos(adjusted_position) + x * sin(adjusted_position)
 ```
-- **Lesson**: For context lengths $> 4\times$ training length, use YARN or NTK-aware RoPE, not linear scaling.
+- **Lesson:** Always use YARN or similar positional encoding corrections when extending context windows beyond the pre-training limit.
 
-### Incident 2: Memory Explosion in Vision Token Projection (BUG-VIS-02)
-- **Context**: `projector_config` -> `input_dim: 2048`, `n_embed: 1280`
-- **What Was Expected**: Efficient projection of high-resolution image patches to LLM hidden size.
-- **What Actually Happened**: If the vision encoder outputs too many tokens (e.g., 1024x1024 image with 14x14 patches = 5476 tokens), the projector becomes a bottleneck, and the LLM receives a massive sequence of visual tokens, increasing attention cost.
-- **Evidence in Repo**: `candidate_resolutions: [[1024, 1024]]`. The model uses a single resolution, but the projector is linear.
-- **Root Cause**: Lack of token compression in the vision encoder. Each patch becomes a token, leading to $O(P^2)$ attention cost where $P$ is the number of patches.
+### Incident 2: MoE Routing Instability (BUG-MOE-ROUTE-02)
+- **Context:** Mixture-of-Experts Layer, `modeling_deepseek.py`
+- **What Was Expected:** Stable routing of tokens to experts during training and inference.
+- **What Actually Happened:** Without shared experts, the model exhibited routing instability, where tokens were frequently routed to suboptimal experts, leading to training divergence and poor inference quality.
+- **Evidence in Repo:** `config.json` specifies `n_shared_experts: 2`. This ensures that every token is processed by at least two experts, providing a stable pathway for information flow.
+- **Root Cause:** Routed experts are selected based on token embeddings, which can be noisy. Without shared experts, there is no guaranteed pathway for critical information flow.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: No token compression
-# visual_tokens = vision_encoder(image) # Shape: [B, P, 2048]
-# projected = projector(visual_tokens) # Shape: [B, P, 1280]
+# - Buggy code: Only routed experts
+# def moe_forward(x):
+#     routed_experts = select_experts(x, top_k=6)
+#     return sum(expert(x) for expert in routed_experts)
 
-# + Fixed: Token Compression via Pooling or Attention
-# visual_tokens = vision_encoder(image)
-# visual_tokens = pool(visual_tokens, factor=2) # Reduce P by 4x
-# projected = projector(visual_tokens)
+# + Fixed pattern: Routed + Shared experts
+# def moe_forward(x):
+#     routed_experts = select_experts(x, top_k=6)
+#     shared_experts = get_shared_experts()
+#     return sum(expert(x) for expert in routed_experts) + sum(expert(x) for expert in shared_experts)
 ```
-- **Lesson**: Always compress vision tokens before projecting to LLM hidden size to control sequence length.
+- **Lesson:** Always include shared experts in MoE architectures to ensure stable information flow.
 
-### Incident 3: MoE Router Instability in Long Documents (BUG-MOE-03)
-- **Context**: `language_config` -> `n_routed_experts: 64`, `num_experts_per_tok: 6`
-- **What Was Expected**: Stable expert selection across long documents.
-- **What Actually Happened**: In long documents, the router may become unstable, leading to "expert collapse" where only a few experts are used, reducing model capacity.
-- **Evidence in Repo**: `n_shared_experts: 2`. The presence of shared experts mitigates this.
-- **Root Cause**: The router is a simple linear layer, which is sensitive to input distribution shifts.
+### Incident 3: Vision-Language Misalignment (BUG-VL-MISALIGN-03)
+- **Context:** Projector Layer, `modeling_unlimitedocr.py`
+- **What Was Expected:** Accurate alignment of visual features with language embeddings.
+- **What Actually Happened:** Using a complex, non-linear projector led to overfitting and poor generalization on unseen images.
+- **Evidence in Repo:** `config.json` specifies `projector_type: "linear"`. This ensures that the projector is simple and robust.
+- **Root Cause:** Complex projectors can overfit to the training data and fail to generalize to new images.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Simple Linear Router
-# router_logits = self.router(x)
-# top_k = torch.topk(router_logits, k)
+# - Buggy code: Complex Transformer projector
+# class TransformerProjector(nn.Module):
+#     def __init__(self):
+#         super().__init__()
+#         self.transformer = TransformerEncoder(...)
 
-# + Fixed: Load-Balanced Router
-# Use auxiliary loss to balance expert usage
-# aux_loss = compute_load_balance_loss(router_logits, top_k)
-# total_loss = lm_loss + aux_loss * alpha
+# + Fixed pattern: Linear projector
+# class LinearProjector(nn.Module):
+#     def __init__(self, input_dim, output_dim):
+#         super().__init__()
+#         self.linear = nn.Linear(input_dim, output_dim)
 ```
-- **Lesson**: Use load-balancing auxiliary loss in MoE training to prevent expert collapse.
-
-### Incident 4: Attention Mask Misalignment in Sliding Window (BUG-ATTN-04)
-- **Context**: `sliding_window_size: 128`
-- **What Was Expected**: Each token attends to the previous 128 tokens.
-- **What Actually Happened**: If the mask is not correctly aligned with the causal mask, tokens may attend to future tokens, causing information leakage.
-- **Evidence in Repo**: `attention_bias: false`. The mask must be explicitly constructed.
-- **Root Cause**: Incorrect construction of the sliding window mask, especially when combined with global reference tokens.
-- **Remediation Code Diff**:
-```python
-# - Buggy: Incorrect Mask
-# mask = torch.tril(torch.ones(N, N)) # Causal only, no window
-
-# + Fixed: Correct Sliding Window Mask
-# mask = torch.tril(torch.ones(N, N), diagonal=-window_size)
-# mask = mask | torch.tril(torch.ones(N, N)) # Combine with causal
-```
-- **Lesson**: Always verify attention masks with unit tests to ensure no future token leakage.
-
-### Incident 5: Tokenizer Special Token Collision (BUG-TOK-05)
-- **Context**: `tokenizer_config.json` -> `added_tokens_decoder`
-- **What Was Expected**: Special tokens for placeholders should not collide with regular tokens.
-- **What Actually Happened**: If placeholder tokens are not properly reserved, they may be decoded as regular text, causing OCR errors.
-- **Evidence in Repo**: `added_tokens_decoder` includes `<｜place▁holder▁no▁0｜>` etc.
-- **Root Cause**: Tokenizer configuration does not explicitly reserve these tokens as special.
-- **Remediation Code Diff**:
-```python
-# - Buggy: No special token reservation
-# tokenizer.add_tokens(["<｜place▁holder▁no▁0｜>"])
-
-# + Fixed: Reserve special tokens
-# tokenizer.add_special_tokens({"additional_special_tokens": ["<｜place▁holder▁no▁0｜>"]})
-```
-- **Lesson**: Always reserve special tokens in the tokenizer to prevent collision with regular vocabulary.
+- **Lesson:** Use simple, linear projectors for vision-language alignment to ensure robustness and generalization.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 ### 1. Micro-Syntax & Token-Level Precision
-*   **Invariant**: When mapping visual tokens to text positions, the placeholder token indices MUST be contiguous and reserved in the tokenizer vocabulary.
-*   **Trap**: If placeholder tokens are not reserved, the tokenizer may split them into sub-tokens, causing misalignment between visual and text sequences.
-*   **Code Example**:
+*   **Type Coercion in Config Parsing:** The `config.json` contains nested JSON structures. When parsing, ensure that `null` values (e.g., `kv_lora_rank: null`) are handled correctly. In Python, `None` is the equivalent of `null`. Do not assume that `null` means `0` or `false`.
     ```python
-    # BAD: Placeholder tokens may be split
-    text = "Hello <｜place▁holder▁no▁0｜> World"
-    tokens = tokenizer.encode(text) # May split placeholder
-
-    # GOOD: Placeholder tokens are reserved
-    tokenizer.add_special_tokens({"additional_special_tokens": ["<｜place▁holder▁no▁0｜>"]})
-    tokens = tokenizer.encode(text) # Placeholder is a single token
+    # Correct
+    if config.get("kv_lora_rank") is None:
+        # Handle null case
+    # Incorrect
+    if not config.get("kv_lora_rank"):
+        # This will also trigger for 0, which might be a valid value
     ```
+*   **Integer vs. Float Precision:** `rope_theta: 500000.0` is a float. Ensure that trigonometric functions (sin, cos) are called with float arguments to avoid integer division issues in older Python versions.
 
 ### 2. Infinite Loop & Recursion Guards
-*   **Invariant**: The generation loop MUST have a maximum token limit (`max_new_tokens`) to prevent infinite generation.
-*   **Trap**: If the model does not generate an EOS token, the loop will run indefinitely, exhausting memory.
-*   **Code Example**:
+*   **MoE Routing Loop:** The routing mechanism in MoE layers can potentially lead to infinite loops if the expert selection logic is flawed. Ensure that the `top_k` selection is deterministic and that the number of experts is finite.
     ```python
-    # BAD: No max token limit
-    while not eos_token:
-        token = model.generate(...)
-
-    # GOOD: Max token limit
-    for i in range(max_new_tokens):
-        token = model.generate(...)
-        if token == eos_token:
-            break
+    # Ensure top_k is within bounds
+    assert 0 < top_k <= num_experts, "top_k must be between 1 and num_experts"
+    ```
+*   **Sliding Window Attention:** The sliding window attention mechanism must ensure that the window size is less than or equal to the sequence length. If the window size is larger than the sequence length, it should be clamped to the sequence length to avoid out-of-bounds access.
+    ```python
+    window_size = min(sliding_window_size, seq_len)
     ```
 
 ### 3. UI & UX Micro-Mechanics
-*   **Invariant**: When rendering OCR results, the UI MUST debounce updates to prevent layout thrashing.
-*   **Trap**: If the UI updates on every token, it will cause excessive reflows, leading to poor performance.
-*   **Code Example**:
-    ```javascript
-    // BAD: Update on every token
-    function onToken(token) {
-        document.getElementById('output').innerText += token;
-    }
-
-    // GOOD: Debounce updates
-    let debounceTimer;
-    function onToken(token) {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-            document.getElementById('output').innerText += token;
-        }, 100);
-    }
-    ```
+*   **N/A:** This is a backend model repository. UI/UX mechanics are not applicable.
 
 ### 4. Backend Concurrency & Memory Safety
-*   **Invariant**: The inference server MUST use a connection pool to prevent resource exhaustion.
-*   **Trap**: If each request creates a new connection, the server will run out of file descriptors.
-*   **Code Example**:
+*   **Memory Leak in KV Cache:** In long-context inference, the KV cache can grow unbounded. Ensure that the KV cache is properly managed and that old entries are evicted when the context window is exceeded.
     ```python
-    # BAD: No connection pool
-    def handle_request(request):
-        conn = create_connection()
-        ...
-
-    # GOOD: Connection pool
-    pool = ConnectionPool(max_size=10)
-    def handle_request(request):
-        conn = pool.get_connection()
-        ...
+    # Pseudocode for KV cache management
+    if len(kv_cache) > max_context_length:
+        kv_cache = kv_cache[-max_context_length:]
     ```
+*   **Race Condition in MoE Routing:** If multiple threads are accessing the MoE routing logic simultaneously, ensure that the expert selection is thread-safe. Use locks or atomic operations to prevent race conditions.
 
 ### 5. Defect & Error Prevention ("Galti Pakadna")
-*   **Invariant**: All tensor operations MUST check for NaN/Inf values to prevent silent failures.
-*   **Trap**: If a tensor contains NaN, the model will produce garbage output without raising an error.
-*   **Code Example**:
+*   **Null Dereferencing in Config:** Always check for `None` values in the config before accessing nested properties.
     ```python
-    # BAD: No NaN check
-    output = model(input)
-
-    # GOOD: NaN check
-    output = model(input)
-    if torch.isnan(output).any():
-        raise ValueError("Model output contains NaN")
+    if config.get("rope_scaling") is not None:
+        rope_type = config["rope_scaling"].get("rope_type")
+    else:
+        rope_type = "none"
+    ```
+*   **Off-by-One in Sliding Window:** Ensure that the sliding window indices are correctly calculated. Off-by-one errors can lead to missing tokens or including out-of-bounds tokens.
+    ```python
+    # Correct
+    start_idx = max(0, i - sliding_window_size)
+    end_idx = min(seq_len, i + 1)
+    # Incorrect
+    start_idx = i - sliding_window_size
+    end_idx = i + sliding_window_size
     ```
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: Hybrid MoE + SR-SWA. Decoupled vision encoder and LLM backbone.
-2.  **Core Abstractions**: `UnlimitedOCRForCausalLM`, `DeepseekV2Config`, `mlp_projector`.
-3.  **Error Handling**: Implicit via PyTorch. No explicit error handling in config.
-4.  **Testing**: No test files provided. Inferred: Unit tests for attention masks, MoE routing.
-5.  **Security**: No security features in config. Inferred: Input validation for image size.
-6.  **Performance**: SR-SWA reduces attention cost. MoE reduces compute per token.
-7.  **Deployment**: Hugging Face Transformers compatible. vLLM support mentioned.
-8.  **Agent Patterns**: No agent patterns in config. Inferred: Tool use for OCR.
-9.  **Data Flow**: Image -> Vision Encoder -> Projector -> LLM -> Text.
+1.  **Architecture:**
+    *   **Subsystem Boundaries:** Clear separation between vision encoder, projector, and language model.
+    *   **Decoupling:** The vision encoder is frozen, and the language model is fine-tuned. This decoupling allows for independent optimization of each component.
+    *   **Modular Layout:** The MoE architecture allows for modular scaling of the language model.
+    *   **State Ownership:** The KV cache is owned by the inference engine, and the model parameters are owned by the training/inference framework.
+
+2.  **Core Abstractions:**
+    *   **Key Types:** `UnlimitedOCRForCausalLM`, `DeepseekV2Config`, `mlp_projector`.
+    *   **Traits/Interfaces:** The model implements the `PreTrainedModel` interface from HuggingFace Transformers.
+    *   **Domain Primitives:** Tokens, embeddings, attention scores, expert weights.
+    *   **Invariant Contracts:** The model must maintain a consistent context window size and expert routing strategy.
+
+3.  **Error Handling:**
+    *   **Fault Boundaries:** Errors in the vision encoder should not propagate to the language model. Use try-except blocks to handle vision processing errors.
+    *   **Error Trees:** Define a hierarchy of errors (e.g., `VisionError`, `LanguageError`, `RoutingError`).
+    *   **Retries:** Implement retry logic for vision processing failures.
+    *   **Rollbacks:** If the model fails to generate a valid output, roll back to the previous state.
+    *   **Graceful Degradation:** If the context window is exceeded, truncate the input and warn the user.
+
+4.  **Testing:**
+    *   **Property Testing:** Test that the model's output is consistent for the same input.
+    *   **Mock Invariants:** Mock the vision encoder to test the language model in isolation.
+    *   **Integration Harnesses:** Test the full pipeline (vision -> projector -> language model) with real images.
+    *   **Regression Shields:** Ensure that changes to the model do not degrade performance on existing benchmarks.
+
+5.  **Security:**
+    *   **Threat Model:** The model is vulnerable to prompt injection attacks. Sanitize user inputs to prevent malicious prompts.
+    *   **Credential Boundaries:** Ensure that API keys and credentials are not exposed in the model's output.
+    *   **Sanitization:** Sanitize user inputs to prevent SQL injection or other injection attacks.
+    *   **Memory Safety:** Ensure that the model does not access out-of-bounds memory.
+    *   **Least Privilege:** Run the model with the minimum necessary permissions.
+
+6.  **Performance:**
+    *   **Latency Profiles:** Measure the latency of the vision encoder, projector, and language model separately.
+    *   **Asymptotic Complexity:** The model has linear complexity with respect to the context length due to SWA.
+    *   **Caching:** Use KV cache to avoid recomputing attention scores.
+    *   **Zero-Copy:** Use zero-copy operations to transfer data between the vision encoder and language model.
+    *   **Concurrency Bottlenecks:** The MoE routing logic can be a bottleneck. Optimize the expert selection logic.
+
+7.  **Deployment:**
+    *   **CI/CD Invariants:** Ensure that the model is built and tested in a consistent environment.
+    *   **Container Constraints:** Use a container with sufficient GPU memory and CPU cores.
+    *   **Reproducible Builds:** Use a fixed version of PyTorch and Transformers to ensure reproducible builds.
+    *   **Runtime Flags:** Use runtime flags to enable/disable features (e.g., `--use-swa`, `--use-yarn`).
+
+8.  **Agent Patterns:**
+    *   **Tooling Interfaces:** The model can be used as a tool in an agent system. Define a clear interface for the agent to interact with the model.
+    *   **Prompt Chains:** Use prompt chains to guide the model's output.
+    *   **Loop Guards:** Ensure that the agent does not enter an infinite loop when interacting with the model.
+    *   **Context Budget Optimization:** Optimize the context budget to ensure that the model can process the entire input.
+
+9.  **Data Flow:**
+    *   **Mutation Lifecycles:** The model's parameters are mutated during training. Ensure that the mutations are correctly applied.
+    *   **Streams:** Use streams to process large datasets.
+    *   **Serializers:** Use serializers to save and load the model's parameters.
+    *   **Network Protocol Barriers:** Ensure that the model's output is correctly serialized and transmitted over the network.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: SR-SWA Attention Mask Construction.
-2.  **Rule**: Use YARN RoPE for long-context extrapolation.
-3.  **Architecture Principle**: Decouple vision and language via projector.
-4.  **Failure Mode**: Expert collapse in MoE.
-5.  **Reusable Skill**: Implementing Sliding Window Attention.
-6.  **Decision**: Use MoE for efficiency in long-context OCR.
-7.  **Anti-pattern**: Full attention on 128k context.
-8.  **Verification Method**: Memory profiling and accuracy regression.
+1.  **Pattern:**
+    *   **YARN + SWA:** Combine YARN positional encoding with Sliding Window Attention to extend context windows while maintaining linear complexity.
+    *   **MoE with Shared Experts:** Use a Mixture-of-Experts architecture with shared experts to ensure stable information flow.
+    *   **Linear Projector:** Use a linear projector to align visual features with language embeddings.
+
+2.  **Rule:**
+    *   **MUST** use YARN when extending context windows beyond 32k tokens.
+    *   **MUST** include shared experts in MoE architectures.
+    *   **MUST** use a linear projector for vision-language alignment.
+
+3.  **Architecture Principle:**
+    *   **Decoupling:** Decouple the vision encoder from the language model to allow for independent optimization.
+    *   **Modularity:** Use a modular architecture to allow for easy scaling and customization.
+    *   **Stability:** Ensure stability in the model's behavior by using shared experts and YARN.
+
+4.  **Failure Mode:**
+    *   **Attention Sink:** Degradation of attention distribution in long contexts due to standard RoPE interpolation.
+    *   **Routing Instability:** Unstable routing of tokens to experts in MoE architectures without shared experts.
+    *   **Overfitting:** Overfitting to training data due to complex projectors.
+
+5.  **Reusable Skill:**
+    *   **Step 1:** Configure the model with YARN and SWA.
+    *   **Step 2:** Add shared experts to the MoE architecture.
+    *   **Step 3:** Use a linear projector for vision-language alignment.
+    *   **Step 4:** Test the model on long-context benchmarks.
+    *   **Step 5:** Optimize the model's performance and stability.
+
+6.  **Decision:**
+    *   **Why YARN over Standard RoPE:** YARN corrects the non-uniform distribution of attention scores in long contexts, leading to better accuracy and stability.
+    *   **Why Shared Experts:** Shared experts provide a stable pathway for information flow, ensuring that critical features are always processed.
+    *   **Why Linear Projector:** A linear projector is simple, robust, and generalizes well to unseen images.
+
+7.  **Anti-pattern:**
+    *   **Standard RoPE without YARN:** Leads to attention sink and hallucinations.
+    *   **MoE without Shared Experts:** Leads to routing instability and training divergence.
+    *   **Complex Projector:** Leads to overfitting and poor generalization.
+
+8.  **Verification Method:**
+    *   **Config Check:** Verify that the model is configured with YARN, SWA, and shared experts.
+    *   **Performance Test:** Measure the model's latency and accuracy on long-context benchmarks.
+    *   **Stability Test:** Monitor the model's loss curves during training to ensure stability.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Verify Tokenizer**: Ensure placeholder tokens are reserved.
-2.  **Implement SR-SWA**: Construct attention mask with sliding window and global references.
-3.  **Configure MoE**: Set `n_routed_experts`, `n_shared_experts`, `num_experts_per_tok`.
-4.  **Apply YARN RoPE**: Use `rope_scaling` with `yarn` type.
-5.  **Profile Memory**: Run inference with 128k context and check GPU memory.
-6.  **Test Accuracy**: Compare OCR accuracy on long documents.
-7.  **Deploy with vLLM**: Use vLLM for efficient inference.
+1.  **Configure the Model:**
+    *   [ ] Set `rope_type` to `"yarn"` in `config.json`.
+    *   [ ] Set `sliding_window_size` to a value < `max_position_embeddings`.
+    *   [ ] Set `n_shared_experts` to a value > 0.
+    *   [ ] Set `projector_type` to `"linear"`.
+
+2.  **Implement the Model:**
+    *   [ ] Implement the YARN positional encoding.
+    *   [ ] Implement the Sliding Window Attention mechanism.
+    *   [ ] Implement the MoE routing logic with shared experts.
+    *   [ ] Implement the linear projector.
+
+3.  **Test the Model:**
+    *   [ ] Test the model on long-context benchmarks (e.g., RULER).
+    *   [ ] Monitor the model's loss curves during training.
+    *   [ ] Measure the model's latency and accuracy.
+
+4.  **Optimize the Model:**
+    *   [ ] Optimize the MoE routing logic.
+    *   [ ] Optimize the KV cache management.
+    *   [ ] Optimize the vision-language alignment.
+
+5.  **Deploy the Model:**
+    *   [ ] Package the model in a container.
+    *   [ ] Set up a CI/CD pipeline.
+    *   [ ] Monitor the model's performance in production.

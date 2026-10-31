@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T03:59:08.966Z",
+  "last_updated": "2026-10-31T04:09:42.916Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10673,8 +10673,8 @@
       "slug": "duckdb-duckdb",
       "platform": "github",
       "source_url": "https://github.com/duckdb/duckdb",
-      "source_version": "ed0443f1",
-      "content_hash": "f400ec526dadff2abdbf6aa355c276ca9fd26068c2d58253edf5e283ec2e5eb1",
+      "source_version": "71f47d41",
+      "content_hash": "85da1c5262a3a4fd98086e66022c08d015d692d45203af18c3d5f82f3c051717",
       "dossier_path": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "promoted_rules": [
@@ -10737,6 +10737,11 @@
           "number": 5676,
           "title": "Non-Recursive Bottom-Up Path Reclamation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6062,
+          "title": "range threads, cross product dictionaries, sequence limits and jemalloc arena fa",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10744,7 +10749,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T08:04:56.356Z",
+      "verified_at": "2026-10-31T04:09:42.896Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -138829,7 +138834,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/baidu/Unlimited-OCR-2",
       "source_version": "hf-baidu-unlimited-ocr-2",
-      "content_hash": "d3bddca3d24d3c13e9cb71814a29757e9757d84a7f8f31c0c690d8e0a18d910c",
+      "content_hash": "ae491bba61bb1ed28c3721e72110d66f4e5ecb58cff6fe4976e0639f8af27625",
       "dossier_path": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md",
       "promoted_rules": [
@@ -138842,6 +138847,21 @@
           "number": 4771,
           "title": "MoE Expert Routing Stability in Long-Context OCR",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6059,
+          "title": "Context Extension via YARN + Sliding Window Attention",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6060,
+          "title": "MoE Routing Stability with Shared Experts",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6061,
+          "title": "Vision-Language Alignment via Linear Projector",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -138849,7 +138869,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:56:51.380Z",
+      "verified_at": "2026-10-31T04:09:41.992Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -159278,6 +159298,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T03:59:08.949Z"
+    },
+    "rule-6059": {
+      "learning_id": "rule-6059",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6059,
+      "title": "Context Extension via YARN + Sliding Window Attention",
+      "source_url": "https://huggingface.co/baidu/Unlimited-OCR-2",
+      "source_version": "hf-baidu-unlimited-ocr-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T04:09:41.992Z"
+    },
+    "rule-6060": {
+      "learning_id": "rule-6060",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6060,
+      "title": "MoE Routing Stability with Shared Experts",
+      "source_url": "https://huggingface.co/baidu/Unlimited-OCR-2",
+      "source_version": "hf-baidu-unlimited-ocr-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T04:09:41.992Z"
+    },
+    "rule-6061": {
+      "learning_id": "rule-6061",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6061,
+      "title": "Vision-Language Alignment via Linear Projector",
+      "source_url": "https://huggingface.co/baidu/Unlimited-OCR-2",
+      "source_version": "hf-baidu-unlimited-ocr-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T04:09:41.992Z"
+    },
+    "rule-6062": {
+      "learning_id": "rule-6062",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6062,
+      "title": "range threads, cross product dictionaries, sequence limits and jemalloc arena fa",
+      "source_url": "https://github.com/duckdb/duckdb",
+      "source_version": "71f47d41",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T04:09:42.896Z"
     }
   },
   "aliases": {

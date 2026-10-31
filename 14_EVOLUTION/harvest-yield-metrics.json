@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T03:59:09.038Z",
-  "total_cycles_completed": 6432,
-  "total_learnings_persisted": 6432,
-  "total_rules_promoted": 6037,
+  "last_updated": "2026-10-31T04:09:42.999Z",
+  "total_cycles_completed": 6434,
+  "total_learnings_persisted": 6434,
+  "total_rules_promoted": 6041,
   "history": [
-    {
-      "timestamp": "2026-10-30T18:07:08.494Z",
-      "repository": "PeerDB-io/peerdb",
-      "learningId": "learn-github-peerdb-io-peerdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T18:07:13.351Z",
-      "repository": "Ontos-AI/knowhere",
-      "learningId": "learn-github-ontos-ai-knowhere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T18:13:39.114Z",
       "repository": "wzh4869/AppPorts",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-31T03:59:09.038Z",
       "repository": "dragonflydb/dragonfly",
       "learningId": "learn-github-dragonflydb-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T04:09:42.098Z",
+      "repository": "baidu/Unlimited-OCR-2",
+      "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T04:09:42.999Z",
+      "repository": "duckdb/duckdb",
+      "learningId": "learn-github-duckdb-duckdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

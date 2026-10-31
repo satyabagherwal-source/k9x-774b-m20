@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-0W5S",
-    "timestamp": "2026-10-28T22:07:47.920Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
-    "contentHash": "59902ba69cf49be7f5faf3108f17c11fbba19df99b5174e3737f1cd922093416",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-0WQU",
-    "timestamp": "2026-10-28T22:07:48.678Z",
-    "repository": "siderolabs/talos",
-    "learningId": "learn-github-siderolabs-talos",
-    "contentHash": "a7e65e389430839661cb8f5bb404ba33cb3c011e4efc97ced02517fbd8de8b6e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-10RS",
     "timestamp": "2026-10-28T22:07:53.896Z",
     "repository": "tursodatabase/turso",
@@ -7490,6 +7460,36 @@
     "repository": "dragonflydb/dragonfly",
     "learningId": "learn-github-dragonflydb-dragonfly",
     "contentHash": "32b7d1876503390e3ff4be2fa19e2f8d26e0094c7bc3880f40648d01beab9e08",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-U095",
+    "timestamp": "2026-10-31T04:09:42.089Z",
+    "repository": "baidu/Unlimited-OCR-2",
+    "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
+    "contentHash": "ae491bba61bb1ed28c3721e72110d66f4e5ecb58cff6fe4976e0639f8af27625",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-U0Y6",
+    "timestamp": "2026-10-31T04:09:42.990Z",
+    "repository": "duckdb/duckdb",
+    "learningId": "learn-github-duckdb-duckdb",
+    "contentHash": "85da1c5262a3a4fd98086e66022c08d015d692d45203af18c3d5f82f3c051717",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

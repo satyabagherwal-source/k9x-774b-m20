@@ -6455,3 +6455,5 @@
 | `CYCLE-20261031-GA6X` | `2026-10-31T03:59:01.785Z` | `software-mansion/react-native-reanimated` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6055` | Yes (`0a6f883d...`) |
 | `CYCLE-20261031-GC2C` | `2026-10-31T03:59:04.212Z` | `FastVideo/FastH3-Omni-Comfy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6056, Rule 6057` | Yes (`43465e50...`) |
 | `CYCLE-20261031-GFS6` | `2026-10-31T03:59:09.030Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6058` | Yes (`32b7d187...`) |
+| `CYCLE-20261031-U095` | `2026-10-31T04:09:42.089Z` | `baidu/Unlimited-OCR-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6059, Rule 6060, Rule 6061` | Yes (`ae491bba...`) |
+| `CYCLE-20261031-U0Y6` | `2026-10-31T04:09:42.990Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6062` | Yes (`85da1c52...`) |

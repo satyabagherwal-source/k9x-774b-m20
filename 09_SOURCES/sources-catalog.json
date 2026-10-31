@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "ed0443f1",
+    "sourceVersion": "71f47d41",
     "license": "MIT",
-    "contentHash": "f400ec526dadff2abdbf6aa355c276ca9fd26068c2d58253edf5e283ec2e5eb1",
-    "lastHarvestedAt": "2026-10-30T08:04:56.454Z",
+    "contentHash": "85da1c5262a3a4fd98086e66022c08d015d692d45203af18c3d5f82f3c051717",
+    "lastHarvestedAt": "2026-10-31T04:09:42.994Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {
@@ -10915,8 +10915,8 @@
     "sourceUrl": "https://huggingface.co/baidu/Unlimited-OCR-2",
     "sourceVersion": "hf-baidu-unlimited-ocr-2",
     "license": "Open-Source",
-    "contentHash": "d3bddca3d24d3c13e9cb71814a29757e9757d84a7f8f31c0c690d8e0a18d910c",
-    "lastHarvestedAt": "2026-10-27T12:56:51.438Z",
+    "contentHash": "ae491bba61bb1ed28c3721e72110d66f4e5ecb58cff6fe4976e0639f8af27625",
+    "lastHarvestedAt": "2026-10-31T04:09:42.092Z",
     "learningId": "learn-huggingface-baidu-unlimited-ocr-2"
   },
   "joooook-12306-mcp": {

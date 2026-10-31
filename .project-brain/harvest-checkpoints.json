@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T03:59:09.041Z",
+  "last_updated": "2026-10-31T04:09:43.003Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9381,14 +9381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duckdb-duckdb",
-      "content_hash": "f400ec526dadff2abdbf6aa355c276ca9fd26068c2d58253edf5e283ec2e5eb1",
-      "verified_at": "2026-10-30T08:04:56.463Z",
+      "content_hash": "85da1c5262a3a4fd98086e66022c08d015d692d45203af18c3d5f82f3c051717",
+      "verified_at": "2026-10-31T04:09:43.002Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T08:04:56.463Z"
+      "last_updated": "2026-10-31T04:09:43.002Z"
     },
     "megh-bari/pattern-craft": {
       "repository": "megh-bari/pattern-craft",
@@ -16401,14 +16401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baidu-unlimited-ocr-2",
-      "content_hash": "d3bddca3d24d3c13e9cb71814a29757e9757d84a7f8f31c0c690d8e0a18d910c",
-      "verified_at": "2026-10-27T12:56:51.443Z",
+      "content_hash": "ae491bba61bb1ed28c3721e72110d66f4e5ecb58cff6fe4976e0639f8af27625",
+      "verified_at": "2026-10-31T04:09:42.101Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:56:51.443Z"
+      "last_updated": "2026-10-31T04:09:42.101Z"
     },
     "Joooook/12306-mcp": {
       "repository": "Joooook/12306-mcp",
