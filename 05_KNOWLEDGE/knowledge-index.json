@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T21:39:34.840Z",
+  "last_updated": "2026-10-31T21:46:14.084Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -27479,7 +27479,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
       "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
-      "content_hash": "98b22cf2ae9582e6bef134ae158406b0416bbca9f2011c62a3e623a008e1ec80",
+      "content_hash": "3aea0b126967bde1cd848e4a41b47269a6b008c804c690ef82e8cb78f6076b1f",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -27562,6 +27562,11 @@
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
+          "number": 1514,
+          "title": "Model Artifact Integrity & Schema Validation",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 1537,
           "title": "GGUF Metadata Integrity & Architecture Validation",
           "status": "PROMOTED_AND_VERIFIED"
@@ -27590,6 +27595,16 @@
           "number": 4175,
           "title": "ChatML Stop-Token Lexical Closure Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6336,
+          "title": "Inference Engine Compatibility & Context Window Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6337,
+          "title": "Uncensored Model Safety & Content Filtering Boundary",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -27610,7 +27625,7 @@
         "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv43ntz8",
         "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv4gww1z"
       ],
-      "verified_at": "2026-10-28T20:15:39.973Z",
+      "verified_at": "2026-10-31T21:46:14.067Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60474,8 +60489,8 @@
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "baedd5dc",
-      "content_hash": "0ff15a5cf4fa5e7aece3124331e6c50ecc43f2c66788a3dbb4a86be35bef08b4",
+      "source_version": "0a153df5",
+      "content_hash": "98fcf092d7396bcce7cdabf0979b17f0112b6fcf64a45bf70ef93c7501d25697",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "promoted_rules": [
@@ -60518,6 +60533,11 @@
           "number": 6002,
           "title": "Web: page layout",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6334,
+          "title": "Sync: update loro to 1.17 so streaming chats stop leaking memory (#1116)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60525,7 +60545,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T02:00:22.421Z",
+      "verified_at": "2026-10-31T21:46:01.772Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -69375,8 +69395,8 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "7aef6cbb",
-      "content_hash": "be5dfca20c209c5c0a1f4e8f735984322c37a1dd49adfb843cf4d4d0e5971ee4",
+      "source_version": "012e1f0c",
+      "content_hash": "07516f4ce856f9be38f54c4b578225c19a23f26be4610b7f68b11eb272c55d90",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
@@ -69454,6 +69474,11 @@
           "number": 6080,
           "title": "studio): use official OpenViking lockup in header (#6834)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6335,
+          "title": "snapshot): restore single files using commit IDs (#6840)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -69461,7 +69486,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T05:14:24.155Z",
+      "verified_at": "2026-10-31T21:46:13.063Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -91194,15 +91219,15 @@
       "learning_id": "rule-1514",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1514,
-      "title": "Model Artifact Integrity & Schema Validation Invariant (Harvested from black-forest-labs/flux-3-image-klein)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Model Artifact Integrity & Schema Validation",
+      "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.820Z"
+      "verified_at": "2026-10-31T21:46:14.067Z"
     },
     "rule-1515": {
       "learning_id": "rule-1515",
@@ -164678,6 +164703,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T21:39:34.820Z"
+    },
+    "rule-6334": {
+      "learning_id": "rule-6334",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6334,
+      "title": "Sync: update loro to 1.17 so streaming chats stop leaking memory (#1116)",
+      "source_url": "https://github.com/zeronsh/zeron",
+      "source_version": "0a153df5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T21:46:01.773Z"
+    },
+    "rule-6335": {
+      "learning_id": "rule-6335",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6335,
+      "title": "snapshot): restore single files using commit IDs (#6840)",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "012e1f0c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T21:46:13.063Z"
+    },
+    "rule-6336": {
+      "learning_id": "rule-6336",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6336,
+      "title": "Inference Engine Compatibility & Context Window Enforcement",
+      "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T21:46:14.067Z"
+    },
+    "rule-6337": {
+      "learning_id": "rule-6337",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6337,
+      "title": "Uncensored Model Safety & Content Filtering Boundary",
+      "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T21:46:14.067Z"
     }
   },
   "aliases": {

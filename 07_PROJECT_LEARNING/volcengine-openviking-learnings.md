@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `7aef6cbb`  
+> **Source Version**: `012e1f0c`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T05:14:23.578Z  
+> **Timestamp**: 2026-10-31T21:46:12.558Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T05:14:23.385Z  
+> **Harvest Timestamp**: 2026-10-31T21:46:12.552Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41220 stars
+- **Stars / Engagement**: 41246 stars
 
 ---
 
@@ -1495,544 +1495,302 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5bfbc298` (2026-10-31)
-**Commit Message**: fix(studio): use official OpenViking lockup in header (#6834)
+### Incident Patch 1: `3dedecc0` (2026-10-31)
+**Commit Message**: fix(snapshot): restore single files using commit IDs (#6840)
 
-Replace the mark + typeset "OpenViking" text in the Studio header with
-the official brand lockup SVGs (light/dark), keeping the compact mark
-below the lg breakpoint and the link's accessible name.
+Co-authored-by: fujiajie.168 <[REDACTED_EMAIL]>
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `web-studio/src/app/layouts/studio-header.tsx` (modified, +15/-4)
+**File**: `docs/en/api/11-snapshot.md` (modified, +8/-13)
 ```diff
-@@ -4,6 +4,8 @@ import { StudioScopeSwitcher } from '#/features/connection/components/studio-sco
- import { StudioSettingsMenu } from '#/features/connection/components/studio-settings-menu'
- import { useAppConnection } from '#/features/connection/hooks/use-app-connection'
- import { hasStudioAccountScope } from '#/features/connection/lib/studio-mode'
-+import brandLockupDark from '#/assets/brand-lockup-dark.svg'
-+import brandLockupLight from '#/assets/brand-lockup-light.svg'
- import { OpenVikingMark } from '#/shared/components/openviking-mark'
- import { resolveConfiguredServiceProvider } from '#/shared/lib/studio-service'
- import { SidebarTrigger } from '#/shared/ui/sidebar'
-@@ -43,10 +45,19 @@ export function StudioHeader({
-           aria-label={t('studioSettings.brand')}
-           className="flex shrink-0 items-center gap-1.5 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring"
-         >
--          <OpenVikingMark className="size-8 sm:size-9" />
--          <span className="hidden text-lg font-semibold tracking-tight lg:inline">
--            {t('studioSettings.brand')}
--          </span>
-+          <OpenVikingMark className="size-8 sm:size-9 lg:hidden" />
-+          <img
-+            src={brandLockupLight}
-+            alt=""
-+            aria-hidden="true"
-+            className="hidden h-7 w-auto lg:block dark:lg:hidden"
-+          />
-+          <img
-+            src={brandLockupDark}
-+            alt=""
-+            aria-hidden="true"
-+            className="hidden h-7 w-auto dark:lg:block"
-+          />
-         </Link>
-         <div className="hidden h-5 w-px bg-border/70 sm:block" />
-         <StudioScopeSwitcher
-```
-
-**File**: `web-studio/src/assets/brand-lockup-dark.svg` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500.05 92.94" width="500.05" height="92.94" fill="#F2F4F6"><g transform="translate(-12 -6)"><path d="M20.5 84H31L70 16.45H67ZM37 84 76 16.45V84Z"/><path d="M141.07 77.99Q133.2 77.99 127.5 74.61Q121.8 71.24 118.76 65.05Q115.72 58.86 115.72 50.24Q115.72 41.61 118.76 35.35Q121.8 29.09 127.5 25.71Q133.2 22.34 141.07 22.34Q149.03 22.34 154.73 25.71Q160.43 29.09 163.46 35.35Q166.5 41.61 166.5 50.24Q166.5 58.86 163.46 65.05Q160.43 71.24 154.73 74.61Q149.03 77.99 141.07 77.99ZM141.07 69.51Q148.35 69.51 152.4 64.45Q156.45 59.39 156.45 50.24Q156.45 41.09 152.4 35.95Q148.35 30.81 141.07 30.81Q133.95 30.81 129.86 35.95Q125.78 41.09 125.78 50.24Q125.78 59.39 129.86 64.45Q133.95 69.51 141.07 69.51ZM172.72 88.04V36.74H181.95L182.1 42.74Q183.82 39.36 186.97 37.6Q190.12 35.84 194.1 35.84Q199.8 35.84 203.59 38.65Q207.38 41.46 209.25 46.22Q211.12 50.99 211.12 56.76Q211.12 62.54 209.21 67.26Q207.3 71.99 203.51 74.84Q199.72 77.69 194.03 77.69Q190.2 77.69 187.09 76Q183.97 74.31 182.32 71.31V88.04ZM191.78 69.89Q196.12 69.89 198.64 66.4Q201.15 62.91 201.15 56.76Q201.15 50.61 198.64 47.12Q196.12 43.64 191.78 43.64Q187.42 43.64 184.88 46.94Q182.32 50.24 182.32 56.76Q182.32 63.29 184.84 66.59Q187.35 69.89 191.78 69.89ZM233.62 77.69Q227.62 77.69 223.2 75.1Q218.77 72.51 216.38 67.79Q213.97 63.06 213.97 56.76Q213.97 50.46 216.38 45.74Q218.77 41.01 223.16 38.42Q227.55 35.84 233.4 35.84Q239.1 35.84 243.38 38.39Q247.65 40.94 250.01 45.74Q252.37 50.54 252.37 57.29V59.46H223.95Q224.17 64.71 226.8 67.37Q229.42 70.04 233.7 70.04Q240.22 70.04 242.02 64.49L251.85 65.09Q250.2 70.94 245.36 74.31Q240.52 77.69 233.62 77.69ZM223.95 53.01H242.47Q242.1 48.14 239.66 45.77Q237.22 43.41 233.4 43.41Q229.5 43.41 227.02 45.89Q224.55 48.36 223.95 53.01ZM257.62 76.79V36.74H266.32L266.55 43.56Q268.2 39.44 271.39 37.64Q274.57 35.84 278.55 35.84Q285.15 35.84 288.67 40.07Q292.2 44.31 292.2 51.06V76.79H282.6V54.14Q282.6 49.04 281.06 46.34Q279.52 43.64 275.62 43.64Q271.72 43.64 269.47 46.34Q267.22 49.04 267.22 54.14V76.79ZM314.4 76.79 295.12 23.54H305.4L320.32 65.91L335.18 23.54H345.45L326.1 76.79ZM348 76.79V36.74H357.6V76.79ZM347.85 31.41V22.86H357.82V31.41ZM364.73 76.79V23.54H374.33V54.81L390.75 36.74H402.6L386.93 53.39L403.12 76.79H392.33L380.62 59.09L374.33 65.76V76.79ZM405.83 76.79V36.74H415.43V76.79ZM405.68 31.41V22.86H415.65V31.41ZM424.2 76.79V36.74H432.9L433.13 43.56Q434.78 39.44 437.96 37.64Q441.15 35.84 445.13 35.84Q451.73 35.84 455.25 40.07Q458.78 44.31 458.78 51.06V76.79H449.18V54.14Q449.18 49.04 447.64 46.34Q446.1 43.64 442.2 43.64Q438.3 43.64 436.05 46.34Q433.8 49.04 433.8 54.14V76.79ZM483.15 88.94Q475.28 88.94 470.78 85.79Q466.28 82.64 464.93 77.54L474.83 76.86Q475.58 79.19 477.41 80.42Q479.25 81.66 483.15 81.66Q487.58 81.66 489.98 79.67Q492.38 77.69 492.38 73.49V68.39Q490.95 71.31 487.8 73.07Q484.65 74.84 480.75 74.84Q475.8 74.84 471.94 72.4Q468.08 69.96 465.9 65.57Q463.73 61.19 463.73 55.41Q463.73 49.64 465.9 45.25Q468.08 40.86 471.86 38.35Q475.65 35.84 480.6 35.84Q484.88 35.84 488.03 37.79Q491.18 39.74 492.68 42.96V36.74H502.05V73.26Q502.05 80.99 496.88 84.96Q491.7 88.94 483.15 88.94ZM483 67.34Q487.28 67.34 489.86 64.15Q492.45 60.96 492.45 55.34Q492.53 49.79 489.94 46.56Q487.35 43.34 483 43.34Q478.58 43.34 476.14 46.6Q473.7 49.86 473.7 55.34Q473.7 60.81 476.21 64.07Q478.73 67.34 483 67.34Z"/></g></svg>
-```
-
-**File**: `web-studio/src/assets/brand-lockup-light.svg` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500.05 92.94" width="500.05" height="92.94" fill="#07090D"><g transform="translate(-12 -6)"><path d="M20.5 84H31L70 16.45H67ZM37 84 76 16.45V84Z"/><path d="M141.07 77.99Q133.2 77.99 127.5 74.61Q121.8 71.24 118.76 65.05Q115.72 58.86 115.72 50.24Q115.72 41.61 118.76 35.35Q121.8 29.09 127.5 25.71Q133.2 22.34 141.07 22.34Q149.03 22.34 154.73 25.71Q160.43 29.09 163.46 35.35Q166.5 41.61 166.5 50.24Q166.5 58.86 163.46 65.05Q160.43 71.24 154.73 74.61Q149.03 77.99 141.07 77.99ZM141.07 69.51Q148.35 69.51 152.4 64.45Q156.45 59.39 156.45 50.24Q156.45 41.09 152.4 35.95Q148.35 30.81 141.07 30.81Q133.95 30.81 129.86 35.95Q125.78 41.09 125.78 50.24Q125.78 59.39 129.86 64.45Q133.95 69.51 141.07 69.51ZM172.72 88.04V36.74H181.95L182.1 42.74Q183.82 39.36 186.97 37.6Q190.12 35.84 194.1 35.84Q199.8 35.84 203.59 38.65Q207.38 41.46 209.25 46.22Q211.12 50.99 211.12 56.76Q211.12 62.54 209.21 67.26Q207.3 71.99 203.51 74.84Q199.72 77.69 194.03 77.69Q190.2 77.69 187.09 76Q183.97 74.31 182.32 71.31V88.04ZM191.78 69.89Q196.12 69.89 198.64 66.4Q201.15 62.91 201.15 56.76Q201.15 50.61 198.64 47.12Q196.12 43.64 191.78 43.64Q187.42 43.64 184.88 46.94Q182.32 50.24 182.32 56.76Q182.32 63.29 184.84 66.59Q187.35 69.89 191.78 69.89ZM233.62 77.69Q227.62 77.69 223.2 75.1Q218.77 72.51 216.38 67.79Q213.97 63.06 213.97 56.76Q213.97 50.46 216.38 45.74Q218.77 41.01 223.16 38.42Q227.55 35.84 233.4 35.84Q239.1 35.84 243.38 38.39Q247.65 40.94 250.01 45.74Q252.37 50.54 252.37 57.29V59.46H223.95Q224.17 64.71 226.8 67.37Q229.42 70.04 233.7 70.04Q240.22 70.04 242.02 64.49L251.85 65.09Q250.2 70.94 245.36 74.31Q240.52 77.69 233.62 77.69ZM223.95 53.01H242.47Q242.1 48.14 239.66 45.77Q237.22 43.41 233.4 43.41Q229.5 43.41 227.02 45.89Q224.55 48.36 223.95 53.01ZM257.62 76.79V36.74H266.32L266.55 43.56Q268.2 39.44 271.39 37.64Q274.57 35.84 278.55 35.84Q285.15 35.84 288.67 40.07Q292.2 44.31 292.2 51.06V76.79H282.6V54.14Q282.6 49.04 281.06 46.34Q279.52 43.64 275.62 43.64Q271.72 43.64 269.47 46.34Q267.22 49.04 267.22 54.14V76.79ZM314.4 76.79 295.12 23.54H305.4L320.32 65.91L335.18 23.54H345.45L326.1 76.79ZM348 76.79V36.74H357.6V76.79ZM347.85 31.41V22.86H357.82V31.41ZM364.73 76.79V23.54H374.33V54.81L390.75 36.74H402.6L386.93 53.39L403.12 76.79H392.33L380.62 59.09L374.33 65.76V76.79ZM405.83 76.79V36.74H415.43V76.79ZM405.68 31.41V22.86H415.65V31.41ZM424.2 76.79V36.74H432.9L433.13 43.56Q434.78 39.44 437.96 37.64Q441.15 35.84 445.13 35.84Q451.73 35.84 455.25 40.07Q458.78 44.31 458.78 51.06V76.79H449.18V54.14Q449.18 49.04 447.64 46.34Q446.1 43.64 442.2 43.64Q438.3 43.64 436.05 46.34Q433.8 49.04 433.8 54.14V76.79ZM483.15 88.94Q475.28 88.94 470.78 85.79Q466.28 82.64 464.93 77.54L474.83 76.86Q475.58 79.19 477.41 80.42Q479.25 81.66 483.15 81.66Q487.58 81.66 489.98 79.67Q492.38 77.69 492.38 73.49V68.39Q490.95 71.31 487.8 73.07Q484.65 74.84 480.75 74.84Q475.8 74.84 471.94 72.4Q468.08 69.96 465.9 65.57Q463.73 61.19 463.73 55.41Q463.73 49.64 465.9 45.25Q468.08 40.86 471.86 38.35Q475.65 35.84 480.6 35.84Q484.88 35.84 488.03 37.79Q491.18 39.74 492.68 42.96V36.74H502.05V73.26Q502.05 80.99 496.88 84.96Q491.7 88.94 483.15 88.94ZM483 67.34Q487.28 67.34 489.86 64.15Q492.45 60.96 492.45 55.34Q492.53 49.79 489.94 46.56Q487.35 43.34 483 43.34Q478.58 43.34 476.14 46.6Q473.7 49.86 473.7 55.34Q473.7 60.81 476.21 64.07Q478.73 67.34 483 67.34Z"/></g></svg>
-```
-
----
-
-### Incident Patch 2: `cd48bf0b` (2026-10-30)
-**Commit Message**: fix(session): surface transient archive context probe errors (#6728)
-
-Keep genuinely missing archive history and terminal markers as empty or pending, but propagate other storage failures while assembling session context. This prevents a timeout from returning a successful incomplete context.
-
-Co-authored-by: Kiko0301 <[REDACTED_EMAIL]>
-
-**File**: `openviking/session/archive_store.py` (modified, +8/-4)
-```diff
-@@ -211,8 +211,10 @@ async def terminal_state(self, archive_uri: str) -> str:
-             try:
-                 if await self._viking_fs.exists(f"{archive_uri}/{marker}", ctx=self._ctx):
-                     return state
--            except Exception:
--                continue
-+            except Exception as exc:
-+                if is_storage_not_found(exc):
-+                    continue
-+                raise
-         return "pending"
+@@ -588,13 +588,11 @@ With `dry_run=true`, only the planned diff is returned and nothing is written. D
  
-     async def list_refs(self) -> List[Dict[str, Any]]:
-@@ -222,8 +224,10 @@ async def list_refs(self) -> List[Dict[str, Any]]:
+ | Parameter | Type | Description |
+ |-----------|------|-------------|
+-| path | str | `viking://` URI of the Compile output file |
+-| restore_version | str | UUID `version_id` of the historical version supplying the restored content |
+-| current_version | str | UUID `version_id` of the current version observed by the caller; a mismatch returns `409 CONFLICT` with `error.details.resource: "VERSION_CONFLICT"` |
++| path | str | Compile output file URI, also used as the path in the historical snapshot |
++| restore_commit_id | str | Full commit ID supplying the content (40 lowercase hexadecimal characters) |
++| current_commit_id | str | Full ID of the last commit changing this file on `main`, as observed by the caller; a mismatch returns `409 CONFLICT` with `error.details.resource: "VERSION_CONFLICT"` |
  
-         try:
-             history_items = await self._viking_fs.ls(f"{self._session_uri}/history", ctx=self._ctx)
--        except Exception:
--            return []
-+        except Exception as exc:
-+            if is_storage_not_found(exc):
-+                return []
-+            raise
+-Call `GET /api/v1/snapshot/versions?uri=<file URI>` to obtain `current_version` and the version history before submitting a restore:
+-
+-Each version has a `version_id` (a full UUID4 hex string) and a positive integer `version_number`. Clients pass IDs unchanged for restore and pagination; use `version_number` to display labels such as `v1` and `v2`. Versions are returned newest first. Numbers increase within a file's lifecycle and remain unchanged across pages and history cleanup. A new version index starts numbering at 1; version IDs are not reused after deletion and recreation, so an old restore request cannot match the recreated file.
++`GET /api/v1/snapshot/versions?uri=<file URI>` lists version history. Each version has a `version_id` (a full UUID4 hex string) and a positive integer `version_number`. Clients pass version IDs unchanged for pagination; use `version_number` to display labels such as `v1` and `v2`. Versions are returned newest first. Numbers increase within a file's lifecycle and remain unchanged across pages and history cleanup. A new version index starts numbering at 1; version IDs are not reused after deletion and recreation, so old version UUIDs cannot match the recreated file.
  
-         refs: List[Dict[str, Any]] = []
-         for item in history_items:
+ The response's `to` identifies the file's owning Compile target directory; use it with a version's `meta.operation_id` to query operation details. `total` counts all retained, queryable versions before applying `limit` or `before_version`; it is not the latest version number. Pass `next_before_version` unchanged as `before_version` to load older versions. Both this cursor and `current_version` contain UUID IDs; do not sort or derive display numbers from IDs or page positions.
+ 
+@@ -604,17 +602,14 @@ curl -X POST "http://localhost:1933/api/v1/snapshot/restore" \
+   -H "X-API-Key: your-key" \
+   -d '{
+     "path": "viking://resources/wiki/entity/project.md",
+-    "restore_version": "0334d9abe4ac4f25a3e59d0b401bb01c",
+-    "current_version": "54c71fb7bf134b71a9b7ed604c21f5b4"
++    "restore_commit_id": "0334d9abe4ac4f25a3e59d0b401bb01c12345678",
++    "current_commit_id": "54c71fb7bf134b71a9b7ed604c21f5b412345678"
+   }'
+ ```
+ 
+-For example, when version 2 is current and version 1 has different content, restoring version 1 creates version 3 and preserves both earlier versions. The response contains a new UUID `version_id`, `version_number: 3`, and `meta.restored_from` equal to version 1's UUID. Identical content returns the current ID and number with `result: "noop"` and `meta.restored_from: null`, without creating a version or incrementing its number.
+-
+-The current version is checked before looking up the historical version and again under the write lock before changing content. A stale `current_version` returns `409 CONFLICT` with `error.details.resource: "VERSION_CONFLICT"`, including after deletion and recreation; a missing historical version returns `404` when the current version matches.
+-
+-Only the specified file is restored; related Wiki pages and index content retain their current content. A running Compile on the target returns `409 CONFLICT` with `error.details.resource: "COMPILE_RUNNING"`. This mode does not provide a `dry_run` preview; directory restore preview options do not apply to single-file restore.
++For example, when version 2 is current and version 1 has different content, restoring version 1 creates version 3 and preserves both earlier versions. The response contains a new UUID `version_id`, `version_number: 3`, and `meta.restored_from` equal to the source commit ID. Identical content returns the current ID and number with `result: "noop"` and `meta.restored_from: null`, without creating a version or incrementing its number.
+ 
++The last commit changing the file is checked before reading the same path in the historical commit and again under the write lock. A stale `current_commit_id` returns `409 VERSION_CONFLICT`; a missing historical commit or path returns `404` when the current commit matches. Restore does not follow moves or renames.
+ ---
+ 
+ ## Ignore management
 ```
 
-**File**: `tests/session/test_archive_context_probe_errors.py` (added, +72/-0)
+**File**: `docs/zh/api/11-snapshot.md` (modified, +8/-13)
 ```diff
-@@ -0,0 +1,72 @@
-+# Copyright (c) 2026 Beijing Volcano Engine Technology Co., Ltd.
-+# SPDX-License-Identifier: AGPL-3.0
-+"""Archive probe failures must not produce a successful, incomplete context."""
-+
-+from types import SimpleNamespace
-+from typing import Any, cast
-+from unittest.mock import AsyncMock
-+
-+import pytest
-+
-+from openviking.pyagfs.exceptions import AGFSNotFoundError, AGFSTimeoutError
-+from openviking.session import Session
-+
-+SESSION_URI = "viking://user/acc1/sessions/archive-probe-test"
-+
-+
-+def _session(*, listing=None, listing_error=None, marker_error=None):
-+    fs = SimpleNamespace(
-+        ls=AsyncMock(return_value=listing, side_effect=listing_error),
-+        exists=AsyncMock(return_value=False, side_effect=marker_error),
-+        read_file=AsyncMock(return_value=""),
-+    )
-+    return Session(
-+        viking_fs=cast(Any, fs), session_uri=SESSION_URI, session_id="archive-probe-test"
-+    )
-+
-+
-+async def test_context_surfaces_transient_archive_listing_failure():
-+    session = _session(listing_error=AGFSTimeoutError("history listing timed out"))
-+
-+    with pytest.raises(AGFSTimeoutError, match="history listing timed out"):
-+        await session.get_session_context()
-+
-+
-+async def test_context_surfaces_transient_terminal_marker_failure():
-+    session = _session(
-+        listing=[{"name": "archive_001"}],
-+        marker_error=AGFSTimeoutError("marker probe timed out"),
-+    )
-+
-+    with pytest.raises(AGFSTimeoutError, match="marker probe timed out"):
-+        await session.get_session_context()
-+
-+
-+async def test_context_accepts_genuinely_missing_history_directory():
-+    session = _session(listing_error=AGFSNotFoundError("history is absent"))
-+
-+    context = await session.get_session_context()
-+
-+    assert context["stats"]["totalArchives"] == 0
-+    assert context["latest_archive_overview"] == ""
-+
-+
-+async def test_context_treats_absent_terminal_markers_as_pending():
-+    session = _session(listing=[{"name": "archive_001"}])
-+
-+    context = await session.get_session_context()
-+
-+    assert context["stats"]["totalArchives"] == 1
-+    assert context["latest_archive_overview"] == ""
-+
-+
-+async def test_context_treats_missing_terminal_marker_error_as_pending():
-+    session = _session(
-+        listing=[{"name": "archive_001"}],
-+        marker_error=AGFSNotFoundError("marker is absent"),
-+    )
-+
-+    context = await session.get_session_context()
-+
-+    assert context["stats"]["totalArchives"] == 1
-+    assert context["latest_archive_overview"] == ""
+@@ -588,13 +588,11 @@ ov snapshot restore 3f2a1b9c viking://resources/my_project -m "restore to v1" -o
+ 
+ | 参数 | 类型 | 说明 |
+ |------|------|------|
+-| path | str | Compile 产物文件的 `viking://` URI |
+-| restore_version | str | 提供恢复内容的历史版本的 UUID `version_id` |
+-| current_version | str | 调用方观察到的当前版本的 UUID `version_id`；不匹配时返回 `409 CONFLICT`，`error.details.resource` 为 `VERSION_CONFLICT` |
++| path | str | Compile 产物文件的 `viking://` URI，也是历史快照中的读取路径 |
++| restore_commit_id | str | 提供恢复内容的完整 commit ID（40 位小写十六进制） |
++| current_commit_id | str | 调用方观察到的该文件在 `main` 上最后一次变更的完整 commit ID；不匹配时返回 `409 CONFLICT`，`error.details.resource` 为 `VERSION_CONFLICT` |
+ 
+-先调用 `GET /api/v1/snapshot/versions?uri=<文件 URI>` 获取 `current_version` 和历史版本列表，再提交恢复请求：
+-
+-每条版本记录包含 `version_id`（完整 UUID4 十六进制字符串）和正整数 `version_number`。客户端在恢复和分页时原样传递 ID，使用 `version_number` 展示 `v1`、`v2` 等编号。版本列表按从新到旧的顺序返回。编号在文件的一轮生命周期内递增，跨分页和历史清理保持不变。新版本索引从 1 开始编号；文件删除重建后版本 ID 不复用，旧恢复请求无法匹配重建文件。
++`GET /api/v1/snapshot/versions?uri=<文件 URI>` 用于查询版本历史。每条版本记录包含 `version_id`（完整 UUID4 十六进制字符串）和正整数 `version_number`。客户端在分页时原样传递版本 ID，使用 `version_number` 展示 `v1`、`v2` 等编号。版本列表按从新到旧的顺序返回。编号在文件的一轮生命周期内递增，跨分页和历史清理保持不变。新版本索引从 1 开始编号；文件删除重建后版本 ID 不复用，旧版本 UUID 不会匹配重建文件。
+ 
+ 响应中的 `to` 是文件所属的 Compile 目标目录，可与版本记录的 `meta.operation_id` 一起用于查询操作详情。`total` 表示当前保留的可查询版本总数，不受 `limit`、`before_version` 影响，不等于最新版本编号。将 `next_before_version` 原样作为 `before_version` 传入可继续加载更旧版本。该游标和 `current_version` 都使用 UUID ID；不要根据 ID 或页面内位置排序或推算展示编号。
+ 
+@@ -604,17 +602,14 @@ curl -X POST "http://localhost:1933/api/v1/snapshot/restore" \
+   -H "X-API-Key: your-key" \
+   -d '{
+     "path": "viking://resources/wiki/entity/project.md",
+-    "restore_version": "0334d9abe4ac4f25a3e59d0b401bb01c",
+-    "current_version": "54c71fb7bf134b71a9b7ed604c21f5b4"
++    "restore_commit_id": "0334d9abe4ac4f25a3e59d0b401bb01c12345678",
++    "current_commit_id": "54c71fb7bf134b71a9b7ed604c21f5b412345678"
+   }'
+ ```
+ 
+-例如，当前为第 2 版且第 1 版内容不同时，恢复第 1 版会生成第 3 版，并保留前两版的历史。响应包含新的 UUID `version_id`、`version_number: 3`，`meta.restored_from` 为第 1 版的 UUID。内容相同时返回当前 ID 和编号，以及 `result: "noop"`、`meta.restored_from: null`，不新增版本，也不递增编号。
+-
+-恢复先检查当前版本，再查找历史版本，并在写入锁内、修改内容前再次检查当前版本。`current_version` 过期时返回 `409 CONFLICT`，`error.details.resource` 为 `VERSION_CONFLICT`，包括删除重建后的旧请求；当前版本匹配但历史版本不存在时返回 `404`。
+-
+-仅指定文件被恢复；相关 Wiki 页面和索引正文保持原内容。目标存在运行中的 Compile 时，返回 `409 CONFLICT`，`error.details.resource` 为 `COMPILE_RUNNING`。此模式不提供 `dry_run` 预演；目录恢复的预演参数不适用于单文件恢复。
++例如，当前为第 2 版且第 1 版内容不同时，恢复第 1 版会生成第 3 版，并保留前两版的历史。响应包含新的 UUID `version_id`、`version_number: 3`，`meta.restored_from` 为来源 commit ID。内容相同时返回当前 ID 和编号，以及 `result: "noop"`、`meta.restored_from: null`，不新增版本，也不递增编号。
+ 
++恢复先校验该文件最新变更的 commit，再读取历史 commit 中的同一路径，并在写入锁内再次校验。`current_commit_id` 过期时返回 `409 VERSION_CONFLICT`；当前 commit 匹配但历史 commit 或路径不存在时返回 `404`。不自动追踪重命名或移动前的路径。
+ ---
+ 
+ ## ignore 管理
 ```
 
----
-
-### Incident Patch 3: `7aef6cbb` (2026-10-31)
-**Commit Message**: fix(studio): retain connections when encrypted storage is unavailable (#6833)
-
-* fix(studio): retain connections when encrypted storage is unavailable
-
-* chore(studio): keep connection recovery fix focused on code
-
-* test(studio): verify pre-6812 connection reuse without setup markers
-
-**File**: `web-studio/src/features/connection/components/credential-storage-notice.test.tsx` (added, +38/-0)
+**File**: `openviking/server/routers/snapshot.py` (modified, +9/-9)
 ```diff
-@@ -0,0 +1,38 @@
-+// @vitest-environment jsdom
-+import { CredentialStorageNotice } from '#/features/connection/components/credential-storage-notice'
-+import { cleanup, render } from '@testing-library/react'
-+import { afterEach, expect, it, vi } from 'vitest'
-+
-+const mocks = vi.hoisted(() => ({
-+  mode: 'persistent',
-+  warning: vi.fn(),
-+}))
-+vi.mock('#/features/connection/lib/credential-storage', () => ({
-+  credentialStorageMode: () => mocks.mode,
-+}))
-+vi.mock('sonner', () => ({ toast: { warning: mocks.warning } }))
-+vi.mock('react-i18next', () => ({
-+  useTranslation: () => ({ t: (key: string) => key }),
-+}))
-+afterEach(() => {
-+  cleanup()
-+  vi.clearAllMocks()
-+})
-+
-+it.each([
-+  ['plaintext', 'credentialStorage.plaintext'],
-+  ['session', 'credentialStorage.sessionOnly'],
-+])('discloses the actual storage limitation in %s mode', (mode, message) => {
-+  mocks.mode = mode
-+  render(<CredentialStorageNotice />)
-+  expect(mocks.warning).toHaveBeenCalledWith(message, {
-+    id: 'credential-storage-mode',
-+    duration: Infinity,
-+  })
-+})
-+
-+it('does not warn when credentials are encrypted', () => {
-+  mocks.mode = 'persistent'
-+  render(<CredentialStorageNotice />)
-+  expect(mocks.warning).not.toHaveBeenCalled()
-+})
+@@ -117,11 +117,11 @@ class RestoreRequest(BaseModel):
+     project_dir: Optional[str] = None
+     source_commit: Optional[str] = None
+     path: Optional[str] = None
+-    restore_version: Optional[str] = Field(
+-        None, description="Historical version UUID supplying the restored content"
++    restore_commit_id: Optional[str] = Field(
++        None, pattern=r"^[0-9a-f]{40}$", description="Full commit ID supplying content at path"
+     )
+-    current_version: Optional[str] = Field(
+-        None, description="Required current version UUID; mismatch returns a conflict"
++    current_commit_id: Optional[str] = Field(
++        None, pattern=r"^[0-9a-f]{40}$", description="Expected last commit changing path"
+     )
+     branch: str = "main"
+     dry_run: bool = False
+@@ -134,8 +134,8 @@ def _one_mode(self) -> "RestoreRequest":
+         if self.path is not None:
+             if self.project_dir is not None or self.source_commit is not None:
+                 raise ValueError("path cannot be combined with project_dir or source_commit")
+-            if not self.restore_version or not self.current_version:
+-                raise ValueError("path requires restore_version and current_version")
++            if not self.restore_commit_id or not self.current_commit_id:
++                raise ValueError("path requires restore_commit_id and current_commit_id")
+         elif not self.source_commit:
+             raise ValueError("source_commit is required")
+         return self
+@@ -161,14 +161,14 @@ async def restore(
+     request: RestoreRequest = Body(...),
+     _ctx: RequestContext = Depends(get_request_context),
+ ):
+-    """Forward-commit restore: rebuild project_dir from source_commit on top of HEAD."""
++    """Restore a directory or one file's historical content as a forward commit."""
+     service = get_service()
+     if request.path is not None:
+         path = validate_request_viking_uri(request.path, _ctx, field_name="path")
+         result = await service.compile.restore_file_version(
+             uri=path,
+-            restore_version=request.restore_version,
+-            current_version=request.current_version,
++            restore_commit_id=request.restore_commit_id,
++            current_commit_id=request.current_commit_id,
+             ctx=_ctx,
+         )
+         return Response(status="ok", result=result)
 ```
 
-**File**: `web-studio/src/features/connection/components/credential-storage-notice.tsx` (modified, +13/-5)
+**File**: `openviking/service/compile_service.py` (modified, +4/-7)
 ```diff
-@@ -6,11 +6,19 @@ import { toast } from 'sonner'
- export function CredentialStorageNotice() {
-   const { t } = useTranslation('studio')
-   useEffect(() => {
--    if (credentialStorageMode() === 'session') {
--      toast.warning(t('credentialStorage.sessionOnly'), {
--        id: 'credential-storage-session',
--        duration: Infinity,
--      })
-+    const mode = credentialStorageMode()
-+    if (mode !== 'persistent') {
-+      toast.warning(
-+        t(
-+          mode === 'plaintext'
-+            ? 'credentialStorage.plaintext'
-+            : 'credentialStorage.sessionOnly',
-+        ),
-+        {
-+          id: 'credential-storage-mode',
-+          duration: Infinity,
-+        },
-+      )
+@@ -838,12 +838,9 @@ async def file_versions(
+         )
+ 
+     async def restore_file_version(
+-        self, uri: str, restore_version: str, current_version: str, ctx: RequestContext
++        self, uri: str, restore_commit_id: str, current_commit_id: str, ctx: RequestContext
+     ) -> dict[str, Any]:
+-        """Restore a file version, retaining current metadata for memory files.
+-
+-        Return version metadata after refresh; mismatches or active Compile raise ConflictError.
+-        """
++        """Return restored version metadata; stale file commits or active Compile raise ConflictError."""
+ 
+         async def write(content: bytes, commit_content: Any) -> None:
+             # Use normal refresh while recording a restore version.
+@@ -863,8 +860,8 @@ async def write(content: bytes, commit_content: Any) -> None:
+ 
+         return await self._require_lifecycle().versions.restore(
+             uri=uri,
+-            restore_version=restore_version,
+-            current_version=current_version,
++            restore_commit_id=restore_commit_id,
++            current_commit_id=current_commit_id,
+             ctx=ctx,
+             write=write,
+         )
+```
+
+**File**: `openviking/service/compile_targets.py` (modified, +24/-23)
+```diff
+@@ -2690,25 +2690,30 @@ async def versions(
+     async def restore(
+         self,
+         uri: str,
+-        restore_version: str,
+-        current_version: str,
++        restore_commit_id: str,
++        current_commit_id: str,
+         ctx: RequestContext,
+         write: Callable[[bytes, Callable[..., Awaitable[Any]]], Awaitable[Any]],
+     ) -> Dict[str, Any]:
+-        """Restore by UUID; reject stale current_version under lock and return metadata or noop."""
++        """Restore URI from a commit; reject stale file commits under lock, returning metadata or noop."""
+         await self._fs._ensure_access(uri, ctx, action=AclAction.WRITE)
+         record = await self._managed(uri, ctx)
+-        index = await self.load(ctx.account_id, record["to"], uri) or {"versions": []}
+-        current = index["versions"][-1]["version_id"] if index["versions"] else None
+-        if current != current_version:
+-            raise ConflictError(
+-                f"Current version is {current}, not {current_version}",
+-                resource="VERSION_CONFLICT",
+-            )
+-        source = next((v for v in index["versions"] if v["version_id"] == restore_version), None)
+-        if source is None:
+-            raise NotFoundError(restore_version, "file version")
+-        content = await self._fs.show(source["snapshot_id"], path=source["snapshot_path"], ctx=ctx)
++
++        async def check_current_commit() -> None:
++            """Reject a stale file commit; unrelated paths do not cause conflicts."""
++            history = await self._fs.log(paths=[uri], limit=1, ctx=ctx)
++            current = history[0]["oid"] if history else None
++            if current != current_commit_id:
++                raise ConflictError(
++                    f"Current file commit is {current}, not {current_commit_id}",
++                    resource="VERSION_CONFLICT",
++                )
++
++        await check_current_commit()
++        try:
++            content = await self._fs.show(restore_commit_id, path=uri, ctx=ctx)
++        except AGFSNotFoundError as exc:
++            raise NotFoundError(f"{restore_commit_id}:{uri}", "snapshot file") from exc
+         result: Dict[str, Any] = {}
+ 
+         async def commit_restore(uris, *, lease_ref, write):
+@@ -2721,16 +2726,12 @@ async def commit_restore(uris, *, lease_ref, write):
+                     raise ConflictError("Compile is running", resource="COMPILE_RUNNING")
+                 index = await self.load(ctx.account_id, target_to, uri) or {"versions": []}
+                 current = index["versions"][-1]["version_id"] if index["versions"] else None
+-                if current != current_version:
+-                    raise ConflictError(
+-                        f"Current version is {current}, not {current_version}",
+-                        resource="VERSION_CONFLICT",
+-                    )
++                await check_current_commit()
+                 written = await self.record_write(
+                     uris, ctx, "restore", write=write, record_version=False
+                 )
+                 snapshot = await self._commit(
+-                    uris, f"restore {uri} to {restore_version}", ctx, lease_ref=lease_ref
++                    uris, f"restore {uri} to {restore_commit_id}", ctx, lease_ref=lease_ref
+                 )
+             if not snapshot or not await self._changed(ctx, target_to, uri, snapshot):
+                 result.update(
+@@ -2749,8 +2750,8 @@ async def commit_restore(uris, *, lease_ref, write):
+                     {
+                         "source": "restore",
+                         "actor": ctx.user.user_id,
+-                        "meta": {"restored_from": restore_version},
+-                        "provenance": dict(source.get("provenance") or {}),
++                        "meta": {"restored_from": restore_commit_id},
++                        "provenance": {"source_roots": [uri]},
+                     },
+                 )
+                 result.update(
+@@ -2771,7 +2772,7 @@ async def restore_content():
+             [uri],
+             ctx,
+             "restore",
+-            {"restore_version": restore_version, "current_version": current_version},
++            {"restore_commit_id": restore_commit_id, "current_commit_id": current_commit_id},
+             restore_content,
+         )
+ 
+```
+
+**File**: `tests/server/test_compile_studio.py` (modified, +4/-4)
+```diff
+@@ -617,7 +617,7 @@ async def submit(payload, key):
+     )
+     assert {"execution", "skill_snapshot"}.isdisjoint(cancelled_operation["meta"])
+ 
+-    # Binary version restore is guarded by the version the caller last observed.
++    # Binary restore is guarded by the last commit changing the file.
+     await service.fs.batch_write(
+         root_uri=target,
+         operations=[
+@@ -632,12 +632,12 @@ async def submit(payload, key):
+     assert versions["to"] == target
+     restore = {
+         "path": picture,
+-        "restore_version": versions["versions"][-1]["version_id"],
+-        "current_version": versions["current_version"],
++        "restore_commit_id": versions["versions"][-1]["snapshot_id"],
++        "current_commit_id": (await service.fs.log(ctx, paths=[picture], limit=1))[0]["oid"],
      }
-   }, [t])
-   return null
-```
-
-**File**: `web-studio/src/features/connection/lib/credential-storage.ts` (modified, +60/-4)
-```diff
-@@ -198,7 +198,7 @@ export class CredentialStorage {
- }
- 
- class SessionCredentialStorage {
--  private values = new Map<Slot, string>()
-+  constructor(protected readonly values = new Map<Slot, string>()) {}
-   async initialize() {}
-   read(slot: Slot): string | null {
-     return this.values.get(slot) ?? null
-@@ -209,24 +209,80 @@ class SessionCredentialStorage {
-   async flush() {}
- }
- 
-+/** Preserve pre-encryption persistence on HTTP origins, with an explicit notice. */
-+class PlaintextCredentialStorage extends SessionCredentialStorage {
-+  private failures = new Map<Slot, unknown>()
-+
-+  constructor(
-+    private readonly disk: Storage,
-+    private readonly persisted: Map<Slot, string | null>,
-+    values: Map<Slot, string>,
-+  ) {
-+    super(values)
-+  }
-+
-+  override write(slot: Slot, value: string) {
-+    try {
-+      // A tab using encrypted storage or newer credentials must win.
-+      if (this.disk.getItem(slot) !== this.persisted.get(slot))
-+        throw new Error('Credentials changed in another tab')
-+      this.disk.setItem(slot, value)
-+      this.persisted.set(slot, value)
-+      super.write(slot, value)
-+      this.failures.delete(slot)
-+    } catch (error) {
-+      this.failures.set(slot, error)
-+      window.dispatchEvent(new Event('ov-credential-storage-error'))
-+      throw error
-+    }
-+  }
-+
-+  override async flush() {
-+    if (this.failures.size) throw this.failures.values().next().value
-+  }
-+}
-+
-+function unencryptedStorage(): SessionCredentialStorage {
-+  try {
-+    const disk = window.localStorage
-+    const entries = CREDENTIAL_SLOTS.map(
-+      (slot) => [slot, disk.getItem(slot)] as const,
-+    )
-+    const values = new Map<Slot, string>()
-+    for (const [slot, raw] of entries)
-+      if (raw && !isEncrypted(raw)) values.set(slot, raw)
-+    // Without the key, never overwrite ciphertext in either slot. Readable
-+    // legacy records can still restore the current workspace in page memory.
-+    if (entries.some(([, raw]) => raw && isEncrypted(raw)))
-+      return new SessionCredentialStorage(values)
-+    return new PlaintextCredentialStorage(disk, new Map(entries), values)
-+  } catch {
-+    return new SessionCredentialStorage()
-+  }
-+}
-+
- let storage: CredentialStorage | SessionCredentialStorage | undefined
--export function credentialStorageMode(): 'persistent' | 'session' {
-+export function credentialStorageMode():
-+  | 'persistent'
-+  | 'plaintext'
-+  | 'session' {
-+  if (storage instanceof PlaintextCredentialStorage) return 'plaintext'
-   return storage instanceof SessionCredentialStorage ? 'session' : 'persistent'
- }
- export async function initializeCredentialStorage(): Promise<void> {
-   storage ??=
-     typeof crypto === 'undefined' ||
-     typeof crypto.subtle === 'undefined' ||
-     typeof indexedDB === 'undefined'
--      ? new SessionCredentialStorage()
-+      ? unencryptedStorage()
-       : new CredentialStorage(window.localStorage, browserKey, () => {
-           window.dispatchEvent(new Event('ov-credential-storage-error'))
-         })
-   try {
-     await storage.initialize()
-   } catch (error) {
-     if (!(error instanceof CredentialStorageUnavailable)) throw error
--    storage = new SessionCredentialStorage()
-+    storage = unencryptedStorage()
-     await storage.initialize()
-   }
-   // The runtime SDK does not persist its key; remove the obsolete plaintext mirror.
-```
-
-**File**: `web-studio/src/features/connection/lib/credential-storage.upgrade.test.ts` (added, +243/-0)
-```diff
-@@ -0,0 +1,243 @@
-+// @vitest-environment jsdom
-+import { webcrypto } from 'node:crypto'
-+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-+
-+const connection = {
-+  serviceSelection: 'opensource' as const,
-+  baseUrl: 'http://legacy-service.test:1933',
-+  apiKey: 'synthetic-user-key',
-+  adminApiKey: 'synthetic-admin-key',
-+  accountId: 'team',
-+  userId: 'alice',
-+}
-+const profiles = {
-+  activeId: 'saved',
-+  profiles: [{ id: 'saved', name: 'Saved workspace', connection }],
-+}
-+
-+beforeEach(() => {
-+  localStorage.clear()
-+  sessionStorage.clear()
-+  vi.resetModules()
-+})
-+afterEach(() => {
-+  vi.restoreAllMocks()
-+  vi.unstubAllGlobals()
-+  localStorage.clear()
-+  sessionStorage.clear()
-+  vi.resetModules()
-+})
-+
-+async function start() {
-+  const storage = await import('./credential-storage')
-+  await storage.initializeCredentialStorage()
-+  const onboarding = await import('./onboarding')
-+  return { ...storage, ...onboarding }
-+}
-+
-+describe.each(['insecure HTTP', 'IndexedDB unavailable', 'IndexedDB denied'])(
-+  'upgrade without encrypted persistence: %s',
-+  (environment) => {
-+    beforeEach(() => {
-+      vi.stubGlobal(
-+        'crypto',
-+        environment === 'insecure HTTP'
-+          ? { getRandomValues: webcrypto.getRandomValues.bind(webcrypto) }
-+          : webcrypto,
-+      )
-+      vi.stubGlobal(
-+        'indexedDB',
-+        environment === 'IndexedDB denied'
-+          ? {
-+              open: () => {
-+                throw new Error('access denied')
-+              },
-+            }
-+          : undefined,
-+      )
-+    })
-+
-+    it.each(
-+      ['legacy connection', 'saved profiles'].flatMap((source) =>
-+        [null, 'pending', 'complete'].map((setupMarker) => [
-+          source,
-+          setupMarker,
-+        ]),
-+      ),
-+    )(
-+      'reuses pre-6812 %s with setup=%s and no workspace session marker',
-+      async (source, setupMarker) => {
-+        if (setupMarker) localStorage.setItem('ov_studio_setup', setupMarker)
-+        const slot =
-+          source === 'legacy connection'
-+            ? 'ov_console_connection'
-+            : 'ov_console_connection_profiles'
-+        const raw = JSON.stringify(
-+          source === 'legacy connection' ? connection : profiles,
-+        )
-+        localStorage.setItem(slot, raw)
-+        const api = await start()
-+        expect(api.needsStudioSetup()).toBe(false)
-+        expect(api.savedSetupConnections()[0].connection).toMatchObject(
-+          connection,
-+        )
-+        expect(localStorage.getItem(slot)).toBe(raw)
-+        if (source === 'legacy connection') {
-+          const { readStoredConnection } = await import('./connection-runtime')
-+          expect(readStoredConnection()).toMatchObject(connection)
-+        } else {
-+          const { readConnectionProfiles } = await import('./profiles')
-+          expect(readConnectionProfiles(connection)).toEqual(profiles)
-+        }
-+        sessionStorage.clear()
-+        vi.resetModules()
-+        const reloaded = await start()
-+        expect(reloaded.needsStudioSetup()).toBe(false)
-+      },
-+    )
-+
-+    it('persists a newly configured workspace and identity changes across reloads', async () => {
-+      const api = await start()
-+      expect(api.needsStudioSetup()).toBe(true)
-+      await api.completeStudioSetup(connection, 'New workspace')
-+      const saved = api.savedSetupConnections()[0]
-+      await api.completeStudioSetup(
-+        { ...connection, userId: 'bob', apiKey: 'synthetic-bob-key' },
-+        saved.name,
-+        saved.id,
-+      )
-+      sessionStorage.clear()
-+      vi.resetModules()
-+      const reloaded = await start()
-+      expect(reloaded.credentialStorageMode()).toBe('plaintext')
-+      expect(reloaded.needsStudioSetup()).toBe(false)
-+      expect(reloaded.savedSetupConnections()).toHaveLength(1)
-+      expect(reloaded.savedSetupConnections()[0]).toMatchObject({
-+        id: saved.id,
-+        connection: { userId: 'bob', apiKey: 'synthetic-bob-key' },
-+      })
-+    })
-+
-+    it('restores a completed same-origin development connection without a key', async () => {
-+      localStorage.setItem('ov_studio_setup', 'complete')
-+      localStorage.setItem(
-+        'ov_console_connection',
-+        JSON.stringify({
-+          ...connection,
-+          baseUrl: window.location.origin,
-+          apiKey: '',
-+          adminApiKey: '',
-+        }),
-+      )
-+      const api = await start()
-+      expect(api.needsStudioSetup()).toBe(false)
-+    })
-+  },
-+)
-+
-+it('migrates fallback credentials into encrypted persistence when encryption becomes available', async () => {
-+  vi.stubGlobal('crypto', {})
-+  const api = await start()
-+  await api.completeStudioSetup(connection, 'Migrated workspace')
-+  const expected = new Map(
-+    api.CREDENTIAL_SLOTS.map((slot) => [slot, localStorage.getItem(slot)]),
-+  )
-+  vi.stubGlobal('crypto', webcrypto)
-+  const key = await crypto.subtle.generateKey(
-+    { name: 'AES-GCM', length: 256 },
-+    false,
-```
-
-**File**: `web-studio/src/i18n/locales/en/studio.ts` (modified, +2/-0)
-```diff
-@@ -1,5 +1,7 @@
- const studio = {
-   credentialStorage: {
-+    plaintext:
-+      'Encrypted credential storage is unavailable. Connections are saved unencrypted in this browser so they remain available after reload. Use HTTPS and allow browser storage for automatic encryption.',
-     sessionOnly:
-       'Secure credential storage is unavailable. Connections last only for this page; reconfigure after refreshing or closing it. Existing records are preserved. Use HTTPS for automatic encrypted storage.',
-     startError:
-```
-
-**File**: `web-studio/src/i18n/locales/zh-CN/studio.ts` (modified, +2/-0)
-```diff
-@@ -1,5 +1,7 @@
- const studio = {
-   credentialStorage: {
-+    plaintext:
-+      '当前环境无法加密保存凭据。连接将以明文保存在此浏览器中，刷新后仍可使用。使用 HTTPS 并允许浏览器存储可启用自动加密。',
-     sessionOnly:
-       '当前环境无法安全保存凭据，连接仅在本页有效，刷新或关闭后需重新配置。已有本地记录保留；使用 HTTPS 可自动加密保存。',
-     startError:
+     restored = await client.post("/api/v1/snapshot/restore", json=restore)
+     assert restored.status_code == 200, restored.text
+-    assert restored.json()["result"]["meta"]["restored_from"] == restore["restore_version"]
++    assert restored.json()["result"]["meta"]["restored_from"] == restore["restore_commit_id"]
+     await service.resources.wait_processed()
+     assert await service.fs.read_file_bytes(picture, ctx) == png
+     assert (await client.post("/api/v1/snapshot/restore", json=restore)).status_code == 409
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6855** (2026-10-31): fix(vika): make bundled CLIs discoverable in agent shells (@krsish)
+- **PR #6849** (2026-10-31): feat(vika): run agents on the pi-durable runtime (@nexw)
+- **PR #6843** (2026-10-31): fix(vika): wake on mentions in Feishu document comments (@krsish)
+- **PR #6841** (2026-10-31): fix(vika): name the Feishu account a bot needs as phone-registered, not "personal" (@krsish)
+- **PR #6840** (2026-10-31): fix(snapshot): restore single files using commit IDs (@FuJiaJie123)
 - **PR #6839** (2026-10-31): fix(vika): say when a Feishu account cannot run bots instead of aborting setup (@krsish)
-- **PR #6835** (2026-10-31): feat(vika): store the owner's Feishu meeting notes in OpenViking (@krsish)
-- **PR #6834** (2026-10-31): fix(studio): use official OpenViking lockup in header (@ZaynJarvis)
-- **PR #6833** (2026-10-31): fix(studio): retain connections when encrypted storage is unavailable (@yufeng201)
-- **PR #6828** (2026-10-30): fix(vika): bound banner colors while preserving gradients (@krsish)
-- **PR #6827** (2026-10-30): chore(vika): refresh product naming in docs and tests (@krsish)
 
 ---
 
@@ -2052,45 +1810,42 @@ Co-authored-by: Kiko0301 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. studio): use official OpenViking lockup in header (#6834)
+## X. snapshot): restore single files using commit IDs (#6840)
 
 **RULE**:
-When implementing operations in `web-studio/src/app/layouts/studio-header.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/en/api/11-snapshot.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5bfbc298`: studio): use official OpenViking lockup in header (#6834). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3dedecc0`: snapshot): restore single files using commit IDs (#6840). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `web-studio/src/app/layouts/studio-header.tsx`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/api/11-snapshot.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-import brandLockupDark from '#/assets/brand-lockup-dark.svg'
-import brandLockupLight from '#/assets/brand-lockup-light.svg'
-          <OpenVikingMark className="size-8 sm:size-9 lg:hidden" />
-          <img
-            src={brandLockupLight}
-            alt=""
-            aria-hidden="true"
-            className="hidden h-7 w-auto lg:block dark:lg:hidden"
-          />
-          <img
-            src={brandLockupDark}
-            alt=""
-            aria-hidden="true"
-            className="hidden h-7 w-auto dark:lg:block"
-          />
+| path | str | Compile output file URI, also used as the path in the historical snapshot |
+| restore_commit_id | str | Full commit ID supplying the content (40 lowercase hexadecimal characters) |
+| current_commit_id | str | Full ID of the last commit changing this file on `main`, as observed by the caller; a mismatch returns `409 CONFLICT` with `error.details.resource: "VERSION_CONFLICT"` |
+`GET /api/v1/snapshot/versions?uri=<file URI>` lists version history. Each version has a `version_id` (a full UUID4 hex string) and a positive integer `version_number`. Clients pass version IDs unchanged for pagination; use `version_number` to display labels such as `v1` and `v2`. Versions are returned newest first. Numbers increase within a file's lifecycle and remain unchanged across pages and history cleanup. A new version index starts numbering at 1; version IDs are not reused after deletion and recreation, so old version UUIDs cannot match the recreated file.
+    "restore_commit_id": "0334d9abe4ac4f25a3e59d0b401bb01c12345678",
+    "current_commit_id": "54c71fb7bf134b71a9b7ed604c21f5b412345678"
+For example, when version 2 is current and version 1 has different content, restoring version 1 cr
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-          <OpenVikingMark className="size-8 sm:size-9" />
-          <span className="hidden text-lg font-semibold tracking-tight lg:inline">
-            {t('studioSettings.brand')}
-          </span>
+| path | str | `viking://` URI of the Compile output file |
+| restore_version | str | UUID `version_id` of the historical version supplying the restored content |
+| current_version | str | UUID `version_id` of the current version observed by the caller; a mismatch returns `409 CONFLICT` with `error.details.resource: "VERSION_CONFLICT"` |
+Call `GET /api/v1/snapshot/versions?uri=<file URI>` to obtain `current_version` and the version history before submitting a restore:
+
+Each version has a `version_id` (a full UUID4 hex string) and a positive integer `version_number`. Clients pass IDs unchanged for restore and pagination; use `version_number` to display labels such as `v1` and `v2`. Versions are returned newest first. Numbers increase within a file's lifecycle and remain unchanged across pages and history cleanup. A new version index starts numbering at 1; version IDs are not reused after deletion and recreation, so an old restore request cannot match the recreated file.
+    "restore_version": "0334d9abe4ac4f25a3e59d0b401bb01c",
+    "current_version": "54c71fb7bf134b71a9b7ed604c21f5b4"
+For example, when version 2 is current and version 1 has different content, restoring version 1 cre
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5bfbc298` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3dedecc0` are properly handled with clean fallback behavior.

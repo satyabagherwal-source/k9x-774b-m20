@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T21:39:37.485Z",
-    "lastVerified": "2026-10-31T21:39:37.485Z",
+    "lastChecked": "2026-10-31T21:46:16.705Z",
+    "lastVerified": "2026-10-31T21:46:16.705Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -347,9 +347,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T21:08:13.241Z",
+    "lastChecked": "2026-10-31T21:46:12.348Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T21:08:13.241Z"
+    "lastVerified": "2026-10-31T21:46:12.348Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -692,9 +692,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-10-31T17:43:57.484Z",
+    "lastChecked": "2026-10-31T21:46:07.314Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-10-31T17:43:57.484Z"
+    "lastVerified": "2026-10-31T21:46:07.314Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -2231,8 +2231,8 @@
     "officialUrl": "https://github.com/chaos-mesh/chaos-mesh",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T06:04:05.230Z",
-    "lastVerified": "2026-10-31T06:04:05.230Z",
+    "lastChecked": "2026-10-31T21:46:04.817Z",
+    "lastVerified": "2026-10-31T21:46:04.817Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-chaos-mesh-chaos-mesh",
@@ -2510,14 +2510,14 @@
     "officialUrl": "https://github.com/zeronsh/zeron",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T02:00:21.920Z",
-    "lastVerified": "2026-10-31T02:00:21.920Z",
+    "lastChecked": "2026-10-31T21:46:00.305Z",
+    "lastVerified": "2026-10-31T21:46:00.305Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zeronsh-zeron",
-    "contentHash": "0ff15a5cf4fa5e7aece3124331e6c50ecc43f2c66788a3dbb4a86be35bef08b4",
+    "contentHash": "98fcf092d7396bcce7cdabf0979b17f0112b6fcf64a45bf70ef93c7501d25697",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7494,14 +7494,14 @@
     "officialUrl": "https://github.com/volcengine/OpenViking",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-31T05:14:23.385Z",
-    "lastVerified": "2026-10-31T05:14:23.385Z",
+    "lastChecked": "2026-10-31T21:46:12.552Z",
+    "lastVerified": "2026-10-31T21:46:12.552Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "be5dfca20c209c5c0a1f4e8f735984322c37a1dd49adfb843cf4d4d0e5971ee4",
+    "contentHash": "07516f4ce856f9be38f54c4b578225c19a23f26be4610b7f68b11eb272c55d90",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7559,13 +7559,13 @@
     "officialUrl": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T20:15:39.168Z",
-    "lastVerified": "2026-10-28T20:15:39.168Z",
+    "lastChecked": "2026-10-31T21:46:00.130Z",
+    "lastVerified": "2026-10-31T21:46:00.130Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-    "contentHash": "98b22cf2ae9582e6bef134ae158406b0416bbca9f2011c62a3e623a008e1ec80",
-    "promotedRulesCount": 0,
+    "contentHash": "3aea0b126967bde1cd848e4a41b47269a6b008c804c690ef82e8cb78f6076b1f",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -8982,9 +8982,9 @@
   "react-native-maps-react-native-maps": {
     "name": "react-native-maps",
     "officialUrl": "https://github.com/react-native-maps/react-native-maps",
-    "lastChecked": "2026-10-29T11:47:31.705Z",
+    "lastChecked": "2026-10-31T21:46:02.402Z",
     "revisionIdentifier": "39c6fd17",
-    "lastVerified": "2026-10-29T11:47:31.705Z"
+    "lastVerified": "2026-10-31T21:46:02.402Z"
   },
   "seo-skills-seo-audit-skill": {
     "name": "seo-audit-skill",

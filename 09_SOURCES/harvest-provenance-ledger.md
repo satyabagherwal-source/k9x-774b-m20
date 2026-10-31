@@ -6735,3 +6735,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-d1-3b` | `https://huggingface.co/LiquidAI/d1-3B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-31T21:30:48.998Z |
 | `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `9d8db55f` | Multi-dimensional audit evidence | 2026-10-31T21:37:33.017Z |
 | `learn-huggingface-cactus-compute-whistle` | `https://huggingface.co/Cactus-Compute/whistle` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-10-31T21:39:34.923Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `0a153df5` | Multi-dimensional audit evidence | 2026-10-31T21:46:01.859Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `012e1f0c` | Multi-dimensional audit evidence | 2026-10-31T21:46:13.164Z |
+| `learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-31T21:46:14.152Z |

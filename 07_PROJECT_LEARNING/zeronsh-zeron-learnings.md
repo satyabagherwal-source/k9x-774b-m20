@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source**: github ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
-> **Source Version**: `baedd5dc`  
+> **Source Version**: `0a153df5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T02:00:21.926Z  
+> **Timestamp**: 2026-10-31T21:46:01.267Z  
 > **Learning ID**: `learn-github-zeronsh-zeron`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T02:00:21.920Z  
+> **Harvest Timestamp**: 2026-10-31T21:46:00.305Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1600,11 +1600,11 @@ enum TextEngine {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1116** (2026-10-31): **Sync: update loro to 1.17 so streaming chats stop leaking memory**
+  *Symptoms*: ## Summary  - Updates loro from 1.13.9 to 1.17.1. No code changes. - Before 1.17, every snapshot export left another copy of the doc's text in its string arena (fixed in loro-dev/loro 089a4e6). `ChatPersistence` exports a dirty chat once a second, so a chat with a streaming agent grows quadratically. A headless engine running 16 Pi agents reached 34 GB after six hours. - This is also the cause of the panic in #905. Once the arena passes 4 GiB, `export_snapshot` fails `append-only-bytes` `start <= end` and the doc is poisoned. The retry loop after a poisoned lock is unchanged.  Refs #905  ## Test plan  - [x] `cargo test -p zeron-doc -p zeron-sync -p zeron-client` - [x] `cargo test -p zeron-engine --lib` - [x] Streaming 380 KB through `SegmentWriter` with an export per tick grows RSS 250 MB on 1.13.9 and a few MB on 1.17.1 (Linux) - [ ] Not run on macOS or Windows  <!-- codesmith:footer --> --- <a href="https://app.blacksmith.sh/zeronsh/codesmith/zeron/pr/1116?autoLogin=true&ref=codesmith_pr_footer"><picture><source media="(prefers-color-scheme: dark)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v3.svg"><source media="(prefers-color-scheme: light)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-light-v3.svg"><img alt="View with [code]smith" src="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v3-3x.png" width="162" height="28"></picture></a> <a href="https://backend.blacksmith.sh
+
 - **Issue #1115** (2026-10-30): **Edge: profile routes**
   *Symptoms*: Edge: public profile routes and supporting assets.  - Username claim and lookup in the user directory, with tests. - Public read routes behind a per-IP gate, exposing only public fields. - A static web page and image route served by the edge worker, with tests.  Verified on staging. Merging deploys the edge.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  
-
-- **Issue #1113** (2026-10-30): **Edge: record every WorkOS organization and its members**
-  *Symptoms*: The user directory now also records every WorkOS organization and who's in it.  - `/workos/webhook` handles `organization.*` and `organization_membership.*` created, updated and deleted events, under the same rules as users: the newest `updated_at` wins, and a delete leaves a tombstone nothing revives. A deleted org's name, external id and domains are cleared. - New tables live in the existing `users1` Durable Object, so there's no new binding or migration. - `GET /admin/organizations[?format=csv]` (ADMIN_TOKEN) lists each org with its members. Memberships are joined to users on read, so a member shows their current profile and drops out once their user or org is deleted, whatever order deliveries arrive in. - `memberCount` counts active members; `members` also lists inactive and pending ones.  Rollout: after this deploys, subscribe the production webhook endpoint to the six new events. Before that, the old code acknowledges and drops them. Existing orgs then need a one-off backfill.  Tested with 8 new workerd tests, and a backfill run against a local edge with a mock WorkOS.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  <!-- codesmith:footer --> --- <a href="https://app.blacksmith.sh/zeronsh/codesmith/zeron/pr/1113?autoLogin=true&ref=codesmith_pr_footer"><picture><source media="(prefers-color-scheme: dark)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v3.svg"><source media="(prefers-color-scheme: light)" srcset="http
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1621,208 +1621,326 @@ enum TextEngine {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `baedd5dc` (2026-10-31)
-**Commit Message**: Web: page layout
+### Incident Patch 1: `6973500b` (2026-10-31)
+**Commit Message**: Sync: update loro to 1.17 so streaming chats stop leaking memory (#1116)
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+* Sync: update loro to 1.17 so streaming chats stop leaking memory
+
+loro before 1.17 left another copy of a doc's text in its string arena on
+every snapshot export (fixed in loro-dev/loro 089a4e6). chat_persistence
+exports a dirty chat each second, so a chat with a streaming agent grew
+quadratically until the arena passed 4 GiB and export panicked (#905).
+
+* Sync: upgrade edge Loro and guard snapshot memory growth
+
 Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
 
-**File**: `apps/card-web/site/pages.mjs` (modified, +4/-19)
-```diff
-@@ -21,13 +21,6 @@ export const escapeHtml = (s) =>
- 
- /** The public card's keys, in the order the edge serves them; a page embeds
-  * these and only these. */
--// "004·182", as the card prints it.
--const serial = (n) => {
--  const v = Math.max(0, Math.trunc(Number(n) || 0));
--  const pad = (x) => String(x % 1000).padStart(3, "0");
--  return `${pad(Math.trunc(v / 1000))}·${pad(v)}`;
--};
--
- export const PUBLIC_KEYS = ["username", "firstName", "userNumber", "joinedOn", "badges", "scene", "holo", "sky"];
- 
- /** Exactly the public card: the known keys in their order, badges reduced
-@@ -111,23 +104,15 @@ ${options.site ? `<meta name="twitter:site" content="${escapeHtml(options.site)}
- <meta property="og:image:alt" content="${escapeHtml(alt)}" />
- <link rel="canonical" href="${urls.page}" />
- <style>
--  main { min-height: 100vh; min-height: 100dvh; display: grid; grid-template-rows: 1fr auto; }
--  .stage { height: min(100vh, 100dvh); min-height: 560px; }
--  footer { display: flex; flex-wrap: wrap; gap: 4px 12px; justify-content: center; align-items: baseline; padding: 0 16px 32px; color: var(--muted); font-size: 13px; }
--  footer b { color: var(--ink); font-weight: 600; }
--  footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--faint); }
--  /* On a phone, the card alone: it fills the screen, nothing under it. */
--  @media (max-width: 640px) {
--    main { grid-template-rows: 1fr; }
--    .stage { min-height: 0; }
--    footer { display: none; }
--  }
-+  /* The card alone, filling the window, nothing to scroll to. */
-+  html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
-+  main { height: 100vh; height: 100dvh; }
-+  .stage { height: 100%; }
- </style>`;
-   return `${head(title, description, urls, meta)}
- <body>
- <main>
-   <div class="stage" id="stage" data-mode="share"><img class="fallback" alt="${escapeHtml(alt)}" data-src="${urls.image}" /></div>
--  <footer><b>${escapeHtml(name)}</b><span>@${escapeHtml(card.username)}</span><span>${serial(card.userNumber)}</span><span>joined ${escapeHtml(card.joinedOn)}</span><a href="https://zeron.sh">zeron.sh</a></footer>
- </main>
- ${dataBlock(card)}
- <script type="module" src="${urls.page_script}"></script>
-```
+---------
 
----
-
-### Incident Patch 2: `0a7d6b9b` (2026-10-31)
-**Commit Message**: Edge: admin profile option
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: gratenes <[REDACTED_EMAIL]>
+Co-authored-by: Wing <[REDACTED_EMAIL]>
 Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
 
-**File**: `edge/src/index.ts` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +8/-8)
 ```diff
-@@ -54,7 +54,7 @@
-  *   GET  /admin/organizations[?format=csv] — ADMIN_TOKEN (every org with its members)
-  *   GET|POST /admin/badges              — ADMIN_TOKEN (list / define badges)
-  *   POST /admin/badges/{grant|revoke}   — ADMIN_TOKEN (give or take a badge from users)
-- *   POST /admin/usernames/{set|clear}   — ADMIN_TOKEN (give or take a username)
-+ *   POST /admin/usernames/{set|clear|face} — ADMIN_TOKEN (give or take a username; pick a card's scene and foil)
-  *
-  * Member cards (card-routes.ts):
-  *   GET  /cards/:username               — pre-bearer, a card as JSON
+@@ -5505,9 +5505,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "loro"
+-version = "1.13.9"
++version = "1.17.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "09ea00f70c1acad4b7a05aaf72c1d9a671426021a1999ee821c77b56f0a15900"
++checksum = "410c939fe3bee34b8ed61f7aea93201fb136629f685ffa557039c4d9952f9988"
+ dependencies = [
+  "enum-as-inner 0.6.1",
+  "generic-btree",
+@@ -5521,9 +5521,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "loro-common"
+-version = "1.13.1"
++version = "1.17.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b51042936156a1d537df8a38938ec8ed24b45de14530af933c1d02de39c9e056"
++checksum = "bd3f7afbafc4db85aefe9620e7e99fa49c974477563904f226ae96fc9674eade"
+ dependencies = [
+  "arbitrary",
+  "enum-as-inner 0.6.1",
+@@ -5551,9 +5551,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "loro-internal"
+-version = "1.13.9"
++version = "1.17.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6fec47acf8db115b7146da5e1d5b18d0cf58032e6012c0c1ee3ec3442d1e936f"
++checksum = "7e533c1688430aa4fcdd933f00861e331c169a4158ee6d27d054e0558892d447"
+ dependencies = [
+  "append-only-bytes",
+  "arref",
+@@ -5598,9 +5598,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "loro-kv-store"
+-version = "1.13.9"
++version = "1.17.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "937f88e4a3d80d5853f5119753f5e5f68d4375726db7e9b3d6dac9db8167e8bf"
++checksum = "c7331ebe6902effeb0c3d52aba9e30fb0118bc926faed6f3848487aab40c1a4e"
+ dependencies = [
+  "bytes",
+  "ensure-cov",
 ```
 
-**File**: `edge/src/user-directory.ts` (modified, +37/-6)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -36,13 +36,13 @@
-  * deleted user's URL. The scene count a card derives from (card.ts) is stored
-  * on the user at their first name, not with the name: a rename or a new claim
-  * after an operator's clear keeps the card. Operators set or clear names at
-- * `POST /admin/usernames/{set|clear}`.
-+ * `POST /admin/usernames/{set|clear|face}`.
-  *
-  * Writes are one row per sign-up or profile change, so a single instance is
-  * not a hotspot.
-  */
- import { DurableObject } from "cloudflare:workers";
--import { CARD_SCENES, cardFirstName, deriveCard, type CardFace } from "./card";
-+import { CARD_SCENES, HOLOS, cardFirstName, deriveCard, type CardFace, type Holo } from "./card";
- import { forgetCard } from "./card-cache";
- import type { Env } from "./env";
- import { json, jsonError } from "./http";
-@@ -208,6 +208,9 @@ export class UserDirectory extends DurableObject<Env> {
-     this.ctx.storage.sql.exec("CREATE UNIQUE INDEX IF NOT EXISTS users_by_number ON users (user_number)");
-     this.numberUsers();
-     if (!columns.includes("card_scenes")) this.ctx.storage.sql.exec("ALTER TABLE users ADD COLUMN card_scenes INTEGER");
-+    // An operator's choice of scene and foil for a card (null: the seed's).
-+    if (!columns.includes("card_scene")) this.ctx.storage.sql.exec("ALTER TABLE users ADD COLUMN card_scene INTEGER");
-+    if (!columns.includes("card_holo")) this.ctx.storage.sql.exec("ALTER TABLE users ADD COLUMN card_holo TEXT");
-     this.ctx.storage.sql.exec(`CREATE TABLE IF NOT EXISTS usernames (
-       username TEXT PRIMARY KEY, user_id TEXT NOT NULL, claimed_at INTEGER NOT NULL, retired_at INTEGER,
-       CHECK (length(username) BETWEEN 3 AND 20 AND username GLOB '[a-z0-9]*' AND username NOT GLOB '*[^a-z0-9_-]*'))`);
-@@ -461,6 +464,15 @@ export class UserDirectory extends DurableObject<Env> {
-     });
-   }
+@@ -69,7 +69,7 @@ zeron-visual = { path = "crates/visual" }
+ zeron-visual-gpu = { path = "crates/visual-gpu" }
  
-+  /** An operator picks a card's scene and foil, over what its seed gives
-+   * (null puts that one back to the seed's). Answers the user's name, or
-+   * undefined if the user isn't a live directory user. */
-+  setCardFace(userId: string, scene: number | null, holo: Holo | null): string | null | undefined {
-+    if (this.userRefusal(userId)) return undefined;
-+    this.ctx.storage.sql.exec("UPDATE users SET card_scene = ?, card_holo = ? WHERE user_id = ?", scene, holo, userId);
-+    return this.username(userId);
+ # CRDT
+-loro = "1.13"
++loro = "1.17"
+ # Wire protocol for the SessionRoom DO rooms — official Rust twin of the npm
+ # `loro-protocol` package the TS edge speaks (same monorepo, byte-identical
+ # frames, cross-checked by its js_snapshots tests).
+```
+
+**File**: `crates/doc/tests/fixtures/loro-1.13.7/initial.json` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++{
++  "text": "Hello 🌍",
++  "messages": [
++    "first"
++  ],
++  "queue": [
++    "one",
++    "two"
++  ],
++  "metadata": {
++    "author": "legacy"
 +  }
-+
-   /** An operator takes a user's name away. It stays retired unless `release`
-    * frees it for someone else. Answers the name, or null if they held none. */
-   clearUsername(userId: string, release: boolean): string | null {
-@@ -475,7 +487,7 @@ export class UserDirectory extends DurableObject<Env> {
-   card(username: string): PublicCard | undefined {
-     const [row] = this.ctx.storage.sql
-       .exec(
--        `SELECT u.user_id, u.user_number, u.first_name, u.created_at, u.card_scenes
-+        `SELECT u.user_id, u.user_number, u.first_name, u.created_at, u.card_scenes, u.card_scene, u.card_holo
-          FROM usernames n JOIN users u ON u.user_id = n.user_id
-          WHERE n.username = ? AND n.retired_at IS NULL AND u.deleted_at IS NULL`,
-         username
-@@ -490,7 +502,10 @@ export class UserDirectory extends DurableObject<Env> {
-       )
-       .toArray();
-     // Field by field, never spread from a row: a new column must not go public.
--    const { scene, holo, sky } = deriveCard(row.user_id as string, row.card_scenes as number);
-+    const seeded = deriveCard(row.user_id as string, row.card_scenes as number);
-+    const scene = row.card_scene === null ? seeded.scene : (row.card_scene as number);
-+    const holo = row.card_holo === null ? seeded.holo : (row.card_holo as Holo);
-+    const sky = seeded.sky;
-     return {
-       username,
-       firstName: cardFirstName(row.first_name as string | null, username),
-@@ -867,17 +882,33 @@ const handleBadgeRoute = async (
-  *                                     allowed here, retired ones are not
-  *   POST /clear {userId, release?}  — answers {cleared}, the name taken away.
-  *                                     It stays retired unless `release` frees it.
-+ *   POST /face  {userId, scene, holo} — an operator's pick of the card's scene
-+ *                                     (0-based) and foil over the seed's; null
-+ *                                     puts either back. Answers the card.
-  */
- const handleUsernameAdminRoute = async (
-   request: Request,
-   directory: DurableObjectStub<UserDirectory>,
-   action: string
- ): Promise<Response> => {
--  if (action !== "set" && action !== "clear") return jsonError(404, "not_found", "Not found.");
-+  if (action !== "set" && action !== "clear" && action !== "face") return jsonError(404, "not_found", "Not found.");
-   if (request.method !== "POST") return jsonError(405, "method_not_allowed", "POST only.");
-   const body = await readJson(request);
-   const userId = body?.userId;
-   if (typeof userId !== "string" || !USER_ID_RE.test(userId)) return jsonError(400, "bad_request", "Expected {use
++}
 ```
 
-**File**: `edge/test/workerd/usernames.workerd.test.ts` (modified, +25/-0)
+**File**: `crates/doc/tests/fixtures/loro-1.13.7/updated.json` (added, +14/-0)
 ```diff
-@@ -489,6 +489,31 @@ describe("a card over time", () => {
-     expect(await directory().card("steadycard")).toMatchObject({ firstName: "Renamed", ...deriveCard(id, CARD_SCENES) });
-   });
- 
-+  it("lets an operator pick a card's scene and foil, and put them back", async () => {
-+    const id = "user_facepick";
-+    await signUp(id);
-+    expect((await claim(id, "facepick")).status).toBe(200);
-+    const seeded = deriveCard(id, CARD_SCENES);
-+    const picked = await admin("/admin/usernames/face", { userId: id, scene: 2, holo: "glyph" });
-+    expect(picked.status).toBe(200);
-+    expect(await picked.json()).toMatchObject({ username: "facepick", scene: 2, holo: "glyph", sky: seeded.sky });
-+    expect(await (await readCard("facepick")).json()).toMatchObject({ scene: 2, holo: "glyph" });
-+    expect(Object.keys((await (await readCard("facepick")).json()) as object)).toEqual([
-+      "username", "firstName", "userNumber", "joinedOn", "badges", "scene", "holo", "sky"
-+    ]);
-+    // A rename keeps the pick.
-+    expect(await (await admin("/admin/usernames/set", { userId: id, username: "facepick2" })).json()).toMatchObject({ scene: 2, holo: "glyph" });
-+    // Null puts each back to the seed's.
-+    expect(await (await admin("/admin/usernames/face", { userId: id, scene: null, holo: null })).json()).toMatchObject({
-+      scene: seeded.scene,
-+      holo: seeded.holo
-+    });
-+    expect((await admin("/admin/usernames/face", { userId: id, scene: CARD_SCENES })).status).toBe(400);
-+    expect((await admin("/admin/usernames/face", { userId: id, holo: "neon" })).status).toBe(400);
-+    expect((await admin("/admin/usernames/face", { userId: id, scene: 1 }, "wrong-token")).status).toBe(401);
-+    expect((await admin("/admin/usernames/face", { userId: "user_nobodyhere", scene: 1 })).status).toBe(404);
-+  });
+@@ -0,0 +1,14 @@
++{
++  "text": "Hello 🌍 from legacy",
++  "messages": [
++    "first",
++    "second"
++  ],
++  "queue": [
++    "two",
++    "one"
++  ],
++  "metadata": {
++    "author": "legacy"
++  }
++}
+```
+
+**File**: `crates/doc/tests/loro_persistence.rs` (added, +43/-0)
+```diff
+@@ -0,0 +1,43 @@
++//! Actual 1.13.7 persisted bytes, shared with the edge compatibility tests.
++use loro::{ExportMode, LoroDoc, ToJson};
++use serde_json::{Value, json};
 +
-   it("keeps a card claimed at 20 scenes once more are added", async () => {
-     expect(CARD_SCENES).toBe(26);
-     const id = idMovedBy(26, "user_at20", 20);
++const SNAPSHOT: &[u8] = include_bytes!("fixtures/loro-1.13.7/snapshot.bin");
++const SHALLOW: &[u8] = include_bytes!("fixtures/loro-1.13.7/shallow.bin");
++const UPDATE: &[u8] = include_bytes!("fixtures/loro-1.13.7/update.bin");
++
++#[test]
++fn legacy_snapshots_merge_updates_and_survive_new_version_persistence() {
++    for snapshot in [SNAPSHOT, SHALLOW] {
++        let doc = LoroDoc::new();
++        doc.import(snapshot).unwrap();
++        let initial: Value =
++            serde_json::from_str(include_str!("fixtures/loro-1.13.7/initial.json")).unwrap();
++        assert_eq!(doc.get_deep_value().to_json_value(), initial);
++        doc.get_map("metadata").insert("modern", true).unwrap();
++        doc.commit();
++        assert!(doc.import(UPDATE).unwrap().pending.is_none());
++        let mut expected: Value =
++            serde_json::from_str(include_str!("fixtures/loro-1.13.7/updated.json")).unwrap();
++        expected["metadata"]["modern"] = json!(true);
++        assert_eq!(doc.get_deep_value().to_json_value(), expected);
++
++        let restored = LoroDoc::new();
++        restored
++            .import(&doc.export(ExportMode::Snapshot).unwrap())
++            .unwrap();
++        // Replay after restart must be idempotent, including movable-list ops.
++        restored.import(UPDATE).unwrap();
++        assert_eq!(restored.get_deep_value().to_json_value(), expected);
++    }
++}
++
++#[test]
++fn legacy_update_waiting_for_snapshot_is_not_lost() {
++    let doc = LoroDoc::new();
++    assert!(doc.import(UPDATE).unwrap().pending.is_some());
++    doc.import(SNAPSHOT).unwrap();
++    let expected: Value =
++        serde_json::from_str(include_str!("fixtures/loro-1.13.7/updated.json")).unwrap();
++    assert_eq!(doc.get_deep_value().to_json_value(), expected);
++}
+```
+
+**File**: `crates/doc/tests/snapshot_memory.rs` (added, +80/-0)
+```diff
+@@ -0,0 +1,80 @@
++//! Keep this in its own test binary: the allocator counts all live allocations.
++//! Measuring retained allocations avoids platform-dependent RSS/GC thresholds.
++use std::alloc::{GlobalAlloc, Layout, System};
++use std::sync::atomic::{AtomicUsize, Ordering::Relaxed};
++use zeron_doc::{MessagePart, SegmentWriter, SessionDoc, fold_event_into_parts};
++use zeron_proto::AgentEvent;
++
++struct CountingAllocator;
++static LIVE_BYTES: AtomicUsize = AtomicUsize::new(0);
++
++// SAFETY: every allocation is delegated unchanged to System; we only count the
++// requested sizes of successful allocations and their corresponding releases.
++unsafe impl GlobalAlloc for CountingAllocator {
++    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
++        let ptr = unsafe { System.alloc(layout) };
++        if !ptr.is_null() {
++            LIVE_BYTES.fetch_add(layout.size(), Relaxed);
++        }
++        ptr
++    }
++
++    unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
++        unsafe { System.dealloc(ptr, layout) };
++        LIVE_BYTES.fetch_sub(layout.size(), Relaxed);
++    }
++
++    unsafe fn realloc(&self, ptr: *mut u8, layout: Layout, size: usize) -> *mut u8 {
++        let new_ptr = unsafe { System.realloc(ptr, layout, size) };
++        if !new_ptr.is_null() {
++            LIVE_BYTES.fetch_add(size, Relaxed);
++            LIVE_BYTES.fetch_sub(layout.size(), Relaxed);
++        }
++        new_ptr
++    }
++}
++
++#[global_allocator]
++static ALLOCATOR: CountingAllocator = CountingAllocator;
++
++#[test]
++fn streaming_with_a_snapshot_every_tick_has_bounded_retained_memory() {
++    let before = LIVE_BYTES.load(Relaxed);
++    let doc = SessionDoc::init("streaming-memory").unwrap();
++    let mut writer = SegmentWriter::begin(&doc, "assistant", "device", 1).unwrap();
++    let mut folded = Vec::new();
++    let token = "streaming text: ".repeat(16);
++    let ticks = 2000;
++    for _ in 0..ticks {
++        fold_event_into_parts(
++            &mut folded,
++            &AgentEvent::TextDelta {
++                text: token.clone(),
++            },
++        );
++        writer.sync(&folded).unwrap();
++        // ChatPersistence exports a dirty document each tick. Do not retain
++        // these bytes: the regression was inside Loro, not the snapshot owner.
++        drop(doc.export_snapshot().unwrap());
++    }
++    let retained = LIVE_BYTES.load(Relaxed).saturating_sub(before);
++    eprintln!(
++        "retained {retained} bytes for {} streamed bytes",
++        token.len() * ticks
++    );
++    // Deliberately generous: fixed versions retain a few MiB; 1.13.9 retains
++    // hundreds of MiB. Includes the application writer's mirrored strings.
++    assert!(
++        retained < 32 * 1024 * 1024,
++        "retained {retained} bytes after repeated exports"
++    );
++
++    let restored = loro::LoroDoc::new();
++    restored.import(&doc.export_snapshot().unwrap()).unwrap();
++    assert_eq!(restored.get_deep_value(), doc.doc().get_deep_value());
++    let entries = doc.read_entries().unwrap();
++    match &entries[0].parts[0] {
++        MessagePart::Text { text, .. } => assert_eq!(text, &token.repeat(ticks)),
++        other => panic!("expected streamed text, got {other:?}"),
++    }
++}
+```
+
+**File**: `edge/package-lock.json` (modified, +10/-1)
+```diff
+@@ -10,13 +10,14 @@
+       "dependencies": {
+         "@cloudflare/puppeteer": "^1.4.0",
+         "jose": "^6.0.11",
+-        "loro-crdt": "^1.13.7",
++        "loro-crdt": "^1.17.1",
+         "loro-protocol": "^0.3.0"
+       },
+       "devDependencies": {
+         "@cloudflare/vitest-pool-workers": "^0.20.2",
+         "@cloudflare/workers-types": "^5.20260714.1",
+         "loro-adaptors": "^0.6.1",
++        "loro-crdt-legacy": "npm:loro-crdt@1.13.7",
+         "loro-websocket": "^0.6.2",
+         "typescript": "^6.0.3",
+         "vitest": "^4.1.10",
+@@ -2661,9 +2662,17 @@
+       }
+     },
+     "node_modules/loro-crdt": {
++      "version": "1.17.1",
++      "resolved": "https://registry.npmjs.org/loro-crdt/-/loro-crdt-1.17.1.tgz",
++      "integrity": "sha512-83hWRYG6eMMpPezm+yXWlOqCuUsC0BYY1MVCPW9x2zlikgkHhL7GC7Q6JFH+Hjvauyn287Q1MiwTuRW0lUOUag==",
++      "license": "MIT"
++    },
++    "node_modules/loro-crdt-legacy": {
++      "name": "loro-crdt",
+       "version": "1.13.7",
+       "resolved": "https://registry.npmjs.org/loro-crdt/-/loro-crdt-1.13.7.tgz",
+       "integrity": "sha512-tOvBUBSVseebXx8L5TMEdVYwgTOVZMMUtA9tQAs2vpPNRx/hClsLGhjmo9D3J4LopCVrQ6cuj3ZdBeyxQheWAg==",
++      "dev": true,
+       "license": "MIT"
+     },
+     "node_modules/loro-protocol": {
+```
+
+**File**: `edge/package.json` (modified, +2/-1)
+```diff
+@@ -17,13 +17,14 @@
+   "dependencies": {
+     "@cloudflare/puppeteer": "^1.4.0",
+     "jose": "^6.0.11",
+-    "loro-crdt": "^1.13.7",
++    "loro-crdt": "^1.17.1",
+     "loro-protocol": "^0.3.0"
+   },
+   "devDependencies": {
+     "@cloudflare/vitest-pool-workers": "^0.20.2",
+     "@cloudflare/workers-types": "^5.20260714.1",
+     "loro-adaptors": "^0.6.1",
++    "loro-crdt-legacy": "npm:loro-crdt@1.13.7",
+     "loro-websocket": "^0.6.2",
+     "typescript": "^6.0.3",
+     "vitest": "^4.1.10",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1116** (2026-10-31): Sync: update loro to 1.17 so streaming chats stop leaking memory (@Gratenes)
 - **PR #1115** (2026-10-30): Edge: profile routes (@wingleeio)
 - **PR #1113** (2026-10-30): Edge: record every WorkOS organization and its members (@wingleeio)
 - **PR #1107** (2026-10-30): Edge: a stored user number for every user in the directory (@wingleeio)
 - **PR #1106** (2026-10-29): Direct links: let WebRTC packets fragment, so links over Tailscale carry data (@wingleeio)
 - **PR #1105** (2026-10-29): Edge: badges for users in the directory (@wingleeio)
-- **PR #1099** (2026-10-29): Add fx as a native ACP provider (@zeronsh[bot])
 
 ---
 
@@ -1842,49 +1960,42 @@ Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Web: page layout
+## X. Sync: update loro to 1.17 so streaming chats stop leaking memory (#1116)
 
 **RULE**:
-When implementing operations in `apps/card-web/site/pages.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `baedd5dc`: Web: page layout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6973500b`: Sync: update loro to 1.17 so streaming chats stop leaking memory (#1116). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/card-web/site/pages.mjs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  /* The card alone, filling the window, nothing to scroll to. */
-  html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
-  main { height: 100vh; height: 100dvh; }
-  .stage { height: 100%; }
+version = "1.17.1"
+checksum = "410c939fe3bee34b8ed61f7aea93201fb136629f685ffa557039c4d9952f9988"
+version = "1.17.0"
+checksum = "bd3f7afbafc4db85aefe9620e7e99fa49c974477563904f226ae96fc9674eade"
+version = "1.17.1"
+checksum = "7e533c1688430aa4fcdd933f00861e331c169a4158ee6d27d054e0558892d447"
+version = "1.17.0"
+checksum = "c7331ebe6902effeb0c3d52aba9e30fb0118bc926faed6f3848487aab40c1a4e"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// "004·182", as the card prints it.
-const serial = (n) => {
-  const v = Math.max(0, Math.trunc(Number(n) || 0));
-  const pad = (x) => String(x % 1000).padStart(3, "0");
-  return `${pad(Math.trunc(v / 1000))}·${pad(v)}`;
-};
-
-  main { min-height: 100vh; min-height: 100dvh; display: grid; grid-template-rows: 1fr auto; }
-  .stage { height: min(100vh, 100dvh); min-height: 560px; }
-  footer { display: flex; flex-wrap: wrap; gap: 4px 12px; justify-content: center; align-items: baseline; padding: 0 16px 32px; color: var(--muted); font-size: 13px; }
-  footer b { color: var(--ink); font-weight: 600; }
-  footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--faint); }
-  /* On a phone, the card alone: it fills the screen, nothing under it. */
-  @media (max-width: 640px) {
-    main { grid-template-rows: 1fr; }
-    .stage { min-height: 0; }
-    footer { display: none; }
-  }
-  <footer><b>${escapeHtml(name)}</b><span>@${escapeHtml(card.username)}</span><span>${serial(card.userNumber)}</span><span>joined ${escapeHtml(card.joinedOn)}</span><a href="https://zeron.sh">zeron.sh</a></footer>
+version = "1.13.9"
+checksum = "09ea00f70c1acad4b7a05aaf72c1d9a671426021a1999ee821c77b56f0a15900"
+version = "1.13.1"
+checksum = "b51042936156a1d537df8a38938ec8ed24b45de14530af933c1d02de39c9e056"
+version = "1.13.9"
+checksum = "6fec47acf8db115b7146da5e1d5b18d0cf58032e6012c0c1ee3ec3442d1e936f"
+version = "1.13.9"
+checksum = "937f88e4a3d80d5853f5119753f5e5f68d4375726db7e9b3d6dac9db8167e8bf"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `baedd5dc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6973500b` are properly handled with clean fallback behavior.

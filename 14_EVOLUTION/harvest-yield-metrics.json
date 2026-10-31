@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T21:39:34.929Z",
-  "total_cycles_completed": 6703,
-  "total_learnings_persisted": 6703,
-  "total_rules_promoted": 6337,
+  "last_updated": "2026-10-31T21:46:14.157Z",
+  "total_cycles_completed": 6706,
+  "total_learnings_persisted": 6706,
+  "total_rules_promoted": 6342,
   "history": [
-    {
-      "timestamp": "2026-10-31T10:07:22.044Z",
-      "repository": "akhilaaa3/Jev-Omni",
-      "learningId": "learn-huggingface-akhilaaa3-jev-omni",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T10:07:26.626Z",
-      "repository": "react/metro",
-      "learningId": "learn-github-react-metro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T10:18:22.080Z",
-      "repository": "vercel-labs/agent-desktop",
-      "learningId": "learn-github-vercel-labs-agent-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T10:20:16.590Z",
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-31T21:39:34.929Z",
       "repository": "Cactus-Compute/whistle",
       "learningId": "learn-huggingface-cactus-compute-whistle",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T21:46:01.864Z",
+      "repository": "zeronsh/zeron",
+      "learningId": "learn-github-zeronsh-zeron",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T21:46:13.168Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T21:46:14.157Z",
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
