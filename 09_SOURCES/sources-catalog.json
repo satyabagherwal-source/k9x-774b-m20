@@ -375,8 +375,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
     "sourceVersion": "hf-qwen-qwen-image-2.1-turbo",
     "license": "Open-Source",
-    "contentHash": "4d6266396f9ac2e6226e84ef046a32224fe38a46e3e244b219c625988d293c3d",
-    "lastHarvestedAt": "2026-10-28T20:57:34.981Z",
+    "contentHash": "d420479906e212b3ee33fd81d9b5dbac78b3710dc1acaaeff164e5d18b9491c3",
+    "lastHarvestedAt": "2026-10-31T22:39:51.942Z",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo"
   },
   "hf-xingchen-agi-xing4.0-29b-a4b": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "310e494c",
+    "sourceVersion": "6f0a7f13",
     "license": "NOASSERTION",
-    "contentHash": "4ee16f65f0a9e9b57989b3febcdd5351edbcbc656eb417a63e56b3fe265295a2",
-    "lastHarvestedAt": "2026-10-31T18:29:09.291Z",
+    "contentHash": "2912bb75c716e35497f8293f907add2c2d1e2a8e00dc406e79b3647a4161d783",
+    "lastHarvestedAt": "2026-10-31T22:40:01.995Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {

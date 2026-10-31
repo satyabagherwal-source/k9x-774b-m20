@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T22:33:05.507Z",
-  "total_cycles_completed": 6716,
-  "total_learnings_persisted": 6716,
-  "total_rules_promoted": 6358,
+  "last_updated": "2026-10-31T22:40:02.000Z",
+  "total_cycles_completed": 6718,
+  "total_learnings_persisted": 6718,
+  "total_rules_promoted": 6359,
   "history": [
-    {
-      "timestamp": "2026-10-31T11:02:41.742Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T11:09:24.027Z",
-      "repository": "Dicklesworthstone/destructive_command_guard",
-      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T11:09:34.953Z",
       "repository": "prithivMLmods/Gender-Classifier-Mini",
@@ -1403,6 +1389,20 @@
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
       "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:39:51.948Z",
+      "repository": "Qwen/Qwen-Image-2.1-Turbo",
+      "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:40:02.000Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

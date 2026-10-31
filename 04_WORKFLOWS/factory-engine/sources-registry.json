@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T22:33:08.068Z",
-    "lastVerified": "2026-10-31T22:33:08.068Z",
+    "lastChecked": "2026-10-31T22:40:04.552Z",
+    "lastVerified": "2026-10-31T22:40:04.552Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -145,8 +145,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T22:03:58.274Z",
-    "lastVerified": "2026-10-31T22:03:58.274Z",
+    "lastChecked": "2026-10-31T22:40:03.107Z",
+    "lastVerified": "2026-10-31T22:40:03.107Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -541,9 +541,9 @@
   "surrealdb-surrealdb": {
     "name": "surrealdb",
     "officialUrl": "https://github.com/surrealdb/surrealdb",
-    "lastChecked": "2026-10-31T06:04:10.283Z",
+    "lastChecked": "2026-10-31T22:40:00.602Z",
     "revisionIdentifier": "18971ffb",
-    "lastVerified": "2026-10-31T06:04:10.283Z"
+    "lastVerified": "2026-10-31T22:40:00.602Z"
   },
   "hf-baai-bge-small-en-v1.5": {
     "name": "BAAI/bge-small-en-v1.5",
@@ -1215,12 +1215,12 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T18:29:08.665Z",
-    "lastVerified": "2026-10-31T18:29:08.665Z",
+    "lastChecked": "2026-10-31T22:40:01.283Z",
+    "lastVerified": "2026-10-31T22:40:01.283Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "4ee16f65f0a9e9b57989b3febcdd5351edbcbc656eb417a63e56b3fe265295a2",
+    "contentHash": "2912bb75c716e35497f8293f907add2c2d1e2a8e00dc406e79b3647a4161d783",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -2672,9 +2672,9 @@
   "permify-permify": {
     "name": "permify",
     "officialUrl": "https://github.com/Permify/permify",
-    "lastChecked": "2026-10-31T06:52:25.670Z",
+    "lastChecked": "2026-10-31T22:39:55.596Z",
     "revisionIdentifier": "43ce9031",
-    "lastVerified": "2026-10-31T06:52:25.670Z"
+    "lastVerified": "2026-10-31T22:39:55.596Z"
   },
   "crate-crate": {
     "name": "crate",
@@ -2895,9 +2895,9 @@
   "asciinema-asciinema": {
     "name": "asciinema",
     "officialUrl": "https://github.com/asciinema/asciinema",
-    "lastChecked": "2026-10-31T02:43:59.421Z",
+    "lastChecked": "2026-10-31T22:39:48.086Z",
     "revisionIdentifier": "cf66ef4c",
-    "lastVerified": "2026-10-31T02:43:59.421Z"
+    "lastVerified": "2026-10-31T22:39:48.086Z"
   },
   "hf-xiaomimimo-mimo-v2.6-pro-rl": {
     "name": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -7765,12 +7765,12 @@
     "officialUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T20:57:34.724Z",
-    "lastVerified": "2026-10-28T20:57:34.724Z",
+    "lastChecked": "2026-10-31T22:39:50.654Z",
+    "lastVerified": "2026-10-31T22:39:50.654Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-    "contentHash": "4d6266396f9ac2e6226e84ef046a32224fe38a46e3e244b219c625988d293c3d",
+    "contentHash": "d420479906e212b3ee33fd81d9b5dbac78b3710dc1acaaeff164e5d18b9491c3",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9094,9 +9094,9 @@
   "zacharee-bifrost": {
     "name": "Bifrost",
     "officialUrl": "https://github.com/zacharee/Bifrost",
-    "lastChecked": "2026-10-29T16:13:32.334Z",
+    "lastChecked": "2026-10-31T22:39:53.109Z",
     "revisionIdentifier": "ed73a034",
-    "lastVerified": "2026-10-29T16:13:32.334Z"
+    "lastVerified": "2026-10-31T22:39:53.109Z"
   },
   "liketrek-trek": {
     "name": "liketrek/TREK",

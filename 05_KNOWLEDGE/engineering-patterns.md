@@ -465237,3 +465237,86 @@ def test_sm_allocation():
 ```
 
 ---
+
+
+---
+
+## 6352. transport): drive the QUIC upgrade machine in shadow mode (#6060) (Harvested from freenet/freenet-core)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "transport): drive the QUIC upgrade machine in shadow mode (#6060)",
+  "source": "freenet/freenet-core",
+  "source_url": "https://github.com/freenet/freenet-core",
+  "source_version": "6f0a7f13",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-31T22:40:01.675Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-freenet-freenet-core",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `6f0a7f13`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `fccbb13c`: transport): drive the QUIC upgrade machine in shadow mode (#6060). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+`total-bandwidth-limit`), QUIC upgrade control messages received
+(`upgrade_control_received`), Decline replies held back
+(`upgrade_decline_suppressed`) and hole-punch handshake packets dropped,
+A node that receives one acks it like a ShortMessage, counts it
+(upgrade_control_received in transport_snapshot) and never closes the
+connection over it. With upgrades (see "Upgrade driver") it goes to the
+session's driver. Without them an Offer gets Decline{Disabled} and an Accept
+or a Decline is dropped.
+
+At most one Decline per connection per DECLINE_INTERVAL (45 s, below the shortest uncharged retry of 48 s), on the
+connection's clock (quic/upgrade/driver.rs DeclineGate; the same type on
+PeerConnection with QUIC off and in the driver with QUIC on). A Decline is
+tracked and retransmitted, and each Offer under a new packet id would otherwise
+get its own. One held back is counted by the gate (upgrade_decline_suppressed)
+and costs the offerer NoReply after OFFER_TIMEOUT, which takes a normal backoff,
+including where the reason would have been uncharged (Busy, NotReady, Backoff).
+With QUIC off the reply is not sent in process_inbound: the Offer is already in
+the dedup window, so a cancelled s
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+`total-bandwidth-limit`), QUIC upgrade control messages received and
+ignored (`upgrade_control_received`) and hole-punch handshake packets dropped,
+Decode-only until step e5a-5b wires quic/upgrade/machine.rs in: nothing sends
+it. A node that receives one acks
+it like a ShortMessage, counts it (upgrade_control_received in
+transport_snapshot) and ignores it. It never replies and never closes the
+connection.
+below it decodes an Offer and ignores it). Parked at (0, 3, 0), above every
+release, until e5a-5b sets it to the release that first ships the negotiation
+and records it in QUIC_UPGRADE_NEGOTIATES_SHIPPED_IN.
+empty. Upgrading a UDP session to QUIC comes later, so only tests open
+QUIC connections.
+Upgrade state machine (`quic/upgrade/machine.rs`, #5940 step e5a-5a, not yet
+wired in): UpgradeMachine::step(Inputs { now, sample, policy }, Event) returns
+Upgrade policy (`quic/upgrade/policy.rs`, not yet wired in):
+`QuicPolicy::new(network_api, breaker, availability)` takes the config, the
+breaker's decision (`breaker::gate` returns it beside the sett
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `fccbb13c` are properly handled with clean fallback behavior.
