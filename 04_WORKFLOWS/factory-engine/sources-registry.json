@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T18:08:51.538Z",
-    "lastVerified": "2026-10-31T18:08:51.538Z",
+    "lastChecked": "2026-10-31T18:15:41.271Z",
+    "lastVerified": "2026-10-31T18:15:41.271Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -200,12 +200,12 @@
     "lastVerified": "2026-10-30T23:21:51.541Z"
   },
   "bitnami-sealed-secrets": {
-    "name": "bitnami/sealed-secrets",
+    "name": "sealed-secrets",
     "officialUrl": "https://github.com/bitnami/sealed-secrets",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T02:44:10.002Z",
-    "lastVerified": "2026-10-31T02:44:10.002Z",
+    "lastChecked": "2026-10-31T18:15:24.831Z",
+    "lastVerified": "2026-10-31T18:15:24.831Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitnami-sealed-secrets",
@@ -214,7 +214,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "53625dfe"
   },
   "microsoft-security-101": {
     "name": "Security-101",
@@ -353,9 +354,9 @@
   "lapce-lapce": {
     "name": "lapce",
     "officialUrl": "https://github.com/lapce/lapce",
-    "lastChecked": "2026-10-30T22:40:48.723Z",
+    "lastChecked": "2026-10-31T18:15:17.355Z",
     "revisionIdentifier": "f66ffaa9",
-    "lastVerified": "2026-10-30T22:40:48.723Z"
+    "lastVerified": "2026-10-31T18:15:17.355Z"
   },
   "hf-sentence-transformers-all-minilm-l6-v2": {
     "name": "sentence-transformers/all-MiniLM-L6-v2",
@@ -429,8 +430,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T17:44:02.451Z",
-    "lastVerified": "2026-10-31T17:44:02.451Z",
+    "lastChecked": "2026-10-31T18:15:32.214Z",
+    "lastVerified": "2026-10-31T18:15:32.214Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1053,9 +1054,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-10-31T14:26:00.703Z",
+    "lastChecked": "2026-10-31T18:15:27.363Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-10-31T14:26:00.703Z"
+    "lastVerified": "2026-10-31T18:15:27.363Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -6076,14 +6077,14 @@
     "officialUrl": "https://github.com/yugabyte/yugabyte-db",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-10-31T02:00:35.662Z",
-    "lastVerified": "2026-10-31T02:00:35.662Z",
+    "lastChecked": "2026-10-31T18:15:38.114Z",
+    "lastVerified": "2026-10-31T18:15:38.114Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "8cf2d75047e3f4b27b0c1a5142cabfde2885e8865978fc0f21a60d0a6b2c9248",
+    "contentHash": "cb9f17a688d6366df14d58e98dff9aa09c346ffee414e1982cccc48b90712458",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6166,12 +6167,12 @@
     "officialUrl": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T17:05:41.839Z",
-    "lastVerified": "2026-10-28T17:05:41.839Z",
+    "lastChecked": "2026-10-31T18:15:19.860Z",
+    "lastVerified": "2026-10-31T18:15:19.860Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-    "contentHash": "a2635af6c9c848da37527c7f8860918c36d26092aadfe239ca787095470d17c2",
+    "contentHash": "12f2b7b58eda7b00bedbebc8409b960c0a65549b1409c62428e15174c0facbfb",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -8415,9 +8416,9 @@
   "gao-sun-eul": {
     "name": "eul",
     "officialUrl": "https://github.com/gao-sun/eul",
-    "lastChecked": "2026-10-28T22:58:58.538Z",
+    "lastChecked": "2026-10-31T18:15:22.259Z",
     "revisionIdentifier": "b5c3bd0a",
-    "lastVerified": "2026-10-28T22:58:58.538Z"
+    "lastVerified": "2026-10-31T18:15:22.259Z"
   },
   "tw93-pake": {
     "name": "tw93/Pake",

@@ -6668,3 +6668,5 @@
 | `CYCLE-20261031-K2TR` | `2026-10-31T18:01:47.343Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6275` | Yes (`f1f05339...`) |
 | `CYCLE-20261031-SXKB` | `2026-10-31T18:08:40.427Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`08fe11cf...`) |
 | `CYCLE-20261031-T3VF` | `2026-10-31T18:08:48.603Z` | `thaw-app/Thaw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6276` | Yes (`b5789af0...`) |
+| `CYCLE-20261031-1IK0` | `2026-10-31T18:15:20.880Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`12f2b7b5...`) |
+| `CYCLE-20261031-1WBH` | `2026-10-31T18:15:38.717Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6277` | Yes (`cb9f17a6...`) |

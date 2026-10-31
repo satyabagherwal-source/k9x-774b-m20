@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T18:08:48.520Z",
+  "last_updated": "2026-10-31T18:15:38.643Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -26664,7 +26664,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
       "source_version": "hf-nomic-ai-nomic-embed-text-v1.5",
-      "content_hash": "a2635af6c9c848da37527c7f8860918c36d26092aadfe239ca787095470d17c2",
+      "content_hash": "12f2b7b58eda7b00bedbebc8409b960c0a65549b1409c62428e15174c0facbfb",
       "dossier_path": "07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
       "promoted_rules": [
@@ -26701,7 +26701,7 @@
         "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv3z1izs",
         "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv4dnd2y"
       ],
-      "verified_at": "2026-10-28T17:05:42.953Z",
+      "verified_at": "2026-10-31T18:15:20.791Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59558,8 +59558,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "6ce4c398",
-      "content_hash": "8cf2d75047e3f4b27b0c1a5142cabfde2885e8865978fc0f21a60d0a6b2c9248",
+      "source_version": "a138218b",
+      "content_hash": "cb9f17a688d6366df14d58e98dff9aa09c346ffee414e1982cccc48b90712458",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -59617,6 +59617,11 @@
           "number": 6004,
           "title": "[#36245] YSQL: Fix spurious wait in org.yb.pgsql.TestPgRegressIsolationObjectLoc",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6277,
+          "title": "[#35616] CDC: Don't panic the walsender when the slot lock is already gone",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59624,7 +59629,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T02:00:36.135Z",
+      "verified_at": "2026-10-31T18:15:38.626Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -163585,6 +163590,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T18:08:48.500Z"
+    },
+    "rule-6277": {
+      "learning_id": "rule-6277",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6277,
+      "title": "[#35616] CDC: Don't panic the walsender when the slot lock is already gone",
+      "source_url": "https://github.com/yugabyte/yugabyte-db",
+      "source_version": "a138218b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T18:15:38.626Z"
     }
   },
   "aliases": {

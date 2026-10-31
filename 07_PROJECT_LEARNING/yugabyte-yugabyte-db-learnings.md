@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `6ce4c398`  
+> **Source Version**: `a138218b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T02:00:35.669Z  
+> **Timestamp**: 2026-10-31T18:15:38.121Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T02:00:35.662Z  
+> **Harvest Timestamp**: 2026-10-31T18:15:38.114Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10640 stars
+- **Stars / Engagement**: 10642 stars
 
 ---
 
@@ -2250,14 +2250,11 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #36483** (2026-10-31): **[YSQL] Build 13d0651c on master: 2 lanes broken**
-  *Symptoms*: Jira Link: [DB-25519](https://yugabyte.atlassian.net/browse/DB-25519) _Filed automatically by [Grissom](https://github.com/yugabyte/agent-k/blob/main/bots/grissom/README.md) (internal docs), which watches YugabyteDB's scheduled builds on `master` and the supported release branches for builds where a lane breaks or many tests fail the same way. Everything below is measured from those builds; how it decides, and how to stop it, is at the end._  ## Summary  The scheduled build of `master` at 13d0651c has a lane-level failure; the affected lane(s) are not judged test by test.  - Failing lanes: `alma8-clang21-release`, `arm-alma8-clang21-release` - Failing build types: release  ## Urgency  S2 lane broken / cluster (`priority/high`).  ## What is being tested  Every lane of the scheduled build (build types release, tsan, fastdebug, asan, debug).  ## What is the failure  - `alma8-clang21-release`: build step failed while configuring (cmake), before compiling: New add_dependencies on rpc-test fails when tests are filtered out; no tests ran ([CSI launch 185812](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/185812), [build log](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/185812/890324279/890324280/log), [Jenkins console](https://jenkins.dev.yugabyte.com/job/github-yugabyte-db-alma8-master-clang21-release/1597/console))    Read from the log by a model as a compile or link error (confidence 0.90): CMake configure failed at src/yb/rpc/CMakeLists.txt:183, where 5c9c8cb176 added
-  **Post-Mortem & Fix Analysis**:
-  > Grissom: **suspected root cause**.  Range [`(fc87b774, 13d0651c]`](https://github.com/yugabyte/yugabyte-db/compare/fc87b774...13d0651c): 8 commits. A build-level break: 2 lane(s) broken in this build, so the onset is this build; the range starts at the previous scheduled build.  1. [13d0651c1f](https://github.com/yugabyte/yugabyte-db/commit/13d0651c1f2540f2fe03fca6b9253a5767b7c940) `[#35773] YSQL: Make a retried UpgradeYsql wait for the upgrade already running (#36003)` (myang2021) -- confidence 0.20: The broken line 'add_dependencies(rpc-test generate_test_certs)' comes from 5c9c8cb176, which was already in the passing build fc87b774. So the bug was latent, and it only shows when the C++ test filter leaves rpc-test out ('included: 1, excluded: 656'). This is the only candidate that changes a C++ gtest source (pg_libpq-test.cc), so it is the most likely reason a changed-test filter kept just one C++ test. It is still a weak guess. 2. [61fd6dae11](https://github.com/yugabyte/yugabyte-db
-  > /grissom deep-analyze Why do the two lanes fail differently (alma8: the rpc-test CMake error from 5c9c8cb176; arm: a sysbench segfault in the PGO workload), and is this issue's onset and range right, given that 5c9c8cb176 predates fc87b774? 
+- **Issue #36522** (2026-10-31): **[#36141] YSQL: Import 'Fix plpgsql's handling of "return simple_record_variable"' from upstream**
+  *Symptoms*: ## Summary  A PL/pgSQL function that returns a domain over a composite type fails when it returns a NULL record variable:  ```sql create type ct as (a int, b int); create domain cd as ct; create function f() returns cd as $$ declare v ct; begin return v; end $$ language plpgsql; select f(); ERROR:  cache lookup failed for type 0 CONTEXT:  PL/pgSQL function f() while casting return value to function's return type ```  The `RETURN <record variable>` fast path in `exec_stmt_return()` set `estate->rettype` only when the record was non-empty. A NULL result normally skips conversion, but for a domain return type `plpgsql_exec_function()` still casts it so that domain constraints are checked. That cast then looked up type 0.  Fixes #36141  ## Changes  - Import upstream PostgreSQL commit 2b93d382055b62e1493cfbb6c3b5547c1bb9ab82 ("Fix plpgsql's handling of \"return simple_record_variable\"", back-patched through 14 and included in 15.17). The `PLPGSQL_DTYPE_REC` case now uses `exec_eval_datum()`, as the `ROW` case already did, so it always fills in the return type. The `pl_exec.c` hunk is byte-identical to upstream. - Add a regression test to `yb.orig.plpgsql`, which runs in `TestPgRegressPlpgsql`. The upstream test was added to `plpgsql_domain`, but YB does not run that file and changing an upstream-owned test fails lint unless the pin moves. The YB test covers both the plain domain case, which now returns NULL, and a `NOT NULL` domain, which must still raise "domain ... does not all
 
-- **Issue #36471** (2026-10-31): **[pg19] YSQL: Let yb_extension members create roles in extension scripts**
-  *Symptoms*: ## Summary  On pg19, a `yb_extension` member can't install orafce ("permission denied to create role"), which fails `TestPgRegressAuth`. Since orafce 4.10 ([ae9d0302be6](https://github.com/orafce/orafce/commit/ae9d0302be607f86bdfecbf24e962678e6282e75)), its install script creates the role `orafce_set_umask`. pg19 ships 4.16 ([18814c4c725](https://github.com/yugabyte/yugabyte-db/commit/18814c4c725bd11552556c31cf63c3a3fb9a6949)), and YB runs the script as the member, who lacks CREATEROLE. Master ships orafce 4.9, which creates no role.  Fix: skip the CREATEROLE check in `CreateRole()` for a `yb_extension` member during CREATE EXTENSION, as [a8733341c84](https://github.com/yugabyte/yugabyte-db/commit/a8733341c847cb99918421fc5da04209f9572bb3) does for other checks. This doesn't give the member CREATEROLE: outside CREATE EXTENSION it still can't create roles. The SUPERUSER, CREATEDB, REPLICATION and BYPASSRLS checks still apply.  ## Test Plan  `./yb_build.sh release --java-test 'org.yb.pgsql.TestPgRegressAuth#schedule'` passes with [#36455](https://github.com/yugabyte/yugabyte-db/pull/36455) applied. By hand: the member still can't run `CREATE ROLE` outside an extension, or create a SUPERUSER role from an extension script. 
+- **Issue #36485** (2026-10-31): **[BACKPORT 2025.2][#36434] YSQL: Log how many waiters a response cache fill releases (#36438)**
+  *Symptoms*: ## Summary  Problem:  A catalog invalidation leaves every new connection wanting the same response cache entry. The first becomes the filler and the rest queue in waiters_, so connections that arrive one at a time are handed their catalog together when the fill lands, and build their caches at the same moment. Nothing reports how long that queue grows, so a node that runs out of memory shortly after an invalidation gives no evidence of how many backends were woken together.  The path has no logging at all today: RegisterWaiter does not say that a connection queued, and the loop that serves them does not say how many it served. A QA run of this exact failure with --vmodule=pg_response_cache=2,pg_sys_table_prefetcher=2 produced only the GC line, because nothing on the path of interest is instrumented.  Fix:  One VLOG(1) before the loop that serves the waiters, reporting the key group and catalog version the entry is keyed at, the fill duration, the number of waiters released, and the size of the response each of them takes. It is logged before the loop rather than after because a node short of memory dies inside it, and the point is to have the number from the run that failed.  The key group and the catalog version say which database refilled and at which version. Neither identifies one fill: the key group is the database oid, a paged prefetch caches every page under a key of its own, and a global catalog version bump moves every database to the same version at once. Both are p
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2274,723 +2271,172 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4184fe31` (2026-10-30)
-**Commit Message**: [#36245] YSQL: Fix spurious wait in org.yb.pgsql.TestPgRegressIsolationObjectLockingPorted#testPgRegress (#36246)
+### Incident Patch 1: `5a6087c8` (2026-10-27)
+**Commit Message**: [#35616] CDC: Don't panic the walsender when the slot lock is already gone
 
-## Summary
+Summary:
+##### Code changes summary
 
-The YB isolationtester treats any step that runs longer than
-`YB_NUM_SECONDS_TO_WAIT_TO_ASSUME_SESSION_BLOCKED` as blocked. On TSAN,
-the `s2a` step of `fk-partitioned-1` (`ALTER TABLE pfk ATTACH
-PARTITION`) sometimes takes longer than that even when no lock blocks
-it, so the output shows an unexpected `<waiting ...>`. Lint does not
-allow edits to the upstream-named spec, so the object-locking schedule
-now runs a new `yb.port.fk-partitioned-1` copy instead. In that copy,
-`s2a` is annotated `(yb_never_waits)` in the 11 permutations where it
-runs before `s1d` or after `s1c` and so cannot be blocked; the expected
-output is unchanged.
+With `ysql_yb_enable_replication_slot_exclusive_lock`, `YbReleaseReplicationSlotLock` runs from walsender error cleanup. Release can fail because the session transaction is already aborted (`ERRCODE_YB_TXN_ABORTED`), or because that transaction expired and the lock is already gone (`ERRCODE_YB_TXN_LOCK_NOT_FOUND`). Raising that failure as ERROR jumps back into `WalSndErrorCleanup` while `yb_slot_locktag` is still set, so the same unlock is retried until the error stack overflows and the postmaster kills every backend on the node.
 
----
-_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed
-the failure logs, wrote the change, and verified it locally._
+Those two statuses now warn and clear the lock tag. Any other release failure stays ERROR, so a transient timeout is still retried. The session transaction is still alive in that case and still holds the lock.
 
-## Test plan
+##### Upgrade/Rollback safety
 
-./yb_build.sh tsan --clang21 --java-test
-'org.yb.pgsql.TestPgRegressIsolationObjectLockingPorted#testPgRegress'
--n 180 --stop-at-failure -- -p 6
-Ran the above locally with no failures.
-Before the fix, this test reproduced locally (same test command and -p /
-env as above, without -
+No proto, RPC, or on-disk format change. `ysql_yb_enable_replication_slot_exclusive_lock` stays off by default.
 
-**File**: `src/postgres/src/test/isolation/expected/yb.port.fk-partitioned-1.out` (added, +133/-0)
+Forward: a tserver warns and clears the lock tag for those two statuses after it restarts on this build. Until that restart it still raises them as ERROR. During a rolling upgrade, a walsender st
+
+**File**: `java/yb-pgsql/src/test/java/org/yb/pgsql/TestPgReplicationSlot.java` (modified, +94/-0)
 ```diff
-@@ -0,0 +1,133 @@
-+Parsed test spec with 2 sessions
+@@ -6379,6 +6379,100 @@ public void testExclusiveReplicationSlotAcquireAcrossTservers() throws Exception
+     }
+   }
+ 
++  @Test
++  public void testSecondConsumerAcquiresSlotAfterHeartbeatLoss() throws Exception {
++    Map<String, String> tserverFlags = getTServerFlagsWithExclusiveLock();
++    tserverFlags.put("transaction_heartbeat_usec", Integer.toString(500000 * kMultiplier));
++    tserverFlags.put("transaction_max_missed_heartbeat_periods", "2");
++    tserverFlags.put("transaction_check_interval_usec", Integer.toString(200000 * kMultiplier));
++    restartClusterWithFlags(getMasterFlags(), tserverFlags);
 +
-+starting permutation: s1b s1d s1c s2b s2a s2c
-+step s1b: begin;
-+step s1d: delete from ppk1 where a = 1;
-+step s1c: commit;
-+step s2b: begin;
-+step s2a: alter table pfk attach partition pfk1 for values in (1);
-+ERROR:  insert or update on table "pfk1" violates foreign key constraint "pfk_a_fkey"
-+step s2c: commit;
++    String slotName = "heartbeat_loss_slot";
 +
-+starting permutation: s1b s1d s2b s1c s2a s2c
-+step s1b: begin;
-+step s1d: delete from ppk1 where a = 1;
-+step s2b: begin;
-+step s1c: commit;
-+step s2a: alter table pfk attach partition pfk1 for values in (1);
-+ERROR:  insert or update on table "pfk1" violates foreign key constraint "pfk_a_fkey"
-+step s2c: commit;
++    try (Statement stmt = connection.createStatement()) {
++      stmt.execute("DROP TABLE IF EXISTS t_heartbeat_loss");
++      stmt.execute("CREATE TABLE t_heartbeat_loss(k int primary key, v text)");
++    }
 +
-+starting permutation: s1b s1d s2b s2a s1c s2c
-+step s1b: begin;
-+step s1d: delete from ppk1 where a = 1;
-+step s2b: begin;
-+step s2a: alter table pfk attach partition pfk1 for values in (1); <waiting ...>
-+step s1c: commit;
-+step s2a: <... completed>
-+ERROR:  insert or update on table "pfk1" violates foreign key constraint "pfk_a_fkey"
-+step s2c: commit;
++    Connection replConn0 = getConnectionBuilder().withTServer(0).replicationConnect();
++    PGReplicationConnection replApi0 =
++        replConn0.unwrap(PGConnection.class).getReplicationAPI();
++    createSlot(replApi0, slotName, "test_decoding");
 +
-+starting permutation: s1b s2b s1d s1c s2a s2c
-+step s1b: begin;
-+step s2b: begin;
-+step s1d: delete from ppk1 where a = 1;
-+step s1c: commit;
-+step s2a: alter table pfk attach partition pfk1 for values in (1);
-+ERROR:  insert or update on table "pfk1" violates foreign key constraint "pfk_a_fkey"
-+step s2c: commit;
++    PGReplicationStream stream0 = replApi0.replicationStream()
++        .logical()
++        .withSlotName(slotName)
++        .withStartPosition(LogSequenceNumber.valueOf(0L))
++        .start();
 +
-+starting permutation: s1b s2b s1d s2a s1c s2c
-+step s1b: begin;
-+step s2b: begin;
-+step s1d: delete from ppk1 where a = 1;
-+step s2a: alter table pfk attach partition pfk1 for values in (1); <waiting ...>
-+step s1c: commit;
-+step s2a: <... completed>
-+ERROR:  insert or update on table "pfk1" violates foreign key constraint "pfk_a_fkey"
-+step s2c: commit;
++    PGReplicationStream stream1 = null;
++    Connection replConn1 = null;
++    try {
++      // Heartbeats stop reaching the coordinator, so the transaction that holds the slot expires
++      // and its lock goes away. Same outcome as a partition between them.
++      for (HostAndPort tServer : miniCluster.getTabletServers().keySet()) {
++        assertTrue(miniCluster.getClient().setFlag(
++            tServer, "transaction_disable_heartbeat_in_tests", "true", true));
++      }
 +
-+starting permutation: s1b s2b s2a s1d s2c s1c
-+step s1b: begin;
-+step s2b: begin;
-+step s2a: alter table pfk attach partition pfk1 for values in (1);
-+step s1d: delete from ppk1 where a = 1; <waiting ...>
-+step s2c: commit;
-+step s1d: <... completed>
-+ERROR:  update or delete on table "ppk1" violates foreign key constraint "pfk_a_fkey1" on table "pfk"
-+step s1c: commit;
++      final int maxAttempts = 30;
++      final int sleepBetweenAttemptsMs = 2000 * kMultiplier;
++      for (int attempt = 1; attempt <= maxAttempts; attempt++) {
++        try {
++          replConn1 = getConnectionBuilder().withTServer(1).replicationConnect();
++          PGReplicationConnection replApi1 =
++              replConn1.unwrap(PGConnection.class).getReplicationAPI();
++          stream1 = replApi1.replicationStream()
++              .logical()
++              .withSlotName(slotName)
++              .withStartPosition(LogSequenceNumber.valueOf(0L))
++              .start();
++          LOG.info("Second consumer acquired slot on attempt {}", attempt);
++          break;
++        } catch (PSQLException e) {
++          if (replConn1 != null) {
++            replConn1.close();
++            replConn1 = null;
++          }
++          if (attempt == maxAttempts) {
++            throw e;
++          }
++          LOG.info("Attempt {} failed, retrying in {}ms: {}", attempt, sleepBetweenAttemptsMs,
++                   e.getMessage());
++          Thread.sleep(sleepBetweenAttemptsMs);
++        }
++      }
++      assertNotNull("Expected a second consumer to acquire the slot", stream1);
 +
-+starting permutation: s1b s2b s2a s2c s1d s1c
-+step s1b: begin;
-+step s2b: begin;
-+step s2a: alter table pfk attach partition pfk1 for values in (1);
-+step s2c: commit;
-+step s1d: delete from ppk1 where a = 1;
-+ERROR:  update or delete on table "ppk1" violates foreign key constraint "pfk_a_fkey1" on table "pfk"
-+step s1c: commit;
++      PGReplicationStream closingStream = stream0;
++      Connection closingConn = replConn0;
++      stream0 = null;
++      replConn0 = null;
++      closingStream.close();
++      closingConn.close();
 +
-+starting permutation: s2b s1b s1d s1c s2a s2c
-+step s2b: begin;
-+step s1b: begin;
-+step s1d: delete from ppk1 where a = 1;
-+step s1c: commit;
-+step s2a: alter table pfk attach partition pfk1 for values in (1);
-+ERROR:  insert or update on table "pfk1" violates foreign key constraint "pfk_a_fkey"
-+step s2c: commit;
++      try (Connection conn = getConnectionBuilder().withTServer(0).connect();
++           Statement stmt = conn.createStatement();
++           ResultSet res = stmt.executeQuery("SELECT 1")) {
++        assertTrue(res.next());
++        assertEquals(1, res.getInt(1));
++      }
++    } finally {
++      if (stream0 != null) {
++        stream0.close();
++      }
++      if (replConn0 != null) {
++        replConn0.close();
++      }
++      if (stream1 != null) {
++        stream1.close();
++      }
++      if (replConn1 != null) {
++        replConn1.close();
++      }
++    }
++  }
 +
-+starting permutation: s2b s1b s1d s2a s1c s2c
-+step s2b: begin;
-+step s1b: begin;
-+step s1d: delete from ppk1 where a = 1;
-+step s2a: alter table pfk attach partition pfk1 for values in (1); <waiting ...>
-+step s1c: commit;
-+step s2a: <... completed>
-+ERROR:  insert or update on table "pfk1" violates foreign key constraint "pfk_a_fkey"
-+step s2c: commit;
-+
-+starting permutation: s2b s1b s2a s1d s2c s1c
-+step s2b: begin;
-+step s1b: begin;
-+step s2a: alter table pfk attach partition pfk1 for values in (1);
-+step s1d: delete from ppk1 where a = 1; <waiting ...>
-+step s2c: commit;
-+step s1d: <... completed>
-+ERROR:  update or delete on table "ppk1" violates foreign key constraint "pfk_a_fkey1" on table "pfk"
-+step s1c: commit;
-+
-+starting permutation: s2b s1b s2a s2c s1d s1c
-+step s2b: begin;
-+step s1b: begin;
-+step s2a: alter table pfk attach partition pfk1 for values in (1);
-+step s2c: commit;
-+step s1d: delete from ppk1 where a = 1;
-+ERROR:  update or delete on table "ppk1" violates foreign key constraint "pfk_a_fkey1" on table "pfk"
-+step s1c: commit;
-+
-+starting permutation: s2b s2a s1b s1d s2c s1c
-+step s2b: begin;
-+step s2a: alter table pfk attach partition pfk1 for values in (1);
-+step s1b: begin;
-+step s1d: delete from ppk1 where a = 1; <waiting ...>
-+step s2c: commit;
-+step s1d: <... completed>
-+ERROR:  update or delete on table "ppk1" violates foreign key constraint "pfk_a_fkey1" on table "pfk"
-+step s1c: commit;
-+
-+starting permutation: s2b s2a s1b s2c s1d s1c
-+step s2b: begin;
-+step s2a: alter table pfk attach partition pfk1 for values in (1);
-+step s1b: begin;
-+step s2c: commit;
-+step s1d: delete from ppk1 where a = 1;
-+ERROR:  update or delete on table "ppk1" violates foreign key constraint "pfk_a_fkey1" on table "pfk"
-+step s1c: commit;
-+
-+starting permutation: s2b s2a s2c s1b s1d s1c
-+step s2b: begin;
-+step s2a: alter table pfk attach partition pfk1 for values in (1);
-+step s2c: commit;
-+step s1b: begin;
-+step s1d: delete from ppk1 where a = 1;
-+ERROR:  update or delete on table "ppk1" violates foreign key constraint "pfk_a_fkey1" on table "pfk"
-+step s1c: commit;
+   @Test
+   public void testSlotLockReleasedOnTserverCrash() throws Exception {
+     restartClusterWithFlags(getMasterFlags(), getTServerFlagsWithExclusiveLock());
 ```
 
-**File**: `src/postgres/src/test/isolation/specs/yb.port.fk-partitioned-1.spec` (added, +48/-0)
+**File**: `src/postgres/src/backend/replication/slot.c` (modified, +21/-3)
 ```diff
-@@ -0,0 +1,48 @@
-+# Verify that cloning a foreign key constraint to a partition ensures
-+# that referenced values exist, even if they're being concurrently
-+# deleted.
-+setup {
-+drop table if exists ppk, pfk, pfk1;
-+  create table ppk (a int primary key) partition by list (a);
-+  create table ppk1 partition of ppk for values in (1);
-+  insert into ppk values (1);
-+  create table pfk (a int references ppk) partition by list (a);
-+  create table pfk1 (a int not null);
-+  insert into pfk1 values (1);
-+}
-+
-+session s1
-+step s1b	{	begin; }
-+step s1d	{	delete from ppk1 where a = 1; }
-+step s1c	{	commit; }
-+
-+session s2
-+step s2b	{	begin; }
-+step s2a	{	alter table pfk attach partition pfk1 for values in (1); }
-+step s2c	{	commit; }
-+
-+teardown	{	drop table ppk, pfk, pfk1; }
-+
-+# YB: s2a can only wait when it runs between s1d and s1c.  Elsewhere it is
-+# annotated yb_never_waits so a slow ATTACH PARTITION (e.g. on TSAN) is not
-+# reported as waiting by the YB isolationtester's assume-blocked timeout.
-+permutation s1b s1d s1c s2b s2a(yb_never_waits) s2c
-+permutation s1b s1d s2b s1c s2a(yb_never_waits) s2c
-+permutation s1b s1d s2b s2a s1c s2c
-+#permutation s1b s1d s2b s2a s2c s1c
-+permutation s1b s2b s1d s1c s2a(yb_never_waits) s2c
-+permutation s1b s2b s1d s2a s1c s2c
-+#permutation s1b s2b s1d s2a s2c s1c
-+#permutation s1b s2b s2a s1d s1c s2c
-+permutation s1b s2b s2a(yb_never_waits) s1d s2c s1c
-+permutation s1b s2b s2a(yb_never_waits) s2c s1d s1c
-+permutation s2b s1b s1d s1c s2a(yb_never_waits) s2c
-+permutation s2b s1b s1d s2a s1c s2c
-+#permutation s2b s1b s1d s2a s2c s1c
-+#permutation s2b s1b s2a s1d s1c s2c
-+permutation s2b s1b s2a(yb_never_waits) s1d s2c s1c
-+permutation s2b s1b s2a(yb_never_waits) s2c s1d s1c
-+#permutation s2b s2a s1b s1d s1c s2c
-+permutation s2b s2a(yb_never_waits) s1b s1d s2c s1c
-+permutation s2b s2a(yb_never_waits) s1b s2c s1d s1c
-+permutation s2b s2a(yb_never_waits) s2c s1b s1d s1c
-```
-
-**File**: `src/postgres/src/test/isolation/yb_pg_isolation_object_locking_schedule` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--test: fk-partitioned-1
-+test: yb.port.fk-partitioned-1
- test: propagate-lock-delete
- test: multiple-cic
- test: alter-table-2
-```
-
----
-
-### Incident Patch 2: `3a23463d` (2026-10-30)
-**Commit Message**: [#34267] YSQL: fix embedded index merge scan on expression columns (#36184)
-
-## Summary
-
-On an embedded index, such as a colocated index,
-yb_finalize_merge_scan_stream_cols truncates a merge scan path's
-pathkeys before the first expression index column (see commit
-194de21b2f51eb47a48f3009e510fb62b21db195).  There is a flaw in how it
-determines what is considered "the first expression index column":
-
-- Reality: for an embedded index scan, merge scan currently cannot merge
-  sort on an expression column (see #36180).
-- Implementation before this fix: the guard added by commit
-  194de21b2f51eb47a48f3009e510fb62b21db195 attempts to determine such
-  columns by checking if the equivalence class containing that column
-  does not have any plain Vars of the relation.  The problem with this
-  is that an equivalence class containing both a Var and expression will
-  not be flagged under this rule, but it is very much possible for
-  either of them to actually be used for the merge sort depending on its
-  position in the list of index keys and which of them are occupied as
-  stream keys.  The same goes for a class whose single member is a plain
-  column cast to a binary-compatible type, which th
-
-**File**: `src/postgres/src/backend/optimizer/util/yb_merge_scan.c` (modified, +9/-40)
-```diff
-@@ -475,34 +475,6 @@ ybFindPathkeyTle(List *tlist, EquivalenceClass *ec, Relids relids,
- 	return NULL;
+@@ -262,12 +262,30 @@ YbTryAcquireReplicationSlotLock(const char *slot_name, bool wait)
+ 	return true;
  }
  
--/*
-- * Whether ec has a member that is a plain column of the relation relids,
-- * possibly relabeled.
-- */
--static bool
--ybEclassHasRelVar(EquivalenceClass *ec, Relids relids)
--{
--	ListCell   *lc2;
--	bool		found = false;
--
--	foreach(lc2, ec->ec_members)
--	{
--		EquivalenceMember *em = (EquivalenceMember *) lfirst(lc2);
--		if (bms_equal(em->em_relids, relids))
--		{
--			Expr	   *expr = em->em_expr;
--			while (IsA(expr, RelabelType))
--				expr = ((RelabelType *) expr)->arg;
--			if (IsA(expr, Var))
--			{
--				found = true;
--				break;
--			}
--		}
--	}
--	return found;
--}
--
- /*
-  * Get sort info for given pathkeys corresponding to tlist.  In case a pathkey
-  * matches multiple columns in tlist, avoid the columns that are pinned as
-@@ -658,13 +630,11 @@ ybEqualityIndexClause(IndexOptInfo *index, List *indexclauses, int indexcol)
-  * the same stream keys.  The pathkeys are final only after this call, which
-  * can truncate them on an embedded index.
-  *
-- * On an embedded index, such as a colocated index, pggate compares each merge
-- * sort value in the table row.  So when embedded, *pathkeys is truncated
-- * before the first pathkey whose EquivalenceClass has no plain column of the
-- * relation, and *yb_distinct_nkeys is set to -1 if the truncation cuts into
-- * the pathkeys that span the distinct prefix.
-- * TODO(#34267): the merge compares the index column the pathkey resolves to,
-- * which can be an expression column even when the class has a plain column.
-+ * On an embedded index, pggate compares each merge sort value in the table
-+ * row, which has no value for an expression index column.  So when embedded,
-+ * *pathkeys is truncated before the first pathkey that resolves to an
-+ * expression column, and *yb_distinct_nkeys is set to -1 if the truncation
-+ * cuts into the pathkeys that span the distinct prefix.
-  *
-  * Each index column before the last merge sort column is one of:
-  *
-@@ -725,7 +695,10 @@ yb_finalize_merge_scan_stream_cols(IndexOptInfo *index, Relids relids,
- 											pathkey->pk_eclass, relids,
- 											saop_idxs, &em);
+-/* YB: Release the slot advisory lock and clear the sentinel. */
++/*
++ * YB: Warn and clear yb_slot_locktag for ERRCODE_YB_TXN_ABORTED and
++ * ERRCODE_YB_TXN_LOCK_NOT_FOUND. Those mean the lock is already gone,
++ * and ERROR during walsender cleanup re-enters that cleanup until the
++ * error stack overflows. Any other status is still raised as ERROR.
++ */
+ static void
+ YbReleaseReplicationSlotLock(void)
+ {
+-	HandleYBStatus(YBCReleaseAdvisoryLock(GetYBAdvisoryLockId(yb_slot_locktag),
+-										  YB_ADVISORY_LOCK_EXCLUSIVE));
++	YbcStatus	status;
++	int			sqlerrcode;
++
++	status = YBCReleaseAdvisoryLock(GetYBAdvisoryLockId(yb_slot_locktag),
++									YB_ADVISORY_LOCK_EXCLUSIVE);
++	sqlerrcode = status ? YBCStatusPgsqlError(status) : 0;
++	if (sqlerrcode == ERRCODE_YB_TXN_ABORTED ||
++		sqlerrcode == ERRCODE_YB_TXN_LOCK_NOT_FOUND)
++	{
++		MemSet(&yb_slot_locktag, 0, sizeof(yb_slot_locktag));
++		HandleYBStatusAtErrorLevel(status, WARNING);
++		return;
++	}
++
++	HandleYBStatus(status);
+ 	MemSet(&yb_slot_locktag, 0, sizeof(yb_slot_locktag));
+ }
  
--		if (embedded && !ybEclassHasRelVar(pathkey->pk_eclass, relids))
-+		/* Not an ordering the merge can compare on. */
-+		if (!tle)
-+			return NIL;
-+		if (embedded && index->indexkeys[tle->resno - 1] == 0)
- 		{
- 			*pathkeys = list_truncate(*pathkeys, foreach_current_index(lc));
- 
-@@ -739,10 +712,6 @@ yb_finalize_merge_scan_stream_cols(IndexOptInfo *index, Relids relids,
- 				*yb_distinct_nkeys = -1;
- 			break;
- 		}
--
--		/* Not an ordering the merge can compare on. */
--		if (!tle)
--			return NIL;
- 		sort_idxs = bms_add_member(sort_idxs, tle->resno - 1);
- 		last_sort_indexcol = Max(last_sort_indexcol, tle->resno - 1);
- 	}
-```
-
-**File**: `src/postgres/src/test/regress/expected/yb.orig.merge_scan_colocated.out` (modified, +102/-0)
-```diff
-@@ -5081,10 +5081,112 @@ EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+Set(yb_max_mer
- 
- EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+Set(yb_max_merge_scan_streams 64)*/ SELECT r5, 1, r5 FROM r5n WHERE r2 IN (0, 1, 2, 3) ORDER BY (r3 + r4) DESC, r2, n LIMIT 5;
- (output identical to previous)
-+-- Expression column tied to a plain column
-+-- Third hint is to encourage merge scan by pinning the index and disabling
-+-- sort.
-+-- TODO(#36180): the third hint should use merge scan.
-+\set query ':P :Q SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;'
-+\set Q3 '/*+IndexScan(r5n r5n_r2_expr_r21_expr1_r22_r5_idx) Set(yb_max_merge_scan_streams 64) Set(enable_sort off)*/'
-+\i :run_query
-+\set _echo_run_query :ECHO
-+\set ECHO none
-+EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+Set(yb_max_merge_scan_streams 0)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
-+                                  QUERY PLAN                                   
-+-------------------------------------------------------------------------------
-+ Limit (actual rows=5 loops=1)
-+   Output: r4, r2, n
-+   ->  Sort (actual rows=5 loops=1)
-+         Output: r4, r2, n
-+         Sort Key: r5n.r4, r5n.n
-+         Sort Method: top-N heapsort
-+         ->  Index Scan using r5n_pkey on public.r5n (actual rows=224 loops=1)
-+               Output: r4, r2, n
-+               Index Cond: (r5n.r2 = ANY ('{0,1,2,3}'::bigint[]))
-+               Storage Filter: (r5n.r4 = ((r5n.r3)::numeric + r5n.r4))
-+(10 rows)
-+
-+EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+Set(yb_max_merge_scan_streams 64)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
-+(output identical to previous)
-+EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+IndexScan(r5n r5n_r2_expr_r21_expr1_r22_r5_idx) Set(yb_max_merge_scan_streams 64) Set(enable_sort off)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
-+                                              QUERY PLAN                                               
-+-------------------------------------------------------------------------------------------------------
-+ Limit (actual rows=5 loops=1)
-+   Output: r4, r2, n
-+   ->  Sort (actual rows=5 loops=1)
-+         Output: r4, r2, n
-+         Sort Key: r5n.r4, r5n.n
-+         Sort Method: top-N heapsort
-+         ->  Index Scan using r5n_r2_expr_r21_expr1_r22_r5_idx on public.r5n (actual rows=224 loops=1)
-+               Output: r4, r2, n
-+               Index Cond: (r5n.r2 = ANY ('{0,1,2,3}'::bigint[]))
-+               Storage Filter: (r5n.r4 = ((r5n.r3)::numeric + r5n.r4))
-+(10 rows)
-+
-+/*+Set(yb_max_merge_scan_streams 0)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
-+ r4 | r2 |   n   
-+----+----+-------
-+  0 |  0 |     6
-+  0 |  0 |     8
-+  0 |  2 |    23
-+  0 |  3 | 10037
-+  0 |  0 | 20009
-+(5 rows)
-+
-+/*+Set(yb_max_merge_scan_streams 64)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
-+(output identical to previous)
-+/*+IndexScan(r5n r5n_r2_expr_r21_expr1_r22_r5_idx) Set(yb_max_merge_scan_streams 64) Set(enable_sort off)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
-+(output identical to previous)
-+\unset Q3
- -- (Reset the explain change)
- \set explain 'EXPLAIN (ANALYZE, DIST, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF)'
- -- (Drop this index)
- DROP INDEX r5n_r2_expr_r21_expr1_r22_r5_idx;
-+--
-+-- Cast expression secondary index
-+--
-+CREATE INDEX NONCONCURRENTLY ON r5n (r2 ASC, (r3::oid), r4);
-+ANALYZE r5n;
-+-- Following queries send various numbers of requests/scan various number of rows
-+-- due to non-deterministic order of equal rows in merge sort, hide their DIST
-+\set explain 'EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF)'
-+-- Order by the cast expression
-+-- TODO(#36180): this should use merge scan.
-+\set query ':P :Q SELECT r3, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) ORDER BY r3::oid, n LIMIT 5;'
-+\i :run_query
-+\set _echo_run_query :ECHO
-+\set ECHO none
-+EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+Set(yb_max_merge_scan_streams 0)*/ SELECT r3, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) ORDER BY r3::oid, n LIMIT 5;
-+                                   QUERY PLAN                                   
-+--------------------------------------------------------------------------------
-+ Limit (actual rows=5 loops=1)
-+   Output: r3, r2, n, ((r3)::oid)
-+   ->  Sort (actual rows=5 loops=1)
-+         Output: r3, r2, n, ((r3)::oid)
-+         Sort Key: r5n.r3 USING <, r5n.n
-+         Sort Method: top-N heapsort
-+         ->  Index Scan using r5n_pkey on public.r5n (actual rows=2045 loops=1)
-+               Output: r3, r2, n, (r3)::oid
-+               Index Cond: (r5n.
-```
-
-**File**: `src/postgres/src/test/regress/expected/yb.orig.merge_scan_range.out` (modified, +129/-0)
-```diff
-@@ -5140,10 +5140,139 @@ EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+Set(yb_max_mer
- 
- EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+Set(yb_max_merge_scan_streams 64)*/ SELECT r5, 1, r5 FROM r5n WHERE r2 IN (0, 1, 2, 3) ORDER BY (r3 + r4) DESC, r2, n LIMIT 5;
- (output identical to previous)
-+-- Expression column tied to a plain column
-+-- Third hint is to encourage merge scan by pinning the index and disabling
-+-- sort.
-+\set query ':P :Q SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;'
-+\set Q3 '/*+IndexScan(r5n r5n_r2_expr_r21_expr1_r22_r5_idx) Set(yb_max_merge_scan_streams 64) Set(enable_sort off)*/'
-+\i :run_query
-+\set _echo_run_query :ECHO
-+\set ECHO none
-+EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+Set(yb_max_merge_scan_streams 0)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
-+                                  QUERY PLAN                                   
-+-------------------------------------------------------------------------------
-+ Limit (actual rows=5 loops=1)
-+   Output: r4, r2, n
-+   ->  Sort (actual rows=5 loops=1)
-+         Output: r4, r2, n
-+         Sort Key: r5n.r4, r5n.n
-+         Sort Method: top-N heapsort
-+         ->  Index Scan using r5n_pkey on public.r5n (actual rows=224 loops=1)
-+               Output: r4, r2, n
-+               Index Cond: (r5n.r2 = ANY ('{0,1,2,3}'::bigint[]))
-+               Storage Filter: (r5n.r4 = ((r5n.r3)::numeric + r5n.r4))
-+(10 rows)
-+
-+EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+Set(yb_max_merge_scan_streams 64)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
-+(output identical to previous)
-+EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+IndexScan(r5n r5n_r2_expr_r21_expr1_r22_r5_idx) Set(yb_max_merge_scan_streams 64) Set(enable_sort off)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
-+                                              QUERY PLAN                                              
-+------------------------------------------------------------------------------------------------------
-+ Limit (actual rows=5 loops=1)
-+   Output: r4, r2, n
-+   ->  Incremental Sort (actual rows=5 loops=1)
-+         Output: r4, r2, n
-+         Sort Key: r5n.r4, r5n.n
-+         Presorted Key: r5n.r4
-+         Full-sort Groups: 1  Sort Method: top-N heapsort
-+         ->  Index Scan using r5n_r2_expr_r21_expr1_r22_r5_idx on public.r5n (actual rows=25 loops=1)
-+               Output: r4, r2, n
-+               Index Cond: (r5n.r2 = ANY ('{0,1,2,3}'::bigint[]))
-+               Merge Sort Key: ((r5n.r3)::numeric + r5n.r4)
-+               Merge Stream Key: r5n.r2
-+               Merge Streams: 4
-+               Merge Cond: (r5n.r2 = ANY ('{0,1,2,3}'::bigint[]))
-+               Storage Filter: (r5n.r4 = ((r5n.r3)::numeric + r5n.r4))
-+(15 rows)
-+
-+/*+Set(yb_max_merge_scan_streams 0)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
-+ r4 | r2 |   n   
-+----+----+-------
-+  0 |  0 |     6
-+  0 |  0 |     8
-+  0 |  2 |    23
-+  0 |  3 | 10037
-+  0 |  0 | 20009
-+(5 rows)
-+
-+/*+Set(yb_max_merge_scan_streams 64)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
-+(output identical to previous)
-+/*+IndexScan(r5n r5n_r2_expr_r21_expr1_r22_r5_idx) Set(yb_max_merge_scan_streams 64) Set(enable_sort off)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
-+(output identical to previous)
-+\unset Q3
- -- (Reset the explain change)
- \set explain 'EXPLAIN (ANALYZE, DIST, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF)'
- -- (Drop this index)
- DROP INDEX r5n_r2_expr_r21_expr1_r22_r5_idx;
-+--
-+-- Cast expression secondary index
-+--
-+CREATE INDEX NONCONCURRENTLY ON r5n (r2 ASC, (r3::oid), r4)
-+SPLIT AT VALUES (
-+    (1),
-+    (2),
-+    (2, 2),
-+    (2, 2, 2),
-+    (3));
-+ANALYZE r5n;
-+-- Following queries send various numbers of requests/scan various number of rows
-+-- due to non-deterministic order of equal rows in merge sort, hide their DIST
-+\set explain 'EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF)'
-+-- Order by the cast expression
-+\set query ':P :Q SELECT r3, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) ORDER BY r3::oid, n LIMIT 5;'
-+\i :run_query
-+\set _echo_run_query :ECHO
-+\set ECHO none
-+EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+Set(yb_max_merge_scan_streams 0)*/ SELECT r3, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) ORDER BY r3::oid, n LIMIT 5;
-+                                   QUERY PLAN                                   
-+--------------------------------------------------------------------------------
-+ Limit (actual rows=5 loops=1)
-+   Output: r3, r2, n, ((r3)::oid)
-+   ->  Sort (actual rows=5 loops=1)
-+         Output: r3, r2, n, ((r3)::oid)
-```
-
-**File**: `src/postgres/src/test/regress/sql/yb.orig.merge_scan_colocated.sql` (modified, +30/-0)
-```diff
-@@ -724,12 +724,42 @@ ANALYZE r5n;
- \set query ':explain :Q SELECT r5, 1, r5 FROM r5n WHERE r2 IN (0, 1, 2, 3) ORDER BY (r3 + r4) DESC, r2, n LIMIT 5;'
- \i :run_query
- 
-+-- Expression column tied to a plain column
-+-- Third hint is to encourage merge scan by pinning the index and disabling
-+-- sort.
-+-- TODO(#36180): the third hint should use merge scan.
-+\set query ':P :Q SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;'
-+\set Q3 '/*+IndexScan(r5n r5n_r2_expr_r21_expr1_r22_r5_idx) Set(yb_max_merge_scan_streams 64) Set(enable_sort off)*/'
-+\i :run_query
-+\unset Q3
-+
- -- (Reset the explain change)
- \set explain 'EXPLAIN (ANALYZE, DIST, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF)'
- 
- -- (Drop this index)
- DROP INDEX r5n_r2_expr_r21_expr1_r22_r5_idx;
- 
-+--
-+-- Cast expression secondary index
-+--
-+CREATE INDEX NONCONCURRENTLY ON r5n (r2 ASC, (r3::oid), r4);
-+ANALYZE r5n;
-+
-+-- Following queries send various numbers of requests/scan various number of rows
-+-- due to non-deterministic order of equal rows in merge sort, hide their DIST
-+\set explain 'EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF)'
-+
-+-- Order by the cast expression
-+-- TODO(#36180): this should use merge scan.
-+\set query ':P :Q SELECT r3, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) ORDER BY r3::oid, n LIMIT 5;'
-+\i :run_query
-+
-+-- (Reset the explain change)
-+\set explain 'EXPLAIN (ANALYZE, DIST, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF)'
-+
-+-- (Drop this index)
-+DROP INDEX r5n_r2_r3_r4_idx;
-+
- -- test yb_enable_advanced_index_cond_fold flag off
- SET yb_enable_advanced_index_cond_fold = off;
- \set query ':P :Q SELECT r1, r3, r4, r5, n, r2 FROM r5n WHERE r1 = 7 AND r2 IN (1, 2, 3, 4) AND r2 IN (0, 2, 4, 6, 8) ORDER BY r3, r4, r5, n LIMIT 5;'
-```
-
-**File**: `src/postgres/src/test/regress/sql/yb.orig.merge_scan_range.sql` (modified, +34/-0)
-```diff
-@@ -758,12 +758,46 @@ ANALYZE r5n;
- \set query ':explain :Q SELECT r5, 1, r5 FROM r5n WHERE r2 IN (0, 1, 2, 3) ORDER BY (r3 + r4) DESC, r2, n LIMIT 5;'
- \i :run_query
- 
-+-- Expression column tied to a plain column
-+-- Third hint is to encourage merge scan by pinning the index and disabling
-+-- sort.
-+\set query ':P :Q SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;'
-+\set Q3 '/*+IndexScan(r5n r5n_r2_expr_r21_expr1_r22_r5_idx) Set(yb_max_merge_scan_streams 64) Set(enable_sort off)*/'
-+\i :run_query
-+\unset Q3
-+
- -- (Reset the explain change)
- \set explain 'EXPLAIN (ANALYZE, DIST, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF)'
- 
- -- (Drop this index)
- DROP INDEX r5n_r2_expr_r21_expr1_r22_r5_idx;
- 
-+--
-+-- Cast expression secondary index
-+--
-+CREATE INDEX NONCONCURRENTLY ON r5n (r2 ASC, (r3::oid), r4)
-+SPLIT AT VALUES (
-+    (1),
-+    (2),
-+    (2, 2),
-+    (2, 2, 2),
-+    (3));
-+ANALYZE r5n;
-+
-+-- Following queries send various numbers of requests/scan various number of rows
-+-- due to non-deterministic order of equal rows in merge sort, hide their DIST
-+\set explain 'EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF)'
-+
-+-- Order by the cast expression
-+\set query ':P :Q SELECT r3, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) ORDER BY r3::oid, n LIMIT 5;'
-+\i :run_query
-+
-+-- (Reset the explain change)
-+\set explain 'EXPLAIN (ANALYZE, DIST, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF)'
-+
-+-- (Drop this index)
-+DROP INDEX r5n_r2_r3_r4_idx;
-+
- -- test yb_enable_advanced_index_cond_fold flag off
- SET yb_enable_advanced_index_cond_fold = off;
- \set query ':P :Q SELECT r1, r3, r4, r5, n, r2 FROM r5n WHERE r1 = 7 AND r2 IN (1, 2, 3, 4) AND r2 IN (0, 2, 4, 6, 8) ORDER BY r3, r4, r5, n LIMIT 5;'
-```
-
----
-
-### Incident Patch 3: `39d017c2` (2026-10-31)
-**Commit Message**: [#35950] DocDB: Add catalog manager locking guide to the review guide (#35951)
-
-## Summary
-
-Add more instructions for review or modifications of master code. 
-
-The REVIEW.md captures known rules for master lock order at review time.
-
-The claude rules tells LLMs to look for this section when making
-changes.
-
-**File**: `.claude/rules/catalog-manager-changes.md` (added, +20/-0)
-```diff
-@@ -0,0 +1,20 @@
-+---
-+paths:
-+  - "src/yb/master/**"
-+---
-+
-+# Catalog manager changes
-+
-+You are changing master code.  Changes to catalog objects (namespaces,
-+tables, tablets, and other copy-on-write (COW) objects) here commonly cause
-+deadlocks, objects stuck after a master leader failover, and master leader
-+stalls.
-+
-+Before you add or move a lock acquisition, a sys catalog write, or a step of a
-+multi-step operation, read the "Catalog manager changes" section of
-+`REVIEW.md` and follow it.  It covers the required lock order (leader shared
-+lock -> `CatalogManager::mutex_` -> namespace -> table -> tablet COW locks,
-+each kind sorted by id), the rule to commit COW write locks in the reverse
-+order of acquisition, resumption after failover between persisted steps,
-+deadlocks with concurrent operations, and keeping `CatalogManager::mutex_` out
-+of RPCs and IO.
-```
-
-**File**: `REVIEW.md` (modified, +31/-1)
-```diff
-@@ -114,12 +114,42 @@ Do new names and terms match the vocabulary the codebase already uses for the sa
- 
- Regardless of PR type, give these areas extra attention:
- 
--- **`src/yb/master/`** (catalog manager, leader election) — concurrency and state-machine correctness.
-+- **`src/yb/master/`** (catalog manager, leader election) — concurrency and state-machine correctness. See [Catalog manager changes](#catalog-manager-changes).
- - **`src/yb/tablet/`** and **`src/yb/docdb/`** — write/read path, MVCC, transaction handling.
- - **`src/yb/cdc/`** and **`src/yb/cdc_consumer/`** — replication-stream correctness, idempotency.
- - **`src/postgres/`** — PostgreSQL-fork merges; double-check that upstream Postgres semantics are preserved. Also check the diff against the fork conventions in `.claude/skills/pg-code-style-guide/SKILL.md`: YB additions yb-prefixed and clustered behind `/* YB ... */` marker comments, upstream-owned lines left byte-identical (no style fixes or rewrapping), and regress test changes respecting the upstream-named / `yb.port.*` / `yb.orig.*` taxonomy. Flag violations — they surface as merge conflicts on the next PG major-version merge.
- - **`managed/`** (YBA platform) — orchestration logic, especially around node lifecycle and cluster-wide ops.
- 
-+## Catalog manager changes
-+
-+For changes to catalog objects (namespaces, tables, tablets, and other COW objects) in `src/yb/master/`, check:
-+
-+1. **Lock order.** Every acquisition follows the [lock order](#catalog-manager-lock-order) below. Flag an inversion at HIGH.
-+2. **Failover between persisted steps.** An operation that persists several states to the sys catalog can stop after any of them when the master leader fails. For each persisted intermediate state, check that the new leader resumes the operation to completion or rolls it back, and that it does not leave an object stuck in that state. Flag a state that no code path on the new leader picks up at HIGH.
-+3. **Deadlocks with other operations.** List the other operations that can run on the same objects at the same time, such as tserver heartbeats, the load balancer, tablet splitting, background tasks, DDL rollback, backfill, xCluster/CDC, and snapshot restore. Check each one for a lock cycle with the change, including cycles through waits that are not locks, such as a lock held while waiting for an RPC callback that needs the same lock. Flag a possible deadlock at HIGH.
-+4. **Hold time of `CatalogManager::mutex_`.** `CatalogManager::mutex_` must be held as briefly as possible and never across an RPC, a sys catalog write, or other IO. It is a spinlock and most master leader RPCs take it, so a thread that blocks while holding it stalls those RPCs and burns CPU in the waiting threads (#23040). Long holds of COW locks can also stall other operations, but `mutex_` is far more sensitive. The leader shared lock is held for the whole duration of many RPCs and does not have this restriction. Flag at HIGH, unless it is an already existing issue, then it is MEDIUM.
-+
-+### Catalog manager lock order
-+
-+Code in `src/yb/master/` must acquire locks in this order. A thread that holds a lock may only acquire locks that come later in the list.
-+
-+1. `ScopedLeaderSharedLock::leader_shared_lock_`, usually taken with the `SCOPED_LEADER_SHARED_LOCK` macro.
-+2. `CatalogManager::mutex_`.
-+3. Namespace COW locks (`NamespaceInfo`), sorted by `namespace_id`.
-+4. Table COW locks (`TableInfo`), sorted by `table_id`.
-+5. Tablet COW locks (`TabletInfo`), sorted by `tablet_id`.
-+6. `CatalogManager::state_lock_` (this position is less certain).
-+
-+COW lock means the read/write/commit lock of a copy-on-write catalog object (`src/yb/util/rwc_lock.h`). Several objects of the same kind must be locked in id order; an unsorted loop over tablets or tables that takes write locks is a deadlock risk.
-+
-+Commit COW write locks in the reverse order of acquisition: a lock acquired later commits earlier. This applies to all COW objects: tablets commit before their table, and of two tables the one with the larger `table_id` commits first. A commit on object A waits until every reader of A releases its read lock. If the committing thread still holds a write lock on an object B that comes after A, a reader that holds A and then tries to lock B (a correct acquisition order) waits for the writer, while the writer waits for that reader: deadlock. Heartbeat processing is one such reader: it holds a table read lock while it takes tablet write locks (#10304, #32090). Debug builds assert the table/tablet case through the held-tablet-write-lock count in `src/yb/master/catalog_entity_info.h`. Code paths exempt from that assert are marked with `TableCommitLockAssertSuppression` (`src/yb/util/cow_object.h`).
-+
-+Inversions to flag at HIGH:
-+
-+- A COW lock taken before `CatalogManager::mutex_` on the same thread, or a `SCOPED_LEADER_SHARED_LOCK` taken while `mutex_` or a COW lock is held.
-+- Several objects of one kind locked without sorting by id.
-+- A CO
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #36522** (closed): [#36141] YSQL: Import 'Fix plpgsql's handling of "return simple_record_variable"' from upstream (@ShryukGrandhi)
+- **PR #36485** (2026-10-31): [BACKPORT 2025.2][#36434] YSQL: Log how many waiters a response cache fill releases (#36438) (@myang2021)
+- **PR #36484** (2026-10-31): [BACKPORT 2026.1][#36434] YSQL: Log how many waiters a response cache fill releases (#36438) (@myang2021)
+- **PR #36479** (2026-10-31): [BACKPORT 2025.2][#36287] YSQL: Make PgCronTest.GracefulLeaderMove wait for a warm worker and a running query (#36357) (@iSignal)
+- **PR #36478** (2026-10-31): [BACKPORT 2026.1][#36287] YSQL: Make PgCronTest.GracefulLeaderMove wait for a warm worker and a running query (#36357) (@iSignal)
 - **PR #36471** (2026-10-31): [pg19] YSQL: Let yb_extension members create roles in extension scripts (@teyenc)
-- **PR #36469** (2026-10-30): [#36468] Build: Add xCluster team to CODEOWNERS (@hulien22)
-- **PR #36457** (2026-10-30): [DOC-1553] Docs: Add the Scarf pixel to the docs site header (@amiramm)
-- **PR #36455** (2026-10-30): [pg19] test: Fix yb.orig.roles for PG 16+ role rules (@teyenc)
-- **PR #36452** (2026-10-31): [BACKPORT 2026.1][#35884] YSQL: Accept ysql_yb_major_version_upgrade_compatibility=15 (#35888) (@ninilo97)
-- **PR #36448** (2026-10-30): [pg19] test: Restore upstream's REFRESH MATERIALIZED VIEW block in yb.port.privileges (@teyenc)
 
 ---
 
@@ -3010,56 +2456,47 @@ changes.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [#36245] YSQL: Fix spurious wait in org.yb.pgsql.TestPgRegressIsolationObjectLoc
+## X. [#35616] CDC: Don't panic the walsender when the slot lock is already gone
 
 **RULE**:
-When implementing operations in `src/postgres/src/test/isolation/expected/yb.port.fk-partitioned-1.out`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `java/yb-pgsql/src/test/java/org/yb/pgsql/TestPgReplicationSlot.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4184fe31`: [#36245] YSQL: Fix spurious wait in org.yb.pgsql.TestPgRegressIsolationObjectLockingPorted#testPgRegress (#36246). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5a6087c8`: [#35616] CDC: Don't panic the walsender when the slot lock is already gone. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/postgres/src/test/isolation/expected/yb.port.fk-partitioned-1.out`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `java/yb-pgsql/src/test/java/org/yb/pgsql/TestPgReplicationSlot.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-Parsed test spec with 2 sessions
+  @Test
+  public void testSecondConsumerAcquiresSlotAfterHeartbeatLoss() throws Exception {
+    Map<String, String> tserverFlags = getTServerFlagsWithExclusiveLock();
+    tserverFlags.put("transaction_heartbeat_usec", Integer.toString(500000 * kMultiplier));
+    tserverFlags.put("transaction_max_missed_heartbeat_periods", "2");
+    tserverFlags.put("transaction_check_interval_usec", Integer.toString(200000 * kMultiplier));
+    restartClusterWithFlags(getMasterFlags(), tserverFlags);
 
-starting permutation: s1b s1d s1c s2b s2a s2c
-step s1b: begin;
-step s1d: delete from ppk1 where a = 1;
-step s1c: commit;
-step s2b: begin;
-step s2a: alter table pfk attach partition pfk1 for values in (1);
-ERROR:  insert or update on table "pfk1" violates foreign key constraint "pfk_a_fkey"
-step s2c: commit;
+    String slotName = "heartbeat_loss_slot";
 
-starting permutation: s1b s1d s2b s1c s2a s2c
-step s1b: begin;
-step s1d: delete from ppk1 where a = 1;
-step s2b: begin;
-step s1c: commit;
-step s2a: alter table pfk attach partition pfk1 for values in (1);
-ERROR:  insert or update on table "pfk1" violates foreign key constraint "pfk_a_fkey"
-step s2c: commit;
+    try (Statement stmt = connection.createStatement()) {
+      stmt.execute("DROP TABLE IF EXISTS t_heartbeat_loss");
+      stmt.execute("CREATE TABLE t_heartbeat_loss(k int primary key, v text)");
+    }
 
-starting permutation: s1b s1d s2b s2a s1c s2c
-step s1b: begin;
-step s1d: delete from ppk1 where a = 1;
-step s2b: begin;
-step s2a: alter table pfk attach partition pfk1 for values in (1); <waiting ...>
-step s1c: commit;
-step s2a: <... completed>
-ERROR:  insert or update on table "pfk1" violates foreign key constraint "pfk_a_fkey"
-step s2c: commit;
+    Connection replConn0 = getConnectionBuilder().withTServer(0).replicationConnect();
+    PGReplicationConnection replApi0 =
+        replConn0.unwrap(PGConnection.class).getReplicationAPI();
+    createSlot(replApi0, slotName, "test_decoding");
 
-starting permutation: s1b s2b s1d s1c s2a s2c
-step s1b: begin;
-step s2b: begin;
-step s1d: delete from ppk1 where a = 1;
-step s1c: commit;
-step s2a: alter table pfk attach partition pfk1 for values
+    PGReplicationStream stream0 = replApi0.replicationStream()
+        .logical()
+        .withSlotName(slotName)
+        .withStartPosition(LogSequenceNumber.valueOf(0L))
+        .start();
+
+    PGReplicationStrea
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3069,4 +2506,4 @@ step s2a: alter table pfk attach partition pfk1 for values
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4184fe31` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5a6087c8` are properly handled with clean fallback behavior.

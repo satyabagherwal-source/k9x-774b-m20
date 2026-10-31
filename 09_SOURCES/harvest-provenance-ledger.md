@@ -6677,3 +6677,5 @@ Every entry in this ledger must capture:
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `90b24cce` | Multi-dimensional audit evidence | 2026-10-31T18:01:47.346Z |
 | `learn-huggingface-qwen-qwen3-vl-8b-instruct` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-31T18:08:40.437Z |
 | `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `cbe1b6fa` | Multi-dimensional audit evidence | 2026-10-31T18:08:48.607Z |
+| `learn-huggingface-nomic-ai-nomic-embed-text-v1-5` | `https://huggingface.co/nomic-ai/nomic-embed-text-v1.5` | `hf-nomic-a` | Multi-dimensional audit evidence | 2026-10-31T18:15:20.888Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `a138218b` | Multi-dimensional audit evidence | 2026-10-31T18:15:38.721Z |

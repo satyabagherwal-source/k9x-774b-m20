@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T18:08:48.617Z",
+  "last_updated": "2026-10-31T18:15:38.729Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1550,14 +1550,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-      "content_hash": "a2635af6c9c848da37527c7f8860918c36d26092aadfe239ca787095470d17c2",
-      "verified_at": "2026-10-28T17:05:43.084Z",
+      "content_hash": "12f2b7b58eda7b00bedbebc8409b960c0a65549b1409c62428e15174c0facbfb",
+      "verified_at": "2026-10-31T18:15:20.897Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T17:05:43.084Z"
+      "last_updated": "2026-10-31T18:15:20.897Z"
     },
     "google/gemma-4-26B-A4B-it": {
       "repository": "google/gemma-4-26B-A4B-it",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "8cf2d75047e3f4b27b0c1a5142cabfde2885e8865978fc0f21a60d0a6b2c9248",
-      "verified_at": "2026-10-31T02:00:36.221Z",
+      "content_hash": "cb9f17a688d6366df14d58e98dff9aa09c346ffee414e1982cccc48b90712458",
+      "verified_at": "2026-10-31T18:15:38.728Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T02:00:36.221Z"
+      "last_updated": "2026-10-31T18:15:38.728Z"
     },
     "React95/React95": {
       "repository": "React95/React95",

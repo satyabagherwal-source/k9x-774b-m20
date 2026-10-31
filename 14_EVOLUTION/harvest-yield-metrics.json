@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T18:08:48.612Z",
-  "total_cycles_completed": 6645,
-  "total_learnings_persisted": 6645,
-  "total_rules_promoted": 6277,
+  "last_updated": "2026-10-31T18:15:38.725Z",
+  "total_cycles_completed": 6647,
+  "total_learnings_persisted": 6647,
+  "total_rules_promoted": 6278,
   "history": [
-    {
-      "timestamp": "2026-10-31T05:07:18.923Z",
-      "repository": "nats-io/nats-server",
-      "learningId": "learn-github-nats-io-nats-server",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T05:14:16.365Z",
-      "repository": "margelo/react-native-vision-camera",
-      "learningId": "learn-github-margelo-react-native-vision-camera",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T05:14:21.864Z",
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-31T18:08:48.612Z",
       "repository": "thaw-app/Thaw",
       "learningId": "learn-github-thaw-app-thaw",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T18:15:20.893Z",
+      "repository": "nomic-ai/nomic-embed-text-v1.5",
+      "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T18:15:38.725Z",
+      "repository": "yugabyte/yugabyte-db",
+      "learningId": "learn-github-yugabyte-yugabyte-db",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
