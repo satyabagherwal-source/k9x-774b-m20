@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-WU2Y",
-    "timestamp": "2026-10-30T10:56:08.266Z",
-    "repository": "goharbor/harbor",
-    "learningId": "learn-github-goharbor-harbor",
-    "contentHash": "3281b4347405e2e6b7909904897864cd1ca1fd7918540c691a9a00a24d76fa1f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-XECF",
-    "timestamp": "2026-10-30T10:56:34.527Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "033ab191b0d22d1adc8e8c48f1f90dbbd45510cbc42aa4dd68b63dd40f3a5ad6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-HSJF",
     "timestamp": "2026-10-30T11:12:26.043Z",
     "repository": "RevenueCat/purchases-ios",
@@ -7492,6 +7462,36 @@
     "contentHash": "c02b328f1ee68721c6f1c6d37388994e64c83911cebbd20dd49f28f9ff2abb68",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-NUIE",
+    "timestamp": "2026-10-31T19:00:42.422Z",
+    "repository": "projectcontour/contour",
+    "learningId": "learn-github-projectcontour-contour",
+    "contentHash": "262e8a76d66c9b011e459e27770c468390b4c4cf2c19844f090d2f9a4d926c9f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-PZXQ",
+    "timestamp": "2026-10-31T19:02:22.766Z",
+    "repository": "google/vit-base-patch16-224",
+    "learningId": "learn-huggingface-google-vit-base-patch16-224",
+    "contentHash": "7200a29bd5c48294bfce06807a6785d0496349fbf03838c74e199d24f279f993",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

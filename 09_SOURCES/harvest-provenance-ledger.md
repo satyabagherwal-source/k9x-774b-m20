@@ -6690,3 +6690,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-argmaxinc-whisperkit-coreml` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-10-31T18:45:47.525Z |
 | `learn-huggingface-qwen-qwen3-8b` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-31T18:52:36.617Z |
 | `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `2c04fb37` | Multi-dimensional audit evidence | 2026-10-31T18:53:42.557Z |
+| `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `ae99b5a1` | Multi-dimensional audit evidence | 2026-10-31T19:00:42.426Z |
+| `learn-huggingface-google-vit-base-patch16-224` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-31T19:02:22.770Z |

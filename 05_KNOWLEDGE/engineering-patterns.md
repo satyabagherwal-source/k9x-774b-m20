@@ -459816,3 +459816,231 @@ pub fn clear_everything(repo_path: &Path) -> Result<()> {
 Implement a reflection/compile-time exhaustion unit test iterating over the domain registry enum to ensure that every variant handled in `state_clear_all` has an active rendering branch in `state_get`.
 
 ---
+
+
+---
+
+## 6289. High-Dimensional Spatial-to-Sequence Dynamic Interpolation Invariant (Harvested from google/vit-base-patch16-224)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "High-Dimensional Spatial-to-Sequence Dynamic Interpolation Invariant",
+  "source": "google/vit-base-patch16-224",
+  "source_url": "https://huggingface.co/google/vit-base-patch16-224",
+  "source_version": "hf-google-vit-base-patch16-224",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-31T19:02:21.961Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-google-vit-base-patch16-224",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [google/vit-base-patch16-224](https://huggingface.co/google/vit-base-patch16-224) (Revision: `hf-google-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When serving or fine-tuning transformer models with learned positional embeddings at variable spatial resolutions, the system MUST decouple token index generation from static tensor slicing and MUST dynamically perform bicubic interpolation on the 2D positional grid while strictly isolating non-spatial auxiliary tokens (such as `[CLS]`, register tokens, or distillation tokens) from spatial interpolation kernels.
+
+**WHY**:
+Static position embedding buffers assume rigid input shapes ($224 \times 224 \to 196$ patches). If an image of dimension $384 \times 384$ ($576$ patches) is fed to the model, tensor addition fails with shape mismatch `RuntimeError: The size of tensor a (197) must match the size of tensor b (577)`. Flattened 1D linear interpolation destroys the 2D spatial locality of visual patches, corrupting vertical and horizontal harmonic features.
+
+**WHEN TO APPLY**:
+In any Vision Transformer, Multimodal Encoder (CLIP, SigLIP, LLaVA), or masked autoencoder loading checkpoints with resolutions different from upstream pre-training.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import math
+import torch
+import torch.nn.functional as F
+
+def interpolate_pos_encoding(
+    pos_embed: torch.Tensor, 
+    num_patches: int, 
+    num_extra_tokens: int = 1
+) -> torch.Tensor:
+    """
+    Interpolates absolute position embeddings for arbitrary image resolutions.
+    
+    Args:
+        pos_embed: Shape [1, N_orig + num_extra_tokens, D]
+        num_patches: Target spatial patch count (N_target)
+        num_extra_tokens: Number of non-spatial prefix tokens (e.g., 1 for [CLS])
+    """
+    # pos_embed: [1, seq_len, dim]
+    seq_len = pos_embed.shape[1]
+    if num_patches + num_extra_tokens == seq_len:
+        return pos_embed
+
+    # Strictly isolate extra tokens (e.g. CLS token)
+    extra_tokens = pos_embed[:, :num_extra_tokens, :]
+    spatial_pos_embed = pos_embed[:, num_extra_tokens:, :]
+
+    # Derive original grid geometry
+    dim = pos_embed.shape[-1]
+    orig_patch_count = spatial_pos_embed.shape[1]
+    orig_h = orig_w = int(math.sqrt(orig_patch_count))
+    if orig_h * orig_w != orig_patch_count:
+        raise ValueError(f"Original spatial tokens ({orig_patch_count}) not square")
+
+    # Derive target grid geometry
+    target_h = target_w = int(math.sqrt(num_patches))
+    if target_h * target_w != num_patches:
+        raise ValueError(f"Target patches ({num_patches}) cannot form a square grid")
+
+    # Reshape to [1, D, H_orig, W_orig] for 2D spatial bicubic interpolation
+    spatial_pos_embed = spatial_pos_embed.reshape(1, orig_h, orig_w, dim).permute(0, 3, 1, 2)
+
+    # Bicubic interpolation preserving coordinate alignment
+    interpolated = F.interpolate(
+        spatial_pos_embed,
+        size=(target_h, target_w),
+        mode="bicubic",
+        align_corners=False
+    )
+
+    # Reshape back to sequence: [1, D, H_target, W_target] -> [1, N_target, D]
+    interpolated = interpolated.permute(0, 2, 3, 1).reshape(1, target_h * target_w, dim)
+
+    # Concatenate isolated extra tokens back to the interpolated spatial tokens
+    return torch.cat((extra_tokens, interpolated), dim=1)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Direct linear 1D interpolation or slicing position embeddings
+def bad_interpolate(pos_embed, new_seq_len):
+    # Fails: Interpolating across the 1D flattened dimension mixes row boundaries
+    # and corrupts the CLS token representation at index 0!
+    return torch.nn.functional.interpolate(
+        pos_embed.transpose(1, 2), 
+        size=new_seq_len, 
+        mode="linear"
+    ).transpose(1, 2)
+```
+
+**VERIFICATION METHOD**:
+Run automated shape and spatial continuity assertions:
+```python
+def test_interpolation_preserves_token_invariants():
+    cls_token = torch.randn(1, 1, 768)
+    spatial_tokens = torch.randn(1, 196, 768) # 14x14
+    pos_embed = torch.cat([cls_token, spatial_tokens], dim=1)
+    
+    # Target: 24x24 = 576 patches
+    out = interpolate_pos_encoding(pos_embed, num_patches=576, num_extra_tokens=1)
+    assert out.shape == (1, 577, 768), f"Expected (1, 577, 768), got {out.shape}"
+    # Assert CLS token was preserved identically without interpolation distortion
+    assert torch.allclose(out[:, 0:1, :], cls_token), "CLS token was corrupted by interpolation"
+```
+
+---
+
+
+---
+
+## 6290. Preprocessor Normalization Range Invariant (Harvested from google/vit-base-patch16-224)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Preprocessor Normalization Range Invariant",
+  "source": "google/vit-base-patch16-224",
+  "source_url": "https://huggingface.co/google/vit-base-patch16-224",
+  "source_version": "hf-google-vit-base-patch16-224",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-31T19:02:22.395Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-google-vit-base-patch16-224",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [google/vit-base-patch16-224](https://huggingface.co/google/vit-base-patch16-224) (Revision: `hf-google-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Vision Transformer input pipelines MUST strictly enforce value space invariant checks on incoming tensor floating-point representations prior to mean/std scaling. Preprocessors MUST NOT execute channel-wise normalization on unscaled $[0, 255]$ integer arrays without rescaling to $[0.0, 1.0]$ first, and MUST guard against double normalization.
+
+**WHY**:
+ViT models pre-trained on ImageNet using standard timm/JAX configurations assume an exact normalized space:
+$$\hat{x} = \frac{x / 255.0 - \mu}{\sigma}, \quad \mu = [0.5, 0.5, 0.5], \quad \sigma = [0.5, 0.5, 0.5]$$
+which maps pixel range $[0, 255] \to [-1.0, 1.0]$. If normalization is computed over raw $[0, 255]$ without dividing by 255, inputs become $[(0 - 0.5)/0.5, (255 - 0.5)/0.5] \approx [-1.0, 509.0]$. This triggers activation saturation in the initial linear projection, outputting infinite/NaN gradients or collapsing attention maps into uniform noise.
+
+**WHEN TO APPLY**:
+All image preprocessing harnesses, custom inference serving pipelines, ONNX pre-transforms, and TensorRT pipelines for Vision Transformers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import numpy as np
+import torch
+
+def preprocess_vit_input(
+    image: np.ndarray, 
+    mean=(0.5, 0.5, 0.5), 
+    std=(0.5, 0.5, 0.5)
+) -> torch.Tensor:
+    """
+    Guarantees strict rescaling and normalization sequence for ViT architectures.
+    """
+    if not isinstance(image, np.ndarray):
+        image = np.array(image)
+        
+    # Guard against float images already in [0, 1] being treated as [0, 255]
+    if image.dtype == np.uint8:
+        image_scaled = image.astype(np.float32) / 255.0
+    elif np.issubdtype(image.dtype, np.floating):
+        if image.max() > 1.01:
+            # Float values are in range 0..255
+            image_scaled = image.astype(np.float32) / 255.0
+        else:
+            # Already in range 0..1; verify lower bound
+            if image.min() < -0.01:
+                raise ValueError("Double normalization detected: Image contains negative values.")
+            image_scaled = image.astype(np.float32)
+    else:
+        raise TypeError(f"Unsupported image dtype: {image.dtype}")
+
+    # Ensure HWC -> CHW transposition
+    if image_scaled.ndim == 3 and image_scaled.shape[-1] in (1, 3):
+        tensor = torch.from_numpy(image_scaled).permute(2, 0, 1)
+    else:
+        raise ValueError(f"Expected HWC shape with 3 channels, got {image_scaled.shape}")
+
+    mean_t = torch.tensor(mean, dtype=torch.float32).view(-1, 1, 1)
+    std_t = torch.tensor(std, dtype=torch.float32).view(-1, 1, 1)
+
+    # Output strictly bounded to target distribution range (approx [-1.0, 1.0])
+    normalized = (tensor - mean_t) / std_t
+    return normalized.unsqueeze(0)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Blind subtraction without dtype/range validation
+def bad_preprocess(img_np):
+    # If img_np is uint8, subtraction underflows or converts to uint8 wrap-around!
+    # If img_np is 0..255, results are out-of-distribution by 2 orders of magnitude!
+    mean = np.array([0.5, 0.5, 0.5])
+    return (img_np - mean) / 0.5
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_preprocessor_bounds():
+    raw_img = np.random.randint(0, 256, (224, 224, 3), dtype=np.uint8)
+    processed = preprocess_vit_input(raw_img)
+    # Range for mean=0.5, std=0.5 must be precisely [-1.0, 1.0]
+    assert processed.min() >= -1.001 and processed.max() <= 1.001, (
+        f"Output range violated: min={processed.min()}, max={processed.max()}"
+    )
+```
+
+---

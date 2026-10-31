@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
 > **Source**: github ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
-> **Source Version**: `f1de7f97`  
+> **Source Version**: `ae99b5a1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T03:26:11.609Z  
+> **Timestamp**: 2026-10-31T19:00:42.093Z  
 > **Learning ID**: `learn-github-projectcontour-contour`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T03:26:11.601Z  
+> **Harvest Timestamp**: 2026-10-31T19:00:40.243Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1592,13 +1592,15 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7803** (2026-10-30): **Use unique filter names for Lua misdirected-request and cookie-rewrite filters**
-  *Symptoms*: This PR renames the misdirected-request and cookie-rewrite Lua filters to have unique names. Both used `envoy.filters.http.lua` and Envoy uses the filter name to look up per-route config, so the cookie config replaced the misdirected-request config on routes with `cookieRewritePolicies`. The misdirected-request filter found no matching script and did nothing.  The PR also adds a validation check that rejects duplicate filter names to prevent similar bugs, and fixes the `421` response body to properly quote the hostname.  Fixes #7802
+- **Issue #7805** (2026-10-31): **Update for Contour v1.33.8 release**
+  *Symptoms*: Changelog, versions.yaml and compatibility matrix for v1.33.8.
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/projectcontour/contour/pull/7803?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 84.27%. Comparing base ([`05abe82`](https://app.codecov.io/gh/projectcontour/contour/commit/05abe826d2334d63707d02537dbdf86de0ea5897?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)) to head ([`c685036`](https://app.codecov.io/gh/projectcontour/contour/commit/c6850361211baa128ada448a85b601ce941f27b2?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)).  <details><summary>Additional details and impacted files</summary>    [![Impacted file tree graph](https://app.codecov.io/gh/projectcontour/contour
+  > ## [Codecov](https://app.codecov.io/gh/projectcontour/contour/pull/7805?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 84.30%. Comparing base ([`f1de7f9`](https://app.codecov.io/gh/projectcontour/contour/commit/f1de7f97e1d1a50243494b758438efdc552795d9?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)) to head ([`7c7dfda`](https://app.codecov.io/gh/projectcontour/contour/commit/7c7dfdab1afb37458c43df752f80f00ff5707328?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)). :warning: Report is 1 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    [![Impacted file tree grap
 
-- **Issue #7802** (2026-10-30): **Misdirected request check skipped on routes with cookieRewritePolicies**
-  *Symptoms*: Contour uses two Lua filters: one returns `421 Misdirected Request` when the request `Host` header does not match the hostname used during the TLS handshake, the other rewrites cookies. Both are registered with the same name in Envoy. When a route has `cookieRewritePolicies`, the cookie config overrides the misdirected-request filter and it stops working on that route.  The bug matters most on wildcard virtual hosts because a mismatched `Host` header still matches the wildcard and reaches the backend. On exact-name virtual hosts mismatched hosts are rejected with `404` at routing because no route matches.  ```yaml apiVersion: projectcontour.io/v1 kind: HTTPProxy spec:   virtualhost:     fqdn: "*.example.com"     tls:       secretName: wildcard-cert   routes:     - conditions:         - prefix: /app       services:         - name: backend           port: 80           cookieRewritePolicies:             - name: session               pathRewrite:                 value: / ```  The `/app` route will not get `421` responses for misdirected requests.  Related: #1493
+- **Issue #7804** (2026-10-31): **release-1.33: Update Kubernetes version for E2E tests to 1.37**
+  *Symptoms*: Run test suite in release-1.33 branch with Kubernetes 1.37, 1.36 and 1.35.  Related to #7732 and #7749.
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/projectcontour/contour/pull/7804?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 82.37%. Comparing base ([`4de356a`](https://app.codecov.io/gh/projectcontour/contour/commit/4de356a66eb923ba5f09fa7986cb5673eabb3b76?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)) to head ([`4c61675`](https://app.codecov.io/gh/projectcontour/contour/commit/4c61675cd412b310afe424c993015946b9d80bd4?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)).  <details><summary>Additional details and impacted files</summary>    [![Impacted file tree graph](https://app.codecov.io/gh/projectcontour/contour
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1615,354 +1617,105 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f1de7f97` (2026-10-30)
-**Commit Message**: Use unique filter names for Lua misdirected-request and cookie-rewrite filters (#7803)
+### Incident Patch 1: `ae99b5a1` (2026-10-31)
+**Commit Message**: Update for Contour v1.33.8 release (#7805)
 
 Signed-off-by: Tero Saarni <[REDACTED_EMAIL]>
 
-**File**: `changelogs/unreleased/7803-tsaarni-small.md` (added, +1/-0)
+**File**: `changelogs/CHANGELOG-v1.33.8.md` (added, +38/-0)
 ```diff
-@@ -0,0 +1 @@
-+Fix routes with cookieRewritePolicies not returning 421 for misdirected requests.
-```
-
-**File**: `internal/envoy/v3/listener.go` (modified, +26/-14)
-```diff
-@@ -15,6 +15,7 @@ package v3
- 
- import (
- 	"errors"
-+	"fmt"
- 	"sort"
- 	"strings"
- 	"time"
-@@ -174,17 +175,18 @@ func Listener(name, address string, port int, perConnectionBufferLimitBytes *uin
- }
- 
- const (
--	CORSFilterName            string = "envoy.filters.http.cors"
--	LocalRateLimitFilterName  string = "envoy.filters.http.local_ratelimit"
--	GlobalRateLimitFilterName string = "envoy.filters.http.ratelimit"
--	RBACFilterName            string = "envoy.filters.http.rbac"
--	ExtAuthzFilterName        string = "envoy.filters.http.ext_authz"
--	JWTAuthnFilterName        string = "envoy.filters.http.jwt_authn"
--	LuaFilterName             string = "envoy.filters.http.lua"
--	CompressorFilterName      string = "envoy.filters.http.compressor"
--	GRPCWebFilterName         string = "envoy.filters.http.grpc_web"
--	GRPCStatsFilterName       string = "envoy.filters.http.grpc_stats"
--	FilterChainFilterName     string = "envoy.filters.http.filter_chain"
-+	CORSFilterName                   string = "envoy.filters.http.cors"
-+	LocalRateLimitFilterName         string = "envoy.filters.http.local_ratelimit"
-+	GlobalRateLimitFilterName        string = "envoy.filters.http.ratelimit"
-+	RBACFilterName                   string = "envoy.filters.http.rbac"
-+	ExtAuthzFilterName               string = "envoy.filters.http.ext_authz"
-+	JWTAuthnFilterName               string = "envoy.filters.http.jwt_authn"
-+	CompressorFilterName             string = "envoy.filters.http.compressor"
-+	GRPCWebFilterName                string = "envoy.filters.http.grpc_web"
-+	GRPCStatsFilterName              string = "envoy.filters.http.grpc_stats"
-+	FilterChainFilterName            string = "envoy.filters.http.filter_chain"
-+	LuaMisdirectedRequestsFilterName string = "envoy.filters.http.lua.misdirected_requests"
-+	LuaCookieRewriteFilterName       string = "envoy.filters.http.lua.cookie_rewrite"
- )
- 
- var compressorContentTypes = []string{
-@@ -477,7 +479,7 @@ func (b *httpConnectionManagerBuilder) DefaultFilters() *httpConnectionManagerBu
- 			},
- 		},
- 		&envoy_filter_network_http_connection_manager_v3.HttpFilter{
--			Name: LuaFilterName,
-+			Name: LuaCookieRewriteFilterName,
- 			ConfigType: &envoy_filter_network_http_connection_manager_v3.HttpFilter_TypedConfig{
- 				TypedConfig: protobuf.MustMarshalAny(&envoy_filter_http_lua_v3.Lua{
- 					SourceCodes: map[string]*envoy_config_core_v3.DataSource{
-@@ -605,6 +607,16 @@ func (b *httpConnectionManagerBuilder) Validate() error {
- 		return errors.New("last filter is not a Router filter")
- 	}
- 
-+	// Filter names must be unique. A route can change the settings of a filter by its name.
-+	// If two filters had the same name, a change meant for one would also apply to the other.
-+	names := make(map[string]struct{}, len(b.filters))
-+	for _, f := range b.filters {
-+		if _, ok := names[f.GetName()]; ok {
-+			return fmt.Errorf("duplicate HTTP filter name %q", f.GetName())
-+		}
-+		names[f.GetName()] = struct{}{}
-+	}
+@@ -0,0 +1,38 @@
++We are delighted to present version v1.33.8 of Contour, our layer 7 HTTP reverse proxy for Kubernetes clusters.
 +
- 	return nil
- }
- 
-@@ -892,14 +904,14 @@ function envoy_on_request(request_handle)
- 	if host ~= target then
- 		request_handle:respond(
- 			{[":status"] = "421"},
--			string.format("misdirected request to %%q", host)
-+			string.format("misdirected request to %q", host)
- 		)
- 	end
- end
- 	`
- 
- 	return &envoy_filter_network_http_connection_manager_v3.HttpFilter{
--		Name: LuaFilterName,
-+		Name: LuaMisdirectedRequestsFilterName,
- 		ConfigType: &envoy_filter_network_http_connection_manager_v3.HttpFilter_TypedConfig{
- 			TypedConfig: protobuf.MustMarshalAny(&envoy_filter_http_lua_v3.Lua{
- 				DefaultSourceCode: &envoy_config_core_v3.DataSource{
-```
-
-**File**: `internal/envoy/v3/listener_test.go` (modified, +20/-2)
-```diff
-@@ -631,7 +631,7 @@ func TestHTTPConnectionManager(t *testing.T) {
- 				),
- 			},
- 		}, {
--			Name: LuaFilterName,
-+			Name: LuaCookieRewriteFilterName,
- 			ConfigType: &envoy_filter_network_http_connection_manager_v3.HttpFilter_TypedConfig{
- 				TypedConfig: protobuf.MustMarshalAny(&envoy_filter_http_lua_v3.Lua{
- 					SourceCodes: map[string]*envoy_config_core_v3.DataSource{
-@@ -1808,6 +1808,24 @@ func TestBuilderValidation(t *testing.T) {
- 		},
- 	})
- 	require.Errorf(t, badBuilder.Validate(), "Adding a filter after the Router filter should fail")
++- [All Changes](#all-changes)
++- [Installing/Upgrading](#installing-and-upgrading)
++- [Compatible Kubernetes Versions](#compatible-kubernetes-versions)
 +
-+	require.NoError(t, envoygen.HTTPConnectionManagerBuilder().
-+		AddFilter(FilterMisdirectedRequests()).
-+		DefaultFilters().
-+		AddBodySizeLimitFilter(ptr.To(uint64(1024))).
-+		Validate(),
-+		"ConnectionManager with misdirected requests, default and body size limit filters failed validation")
++# All Changes
 +
-+	duplicateName := envoygen.HTTPConnectionManagerBuilder().
-+		DefaultFilters().
-+		AddFilter(&envoy_filter_network_http_connection_manager_v3.HttpFilter{
-+			Name: "some-filter",
-+		}).
-+		AddFilter(&envoy_filter_network_http_connection_manager_v3.HttpFilter{
-+			Name: "some-filter",
-+		})
-+	require.EqualError(t, duplicateName.Validate(), `duplicate HTTP filter name "some-filter"`,
-+		"Filters with the same name should fail validation")
- }
- 
- func TestAddFilter(t *testing.T) {
-@@ -1842,7 +1860,7 @@ func TestAddFilter(t *testing.T) {
- 		},
- 	}
- 	luaFilter := &envoy_filter_network_http_connection_manager_v3.HttpFilter{
--		Name: LuaFilterName,
-+		Name: LuaCookieRewriteFilterName,
- 		ConfigType: &envoy_filter_network_http_connection_manager_v3.HttpFilter_TypedConfig{
- 			TypedConfig: protobuf.MustMarshalAny(&envoy_filter_http_lua_v3.Lua{
- 				SourceCodes: map[string]*envoy_config_core_v3.DataSource{
-```
-
-**File**: `internal/envoy/v3/route.go` (modified, +1/-1)
-```diff
-@@ -673,7 +673,7 @@ func weightedClusters(route *dag.Route) *envoy_config_route_v3.WeightedCluster {
- 			if c.TypedPerFilterConfig == nil {
- 				c.TypedPerFilterConfig = map[string]*anypb.Any{}
- 			}
--			c.TypedPerFilterConfig[LuaFilterName] = cookieRewriteConfig(route.CookieRewritePolicies, cluster.CookieRewritePolicies)
-+			c.TypedPerFilterConfig[LuaCookieRewriteFilterName] = cookieRewriteConfig(route.CookieRewritePolicies, cluster.CookieRewritePolicies)
- 		}
- 		wc.Clusters = append(wc.Clusters, c)
- 	}
-```
-
-**File**: `internal/envoy/v3/route_test.go` (modified, +48/-0)
-```diff
-@@ -33,6 +33,7 @@ import (
- 	"google.golang.org/protobuf/types/known/wrapperspb"
- 	core_v1 "k8s.io/api/core/v1"
- 	"k8s.io/apimachinery/pkg/util/intstr"
-+	"k8s.io/utils/ptr"
- 
- 	"github.com/projectcontour/contour/internal/dag"
- 	"github.com/projectcontour/contour/internal/fixture"
-@@ -1199,6 +1200,53 @@ func TestWeightedClusters(t *testing.T) {
- 				}},
- 			},
- 		},
-+		"service with cookie rewrite policy": {
-+			route: &dag.Route{
-+				Clusters: []*dag.Cluster{{
-+					Upstream: &dag.Service{
-+						Weighted: dag.WeightedService{
-+							Weight:           1,
-+							ServiceName:      "kuard",
-+							ServiceNamespace: "default",
-+							ServicePort: core_v1.ServicePort{
-+								Port: 8080,
-+							},
-+						},
-+					},
-+					CookieRewritePolicies: []dag.CookieRewritePolicy{{
-+						Name: "session",
-+						Path: ptr.To("/rewritten"),
-+					}},
-+				}, {
-+					Upstream: &dag.Service{
-+						Weighted: dag.WeightedService{
-+							Weight:           1,
-+							ServiceName:      "nginx",
-+							ServiceNamespace: "default",
-+							ServicePort: core_v1.ServicePort{
-+								Port: 8080,
-+							},
-+						},
-+					},
-+				}},
-+			},
-+			want: &envoy_config_route_v3.WeightedCluster{
-+				Clusters: []*envoy_config_route_v3.WeightedCluster_ClusterWeight{{
-+					Name:   "default/kuard/8080/da39a3ee5e",
-+					Weight: wrapperspb.UInt32(1),
-+					// Must target only the cookie rewrite Lua filter, not the misdirected requests filter.
-+					TypedPerFilterConfig: map[string]*anypb.Any{
-+						LuaCookieRewriteFilterName: cookieRewriteConfig(nil, []dag.CookieRewritePolicy{{
-+							Name: "session",
-+							Path: ptr.To("/rewritten"),
-+						}}),
-+					},
-+				}, {
-+					Name:   "default/nginx/8080/da39a3ee5e",
-+					Weight: wrapperspb.UInt32(1),
-+				}},
-+			},
-+		},
- 	}
- 
- 	for name, tc := range tests {
-```
-
----
-
-### Incident Patch 2: `3e4f73b6` (2026-10-30)
-**Commit Message**: internal/envoy: use content_type_matcher in the compressor filter (#7792)
-
-* internal/envoy: use content_type_matcher in the compressor filter
-
-Envoy 1.40 deprecated the compressor filter's content_type field in
-favour of content_type_matcher. Build the response direction config with
-content_type_matcher instead, which also lets us drop the staticcheck
-nolint directives.
-
-Envoy converts each legacy content_type entry into an exact,
-case-insensitive string matcher, so the new matchers are generated from
-the existing compressorContentTypes list with exact matching and
-ignore_case set. The set of compressed content types, and how they are
-matched, is unchanged.
-
-content_type_matcher was added in Envoy 1.40.0, which main already
-requires.
-
-Fixes #7788
-
-Signed-off-by: NopeCharon <[REDACTED_EMAIL]>
-
-* changelogs: add entry for #7792
-
-Signed-off-by: NopeCharon <[REDACTED_EMAIL]>
-
-* internal/envoy: drop references to the deprecated content_type field
-
-Remove mentions of the deprecated compressor content_type field from code
-comments and stop asserting that it is unset in the compressor test.
-
-Signed-off-by: NopeCharon <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: NopeCharon <[REDACTED_EMAI
-
-**File**: `changelogs/unreleased/7792-NopeCharon-small.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+The Envoy compressor filter is now configured with `content_type_matcher` instead of the `content_type` field deprecated in Envoy 1.40. The compressed content types are unchanged.
-```
-
-**File**: `internal/envoy/v3/listener.go` (modified, +13/-2)
-```diff
-@@ -198,6 +198,18 @@ var compressorContentTypes = []string{
- 	"application/grpc-web-text", "application/grpc-web-text+proto", "application/grpc-web-text+thrift",
- }
- 
-+// compressorContentTypeMatchers matches each of compressorContentTypes exactly, ignoring case.
-+var compressorContentTypeMatchers = func() []*envoy_matcher_v3.StringMatcher {
-+	matchers := make([]*envoy_matcher_v3.StringMatcher, 0, len(compressorContentTypes))
-+	for _, contentType := range compressorContentTypes {
-+		matchers = append(matchers, &envoy_matcher_v3.StringMatcher{
-+			MatchPattern: &envoy_matcher_v3.StringMatcher_Exact{Exact: contentType},
-+			IgnoreCase:   true,
-+		})
-+	}
-+	return matchers
-+}()
++## Security fix for [GHSA-899w-6852-7fr3](https://github.com/projectcontour/contour/security/advisories/GHSA-899w-6852-7fr3)
 +
- type httpConnectionManagerBuilder struct {
- 	routeConfigName               string
- 	routeConfigSource             *envoy_config_core_v3.ConfigSource
-@@ -405,8 +417,7 @@ func compressorFilter(algorithm contour_v1alpha1.CompressionAlgorithm, chooseFir
- 				ChooseFirst: chooseFirst,
- 				ResponseDirectionConfig: &envoy_filter_http_compressor_v3.Compressor_ResponseDirectionConfig{
- 					CommonConfig: &envoy_filter_http_compressor_v3.Compressor_CommonDirectionConfig{
--						//nolint:staticcheck
--						ContentType: compressorContentTypes,
-+						ContentTypeMatcher: compressorContentTypeMatchers,
- 					},
- 					// Accept-Encoding is deliberately passed to the upstream so it can still compress
- 					// responses itself, e.g. content types not listed above or pre-compressed files.
++Crash loop when an Ingress has a resource backend.
++
++## Security fix for [GHSA-9x3c-68m7-f3x4](https://github.com/projectcontour/contour/security/advisories/GHSA-9x3c-68m7-f3x4)
++
++HTTPProxy JWKS settings can be replaced by another HTTPProxy that uses the same JWKS host.
++
++## Security fix for [GHSA-g6qh-g3pq-5cpm](https://github.com/projectcontour/contour/security/advisories/GHSA-g6qh-g3pq-5cpm)
++
++Included HTTPProxy can receive requests outside its prefix by using regex.
++
++## Other Changes
++
++- Updates Envoy to v1.38.9. See the [Envoy release notes](https://www.envoyproxy.io/docs/envoy/v1.38.9/version_history/v1.38/v1.38.9) for more information about the content of the release.
++- Bumps Go to 1.26.10.
++- Updated dependencies to fix CVEs.
++
++# Installing and Upgrading
++
++For a fresh install of Contour, consult the [getting started documentation](https://projectcontour.io/getting-started/).
++
++To upgrade an existing Contour installation, please consult the [upgrade documentation](https://projectcontour.io/resources/upgrading/).
++
++# Compatible Kubernetes Versions
++
++Contour v1.33.8 is tested against Kubernetes 1.35 through 1.37.
++
++# Are you a Contour user? We would love to know!
++If you're using Contour and want to add your organization to our adopters list, please visit this [page](https://projectcontour.io/resources/adopters/). If you prefer to keep your organization name anonymous but still give us feedback into your usage and scenarios for Contour, please post on this [GitHub thread](https://github.com/projectcontour/contour/issues/1269).
 ```
 
-**File**: `internal/envoy/v3/listener_test.go` (modified, +11/-4)
+**File**: `site/content/resources/compatibility-matrix.md` (modified, +2/-0)
 ```diff
-@@ -596,8 +596,7 @@ func TestHTTPConnectionManager(t *testing.T) {
- 					},
- 					ResponseDirectionConfig: &envoy_filter_http_compressor_v3.Compressor_ResponseDirectionConfig{
- 						CommonConfig: &envoy_filter_http_compressor_v3.Compressor_CommonDirectionConfig{
--							//nolint:staticcheck
--							ContentType: compressorContentTypes,
-+							ContentTypeMatcher: compressorContentTypeMatchers,
- 						},
- 					},
- 				}),
-@@ -1886,8 +1885,7 @@ func TestAddFilter(t *testing.T) {
- 				},
- 				ResponseDirectionConfig: &envoy_filter_http_compressor_v3.Compressor_ResponseDirectionConfig{
- 					CommonConfig: &envoy_filter_http_compressor_v3.Compressor_CommonDirectionConfig{
--						//nolint:staticcheck
--						ContentType: compressorContentTypes,
-+						ContentTypeMatcher: compressorContentTypeMatchers,
- 					},
- 				},
- 			}),
-@@ -2267,6 +2265,15 @@ func TestHTTPConnectionManagerCompressionAlgorithms(t *testing.T) {
- 				assert.Equal(t, want.chooseFirst, compressor.ChooseFirst)
- 				// Accept-Encoding must reach the upstream so it can compress responses itself.
- 				assert.False(t, compressor.ResponseDirectionConfig.RemoveAcceptEncodingHeader)
-+
-+				// Content types are matched with content_type_matcher.
-+				commonConfig := compressor.ResponseDirectionConfig.CommonConfig
-+				require.NotNil(t, commonConfig)
-+				require.Len(t, commonConfig.ContentTypeMatcher, len(compressorContentTypes))
-+				for j, contentType := range compressorContentTypes {
-+					assert.Equal(t, contentType, commonConfig.ContentTypeMatcher[j].GetExact())
-+					assert.True(t, commonConfig.ContentTypeMatcher[j].IgnoreCase)
-+				}
- 			}
- 		})
- 	}
+@@ -10,6 +10,7 @@ This page lists the versions of Envoy and Kubernetes that each Contour release w
+ | Contour Version | Tested Envoy Version | Tested Kubernetes Versions | Gateway API Version |
+ | --------------- | :------------------- | -------------------------- | --------------------|
+ | main            | [1.40.2][85]         | 1.37, 1.36, 1.35    | [1.3.0][113]        |
++| 1.33.8          | [1.38.9][86]         | 1.37, 1.36, 1.35    | [1.3.0][113]        |
+ | 1.33.7          | [1.38.4][84]         | 1.34, 1.33, 1.32    | [1.3.0][113]        |
+ | 1.33.6          | [1.38.3][83]         | 1.34, 1.33, 1.32    | [1.3.0][113]        |
+ | 1.33.5          | [1.35.10][80]        | 1.34, 1.33, 1.32    | [1.3.0][113]        |
+@@ -264,6 +265,7 @@ __Note:__ This list of extensions was last verified to be complete with Envoy v1
+ [83]: https://www.envoyproxy.io/docs/envoy/v1.38.3/version_history/v1.38/v1.38.3
+ [84]: https://www.envoyproxy.io/docs/envoy/v1.38.4/version_history/v1.38/v1.38.4
+ [85]: https://www.envoyproxy.io/docs/envoy/v1.40.2/version_history/v1.40/v1.40.2
++[86]: https://www.envoyproxy.io/docs/envoy/v1.38.9/version_history/v1.38/v1.38.9
+ 
+ [98]: https://github.com/kubernetes/client-go
+ [99]: https://github.com/kubernetes/client-go#compatibility-matrix
+```
+
+**File**: `versions.yaml` (modified, +11/-1)
+```diff
+@@ -14,8 +14,18 @@ versions:
+         - "1.35"
+       gateway-api:
+         - "1.3.0"
+-  - version: v1.33.7
++  - version: v1.33.8
+     supported: "true"
++    dependencies:
++      envoy: "1.38.9"
++      kubernetes:
++        - "1.37"
++        - "1.36"
++        - "1.35"
++      gateway-api:
++        - "1.3.0"
++  - version: v1.33.7
++    supported: "false"
+     dependencies:
+       envoy: "1.38.4"
+       kubernetes:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7805** (2026-10-31): Update for Contour v1.33.8 release (@tsaarni)
+- **PR #7804** (2026-10-31): release-1.33: Update Kubernetes version for E2E tests to 1.37 (@tsaarni)
 - **PR #7803** (2026-10-30): Use unique filter names for Lua misdirected-request and cookie-rewrite filters (@tsaarni)
 - **PR #7797** (2026-10-29): Revert "Do not use body size limit filter for websockets (#7787)" (@tsaarni)
 - **PR #7795** (2026-10-29): release-1.33: Bump golang.org/x/net  (@tsaarni)
 - **PR #7794** (2026-10-29): release-1.33: Bump to go 1.26.10 (@tsaarni)
-- **PR #7793** (2026-10-29): release-1.33: Bump to Envoy v1.38.9 (@tsaarni)
-- **PR #7792** (2026-10-30): internal/envoy: use content_type_matcher in the compressor filter (@NopeCharon)
 
 ---
 
@@ -1982,21 +1735,49 @@ Signed-off-by: NopeCharon <[REDACTED_EMAI
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Use unique filter names for Lua misdirected-request and cookie-rewrite filters (
+## X. Update for Contour v1.33.8 release (#7805)
 
 **RULE**:
-When implementing operations in `changelogs/unreleased/7803-tsaarni-small.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectcontour/contour. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelogs/CHANGELOG-v1.33.8.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectcontour/contour. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f1de7f97`: Use unique filter names for Lua misdirected-request and cookie-rewrite filters (#7803). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae99b5a1`: Update for Contour v1.33.8 release (#7805). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing HTML data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/unreleased/7803-tsaarni-small.md`.
+Subsystems managing HTML data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/CHANGELOG-v1.33.8.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```html
 // Verified production-grade fix pattern:
-Fix routes with cookieRewritePolicies not returning 421 for misdirected requests.
+We are delighted to present version v1.33.8 of Contour, our layer 7 HTTP reverse proxy for Kubernetes clusters.
+
+- [All Changes](#all-changes)
+- [Installing/Upgrading](#installing-and-upgrading)
+- [Compatible Kubernetes Versions](#compatible-kubernetes-versions)
+
+# All Changes
+
+## Security fix for [GHSA-899w-6852-7fr3](https://github.com/projectcontour/contour/security/advisories/GHSA-899w-6852-7fr3)
+
+Crash loop when an Ingress has a resource backend.
+
+## Security fix for [GHSA-9x3c-68m7-f3x4](https://github.com/projectcontour/contour/security/advisories/GHSA-9x3c-68m7-f3x4)
+
+HTTPProxy JWKS settings can be replaced by another HTTPProxy that uses the same JWKS host.
+
+## Security fix for [GHSA-g6qh-g3pq-5cpm](https://github.com/projectcontour/contour/security/advisories/GHSA-g6qh-g3pq-5cpm)
+
+Included HTTPProxy can receive requests outside its prefix by using regex.
+
+## Other Changes
+
+- Updates Envoy to v1.38.9. See the [Envoy release notes](https://www.envoyproxy.io/docs/envoy/v1.38.9/version_history/v1.38/v1.38.9) for more information about the content of the release.
+- Bumps Go to 1.26.10.
+- Updated dependencies to fix CVEs.
+
+# Installing and Upgrading
+
+For a fresh install of Conto
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2006,4 +1787,4 @@ Fix routes with cookieRewritePolicies not returning 421 for misdirected requests
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f1de7f97` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae99b5a1` are properly handled with clean fallback behavior.

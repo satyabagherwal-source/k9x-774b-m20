@@ -1235,8 +1235,8 @@
     "sourceUrl": "https://huggingface.co/google/vit-base-patch16-224",
     "sourceVersion": "hf-google-vit-base-patch16-224",
     "license": "Open-Source",
-    "contentHash": "6a62e9b17ac12820b8bf6d23cd785aade88f14e462d86160b5d5459a022884ac",
-    "lastHarvestedAt": "2026-10-28T17:42:43.075Z",
+    "contentHash": "7200a29bd5c48294bfce06807a6785d0496349fbf03838c74e199d24f279f993",
+    "lastHarvestedAt": "2026-10-31T19:02:22.770Z",
     "learningId": "learn-huggingface-google-vit-base-patch16-224"
   },
   "hf-google-gemma-4-31b-it": {
@@ -6793,10 +6793,10 @@
     "repository": "projectcontour/contour",
     "platform": "github",
     "sourceUrl": "https://github.com/projectcontour/contour",
-    "sourceVersion": "f1de7f97",
+    "sourceVersion": "ae99b5a1",
     "license": "Apache-2.0",
-    "contentHash": "cad9af0e69e9554c4b7e72732800c2726e87f886bb1a9c60de2142d451a33cdb",
-    "lastHarvestedAt": "2026-10-31T03:26:12.300Z",
+    "contentHash": "262e8a76d66c9b011e459e27770c468390b4c4cf2c19844f090d2f9a4d926c9f",
+    "lastHarvestedAt": "2026-10-31T19:00:42.426Z",
     "learningId": "learn-github-projectcontour-contour"
   },
   "topoteretes-cognee": {

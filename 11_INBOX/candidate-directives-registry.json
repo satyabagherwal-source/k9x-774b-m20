@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T16:39:50.058Z",
+  "last_updated": "2026-10-31T19:00:42.433Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3533,6 +3533,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-NUIP",
+      "directive_title": "Update for Contour v1.33.8 release (#7805)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "projectcontour/contour",
+      "source_commit": "ae99b5a1",
+      "date_staged": "2026-10-31",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-projectcontour-contour"
     }
   ]
 }

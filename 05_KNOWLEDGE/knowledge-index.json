@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T18:53:42.474Z",
+  "last_updated": "2026-10-31T19:02:22.681Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -24052,7 +24052,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/vit-base-patch16-224",
       "source_version": "hf-google-vit-base-patch16-224",
-      "content_hash": "6a62e9b17ac12820b8bf6d23cd785aade88f14e462d86160b5d5459a022884ac",
+      "content_hash": "7200a29bd5c48294bfce06807a6785d0496349fbf03838c74e199d24f279f993",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md",
       "promoted_rules": [
@@ -24085,6 +24085,16 @@
           "number": 4516,
           "title": "CLS Token Extraction Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6289,
+          "title": "High-Dimensional Spatial-to-Sequence Dynamic Interpolation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6290,
+          "title": "Preprocessor Normalization Range Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -24104,7 +24114,7 @@
         "learn-huggingface-hf-google-vit-base-patch16-224-mv40bvhc",
         "learn-huggingface-hf-google-vit-base-patch16-224-mv4eaiut"
       ],
-      "verified_at": "2026-10-28T17:42:42.970Z",
+      "verified_at": "2026-10-31T19:02:22.660Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46624,8 +46634,8 @@
       "slug": "projectcontour-contour",
       "platform": "github",
       "source_url": "https://github.com/projectcontour/contour",
-      "source_version": "f1de7f97",
-      "content_hash": "cad9af0e69e9554c4b7e72732800c2726e87f886bb1a9c60de2142d451a33cdb",
+      "source_version": "ae99b5a1",
+      "content_hash": "262e8a76d66c9b011e459e27770c468390b4c4cf2c19844f090d2f9a4d926c9f",
       "dossier_path": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "promoted_rules": [
@@ -46685,7 +46695,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T03:26:12.196Z",
+      "verified_at": "2026-10-31T19:00:42.267Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -163813,6 +163823,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T18:53:42.454Z"
+    },
+    "rule-6289": {
+      "learning_id": "rule-6289",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6289,
+      "title": "High-Dimensional Spatial-to-Sequence Dynamic Interpolation Invariant",
+      "source_url": "https://huggingface.co/google/vit-base-patch16-224",
+      "source_version": "hf-google-vit-base-patch16-224",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T19:02:22.660Z"
+    },
+    "rule-6290": {
+      "learning_id": "rule-6290",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6290,
+      "title": "Preprocessor Normalization Range Invariant",
+      "source_url": "https://huggingface.co/google/vit-base-patch16-224",
+      "source_version": "hf-google-vit-base-patch16-224",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T19:02:22.660Z"
     }
   },
   "aliases": {

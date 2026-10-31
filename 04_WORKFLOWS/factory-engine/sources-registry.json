@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T18:53:45.120Z",
-    "lastVerified": "2026-10-31T18:53:45.120Z",
+    "lastChecked": "2026-10-31T19:02:25.322Z",
+    "lastVerified": "2026-10-31T19:02:25.322Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -141,12 +141,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T18:22:25.872Z",
-    "lastVerified": "2026-10-31T18:22:25.872Z",
+    "lastChecked": "2026-10-31T19:00:43.995Z",
+    "lastVerified": "2026-10-31T19:00:43.995Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -155,7 +155,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9cfd9db0"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -677,13 +678,13 @@
     "officialUrl": "https://github.com/projectcontour/contour",
     "sourceType": "github",
     "technology": "HTML",
-    "lastChecked": "2026-10-31T03:26:11.601Z",
-    "lastVerified": "2026-10-31T03:26:11.601Z",
+    "lastChecked": "2026-10-31T19:00:40.243Z",
+    "lastVerified": "2026-10-31T19:00:40.243Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectcontour-contour",
-    "contentHash": "cad9af0e69e9554c4b7e72732800c2726e87f886bb1a9c60de2142d451a33cdb",
-    "promotedRulesCount": 1,
+    "contentHash": "262e8a76d66c9b011e459e27770c468390b4c4cf2c19844f090d2f9a4d926c9f",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -983,12 +984,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "ducaale-xh": {
-    "name": "ducaale/xh",
+    "name": "xh",
     "officialUrl": "https://github.com/ducaale/xh",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T23:21:50.741Z",
-    "lastVerified": "2026-10-30T23:21:50.741Z",
+    "lastChecked": "2026-10-31T19:00:28.945Z",
+    "lastVerified": "2026-10-31T19:00:28.945Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ducaale-xh",
@@ -997,7 +998,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "dd424850"
   },
   "hf-stabilityai-stable-diffusion-xl-base-1.0": {
     "name": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -1479,9 +1481,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-10-31T14:59:36.128Z",
+    "lastChecked": "2026-10-31T19:00:38.980Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-10-31T14:59:36.128Z"
+    "lastVerified": "2026-10-31T19:00:38.980Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -6362,9 +6364,9 @@
   "lindb-lindb": {
     "name": "lindb",
     "officialUrl": "https://github.com/lindb/lindb",
-    "lastChecked": "2026-10-31T02:34:21.119Z",
+    "lastChecked": "2026-10-31T19:00:41.436Z",
     "revisionIdentifier": "612070e1",
-    "lastVerified": "2026-10-31T02:34:21.119Z"
+    "lastVerified": "2026-10-31T19:00:41.436Z"
   },
   "vercel-labs-opensrc": {
     "name": "opensrc",
@@ -6465,13 +6467,13 @@
     "officialUrl": "https://huggingface.co/google/vit-base-patch16-224",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T17:42:42.150Z",
-    "lastVerified": "2026-10-28T17:42:42.150Z",
+    "lastChecked": "2026-10-31T19:00:31.552Z",
+    "lastVerified": "2026-10-31T19:00:31.552Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-google-vit-base-patch16-224",
-    "contentHash": "6a62e9b17ac12820b8bf6d23cd785aade88f14e462d86160b5d5459a022884ac",
-    "promotedRulesCount": 0,
+    "contentHash": "7200a29bd5c48294bfce06807a6785d0496349fbf03838c74e199d24f279f993",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -8560,9 +8562,9 @@
   "swiftuix-swiftuix": {
     "name": "SwiftUIX",
     "officialUrl": "https://github.com/SwiftUIX/SwiftUIX",
-    "lastChecked": "2026-10-28T23:52:08.108Z",
+    "lastChecked": "2026-10-31T19:00:33.936Z",
     "revisionIdentifier": "3a99044b",
-    "lastVerified": "2026-10-28T23:52:08.108Z"
+    "lastVerified": "2026-10-31T19:00:33.936Z"
   },
   "hf-black-forest-labs-flux-3-image-klein-comfy": {
     "name": "black-forest-labs/flux-3-image-klein-comfy",
