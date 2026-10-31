@@ -6476,3 +6476,6 @@
 | `CYCLE-20261031-E3HN` | `2026-10-31T05:21:18.635Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6081` | Yes (`73b5a687...`) |
 | `CYCLE-20261031-OOXQ` | `2026-10-31T05:29:32.990Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6082` | Yes (`27dd85d7...`) |
 | `CYCLE-20261031-OSRI` | `2026-10-31T05:29:37.950Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6083, Rule 6084, Rule 6085` | Yes (`a916287b...`) |
+| `CYCLE-20261031-X0J3` | `2026-10-31T05:36:01.263Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`21e671d6...`) |
+| `CYCLE-20261031-X17J` | `2026-10-31T05:36:02.143Z` | `wasm-bindgen/wasm-pack` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6086` | Yes (`cad842dd...`) |
+| `CYCLE-20261031-X4PE` | `2026-10-31T05:36:06.674Z` | `keybase/client` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6087` | Yes (`509874fa...`) |

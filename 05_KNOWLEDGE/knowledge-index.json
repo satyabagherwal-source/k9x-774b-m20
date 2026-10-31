@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T05:29:37.872Z",
+  "last_updated": "2026-10-31T05:36:06.610Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -27922,7 +27922,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
       "source_version": "hf-qwen-qwen3.8-27b",
-      "content_hash": "aab339483193ee7783bcbffb9f0038d89fa2793cdbb04d2d56ba0969bab538d6",
+      "content_hash": "21e671d6464f147d27ce0933bf436251a73ad2b4cd9cf5bc9e4d4680f0cde6ee",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
       "promoted_rules": [
@@ -27990,7 +27990,7 @@
         "learn-huggingface-hf-qwen-qwen3-8-27b-mv43c1y3",
         "learn-huggingface-hf-qwen-qwen3-8-27b-mv4gkm75"
       ],
-      "verified_at": "2026-10-28T03:31:32.103Z",
+      "verified_at": "2026-10-31T05:36:01.171Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33878,8 +33878,8 @@
       "slug": "keybase-client",
       "platform": "github",
       "source_url": "https://github.com/keybase/client",
-      "source_version": "6cc54d38",
-      "content_hash": "f075295cc94e176eb2d9e5cae58b545e97311185abba91f01c592deb10e78557",
+      "source_version": "952e87ee",
+      "content_hash": "509874fa5332a7780de51741abf6b1b76212ee94267fcdb08f4b05080dd8e4c8",
       "dossier_path": "07_PROJECT_LEARNING/keybase-client-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/keybase-client-learnings.md",
       "promoted_rules": [
@@ -33897,6 +33897,11 @@
           "number": 4899,
           "title": "deps: LegendList 3.7.0, expo 58.0.19; drop desktop thread scroll workarounds 3.7",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6087,
+          "title": "migrate to btcsuite/btcd (#29858)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33904,7 +33909,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T16:31:38.637Z",
+      "verified_at": "2026-10-31T05:36:06.594Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57239,8 +57244,8 @@
       "slug": "wasm-bindgen-wasm-pack",
       "platform": "github",
       "source_url": "https://github.com/wasm-bindgen/wasm-pack",
-      "source_version": "b9ac5e48",
-      "content_hash": "433068903230fa48a0ffc5981373fce84168193208334dbe261ffb373f325471",
+      "source_version": "b4586ca5",
+      "content_hash": "cad842dd19948f15a62fa6a08c79fdcbc2fac298344d1aff564684f1536f64ee",
       "dossier_path": "07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md",
       "promoted_rules": [
@@ -57278,6 +57283,11 @@
           "number": 5614,
           "title": "resolve #1420 package.json parsing with two-step deserialization (#1533)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6086,
+          "title": "Comment on the release PR when a publish waits for approval (#1621)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -57285,7 +57295,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T05:45:57.326Z",
+      "verified_at": "2026-10-31T05:36:02.061Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -159796,6 +159806,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T05:29:37.852Z"
+    },
+    "rule-6086": {
+      "learning_id": "rule-6086",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6086,
+      "title": "Comment on the release PR when a publish waits for approval (#1621)",
+      "source_url": "https://github.com/wasm-bindgen/wasm-pack",
+      "source_version": "b4586ca5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T05:36:02.061Z"
+    },
+    "rule-6087": {
+      "learning_id": "rule-6087",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6087,
+      "title": "migrate to btcsuite/btcd (#29858)",
+      "source_url": "https://github.com/keybase/client",
+      "source_version": "952e87ee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T05:36:06.594Z"
     }
   },
   "aliases": {

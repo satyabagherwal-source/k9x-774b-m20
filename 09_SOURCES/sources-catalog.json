@@ -205,8 +205,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-27B",
     "sourceVersion": "hf-qwen-qwen3.8-27b",
     "license": "Open-Source",
-    "contentHash": "aab339483193ee7783bcbffb9f0038d89fa2793cdbb04d2d56ba0969bab538d6",
-    "lastHarvestedAt": "2026-10-28T03:31:32.203Z",
+    "contentHash": "21e671d6464f147d27ce0933bf436251a73ad2b4cd9cf5bc9e4d4680f0cde6ee",
+    "lastHarvestedAt": "2026-10-31T05:36:01.272Z",
     "learningId": "learn-huggingface-qwen-qwen3-8-27b"
   },
   "hf-black-forest-labs-flux.1-dev": {
@@ -4403,10 +4403,10 @@
     "repository": "keybase/client",
     "platform": "github",
     "sourceUrl": "https://github.com/keybase/client",
-    "sourceVersion": "6cc54d38",
+    "sourceVersion": "952e87ee",
     "license": "BSD-3-Clause",
-    "contentHash": "f075295cc94e176eb2d9e5cae58b545e97311185abba91f01c592deb10e78557",
-    "lastHarvestedAt": "2026-10-27T16:31:38.713Z",
+    "contentHash": "509874fa5332a7780de51741abf6b1b76212ee94267fcdb08f4b05080dd8e4c8",
+    "lastHarvestedAt": "2026-10-31T05:36:06.677Z",
     "learningId": "learn-github-keybase-client"
   },
   "sealerio-sealer": {
@@ -4783,10 +4783,10 @@
     "repository": "wasm-bindgen/wasm-pack",
     "platform": "github",
     "sourceUrl": "https://github.com/wasm-bindgen/wasm-pack",
-    "sourceVersion": "b9ac5e48",
+    "sourceVersion": "b4586ca5",
     "license": "Apache-2.0",
-    "contentHash": "433068903230fa48a0ffc5981373fce84168193208334dbe261ffb373f325471",
-    "lastHarvestedAt": "2026-10-30T05:45:57.406Z",
+    "contentHash": "cad842dd19948f15a62fa6a08c79fdcbc2fac298344d1aff564684f1536f64ee",
+    "lastHarvestedAt": "2026-10-31T05:36:02.147Z",
     "learningId": "learn-github-wasm-bindgen-wasm-pack"
   },
   "software-mansion-react-native-gesture-handler": {

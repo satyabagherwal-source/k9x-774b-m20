@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T05:29:37.959Z",
-  "total_cycles_completed": 6453,
-  "total_learnings_persisted": 6453,
-  "total_rules_promoted": 6071,
+  "last_updated": "2026-10-31T05:36:06.682Z",
+  "total_cycles_completed": 6456,
+  "total_learnings_persisted": 6456,
+  "total_rules_promoted": 6073,
   "history": [
-    {
-      "timestamp": "2026-10-30T19:29:34.046Z",
-      "repository": "krakend/krakend-ce",
-      "learningId": "learn-github-krakend-krakend-ce",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T19:35:50.830Z",
-      "repository": "TanStack/query",
-      "learningId": "learn-github-tanstack-query",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T19:35:57.643Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T19:42:41.912Z",
       "repository": "preactjs/preact",
@@ -1403,6 +1382,27 @@
       "repository": "BAAI/bge-small-en-v1.5",
       "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T05:36:01.277Z",
+      "repository": "Qwen/Qwen3.8-27B",
+      "learningId": "learn-huggingface-qwen-qwen3-8-27b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T05:36:02.153Z",
+      "repository": "wasm-bindgen/wasm-pack",
+      "learningId": "learn-github-wasm-bindgen-wasm-pack",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T05:36:06.682Z",
+      "repository": "keybase/client",
+      "learningId": "learn-github-keybase-client",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

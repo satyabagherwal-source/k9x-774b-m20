@@ -6485,3 +6485,6 @@ Every entry in this ledger must capture:
 | `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `9caf2b4c` | Multi-dimensional audit evidence | 2026-10-31T05:21:18.639Z |
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `a1920121` | Multi-dimensional audit evidence | 2026-10-31T05:29:32.994Z |
 | `learn-huggingface-baai-bge-small-en-v1-5` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-31T05:29:37.953Z |
+| `learn-huggingface-qwen-qwen3-8-27b` | `https://huggingface.co/Qwen/Qwen3.8-27B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-31T05:36:01.272Z |
+| `learn-github-wasm-bindgen-wasm-pack` | `https://github.com/wasm-bindgen/wasm-pack` | `b4586ca5` | Multi-dimensional audit evidence | 2026-10-31T05:36:02.147Z |
+| `learn-github-keybase-client` | `https://github.com/keybase/client` | `952e87ee` | Multi-dimensional audit evidence | 2026-10-31T05:36:06.677Z |

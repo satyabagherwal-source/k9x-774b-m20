@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-M0HD",
-    "timestamp": "2026-10-28T22:52:12.913Z",
-    "repository": "google/tcmalloc",
-    "learningId": "learn-github-google-tcmalloc",
-    "contentHash": "5928d835d9d7bb1eafcdbb12cdf3ecb461e260f4f525a008a98cde634c80a592",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-M4PR",
-    "timestamp": "2026-10-28T22:52:18.399Z",
-    "repository": "thaw-app/Thaw",
-    "learningId": "learn-github-thaw-app-thaw",
-    "contentHash": "c3c7e033aa9fb65b85e223f076458509e8631d9f7b31aa332282b05729e8813c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-UODV",
-    "timestamp": "2026-10-28T22:58:57.139Z",
-    "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
-    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-    "contentHash": "17e709faa90a7e313ab28b35a730513eca3da84637e07acde4d2174add79ea58",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-UPEV",
     "timestamp": "2026-10-28T22:58:58.471Z",
     "repository": "nguyenphutrong/quotio",
@@ -7492,6 +7447,51 @@
     "contentHash": "a916287b8109489bf58cd733203be0e4613462b9b12fd09cec82021227d1f42e",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-X0J3",
+    "timestamp": "2026-10-31T05:36:01.263Z",
+    "repository": "Qwen/Qwen3.8-27B",
+    "learningId": "learn-huggingface-qwen-qwen3-8-27b",
+    "contentHash": "21e671d6464f147d27ce0933bf436251a73ad2b4cd9cf5bc9e4d4680f0cde6ee",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-X17J",
+    "timestamp": "2026-10-31T05:36:02.143Z",
+    "repository": "wasm-bindgen/wasm-pack",
+    "learningId": "learn-github-wasm-bindgen-wasm-pack",
+    "contentHash": "cad842dd19948f15a62fa6a08c79fdcbc2fac298344d1aff564684f1536f64ee",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-X4PE",
+    "timestamp": "2026-10-31T05:36:06.674Z",
+    "repository": "keybase/client",
+    "learningId": "learn-github-keybase-client",
+    "contentHash": "509874fa5332a7780de51741abf6b1b76212ee94267fcdb08f4b05080dd8e4c8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
