@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
 > **Source**: github ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
-> **Source Version**: `00635bc3`  
+> **Source Version**: `c803cca1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T04:41:58.312Z  
+> **Timestamp**: 2026-10-31T01:21:26.657Z  
 > **Learning ID**: `learn-github-zulip-zulip`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T04:41:58.306Z  
+> **Harvest Timestamp**: 2026-10-31T01:21:25.810Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zulip server and web application. Open-source team chat that helps teams stay productive and focused.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md
-- **Stars / Engagement**: 26125 stars
+- **Stars / Engagement**: 26145 stars
 
 ---
 
@@ -1210,17 +1210,17 @@ def check_rabbitmq_queues() -> None:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #40501** (2026-10-29): **provisioning fails on wsl with existing uv > 0.13.4**
+  *Symptoms*: I ran ./tools/provision under WSL 2.7.14.0. Using https://github.com/zulip/zulip commit 3e9bc1e from UTC 2026-10-27 08:54  It errored out comparing my uv version 0.13.6 to the apparently hardcoded string 0.13.4 - seems a bit brittle. I had to uninstall my uv (delete it) and manually install 0.13.4 before dev environ provisioning would complete successfully. It's possible I didn't have to manually install 0.13.4, maybe could have just "hash -r" after deleting the newer one.
+  **Post-Mortem & Fix Analysis**:
+  > Hello @zulip/server-development members, this issue was labeled with the "area: provision" label, so you may want to check it out!  <!-- areaLabelAddition --> 
+  > Hello!  I can patch a fix for this?
+
 - **Issue #40388** (2026-10-20): **data import bug fixes**
   *Symptoms*: Minor bugs caught by the new data import test class (#40370).    <details> <summary>Self-review checklist</summary>  <!-- Prior to submitting a PR, follow our step-by-step guide to review your own code: https://zulip.readthedocs.io/en/latest/contributing/code-reviewing.html#how-to-review-code -->  <!-- Once you create the PR, check off all the steps below that you have completed. If any of these steps are not relevant or not completed, leave them unchecked.-->  - [ ] [Self-reviewed](https://zulip.readthedocs.io/en/latest/contributing/code-reviewing.html#how-to-review-code) the changes for clarity and maintainability       (variable names, code reuse, readability, etc.). - [ ] Followed the [AI use policy](https://zulip.readthedocs.io/en/latest/contributing/contributing.html#ai-use-policy-and-guidelines).  Communicate decisions, questions, and potential concerns.  - [ ] Explains differences from previous plans (e.g., issue description). - [ ] Highlights technical choices and bugs encountered. - [ ] Calls out remaining decisions and concerns. - [ ] Automated tests verify logic where appropriate.  Individual commits are ready for review (see [commit discipline](https://zulip.readthedocs.io/en/latest/contributing/commit-discipline.html)).  - [ ] Each commit is a coherent idea. - [ ] Commit message(s) explain reasoning and motivation for changes.  Completed manual review and testing of the following:  - [ ] Visual appearance of the changes. - [ ] Resp
   **Post-Mortem & Fix Analysis**:
   > @mateuszmandera -- Would you be up for reviewing this?  @emilysutherlin -- Should we add this to my release board? These are straight forward bug fixes with no UI changes.
   > @mateuszmandera -- Thanks for the review. I think this is ready for you to take another look.
-
-- **Issue #40326** (2026-10-12): **[ai] left_sidebar: Don't show view tooltips on mouse-opened popover focus.**
-  *Symptoms*: Opening the condensed views popover with a mouse click focuses its first item, via focus_popover. The view items carry the `.tippy-left-sidebar-tooltip` class, whose tooltips use Tippy's default "mouseenter focus" trigger, so that programmatic focus opened the first item's tooltip without the user hovering over it.  Suppress the tooltip when the reference has focus without `:focus-visible` and isn't hovered. This preserves tooltips for keyboard navigation while avoiding unwanted tooltips from mouse-opened popovers.  Check for focus explicitly rather than relying only on the absence of `:focus-visible`, so touch long-press tooltips continue to work.  <!-- Describe your pull request here.-->  **How changes were tested:**  <!-- If the PR makes UI changes, you must include screenshots. Detailed guide: https://zulip.readthedocs.io/en/latest/contributing/presenting-visual-changes.html -->  **Screenshots and screen captures:**  |Before|After| |-|-| |[Screencast from 2026-10-07 23-37-10.webm](https://github.com/user-attachments/assets/7c2bdc46-d840-457e-aef4-072bbbcd4676)|[Screencast from 2026-10-07 23-38-03.webm](https://github.com/user-attachments/assets/d58431a3-35df-45b6-9393-e6cc91e53f76)|  <details> <summary>Self-review checklist</summary>  <!-- Prior to submitting a PR, follow our step-by-step guide to review your own code: https://zulip.readthedocs.io/en/latest/contributing/code-reviewing.html#how-to-review-code -->  <!-- Once you create the PR, chec
-  **Post-Mortem & Fix Analysis**:
-  > @amanagr Tagging you for review here.
-  > Looks great! Thanks @pratik-pc !
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1237,471 +1237,184 @@ def check_rabbitmq_queues() -> None:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `00635bc3` (2026-10-20)
-**Commit Message**: slack_import: Fix unexplained failure on invalid Slack user emails.
+### Incident Patch 1: `6e059848` (2026-10-29)
+**Commit Message**: provision: Fix PGroonga failing to load on Debian 13.
 
-If a Slack user had an invalid email address, such as one ending in
-".c", the self-serve import failed with an "unexpected error" that
-sent the user to support. The error naming the invalid addresses,
-written for operators running the conversion by hand, went only to
-Sentry.
+On Debian 13, we build PGroonga from source against libgroonga-dev
+from packages.groonga.org. Its libgroonga0 16.1.5-1 depends on
+libarrow2600, which links against the OpenTelemetry C++ libraries
+without declaring a dependency on them. So provisioning fails in
+postgresql-init-dev-db, because PostgreSQL cannot load pgroonga.so
+without libopentelemetry_exporter_otlp_http_log.so.
 
-Now the import page lists those addresses and asks the user to
-correct them in Slack and start the import again, or contact
-support if they can't. Unlike after an invalid-file error, "Start
-import" stays enabled without a new upload, since the converter
-fetches user emails from the Slack API, not from the export file.
+Fix this by installing opentelemetry-cpp from Debian's main archive.
+Ubuntu 26.04 also builds PGroonga from source, but against Ubuntu's
+own libgroonga-dev, so it is not affected.
 
-We store the addresses rather than the message, so it's shown in
-the viewer's language. Since this is a problem in the user's data,
-we log it at the info level instead of reporting an error.
+https://github.com/apache/arrow/issues/55112
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `templates/zerver/slack_import.html` (modified, +2/-2)
+**File**: `tools/lib/provision.py` (modified, +5/-0)
 ```diff
-@@ -104,7 +104,7 @@ <h1 class="get-started">{{ _("Import from Slack") }}</h1>
-                             <span id="slack-import-uploaded-file-name">{{ uploaded_import_file_name }}</span>
-                             &nbsp;<a href="#" type="button" class="slack-import-upload-file">Upload a different file</a>
-                         </div>
--                        <p id="slack-import-file-upload-error" class="help-inline text-error">{{ invalid_file_error_message }}</p>
-+                        <p id="slack-import-file-upload-error" class="help-inline text-error">{{ import_data_error_message }}</p>
-                     </div>
-                     <div class="input-group input-box" id="email-address-visibility-select-wrapper">
-                         <label for="email-address-visibility-select">
-@@ -123,7 +123,7 @@ <h1 class="get-started">{{ _("Import from Slack") }}</h1>
-                         </select>
-                     </div>
-                     <div class="input-box">
--                        <button type="submit" class="register-button"{% if invalid_file_error_message %} disabled{% endif %}>
-+                        <button type="submit" class="register-button"{% if needs_new_upload %} disabled{% endif %}>
-                             {{ _("Start import") }}
-                         </button>
-                     </div>
-```
-
-**File**: `zerver/actions/data_import.py` (modified, +20/-7)
-```diff
-@@ -17,7 +17,7 @@
- from zerver.actions.users import do_change_user_role
- from zerver.context_processors import is_realm_import_enabled
- from zerver.data_import.slack import do_convert_zipfile
--from zerver.lib.exceptions import SlackImportInvalidFileError
-+from zerver.lib.exceptions import InvalidEmailsInImportError, SlackImportInvalidFileError
- from zerver.lib.import_realm import do_import_realm
- from zerver.lib.upload import save_attachment_contents
- from zerver.models.prereg_users import PreregistrationRealm
-@@ -108,12 +108,25 @@ def import_slack_data(event: dict[str, Any]) -> None:
-             logger.info(
-                 "(%s) Wrote %d bytes of %s to %s", string_id, fh.tell(), event["filename"], fh.name
-             )
--            do_convert_zipfile(
--                fh.name,
--                output_dir,
--                event["slack_access_token"],
--                convert_slack_threads=True,
--            )
-+            try:
-+                do_convert_zipfile(
-+                    fh.name,
-+                    output_dir,
-+                    event["slack_access_token"],
-+                    convert_slack_threads=True,
-+                )
-+            except InvalidEmailsInImportError as e:
-+                # The user can correct these addresses in Slack and try
-+                # again, so this is not a server error.
-+                logger.info(
-+                    "(%s) Slack import has invalid user emails: %s",
-+                    string_id,
-+                    ", ".join(e.invalid_emails),
-+                )
-+                preregistration_realm.data_import_metadata["invalid_user_emails"] = e.invalid_emails
-+                preregistration_realm.data_import_metadata["is_import_work_queued"] = False
-+                preregistration_realm.save(update_fields=["data_import_metadata"])
-+                return
-             attachment_size = sum(
-                 os.path.getsize(os.path.join(dirpath, filename))
-                 for dirpath, dirnames, filenames in os.walk(f"{output_dir}/uploads/")
-```
-
-**File**: `zerver/tests/test_slack_importer.py` (modified, +158/-0)
-```diff
-@@ -75,6 +75,7 @@
- from zerver.lib.import_realm import do_import_realm
- from zerver.lib.mime_types import INLINE_MIME_TYPES
- from zerver.lib.queue import high_latency_queue_name
-+from zerver.lib.send_email import FromAddress
- from zerver.lib.test_classes import ZulipTestCase
- from zerver.lib.test_helpers import find_key_by_email, read_test_image_file
- from zerver.lib.thumbnail import THUMBNAIL_ACCEPT_IMAGE_TYPES, BadImageError
-@@ -3268,6 +3269,163 @@ def test_import_slack_data_failure_cleanup_realm_not_created(
-         )
-         self.assertFalse(Realm.objects.filter(string_id="test-realm").exists())
- 
-+    @mock.patch("zerver.data_import.slack.get_slack_api_data")
-+    @mock.patch("zerver.data_import.slack.check_slack_token_access")
-+    @mock.patch("zerver.actions.data_import.save_attachment_contents")
-+    def test_import_slack_data_invalid_user_emails(
-+        self,
-+        mock_save_attachment_contents: mock.Mock,
-+        mock_check_slack_token_access: mock.Mock,
-+        mock_get_slack_api_data: mock.Mock,
-+    ) -> None:
-+        """
-+        An import that fails on invalid Slack user emails lists them
-+        on the import page, and the user can start the import again
-+        with the same uploaded file after correcting them in Slack.
-+        """
-+        prereg_realm = PreregistrationRealm.objects.create(
-+            string_id="test-realm",
-+            name="Test Realm",
-+            email="test@example.com",
-+            data_import_metadata={
-+                "import_from": "slack",
-+                "slack_access_token": "xoxb-valid-token",
-+                "uploaded_import_file_name": "slack.zip",
-+                "is_import_work_queued": True,
-+            },
-+        )
-+
-+        test_slack_zip_file = os.path.join(
-+            settings.DEPLOY_ROOT,
-+            "zerver",
-+            "tests",
-+            "fixtures",
-+            "slack_fixtures",
-+            "test_unicode_slack_importer.zip",
-+        )
-+        with open(test_slack_zip_file, "rb") as f:
-+            zip_contents = f.read()
-+        mock_save_attachment_contents.side_effect = lambda path_id, fh: fh.write(zip_contents)
-+
-+        user_data_fixture = orjson.loads(
-+            self.fixture_data("unicode_user_data.json", type="slack_fixtures")
-+        )
-+        [slack_user] = [user for user in user_data_fixture["members"] if user["name"] == "alexmv"]
-+        slack_user["profile"]["email"] = "alexmv@zulip.c"
-+        mock_get_slack_api_data.side_effect = [user_data_fixture["members"], {}]
-+
-+        event = {
-+            "preregistration_realm_id": prereg_realm.id,
-+            "filename": "import/test/slack.zip",
-+            "slack_access_token": "xoxb-valid-token",
-+        }
-+        with (
-+            self.assertLogs("zulip.registration", "INFO") as logs,
-+            self.assertLogs(level="INFO"),
-+            # The importer makes up email addresses for bots in the
-+            # EXTERNAL_HOST domain, which needs to be valid here.
-+            self.settings(EXTERNAL_HOST="zulip.example.com"),
-+        ):
-+            import_slack_data(event)
-+        self.assertEqual([record.levelname for record in logs.records], ["INFO"] * 3)
-+        self.assertEqual(
-+            logs.output[-1],
-+            "INFO:zulip.registration:"
-+            "(test-realm) Slack import has invalid user emails: alexmv@zulip.c",
-+        )
-+
-+        prereg_realm.refresh_from_db()
-+        self.assertIsNone(prereg_realm.created_realm)
-+        self.assertFalse(prereg_realm.data_import_metadata["is_import_work_queued"])
-+        self.assertEqual(
-+            prereg_realm.data_import_metadata["invalid_user_emails"], ["alexmv@zulip.c"]
-+        )
-+
-+        confirmation_key = create_confirmation_link(
-+            prereg_realm,
-+            Confirmation.NEW_REALM_USER_REGISTRATION,
-+            no_associated_realm_object=True,
-+        ).split("/")[-1]
-+        result = self.client_get(f"/json/realm/import/status/{confirmation_key}")
-+        response_dict = self.assert_json_success(result)
-+        self.assertEqual(
-+            response_dict["status"],
-+            "1 Slack user has an invalid email address. Correct it in Slack, "
-+            "then start the import again. If you can't correct it, "
-+            f"contact {FromAddress.SUPPORT} for help. Invalid address: alexmv@zulip.c",
-+        )
-+        self.assertEqual(response_dict["redirect"], f"/accounts/do_confirm/{confirmation_key}")
-+
-+        prereg_realm.data_import_metadata["invalid_user_emails"] = [
-+            "alexmv@zulip.c",
-+            "jane@yahoo.c",
-+        ]
-+        prereg_realm.save()
-+        result = self.client_get(f"/json/realm/import/status/{confirmation_key}")
-+        self.assertEqual(
-+            self.assert_json_success(result)["status"],
-+            "2 Slack users have invalid email addresses. Correct them in Slack, "
-+            "then start the import again. If you can't correct them, "
-+            f"contact {FromAddress.SUPPORT} for help. "
-+
-```
-
-**File**: `zerver/tests/test_tusd.py` (modified, +2/-0)
-```diff
-@@ -371,6 +371,7 @@ def test_realm_import_data_upload(self) -> None:
-         prereg_realm.data_import_metadata["invalid_file_error_message"] = (
-             "Uploaded zip file is not a valid Slack export."
-         )
-+        prereg_realm.data_import_metadata["invalid_user_emails"] = ["alexmv@zulip.c"]
-         prereg_realm.save()
- 
-         # Post the hook saying the file is in place
-@@ -386,6 +387,7 @@ def test_realm_import_data_upload(self) -> None:
-             prereg_realm.data_import_metadata["uploaded_import_file_name"].endswith(filename)
-         )
-         self.assertNotIn("invalid_file_error_message", prereg_realm.data_import_metadata)
-+        self.assertNotIn("invalid_user_emails", prereg_realm.data_import_metadata)
- 
-     def test_realm_import_data_upload_size_is_deferred(self) -> None:
-         # Choose import from slack
-```
-
-**File**: `zerver/views/registration.py` (modified, +27/-4)
-```diff
-@@ -20,7 +20,7 @@
- from django.shortcuts import redirect, render
- from django.template.response import TemplateResponse
- from django.urls import reverse
--from django.utils.translation import get_language, gettext_lazy
-+from django.utils.translation import get_language, gettext_lazy, ngettext
- from django.utils.translation import gettext as _
- from django.utils.translation import override as override_language
- from django.views.decorators.cache import never_cache
-@@ -274,6 +274,26 @@ def accounts_register(*args: Any, **kwargs: Any) -> HttpResponse:
-     return registration_helper(*args, **kwargs)
- 
- 
-+def get_slack_import_data_error_message(prereg_realm: PreregistrationRealm) -> str:
-+    metadata = prereg_realm.data_import_metadata
-+    invalid_user_emails = metadata.get("invalid_user_emails")
-+    if invalid_user_emails:
-+        return ngettext(
-+            "{count} Slack user has an invalid email address. Correct it in Slack, "
-+            "then start the import again. If you can't correct it, "
-+            "contact {support_email} for help. Invalid address: {emails}",
-+            "{count} Slack users have invalid email addresses. Correct them in Slack, "
-+            "then start the import again. If you can't correct them, "
-+            "contact {support_email} for help. Invalid addresses: {emails}",
-+            len(invalid_user_emails),
-+        ).format(
-+            count=len(invalid_user_emails),
-+            support_email=FromAddress.SUPPORT,
-+            emails=", ".join(invalid_user_emails),
-+        )
-+    return metadata.get("invalid_file_error_message", "")
-+
-+
- def render_slack_import_page(
-     request: HttpRequest,
-     prereg_realm: PreregistrationRealm,
-@@ -300,7 +320,8 @@ def render_slack_import_page(
-         ),
-         "slack_access_token": metadata.get("slack_access_token"),
-         "uploaded_import_file_name": metadata.get("uploaded_import_file_name"),
--        "invalid_file_error_message": metadata.get("invalid_file_error_message", ""),
-+        "import_data_error_message": get_slack_import_data_error_message(prereg_realm),
-+        "needs_new_upload": "invalid_file_error_message" in metadata,
-         "slack_access_token_validation_error": slack_access_token_validation_error,
-         "slack_import_error": slack_import_error,
-     }
-@@ -442,6 +463,7 @@ def registration_helper(
- 
-             prereg_realm.data_import_metadata["email_address_visibility"] = email_address_visibility
-             prereg_realm.data_import_metadata.pop("invalid_file_error_message", None)
-+            prereg_realm.data_import_metadata.pop("invalid_user_emails", None)
-             prereg_realm.save(update_fields=["data_import_metadata"])
- 
-             logger.info("(%s) Enqueueing Slack import", prereg_realm.string_id)
-@@ -1241,12 +1263,13 @@ def realm_import_status(
-             # clear it and report this import's own failure below.
-             del metadata["subdomain_unavailable"]
-             preregistration_realm.save(update_fields=["data_import_metadata"])
--        if metadata.get("invalid_file_error_message"):
-+        data_error_message = get_slack_import_data_error_message(preregistration_realm)
-+        if data_error_message:
-             # Redirect user the file upload page if we have an error message to display.
-             return json_success(
-                 request,
-                 {
--                    "status": metadata.get("invalid_file_error_message"),
-+                    "status": data_error_message,
-                     "redirect": reverse(
-                         "get_prereg_key_and_redirect", kwargs={"confirmation_key": confirmation_key}
-                     ),
-```
-
-**File**: `zerver/views/tusd.py` (modified, +1/-0)
-```diff
-@@ -306,6 +306,7 @@ def handle_preregistration_pre_finish_hook(
-     preregistration_realm.data_import_metadata["uploaded_import_file_name"] = filename
-     # The next import attempt will report its own errors.
-     preregistration_realm.data_import_metadata.pop("invalid_file_error_message", None)
-+    preregistration_realm.data_import_metadata.pop("invalid_user_emails", None)
-     preregistration_realm.save(update_fields=["data_import_metadata"])
-     return tusd_json_response({})
+@@ -170,6 +170,11 @@
+         "libmsgpack-dev",
+         *VENV_DEPENDENCIES,
+     ]
++    if vendor == "debian":
++        # libarrow2600 from packages.groonga.org links against
++        # opentelemetry-cpp without depending on it; see
++        # https://github.com/apache/arrow/issues/55112
++        SYSTEM_DEPENDENCIES.append("opentelemetry-cpp")
+ elif "debian" in os_families():
+     DEBIAN_DEPENDENCIES = UBUNTU_COMMON_APT_DEPENDENCIES
  
 ```
 
 ---
 
-### Incident Patch 2: `50e73610` (2026-10-20)
-**Commit Message**: slack_import: Fix stale invalid-file error on import retry.
+### Incident Patch 2: `0ac92e64` (2026-10-29)
+**Commit Message**: message_store tests: Build expected topic links with helpers.
 
-When an import failed on an invalid file, the error stayed in the
-registration's metadata after the user uploaded a new file. A
-reload of the import page then showed the old error with "Start
-import" disabled. If the next import failed for some other reason,
-the status poll reported the old error instead of the instructions
-to contact support.
+The tests spell out every expected cross-conversation link as an
+object literal. Two helpers, message_link and topic_link, now build
+them, which keeps each expected link on one line and names the kind
+of link being checked.
 
-Fix this by clearing the error when an upload finishes, and before
-an import is queued.
+This is a prep commit for adding a field to those links.
 
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
-**File**: `zerver/tests/test_slack_importer.py` (modified, +5/-1)
+**File**: `web/tests/message_store.test.cjs` (modified, +85/-249)
 ```diff
-@@ -2752,8 +2752,11 @@ def test_end_to_end_slack_import(
-         self.assertEqual(prereg_realm.data_import_metadata["import_from"], "slack")
-         self.assertEqual(prereg_realm.data_import_metadata["slack_access_token"], access_token)
+@@ -585,6 +585,15 @@ test("maybe_update_raw_content", () => {
+     assert.equal(message1.raw_content, "hello world");
+ });
  
--        # Assume user uploaded a file.
-+        # Assume user uploaded a file, after an earlier import attempt failed.
-         prereg_realm.data_import_metadata["uploaded_import_file_name"] = "test_slack_importer.zip"
-+        prereg_realm.data_import_metadata["invalid_file_error_message"] = (
-+            "Uploaded zip file is not a valid Slack export."
-+        )
-         prereg_realm.save()
- 
-         # Set by the user performing the import.
-@@ -2771,6 +2774,7 @@ def test_end_to_end_slack_import(
-             self.assert_in_success_response(["Import progress"], result)
-             prereg_realm.refresh_from_db()
-             self.assertTrue(prereg_realm.data_import_metadata["is_import_work_queued"])
-+            self.assertNotIn("invalid_file_error_message", prereg_realm.data_import_metadata)
-             self.assertTrue(
-                 prereg_realm.data_import_metadata["email_address_visibility"],
-                 importer_set_email_address_visibility,
-```
-
-**File**: `zerver/tests/test_tusd.py` (modified, +7/-0)
-```diff
-@@ -367,6 +367,12 @@ def test_realm_import_data_upload(self) -> None:
-             ),
-         )
- 
-+        # Simulate a failed import of a previously uploaded file.
-+        prereg_realm.data_import_metadata["invalid_file_error_message"] = (
-+            "Uploaded zip file is not a valid Slack export."
-+        )
-+        prereg_realm.save()
++// Expected cross-conversation links, as message_store returns them.
++function message_link(stream_id, topic, message_id) {
++    return {stream_id, topic, message_id};
++}
 +
-         # Post the hook saying the file is in place
-         result = self.client_post(
-             "/api/internal/tusd",
-@@ -379,6 +385,7 @@ def test_realm_import_data_upload(self) -> None:
-         self.assertTrue(
-             prereg_realm.data_import_metadata["uploaded_import_file_name"].endswith(filename)
-         )
-+        self.assertNotIn("invalid_file_error_message", prereg_realm.data_import_metadata)
- 
-     def test_realm_import_data_upload_size_is_deferred(self) -> None:
-         # Choose import from slack
-```
-
-**File**: `zerver/views/registration.py` (modified, +1/-0)
-```diff
-@@ -441,6 +441,7 @@ def registration_helper(
-                 return render_slack_import_page(request, prereg_realm, key)
- 
-             prereg_realm.data_import_metadata["email_address_visibility"] = email_address_visibility
-+            prereg_realm.data_import_metadata.pop("invalid_file_error_message", None)
-             prereg_realm.save(update_fields=["data_import_metadata"])
- 
-             logger.info("(%s) Enqueueing Slack import", prereg_realm.string_id)
-```
-
-**File**: `zerver/views/tusd.py` (modified, +2/-0)
-```diff
-@@ -304,6 +304,8 @@ def handle_preregistration_pre_finish_hook(
-     # the database so that is available even after a refresh.
-     filename = data.meta_data["filename"]
-     preregistration_realm.data_import_metadata["uploaded_import_file_name"] = filename
-+    # The next import attempt will report its own errors.
-+    preregistration_realm.data_import_metadata.pop("invalid_file_error_message", None)
-     preregistration_realm.save(update_fields=["data_import_metadata"])
-     return tusd_json_response({})
- 
-```
-
----
-
-### Incident Patch 3: `239c2832` (2026-10-28)
-**Commit Message**: modal: Fix sidebars resizing when a modal hides the scrollbar.
-
-Opening a modal hides the document scrollbar, which makes `100vw`
-grow by the scrollbar's width. The sidebar widths are `vw`-based,
-so on Linux and Windows, in windows narrow enough for the `vw` term
-to win their `min()`, the sidebars widened by a few pixels. The
-message feed narrowed by the same amount, re-wrapping messages
-behind the modal.
-
-Fix this by subtracting `--disabled-scrollbar-width` in those
-widths, as we already do for `html`, the navbar and compose.
-
-Fixes #36998.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `web/styles/app_variables.css` (modified, +11/-2)
-```diff
-@@ -333,15 +333,21 @@
-        This is very useful for areas in the CSS codebase
-        that rely on this value, but not necessarily as
-        applied to `width:` or `max-width:`. */
--    --left-sidebar-width: min(33.3333vw, var(--left-sidebar-max-width));
-+    --left-sidebar-width: min(
-+        calc((100vw - var(--disabled-scrollbar-width)) / 3),
-+        var(--left-sidebar-max-width)
-+    );
-     --right-sidebar-left-spacing: 5px;
-     /* 50px per icon * 4 icons + 3px space (legacy) = 203px at 20px/1em */
-     --right-column-collapsed-sidebar-width: 10.15em;
-     /* 288px at 14px/1em */
-     --right-sidebar-max-width: 20.57em;
-     /* We open the right sidebar at xl_min at a size of 240px,
-        here expressed as precisely 20% of the viewport. */
--    --right-sidebar-width: min(20vw, var(--right-sidebar-max-width));
-+    --right-sidebar-width: min(
-+        calc((100vw - var(--disabled-scrollbar-width)) * 0.2),
-+        var(--right-sidebar-max-width)
-+    );
-     /* 25px at 16px/1em */
-     --right-sidebar-vdots-width: 1.5625em;
-     /* The width of the icon is reduced by 2px, to account for 2px
-@@ -636,6 +642,9 @@
-     Width to be reserved for document scrollbar when scrolling is disabled.
-     Using `scrollbar-gutter` would be more appropriate but doesn't has wide
-     support and doesn't work for `fixed` elements.
++function topic_link(stream_id, topic) {
++    return {stream_id, topic, message_id: undefined};
++}
 +
-+    Since `html` has `overflow-y: scroll`, `100vw` excludes the scrollbar
-+    until scrolling is disabled, so `vw`-based widths subtract this too.
-     */
-     --disabled-scrollbar-width: 0px;
- 
+ test("save_topic_links", () => {
+     function assert_maps_empty() {
+         assert.deepEqual(message_store.topic_links_incoming_for_testing(), new Map());
+@@ -638,23 +647,7 @@ test("save_topic_links", () => {
+         new Map([
+             [
+                 message.stream_id,
+-                new Map([
+-                    [
+-                        message.topic,
+-                        new Map([
+-                            [
+-                                message.id,
+-                                [
+-                                    {
+-                                        stream_id: 10,
+-                                        topic: "hello",
+-                                        message_id: undefined,
+-                                    },
+-                                ],
+-                            ],
+-                        ]),
+-                    ],
+-                ]),
++                new Map([[message.topic, new Map([[message.id, [topic_link(10, "hello")]]])]]),
+             ],
+         ]),
+     );
+@@ -703,18 +696,7 @@ test("save_topic_links", () => {
+                 new Map([
+                     [
+                         message.topic,
+-                        new Map([
+-                            [
+-                                message.id,
+-                                [
+-                                    {
+-                                        stream_id: 10,
+-                                        topic: "hello",
+-                                        message_id: linked_message.id,
+-                                    },
+-                                ],
+-                            ],
+-                        ]),
++                        new Map([[message.id, [message_link(10, "hello", linked_message.id)]]]),
+                     ],
+                 ]),
+             ],
+@@ -815,18 +797,7 @@ test("get and update topic links to/from narrow", () => {
+                 new Map([
+                     [
+                         "engineering",
+-                        new Map([
+-                            [
+-                                message1.id,
+-                                [
+-                                    {
+-                                        stream_id: design.stream_id,
+-                                        topic: "goodbye",
+-                                        message_id: undefined,
+-                                    },
+-                                ],
+-                            ],
+-                        ]),
++                        new Map([[message1.id, [topic_link(design.stream_id, "goodbye")]]]),
+                     ],
+                 ]),
+             ],
+@@ -878,17 +849,9 @@ test("get and update topic links to/from narrow", () => {
+                             [
+                                 message1.id,
+                                 [
+-                                    {
+-                                        stream_id: design.stream_id,
+-                                        topic: "goodbye",
+-                                        message_id: undefined,
+-                                    },
++                                    topic_link(design.stream_id, "goodbye"),
+                                     // to "second-goodbye" is new
+-                                    {
+-                                        stream_id: design.stream_id,
+-                                        topic: "second-goodbye",
+-                                        message_id: undefined,
+-                                    },
++                                    topic_link(design.stream_id, "second-goodbye"),
+                                 ],
+                             ],
+                         ]),
+@@ -901,18 +864,7 @@ test("get and update topic links to/from narrow", () => {
+                 new Map([
+                     [
+                         "new client",
+-                        new Map([
+-                            [
+-                                message5.id,
+-                                [
+-                                    {
+-                                        stream_id: design.stream_id,
+-                                        topic: "goodbye",
+-                                        message_id: undefined,
+-                                    },
+-                                ],
+-                            ],
+-                        ]),
++                        new Map([[message5.id, [topic_link(design.stream_id, "goodbye")]]]),
+                     ],
+                 ]),
+        
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40507** (2026-10-28): makemessages: Treat frontend translation keys and values as separate (@andersk)
-- **PR #40506** (2026-10-28): modal: Fix sidebars resizing when a modal hides the scrollbar. (@sahil839)
-- **PR #40496** (2026-10-28): Upgrade JavaScript dependencies (@andersk)
-- **PR #40492** (closed): feat(docs): add markdown documentation validator and contributor guide (@tukaram-007)
-- **PR #40490** (2026-10-28): Show invalid emails to the slack importer. (@amanagr)
-- **PR #40489** (2026-10-26): [12.x backport] migrations: Backfill is_deleted for users deleted before it existed. (@mateuszmandera)
+- **PR #40542** (closed): stream_settings: Optimize DOM queries in redraw_left_panel. (@sumit-2007-git)
+- **PR #40537** (closed): [ai] left_sidebar: Translate "Back" button label in modal header. (@raadhika-N)
+- **PR #40534** (2026-10-30): [ai] message_store: Prep for anchoring topic links on their permalink's message. (@evykassirer)
+- **PR #40533** (2026-10-30): Use PGroonga binary packages on Debian 13, Ubuntu 26.04 (@andersk)
+- **PR #40530** (2026-10-29): [ai] provision: Fix PGroonga failing to load on Debian 13. (@benprew)
+- **PR #40528** (2026-10-30): [ai] Zulip beta releases (@benprew)
 
 ---
 
@@ -1721,30 +1434,32 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. slack_import: Fix unexplained failure on invalid Slack user emails.
+## X. provision: Fix PGroonga failing to load on Debian 13.
 
 **RULE**:
-When implementing operations in `templates/zerver/slack_import.html`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zulip/zulip. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tools/lib/provision.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zulip/zulip. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `00635bc3`: slack_import: Fix unexplained failure on invalid Slack user emails.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6e059848`: provision: Fix PGroonga failing to load on Debian 13.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `templates/zerver/slack_import.html`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/lib/provision.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-                        <p id="slack-import-file-upload-error" class="help-inline text-error">{{ import_data_error_message }}</p>
-                        <button type="submit" class="register-button"{% if needs_new_upload %} disabled{% endif %}>
+    if vendor == "debian":
+        # libarrow2600 from packages.groonga.org links against
+        # opentelemetry-cpp without depending on it; see
+        # https://github.com/apache/arrow/issues/55112
+        SYSTEM_DEPENDENCIES.append("opentelemetry-cpp")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-                        <p id="slack-import-file-upload-error" class="help-inline text-error">{{ invalid_file_error_message }}</p>
-                        <button type="submit" class="register-button"{% if invalid_file_error_message %} disabled{% endif %}>
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `00635bc3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6e059848` are properly handled with clean fallback behavior.

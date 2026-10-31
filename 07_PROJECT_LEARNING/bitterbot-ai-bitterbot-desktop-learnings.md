@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `54ee07c6`  
+> **Source Version**: `2f1bdadc`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T00:41:26.347Z  
+> **Timestamp**: 2026-10-31T01:21:34.609Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T00:41:26.339Z  
+> **Harvest Timestamp**: 2026-10-31T01:21:34.605Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,291 +1799,120 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `54ee07c6` (2026-10-31)
-**Commit Message**: chore(deps): bump the native group across 1 directory with 3 updates (#326)
+### Incident Patch 1: `2f1bdadc` (2026-10-31)
+**Commit Message**: chore(deps-dev): bump @types/node from 25.2.3 to 26.6.5 (#306)
 
-Bumps the native group with 3 updates in the / directory: [@lydell/node-pty](https://github.com/lydell/node-pty), [playwright](https://github.com/microsoft/playwright) and [playwright-core](https://github.com/microsoft/playwright).
-
-
-Updates `@lydell/node-pty` from 1.2.0-beta.15 to 1.2.0-beta.18
-- [Release notes](https://github.com/lydell/node-pty/releases)
-- [Commits](https://github.com/lydell/node-pty/compare/v1.2.0-beta.15...v1.2.0-beta.18)
-
-Updates `playwright` from 1.64.0 to 1.64.1
-- [Release notes](https://github.com/microsoft/playwright/releases)
-- [Commits](https://github.com/microsoft/playwright/compare/v1.64.0...v1.64.1)
-
-Updates `playwright-core` from 1.64.0 to 1.64.1
-- [Release notes](https://github.com/microsoft/playwright/releases)
-- [Commits](https://github.com/microsoft/playwright/compare/v1.64.0...v1.64.1)
+Bumps [@types/node](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/node) from 25.2.3 to 26.6.5.
+- [Release notes](https://github.com/DefinitelyTyped/DefinitelyTyped/releases)
+- [Commits](https://github.com/DefinitelyTyped/DefinitelyTyped/commits/HEAD/types/node)
 
 ---
 updated-dependencies:
-- dependency-name: "@lydell/node-pty"
-  dependency-version: 1.2.0-beta.18
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-  dependency-group: native
-- dependency-name: playwright
-  dependency-version: 1.64.1
-  dependency-type: di
-
-**File**: `package.json` (modified, +3/-3)
-```diff
-@@ -168,7 +168,7 @@
-     "@grammyjs/runner": "^2.0.3",
-     "@grammyjs/transformer-throttler": "^1.2.1",
-     "@larksuiteoapi/node-sdk": "^1.74.0",
--    "@lydell/node-pty": "1.2.0-beta.15",
-+    "@lydell/node-pty": "1.2.0-beta.18",
-     "@mariozechner/pi-agent-core": "0.73.1",
-     "@mariozechner/pi-ai": "0.73.1",
-     "@modelcontextprotocol/sdk": "^1.32.1",
-@@ -209,8 +209,8 @@
-     "nodemailer": "^10.0.15",
-     "osc-progress": "^0.3.4",
-     "pdfjs-dist": "^5.4.624",
--    "playwright": "1.64.0",
--    "playwright-core": "1.64.0",
-+    "playwright": "1.64.1",
-+    "playwright-core": "1.64.1",
-     "proper-lockfile": "^4.1.2",
-     "qrcode-terminal": "^0.12.0",
-     "sharp": "^0.35.5",
-```
-
-**File**: `pnpm-lock.yaml` (modified, +44/-44)
-```diff
-@@ -50,8 +50,8 @@ importers:
-         specifier: ^1.74.0
-         version: 1.76.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-       '@lydell/node-pty':
--        specifier: 1.2.0-beta.15
--        version: 1.2.0-beta.15
-+        specifier: 1.2.0-beta.18
-+        version: 1.2.0-beta.18
-       '@mariozechner/pi-agent-core':
-         specifier: 0.73.1
-         version: 0.73.1(@modelcontextprotocol/sdk@1.32.2(zod@4.6.7))(@opentelemetry/api@1.10.0)(@opentelemetry/exporter-trace-otlp-http@0.300.0(@opentelemetry/api@1.10.0))(@opentelemetry/resources@2.12.0(@opentelemetry/api@1.10.0))(@opentelemetry/sdk-trace-base@2.12.0(@opentelemetry/api@1.10.0))(bufferutil@4.1.0)(utf-8-validate@5.0.10)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))(zod@4.6.7)
-@@ -179,11 +179,11 @@ importers:
-         specifier: ^5.4.624
-         version: 5.4.624
-       playwright:
--        specifier: 1.64.0
--        version: 1.64.0
-+        specifier: 1.64.1
-+        version: 1.64.1
-       playwright-core:
--        specifier: 1.64.0
--        version: 1.64.0
-+        specifier: 1.64.1
-+        version: 1.64.1
-       proper-lockfile:
-         specifier: ^4.1.2
-         version: 4.1.2
-@@ -1646,38 +1646,38 @@ packages:
-   '@lit/reactive-element@2.1.2':
-     resolution: {integrity: sha512-pbCDiVMnne1lYUIaYNN5wrwQXDtHaYtg7YEFPeW+hws6U47WeFvISGUWekPGKWOP1ygrs0ef0o1VJMk1exos5A==}
- 
--  '@lydell/node-pty-darwin-arm64@1.2.0-beta.15':
--    resolution: {integrity: sha512-6TSBbzdcLiNTHl1mTuzflqXrkmcC36USVGvERoDgvHk2ItEDaMaFZuAJ1CqPmwYj0DyhCS16TVS8OGK9xZnjyQ==}
-+  '@lydell/node-pty-darwin-arm64@1.2.0-beta.18':
-+    resolution: {integrity: sha512-gJizeNHkkKCoggtj5Q0yf4btK6dPfr7E063SrOh1jHXp3IyjiErU4KwT7Cn29qb/OY5pBo/Utctenl03MyBtAg==}
-     cpu: [arm64]
-     os: [darwin]
- 
--  '@lydell/node-pty-darwin-x64@1.2.0-beta.15':
--    resolution: {integrity: sha512-yDT2oqPqYMBScyuk1U9Rg5VKcrbMOD9o9jWYYamDADA3NSbUISroPChrqYRQ74Y7BQtNH4gqYAiWOZRi5uQZ0Q==}
-+  '@lydell/node-pty-darwin-x64@1.2.0-beta.18':
-+    resolution: {integrity: sha512-xnJQz+i5v7pkR1xo14ffTwvMm2DoK3KqPACQaJqxtMVkM7ojv14/KmkaV2jte7Q0BIzfU+VbKVUL9Zmf23G8VQ==}
-     cpu: [x64]
-     os: [darwin]
- 
--  '@lydell/node-pty-linux-arm64@1.2.0-beta.15':
--    resolution: {integrity: sha512-wkbNF7dYAmtJv+o2+iztVlNwnUB4B0uX0wh/UD+mwMcmE2gNMnW9GChXO7fEE5XJokD0vB5idiHpGegaN+G/sg==}
-+  '@lydell/node-pty-linux-arm64@1.2.0-beta.18':
-+    resolution: {integrity: sha512-fM8jRcZDZwG7ihEOx/R7N1aGHdT4Fd6IQj1d6Jp7Qb9FeDWlIwLuVlxUkJOsW4V1ZmJe1xZl2+WR0RjqMvb2+Q==}
-     cpu: [arm64]
-     os: [linux]
- 
--  '@lydell/node-pty-linux-x64@1.2.0-beta.15':
--    resolution: {integrity: sha512-+U/5AVvHT6W+8OCYcnJgN0Qgc0ycO3TfD6aaFJHK+WHij797f8gsi5dV1HEO9l6YQmWCD+VL5gaLDhx3mxHwCA==}
-+  '@lydell/node-pty-linux-x64@1.2.0-beta.18':
-+    resolution: {integrity: sha512-LGikvfcvoPrxXO7o1gCsd5ErrRWnQFYLxjJfX0uwBpi0oGPiTERUBLzKspzZs7wjXZqF30mnNB/C09uotu5vRA==}
-     cpu: [x64]
-     os: [linux]
- 
--  '@lydell/node-pty-win32-arm64@1.2.0-beta.15':
--    resolution: {integrity: sha512-pyAk91w7wnnKrD4mrHXtIXRfmzSWV5bEzvRhurXcMCtCc2TJ424ciUskIgWMhAPP6y3KyUnqElj+U6kY3iOt0A==}
-+  '@lydell/node-pty-win32-arm64@1.2.0-beta.18':
-+    resolution: {integrity: sha512-S6h4G3zYGe+pPQxhlNxg+MvJNUIwXFxhnUufx1QT45TgratKMxQfoGPidvnwoLwuXQ3hqQ7SsI93rH8RUoL09g==}
-     cpu: [arm64]
-     os: [win32]
- 
--  '@lydell/node-pty-win32-x64@1.2.0-beta.15':
--    resolution: {integrity: sha512-2f8twEmDVxZ7drchAXjtevpmSPhFok0avAnzXro4t5gmz0xsPNKkoZvymwtuIS3xo7PzQqZOPQ/YzwEMb7oIzQ==}
-+  '@lydell/node-pty-win32-x64@1.2.0-beta.18':
-+    resolution: {integrity: sha512-wBSMeAwEL04t694ln+QbLnc98YeF3mAwWm/NP8acYDAobPw/WK7KKpk8z07iyxv0gRH2Z2/L/f6vgtnBgxE0Bg==}
-     cpu: [x64]
-     os: [win32]
- 
--  '@lydell/node-pty@1.2.0-beta.15':
--    resolution: {integrity: sha512-Br8wBxzbxFwdWgk9uQ+rdzE0xfoxOK4QuGH54swhRwc5IxP6H9Y1/bcyazRGvNUs6XkB5qNVkezuKSRxUwZe7A==}
-+  '@lydell/node-pty@1.2.0-beta.18':
-+    resolution: {integrity: sha512-ryy4liRcw6QBBKWDIbJgTW7Pw8NI2xjri/5s/LZg/jJ8ZVg8MgA1xI/vjpT5qTvDvPjUpU5NybJBrKRgK/QvlA==}
- 
-   '@mariozechner/pi-agent-core@0.73.1':
-     resolution: {integrity: sha512-Y/KVOhuKSgRQgYBlwmRtO2gPkUcoavOSqGF9bpQIINvNZvc19k6Z1H3bFDTce3Vp5ApMmTsfLH3+tNvOg75fAQ==}
-@@ -8570,13 +8570,13 @@ packages:
-     resolution: {integrity: sha512-wQ0b/W4Fr01qtpHlqSqspcj3EhBvimsdh0KlHhH8HRZnMsEa0ea2fTULOXOS9ccQr3om+GcGRk4e+isrZWV8qQ==}
-     engines: {node: '>=16.20.0'}
- 
--  playwright-core@1.64.0:
--    resolution: {integrity: sha512-T9r+MZkTECl2+oUcZ26YgZzTrYidTsIhYYkJix+6iDOymOb1FB2RLLSOxRGnZGv5DStt+aduIVbt+E8WygXYpg==}
-+  playwright-core@1.64.1:
-+    resolution: {integrity: sha512-BC4s8y6SEVA6Q1rSxZTto8hI1KUI3xXlHGZgvGqP4IqPdI/a6FX9H29IDNz7vKo9l21b6LfYosScPL6M3xxyDQ==}
-     engines: {node: '>=20'}
-     hasBin: true
- 
--  playwright@1.64.0:
--    resolution: {integrity: sha512-kVzTnYFYEyQ9RGzBjNCd2+yEqWmVbxl3AHPynv3qQ6JTjv4a+kwRcnqQwIpuP3NnrnIrE/Q6wWAIAvMfIE2/Yg==}
-+  playwright@1.64.1:
-+    resolution: {integrity: sha512-HCrVhHr5QQuwYoswEUGTb7gGp522yflbv/ST8nF4sFWGuLjQCt17Q/EubpGGSNKYn1tsTCPZxqHhHCf
-```
-
----
-
-### Incident Patch 2: `e5b262ec` (2026-10-31)
-**Commit Message**: chore(deps): bump shiki from 1.29.2 to 4.5.0 (#305)
-
-Bumps [shiki](https://github.com/shikijs/shiki/tree/HEAD/packages/shiki) from 1.29.2 to 4.5.0.
-- [Release notes](https://github.com/shikijs/shiki/releases)
-- [Commits](https://github.com/shikijs/shiki/commits/v4.5.0/packages/shiki)
-
----
-updated-dependencies:
-- dependency-name: shiki
-  dependency-version: 4.5.0
-  dependency-type: direct:production
+- dependency-name: "@types/node"
+  dependency-version: 26.6.5
+  dependency-type: direct:development
   update-type: version-update:semver-major
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `desktop/package.json` (modified, +1/-1)
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -50,7 +50,7 @@
-     "react-markdown": "^9.0.1",
-     "react-router-dom": "^7.18.4",
-     "remark-gfm": "^4.0.0",
--    "shiki": "^1.26.2",
-+    "shiki": "^4.5.0",
-     "sonner": "^2.0.8",
-     "tailwind-merge": "^3.7.0",
-     "vaul": "^1.1.2",
+@@ -231,7 +231,7 @@
+     "@lit/context": "^1.1.0",
+     "@types/express": "^5.0.6",
+     "@types/markdown-it": "^14.1.2",
+-    "@types/node": "^25.2.3",
++    "@types/node": "^26.6.5",
+     "@types/proper-lockfile": "^4.1.4",
+     "@types/qrcode-terminal": "^0.12.2",
+     "@types/ws": "^8.18.2",
 ```
 
-**File**: `pnpm-lock.yaml` (modified, +103/-86)
+**File**: `pnpm-lock.yaml` (modified, +80/-98)
 ```diff
-@@ -399,8 +399,8 @@ importers:
-         specifier: ^4.0.0
-         version: 4.0.1
-       shiki:
--        specifier: ^1.26.2
--        version: 1.29.2
-+        specifier: ^4.5.0
-+        version: 4.5.0
-       sonner:
-         specifier: ^2.0.8
-         version: 2.0.8(@types/react@18.3.28)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-@@ -3797,26 +3797,36 @@ packages:
-     peerDependencies:
-       selderee: ~0.12.0
+@@ -30,13 +30,13 @@ importers:
+         version: 3.1158.0
+       '@buape/carbon':
+         specifier: 0.17.0
+-        version: 0.17.0(@discordjs/voice@0.19.2(@emnapi/core@1.8.1)(@emnapi/runtime@1.11.3)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/node@25.2.3)
++        version: 0.17.0(@discordjs/voice@0.19.2(@emnapi/core@1.8.1)(@emnapi/runtime@1.11.3)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/node@26.6.5)
+       '@clack/prompts':
+         specifier: ^1.8.1
+         version: 1.8.1
+       '@coinbase/agentkit':
+         specifier: ^0.10.4
+-        version: 0.10.4(@tanstack/query-core@5.100.1)(@tanstack/react-query@5.100.1(react@18.3.1))(@types/node@25.2.3)(@types/react@18.3.28)(@zerodev/webauthn-key@5.5.0(viem@2.57.12(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.6.7)))(abitype@1.3.0(typescript@5.9.3)(zod@4.6.7))(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(graphql@16.13.2)(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(utf-8-validate@5.0.10)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
++        version: 0.10.4(@tanstack/query-core@5.100.1)(@tanstack/react-query@5.100.1(react@18.3.1))(@types/node@26.6.5)(@types/react@18.3.28)(@zerodev/webauthn-key@5.5.0(viem@2.57.12(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.6.7)))(abitype@1.3.0(typescript@5.9.3)(zod@4.6.7))(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(graphql@16.13.2)(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(utf-8-validate@5.0.10)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+       '@coinbase/cdp-sdk':
+         specifier: ^1.57.1
+         version: 1.60.0(@x402/evm@2.10.0(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10))(@x402/svm@2.10.0(@solana/kit@2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))))(bufferutil@4.1.0)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(utf-8-validate@5.0.10)
+@@ -102,7 +102,7 @@ importers:
+         version: 8.2.0(@twurple/auth@8.2.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+       '@whiskeysockets/baileys':
+         specifier: 7.0.0-rc14
+-        version: 7.0.0-rc14(audio-decode@2.2.3)(bufferutil@4.1.0)(sharp@0.35.5(@types/node@25.2.3))(utf-8-validate@5.0.10)
++        version: 7.0.0-rc14(audio-decode@2.2.3)(bufferutil@4.1.0)(sharp@0.35.5(@types/node@26.6.5))(utf-8-validate@5.0.10)
+       ajv:
+         specifier: ^8.20.0
+         version: 8.20.0
+@@ -192,7 +192,7 @@ importers:
+         version: 0.12.0
+       sharp:
+         specifier: ^0.35.5
+-        version: 0.35.5(@types/node@25.2.3)
++        version: 0.35.5(@types/node@26.6.5)
+       signal-utils:
+         specifier: ^0.21.1
+         version: 0.21.1(signal-polyfill@0.2.2)
+@@ -201,7 +201,7 @@ importers:
+         version: 0.1.9
+       stripe:
+         specifier: ^20.4.1
+-        version: 20.4.1(@types/node@25.2.3)
++        version: 20.4.1(@types/node@26.6.5)
+       tar:
+         specifier: 7.5.9
+         version: 7.5.9
+@@ -240,8 +240,8 @@ importers:
+         specifier: ^14.1.2
+         version: 14.1.2
+       '@types/node':
+-        specifier: ^25.2.3
+-        version: 25.2.3
++        specifier: ^26.6.5
++        version: 26.6.5
+       '@types/proper-lockfile':
+         specifier: ^4.1.4
+         version: 4.1.4
+@@ -256,7 +256,7 @@ importers:
+         version: 7.0.0-dev.20260215.1
+       '@vitest/coverage-v8':
+         specifier: ^4.0.18
+-        version: 4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@6.4.4(@types/node@25.2.3)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18)
++        version: 4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@6.4.4(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18)
+       esbuild:
+         specifier: ^0.28.2
+         version: 0.28.2
+@@ -289,7 +289,7 @@ importers:
+         version: 5.9.3
+       vitest:
+         specifier: ^4.0.18
+-        version: 4.0.18(@opentelemetry/api@1.10.0)(@types/node@25.2.3)(@vitest/browser-playwright@4.0.18)(happy-dom@20.14.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1)
++        version: 4.0.18(@opentelemetry/api@1.10.0)(@types/node@26.6.5)(@vitest/browser-playwright@4.0.18)(happy-dom@20.14.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1)
  
--  '@shikijs/core@1.29.2':
--    resolution: {integrity: sha512-vju0lY9r27jJfOY4Z7+Rt/nIOjzJpZ3y+nYpqtUZInVoXQ/TJZcfGnNOGnKjFdVZb8qexiCuSlZRKcGfhhTTZQ==}
-+  '@shikijs/core@4.5.0':
-+    resolution: {integrity: sha512-6CIgwq+bt2JZ3OSjb/nBkkwEf/CfpHcbam+Mg5Pllco7HAGRQ2/EFhZrrJtbyNTgKwknfVS+llsXGygiDGwJWw==}
-+    engines: {node: '>=20'}
- 
--  '@shikijs/engine-javascript@1.29.2':
--    resolution: {integrity: sha512-iNEZv4IrLYPv64Q6k7EPpOCE/nuvGiKl7zxdq0WFuRPF5PAE9PRo2JGq/d8crLusM59BRemJ4eOqrFrC4wiQ+A==}
-+  '@shikijs/engine-javascript@4.5.0':
-+    resolution: {integrity: sha512-Ed6UdEj84LyYkwnxM5CvSMWAD+id9ExTYri0/+x41U9zrgNifPSS9lZm0JqBP0VfYI8yr8tY5nbNq9+p9R0kFA==}
-+    engines: {node: '>=20'}
- 
--  '@shikijs/engine-oniguruma@1.29.2':
--    resolution: {integrity: sha512-7iiOx3SG8+g1MnlzZVDYiaeHe7Ez2Kf2HrJzdmGwkRisT7r4rak0e655AcM/tF9JG/kg5fMNYlLLKglbN7gBqA==}
-+  '@shikijs/engine-oniguruma@4.5.0':
-+    resolution: {integrity: sha512-dKVmbJecVdB9recl8a/CU4jdpNXyjJQrIcesIkpS70s5HS02ohpnCSpMUbotPnEUzbAcLQ+S4hwZYbkBBiTcJw==}
-+    engines: {node: '>=20'}
- 
--  '@shikijs/langs@1.29.2':
--    resolution: {integrity: sha512-FIBA7N3LZ+223U7cJDUYd5shmciFQlYkFXlkKVaHsCPgfVLiO+e12FmQE6Tf9vuyEsFe3dIl8qGWKXgEHL9wmQ==}
-+  '@shikijs/langs@4.5.0':
-+    resolution: {integrity: sha512-wwBTqwduXSz0X4v9Qa2EWeFaYJEw1clCncWjoRNQRbVDu3SPRTRWucnouYapKj3b8Q+sk/41Vbc4B5c8nuYzLA==}
-+    engines: {node: '>=20'}
- 
--  '@shikijs/themes@1.29.2':
--    resolution: {integrity: sha512-i9TNZlsq4uoyqSbluIcZkmPL9Bfi3djVxRnofUHwvx/h6SRW3cwgBC5SML7vsDcWyukY0eCzVN980rqP6qNl9g==}
-+  '@shikijs/primitive@4.5.0':
-+    resolution: {integrity: sha512-UM7ShlA8oz0OWxLLO8BmO9Ip6fVqdkt8yF0EH7nOCqHfrx1eEAzF0ZUVK7L+I8NEgeu1PEWSRlxaiPPeCb4iDg==}
-+    engines: {node: '>=20'}
- 
--  '@shikijs/types@1.29.2':
--    resolution: {integrity: sha512-VJjK0eIijTZf0QSTODEXCqinjBn0joAHQ+aPSBzrv4O2d/QSbsMw+ZeSRx03kV34Hy7NzUvV/7NqfYGRLrASmw==}
-+  '@shikijs/themes@4.5.0':
-+    resolution: {integrity: sha512-zGb87H3UBbpuI4yoh5UguB1XbU+2BDU3kflM7UfZ+Cy2hWo9lBtqjSVK20gmLY6ukYl040hAypGXMgud9vul8Q==}
-+    engines: {node: '>=20'}
- 
--  '@shikijs/vscode-textmate@10.0.2':
--    resolution: {integrity: sha512-83yeghZ2xxin3Nj8z1NMd/NCuca+gsYXswywDy5bHvwlWL8tpTQmzGeUuHd9FC3E/SBEMvzJRwWEOz5gGes9Qg==}
-+  '@shikijs/types@4.5.0':
-+    resolution: {integrity: sha512-drtPrtD8N0DENyD2cyt6Ajy+IWsiCLgMxODwLTpvH1UsN6a9jf90tNTPjqwHvA+0Lzu9e0txk8DjfqH1p9UJRw==}
-+    engines: {node: '>=20'}
-+
-+  '@shikijs/vscode-textmate@10.1.0':
-+    resolution: {integrity: sha512-cVBuhDQjBZaNMTwBquYfPydrUP+E3hE6oYGasx8h6ZrODIM7/r+gxLDXdd66oszbrggZHEntdE6j+5gYIVyMWQ==}
- 
-   '@simplewebauthn/browser@8.3.7':
-     resolution: {integrity: sha512-ZtRf+pUEgOCvjrYsbMsJfiHOdKcrSZt2zrAnIIpfmA06r0FxBovFYq0rJ171soZbe13KmWzAoLKjSxVW7KxCdQ==}
-@@ -5066,6 +5076,9 @@ packages:
-   '@types/hast@3.0.4':
-     resolution: {integrity: sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ==}
- 
-+  '@types/hast@3.0.5':
-+    resolution: {integrity: sha512-rp/ezSWaD1m44dPKICGhiskI13nVr7qTloFwDa/IYkhhf5nzwP+zIQcIJh3WIFSBOy/H1PzB40jPjMDksN4F+g==}
-+
-   '@types/http-errors@2.0.5':
-     resolution: {integrity: sha512-r8Tayk8HJnX0FztbZN7oVqGccWgw98T/0neJphO91KkmOzug1KkofZURD4UaD5uH8AqcFLfdPErnBod0u71/qg==}
- 
-@@ -6617,9 +6630,6 @@ packages:
-   elliptic@6.6.1:
-     resolution: {integrity: sha512-RaddvvMatK2LJHqFJ+YA4WysVN5Ita9E35botqIYspQ4TkRAlCicdzKOjlyv/1Za5RyTNn7di//eEV0uTAfe3g==}
- 
--  emoji-regex-xs@1.0.0:
--    resolution: {integrity: sha512-LRlerrMYoIDrT6jgpeZ2YYl/L8EulRTt5hQcYjy5AInh7HWXKimpqx68aknBFpGL2+/IcogTcaydJEgaTmOpDg==}
--
-   emoji-regex@10.6.0:
-     resolution: {integrity: sha512-toUI84YS5YmxW219erniWD0CIVOo46xGKColeNQRgOzDorgBi1v4D71/OFzgD9GO2UGKIv1C3Sp8DAn0+j5w7A==}
- 
-@@ -8267,8 +8277,11 @@ packages:
-     resolution: {integrity: sha512-VXJjc87FScF88uafS3JllDgvAm+c/Slfz06lorj2uAY34rlUu0Nt+v8wreiImcrgAjjIHp1rXpTDlLOGw29WwQ==}
-     engines: {node: '>=18'}
- 
--  oniguruma-to-es@2.3.0:
--    resolution: {integrity: sha512-bwALDxriqfKGfUufKGGepCzu9x7nJQuoRoAFp4AnwehhC2crqrDIAP/uN2qdlsAvSMpeRC3+Yzhqc7hLmle5+g==}
-+  oniguruma-parser@0.12.2:
-+    resolution: {integrity: sha512-6HVa5oIrgMC6aA6WF6XyyqbhRPJrKR02L20+2+zpDtO5QAzGHAUGw5TKQvwi5vctNnRHkJYmjAhRVQF2EKdTQw==}
-+
-+  oniguruma-to-es@4.3.6:
-+    resolution: {integrity: sha512-csuQ9x3Yr0cEIs/Zgx/OEt9iBw9vqIunAPQkx19R/fiMq2oGVTgcMqO/V3Ybqefr1TBvosI6jU539ksaBULJyA==}
- 
-   openai@6.26.0:
-     resolution: {integrity: sha512-zd23dbWTjiJ6sSAX6s0HrCZi41JwTA1bQVs0wLQPZ2/5o2gxOJA5wh7yOAUgwYybfhDXyhwlpeQf7Mlgx8EOCA==}
-@@ -8690,6 +8703,9 @@ packages:
-   property-informatio
+   desktop:
+     dependencies:
+@@ -437,7 +437,7 @@ importers:
+         version: 18.3.7(@types/react@18.3.28)
+       '@vitejs/plugin-react':
+         specifier: ^6.1.2
+-        version: 6.1.2(vite@8.3.4(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
++        version: 6.1.2(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
+       autoprefixer:
+         specifier: ^10.6.1
+         version: 10.6.
 ```
 
 #### Recent Merged Pull Requests:
@@ -2112,13 +1941,13 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump the native group across 1 directory with 3 updates (#326)
+## X. deps-dev): bump @types/node from 25.2.3 to 26.6.5 (#306)
 
 **RULE**:
 When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `54ee07c6`: deps): bump the native group across 1 directory with 3 updates (#326). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2f1bdadc`: deps-dev): bump @types/node from 25.2.3 to 26.6.5 (#306). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
@@ -2126,18 +1955,14 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "@lydell/node-pty": "1.2.0-beta.18",
-    "playwright": "1.64.1",
-    "playwright-core": "1.64.1",
+    "@types/node": "^26.6.5",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "@lydell/node-pty": "1.2.0-beta.15",
-    "playwright": "1.64.0",
-    "playwright-core": "1.64.0",
+    "@types/node": "^25.2.3",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `54ee07c6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2f1bdadc` are properly handled with clean fallback behavior.

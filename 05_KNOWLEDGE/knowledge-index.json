@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T01:15:15.916Z",
+  "last_updated": "2026-10-31T01:21:34.971Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4870,8 +4870,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "54ee07c6",
-      "content_hash": "2578c919276b082652fc0c11b628247394998f97ccc21cf0836810486cf64615",
+      "source_version": "2f1bdadc",
+      "content_hash": "1c77e86f23829faf360fba59ffb50519e466c6cb4d732092513261bed6d09156",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -5019,6 +5019,11 @@
           "number": 5965,
           "title": "deps): bump the native group across 1 directory with 3 updates (#326)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5991,
+          "title": "deps-dev): bump @types/node from 25.2.3 to 26.6.5 (#306)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5026,7 +5031,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T00:41:26.951Z",
+      "verified_at": "2026-10-31T01:21:34.959Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12603,8 +12608,8 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "40e3eb97",
-      "content_hash": "d7d4c713c2d9bd5c80d34f25a39f739af72016df2cada716b837e3eb1b661fc8",
+      "source_version": "2d4aed8d",
+      "content_hash": "6a5d9a731e8c13f47800f7da86679f47ee3a97a089e419fa8a73c3ee28c15c58",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "promoted_rules": [
@@ -12657,6 +12662,11 @@
           "number": 5512,
           "title": "config): correct local-binding config reads after the multi-config change (#3987",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5984,
+          "title": "audit): remove the lock file of a reclaimed audit cache on Unix (#4021)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12664,7 +12674,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T12:26:02.715Z",
+      "verified_at": "2026-10-31T01:21:22.259Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48004,8 +48014,8 @@
       "slug": "rook-rook",
       "platform": "github",
       "source_url": "https://github.com/rook/rook",
-      "source_version": "61a8fea1",
-      "content_hash": "b91784086871d12370847c05f7b8827672856c467aaf0449c8f723c1fc6edd53",
+      "source_version": "285e01eb",
+      "content_hash": "7d26a62a115899ac5812bf510ecda4e6957381f66bcf00bdf5f0c218475d9d6e",
       "dossier_path": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "promoted_rules": [
@@ -48038,6 +48048,11 @@
           "number": 5615,
           "title": "Merge pull request #18639 from taraasrita10/cephcluster-status-update",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5986,
+          "title": "Merge pull request #18649 from cobaltcore-dev/add-arttor-as-approver",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48045,7 +48060,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T05:46:02.246Z",
+      "verified_at": "2026-10-31T01:21:28.790Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54970,8 +54985,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "eb21c0d1",
-      "content_hash": "333a0dbb335eedc7b759ea3831bc964c8008d258ef268fa2d3601036680a8fd7",
+      "source_version": "ef92bc17",
+      "content_hash": "ce83b77807f381fc1eae88ec76733139f7435508489dc326de98d8b3a25e2c03",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -55024,6 +55039,11 @@
           "number": 5604,
           "title": "Avoid oversized null row builders",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5990,
+          "title": "Classify MongoDB timeout errors as external errors",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55031,7 +55051,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T04:54:38.098Z",
+      "verified_at": "2026-10-31T01:21:33.840Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59478,8 +59498,8 @@
       "slug": "zulip-zulip",
       "platform": "github",
       "source_url": "https://github.com/zulip/zulip",
-      "source_version": "00635bc3",
-      "content_hash": "50c638e5048a39d9c0b7466c4761599a68c1a6f2f19af971f347beb153c1ba9b",
+      "source_version": "c803cca1",
+      "content_hash": "dc6b3bdba2a9708c5a5644b7362e5755a1721f830e6417a7b220ac5cda78de08",
       "dossier_path": "07_PROJECT_LEARNING/zulip-zulip-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zulip-zulip-learnings.md",
       "promoted_rules": [
@@ -59512,6 +59532,11 @@
           "number": 5175,
           "title": "slack_import: Fix unexplained failure on invalid Slack user emails.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5985,
+          "title": "provision: Fix PGroonga failing to load on Debian 13.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59519,7 +59544,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T04:41:58.710Z",
+      "verified_at": "2026-10-31T01:21:27.032Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -115195,7 +115220,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lodestones/Kromoss",
       "source_version": "hf-lodestones-kromoss",
-      "content_hash": "133cdee81537e0c7f9f3684bbae12e31120d8a5c08901adf98f7830266b41863",
+      "content_hash": "2a4ad9a50f02e655f71629bc5e4463c4b4fdef8f6c7f159773730644512bf5cc",
       "dossier_path": "07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md",
       "promoted_rules": [
@@ -115208,6 +115233,21 @@
           "number": 4215,
           "title": "Multi-Head Projection Slice-to-Fused Mapping Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5987,
+          "title": "Mixed-Precision Boundary Enforcement in Diffusion Pipelines",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5988,
+          "title": "Fused QKV Weight Mapping for ComfyUI Interoperability",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5989,
+          "title": "Distilled LoRA Inference Configuration Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -115215,7 +115255,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T09:37:59.426Z",
+      "verified_at": "2026-10-31T01:21:30.824Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -157842,6 +157882,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T01:15:14.599Z"
+    },
+    "rule-5984": {
+      "learning_id": "rule-5984",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5984,
+      "title": "audit): remove the lock file of a reclaimed audit cache on Unix (#4021)",
+      "source_url": "https://github.com/fallow-rs/fallow",
+      "source_version": "2d4aed8d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T01:21:22.259Z"
+    },
+    "rule-5985": {
+      "learning_id": "rule-5985",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5985,
+      "title": "provision: Fix PGroonga failing to load on Debian 13.",
+      "source_url": "https://github.com/zulip/zulip",
+      "source_version": "c803cca1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T01:21:27.032Z"
+    },
+    "rule-5986": {
+      "learning_id": "rule-5986",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5986,
+      "title": "Merge pull request #18649 from cobaltcore-dev/add-arttor-as-approver",
+      "source_url": "https://github.com/rook/rook",
+      "source_version": "285e01eb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T01:21:28.790Z"
+    },
+    "rule-5987": {
+      "learning_id": "rule-5987",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5987,
+      "title": "Mixed-Precision Boundary Enforcement in Diffusion Pipelines",
+      "source_url": "https://huggingface.co/lodestones/Kromoss",
+      "source_version": "hf-lodestones-kromoss",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T01:21:30.824Z"
+    },
+    "rule-5988": {
+      "learning_id": "rule-5988",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5988,
+      "title": "Fused QKV Weight Mapping for ComfyUI Interoperability",
+      "source_url": "https://huggingface.co/lodestones/Kromoss",
+      "source_version": "hf-lodestones-kromoss",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T01:21:30.824Z"
+    },
+    "rule-5989": {
+      "learning_id": "rule-5989",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5989,
+      "title": "Distilled LoRA Inference Configuration Invariant",
+      "source_url": "https://huggingface.co/lodestones/Kromoss",
+      "source_version": "hf-lodestones-kromoss",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T01:21:30.824Z"
+    },
+    "rule-5990": {
+      "learning_id": "rule-5990",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5990,
+      "title": "Classify MongoDB timeout errors as external errors",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "ef92bc17",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T01:21:33.840Z"
+    },
+    "rule-5991": {
+      "learning_id": "rule-5991",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5991,
+      "title": "deps-dev): bump @types/node from 25.2.3 to 26.6.5 (#306)",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "2f1bdadc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T01:21:34.960Z"
     }
   },
   "aliases": {

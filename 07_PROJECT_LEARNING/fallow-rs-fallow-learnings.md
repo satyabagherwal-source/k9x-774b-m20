@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source**: github ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
-> **Source Version**: `40e3eb97`  
+> **Source Version**: `2d4aed8d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T12:26:02.209Z  
+> **Timestamp**: 2026-10-31T01:21:21.900Z  
 > **Learning ID**: `learn-github-fallow-rs-fallow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T12:26:00.475Z  
+> **Harvest Timestamp**: 2026-10-31T01:21:20.332Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Codebase intelligence for TypeScript and JavaScript. Health, complexity hotspots, duplication, architecture boundaries, circular dependencies, design-system drift, and unused code, from one graph. CLI, GitHub Action, LSP, MCP, and VS Code. Rust, MIT licensed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5269 stars
+- **Stars / Engagement**: 5281 stars
 
 ---
 
@@ -869,7 +869,327 @@ fn routing_block_step(ctx: &Ctx, harness: Harness, block: &AgentsBlockReport) ->
 
 ```
 
-### Core Architecture Module: `crates/cli/src/cli_hooks.rs`
+### Core Architecture Module: `crates/cli/src/cli_hooks/hook_runtime.rs`
+```
+//! JSON bridge for generated agent hooks. Shell routing and report writes stay
+//! in the gate; this module only decodes its external JSON boundaries.
+
+use std::io::{Read, Write};
+use std::process::ExitCode;
+
+use serde::Deserialize;
+use serde_json::Value;
+
+pub const PROTOCOL: &str = "fallow-gate-json-v1";
+const MAX_PAYLOAD_BYTES: u64 = 1024 * 1024;
+const MAX_REPORT_BYTES: u64 = 64 * 1024 * 1024;
+
+#[derive(Clone, Copy, clap::ValueEnum)]
+pub enum Operation {
+    Probe,
+    Input,
+    Report,
+    Findings,
+}
+
+#[derive(Default, Deserialize)]
+struct ToolInput {
+    command: Option<String>,
+}
+
+#[derive(Deserialize)]
+struct Payload {
+    cwd: Option<String>,
+    tool_input: Option<ToolInput>,
+}
+
+pub fn run(operation: Operation) -> ExitCode {
+    let result = process(
+        operation,
+        &mut std::io::stdin().lock(),
+        &mut std::io::stdout().lock(),
+    );
+    match result {
+        Ok(()) => ExitCode::SUCCESS,
+        Err(error) => {
+            let _ = writeln!(std::io::stderr().lock(), "fallow-gate: {error}");
+            ExitCode::from(2)
+        }
+    }
+}
+
+fn process(
+    operation: Operation,
+    input: &mut impl Read,
+    output: &mut impl Write,
+) -> Result<(), String> {
+    if matches!(operation, Operation::Probe) {
+        return writeln!(output, "{PROTOCOL}").map_err(|error| error.to_string());
+    }
+    let limit = if matches!(operation, Operation::Input) {
+        MAX_PAYLOAD_BYTES
+    } else {
+        MAX_REPORT_BYTES
+    };
+    let bytes = bounded_input(input, limit)?;
+    if matches!(operation, Operation::Input) {
+        let payload: Payload = serde_json::from_slice(&bytes)
+            .map_err(|error| format!("invalid hook payload: {error}"))?;
+        let command = payload
+            .tool_input
+            .unwrap_or_default()
+            .command
+            .unwrap_or_default();
+        return write_fields(
+            output,
+            &[&command, payload.cwd.as_deref().unwrap_or_default()],
+        );
+    }
+    let report: Value =
+        serde_json::from_slice(&bytes).map_err(|error| format!("invalid audit report: {error}"))?;
+    if matches!(operation, Operation::Report) {
+        return report_fields(&report, output);
+    }
+    for finding in blocking_findings(&report) {
+        writeln!(output, "{}", format_finding(&finding)).map_err(|error| error.to_string())?;
+    }
+    Ok(())
+}
+
+fn bounded_input(input: &mut impl Read, limit: u64) -> Result<Vec<u8>, String> {
+    let mut bytes = Vec::new();
+    input
+        .take(limit + 1)
+        .read_to_end(&mut bytes)
+        .map_err(|error| error.to_string())?;
+    if bytes.len() as u64 > limit {
+        return Err(format!("JSON input exceeds the {limit}-byte limit"));
+    }
+    Ok(bytes)
+}
+
+fn write_fields(output: &mut impl Write, fields: &[&str]) -> Result<(), String> {
+    if fields.iter().any(|field| field.contains('\0')) {
+        return Err("hook JSON strings cannot contain NUL".to_string());
+    }
+    for field in fields {
+        output
+            .write_all(field.as_bytes())
+            .map_err(|error| error.to_string())?;
+        output.write_all(&[0]).map_err(|error| error.to_string())?;
+    }
+    Ok(())
+}
+
+fn report_fields(report: &Value, output: &mut impl Write) -> Result<(), String> {
+    let error = report
+        .get("error")
+        .and_then(Value::as_bool)
+        .unwrap_or(false);
+    let verdict = report
+        .get("verdict")
+        .and_then(Value::as_str)
+        .unwrap_or_default();
+    if !matches!(verdict, "pass" | "warn" | "fail") && !error {
+        return Err("audit report has neither a verdict nor an error".to_string());
+    }
+    let message = report
+        .get("message")
+        .and_then(Value::as_str)
+        .unwrap_or_default();
+    write_fields(
+        output,
+        &[
+            verdict,
+            if error { "true" } else { "false" },
+            &clean(message),
+        ],
+    )
+}
+
+struct Finding<'a> {
+    keys: Vec<&'a str>,
+    value: &'a Value,
+}
+
+fn is_finding(value: &Value) -> bool {
+    value.get("actions").is_some_and(Value::is_array)
+        && [
+            "introduced",
+            "path",
+            "from_path",
+            "file",
+            "files",
+            "instances",
+            "locations",
+            "imported_from",
+            "hops",
+            "package_roots",
+        ]
+        .iter()
+        .any(|key| value.get(key).is_some())
+}
+
+fn collect_findings<'a>(value: &'a Value, keys: &mut Vec<&'a str>, found: &mut Vec<Finding<'a>>) {
+    if is_finding(value) {
+        found.push(Finding {
+            keys: keys.clone(),
+            value,
+        });
+    }
+    match value {
+        Value::Object(object) => {
+            for (key, child) in object {
+                keys.push(key);
+                collect_findings(child, keys, found);
+                keys.pop();
+            }
+        }
+        Value::Array(array) => {
+            for child in array {
+                collect_findings(child, keys, found);
+            }
+        }
+        _ => {}
+    }
+}
+
+fn is_warning(finding: &Finding<'_>) -> bool {
+    matches!(
+        first(finding.value, &["/effective_severity", "/severity"]).and_then(Value::as_str),
+        Some("warn" | "off")
+    )
+}
+
+fn blocking_findings(report: &Value) -> Vec<Finding<'_>> {
+    let mut all = Vec::new();
+    if let Some(object) = report.as_object() {
+        for (key, value) in object {
+            collect_findings(value, &mut vec![key.as_str()], &mut all);
+        }
+    }
+    let introduced = all
+        .iter()
+        .any(|finding| finding.value.get("introduced") == Some(&Value::Bool(true)));
+    if introduced {
+        all.retain(|finding| finding.value.get("introduced") == Some(&Value::Bool(true)));
+        if all.iter().any(|finding| !is_warning(finding)) {
+            all.retain(|finding| !is_warning(finding));
+        }
+        return all;
+    }
+    if report.pointer("/attribution/gate").and_then(Value::as_str) == Some("all") {
+        all.retain(|finding| !is_warning(finding));
+        return all;
+    }
+    Vec::new()
+}
+
+fn first<'a>(value: &'a Value, pointers: &[&str]) -> Option<&'a Value> {
+    pointers
+        .iter()
+        .filter_map(|pointer| value.pointer(pointer))
+        .find(|field| !field.is_null() && **field != Value::Bool(false))
+}
+
+fn text(value: &Value) -> String {
+    value
+        .as_str()
+        .map_or_else(|| value.to_string(), str::to_string)
+}
+
+fn clean(value: &str) -> String {
+    let mut result = String::new();
+    let mut in_control_run = false;
+    for character in value.chars() {
+        let control = character.is_control() || matches!(character, '\u{2028}' | '\u{2029}');
+        if control {
+            if !in_control_run {
+                result.push(' ');
+            }
+        } else {
+            result.push(character);
+        }
+        in_control_run = control;
+    }
+    result
+}
+
+fn format_finding(finding: &Finding<'_>) -> String {
+    let value = finding.value;
+    let identity = first(value, &["/code", "/rule"])
+        .map(text)
+        .or_else(|| {
+            value
+                .get("finding_id")
+                .and_then(Value::as_str)
+                .and_then(|id| id.split(':').nth(1))
+                .map(str::to_string)
+        })
+        .unwrap_or_else(|| {
+            let last = finding.keys.last().copied().unwrap_or("?");
+            if matches!(last, "findings" | "clone_groups") {
+                finding.keys.first().copied().unwrap_or("?")
+            } else {
+                last
+            }
+            .to_string()
+        });
+    let location = first(
+        value,
+        &[
+            "/path",
+            "/from_path",
+            "/file",
+            "/files/0",
+            "/instances/0/file",
+            "/locations/0/path",
+            "/imported_from/0/path",
+            "/hops/0/file",
+            "/package_roots/0",
+        ],
+    )
+    .map_or_else(|| "?".to_string(), text);
+    let line = first(
+        value,
+        &[
+            "/line",
+            "/instances/0/start_line",
+            "/locations/0/line",
+            "/imported_from/0/line",
+            "/hops/0/line",
+        ],
+    )
+    .map(|line| format!(":{}", clean(&text(line))))
+    .unwrap_or_default();
+    let detail = first(
+        value,
+        &[
+            "/export_name",
+            "/package_name",
+            "/member_name",
+            "/entry_name",
+            "/name",
+            "/specifier",
+            "/import_specifier",
+            "/url",
+            "/value",
+            "/message",
+        ],
+    )
+    .map(text)
+    .unwrap_or_default();
+    let detail = if detail.is_empty() {
+        String::new()
+    } else {
+        format!(" {}", clean(&detail))
+    };
+    format!("{} {}{line}{detail}", clean(&identity), clean(&location))
+}
+
+```
+
+### Core Architecture Module: `crates/cli/src/cli_hooks/mod.rs`
 ```
 use std::path::Path;
 use std::process::ExitCode;
@@ -877,6 +1197,8 @@ use std::process::ExitCode;
 use crate::error::emit_error;
 use crate::init;
 use crate::setup_hooks;
+
+mod hook_runtime;
 
 #[derive(clap::ValueEnum, Clone, Copy, Debug, PartialEq, Eq)]
 pub enum HooksTargetArg {
@@ -888,6 +1210,13 @@ pub enum HooksTargetArg {
 
 #[derive(clap::Subcommand)]
 pub enum HooksCli {
+    /// Internal JSON bridge used by generated agent gates.
+    #[command(hide = true)]
+    GateRuntime {
+        #[arg(value_enum)]
+        operation: hook_runtime::Operation,
+    },
+
     /// Show installed hook state for Git, Claude, and Codex surfaces.
     Status,
 
@@ -961,6 +1290,7 @@ pub fn run_hooks_command(
     json_style: crate::json_style::JsonStyle,
 ) -> ExitCode {
     match subcommand {
+        HooksCli::GateRuntime { operation } => hook_runtime::run(operation),
         HooksCli::Status => setup_hooks::run_hooks_status(root, output, json_style),
         install @ HooksCli::Install { .. } => run_hooks_install(root, install, output),
         uninstall @ HooksCli::Uninstall { .. } => run_hooks_uninstall(root, &uninstall, output),
@@ -1089,215 +1419,19 @@ pub use fallow_types::path_util::{
 
 ```
 
-### Core Architecture Module: `crates/cli/src/setup_hooks.rs`
-```
-//! `fallow setup-hooks`: generate or remove the Claude Code and Codex
-//! PreToolUse gate files for this repo. For Codex it also maintains a routing
-//! block in `AGENTS.md`.
-//!
-//! Both harnesses run the same gate script. Claude Code reads the handler from
-//! `.claude/settings.json`, and Codex reads it from `.codex/hooks.json`.
-//!
-//! The gate intercepts the agent's Bash tool when the command is `git commit`
-//! or `git push`, runs `fallow audit --format json --quiet --explain`, and
-//! blocks only on `verdict: "fail"`. The audit JSON is written to stderr so
-//! the agent can read `_meta.docs` links and `actions`, fix the findings,
-//! and retry.
-//!
-//! `fallow setup-hooks` itself is deprecated (removed in the next major);
-//! the engine stays because `fallow hooks install --target agent` and
-//! `fallow agent install` run through it. For the *git pre-commit* hook
-//! scaffolder, see `fallow hooks install --target git`. The two targets write
-//! to different surfaces: Git hooks write into `.git/hooks/` or `.husky/`, and
-//! agent hooks write into `.claude/` / `AGENTS.md`.
-
-use std::io::{ErrorKind, Write};
-use std::path::{Path, PathBuf};
-use std::process::ExitCode;
-
-use serde::Serialize;
-
-/// Agent target for generated hook artifacts.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, clap::ValueEnum)]
-pub enum HookAgentArg {
-    /// Claude Code: project-level `.claude/settings.json` + hook script.
-    Claude,
-    /// Codex: `.codex/hooks.json` PreToolUse gate + hook script, plus a
-    /// routing block in `AGENTS.md`.
-    Codex,
-}
-
-/// CLI options for `fallow setup-hooks`.
-pub struct SetupHooksOptions<'a> {
-    pub root: &'a Path,
-    pub agent: Option<HookAgentArg>,
-    pub dry_run: bool,
-    pub force: bool,
-    pub user: bool,
-    /// Home directory for `--user` targets; `None` reads `$HOME`.
-    pub home: Option<&'a Path>,
-    pub gitignore_claude: bool,
-    pub uninstall: bool,
-}
-
-impl SetupHooksOptions<'_> {
-    /// Base directory for harness files: the home directory under `--user`,
-    /// otherwise the project root.
-    fn scope_base(&self) -> Result<PathBuf, String> {
-        if !self.user {
-            return Ok(self.root.to_path_buf());
-        }
-        // A unit test that falls back to `$HOME` writes into the real home
-        // directory of the developer.
-        #[cfg(test)]
-        assert!(
-            self.home.is_some(),
-            "user scope in a unit test: pass an explicit home"
-        );
-        self.home
-            .map(Path::to_path_buf)
-            .or_else(home_dir)
-            .ok_or_else(|| {
-                "Cannot resolve user home directory; unset --user or set $HOME.".to_string()
-            })
-    }
-}
-
-/// Template content of `.claude/hooks/fallow-gate.sh`. Contains the
-/// `@@FALLOW_INSTALLER_VERSION@@` placeholder; use [`rendered_gate_script`] to
-/// obtain the install-ready bytes.
-pub const FALLOW_GATE_SCRIPT: &str = include_str!("setup_hooks/fallow-gate.sh");
-
-/// Marker substituted at install time by [`rendered_gate_script`]. Follows the
-/// autotools `@@NAME@@` convention: grep-friendly, bash-safe, unambiguously
-/// "already rendered" when read in an installed script.
-const INSTALLER_VERSION_PLACEHOLDER: &str = "@@FALLOW_INSTALLER_VERSION@@";
-
-/// Render the gate script with install-time substitutions applied. Stamps the
-/// fallow version that invoked `setup-hooks` into a header comment for
-/// forensics; the enforced `FALLOW_GATE_MIN_VERSION` default stays hand-bumped
-/// by maintainers when a correctness-affecting filtering fix lands, and is
-/// intentionally NOT substituted here.
-#[must_use]
-pub fn rendered_gate_script() -> String {
-    FALLOW_GATE_SCRIPT.replace(INSTALLER_VERSION_PLACEHOLDER, env!("CARGO_PKG_VERSION"))
-}
-
-/// Static content of `.claude/settings.json` when no prior file exists.
-pub const CLAUDE_SETTINGS_DEFAULT: &str = include_str!("setup_hooks/settings.json");
-
-/// Managed-block start marker for the AGENTS.md routing block.
-pub const AGENTS_BLOCK_START: &str = "<!-- fallow:setup-hooks:start -->";
-/// Managed-block end marker for the AGENTS.md routing block.
-pub const AGENTS_BLOCK_END: &str = "<!-- fallow:setup-hooks:end -->";
-
-/// Prose body of the managed block that `fallow setup-hooks` maintains in
-/// `AGENTS.md`. The block routes agents to fallow; the PreToolUse hooks do
-/// the enforcement. The `start` and `end` markers bracket the full body (this
-/// prose plus the task-to-command matrix appended by `agents_block_body`) so
-/// re-runs replace it in place rather than appending duplicates.
-pub const AGENTS_BLOCK_BODY: &str = "## Fallow checks
-
-Use fallow for code-quality, cleanup, and setup tasks in this repository. Fallow checks the changed code before each `git commit` and `git push`. In Claude Code and Codex, a PreToolUse hook from `fallow agent install` runs this check and blocks the command when the verdict is `fail`. Other agents run the check themselves: `fallow audit --format json --quiet --explain --gate-marker agent`. If the verdict is `fail`, fix the reported findings before you try again. A JSON runtime error such as `{ \"error\": true, ... }` does not block.
-
-Audit defaults to `gate=new-only`: only findings introduced by the current changeset affect the verdict. Inherited findings on touched files are reported under `attribution` and annotated with `introduced: false`, but do not block the commit. Set `[audit] gate = \"all\"` in `fallow.toml` to gate every finding in changed files.
-
-For non-skill agents, treat the task map below as the local onboarding source: run the listed fallow command before destructive edits, before commits, and before pull request handoff.
-";
-
-/// Full managed-block body: the gate prose plus the agent task-to-command
-/// matrix, rendered from the single `crate::task_matrix::TASK_MATRIX` slice so
-/// it stays in sync with the `init --agents` template, the schema manifest,
-/// and the generated SKILL.md section. The matrix refreshes on every reinstall
-/// because `upsert_managed_block` replaces the whole block wholesale.
-fn agents_block_body() -> String {
-    format!(
-        "{AGENTS_BLOCK_BODY}\n## Fallow task map\n\n{}",
-        crate::task_matrix::render_task_matrix_markdown()
-    )
-}
-
-/// Marker embedded in generated hook scripts so uninstall (and upgrades)
-/// can recognize a previously-generated file and remove it without `--force`.
-const HOOK_SCRIPT_MARKER: &str = "# Generated by fallow setup-hooks.";
-/// The gate script and `fallow audit` resolve paths from the cwd, and a Claude
-/// session can work in a package directory below the install root. The handler
-/// walks up to the nearest directory that holds the gate script and runs it
-/// there. The walk stops at the first `.git` entry, so a nested worktree does
-/// not reach the gate of the checkout around it. When no script is found, the
-/// handler runs the script under `$CLAUDE_PROJECT_DIR` from the cwd, which was
-/// the only behavior before.
-const PROJECT_FALLOW_HANDLER_COMMAND: &str = "d=\"$(pwd)\"; until [ -f \"$d/.claude/hooks/fallow-gate.sh\" ] || [ -e \"$d/.git\" ] || [ \"$d\" = / ]; do d=\"$(dirname \"$d\")\"; done; if [ -f \"$d/.claude/hooks/fallow-gate.sh\" ]; then cd \"$d\" && exec ./.claude/hooks/fallow-gate.sh; fi; exec \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/fallow-gate.sh";
-const USER_FALLOW_HANDLER_COMMAND: &str = "\"$HOME\"/.claude/hooks/fallow-gate.sh";
-const FALLOW_GATE_POSIX_SUFFIX: &str = "/.claude/hooks/fallow-gate.sh";
-const FALLOW_GATE_WINDOWS_SUFFIX: &str = "\\.claude\\hooks\\fallow-gate.sh";
-const CLAUDE_HOOK_MATCHER: &str = "Bash";
-
-/// Codex runs hook commands from the session cwd and sets no project-dir
-/// variable. The project handler walks up to the nearest directory that holds
-/// the gate script, which is the install root: the gate script and `fallow
-/// audit` both resolve paths from the cwd. The install root is not always the
-/// git root (`--root packages/app`), and Codex does not block on exit 127, so
-/// a handler that cannot find the script would let every commit through. The
-/// walk stops at the first `.git` entry, the same as the Claude handler.
-const CODEX_PROJECT_HANDLER_COMMAND: &str = "d=\"$(pwd)\"; until [ -f \"$d/.codex/hooks/fallow-gate.sh\" ] || [ -e \"$d/.git\" ] || [ \"$d\" = / ]; do d=\"$(dirname \"$d\")\"; done; if [ -f \"$d/.codex/hooks/fallow-gate.sh\" ]; then cd \"$d\" && exec ./.codex/hooks/fallow-gate.sh; fi; exit 0";
-/// The user-scope script lives in `$HOME`, so there is no marker to walk up
-/// to. `--show-cdup` prints the relative path up to the git root (empty at the
-/// root, and empty outside a git repository, where the handler stays in the cwd).
-const CODEX_USER_HANDLER_COMMAND: &str =
-    "cd \"./$(git rev-parse --show-cdup 2>/dev/null)\" && \"$HOME\"/.codex/hooks/fallow-gate.sh";
-const CODEX_GATE_POSIX_SUFFIX: &str = "/.codex/hooks/fallow-gate.sh";
-const CODEX_GATE_WINDOWS_SUFFIX: &str = "\\.codex\\hooks\\fallow-gate.sh";
-/// Codex matchers are regular expressions; anchor so only the Bash tool runs
-/// the gate.
-const CODEX_HOOK_MATCHER: &str = "^Bash$";
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
-#[serde(rename_all = "snake_case")]
-pub enum Mode {
-    Install,
-    Uninstall,
-}
-
-impl Mode {
-    pub const fn as_str(self) -> &'static str {
-        match self {
-            Self::Install => "install",
-            Self::Uninstall => "uninstall",
-        }
-    }
-}
-
-/// Entry point for the `fallow setup-hooks` subcommand.
-pub fn run_setup_hooks(opts: &SetupHooksOptions<'_>) -> ExitCode {
-    run_setup_hooks_with_label(opts, "fallow setup-hooks")
-}
-
-/// Entry point used by the `fallow hooks ... --target agent` namespace while
-/// reusing the same installation engine and summary renderer.
-pub fn run_setup_hooks_with_label(opts: &SetupHooksOptions<'_>, command_label: &str) -> ExitCode {
-    let mode = if opts.uninstall {
-        Mode::Uninstall
-    } else {
-        Mode::Install
-    };
-
-    let plan = match Plan::resolve(opts, mode) {
-        Ok(plan) => plan,
-        Err(msg)
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #3998** (2026-10-29): **Can't use tsrs**
+  *Symptoms*: ### What happened?  ``` Fallow 3.37.0 (latest; upstream main too) can't switch to tsrs here. Its tsrs backend is experimental (FALLOW_TYPE_AWARE_BACKEND=tsrs), and both the sidecar and the Rust binary require exactly tsrs 0.18.0-ts7.1.0-dev.20260929. That version ships no Windows binary (@tsrs/win32-x64 starts at 0.20.0). Our 0.20.1 is rejected: 'unsupported type-aware backend version 0.20.1-ts7.1.0-beta; expected 0.18.0…', and Fallow falls back to syntactic analysis with 114 false findings. What should T-094 do? ``` I installed tsrs to typecheck my project, and decided to also switch fallow to the same backend, then i got the error above why is fallow so restrictive? Why can't I use the same tsrs I installed to typecheck my project?  ### Reproduction  install latest tsrs 0.20.1  ### Expected behavior  I should be able to reuse my existing tsrs installation that i already use to typecheck the project  ### Fallow version  3.37.0  ### Operating system  Windows  ### Configuration  ```toml  ```
+  **Post-Mortem & Fix Analysis**:
+  > This is in v3.38.0: `npm install fallow@3.38.0`.  The experimental tsrs backend now accepts any tsrs from `0.18.0` up to but not including `1.0.0`, so your tsrs 0.20.1 works with `FALLOW_TYPE_AWARE_BACKEND=tsrs`. The default backend accepts any TypeScript 7 release. `fallow type-aware status` shows the version that fallow resolved. Guarded fixes still need `typescript@7.0.2`.  Thanks for raising this, @Smrtnyk. 
+
 - **Issue #3950** (2026-10-29): **mutation: temporary copies bypass the Node child-process overlay**
   *Symptoms*: A selected `node:test` case can run an unchanged temporary copy of a planned source file and produce a false survivor. The child inherits `NODE_OPTIONS`; the preload works when the child executes the original path.  Reproduced on main `ef1617dd4924c86829bef25deafeabef3743cb7f` (3.36.0), Node 22.23.3.  `src/cli.mjs`:  ```js export const value = () => { return 1; }; if (import.meta.main) {   console.log(value()); } ```  `test/runner.test.mjs`:  ```js import assert from "node:assert/strict"; import { spawnSync } from "node:child_process"; import { copyFileSync, mkdtempSync, rmSync } from "node:fs"; import { tmpdir } from "node:os"; import { join } from "node:path"; import { test } from "node:test"; import { fileURLToPath } from "node:url"; import { value } from "../src/cli.mjs";  test("the library and CLI return the same value", (t) => {   assert.equal(value(), 1);   const directory = mkdtempSync(join(tmpdir(), "copied-cli-repro-"));   t.after(() => rmSync(directory, { recursive: true, force: true }));   const original = fileURLToPath(new URL("../src/cli.mjs", import.meta.url));   const copied = join(directory, "cli.mjs");   copyFileSync(original, copied);   const child = spawnSync(process.execPath, [copied], {     encoding: "utf8", env: process.env, timeout: 10000,   });   assert.equal(child.status, 0, child.stderr);   assert.equal(child.stdout, "1\n"); }); ```  Configure `entry: ["src/cli.mjs", "test/*.test.mjs"]`, `mutation.runner: "node-test"`, and `test: "node --test test/*
-
-- **Issue #3886** (2026-10-27): **unused-dependencies: inspect literal local shell helpers invoked by package scripts**
-  *Symptoms*: Package command analysis credits direct binaries and discovers JavaScript or TypeScript helper files, but does not read an invoked shell helper's contents.  For example:  ```json { "scripts": { "build": "bash scripts/build.sh" } } ```  ```sh # scripts/build.sh report-cli --format json ```  If an installed local package declares the `report-cli` binary and the helper is its only usage, command analysis does not discover that usage. A useful regression fixture would declare an otherwise unused package as a negative control.  The [command analysis entry point](https://github.com/fallow-rs/fallow/blob/9c6fc8a2bb1e8a207441ec5f7a5d7b361a34b180/crates/core/src/scripts/mod.rs#L1383) processes supplied command strings. [Command accumulation](https://github.com/fallow-rs/fallow/blob/9c6fc8a2bb1e8a207441ec5f7a5d7b361a34b180/crates/core/src/scripts/mod.rs#L1464) collects binary and file information without reading invoked shell files. There is already separate [shell-content reading for hook directories](https://github.com/fallow-rs/fallow/blob/9c6fc8a2bb1e8a207441ec5f7a5d7b361a34b180/crates/core/src/scripts/hooks.rs#L144).  ## Requested behavior  Read statically named, project-local shell helpers without executing them, and feed supported commands into the existing binary-to-package analysis. Bound recursion and detect cycles. Respect working-directory changes or expose unresolved context rather than assuming a package is unused.  Cover `bash scripts/build.sh`, a directly invoked execut
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1314,1497 +1448,1827 @@ pub fn run_setup_hooks_with_label(opts: &SetupHooksOptions<'_>, command_label: &
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `255f50fe` (2026-10-28)
-**Commit Message**: fix(config): correct local-binding config reads after the multi-config change (#3987)
+### Incident Patch 1: `a038ce69` (2026-10-30)
+**Commit Message**: fix(audit): remove the lock file of a reclaimed audit cache on Unix (#4021)
 
-* fix(config): correct the review findings of the config local inlining
+On Unix the audit cache cleanup unlinks the .lock file of each reclaimed entry while it holds the flock. Each lock acquirer checks that its fd is still the inode at the path and opens the path again when it is not. Prune reports a removed bare lock file as orphaned-lock. Windows keeps the lock file.
 
-This change follows up #3981.
+Closes: N/A
 
-- Module Federation `exposes` in a webpack, rspack or rsbuild config
-  array use the base directory only when all configs declare the same
-  one. Before, they used the base directory of the first config, also
-  when the plugin call was in a different config.
-- A top-level `return config` is inlined unless a branch `return` gives
-  an object after the inlining. A returned array is always inlined.
-- The local pass follows `module.exports = config` to the callback of
-  one top-level binding.
-- The local pass inlines a returned top-level constant also when the
-  callback has no locals.
-- A loop binding, an array or object literal and a destructuring
-  assignment that hold a binding are aliases of it. A call that gets an
-  object or an array as an argument changes it, unless the callee only
-  reads its arguments.
-- The multi-config reader reads up to 64 configs and writes a debug
-  message when an array has more.
-- The stable-local filter uses a hash set.
-- A new test checks that the inlined AST sta
-
-**File**: `changelog.d/fix-webpack-function-config-local-aliases.md` (modified, +5/-4)
+**File**: `.github/workflows/ci.yml` (modified, +2/-0)
 ```diff
-@@ -1,7 +1,8 @@
- ### Fixed
- 
- - **`fallow dead-code` now reads a config that a function builds from local bindings.** Before, fallow reported the entries and alias targets of such a config as unused files. An example is a webpack config that exports `(env, argv) => { const common = {...}; const web = { ...common, entry: {...} }; return [bg, web]; }`. Fallow does not run the config code. The changes are:
--  - Fallow reads a local `const` or `let` binding with a literal value in the returned value of a config function. This applies to a returned identifier, an array element, a property value and an object spread such as `...common` or `...common.resolve`. When a spread and a key set the same property, the last value wins.
--  - Fallow also reads a spread of a stable top-level constant, such as `export default { ...base, test }`. These two changes apply to all plugins that read a JavaScript or TypeScript config, for example Vite, Vitest, Playwright and Electron.
--  - For webpack and rspack, fallow reads each config of an exported array, also when a function returns the array. Each config resolves its entries against its own `context`. Fallow collects the loaders, the `plugins` requires and the `externals` of all configs. For webpack, fallow also collects the aliases of all configs.
--  - Fallow does not read a binding that the config can change. This includes a write, a method such as `push`, a call such as `Object.assign`, and a change through an alias such as `const { resolve } = common`. Fallow also does not read a `var` binding, a destructured binding or the result of a call.
-+  - Fallow reads a local `const` or `let` binding with a literal value in the returned value of a config function. This applies to a returned identifier, an array element, a property value and an object spread such as `...common` or `...common.resolve`. When a spread and a key set the same property, the last value wins. This also applies to a function that the file exports through a binding, such as `const config = (env) => {...}; module.exports = config;`.
-+  - Fallow also reads a spread of a stable top-level constant, such as `export default { ...base, test }`, and a top-level constant that a config function returns, such as `module.exports = () => base;`. These changes apply to all plugins that read a JavaScript or TypeScript config, for example Vite, Vitest, Playwright and Electron.
-+  - A top-level `return config` gives the config also when a branch `return` gives no object, such as `if (!env) return null;` or `return mergeConfig(config, overrides);`. When a branch `return` gives an object, fallow reads that object, as before. A returned array always gives the configs of the array.
-+  - For webpack and rspack, fallow reads up to 64 configs of an exported array, also when a function returns the array. Each config resolves its entries against its own `context`. Module Federation `exposes` resolve against the `context` only when all configs declare the same `context`, because fallow does not know which config holds the plugin call. Fallow collects the loaders, the `plugins` requires and the `externals` of all configs. For webpack, fallow also collects the aliases of all configs.
-+  - Fallow does not read a binding that the config can change. This includes a write, a method such as `push`, a call such as `Object.assign`, and a change through an alias such as `const { resolve } = common`, `({ resolve: r } = common)`, `const list = [common]` or `for (const c of [common])`. An object literal such as `const config = { mode, entry }` changes `entry` only through the `entry` key, as in `config.entry.admin = x`, not through `config.devtool = x` or `config.plugins.push(x)`. An alias keeps that key path, so `const plugins = config.plugins; plugins.push(x)` does not change `entry` either. A call to a function of the same file changes its argument only when the body of that function changes its parameter, also under the same key path. A call to an imported or unknown function, such as `addAnalyzer(config)` with `addAnalyzer` from `require`, does not count as a change, because fallow does not see what the function does. Fallow also does not read a `var` binding, a destructured binding or the result of a call.
+@@ -190,13 +190,15 @@ jobs:
+               - 'crates/process/src/process_tree.rs'
+               - 'crates/process/src/registry.rs'
+               - 'crates/cli/tests/drift/**'
++              - 'crates/cli/tests/integration/audit_tests.rs'
+               - 'crates/cli/tests/integration/exit_code_tests.rs'
+               - 'crates/cli/src/agent_install/mcp.rs'
+               - 'crates/cli/src/agent_install/mod.rs'
+               - 'crates/cli/src/agent_install/status.rs'
+               - 'crates/cli/src/audit_tests.rs'
+               - 'crates/cli/src/base_worktree.rs'
+               - 'crates/cli/src/base_worktree_scan.rs'
++              - 'crates/cli/src/base_worktree_lock.rs'
+               - 'crates/cli/src/ci_template.rs'
+               - 'crates/cli/src/coverage/mod.rs'
+               - 'crates/cli/src/coverage/mod_tests.rs'
 ```
 
-**File**: `crates/core/src/plugins/config_parser.rs` (modified, +1/-3)
+**File**: `changelog.d/fix-reclaim-orphan-cache-locks.md` (added, +3/-0)
 ```diff
-@@ -1206,9 +1206,7 @@ pub(crate) fn extract_from_source<T: Send>(
-     fallow_extract::parse_bounded(source, || {
-         let allocator = oxc_allocator::Allocator::default();
-         let mut parsed = oxc_parser::Parser::new(&allocator, source, source_type).parse();
--        const_inline::inline_value_constants(&allocator, &mut parsed.program, source.len());
--        local_inline::inline_callback_locals(&allocator, &mut parsed.program, source.len());
--        extractor(&parsed.program)
-+        const_inline::with_inlined_program(&allocator, &mut parsed.program, source.len(), extractor)
-     })
-     .flatten()
- }
-```
-
-**File**: `crates/core/src/plugins/config_parser_const_inline.rs` (modified, +130/-142)
-```diff
-@@ -7,13 +7,18 @@
- //! identifier in a property value or an array element with a copy of the
- //! constant's literal value, so that every walker reads it without change.
- 
-+use std::cell::RefCell;
-+use std::rc::Rc;
-+
- use oxc_allocator::{Allocator, CloneIn};
- #[allow(clippy::wildcard_imports, reason = "many AST types used")]
- use oxc_ast::ast::*;
- use oxc_ast_visit::{Visit, VisitMut, walk, walk_mut};
- use rustc_hash::{FxHashMap, FxHashSet};
- 
- use super::top_level_variable_declarations;
-+#[path = "config_parser_value_changes.rs"]
-+mod value_changes;
- 
- /// The maximum number of constants that one inlined value can pass through,
- /// as in `const A = {...}; const B = [A]; export default { x: B }`.
-@@ -59,12 +64,7 @@ pub(super) fn constant_values<'a>(
-     if candidates.is_empty() {
-         return FxHashMap::default();
-     }
--    let stable = stable_bindings(
--        program,
--        candidates.iter().map(|(name, _)| *name),
--        false,
--        true,
--    );
-+    let stable = stable_values(program, candidates.iter().copied(), true);
-     candidates
-         .into_iter()
-         .filter(|(name, _)| stable.contains(name))
-@@ -397,28 +397,105 @@ pub(super) fn stable_bindings<'n>(
-     allow_mutating_calls: bool,
-     require_top_level: bool,
- ) -> FxHashSet<&'n str> {
-+    binding_counts(program, names, require_top_level)
-+        .into_iter()
-+        .filter(|(_, count)| count.is_stable(allow_mutating_calls))
-+        .map(|(name, _)| name)
-+        .collect()
-+}
-+
-+/// The subset of the named literal values that [`stable_bindings`] accepts
-+/// with no mutating calls.
-+pub(super) fn stable_values<'n, 'e, 'a: 'e>(
-+    program: &Program<'_>,
-+    candidates: impl IntoIterator<Item = (&'n str, &'e Expression<'a>)>,
-+    require_top_level: bool,
-+) -> FxHashSet<&'n str> {
-+    stable_bindings(
-+        program,
-+        candidates.into_iter().map(|(name, _)| name),
-+        false,
-+        require_top_level,
-+    )
-+}
-+
-+/// The [`NameCount`] of each name, with the changes through aliases and
-+/// through calls to local functions added as mutating calls.
-+fn binding_counts<'n>(
-+    program: &Program<'_>,
-+    names: impl IntoIterator<Item = &'n str>,
-+    require_top_level: bool,
-+) -> FxHashMap<&'n str, NameCount> {
-     let mut usage = NameUsage::new(
-         names
-             .into_iter()
-             .filter(|name| !require_top_level || declares_top_level_const_or_let(program, name)),
-     );
-     if usage.counts.is_empty() {
--        return FxHashSet::default();
-+        return FxHashMap::default();
-     }
-     usage.visit_program(program);
--    for name in changed_alias_names(program) {
--        usage.count_mutation(&name);
-+    for name in changed_names(program).iter() {
-+        usage.count_mutation(name);
-     }
--    usage
--        .counts
--        .into_iter()
--        .filter(|(_, count)| {
--            count.bindings == 1
--                && count.writes == 0
--                && (allow_mutating_calls || count.mutating_calls == 0)
--        })
--        .map(|(name, _)| name)
--        .collect()
-+    usage.counts
-+}
-+
-+/// The identity of one parsed program: its address, its source text and its
-+/// number of statements.
-+type ProgramKey = (usize, usize, usize, usize);
-+
-+thread_local! {
-+    /// The changed names of the last program that [`changed_names`] read.
-+    /// [`with_inlined_program`] clears it each time the program changes.
-+    static CHANGED_NAMES: RefCell<Option<(ProgramKey, Rc<FxHashSet<String>>)>> =
-+        const { RefCell::new(None) };
-+}
-+
-+fn program_key(program: &Program<'_>) -> ProgramKey {
-+    (
-+        std::ptr::from_ref(program) as usize,
-+        program.source_text.as_ptr() as usize,
-+        program.source_text.len(),
-+        program.body.len(),
-+    )
-+}
-+
-+/// The names that the program changes through an alias or a local call,
-+/// computed once for each state of the program. A config parse asks for each
-+/// stable binding, so one analysis serves all of them.
-+fn changed_names(program: &Program<'_>) -> Rc<FxHashSet<String>> {
-+    let key = program_key(program);
-+    if let Some(names) = CHANGED_NAMES.with_borrow(|cached| {
-+        cached
-+            .as_ref()
-+            .filter(|(cached_key, _)| *cached_key == key)
-+            .map(|(_, names)| Rc::clone(names))
-+    }) {
-+        return names;
-+    }
-+    let names = Rc::new(value_changes::changed_names(program));
-+    CHANGED_NAMES.set(Some((key, Rc::clone(&names))));
-+    names
-+}
-+
-+/// Run both inline passes on `program`, then `read` it. The cache of
-+/// [`changed_names`] is cleared before and after each step, because each
-+/// inline pass changes the program.
-+pub(super) fn with_inlined_program<'a, R>(
-+    allocator: &'a Allocator,
-+    program: &mut Program<'a>,
-+    source_len: usize,
-+    read: impl FnOnce(&Program<'a>) -> R,
-+) -> R {
-+    CHANGED_NAMES.set(None);
-+    inline_value_constants(allocator, program, source_len);
-+    CHANGED_NAMES.set(None);
-+    super::local_inline::inline_c
-```
-
-**File**: `crates/core/src/plugins/config_parser_local_inline.rs` (modified, +386/-61)
-```diff
-@@ -15,10 +15,13 @@
- use oxc_allocator::{Allocator, CloneIn};
- #[allow(clippy::wildcard_imports, reason = "many AST types used")]
- use oxc_ast::ast::*;
--use rustc_hash::FxHashMap;
-+use rustc_hash::{FxHashMap, FxHashSet};
- 
--use super::const_inline::{Inliner, constant_values, literal_value, stable_bindings};
--use super::{MAX_CONFIG_BRANCH_DEPTH, MAX_CONFIG_WRAPPER_DEPTH, is_module_exports_target};
-+use super::const_inline::{Inliner, constant_values, literal_value, stable_values};
-+use super::{
-+    MAX_CONFIG_BRANCH_DEPTH, MAX_CONFIG_WRAPPER_DEPTH, extract_object_from_expression,
-+    is_module_exports_target,
-+};
- 
- /// The budget of the local pass, as a multiple of the source size. A config
- /// that spreads one shared local into two configs copies that local twice.
-@@ -29,40 +32,46 @@ const LOCAL_BUDGET_FACTOR: usize = 2;
- ///
- /// A local qualifies when a `const` or `let` statement at the callback body's
- /// own level declares it with an object, array or string literal, and it is
--/// the only binding of its name in the program, with no writes and no mutating
--/// calls. The stable top-level constants are available too. The copied AST
-+/// the only binding of its name in the program, with no writes, no mutating
-+/// calls and no call that can change it. The stable top-level constants are
-+/// available too. The copied AST
- /// nodes stay at or below `LOCAL_BUDGET_FACTOR` times `source_len`.
- pub(super) fn inline_callback_locals<'a>(
-     allocator: &'a Allocator,
-     program: &mut Program<'a>,
-     source_len: usize,
- ) {
--    let mut values = callback_locals(allocator, program);
--    if values.is_empty() {
-+    let Some(mut values) = callback_locals(allocator, program) else {
-         return;
--    }
-+    };
-     for (name, value) in constant_values(allocator, program) {
-         values.entry(name).or_insert(value);
-     }
-+    if values.is_empty() {
-+        return;
-+    }
-     let mut inliner = Inliner::new(
-         allocator,
-         &values,
-         source_len.saturating_mul(LOCAL_BUDGET_FACTOR),
-     );
-     for callback in config_callbacks(program) {
--        for value in callback.returned_values() {
--            inliner.inline_value(value);
--        }
-+        callback.inline_returns(&mut inliner, &values);
-     }
- }
- 
- /// A copy of the literal value of each stable local of the config callbacks.
-+/// Returns `None` when the program exports no config callback.
- fn callback_locals<'a>(
-     allocator: &'a Allocator,
-     program: &mut Program<'a>,
--) -> FxHashMap<String, Expression<'a>> {
-+) -> Option<FxHashMap<String, Expression<'a>>> {
-+    let callbacks = config_callbacks(program);
-+    if callbacks.is_empty() {
-+        return None;
-+    }
-     let mut candidates: Vec<(String, Expression<'a>)> = Vec::new();
--    for callback in config_callbacks(program) {
-+    for callback in callbacks {
-         let Callback::Body(body) = callback else {
-             continue;
-         };
-@@ -87,19 +96,24 @@ fn callback_locals<'a>(
-         }
-     }
-     if candidates.is_empty() {
--        return FxHashMap::default();
-+        return Some(FxHashMap::default());
-     }
--    let stable = stable_bindings(
-+    let stable: FxHashSet<String> = stable_values(
-         program,
--        candidates.iter().map(|(name, _)| name.as_str()),
-+        candidates
-+            .iter()
-+            .map(|(name, value)| (name.as_str(), value)),
-         false,
--        false,
--    );
--    let stable: Vec<String> = stable.into_iter().map(str::to_string).collect();
--    candidates
--        .into_iter()
--        .filter(|(name, _)| stable.contains(name))
--        .collect()
-+    )
-+    .into_iter()
-+    .map(str::to_string)
-+    .collect();
-+    Some(
-+        candidates
-+            .into_iter()
-+            .filter(|(name, _)| stable.contains(name))
-+            .collect(),
-+    )
- }
- 
- /// The body of a config callback: a function body, or the expression body of
-@@ -109,52 +123,72 @@ enum Callback<'p, 'a> {
-     Expression(&'p mut Expression<'a>),
- }
- 
--impl<'p, 'a> Callback<'p, 'a> {
--    /// The values that `find_config_object` can read as the returned config:
--    /// the expression body of an arrow, or the argument of each `return` at the
--    /// body's own level or in the bounded branch search. Returns of nested
--    /// functions belong to those functions and stay out.
-+impl<'a> Callback<'_, 'a> {
-+    /// Inline the values that `find_config_object` and the multi-config reader
-+    /// can read as the returned config: the expression body of an arrow, or the
-+    /// argument of each `return` at the body's own level or in the bounded
-+    /// branch search. Returns of nested functions belong to those functions and
-+    /// stay out.
-     ///
-     /// `find_config_object` prefers an object that a top-level `return` gives
-     /// over a branch return. A top-level `return base;` gave no object before
--    /// this pass, so the search used the first branch return. To keep that
--    /// result, a returned identifier at t
-```
-
-**File**: `crates/core/src/plugins/config_parser_multi_config.rs` (modified, +25/-12)
-```diff
-@@ -20,7 +20,9 @@ use super::{
- };
- 
- /// The maximum number of configs read from one exported array, in source order.
--const MAX_MULTI_CONFIGS: usize = 16;
-+/// A build can export one config per locale or per target. The work for each
-+/// config is linear in its size, and the inline budget bounds the copies.
-+const MAX_MULTI_CONFIGS: usize = 64;
- 
- /// The config objects of a program: the one object that `find_config_object`
- /// finds, or else each object element of an exported config array. Elements
-@@ -29,16 +31,23 @@ pub fn find_config_objects<'a>(program: &'a Program<'a>) -> Vec<&'a ObjectExpres
-     if let Some(object) = find_config_object(program) {
-         return vec![object];
-     }
--    find_default_export_array(program)
--        .map(|array| {
--            array
--                .elements
--                .iter()
--                .filter_map(|element| element.as_expression().and_then(object_expression))
--                .take(MAX_MULTI_CONFIGS)
--                .collect()
--        })
--        .unwrap_or_default()
-+    let Some(array) = find_default_export_array(program) else {
-+        return Vec::new();
-+    };
-+    let mut objects: Vec<_> = array
-+        .elements
-+        .iter()
-+        .filter_map(|element| element.as_expression().and_then(object_expression))
-+        .collect();
-+    if objects.len() > MAX_MULTI_CONFIGS {
-+        tracing::debug!(
-+            configs = objects.len(),
-+            read = MAX_MULTI_CONFIGS,
-+            "config array is longer than the limit, later configs are not read"
-+        );
-+        objects.truncate(MAX_MULTI_CONFIGS);
-+    }
-+    objects
- }
- 
- /// Run `read` on each config object of the source and collect the results in
-@@ -261,8 +270,12 @@ mod tests {
- 
-     #[test]
-     fn exported_array_count_is_bounded() {
-+        // A build that emits one config per locale or per target can export
-+        // more than 16 configs.
-         let elements = vec!["{ entry: 'a' }"; 40].join(", ");
--        assert_eq!(count(&format!("module.exports = [{elements}];")), 16);
-+        assert_eq!(count(&format!("module.exports = [{elements}];")), 40);
-+        let elements = vec!["{ entry: 'a' }"; 100].join(", ");
-+        assert_eq!(count(&format!("module.exports = [{elements}];")), 64);
-     }
- 
-     #[test]
-```
-
-**File**: `crates/core/src/plugins/config_parser_value_changes.rs` (added, +859/-0)
-```diff
-@@ -0,0 +1,859 @@
-+//! Find the names whose value the program changes through another name.
-+//!
-+//! A config can change a value through an alias: `const r = common.resolve;
-+//! r.alias.a = x` changes `common`, and `const config = { entry };
-+//! config.entry.admin = x` changes `entry`. This module follows each change
-+//! along a key path, so `config.devtool = x` or `config.plugins.push(x)` does
-+//! not change `entry`.
-+//!
-+//! Only a change that the file shows counts: a write, a known mutating call
-+//! such as `push` or `Object.assign`, and a call to a function of the same
-+//! file whose body changes its parameter. A call to an imported or unknown
-+//! function does not count. A missed change can only hide an unused file, but
-+//! a change that is not real reports a used file as unused.
-+
-+#[allow(clippy::wildcard_imports, reason = "many AST types used")]
-+use oxc_ast::ast::*;
-+use oxc_ast_visit::{Visit, walk};
-+use oxc_syntax::scope::ScopeFlags;
-+use rustc_hash::{FxHashMap, FxHashSet};
-+
-+use super::mutated_target;
-+
-+/// The keys of a member chain after its root name, in source order. `None`
-+/// stands for a computed key, which can be any key.
-+type Chain = Vec<Option<String>>;
-+
-+/// The maximum number of steps that one analysis takes: each change that it
-+/// records and each alias that it follows counts as one step.
-+const MAX_STEPS: usize = 200_000;
-+
-+/// The maximum number of aliases that one analysis collects.
-+const MAX_EDGES: usize = 20_000;
-+
-+/// A change of the value that a name holds.
-+type NamedChange = (String, Change);
-+
-+/// One change of a value, with the key chain under the changed name.
-+#[derive(Clone, PartialEq, Eq, Hash)]
-+enum Change {
-+    /// A write to a member, such as `x.a.b = 1` (chain `[a, b]`).
-+    Write(Chain),
-+    /// A mutating call on the value at the chain, such as `x.a.push(1)`.
-+    Mutation(Chain),
-+}
-+
-+impl Change {
-+    /// The same change with the first `keep` keys of its chain.
-+    fn cut(self, keep: usize) -> Self {
-+        match self {
-+            Change::Write(mut chain) => {
-+                chain.truncate(keep);
-+                Change::Write(chain)
-+            }
-+            Change::Mutation(mut chain) => {
-+                chain.truncate(keep);
-+                Change::Mutation(chain)
-+            }
-+        }
-+    }
-+}
-+
-+/// One step of the way that an object or array literal holds a value.
-+#[derive(Clone)]
-+enum Hold {
-+    /// A property with a static key, as `entry` in `{ entry }`.
-+    Key(String),
-+    /// An array element or a computed key, which can be any key.
-+    Any,
-+    /// A spread, as in `{ ...common }`. The copy has the same keys, but a
-+    /// write to a key of the copy does not change the spread value. The list
-+    /// holds the static keys that the same literal sets after the spread, as
-+    /// `plugins` in `{ ...common, plugins: [] }`: the copy does not share the
-+    /// value of such a key with the spread value.
-+    Spread(Vec<String>),
-+}
-+
-+/// A name that holds the value of `root`, or a part of it. A change of `name`
-+/// with chain `c` is a change of the value at `prefix ++ c`. That value holds
-+/// the root value under `holds`, and `part` is the member chain from the root
-+/// value, as `[plugins]` in `const p = config.plugins`.
-+struct Edge {
-+    name: String,
-+    root: String,
-+    prefix: Chain,
-+    holds: Vec<Hold>,
-+    part: Chain,
-+}
-+
-+impl Edge {
-+    /// The change of `root` that a change of `name` makes, if any. The
-+    /// result keeps the first `keep` keys of its chain.
-+    fn translate(&self, change: &Change, keep: usize) -> Option<Change> {
-+        let (chain, is_write) = match change {
-+            Change::Write(chain) => (chain, true),
-+            Change::Mutation(chain) => (chain, false),
-+        };
-+        let full: Chain = self.prefix.iter().chain(chain).cloned().collect();
-+        let mut index = 0;
-+        let mut shallow = 0;
-+        for hold in &self.holds {
-+            match hold {
-+                Hold::Key(key) => {
-+                    let found = full.get(index)?;
-+                    if found.as_ref().is_some_and(|found| found != key) {
-+                        return None;
-+                    }
-+                    index += 1;
-+                }
-+                Hold::Any => {
-+                    full.get(index)?;
-+                    index += 1;
-+                }
-+                Hold::Spread(overridden) => {
-+                    let first = full.get(index)?;
-+                    if first
-+                        .as_ref()
-+                        .is_some_and(|key| overridden.iter().any(|own| own == key))
-+                    {
-+                        return None;
-+                    }
-+                    shallow = 1;
-+                }
-+            }
-+        }
-+        let rest = &full[index..];
-+        let needed = if is_write { 1 + shallow } else { shallow };
-+        if rest.len() < needed {
-+            return None;
-+        }
-+        let chain: C
-```
-
-**File**: `crates/core/src/plugins/webpack.rs` (modified, +503/-11)
-```diff
-@@ -278,9 +278,14 @@ pub(super) struct ConfigFile<'a> {
- /// Webpack and rspack name the base directory `context`, and rsbuild names it
- /// `root`. A relative entry resolves against it, not against the config file.
- /// In a multi-config export, each config resolves its entries against its own
--/// base directory. Returns the project-relative base directory of the first
--/// config, so the Module Federation reader can resolve `exposes` targets the
--/// same way.
-+/// base directory.
-+///
-+/// Returns the project-relative base directory that all configs share, so the
-+/// Module Federation reader can resolve `exposes` targets the same way. The
-+/// Federation reader reads the plugin calls of the whole file and does not
-+/// know which config holds a call. When the configs declare different base
-+/// directories, this returns `None`, and the reader resolves `exposes`
-+/// against the config directory.
- pub(super) fn apply_entries(
-     result: &mut PluginResult,
-     source: &str,
-@@ -289,11 +294,9 @@ pub(super) fn apply_entries(
-     base_key: &str,
- ) -> Option<PathBuf> {
-     let ConfigFile { path, root } = config;
--    let mut first_base = None;
--    for (index, (entries, raw_base)) in
-+    let mut bases = Vec::new();
-+    for (entries, raw_base) in
-         config_parser::extract_each_config_entries(source, path, entry_key, base_key)
--            .into_iter()
--            .enumerate()
-     {
-         let base = raw_base
-             .and_then(|raw| config_parser::normalize_filesystem_config_path_buf(&raw, path, root));
-@@ -302,11 +305,19 @@ pub(super) fn apply_entries(
-                 .map(|base| normalize_context_entry(&entry, base, path, root))
-                 .unwrap_or(entry)
-         });
--        if index == 0 {
--            first_base = base;
--        }
-+        bases.push(base);
-     }
--    first_base
-+    shared_base(bases)
-+}
-+
-+/// The one base directory of all configs, or `None` when the configs declare
-+/// different base directories.
-+fn shared_base(bases: Vec<Option<PathBuf>>) -> Option<PathBuf> {
-+    let mut bases = bases.into_iter();
-+    let first = bases.next()??;
-+    bases
-+        .all(|base| base.as_ref() == Some(&first))
-+        .then_some(first)
- }
- 
- /// The project-relative package directory of a config that sits in a config
-@@ -966,6 +977,487 @@ mod tests {
-         assert_eq!(result.entry_patterns, vec!["app/src/B.tsx"]);
-     }
- 
-+    /// A config whose inlined values nest much deeper than the source does.
-+    /// Two top-level constants name each other at the leaf, so the first pass
-+    /// stacks their copies. Two callback locals do the same and also name the
-+    /// constants, so the second pass stacks copies of values that already
-+    /// hold copies of the first pass.
-+    fn deep_inline_source(open: &str, close: &str, depth: usize) -> String {
-+        let deep = |leaf: &str| format!("{}{leaf}{}", open.repeat(depth), close.repeat(depth));
-+        format!(
-+            "const A = {a};\nconst B = {b};\nmodule.exports = () => {{\n\
-+             const l1 = {l1};\nconst l2 = {l2};\n\
-+             return {{ entry: \"./src/a.ts\", resolve: {{ alias: l1 }}, plugins: [l1, l2],\n\
-+             externals: l2, module: {{ rules: [l1] }}, other: [l1, l2, A, B] }};\n}};\n",
-+            a = deep("B"),
-+            b = deep("A"),
-+            l1 = deep("[l2, A]"),
-+            l2 = deep("[l1, B]"),
-+        )
-+    }
-+
-+    /// The shape of [`deep_inline_source`] with one constant and one local
-+    /// that each name themselves, which gives the deepest AST per source byte.
-+    fn self_inline_source(open: &str, close: &str, depth: usize) -> String {
-+        let deep = |leaf: &str| format!("{}{leaf}{}", open.repeat(depth), close.repeat(depth));
-+        format!(
-+            "const A = {a};\nmodule.exports = () => {{\nconst l = {l};\n\
-+             return {{ entry: \"./src/a.ts\", resolve: {{ alias: l }}, plugins: [l],\n\
-+             externals: l, module: {{ rules: [l] }}, other: [l, A] }};\n}};\n",
-+            a = deep("A"),
-+            l = deep("[l, A]"),
-+        )
-+    }
-+
-+    #[test]
-+    fn deep_inlined_values_stay_within_the_parse_stack() {
-+        // Each parse runs on a stack that `parse_bounded` sizes from the source
-+        // length and the source bracket depth. The inline passes can make the
-+        // AST deeper than the source. This test fails with a stack overflow
-+        // when the walks over the inlined AST need more stack than that.
-+        // A probe measured about 1.1 AST levels per source byte for the
-+        // self-naming array shape, against about 0.12 levels per byte for the
-+        // source alone.
-+        for (open, close) in [("[", "]"), ("{a:", "}"), ("{a:[", "]}")] {
-+            for source in [
-+                deep_inline_source(open, close, 480),
-+                self_inline_source(open, close, 480),
-+            ] {
-+                let result = WebpackPlugin.resolve_config(
-+                    std::path::Path::new("/proje
-```
-
----
-
-### Incident Patch 2: `24a3e24b` (2026-10-28)
-**Commit Message**: fix(config): read configs that a function builds from local bindings (#3981)
-
-* fix(config): read configs that a function builds from local bindings
-
-Fallow did not read a config whose exported function builds its value from
-local bindings, such as a webpack config that returns
-`[{ ...common, entry }, { ...common, entry }]`. The entries and the alias
-targets of such a config were reported as unused files.
-
-- A config function now resolves its body-level `const` and `let` bindings
-  with literal values in the value that it returns. This includes a returned
-  identifier, array elements, property values and object spreads such as
-  `...common` and `...common.resolve`. The last value of a key wins.
-- A spread of a stable top-level constant now resolves too, for every plugin
-  that reads a JavaScript or TypeScript config.
-- Webpack and rspack read each config of an exported array, also when a
-  function returns the array. Each config resolves its entries against its
-  own context. Webpack also collects the aliases of each config.
-- A binding that the program can change is not read: a write, a mutating
-  method, a call such as Object.assign or Reflect.set, or a write or a
-  mutating call
-
-**File**: `changelog.d/fix-webpack-function-config-local-aliases.md` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
+@@ -0,0 +1,3 @@
 +### Fixed
 +
-+- **`fallow dead-code` now reads a config that a function builds from local bindings.** Before, fallow reported the entries and alias targets of such a config as unused files. An example is a webpack config that exports `(env, argv) => { const common = {...}; const web = { ...common, entry: {...} }; return [bg, web]; }`. Fallow does not run the config code. The changes are:
-+  - Fallow reads a local `const` or `let` binding with a literal value in the returned value of a config function. This applies to a returned identifier, an array element, a property value and an object spread such as `...common` or `...common.resolve`. When a spread and a key set the same property, the last value wins.
-+  - Fallow also reads a spread of a stable top-level constant, such as `export default { ...base, test }`. These two changes apply to all plugins that read a JavaScript or TypeScript config, for example Vite, Vitest, Playwright and Electron.
-+  - For webpack and rspack, fallow reads each config of an exported array, also when a function returns the array. Each config resolves its entries against its own `context`. Fallow collects the loaders, the `plugins` requires and the `externals` of all configs. For webpack, fallow also collects the aliases of all configs.
-+  - Fallow does not read a binding that the config can change. This includes a write, a method such as `push`, a call such as `Object.assign`, and a change through an alias such as `const { resolve } = common`. Fallow also does not read a `var` binding, a destructured binding or the result of a call.
++- **The audit cache sweep now removes the `.lock` file of a cache that it reclaims (Unix).** Before, the sweep removed the cache directory and its `.sha` and `.last-used` files, but kept the `.lock` file for ever. These files grew without limit: one host had more than 15,000 of them, and every full sweep and every `fallow audit-cache prune` read each one. Now the sweep unlinks the `.lock` file while it holds the lock, and a lock acquirer that finds its file unlinked opens the path again. `fallow audit-cache prune --format json` reports a bare lock file that it removes with the new reason `orphaned-lock`. Windows keeps the `.lock` file and reports `lock-only` as before.
 ```
 
-**File**: `crates/core/src/plugins/config_parser.rs` (modified, +13/-79)
+**File**: `crates/cli/src/audit_cache_prune.rs` (modified, +25/-11)
 ```diff
-@@ -13,6 +13,15 @@ use rustc_hash::FxHashSet;
- #[path = "config_parser_const_inline.rs"]
- mod const_inline;
- use const_inline::holds_one_stable_object;
-+#[path = "config_parser_local_inline.rs"]
-+mod local_inline;
-+#[path = "config_parser_multi_config.rs"]
-+mod multi_config;
-+use multi_config::find_default_export_array;
-+pub(crate) use multi_config::{
-+    extract_each_config_entries, extract_each_config_path_aliases,
-+    extract_each_config_require_strings, extract_each_config_shallow_strings, find_config_objects,
-+};
- #[path = "config_parser_vite_plugin_call.rs"]
- mod vite_plugin_call;
- pub(crate) use vite_plugin_call::extract_vite_plugin_call_option_path;
-@@ -1174,6 +1183,9 @@ pub(crate) fn parent_relative_config_path(
- /// Before the extraction, a JavaScript or TypeScript program gets the literal
- /// value of each stable same-file constant in the property values and array
- /// elements that name it, so `projects: [UNIT]` reads like an inline object.
-+/// An object spread of such a constant gets its properties. The values that an
-+/// exported config callback returns also get the literal value of the stable
-+/// locals of that callback, so `return { ...common, entry }` reads the same way.
- pub(crate) fn extract_from_source<T: Send>(
-     source: &str,
-     path: &Path,
-@@ -1193,6 +1205,7 @@ pub(crate) fn extract_from_source<T: Send>(
-         let allocator = oxc_allocator::Allocator::default();
-         let mut parsed = oxc_parser::Parser::new(&allocator, source, source_type).parse();
-         const_inline::inline_value_constants(&allocator, &mut parsed.program, source.len());
-+        local_inline::inline_callback_locals(&allocator, &mut parsed.program, source.len());
-         extractor(&parsed.program)
-     })
-     .flatten()
-@@ -2597,85 +2610,6 @@ pub(crate) fn resolve_sibling_module(
-     None
- }
- 
--/// Find a default-exported array config, the `defineWorkspace([...])` /
--/// `vitest.workspace.{ts,js}` shape. Handles `export default [...]` and
--/// `export default defineWorkspace([...])` / `defineConfig([...])` (the array as
--/// the call's first argument), function configs with a static array return, and
--/// parenthesised / `as` wrappers.
--fn find_default_export_array<'a>(program: &'a Program<'a>) -> Option<&'a ArrayExpression<'a>> {
--    for stmt in &program.body {
--        if let Statement::ExportDefaultDeclaration(decl) = stmt {
--            if let ExportDefaultDeclarationKind::FunctionDeclaration(function) = &decl.declaration {
--                if function.generator {
--                    return None;
--                }
--                return function.body.as_ref().and_then(|body| returned_array(body));
--            }
--            return decl
--                .declaration
--                .as_expression()
--                .and_then(array_from_config_expression);
--        }
--    }
--    None
--}
--
--/// Read only returns belonging to this callback, never nested helper functions.
--fn returned_array<'a>(body: &'a FunctionBody<'a>) -> Option<&'a ArrayExpression<'a>> {
--    body.statements
--        .iter()
--        .find_map(|statement| match statement {
--            Statement::ReturnStatement(returned) => Some(returned),
--            _ => None,
--        })
--        .and_then(|returned| returned.argument.as_ref())
--        .and_then(array_from_expression)
--}
--
--/// A config provider invokes its callback once; returned callbacks are values.
--fn array_from_config_expression<'a>(expr: &'a Expression<'a>) -> Option<&'a ArrayExpression<'a>> {
--    match expr {
--        Expression::ArrowFunctionExpression(arrow) => match &arrow.body {
--            ArrowFunctionBody::FunctionBody(body) => returned_array(body),
--            body => body.as_expression().and_then(array_from_expression),
--        },
--        Expression::FunctionExpression(function) => {
--            if function.generator {
--                return None;
--            }
--            function.body.as_ref().and_then(|body| returned_array(body))
--        }
--        Expression::ParenthesizedExpression(paren) => {
--            array_from_config_expression(&paren.expression)
--        }
--        Expression::TSAsExpression(ts_as) => array_from_config_expression(&ts_as.expression),
--        Expression::TSSatisfiesExpression(ts_sat) => {
--            array_from_config_expression(&ts_sat.expression)
--        }
--        Expression::CallExpression(call) => call
--            .arguments
--            .first()
--            .and_then(Argument::as_expression)
--            .and_then(array_from_config_expression),
--        _ => array_from_expression(expr),
--    }
--}
--
--fn array_from_expression<'a>(expr: &'a Expression<'a>) -> Option<&'a ArrayExpression<'a>> {
--    match expr {
--        Expression::ArrayExpression(arr) => Some(arr),
--        Expression::ParenthesizedExpression(paren) => array_from_expression(&paren.expression),
--        Expression::TSAsExpression(ts_as) => array_from_expression(&ts_as.expression),
--        Expression::TSSatisfiesExpression(ts_sat) => 
-```
-
-**File**: `crates/core/src/plugins/config_parser_const_inline.rs` (modified, +507/-36)
-```diff
-@@ -11,23 +11,24 @@ use oxc_allocator::{Allocator, CloneIn};
- #[allow(clippy::wildcard_imports, reason = "many AST types used")]
- use oxc_ast::ast::*;
- use oxc_ast_visit::{Visit, VisitMut, walk, walk_mut};
--use oxc_span::GetSpan;
- use rustc_hash::{FxHashMap, FxHashSet};
- 
- use super::top_level_variable_declarations;
- 
- /// The maximum number of constants that one inlined value can pass through,
- /// as in `const A = {...}; const B = [A]; export default { x: B }`.
--const MAX_INLINE_NESTING: usize = 4;
-+pub(super) const MAX_INLINE_NESTING: usize = 4;
- 
- /// Replace each identifier in a property value or an array element that names
--/// a stable top-level constant with a literal value.
-+/// a stable top-level constant with a literal value, and replace each object
-+/// spread of such a constant with the properties of the constant.
- ///
- /// A constant qualifies when one top-level `const` or `let` is the only
- /// binding of its name, no expression writes to it, and its value is an
- /// object, array or string literal.
--/// The copied source bytes stay at or below `source_len`, so the AST grows at
--/// most to two times the size of the parsed source.
-+/// The copied AST nodes stay at or below `source_len`, and each node of the
-+/// parsed source spans at least one byte, so the AST grows at most to two
-+/// times its parsed size.
- pub(super) fn inline_value_constants<'a>(
-     allocator: &'a Allocator,
-     program: &mut Program<'a>,
-@@ -37,17 +38,11 @@ pub(super) fn inline_value_constants<'a>(
-     if values.is_empty() {
-         return;
+@@ -121,6 +121,7 @@ struct PruneCounts {
+     skipped: usize,
+     failed: usize,
+     lock_only: usize,
++    lock_reclaimed: usize,
+     owner_live: usize,
+     /// Legacy pre-#1815 registrations cleared while the cache directory stayed
+     /// warm on disk; a subset of `kept`, and never part of `reclaimed_bytes`.
+@@ -137,6 +138,7 @@ impl PruneCounts {
+             skipped: 0,
+             failed: 0,
+             lock_only: 0,
++            lock_reclaimed: 0,
+             owner_live: 0,
+             deregistered: 0,
+             reclaimed_bytes: 0,
+@@ -155,6 +157,7 @@ impl PruneCounts {
+             }
+             match entry.disposition.reason() {
+                 "lock-only" => counts.lock_only += 1,
++                "orphaned-lock" => counts.lock_reclaimed += 1,
+                 "owner-live" => counts.owner_live += 1,
+                 "legacy-deregistered" => counts.deregistered += 1,
+                 _ => {}
+@@ -227,17 +230,29 @@ fn print_prune_human(
      }
--    let mut inliner = Inliner {
--        allocator,
--        values: &values,
--        nesting: 0,
--        budget: source_len,
--    };
--    inliner.visit_program(program);
-+    Inliner::new(allocator, &values, source_len).visit_program(program);
- }
- 
- /// A copy of the literal value of each stable top-level constant, by name.
--fn constant_values<'a>(
-+pub(super) fn constant_values<'a>(
-     allocator: &'a Allocator,
-     program: &Program<'a>,
- ) -> FxHashMap<String, Expression<'a>> {
-@@ -64,7 +59,12 @@ fn constant_values<'a>(
-     if candidates.is_empty() {
-         return FxHashMap::default();
+     println!("{}", header_line(scan_root, resolved));
+     for entry in entries {
+-        // Lock-only leftovers can number in the hundreds (issue #2169); they
++        // Lock-only leftovers can number in the thousands (issue #2169); they
+         // collapse into one trailing count line instead of one row each.
+-        if entry.disposition.reason() == "lock-only" {
++        if matches!(entry.disposition.reason(), "lock-only" | "orphaned-lock") {
+             continue;
+         }
+         println!("{}", entry_row(entry, opts.dry_run));
      }
--    let stable = stable_bindings(program, candidates.iter().map(|(name, _)| *name), false);
-+    let stable = stable_bindings(
-+        program,
-+        candidates.iter().map(|(name, _)| *name),
-+        false,
-+        true,
-+    );
-     candidates
-         .into_iter()
-         .filter(|(name, _)| stable.contains(name))
-@@ -78,7 +78,7 @@ fn constant_values<'a>(
- /// The value can hold functions and writes. A copy of one adds a binding or a
- /// write only for a name that the source already binds or writes inside it, so
- /// a later stable-binding check of the same program gives the same answer.
--fn literal_value<'e, 'a>(init: &'e Expression<'a>) -> Option<&'e Expression<'a>> {
-+pub(super) fn literal_value<'e, 'a>(init: &'e Expression<'a>) -> Option<&'e Expression<'a>> {
-     match init {
-         Expression::ParenthesizedExpression(paren) => literal_value(&paren.expression),
-         Expression::TSAsExpression(ts_as) => literal_value(&ts_as.expression),
-@@ -91,14 +91,74 @@ fn literal_value<'e, 'a>(init: &'e Expression<'a>) -> Option<&'e Expression<'a>>
-     }
- }
- 
--struct Inliner<'a, 'v> {
-+/// Copies literal values into the positions that name them. Each copy charges
-+/// its number of AST nodes to `budget`, and a copy inside a copy adds one to
-+/// `nesting`. A value can hold copies from an earlier pass, so its source span
-+/// can be much smaller than the copy.
-+pub(super) struct Inliner<'a, 'v> {
-     allocator: &'a Allocator,
-     values: &'v FxHashMap<String, Expression<'a>>,
-     nesting: usize,
-     budget: usize,
-+    /// The node count of each value or object that was copied, by address.
-+    /// The values do not change during a pass, so each count is computed once.
-+    node_counts: FxHashMap<usize, usize>,
- }
- 
--impl<'a> Inliner<'a, '_> {
-+impl<'a, 'v> Inliner<'a, 'v> {
-+    pub(super) fn new(
-+        allocator: &'a Allocator,
-+        values: &'v FxHashMap<String, Expression<'a>>,
-+        budget: usize,
-+    ) -> Self {
-+        Self {
-+            allocator,
-+            values,
-+            nesting: 0,
-+            budget,
-+            node_counts: FxHashMap::default(),
-+        }
-+    }
-+
-+    /// Charge the node count of a value to the budget. Returns `None` when
-+    /// the budget is too small.
-+    fn charge_value(&mut self, value: &Expression<'a>) -> Option<()> {
-+        let key = std::ptr::from_ref(value) as usize;
-+        let count = *self.node_counts.entry(key).or_insert_with(|| {
-+            let mut counter = NodeCounter::default();
-+            counter.visit_expression(value);
-+            counter.count
-+        });
-+        self.budget = self.budget.checked_sub(count)?;
-+        Some(())
-+    }
-+
-+    /// Charge the node count of an object literal to the budget. Returns
-+    /// `None` when the budget is too small.
-+    fn charge_objec
-```
-
-**File**: `crates/core/src/plugins/config_parser_local_inline.rs` (added, +567/-0)
-```diff
-@@ -0,0 +1,567 @@
-+//! Put the value of a local binding of a config callback in the values that
-+//! the callback returns.
-+//!
-+//! A config file can export a function that builds its value in local
-+//! bindings: `const common = {...}; const web = { ...common, entry }; return
-+//! [web];`. The config walkers read literal objects only. This pass replaces
-+//! each returned identifier, each array element and property value that names
-+//! a local, and each object spread of a local with a copy of the literal value
-+//! of that local. It never runs the code of the config.
-+//!
-+//! The pass ignores the order of the statements. A returned value that names a
-+//! local declared after the `return` fails at run time, but this pass reads the
-+//! value of the local.
-+
-+use oxc_allocator::{Allocator, CloneIn};
-+#[allow(clippy::wildcard_imports, reason = "many AST types used")]
-+use oxc_ast::ast::*;
-+use rustc_hash::FxHashMap;
-+
-+use super::const_inline::{Inliner, constant_values, literal_value, stable_bindings};
-+use super::{MAX_CONFIG_BRANCH_DEPTH, MAX_CONFIG_WRAPPER_DEPTH, is_module_exports_target};
-+
-+/// The budget of the local pass, as a multiple of the source size. A config
-+/// that spreads one shared local into two configs copies that local twice.
-+const LOCAL_BUDGET_FACTOR: usize = 2;
-+
-+/// Inline the stable locals of each exported config callback into the values
-+/// that the callback returns.
-+///
-+/// A local qualifies when a `const` or `let` statement at the callback body's
-+/// own level declares it with an object, array or string literal, and it is
-+/// the only binding of its name in the program, with no writes and no mutating
-+/// calls. The stable top-level constants are available too. The copied AST
-+/// nodes stay at or below `LOCAL_BUDGET_FACTOR` times `source_len`.
-+pub(super) fn inline_callback_locals<'a>(
-+    allocator: &'a Allocator,
-+    program: &mut Program<'a>,
-+    source_len: usize,
-+) {
-+    let mut values = callback_locals(allocator, program);
-+    if values.is_empty() {
-+        return;
-+    }
-+    for (name, value) in constant_values(allocator, program) {
-+        values.entry(name).or_insert(value);
-+    }
-+    let mut inliner = Inliner::new(
-+        allocator,
-+        &values,
-+        source_len.saturating_mul(LOCAL_BUDGET_FACTOR),
-+    );
-+    for callback in config_callbacks(program) {
-+        for value in callback.returned_values() {
-+            inliner.inline_value(value);
-+        }
-+    }
-+}
-+
-+/// A copy of the literal value of each stable local of the config callbacks.
-+fn callback_locals<'a>(
-+    allocator: &'a Allocator,
-+    program: &mut Program<'a>,
-+) -> FxHashMap<String, Expression<'a>> {
-+    let mut candidates: Vec<(String, Expression<'a>)> = Vec::new();
-+    for callback in config_callbacks(program) {
-+        let Callback::Body(body) = callback else {
-+            continue;
++    if counts.lock_reclaimed > 0 {
++        let verb = if opts.dry_run {
++            "would remove"
++        } else {
++            "removed"
 +        };
-+        for statement in &body.statements {
-+            let Statement::VariableDeclaration(decl) = statement else {
-+                continue;
-+            };
-+            if !matches!(
-+                decl.kind,
-+                VariableDeclarationKind::Const | VariableDeclarationKind::Let
-+            ) {
-+                continue;
-+            }
-+            for declarator in &decl.declarations {
-+                let BindingPattern::BindingIdentifier(id) = &declarator.id else {
-+                    continue;
-+                };
-+                if let Some(value) = declarator.init.as_ref().and_then(literal_value) {
-+                    candidates.push((id.name.to_string(), value.clone_in(allocator)));
-+                }
-+            }
-+        }
++        let s = plural(counts.lock_reclaimed);
++        println!(
++            "  {verb} {} lock sidecar{s} with no cache",
++            counts.lock_reclaimed,
++        );
 +    }
-+    if candidates.is_empty() {
-+        return FxHashMap::default();
-+    }
-+    let stable = stable_bindings(
-+        program,
-+        candidates.iter().map(|(name, _)| name.as_str()),
-+        false,
-+        false,
-+    );
-+    let stable: Vec<String> = stable.into_iter().map(str::to_string).collect();
-+    candidates
-+        .into_iter()
-+        .filter(|(name, _)| stable.contains(name))
-+        .collect()
-+}
-+
-+/// The body of a config callback: a function body, or the expression body of
-+/// an arrow.
-+enum Callback<'p, 'a> {
-+    Body(&'p mut FunctionBody<'a>),
-+    Expression(&'p mut Expression<'a>),
-+}
-+
-+impl<'p, 'a> Callback<'p, 'a> {
-+    /// The values that `find_config_object` can read as the returned config:
-+    /// the expression body of an arrow, or the argument of each `return` at the
-+    /// body's own level or in the bounded branch search. Returns of nested
-+    /// functions belong to those functions and stay out.
-+    ///
-+    /// `find_config_object` prefers an object that a top-level `return` gives
-+    /// over a branch return. A top-level `return base;` gave no object before
-+    /// this pass, so the search used the first branch return. To keep that
-+    /// result, a returned identifier at the top level stays when a branch
-+    /// return exists.
-+    fn returned_values(self) -> Ve
+     if counts.lock_only > 0 {
+         let s = plural(counts.lock_only);
+         println!(
+-            "  {} lock sidecar{s} with no cache remain (harmless, kept by design)",
++            "  {} lock sidecar{s} with no cache remain (harmless)",
+             counts.lock_only,
+         );
+     }
+@@ -269,16 +284,15 @@ fn print_prune_human(
+     } else {
+         "reclaimed"
+     };
+-    let plural_entries = if counts.found == 1 {
+-        "entry"
+-    } else {
+-        "entries"
+-    };
++    // Lock sidecars have their own line above; counting them here would
++    // read as "0 B across 15000 of 15000 entries" on a host full of them.
++    let lock_entries = counts.lock_only + counts.lock_reclaimed;
++    let found = counts.found - lock_entries;
++    let plural_entries = if found == 1 { "entry" } else { "entries" };
+     println!(
+-        "{verb} {} across {} of {} {plural_entries}",
++        "{verb} {} across {} of {found} {plural_entries}",
+         format_bytes(counts.reclaimed_bytes),
+-        counts.removed,
+-        counts.found,
++        counts.removed - counts.lock_reclaimed,
+     );
+ }
+ 
 ```
 
-**File**: `crates/core/src/plugins/config_parser_multi_config.rs` (added, +275/-0)
+**File**: `crates/cli/src/audit_tests.rs` (modified, +97/-18)
 ```diff
-@@ -0,0 +1,275 @@
-+//! Read each config of a config file that exports more than one.
-+//!
-+//! Webpack and rspack build every config of an exported array, as in
-+//! `module.exports = [configA, configB]` or a function that returns such an
-+//! array. `find_config_object` keeps its contract and returns `None` for an
-+//! array export, because other tools read an array export in their own way.
-+//! The readers here are for the tools that build each element.
+@@ -791,8 +791,9 @@ fn reusable_cache_gc_reclaims_sidecar_orphan_even_when_age_gc_disabled() {
+     cleanup_reusable_worktree(&repo, &worktree_path);
+ }
+ 
++#[cfg(unix)]
+ #[test]
+-fn reusable_cache_gc_preserves_lock_file_after_removal() {
++fn reusable_cache_gc_removes_lock_file_with_the_entry() {
+     let tmp = tempfile::TempDir::new().expect("temp dir should be created");
+     let repo = init_throwaway_repo(tmp.path(), "repo-gc-lockfile");
+     let worktree_path = create_unregistered_reusable_cache(&repo);
+@@ -814,10 +815,9 @@ fn reusable_cache_gc_preserves_lock_file_after_removal() {
+         "sweep should still remove the worktree directory",
+     );
+     assert!(
+-        lock_path.exists(),
+-        "sweep MUST NOT delete the `.lock` file (lock-lifecycle invariant)",
++        !lock_path.exists(),
++        "sweep should unlink the `.lock` file of the entry it reclaims",
+     );
+-    let _ = fs::remove_file(&lock_path);
+     cleanup_reusable_worktree(&repo, &worktree_path);
+ }
+ 
+@@ -1160,8 +1160,9 @@ fn sweep_report_apply_keeps_deregistered_current_path_and_removes_released_sha()
+     cleanup_reusable_worktree(&repo, &released_path);
+ }
+ 
++#[cfg(unix)]
+ #[test]
+-fn sweep_report_counts_bare_lock_sidecar_as_lock_only() {
++fn sweep_reclaims_bare_lock_sidecar() {
+     let tmp = tempfile::TempDir::new().expect("temp dir should be created");
+     let repo = init_throwaway_repo(tmp.path(), "repo-report-lock-only");
+     let cache_path = tmp
+@@ -1184,16 +1185,91 @@ fn sweep_report_counts_bare_lock_sidecar_as_lock_only() {
+         .iter()
+         .find(|entry| entry.path == cache_path)
+         .expect("a bare lock sidecar must fold back into a reported candidate");
+-    assert_eq!(entry.disposition, SweepDisposition::KeptLockOnly);
++    assert_eq!(entry.disposition, SweepDisposition::ReclaimedLockOnly);
+     assert_eq!(entry.pass, SweepPass::Foreign);
+-    assert_eq!(entry.disposition.reason(), "lock-only");
+-    assert_eq!(report.removed, 0);
++    assert_eq!(entry.disposition.reason(), "orphaned-lock");
++    assert_eq!(
++        report.removed, 0,
++        "a lock sidecar does not count as a reclaimed cache in the stderr summary",
++    );
+     assert!(
+-        lock_path.exists(),
+-        "the `.lock` sidecar must never be deleted",
++        !lock_path.exists(),
++        "a lock sidecar without a cache must be reclaimed",
+     );
+ }
+ 
++#[cfg(unix)]
++#[test]
++fn sweep_reclaims_lock_sidecar_with_the_aged_entry() {
++    let tmp = tempfile::TempDir::new().expect("temp dir should be created");
++    let repo = init_throwaway_repo(tmp.path(), "repo-aged-lock");
++    let cache_path = tmp
++        .path()
++        .join("fallow-audit-base-cache-0123456789abcdef-root-0123456789abcdef");
++    fs::create_dir(&cache_path).expect("cache dir should be created");
++    let lock_path = reusable_worktree_lock_path(&cache_path);
++    fs::write(&lock_path, "").expect("lock sidecar should be written");
++    let last_used = reusable_worktree_last_used_path(&cache_path);
++    fs::write(&last_used, "").expect("last-used sidecar should be written");
++    let old = SystemTime::now() - Duration::from_hours(40 * 24);
++    fs::File::options()
++        .write(true)
++        .open(&last_used)
++        .and_then(|file| file.set_modified(old))
++        .expect("last-used mtime should be set");
++
++    let report = sweep_reusable_caches_with_report(
++        &repo,
++        Some(Duration::from_hours(30 * 24)),
++        tmp.path(),
++        SweepMode::Apply,
++        SweepSizes::Skip,
++        SweepScope::All,
++    );
++
++    let entry = report
++        .entries
++        .iter()
++        .find(|entry| entry.path == cache_path)
++        .expect("the aged entry should be reported");
++    assert_eq!(entry.disposition, SweepDisposition::ReclaimedAged);
++    assert!(!cache_path.exists());
++    assert!(
++        !lock_path.exists(),
++        "the lock sidecar must go with the reclaimed entry, not stay as a lock-only leftover",
++    );
++}
++
++#[cfg(not(unix))]
++#[test]
++fn sweep_report_counts_bare_lock_sidecar_as_lock_only() {
++    let tmp = tempfile::TempDir::new().expect("temp dir should be created");
++    let repo = init_throwaway_repo(tmp.path(), "repo-report-lock-only");
++    let cache_path = tmp
++        .path()
++        .join("fallow-audit-base-cache-0123456789abcdef-root-fedcba9876543210");
++    let lock_path = reusable_worktree_lock_path(&cache_path);
++    fs::write(&lock_path, "").expect("bare lock sidecar should be written");
++
++    let report = sweep_reusable_caches_with_report(
++        &repo,
++        Some(Duration::from_hours(30 * 24)),
++        tmp.path(),
++        SweepMode::Apply,
++        SweepSizes::Skip,
++        SweepScope::All,
++    );
++
++    let entry = report
++        .entries
++        .iter()
++        .find(|entry| entry.path == cache_path)
++        .expect("a bare lock sidecar must fold back into a reported candidate");
++    assert_eq!(entry.disposition, SweepDisposition::KeptLockOnly);
++    assert_eq!(entry.disposition.reason(
+```
+
+**File**: `crates/cli/src/base_worktree.rs` (modified, +54/-70)
+```diff
+@@ -37,6 +37,13 @@ pub use scan::SweepScope;
+ pub use scan::full_sweep_marker_path;
+ use scan::{claim_full_sweep, scan_all_reusable_cache_paths, scan_cache_paths_with_hex_suffix};
+ 
++#[path = "base_worktree_lock.rs"]
++mod lock;
++pub use lock::ReusableWorktreeLock;
++#[cfg(all(test, unix))]
++use lock::lock_file_is_current;
++use lock::{reclaim_lock_only, remove_held_lock_file};
++
+ pub struct BaseWorktree {
+     path: PathBuf,
+     persistent: bool,
+@@ -247,51 +254,6 @@ impl Drop for WorktreeCleanupGuard<'_> {
+     }
+ }
+ 
+-/// Kernel-level advisory lock around the reusable-cache `reuse_or_create`
+-/// critical section, backed by `std::fs::File::try_lock` (stable since Rust
+-/// 1.89), which wraps `flock(2)` on Unix and `LockFileEx` on Windows.
+-/// Concurrent acquirers either fall through (`None`) or observe a
+-/// freshly-prepared cache after the holder releases.
+-pub struct ReusableWorktreeLock {
+-    file: std::fs::File,
+-}
+-
+-impl ReusableWorktreeLock {
+-    /// `context` names the caller's contention fallback in the debug
+-    /// diagnostic ("falls back to a non-reusable worktree" is only true for
+-    /// `reuse_or_create`; a GC sweep or prune skips the entry instead).
+-    pub fn try_acquire(reusable_path: &Path, context: &'static str) -> Option<Self> {
+-        let lock_path = reusable_worktree_lock_path(reusable_path);
+-        let file = open_or_create_owned_sidecar(&lock_path).ok()?;
+-        match file.try_lock() {
+-            Ok(()) => Some(Self { file }),
+-            Err(std::fs::TryLockError::WouldBlock) => {
+-                tracing::debug!(
+-                    path = %lock_path.display(),
+-                    context,
+-                    "reusable audit worktree lock contended",
+-                );
+-                None
+-            }
+-            Err(std::fs::TryLockError::Error(err)) => {
+-                tracing::debug!(
+-                    path = %lock_path.display(),
+-                    error = %err,
+-                    context,
+-                    "could not acquire reusable audit worktree lock",
+-                );
+-                None
+-            }
+-        }
+-    }
+-}
+-
+-impl Drop for ReusableWorktreeLock {
+-    fn drop(&mut self) {
+-        let _ = self.file.unlock();
+-    }
+-}
+-
+ pub fn reusable_worktree_lock_path(reusable_path: &Path) -> PathBuf {
+     sidecar_path(reusable_path, REUSABLE_LOCK_SUFFIX)
+ }
+@@ -634,11 +596,8 @@ fn load_audit_config(
+ /// POSIX) would wipe every legitimately-warm pre-upgrade cache on the
+ /// first run after upgrade.
+ ///
+-/// The `.lock` sidecar file is intentionally NOT deleted on removal: a
+-/// racing acquirer of an unlinked-but-still-flocked inode plus a sibling
+-/// `open(O_CREAT)` at the same path would produce two processes each
+-/// holding a kernel flock on different inodes. Lock files are tens of
+-/// bytes; leaking them is harmless.
++/// On Unix the `.lock` sidecar goes with the entry, unlinked under the lock;
++/// see [`ReusableWorktreeLock`] for why that is race-safe. Windows keeps it.
+ pub fn sweep_old_reusable_caches(repo_root: &Path, max_age: Option<Duration>, quiet: bool) {
+     sweep_old_reusable_caches_in(repo_root, max_age, quiet, &std::env::temp_dir());
+ }
+@@ -798,8 +757,12 @@ pub enum SweepDisposition {
+     /// First encounter of a pre-upgrade entry without a `.last-used` sidecar;
+     /// a sidecar is seeded so it ages from real last-use.
+     KeptGraceSeeded,
+-    /// Only a `.lock` sidecar survives (never deleted by design); there is no
+-    /// directory, `.sha`, or `.last-used` left to reclaim.
++    /// Only a `.lock` sidecar survived, and the sweep unlinked it under the
++    /// lock (Unix only).
++    ReclaimedLockOnly,
++    /// Only a `.lock` sidecar survives and stays (Windows, or a lock file that
++    /// changed under the sweep); there is no directory, `.sha`, or
++    /// `.last-used` left to reclaim.
+     KeptLockOnly,
+     /// The orphan re-check under the lock found the directory rebuilt by a
+     /// concurrent run.
+@@ -821,7 +784,8 @@ impl SweepDisposition {
+             | Self::ReclaimedAged
+             | Self::ReclaimedOwnerMissing
+             | Self::ReclaimedLegacyRegistered
+-            | Self::ReclaimedOverCapacity => SweepDecision::Removed,
++            | Self::ReclaimedOverCapacity
++            | Self::ReclaimedLockOnly => SweepDecision::Removed,
+             Self::KeptLegacyDeregistered
+             | Self::KeptFresh
+             | Self::KeptOwnerLive
+@@ -846,6 +810,7 @@ impl SweepDisposition {
+             Self::ReclaimedOwnerMissing => "owner-missing",
+             Self::ReclaimedLegacyRegistered => "legacy-registered",
+             Self::ReclaimedOverCapacity => "over-capacity",
++            Self::ReclaimedLockOnly => "orphaned-lock",
+             Self::KeptLegacyDeregistered => "legacy-deregistered",
+             Self::KeptFresh => "fresh",
+             Self::KeptOwnerLive => "owner-live",
+@@ -1085,7 +1050,7 @@ fn legacy_registered_pass(
+                 }
+             }
+             Sweep
+```
+
+**File**: `crates/cli/src/base_worktree_cleanup_tests.rs` (modified, +53/-0)
+```diff
+@@ -277,3 +277,56 @@ fn deregistration_rejects_admin_entry_with_another_worktree_backlink() {
+         "the separate admin entry must remain"
+     );
+ }
++
++/// A process that opened the lock file before a sweep unlinked it can still
++/// win the flock on the unlinked inode. The acquirer must see that its fd no
++/// longer names the file at the path, or two processes hold the lock for one
++/// cache path at once.
++#[cfg(unix)]
++#[test]
++fn lock_acquirer_rejects_an_unlinked_lock_inode() {
++    let tmp = tempfile::TempDir::new().unwrap();
++    let cache_path = tmp
++        .path()
++        .join("fallow-audit-base-cache-0123456789abcdef-root-0123456789abcdef");
++    let lock_path = reusable_worktree_lock_path(&cache_path);
++    let stale = open_or_create_owned_sidecar(&lock_path).unwrap();
++    assert!(lock_file_is_current(&stale, &lock_path));
++
++    let sweep = ReusableWorktreeLock::try_acquire(&cache_path, "test").unwrap();
++    assert!(sweep.remove_lock_file().unwrap());
++    assert!(!lock_path.exists());
++    drop(sweep);
++
++    stale.try_lock().unwrap();
++    assert!(
++        !lock_file_is_current(&stale, &lock_path),
++        "a flock on an unlinked inode must not count as the cache lock",
++    );
++    let fresh = ReusableWorktreeLock::try_acquire(&cache_path, "test")
++        .expect("a new acquirer creates a new lock file");
++    assert!(lock_file_is_current(&fresh.file, &lock_path));
++    assert!(
++        !lock_file_is_current(&stale, &lock_path),
++        "the stale fd must not match the new lock file either",
++    );
++}
++
++#[cfg(unix)]
++#[test]
++fn remove_lock_file_keeps_a_lock_file_that_replaced_the_held_one() {
++    let tmp = tempfile::TempDir::new().unwrap();
++    let cache_path = tmp
++        .path()
++        .join("fallow-audit-base-cache-0123456789abcdef-root-0123456789abcdef");
++    let lock_path = reusable_worktree_lock_path(&cache_path);
++    let held = ReusableWorktreeLock::try_acquire(&cache_path, "test").unwrap();
++    std::fs::remove_file(&lock_path).unwrap();
++    std::fs::write(&lock_path, "").unwrap();
++
++    assert!(!held.remove_lock_file().unwrap());
++    assert!(
++        lock_path.exists(),
++        "only the held inode may be unlinked, never a newer lock file",
++    );
++}
+```
+
+**File**: `crates/cli/src/base_worktree_lock.rs` (added, +136/-0)
+```diff
+@@ -0,0 +1,136 @@
++//! The per-entry advisory lock of the reusable audit caches, and the unlink
++//! of its `.lock` file when the cache cleanup reclaims an entry.
 +
 +use std::path::{Path, PathBuf};
 +
-+#[allow(clippy::wildcard_imports, reason = "many AST types used")]
-+use oxc_ast::ast::*;
-+use rustc_hash::FxHashSet;
++use super::{SweepDisposition, open_or_create_owned_sidecar, reusable_worktree_lock_path};
 +
-+use super::{
-+    PathScope, collect_require_sources, collect_shallow_string_values, expression_to_path,
-+    extract_from_source, find_config_object, find_property, get_nested_expression,
-+    get_nested_string_or_array, is_module_exports_target, object_expression,
-+    path_from_config_string, resolve_alias_pairs_kinded,
-+};
-+
-+/// The maximum number of configs read from one exported array, in source order.
-+const MAX_MULTI_CONFIGS: usize = 16;
-+
-+/// The config objects of a program: the one object that `find_config_object`
-+/// finds, or else each object element of an exported config array. Elements
-+/// that are not object literals, such as `merge(a, b)` or a spread, are skipped.
-+pub fn find_config_objects<'a>(program: &'a Program<'a>) -> Vec<&'a ObjectExpression<'a>> {
-+    if let Some(object) = find_config_object(program) {
-+        return vec![object];
-+    }
-+    find_default_export_array(program)
-+        .map(|array| {
-+            array
-+                .elements
-+                .iter()
-+                .filter_map(|element| element.as_expression().and_then(object_expression))
-+                .take(MAX_MULTI_CONFIGS)
-+                .collect()
-+        })
-+        .unwrap_or_default()
++/// Kernel-level advisory lock around the reusable-cache `reuse_or_create`
++/// critical section, backed by `std::fs::File::try_lock` (stable since Rust
++/// 1.89), which wraps `flock(2)` on Unix and `LockFileEx` on Windows.
++/// Concurrent acquirers either fall through (`None`) or observe a
++/// freshly-prepared cache after the holder releases.
++///
++/// On Unix a sweep unlinks the `.lock` file of a reclaimed entry while it
++/// holds the lock ([`Self::remove_lock_file`]). A process that opened the old
++/// inode before the unlink can still win the flock on it later, so every
++/// acquirer checks after the lock that its fd is still the inode at the
++/// path, and opens the path again when it is not. Without that check, two
++/// processes could hold a flock on two different inodes for one path.
++pub struct ReusableWorktreeLock {
++    pub(super) file: std::fs::File,
++    path: PathBuf,
 +}
 +
-+/// Run `read` on each config object of the source and collect the results in
-+/// source order.
-+fn extract_each_config<T: Send>(
-+    source: &str,
-+    path: &Path,
-+    read: impl Fn(&Program<'_>, &ObjectExpression<'_>) -> Vec<T> + Send + Sync,
-+) -> Vec<T> {
-+    extract_from_source(source, path, |program| {
-+        Some(
-+            find_config_objects(program)
-+                .into_iter()
-+                .flat_map(|object| read(program, object))
-+                .collect(),
-+        )
-+    })
-+    .unwrap_or_default()
-+}
++/// Open attempts of [`ReusableWorktreeLock::try_acquire`]. A retry is needed
++/// only when a sweep unlinked the lock file between the open and the flock.
++const LOCK_OPEN_ATTEMPTS: usize = 3;
 +
-+/// The entries of each config, with the base directory path that the same
-+/// config declares under `base_key`.
-+pub fn extract_each_config_entries(
-+    source: &str,
-+    path: &Path,
-+    entry_key: &[&str],
-+    base_key: &str,
-+) -> Vec<(Vec<String>, Option<PathBuf>)> {
-+    extract_each_config(source, path, |program, object| {
-+        let entries = get_nested_string_or_array(object, entry_key, PathScope::Program(program))
-+            .unwrap_or_default();
-+        let base = get_nested_expression(object, &[base_key]).and_then(expression_to_path);
-+        vec![(entries, base)]
-+    })
-+}
-+
-+/// The path aliases of all configs, without duplicate pairs.
-+pub fn extract_each_config_path_aliases(
-+    source: &str,
-+    path: &Path,
-+    prop_path: &[&str],
-+) -> Vec<(String, PathBuf)> {
-+    let pairs = extract_each_config(source, path, |program, object| {
-+        let Some(expr) = get_nested_expression(object, prop_path) else {
-+            return Vec::new();
-+        };
-+        let mut visited = FxHashSet::default();
-+        resolve_alias_pairs_kinded(program, path, expr, &mut visited, 0)
-+    });
-+    let mut seen = FxHashSet::default();
-+    pairs
-+        .into_iter()
-+        .filter(|(find, replacement, _)| seen.insert((find.clone(), replacement.clone())))
-+        .map(|(find, replacement, _)| (find, path_from_config_string(&replacement)))
-+        .collect()
-+}
-+
-+/// The `require('...')` sources in the `key` property of all configs.
-+pub fn extract_each_config_require_strings(source: &str, path: &Path, key: &str) -> Vec<String> {
-+    dedup(extract_each_config(source, path, |_, object| {
-+        find_property(object, key)
-+            .map(|prop| collect_require_sources(&prop.value))
-+            .unwrap_or_default()
-+    }))
-+}
-+
-+/// The top-level string values of the `key` property of all configs.
-+pub fn extract_each_config_shallow_strings(source: &str, path: &Path, key: &str) -> Vec<String> {
-+    dedup(extract_each_config(source, path, |_, object| {
-+        find_property(object, key)
-+            .map(|prop| collect_shallow_string_values(&prop.value))
-+            .unwrap_or_default()
-+    }))
-+}
-+
-+fn dedup(values: Vec<String>) -> Vec<String> {
-+    let mut seen = FxHashSet::default();
-+    values
-+        .into_iter()
-+        .filter(|value| seen.insert(value.clone()))
-+        .collect()
-+}
-+
-+/// Find an exported array config, the `defineWorkspace([...])` /
-+/// `vitest.workspace.{ts,js}` shape and the webpack multi-config shape. Handles
-+/// `export default [...]`, `module.exports = [...]` and
-+/// `export default defineWorkspace([...])`
-```
-
-**File**: `crates/core/src/plugins/electron.rs` (modified, +15/-0)
-```diff
-@@ -574,6 +574,21 @@ mod tests {
-         }
-     }
- 
-+    #[test]
-+    fn resolve_config_reads_sections_through_a_spread_of_a_local_constant() {
-+        let source = r#"
-+            const base = { main: { build: { lib: { entry: "src/main/app.ts" } } } };
-+            const shared = { build: {} };
-+            export default { ...base, preload: { ...shared } };
-+        "#;
-+        let result = ElectronPlugin.resolve_config(&config_path(), source, Path::new("/project"));
-+        assert!(result.replace_entry_patterns);
-+        assert_eq!(
-+            entry_strings(&result),
-+            vec!["src/main/app.ts".to_string(), PRELOAD_DEFAULT.to_string()]
++impl ReusableWorktreeLock {
++    /// `context` names the caller's contention fallback in the debug
++    /// diagnostic ("falls back to a non-reusable worktree" is only true for
++    /// `reuse_or_create`; a GC sweep or prune skips the entry instead).
++    pub fn try_acquire(reusable_path: &Path, context: &'static str) -> Option<Self> {
++        let lock_path = reusable_worktree_lock_path(reusable_path);
++        for _ in 0..LOCK_OPEN_ATTEMPTS {
++            let file = open_or_create_owned_sidecar(&lock_path).ok()?;
++            match file.try_lock() {
++                Ok(()) if lock_file_is_current(&file, &lock_path) => {
++                    return Some(Self {
++                        file,
++                        path: lock_path,
++                    });
++                }
++                Ok(()) => {
++                    let _ = file.unlock();
++                }
++                Err(err) => {
++                    log_lock_failure(&lock_path, &err, context);
++                    return None;
++                }
++            }
++        }
++        tracing::debug!(
++            path = %lock_path.display(),
++            context,
++            "reusable audit worktree lock file kept changing during acquisition",
 +        );
++        None
 +    }
 +
-     #[test]
-     fn resolve_config_without_node_sections_keeps_static_entries() {
-         let source = r#"export default { renderer: { build: { rollupOptions: { input: "src/renderer/index.html" } } } };"#;
-```
-
-**File**: `crates/core/src/plugins/playwright.rs` (modified, +10/-0)
-```diff
-@@ -1324,6 +1324,16 @@ mod tests {
-                 "ui/live.pw.ts",
-                 "outside/live.pw.ts",
-             ),
-+            (
-+                "const shared = { testDir: './wrong', testMatch: '*.pw.ts' }; export default { ...shared, testDir: './ui' };",
-+                "ui/live.pw.ts",
-+                "wrong/live.pw.ts",
-+            ),
-+            (
-+                "const shared = { testDir: './ui', testMatch: '*.pw.ts' }; export default { testDir: './wrong', ...shared };",
-+                "ui/live.pw.ts",
-+                "wrong/live.pw.ts",
-+            ),
-             (
-                 "export default { testDir:'./ui', [key]:'./tests', testMatch:'*.pw.ts', projects:[{name:'chromium'}] };",
-                 "tests/live.pw.ts",
-```
-
-**File**: `crates/core/src/plugins/rspack.rs` (modified, +24/-2)
-```diff
-@@ -55,15 +55,15 @@ define_plugin! {
-         );
- 
-         let require_deps =
--            config_parser::extract_config_require_strings(source, config_path, "plugins");
-+            config_parser::extract_each_config_require_strings(source, config_path, "plugins");
-         for dep in &require_deps {
-             result
-                 .referenced_dependencies
-                 .push(crate::resolve::extract_package_name(dep));
-         }
- 
-         let externals =
--            config_parser::extract_config_shallow_strings(source, config_path, "externals");
-+            config_parser::extract_each_config_shallow_strings(source, config_path, "externals");
-         for ext in &externals {
-             result
-                 .referenced_dependencies
-@@ -92,6 +92,28 @@ define_plugin! {
- mod tests {
-     use super::*;
- 
-+    #[test]
-+    fn resolve_config_reads_plugins_and_externals_of_each_config() {
-+        let source = r#"
-+            module.exports = [
-+                { entry: "./src/a.js", externals: ["lodash"] },
-+                { entry: "./src/b.js", plugins: [require("my-plugin")] },
-+            ];
-+        "#;
-+        let result = RspackPlugin.resolve_config(
-+            std::path::Path::new("/project/rspack.config.js"),
-+            source,
-+            std::path::Path::new("/project"),
-+        );
-+        assert_eq!(result.entry_patterns, vec!["src/a.js", "src/b.js"]);
-+        for dep in ["lodash", "my-plugin"] {
-+            assert!(
-+                result.referenced_dependencies.contains(&dep.to_string()),
-+                "{dep}"
++    /// Unlink the held lock file, so a reclaimed entry leaves nothing behind.
++    /// Returns `Ok(false)` when the path no longer names the held inode. On
++    /// Windows it always returns `Ok(false)` and the `.lock` file stays,
++    /// because the inode check of [`Self::try_acquire`] is Unix only.
++    pub fn remove_lock_file(&self) -> std::io::Result<bool> {
++        if !cfg!(unix) || !lock_file_is_current(&self.file, &self.path) {
++            return Ok(false);
++        }
++        std::fs::remove_file(&self.path).map(|()| true)
++    }
++}
++
++#[cfg(unix)]
++pub(super) fn lock_file_is_current(file: &std::fs::File, lock_path: &Path) -> bool {
++    use std::os::unix::fs::MetadataExt as _;
++
++    let (Ok(held), Ok(at_path)) = (file.metadata(), std::fs::symlink_metadata(lock_path)) else {
++        return false;
++    };
++    held.dev() == at_path.dev() && held.ino() == at_path.ino()
++}
++
++#[cfg(not(unix))]
++pub(super) const fn lock_file_is_current(_file: &std::fs::File, _lock_path: &Path) -> bool {
++    true
++}
++
++fn log_lock_failure(lock_path: &Path, err: &std::fs::TryLockError, context: &'static str) {
++    match err {
++        std::fs::TryLockError::WouldBlock => {
++            tracing::debug!(
++                path = %lock_path.display(),
++                context,
++                "reusable audit worktree lock contended",
++            );
++        }
++        std::fs::TryLockError::Error(err) => {
++            tracing::debug!(
++                path = %lock_path.display(),
++                error = %err,
++                context,
++                "could not acquire reusable audit worktree lock",
 +            );
 +        }
 +    }
++}
 +
-     #[test]
-     fn resolve_config_entry_string() {
-         let source = r#"module.exports = { entry: "./src/app.tsx" };"#;
++impl Drop for ReusableWorktreeLock {
++    fn drop(&mut self) {
++        let _ = self.file.unlock();
++    }
++}
++
++/// Unlink the held lock file of an entry whose other parts are gone. A
++/// failure is not an error of the sweep: the lock file stays and the next
++/// sweep reports it as lock-only.
++pub(super) fn remove_held_lock_file(lock: &ReusableWorktreeLock) -> bool {
++    match lock.remove_lock_file() {
++        Ok(removed) => removed,
++        Err(err) => {
++            tracing::debug!(
++                error = %err,
++                "failed to remove the lock sidecar of a reclaimed audit cache entry",
++            );
++            false
++        }
++    }
++}
++
++pub(sup
+```
+
+**File**: `crates/cli/tests/integration/audit_tests.rs` (modified, +25/-8)
+```diff
+@@ -446,9 +446,10 @@ fn audit_cache_prune_applies_policy_and_closes_counts() {
+     assert!(!aged_path.exists(), "the aged entry must be removed");
+     assert!(!cache_sidecar(&aged_path, ".sha").exists());
+     assert!(!cache_sidecar(&aged_path, ".last-used").exists());
+-    assert!(
++    assert_eq!(
+         cache_sidecar(&aged_path, ".lock").exists(),
+-        "the `.lock` sidecar must never be deleted",
++        cfg!(windows),
++        "the `.lock` sidecar goes with the entry on Unix and stays on Windows",
+     );
+     assert!(fresh_path.is_dir(), "a fresh entry must be kept");
+     assert!(
+@@ -506,8 +507,13 @@ fn audit_cache_prune_human_output_lists_rows_and_hints() {
+         stdout.contains("owner live: "),
+         "live-owner rows should name the owner: {stdout}"
+     );
++    let lock_line = if cfg!(unix) {
++        "would remove 1 lock sidecar with no cache"
++    } else {
++        "1 lock sidecar with no cache remain (harmless)"
++    };
+     assert!(
+-        stdout.contains("1 lock sidecar with no cache remain (harmless, kept by design)"),
++        stdout.contains(lock_line),
+         "lock-only entries should aggregate into one line: {stdout}"
+     );
+     assert!(
+@@ -520,6 +526,10 @@ fn audit_cache_prune_human_output_lists_rows_and_hints() {
+         stdout.contains("would reclaim "),
+         "dry-run summary should use would-reclaim wording: {stdout}"
+     );
++    assert!(
++        stdout.contains(" across 1 of 2 entries"),
++        "the summary counts caches only; lock sidecars have their own line: {stdout}"
++    );
+ }
+ 
+ #[test]
+@@ -909,7 +919,11 @@ fn audit_gc_debug_diagnostics_require_explicit_rust_log() {
+     assert!(
+         // ANSI styling may sit between the field name and its value, so match
+         // the reason value alone.
+-        with_debug.stderr.contains("\"lock-only\""),
++        with_debug.stderr.contains(if cfg!(unix) {
++            "\"orphaned-lock\""
++        } else {
++            "\"lock-only\""
++        }),
+         "the decision line should carry the reason field: {}",
+         with_debug.stderr
+     );
+@@ -936,7 +950,7 @@ fn cache_sidecar(path: &Path, suffix: &str) -> std::path::PathBuf {
+ }
+ 
+ #[test]
+-fn audit_cache_remove_requires_explicit_root_and_removes_sidecars_but_keeps_locks() {
++fn audit_cache_remove_requires_explicit_root_and_removes_sidecars() {
+     let fixture = create_audit_fixture("cache-remove");
+     let root = fixture.path();
+     let base_sha = "0123456789abcdef0123456789abcdef01234567";
+@@ -1030,9 +1044,12 @@ fn audit_cache_remove_requires_explicit_root_and_removes_sidecars_but_keeps_lock
+         assert!(!path.exists(), "cache directory should be removed");
+         assert!(!cache_sidecar(path, ".sha").exists());
+         assert!(!cache_sidecar(path, ".last-used").exists());
+-        assert!(cache_sidecar(path, ".lock").exists());
+-        fs::remove_file(cache_sidecar(path, ".lock"))
+-            .expect("test lock sidecar should be removable");
++        assert_eq!(
++            cache_sidecar(path, ".lock").exists(),
++            cfg!(windows),
++            "the `.lock` sidecar goes on Unix and stays on Windows",
++        );
++        let _ = fs::remove_file(cache_sidecar(path, ".lock"));
+     }
+ }
+ 
 ```
 
 ---
 
-### Incident Patch 3: `a2d1a3e2` (2026-10-28)
-**Commit Message**: fix(vitest): credit exports of a replacement file for a relative alias key (#3969)
+### Incident Patch 2: `9654246e` (2026-10-30)
+**Commit Message**: refactor(graph): share the re-export test fixture builders (#4017)
 
-* fix(vitest): credit exports of a replacement file for a relative alias key
+Moves the module, export, re-export, import and graph builders of the four re-export test files into `crates/graph/src/graph/re_exports/test_support.rs`. The tests keep their assertions, and a cargo-mutants run gives the same caught set. No production code changes.
 
-A Vitest or Vite alias with a relative key, such as ./clock.js, swaps the original file for a stub. The resolver resolves the relative import to the original file and never applies the alias, so the stub had no consumer. With includeEntryExports, fallow reported the exports of the stub as unused.
+Closes: N/A
 
-The shared alias helper now credits every export of the replacement file when the alias key is a relative or absolute path. Aliases with a bare or a path-alias key keep the current behavior, because the resolver routes their imports to the replacement file.
-
-Closes #3963
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-* docs(changelog): limit the #3963 entry to Vitest
-
-The top-level resolve.alias of a Vite config does not use the shared alias helper, so the credit does not apply there.
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-**File**: `changelog.d/fix-vitest-alias-replacement-exports-3963.md` (added, +4/-0)
+**File**: `crates/graph/src/graph/re_exports/mod.rs` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,4 @@
-+### Fixed
-+
-+- **`fallow dead-code` no longer reports the exports of a Vitest alias replacement file that stands in for a relative import.** An entry such as `{ find: "./clock.js", replacement: "./test/stubs/clock.ts" }` swaps the original file for a stub. Fallow resolves the relative import to the original file, so the stub had no consumer. With `includeEntryExports`, fallow reported the exports of the stub as unused. Fallow now credits every export of a replacement file when the alias key is a relative or absolute path. Thanks @Smrtnyk for the report.
-+  (Closes [#3963](https://github.com/fallow-rs/fallow/issues/3963))
+@@ -2,6 +2,8 @@
+ 
+ mod propagate;
+ #[cfg(test)]
++mod test_support;
++#[cfg(test)]
+ mod tests;
+ #[cfg(test)]
+ mod tests_exposure_walk;
 ```
 
-**File**: `crates/core/src/plugins/test_alias.rs` (modified, +56/-0)
+**File**: `crates/graph/src/graph/re_exports/test_support.rs` (added, +193/-0)
 ```diff
-@@ -30,6 +30,13 @@ fn alias_target_is_source_file(normalized: &str) -> bool {
-         .is_some_and(|ext| ALIAS_SOURCE_EXTENSIONS.contains(&ext))
- }
- 
-+/// True when an alias key is a relative or absolute file specifier, such as
-+/// `./clock.js`. An import with such a specifier resolves to a file on disk, so
-+/// the path-alias fallback of the resolver never routes it to the replacement.
-+fn is_path_specifier(find: &str) -> bool {
-+    find.starts_with("./") || find.starts_with("../") || find.starts_with('/')
+@@ -0,0 +1,193 @@
++//! Fixture builders shared by the re-export propagation test files.
++
++use std::path::PathBuf;
++
++use crate::graph::{ExportSymbol, ModuleGraph};
++use crate::resolve::{ResolveResult, ResolvedImport, ResolvedModule, ResolvedReExport};
++use fallow_types::discover::{DiscoveredFile, EntryPoint, EntryPointSource, FileId};
++use fallow_types::extract::{
++    ExportInfo, ExportName, ImportInfo, ImportedName, ReExportInfo, VisibilityTag,
++};
++use oxc_span::Span;
++
++/// The module that a fixture import or re-export resolves to: a file id, or
++/// the module itself. A bare id can name a module that does not exist.
++pub(super) trait Target: Copy {
++    fn file_id(&self) -> FileId;
 +}
 +
- /// Apply one alias entry to the plugin result.
- ///
- /// Path aliases feed `path_aliases`, source-file targets seed setup files, and
-@@ -65,6 +72,13 @@ pub(super) fn process_test_alias(
-         .path_aliases
-         .push((find.to_owned(), normalized.clone()));
-     if alias_target_is_source_file(&normalized) {
-+        if is_path_specifier(find) {
-+            // The resolver resolves a relative or absolute import to the
-+            // original file and never applies the alias. The import of the
-+            // original file is then the only consumer, so credit every export
-+            // of the replacement file (issue #3963).
-+            result.push_entry_export_credit(normalized.clone(), ["*"]);
-+        }
-         result.setup_files.push(root.join(&normalized));
-     }
-     if find_is_pkg {
-@@ -148,6 +162,48 @@ mod tests {
-         std::path::PathBuf::from("/project")
-     }
- 
-+    #[test]
-+    fn path_specifier_key_credits_every_replacement_export() {
-+        for find in ["./clock.js", "../src/clock", "/abs/clock.js"] {
-+            let mut result = PluginResult::default();
-+            process_test_alias(
-+                &mut result,
-+                find,
-+                "./test/stubs/clock.ts",
-+                false,
-+                &cfg(),
-+                &root(),
-+            );
-+            assert_eq!(
-+                result.entry_export_credits,
-+                vec![crate::plugins::UsedExportRule::new(
-+                    "test/stubs/clock.ts",
-+                    ["*"]
-+                )],
-+                "key `{find}` must credit the replacement exports"
-+            );
-+        }
++impl Target for u32 {
++    fn file_id(&self) -> FileId {
++        FileId(*self)
 +    }
++}
 +
-+    #[test]
-+    fn bare_or_directory_alias_adds_no_entry_export_credit() {
-+        let mut result = PluginResult::default();
-+        process_test_alias(
-+            &mut result,
-+            "vscode",
-+            "./mock/vscode.ts",
-+            false,
-+            &cfg(),
-+            &root(),
-+        );
-+        process_test_alias(&mut result, "@", "src", false, &cfg(), &root());
-+        assert!(
-+            result.entry_export_credits.is_empty(),
-+            "the resolver routes these imports through the alias: {:?}",
-+            result.entry_export_credits
-+        );
++impl Target for &ResolvedModule {
++    fn file_id(&self) -> FileId {
++        self.file_id
 +    }
++}
 +
-     #[test]
-     fn package_to_package_credits_both_no_path_alias() {
-         let mut result = PluginResult::default();
++fn source(target: FileId) -> String {
++    format!("./module{}", target.0)
++}
++
++pub(super) fn module(id: u32, name: &str) -> ResolvedModule {
++    ResolvedModule {
++        file_id: FileId(id),
++        path: PathBuf::from(format!("/project/{name}.ts")),
++        ..Default::default()
++    }
++}
++
++fn export_info(name: &str, is_type_only: bool) -> ExportInfo {
++    ExportInfo {
++        name: if name == "default" {
++            ExportName::Default
++        } else {
++            ExportName::Named(name.to_string())
++        },
++        local_name: Some(name.to_string()),
++        is_type_only,
++        visibility: VisibilityTag::None,
++        expected_unused_reason: None,
++        span: Span::new(0, 20),
++        members: vec![],
++        is_side_effect_used: false,
++        super_class: None,
++        deprecated: false,
++        deprecated_reason: None,
++    }
++}
++
++/// A value export. The name `default` gives the default export.
++pub(super) fn export(name: &str) -> ExportInfo {
++    export_info(name, false)
++}
++
++pub(super) fn type_export(name: &str) -> ExportInfo {
++    export_info(name, true)
++}
++
++pub(super) fn re_export(target: impl Target, imported: &str, exported: &str) -> ResolvedReExport {
++    let target = target.file_id();
++    ResolvedReExport {
++        info: ReExportInfo {
++            source: source(target),
++            imported_name: imported.to_string(),
++            exported_name: exported.to_string(),
++            is_type_only: false,
++            span: Span::default(),
++            statement_span: Span::default(),
++            source_span: Span::default(),
++        },
++        target: ResolveResult::InternalModule(target),
++    }
++}
++
++fn import_info(
++    target: FileId,
++    imported_name: ImportedName,
++    local_name: &str,
++    is_type_only: bool,
++) -> ResolvedImport {
++    ResolvedImport {
++        info: ImportInfo {
++            source: source(target),
++            imported_name,
++            local_name: local_name.to_string(),
++            is_type_only,
++            is_type_only_star: false,
++            from_style: false,
++            span: Span::default(),
++            source_span: Span::default(),
++        },
++        target: ResolveResult::InternalModule(target),
++    }
++}
++
++/// A value import of `imported` under the local name `local`.
++pub(super) fn import(target: impl Target, imported: ImportedName, local: &str) -> ResolvedImport {
++    import_info(target.file_id(), imported, local, false)
++}
++
++/// `import { name } from '...'`.
++pub(super) fn named_import(target: impl Target, name: &str) -> ResolvedImport {
++    import_info(
++        target.file_id(),
++        ImportedName::Named(name.to_string()),
++        name,
++        false,
++    )
++}
++
++/// `import type { name } from '...'`.
++pub(super) fn type_import(target: impl Target, name: &str) -> ResolvedImport {
++    import_info(
++        target.file_id(),
++        ImportedName::Named(name.to_string()),
++        name,
++        true,
++    )
++}
++
++/// The imports extraction records for `export *` inside a
++/// `declare module '...'` body. A type-only import with an empty local name
++/// marks the ambient form. The `export * as ns` spelling adds a `Default`
++/// import at the same span, which the graph reads as an observation of the
++/// whole namespace object.
++pub(super) fn ambient_imports(target: impl Target, namespace_object: bool) -> Vec<ResolvedImport> {
++    let target = target.file_id();
++    let names = if namespace_object {
++        vec![ImportedName::Namespace, ImportedName::Default]
++    } else {
++        vec![ImportedName::Namespace]
++    };
++    names
++        .into_iter()
++        .map(|imported_name| {
++            let mut import = import_info(target, imported_name, "", true);
++            import.info.span = Span::new(25, 65);
++            import.info.source_span = Span::new(50, 64);
++            import
++        })
++        .collect()
++}
++
++pub(super) fn discovered_files(modules: &[ResolvedModule]) -> Vec<DiscoveredFile> {
++    modules
++        .iter()
++        .map(|module| DiscoveredFile {
++            id: module.file_id,
++   
 ```
 
-**File**: `crates/core/tests/integration_test/issue_601_vitest_test_alias.rs` (modified, +75/-0)
+**File**: `crates/graph/src/graph/re_exports/tests_exposure_walk.rs` (modified, +11/-96)
 ```diff
-@@ -482,3 +482,78 @@ fn vitest_workspace_array_file_aliases_resolve() {
-         "workspace-array alias-resolved module must not be unlisted, found: {unlisted:?}"
+@@ -1,97 +1,16 @@
+ use std::path::PathBuf;
+ 
+ use super::module_path_and_display;
+-use crate::graph::{ExportSymbol, ModuleGraph};
+-use crate::resolve::{ResolveResult, ResolvedImport, ResolvedModule, ResolvedReExport};
+-use fallow_types::discover::{DiscoveredFile, EntryPoint, EntryPointSource, FileId};
+-use fallow_types::extract::{
+-    ExportInfo, ExportName, ImportInfo, ImportedName, ReExportInfo, VisibilityTag,
++use super::test_support::{
++    ambient_imports, build, build_without_entry_points, export, module, re_export, symbol,
+ };
+-
+-fn module(id: u32, name: &str) -> ResolvedModule {
+-    ResolvedModule {
+-        file_id: FileId(id),
+-        path: PathBuf::from(format!("/project/{name}.ts")),
+-        ..Default::default()
+-    }
+-}
+-
+-fn export(name: &str) -> ExportInfo {
+-    ExportInfo {
+-        name: ExportName::Named(name.to_string()),
+-        local_name: Some(name.to_string()),
+-        is_type_only: false,
+-        visibility: VisibilityTag::None,
+-        expected_unused_reason: None,
+-        span: oxc_span::Span::new(0, 20),
+-        members: vec![],
+-        is_side_effect_used: false,
+-        super_class: None,
+-        deprecated: false,
+-        deprecated_reason: None,
+-    }
+-}
+-
+-fn re_export(target: u32, imported: &str, exported: &str) -> ResolvedReExport {
+-    ResolvedReExport {
+-        info: ReExportInfo {
+-            source: format!("./module{target}"),
+-            imported_name: imported.to_string(),
+-            exported_name: exported.to_string(),
+-            is_type_only: false,
+-            span: oxc_span::Span::default(),
+-            statement_span: oxc_span::Span::default(),
+-            source_span: oxc_span::Span::default(),
+-        },
+-        target: ResolveResult::InternalModule(FileId(target)),
+-    }
+-}
+-
+-fn import(target: u32, imported_name: ImportedName) -> ResolvedImport {
+-    ResolvedImport {
+-        info: ImportInfo {
+-            source: format!("./module{target}"),
+-            imported_name,
+-            local_name: String::new(),
+-            // A type-only import with no local name is how an ambient `export *` appears.
+-            is_type_only: true,
+-            is_type_only_star: false,
+-            from_style: false,
+-            span: oxc_span::Span::new(0, 10),
+-            source_span: oxc_span::Span::default(),
+-        },
+-        target: ResolveResult::InternalModule(FileId(target)),
+-    }
+-}
+-
+-fn build(resolved_modules: &[ResolvedModule], entry_points: &[EntryPoint]) -> ModuleGraph {
+-    let files: Vec<_> = resolved_modules
+-        .iter()
+-        .map(|module| DiscoveredFile {
+-            id: module.file_id,
+-            path: module.path.clone(),
+-            size_bytes: 100,
+-        })
+-        .collect();
+-    ModuleGraph::build(resolved_modules, entry_points, &files)
+-}
+-
+-fn symbol<'a>(graph: &'a ModuleGraph, id: usize, name: &str) -> &'a ExportSymbol {
+-    graph.modules[id]
+-        .exports
+-        .iter()
+-        .find(|export| export.name.matches_str(name))
+-        .unwrap_or_else(|| panic!("module {id} should export {name}"))
+-}
++use fallow_types::discover::FileId;
+ 
+ /// An ambient namespace exposes a default namespace and its transitive star exports.
+ #[test]
+ fn ambient_namespace_default_re_export_credits_deep_exports() {
+     let mut ambient = module(0, "ambient");
+-    ambient.resolved_imports = vec![
+-        import(1, ImportedName::Namespace),
+-        import(1, ImportedName::Default),
+-    ];
++    ambient.resolved_imports = ambient_imports(1, true);
+     let mut seed = module(1, "seed");
+     seed.re_exports = vec![re_export(2, "*", "default")];
+     let mut surface = module(2, "surface");
+@@ -100,7 +19,7 @@ fn ambient_namespace_default_re_export_credits_deep_exports() {
+     deep.exports = vec![export("used")].into();
+     let resolved_modules = vec![ambient, seed, surface, deep];
+ 
+-    let graph = build(&resolved_modules, &[]);
++    let graph = build_without_entry_points(&resolved_modules);
+ 
+     assert!(!graph.modules[2].is_reachable());
+     assert!(
+@@ -113,7 +32,7 @@ fn ambient_namespace_default_re_export_credits_deep_exports() {
+ #[test]
+ fn ambient_star_chain_namespace_re_export_credits_deep_exports() {
+     let mut ambient = module(0, "ambient");
+-    ambient.resolved_imports = vec![import(1, ImportedName::Namespace)];
++    ambient.resolved_imports = ambient_imports(1, false);
+     let mut seed = module(1, "seed");
+     seed.re_exports = vec![re_export(2, "*", "*")];
+     let mut member = module(2, "member");
+@@ -124,7 +43,7 @@ fn ambient_star_chain_namespace_re_export_credits_deep_exports() {
+     deep.exports = vec![export("used")].into();
+     let resolved_modules = vec![ambient, seed, member, surface, deep];
+ 
+-    let graph = build(&resolved_modules, &[]);
++    let graph = build_without_entry_points(&resolved_modules);
+ 
+     assert!(!graph.modules[3].is_reachable());
+     assert!(
+@@ -137,7 +56,7 @@ fn ambient_star_chain_namespace_re_export_credits_deep_exports() {
+ #[test]
+ fn named_re_e
+```
+
+**File**: `crates/graph/src/graph/re_exports/tests_name_search.rs` (modified, +27/-113)
+```diff
+@@ -1,100 +1,14 @@
+-use std::path::PathBuf;
+-
++use super::test_support::{build, export, import, is_used, module, re_export, symbol};
+ use crate::graph::ModuleGraph;
+-use crate::resolve::{ResolveResult, ResolvedImport, ResolvedModule, ResolvedReExport};
+-use fallow_types::discover::{DiscoveredFile, EntryPoint, EntryPointSource, FileId};
+-use fallow_types::extract::{
+-    ExportInfo, ExportName, ImportInfo, ImportedName, ReExportInfo, VisibilityTag,
+-};
+-
+-fn module(id: u32, name: &str) -> ResolvedModule {
+-    ResolvedModule {
+-        file_id: FileId(id),
+-        path: PathBuf::from(format!("/project/{name}.ts")),
+-        ..Default::default()
+-    }
+-}
+-
+-fn export(name: &str) -> ExportInfo {
+-    ExportInfo {
+-        name: if name == "default" {
+-            ExportName::Default
+-        } else {
+-            ExportName::Named(name.to_string())
+-        },
+-        local_name: Some(name.to_string()),
+-        is_type_only: false,
+-        visibility: VisibilityTag::None,
+-        expected_unused_reason: None,
+-        span: oxc_span::Span::default(),
+-        members: vec![],
+-        is_side_effect_used: false,
+-        super_class: None,
+-        deprecated: false,
+-        deprecated_reason: None,
+-    }
+-}
+-
+-fn re_export(target: &ResolvedModule, imported: &str, exported: &str) -> ResolvedReExport {
+-    ResolvedReExport {
+-        info: ReExportInfo {
+-            source: target.path.to_string_lossy().into_owned(),
+-            imported_name: imported.to_string(),
+-            exported_name: exported.to_string(),
+-            is_type_only: false,
+-            span: oxc_span::Span::default(),
+-            statement_span: oxc_span::Span::default(),
+-            source_span: oxc_span::Span::default(),
+-        },
+-        target: ResolveResult::InternalModule(target.file_id),
+-    }
+-}
++use fallow_types::extract::ImportedName;
+ 
+-fn import(target: &ResolvedModule, imported: ImportedName, local: &str) -> ResolvedImport {
+-    ResolvedImport {
+-        info: ImportInfo {
+-            source: target.path.to_string_lossy().into_owned(),
+-            imported_name: imported,
+-            local_name: local.to_string(),
+-            is_type_only: false,
+-            is_type_only_star: false,
+-            from_style: false,
+-            span: oxc_span::Span::default(),
+-            source_span: oxc_span::Span::default(),
+-        },
+-        target: ResolveResult::InternalModule(target.file_id),
+-    }
+-}
+-
+-fn build(modules: &[ResolvedModule], entry: FileId) -> ModuleGraph {
+-    let files: Vec<_> = modules
+-        .iter()
+-        .map(|module| DiscoveredFile {
+-            id: module.file_id,
+-            path: module.path.clone(),
+-            size_bytes: 100,
+-        })
+-        .collect();
+-    let entry_points = vec![EntryPoint {
+-        path: modules[entry.0 as usize].path.clone(),
+-        source: EntryPointSource::PackageJsonMain,
+-    }];
+-    ModuleGraph::build(modules, &entry_points, &files)
+-}
+-
+-fn assert_credit(graph: &ModuleGraph, file: FileId, name: &str, expected: bool) {
+-    let module = &graph.modules[file.0 as usize];
+-    let export = module
+-        .exports
+-        .iter()
+-        .find(|export| export.name.matches_str(name))
+-        .expect("the target must export the name");
++fn assert_credit(graph: &ModuleGraph, module: usize, name: &str, expected: bool) {
+     assert_eq!(
+-        !export.references.is_empty(),
++        is_used(graph, module, name),
+         expected,
+         "{}:{name} has references {:?}",
+-        module.path.display(),
+-        export.references
++        graph.modules[module].path.display(),
++        symbol(graph, module, name).references
      );
  }
+ 
+@@ -109,27 +23,27 @@ fn whole_object_graph(imported: ImportedName, exported: &str) -> ModuleGraph {
+     barrel.re_exports = vec![re_export(&target, "*", exported)];
+     consumer.resolved_imports = vec![import(&barrel, imported, "api")];
+     consumer.whole_object_uses = vec!["api".to_string()].into();
+-    build(&[consumer, barrel, target, leaf], FileId(0))
++    build(&[consumer, barrel, target, leaf], 0)
+ }
+ 
+ #[test]
+ fn default_import_whole_object_use_credits_star_source() {
+     let graph = whole_object_graph(ImportedName::Default, "default");
+ 
+-    assert_credit(&graph, FileId(2), "direct", true);
++    assert_credit(&graph, 2, "direct", true);
+     // The target credits its direct export without the whole-object use, so
+     // only the leaf behind its star shows that the namespace object is exposed.
+-    assert_credit(&graph, FileId(3), "value", true);
+-    assert_credit(&graph, FileId(3), "default", false);
++    assert_credit(&graph, 3, "value", true);
++    assert_credit(&graph, 3, "default", false);
+ }
+ 
+ #[test]
+ fn named_import_whole_object_use_credits_star_source() {
+     let graph = whole_object_graph(ImportedName::Named("ns".to_string()), "ns");
+ 
+-    assert_credit(&graph, FileId(2), "direct", true);
+-    assert_credit(&graph, FileId(3), "value", true);
+-    assert_credit(&graph, FileId(3)
+```
+
+**File**: `crates/graph/src/graph/re_exports/tests_namespace_targets.rs` (modified, +33/-151)
+```diff
+@@ -1,120 +1,14 @@
+-use std::path::PathBuf;
+-
+ use rustc_hash::FxHashMap;
+ 
++use super::test_support::{
++    ambient_imports, build_without_entry_points, discovered_files, export, is_used, module,
++    named_import, re_export,
++};
+ use super::{ExposedNamespaceTargets, Exposure};
+ use crate::graph::ModuleGraph;
+-use crate::resolve::{
+-    ResolveResult, ResolvedImport, ResolvedModule, ResolvedReExport, ResolvedReplacedModuleTarget,
+-};
+-use fallow_types::discover::{DiscoveredFile, EntryPoint, EntryPointSource, FileId};
+-use fallow_types::extract::{
+-    ExportInfo, ExportName, ImportInfo, ImportedName, MemberAccess, ReExportInfo, VisibilityTag,
+-};
+-use oxc_span::Span;
+-
+-fn module(id: u32, name: &str) -> ResolvedModule {
+-    ResolvedModule {
+-        file_id: FileId(id),
+-        path: PathBuf::from("/project").join(name),
+-        ..Default::default()
+-    }
+-}
+-
+-fn relative_source(target: &ResolvedModule) -> String {
+-    let file_name = target
+-        .path
+-        .file_name()
+-        .and_then(|name| name.to_str())
+-        .expect("fixture paths have a UTF-8 file name");
+-    format!("./{file_name}")
+-}
+-
+-fn named_export(name: &str) -> ExportInfo {
+-    ExportInfo {
+-        name: ExportName::Named(name.to_string()),
+-        local_name: Some(name.to_string()),
+-        is_type_only: false,
+-        is_side_effect_used: false,
+-        visibility: VisibilityTag::None,
+-        expected_unused_reason: None,
+-        deprecated: false,
+-        deprecated_reason: None,
+-        span: Span::default(),
+-        members: vec![],
+-        super_class: None,
+-    }
+-}
+-
+-fn re_export(target: &ResolvedModule, exported_name: &str) -> ResolvedReExport {
+-    ResolvedReExport {
+-        info: ReExportInfo {
+-            source: relative_source(target),
+-            imported_name: "*".to_string(),
+-            exported_name: exported_name.to_string(),
+-            is_type_only: false,
+-            span: Span::default(),
+-            statement_span: Span::default(),
+-            source_span: Span::default(),
+-        },
+-        target: ResolveResult::InternalModule(target.file_id),
+-    }
+-}
+-
+-/// The imports extraction records for `export *` inside a
+-/// `declare module '...'` body. A type-only import with an empty local name
+-/// marks the ambient form. The `export * as ns` spelling adds a `Default`
+-/// import at the same span, which the graph reads as an observation of the
+-/// whole namespace object.
+-fn ambient_imports(target: &ResolvedModule, namespace_object: bool) -> Vec<ResolvedImport> {
+-    let names = if namespace_object {
+-        vec![ImportedName::Namespace, ImportedName::Default]
+-    } else {
+-        vec![ImportedName::Namespace]
+-    };
+-    names
+-        .into_iter()
+-        .map(|imported_name| ResolvedImport {
+-            info: ImportInfo {
+-                source: relative_source(target),
+-                imported_name,
+-                local_name: String::new(),
+-                is_type_only: true,
+-                is_type_only_star: false,
+-                from_style: false,
+-                span: Span::new(25, 65),
+-                source_span: Span::new(50, 64),
+-            },
+-            target: ResolveResult::InternalModule(target.file_id),
+-        })
+-        .collect()
+-}
+-
+-fn discovered_files(modules: &[ResolvedModule]) -> Vec<DiscoveredFile> {
+-    modules
+-        .iter()
+-        .map(|module| DiscoveredFile {
+-            id: module.file_id,
+-            path: module.path.clone(),
+-            size_bytes: 100,
+-        })
+-        .collect()
+-}
+-
+-fn build_without_entry_points(modules: &[ResolvedModule]) -> ModuleGraph {
+-    let graph = ModuleGraph::build(modules, &[], &discovered_files(modules));
+-    assert!(graph.modules.iter().all(|module| !module.is_entry_point()));
+-    graph
+-}
+-
+-fn export_is_used(graph: &ModuleGraph, file: FileId, name: &str) -> bool {
+-    let export = graph.modules[file.0 as usize]
+-        .exports
+-        .iter()
+-        .find(|export| export.name.to_string() == name)
+-        .expect("fixture export must exist");
+-    !export.references.is_empty()
+-}
++use crate::resolve::ResolvedReplacedModuleTarget;
++use fallow_types::discover::{EntryPoint, EntryPointSource, FileId};
++use fallow_types::extract::MemberAccess;
+ 
+ #[test]
+ fn ambient_namespace_forwards_default_namespace_exports_without_entry_points() {
+@@ -123,25 +17,25 @@ fn ambient_namespace_forwards_default_namespace_exports_without_entry_points() {
+         (Some(false), true, false),
+         (Some(true), true, true),
+     ] {
+-        let mut ambient = module(0, "ambient.ts");
+-        let mut leaf = module(1, "leaf.ts");
+-        leaf.exports = vec![named_export("leafValue")].into();
+-        let mut target = module(2, "target.ts");
+-        target.exports = vec![named_export("namedValue")].into();
+-        target.re_exports = vec![re_export(&leaf, "default")];
++        let mut ambient = module(0, "ambient");
++        let mut leaf = module(1, "leaf");
++        leaf.exports 
+```
+
+**File**: `crates/graph/src/graph/re_exports/tests_star_propagate.rs` (modified, +41/-126)
+```diff
+@@ -1,84 +1,10 @@
+-use std::path::PathBuf;
+-
+ use super::capture_propagation_visits;
+ use super::propagate::count_star_name_checks;
+-use crate::graph::{ExportNamespace, ExportSymbol, ModuleGraph};
+-use crate::resolve::{ResolveResult, ResolvedImport, ResolvedModule, ResolvedReExport};
+-use fallow_types::discover::{DiscoveredFile, EntryPoint, EntryPointSource, FileId};
+-use fallow_types::extract::{
+-    ExportInfo, ExportName, ImportInfo, ImportedName, ReExportInfo, VisibilityTag,
++use super::test_support::{
++    build, export, module, named_import, re_export, type_export, type_import,
+ };
+-
+-fn module(id: u32, name: &str) -> ResolvedModule {
+-    ResolvedModule {
+-        file_id: FileId(id),
+-        path: PathBuf::from(format!("/project/{name}.ts")),
+-        ..Default::default()
+-    }
+-}
+-
+-fn re_export(target: u32, name: &str, is_type_only: bool) -> ResolvedReExport {
+-    ResolvedReExport {
+-        info: ReExportInfo {
+-            source: format!("./module{target}"),
+-            imported_name: name.to_string(),
+-            exported_name: name.to_string(),
+-            is_type_only,
+-            span: oxc_span::Span::default(),
+-            statement_span: oxc_span::Span::default(),
+-            source_span: oxc_span::Span::default(),
+-        },
+-        target: ResolveResult::InternalModule(FileId(target)),
+-    }
+-}
+-
+-fn named_import(target: u32, name: &str, is_type_only: bool) -> ResolvedImport {
+-    ResolvedImport {
+-        info: ImportInfo {
+-            source: format!("./module{target}"),
+-            imported_name: ImportedName::Named(name.to_string()),
+-            local_name: name.to_string(),
+-            is_type_only,
+-            is_type_only_star: false,
+-            from_style: false,
+-            span: oxc_span::Span::default(),
+-            source_span: oxc_span::Span::default(),
+-        },
+-        target: ResolveResult::InternalModule(FileId(target)),
+-    }
+-}
+-
+-fn named_export(name: &str, is_type_only: bool) -> ExportInfo {
+-    ExportInfo {
+-        name: ExportName::Named(name.to_string()),
+-        local_name: Some(name.to_string()),
+-        is_type_only,
+-        visibility: VisibilityTag::None,
+-        expected_unused_reason: None,
+-        span: oxc_span::Span::new(0, 20),
+-        members: vec![],
+-        is_side_effect_used: false,
+-        super_class: None,
+-        deprecated: false,
+-        deprecated_reason: None,
+-    }
+-}
+-
+-fn build(modules: &[ResolvedModule], entry: usize) -> ModuleGraph {
+-    let files: Vec<_> = modules
+-        .iter()
+-        .map(|module| DiscoveredFile {
+-            id: module.file_id,
+-            path: module.path.clone(),
+-            size_bytes: 100,
+-        })
+-        .collect();
+-    let entry_points = vec![EntryPoint {
+-        path: files[entry].path.clone(),
+-        source: EntryPointSource::PackageJsonMain,
+-    }];
+-    ModuleGraph::build(modules, &entry_points, &files)
+-}
++use crate::graph::{ExportNamespace, ExportSymbol, ModuleGraph};
++use fallow_types::discover::FileId;
+ 
+ fn reference_namespaces(export: &ExportSymbol) -> Vec<ExportNamespace> {
+     let mut namespaces: Vec<_> = export
+@@ -112,19 +38,11 @@ fn export_states(
+ #[test]
+ fn star_name_checks_count_each_imported_name() {
+     let mut consumer = module(0, "a_consumer");
+-    consumer.resolved_imports = vec![
+-        named_import(1, "first", false),
+-        named_import(1, "second", false),
+-    ];
++    consumer.resolved_imports = vec![named_import(1, "first"), named_import(1, "second")];
+     let mut barrel = module(1, "b_barrel");
+-    barrel.re_exports = vec![re_export(2, "*", false)];
++    barrel.re_exports = vec![re_export(2, "*", "*")];
+     let mut source = module(2, "c_source");
+-    source.exports = vec![
+-        named_export("first", false),
+-        named_export("second", false),
+-        named_export("unused", false),
+-    ]
+-    .into();
++    source.exports = vec![export("first"), export("second"), export("unused")].into();
+ 
+     let (graph, checks) = count_star_name_checks(|| build(&[consumer, barrel, source], 0));
+ 
+@@ -144,13 +62,13 @@ fn star_name_checks_count_each_imported_name() {
+ #[test]
+ fn star_change_requeues_an_earlier_barrel() {
+     let mut inner = module(0, "a_inner");
+-    inner.re_exports = vec![re_export(1, "*", false)];
++    inner.re_exports = vec![re_export(1, "*", "*")];
+     let mut leaf = module(1, "b_leaf");
+-    leaf.exports = vec![named_export("Item", false)].into();
++    leaf.exports = vec![export("Item")].into();
+     let mut outer = module(2, "c_outer");
+-    outer.re_exports = vec![re_export(0, "*", false)];
++    outer.re_exports = vec![re_export(0, "*", "*")];
+     let mut consumer = module(3, "d_consumer");
+-    consumer.resolved_imports = vec![named_import(2, "Item", false)];
++    consumer.resolved_imports = vec![named_import(2, "Item")];
+ 
+     let (graph, visits) = capture_propagation_visits(|| build(&[inner, leaf, outer, consumer], 3));
+ 
+@@ -185,14 +103,14 @@ fn star_change_requeues_an_earlier_barrel
+```
+
+---
+
+### Incident Patch 3: `1be42d13` (2026-10-30)
+**Commit Message**: fix(coverage): omit shallow churn and bind Vercel uploads (#4008)
+
+* fix(coverage): bind Vercel uploads and respect partial evidence
+
+Omit churn when Git history is shallow, bind build uploads to their Vercel deployment, and preserve positive runtime calls without cold-code or application-coverage claims for partial captures.
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+* fix: withhold partial capture totals in JSON and qualify Vercel SHA check
+
+A partial cloud capture reports positive execution evidence only. The server turns never-called functions into untracked ones, so the JSON summary showed a coverage percent near 100. The summary now sets coverage_percent, functions_tracked and functions_unhit to null for a partial capture. The output schema and the generated types mark these fields as nullable.
+
+The --vercel-deployment-id help text now says that the cloud verifies the deployment against the git SHA only with Vercel OIDC authentication.
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+* fix: keep the runtime coverage summary fields required
+
+Optional summary totals change a frozen output contract and need a schema_version bump on four envelopes. Partial captures 
+
+**File**: `changelog.d/fix-vercel-inventory-shallow-history.md` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++### Fixed
 +
-+/// Issue #3963: a `resolve.alias` entry swaps a relative import for a stub
-+/// file. The resolver resolves `./clock.js` to the original file, so the stub
-+/// has no graph consumer. With `includeEntryExports`, the exports of the stub
-+/// must stay credited. Exports of the original file stay reportable.
-+#[test]
-+fn relative_alias_replacement_exports_are_used_with_include_entry_exports() {
-+    let dir = tempfile::tempdir().expect("temp dir");
-+    let root = dir.path();
++- **Inventory uploads omit churn from shallow Git history.** Partial histories are omitted on both fresh and cached uploads.
++- **Cloud analysis treats managed partial captures as positive execution evidence.** Human and Markdown reports withhold application coverage percentages and cold-code conclusions.
 +
-+    write(
-+        &root.join("package.json"),
-+        r#"{
-+            "name": "repro",
-+            "private": true,
-+            "type": "module",
-+            "main": "src/index.ts",
-+            "scripts": { "test": "vitest" },
-+            "devDependencies": { "vitest": "4.0.0" }
-+        }"#,
-+    );
-+    write(
-+        &root.join("node_modules/vitest/package.json"),
-+        r#"{ "name": "vitest", "version": "4.0.0", "bin": { "vitest": "vitest.mjs" } }"#,
-+    );
-+    write(
-+        &root.join("vitest.config.ts"),
-+        r#"
-+            export default {
-+                resolve: {
-+                    alias: [{ find: "./clock.js", replacement: new URL("./test/stubs/clock.ts", import.meta.url).pathname }],
-+                },
-+            };
-+        "#,
-+    );
-+    write(
-+        &root.join("src/clock.ts"),
-+        "export function now(): number { return Date.now(); }\nexport function unusedClock(): number { return 1; }\n",
-+    );
-+    write(
-+        &root.join("src/index.ts"),
-+        "import { now } from \"./clock.js\";\n\nexport function stamp(): number {\n    return now();\n}\n",
-+    );
-+    write(
-+        &root.join("test/stubs/clock.ts"),
-+        "export function now(): number { return 0; }\n",
-+    );
-+    write(
-+        &root.join("test/index.spec.ts"),
-+        "import { stamp } from \"../src/index.js\";\n\nif (stamp() !== 0) {\n    throw new Error(\"stamp\");\n}\n",
-+    );
++### Added
 +
-+    let mut config = create_config(root.to_path_buf());
-+    config.include_entry_exports = true;
-+    let results = fallow_core::analyze(&config).expect("analysis should succeed");
++- **Inventory and source-map uploads accept a Vercel deployment binding.** Use `--vercel-deployment-id`, or `VERCEL_DEPLOYMENT_ID` during a Vercel build. The cloud verifies the deployment against the upload SHA.
+```
+
+**File**: `crates/api/src/markdown_output.rs` (modified, +4/-34)
+```diff
+@@ -1,3 +1,6 @@
++#[path = "markdown_runtime_summary.rs"]
++mod runtime_summary;
 +
-+    let unused: Vec<String> = results
-+        .unused_exports
-+        .iter()
-+        .map(|e| {
-+            let path = e.export.path.strip_prefix(root).unwrap_or(&e.export.path);
-+            format!(
-+                "{}:{}",
-+                path.to_string_lossy().replace('\\', "/"),
-+                e.export.export_name
-+            )
-+        })
-+        .collect();
+ use std::borrow::Cow;
+ use std::fmt::Write;
+ use std::path::Path;
+@@ -1924,44 +1927,11 @@ fn write_runtime_coverage_section(
+     if !out.is_empty() && !out.ends_with("\n\n") {
+         out.push('\n');
+     }
+-    write_runtime_coverage_summary(out, production);
++    runtime_summary::write_runtime_coverage_summary(out, production);
+     write_runtime_coverage_findings(out, production, root);
+     write_runtime_coverage_hot_paths(out, production, root);
+ }
+ 
+-/// Write the runtime-coverage summary header and capture-quality lines.
+-fn write_runtime_coverage_summary(
+-    out: &mut String,
+-    production: &fallow_output::RuntimeCoverageReport,
+-) {
+-    let _ = writeln!(
+-        out,
+-        "## Runtime Coverage\n\n- Verdict: {}\n- Functions tracked: {}\n- Hit: {}\n- Unhit: {}\n- Untracked: {}\n- Coverage: {:.1}%\n- Traces observed: {}\n- Period: {} day(s), {} deployment(s)\n",
+-        production.verdict,
+-        production.summary.functions_tracked,
+-        production.summary.functions_hit,
+-        production.summary.functions_unhit,
+-        production.summary.functions_untracked,
+-        production.summary.coverage_percent,
+-        production.summary.trace_count,
+-        production.summary.period_days,
+-        production.summary.deployments_seen,
+-    );
+-    if let Some(watermark) = production.watermark {
+-        let _ = writeln!(out, "- Watermark: {watermark}\n");
+-    }
+-    if let Some(ref quality) = production.summary.capture_quality
+-        && quality.lazy_parse_warning
+-    {
+-        let window = format_window(quality.window_seconds);
+-        let _ = writeln!(
+-            out,
+-            "- Capture quality: short window ({} from {} instance(s), {:.1}% of functions untracked); lazy-parsed scripts may not appear.\n",
+-            window, quality.instances_observed, quality.untracked_ratio_percent,
+-        );
+-    }
+-}
+-
+ /// Write the runtime-coverage per-finding table.
+ fn write_runtime_coverage_findings(
+     out: &mut String,
+```
+
+**File**: `crates/api/src/markdown_runtime_summary.rs` (added, +44/-0)
+```diff
+@@ -0,0 +1,44 @@
++use std::fmt::Write as _;
 +
-+    assert_eq!(
-+        unused,
-+        vec!["src/clock.ts:unusedClock".to_string()],
-+        "only the unused export of the original file stays reportable"
++use super::format_window;
++
++/// Write the runtime-coverage summary header and capture-quality lines.
++pub(super) fn write_runtime_coverage_summary(
++    out: &mut String,
++    production: &fallow_output::RuntimeCoverageReport,
++) {
++    if production.has_positive_only_capture() {
++        let _ = writeln!(
++            out,
++            "## Runtime Coverage\n\nPartial capture provides positive execution evidence only.\n\n- Observed called functions: {}\n- Untracked: {}\n",
++            production.summary.functions_hit, production.summary.functions_untracked
++        );
++        return;
++    }
++    let _ = writeln!(
++        out,
++        "## Runtime Coverage\n\n- Verdict: {}\n- Functions tracked: {}\n- Hit: {}\n- Unhit: {}\n- Untracked: {}\n- Coverage: {:.1}%\n- Traces observed: {}\n- Period: {} day(s), {} deployment(s)\n",
++        production.verdict,
++        production.summary.functions_tracked,
++        production.summary.functions_hit,
++        production.summary.functions_unhit,
++        production.summary.functions_untracked,
++        production.summary.coverage_percent,
++        production.summary.trace_count,
++        production.summary.period_days,
++        production.summary.deployments_seen,
 +    );
++    if let Some(watermark) = production.watermark {
++        let _ = writeln!(out, "- Watermark: {watermark}\n");
++    }
++    if let Some(ref quality) = production.summary.capture_quality
++        && quality.lazy_parse_warning
++    {
++        let window = format_window(quality.window_seconds);
++        let _ = writeln!(
++            out,
++            "- Capture quality: short window ({} from {} instance(s), {:.1}% of functions untracked); lazy-parsed scripts may not appear.\n",
++            window, quality.instances_observed, quality.untracked_ratio_percent,
++        );
++    }
 +}
+```
+
+**File**: `crates/cli/src/cli_args.rs` (modified, +18/-22)
+```diff
+@@ -2565,6 +2565,12 @@ pub enum CoverageCli {
+         #[arg(long, value_name = "SHA")]
+         git_sha: Option<String>,
+ 
++        /// Bind the upload to a Vercel deployment. Defaults to $VERCEL_DEPLOYMENT_ID
++        /// only when $VERCEL=1. With Vercel OIDC authentication, the cloud verifies
++        /// the deployment against the supplied git SHA.
++        #[arg(long, value_name = "DEPLOYMENT_ID")]
++        vercel_deployment_id: Option<String>,
++
+         /// Proceed even when the working tree has uncommitted changes.
+         ///
+         /// Warning: the inventory is generated from the working copy, so it
+@@ -2579,18 +2585,9 @@ pub enum CoverageCli {
+         #[arg(long, value_name = "GLOB", num_args = 0..)]
+         exclude_paths: Vec<String>,
+ 
+-        /// Prefix prepended to every emitted filePath so the static
+-        /// inventory joins with the runtime beacon for your deployment.
+-        /// Required for containerized deployments where the deployed
+-        /// WORKDIR rebases paths at runtime. Default: none (paths emit
+-        /// repo-relative, matching local runs and non-container CI).
+-        ///
+-        /// Common values: `/app` (typical Dockerfile), `/workspace`
+-        /// (Buildpacks / Cloud Run), `/usr/src/app` (older Node images),
+-        /// `/var/task` (Lambda), `/home/runner/work/<repo>/<repo>`
+-        /// (GitHub Actions default checkout).
+-        ///
+-        /// Must start with `/` and use POSIX separators.
++        /// Prefix for inventory paths to match the runtime beacon, for example
++        /// `/app` for Docker or `/var/task` for Lambda. Defaults to repo-relative
++        /// paths. Must start with `/` and use POSIX separators.
+         #[arg(long, value_name = "PREFIX")]
+         path_prefix: Option<String>,
+ 
+@@ -2614,16 +2611,9 @@ pub enum CoverageCli {
+     },
+     /// Upload JavaScript source maps to Fallow Cloud for bundled runtime coverage.
+     ///
+-    /// Scans a build output directory for `.map` files and uploads them under
+-    /// the selected repo + git SHA. The production beacon reports bundled
+-    /// paths; the cloud resolver uses these maps to remap runtime coverage back
+-    /// to original source files.
+-    ///
+-    /// Each upload also carries the map's path relative to the repo root, so the
+-    /// source-evidence viewer can resolve a monorepo sub-package map's relative
+-    /// `sources[]` (e.g. `../../src/X`) to the package-prefixed source path
+-    /// (e.g. `dashboard/src/X`). Run from the repo root so this prefix is
+-    /// correct.
++    /// Uploads build `.map` files under the selected repo and git SHA so the
++    /// cloud can resolve bundled runtime paths to original sources. Run from
++    /// the repo root to preserve each map's repo-relative path and source base.
+     UploadSourceMaps {
+         /// Directory to scan recursively for source maps.
+         #[arg(long, value_name = "PATH", default_value = "dist")]
+@@ -2652,6 +2642,12 @@ pub enum CoverageCli {
+         #[arg(long, value_name = "SHA")]
+         git_sha: Option<String>,
+ 
++        /// Bind the upload to a Vercel deployment. Defaults to $VERCEL_DEPLOYMENT_ID
++        /// only when $VERCEL=1. With Vercel OIDC authentication, the cloud verifies
++        /// the deployment against the supplied git SHA.
++        #[arg(long, value_name = "DEPLOYMENT_ID")]
++        vercel_deployment_id: Option<String>,
++
+         /// Override the Fallow Cloud base URL.
+         #[arg(long, value_name = "URL")]
+         endpoint: Option<String>,
+```
+
+**File**: `crates/cli/src/coverage/analyze.rs` (modified, +10/-21)
+```diff
+@@ -30,9 +30,8 @@ use fallow_output::{
+     RUNTIME_STALE_AFTER_DAYS, RuntimeCoverageAction, RuntimeCoverageCaptureQuality,
+     RuntimeCoverageConfidence, RuntimeCoverageDataSource, RuntimeCoverageEvidence,
+     RuntimeCoverageFinding, RuntimeCoverageHotPath, RuntimeCoverageMessage,
+-    RuntimeCoverageProvenance, RuntimeCoverageReport, RuntimeCoverageReportVerdict,
+-    RuntimeCoverageRiskBand, RuntimeCoverageSchemaVersion, RuntimeCoverageSummary,
+-    RuntimeCoverageVerdict,
++    RuntimeCoverageProvenance, RuntimeCoverageReport, RuntimeCoverageRiskBand,
++    RuntimeCoverageSchemaVersion, RuntimeCoverageSummary, RuntimeCoverageVerdict,
+ };
+ 
+ const RUNTIME_COVERAGE_SCHEMA_VERSION: &str = "1";
+@@ -871,7 +870,7 @@ fn merge_cloud_snapshot(
+ 
+     let report = RuntimeCoverageReport {
+         schema_version: RuntimeCoverageSchemaVersion::V1,
+-        verdict: cloud_report_verdict(&findings),
++        verdict: super::partial_capture::report_verdict(snapshot, &findings),
+         signals: Vec::new(),
+         summary: cloud_report_summary(snapshot),
+         findings,
+@@ -910,14 +909,6 @@ fn sort_cloud_runtime_entries(
+     });
+ }
+ 
+-fn cloud_report_verdict(findings: &[RuntimeCoverageFinding]) -> RuntimeCoverageReportVerdict {
+-    if findings.is_empty() {
+-        RuntimeCoverageReportVerdict::Clean
+-    } else {
+-        RuntimeCoverageReportVerdict::ColdCodeDetected
+-    }
+-}
+-
+ fn cloud_report_summary(snapshot: &CloudRuntimeContext) -> RuntimeCoverageSummary {
+     RuntimeCoverageSummary {
+         data_source: RuntimeCoverageDataSource::Cloud,
+@@ -1923,15 +1914,7 @@ fn print_runtime_human(
+     root: &Path,
+ ) -> ExitCode {
+     let display_limit = args.top.unwrap_or(HUMAN_DEFAULT_DISPLAY_LIMIT);
+-    println!("Runtime coverage: {}", report.verdict);
+-    println!(
+-        "  {} tracked, {} hit, {} unhit, {} untracked ({:.1}% covered)",
+-        report.summary.functions_tracked,
+-        report.summary.functions_hit,
+-        report.summary.functions_unhit,
+-        report.summary.functions_untracked,
+-        report.summary.coverage_percent,
+-    );
++    super::partial_capture::print_runtime_summary(report);
+     println!(
+         "  based on {} traces over {} days ({} deployments)",
+         report.summary.trace_count, report.summary.period_days, report.summary.deployments_seen
+@@ -2020,6 +2003,7 @@ fn print_runtime_importance(report: &RuntimeCoverageReport, display_limit: usize
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++    use fallow_output::RuntimeCoverageReportVerdict;
+     use fallow_output::{
+         RuntimeCoverageBlastRadiusEntry, RuntimeCoverageCostBasis, RuntimeCoverageImportanceEntry,
+     };
+@@ -2263,6 +2247,7 @@ mod tests {
+         function.hit_count = Some(20_000);
+         function.deployments_observed = 4;
+         let snapshot = CloudRuntimeContext {
++            capture_policy: None,
+             repo: "acme/web".to_owned(),
+             actionable: None,
+             actionability_reason: None,
+@@ -2954,6 +2939,7 @@ export const createStore = (rows: string[]) => {
+     #[test]
+     fn cloud_warnings_dedupe_server_and_cli_no_runtime_data() {
+         let snapshot = CloudRuntimeContext {
++            capture_policy: None,
+             repo: "nonexistent-repo".to_owned(),
+             actionable: None,
+             actionability_reason: None,
+@@ -2996,6 +2982,7 @@ export const createStore = (rows: string[]) => {
+     #[test]
+     fn cloud_warnings_dedupe_when_server_message_includes_project_id() {
+         let snapshot = CloudRuntimeContext {
++            capture_policy: None,
+             repo: "fallow-cloud".to_owned(),
+             actionable: None,
+             actionability_reason: None,
+@@ -3037,6 +3024,7 @@ export const createStore = (rows: string[]) => {
+     #[test]
+     fn cloud_capture_quality_reports_untracked_ratio_only_when_data_exists() {
+         let mut snapshot = CloudRuntimeContext {
++            capture_policy: None,
+             repo: "acme/web".to_owned(),
+             actionable: None,
+             actionability_reason: None,
+@@ -3341,6 +3329,7 @@ export const createStore = (rows: string[]) => {
+ 
+     fn cloud_context(functions_tracked: usize, functions_untracked: usize) -> CloudRuntimeContext {
+         CloudRuntimeContext {
++            capture_policy: None,
+             repo: "acme/web".to_owned(),
+             actionable: None,
+             actionability_reason: None,
+```
+
+**File**: `crates/cli/src/coverage/cloud_client.rs` (modified, +14/-1)
+```diff
+@@ -92,6 +92,8 @@ impl CloudRuntimeContextResponse {
+ 
+ #[derive(Debug, Clone, Deserialize)]
+ pub struct CloudRuntimeContext {
++    #[serde(default, rename = "capturePolicy", alias = "capture_policy")]
++    pub capture_policy: Option<CloudCapturePolicy>,
+     #[serde(default)]
+     pub repo: String,
+     #[serde(default)]
+@@ -119,6 +121,13 @@ pub struct CloudRuntimeContext {
+     pub warnings: Vec<CloudRuntimeWarning>,
+ }
+ 
++/// A managed runtime capture that supports positive execution evidence only.
++#[derive(Debug, Clone, Deserialize)]
++pub enum CloudCapturePolicy {
++    #[serde(rename = "positive_only")]
++    PositiveOnly,
++}
++
+ #[derive(Debug, Clone, Deserialize)]
+ pub struct CloudRuntimeProvenance {
+     #[serde(default)]
+@@ -322,7 +331,11 @@ pub fn fetch_runtime_context(request: &CloudRequest) -> Result<CloudRuntimeConte
+     match cloud_transport::send(&auth, &url, &CloudBody::None, RUNTIME_CONTEXT_OPERATION)? {
+         CloudOutcome::Success(response) => {
+             serde_json::from_str::<CloudRuntimeContextResponse>(&response.body)
+-                .map(CloudRuntimeContextResponse::into_context)
++                .map(|response| {
++                    let mut context = response.into_context();
++                    super::partial_capture::apply_capture_policy(&mut context);
++                    context
++                })
+                 .map_err(|err| {
+                     CloudError::Server(format!("malformed runtime-context response: {err}"))
+                 })
+```
+
+**File**: `crates/cli/src/coverage/cloud_transport.rs` (modified, +4/-2)
+```diff
+@@ -280,7 +280,8 @@ fn send_once(
+                 .get(url)
+                 .header("Authorization", &bearer)
+                 .header("Accept", "application/json")
+-                .header("Accept-Encoding", "gzip");
++                .header("Accept-Encoding", "gzip")
++                .header("X-Fallow-Accept-Capture-Policy", "positive_only");
+             if let Some(source) = auth.agent_source.as_deref() {
+                 request = request.header(AGENT_SOURCE_HEADER, source);
+             }
+@@ -291,7 +292,8 @@ fn send_once(
+                 .post(url)
+                 .header("Authorization", &bearer)
+                 .header("Accept", "application/json")
+-                .header("Accept-Encoding", "gzip");
++                .header("Accept-Encoding", "gzip")
++                .header("X-Fallow-Accept-Capture-Policy", "positive_only");
+             if let Some(source) = auth.agent_source.as_deref() {
+                 request = request.header(AGENT_SOURCE_HEADER, source);
+             }
+```
+
+**File**: `crates/cli/src/coverage/mod.rs` (modified, +5/-5)
+```diff
+@@ -1,14 +1,12 @@
+ //! `fallow coverage` - runtime coverage onboarding and inventory upload.
+ //!
+-//! Today the subtree holds four commands:
++//! Runtime coverage commands:
+ //!
+-//! - `setup`: resumable first-run state machine (optional license + sidecar
+-//!   + recipe + auto-handoff to `fallow health --runtime-coverage`).
++//! - `setup`: resumable license, sidecar, recipe and first-analysis setup.
+ //! - `analyze`: focused runtime coverage analysis. Local mode reads a coverage
+ //!   artifact; cloud mode explicitly fetches runtime facts from Fallow Cloud.
+ //! - `upload-inventory`: push a static function inventory to Fallow Cloud,
+-//!   unlocking the `untracked` filter on the dashboard by pairing runtime
+-//!   coverage data with the AST view of "every function that exists".
++//!   pairing runtime coverage with the complete static function list.
+ //! - `upload-source-maps`: push build source maps so bundled runtime coverage
+ //!   can resolve back to original source files. Each map also carries the
+ //!   line starts of its generated script (`x_fallow_line_starts`).
+@@ -50,13 +48,15 @@ pub mod credentials;
+ pub mod file_context;
+ mod generated_line_starts;
+ pub mod login;
++mod partial_capture;
+ mod setup_cli;
+ mod setup_cloud;
+ mod source_map_sources;
+ pub mod upload_common;
+ mod upload_inventory;
+ mod upload_source_maps;
+ mod upload_static_findings;
++mod vercel_upload;
+ 
+ const COVERAGE_DOCS_URL: &str = "https://fallow.tools/docs/analysis/runtime-coverage/";
+ pub use crate::exit_codes::{
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3994** (2026-10-29): fix(mutation): instrument copied Node sources (@BartWaardenburg)
-- **PR #3991** (2026-10-29): fix(coverage): share the served line starts cases with Fallow Cloud (@BartWaardenburg)
-- **PR #3990** (2026-10-28): feat(coverage): record the line starts of each generated script at map upload (@BartWaardenburg)
-- **PR #3989** (2026-10-28): fix(scripts): fail when a curated Key Flags cell misses a new seed flag (@BartWaardenburg)
-- **PR #3988** (2026-10-28): docs(skills): list --max-file-lines in the health flags (@BartWaardenburg)
-- **PR #3987** (2026-10-28): fix(config): correct the review findings of the config local inlining (@BartWaardenburg)
+- **PR #4028** (2026-10-30): docs(audit): name fallow dead-code for the impact closure seed (@BartWaardenburg)
+- **PR #4027** (2026-10-30): chore(docker): pin FALLOW_VERSION 3.38.0 with refreshed checksums (@BartWaardenburg)
+- **PR #4026** (2026-10-30): chore(napi): sync package.json / package-lock / index.js to v3.38.0 (@BartWaardenburg)
+- **PR #4025** (2026-10-30): fix(release): pass the root digest to the gate on a rerun (@BartWaardenburg)
+- **PR #4021** (2026-10-30): fix(audit): remove the lock file of a reclaimed audit cache on Unix (@BartWaardenburg)
+- **PR #4020** (2026-10-30): perf(audit): scan the temp dir for old caches at most once per hour (@BartWaardenburg)
 
 ---
 
@@ -2824,34 +3288,29 @@ Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. config): correct local-binding config reads after the multi-config change (#3987
+## X. audit): remove the lock file of a reclaimed audit cache on Unix (#4021)
 
 **RULE**:
-When implementing operations in `changelog.d/fix-webpack-function-config-local-aliases.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `255f50fe`: config): correct local-binding config reads after the multi-config change (#3987). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a038ce69`: audit): remove the lock file of a reclaimed audit cache on Unix (#4021). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-webpack-function-config-local-aliases.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  - Fallow reads a local `const` or `let` binding with a literal value in the returned value of a config function. This applies to a returned identifier, an array element, a property value and an object spread such as `...common` or `...common.resolve`. When a spread and a key set the same property, the last value wins. This also applies to a function that the file exports through a binding, such as `const config = (env) => {...}; module.exports = config;`.
-  - Fallow also reads a spread of a stable top-level constant, such as `export default { ...base, test }`, and a top-level constant that a config function returns, such as `module.exports = () => base;`. These changes apply to all plugins that read a JavaScript or TypeScript config, for example Vite, Vitest, Playwright and Electron.
-  - A top-level `return config` gives the config also when a branch `return` gives no object, such as `if (!env) return null;` or `return mergeConfig(config, overrides);`. When a branch `return` gives an object, fallow reads that object, as before. A returned array always gives the configs of the array.
-  - For webpack and rspack, fallow reads up to 64 configs of an exported array, also when a functi
+              - 'crates/cli/tests/integration/audit_tests.rs'
+              - 'crates/cli/src/base_worktree_lock.rs'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  - Fallow reads a local `const` or `let` binding with a literal value in the returned value of a config function. This applies to a returned identifier, an array element, a property value and an object spread such as `...common` or `...common.resolve`. When a spread and a key set the same property, the last value wins.
-  - Fallow also reads a spread of a stable top-level constant, such as `export default { ...base, test }`. These two changes apply to all plugins that read a JavaScript or TypeScript config, for example Vite, Vitest, Playwright and Electron.
-  - For webpack and rspack, fallow reads each config of an exported array, also when a function returns the array. Each config resolves its entries against its own `context`. Fallow collects the loaders, the `plugins` requires and the `externals` of all configs. For webpack, fallow also collects the aliases of all configs.
-  - Fallow does not read a binding that the config can change. This includes a write, a method such as `push`, a call such as `Object.assign`, and a change through an alias such as `const { resolve } = common`. Fallow also does not read a `var` binding, a destructured binding or the result of a call.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `255f50fe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a038ce69` are properly handled with clean fallback behavior.

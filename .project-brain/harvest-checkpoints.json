@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T01:15:16.024Z",
+  "last_updated": "2026-10-31T01:21:35.023Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "2578c919276b082652fc0c11b628247394998f97ccc21cf0836810486cf64615",
-      "verified_at": "2026-10-31T00:41:27.068Z",
+      "content_hash": "1c77e86f23829faf360fba59ffb50519e466c6cb4d732092513261bed6d09156",
+      "verified_at": "2026-10-31T01:21:35.023Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T00:41:27.068Z"
+      "last_updated": "2026-10-31T01:21:35.023Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -4056,14 +4056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zulip-zulip",
-      "content_hash": "50c638e5048a39d9c0b7466c4761599a68c1a6f2f19af971f347beb153c1ba9b",
-      "verified_at": "2026-10-28T04:41:58.795Z",
+      "content_hash": "dc6b3bdba2a9708c5a5644b7362e5755a1721f830e6417a7b220ac5cda78de08",
+      "verified_at": "2026-10-31T01:21:27.094Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T04:41:58.795Z"
+      "last_updated": "2026-10-31T01:21:27.094Z"
     },
     "goodrain/rainbond": {
       "repository": "goodrain/rainbond",
@@ -4896,14 +4896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fallow-rs-fallow",
-      "content_hash": "d7d4c713c2d9bd5c80d34f25a39f739af72016df2cada716b837e3eb1b661fc8",
-      "verified_at": "2026-10-29T12:26:02.784Z",
+      "content_hash": "6a5d9a731e8c13f47800f7da86679f47ee3a97a089e419fa8a73c3ee28c15c58",
+      "verified_at": "2026-10-31T01:21:22.327Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T12:26:02.784Z"
+      "last_updated": "2026-10-31T01:21:22.327Z"
     },
     "expo/create-react-native-app": {
       "repository": "expo/create-react-native-app",
@@ -7731,14 +7731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trinodb-trino",
-      "content_hash": "333a0dbb335eedc7b759ea3831bc964c8008d258ef268fa2d3601036680a8fd7",
-      "verified_at": "2026-10-30T04:54:38.190Z",
+      "content_hash": "ce83b77807f381fc1eae88ec76733139f7435508489dc326de98d8b3a25e2c03",
+      "verified_at": "2026-10-31T01:21:33.904Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T04:54:38.190Z"
+      "last_updated": "2026-10-31T01:21:33.904Z"
     },
     "pinterest/gestalt": {
       "repository": "pinterest/gestalt",
@@ -9066,14 +9066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rook-rook",
-      "content_hash": "b91784086871d12370847c05f7b8827672856c467aaf0449c8f723c1fc6edd53",
-      "verified_at": "2026-10-30T05:46:02.333Z",
+      "content_hash": "7d26a62a115899ac5812bf510ecda4e6957381f66bcf00bdf5f0c218475d9d6e",
+      "verified_at": "2026-10-31T01:21:28.856Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T05:46:02.333Z"
+      "last_updated": "2026-10-31T01:21:28.856Z"
     },
     "genkit-ai/genkit": {
       "repository": "genkit-ai/genkit",
@@ -15621,14 +15621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lodestones-kromoss",
-      "content_hash": "133cdee81537e0c7f9f3684bbae12e31120d8a5c08901adf98f7830266b41863",
-      "verified_at": "2026-10-25T09:37:59.525Z",
+      "content_hash": "2a4ad9a50f02e655f71629bc5e4463c4b4fdef8f6c7f159773730644512bf5cc",
+      "verified_at": "2026-10-31T01:21:30.902Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T09:37:59.525Z"
+      "last_updated": "2026-10-31T01:21:30.902Z"
     },
     "HemmingwayAI/Hemmingway-1": {
       "repository": "HemmingwayAI/Hemmingway-1",

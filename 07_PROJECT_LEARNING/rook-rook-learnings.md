@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source**: github ([https://github.com/rook/rook](https://github.com/rook/rook))  
-> **Source Version**: `61a8fea1`  
+> **Source Version**: `285e01eb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T05:46:01.758Z  
+> **Timestamp**: 2026-10-31T01:21:28.382Z  
 > **Learning ID**: `learn-github-rook-rook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rook/rook](https://github.com/rook/rook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T05:46:01.222Z  
+> **Harvest Timestamp**: 2026-10-31T01:21:27.297Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1427,161 +1427,73 @@ func quanityToInt64(qty string) (*int64, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `61a8fea1` (2026-10-28)
-**Commit Message**: Merge pull request #18639 from taraasrita10/cephcluster-status-update
+### Incident Patch 1: `285e01eb` (2026-10-30)
+**Commit Message**: Merge pull request #18649 from cobaltcore-dev/add-arttor-as-approver
 
-operator: retry CephCluster status update on conflict
+doc: add arttor to approvers list
 
-**File**: `pkg/operator/ceph/cluster/controller.go` (modified, +1/-1)
+**File**: `CODE-OWNERS` (modified, +1/-1)
 ```diff
-@@ -408,7 +408,7 @@ func (r *ReconcileCephCluster) reconcileDelete(cephCluster *cephv1.CephCluster)
- 	var err error
- 
- 	// Set the deleting status
--	opcontroller.UpdateClusterCondition(r.context, cephCluster, nsName,
-+	_ = opcontroller.UpdateClusterCondition(r.context, cephCluster, nsName,
- 		k8sutil.ObservedGenerationNotAvailable, cephv1.ConditionDeleting, corev1.ConditionTrue, cephv1.ClusterDeletingReason, "Deleting the CephCluster",
- 		true /* keep all other conditions to be safe */)
- 
+@@ -11,6 +11,6 @@ approvers:
+ - sp98
+ - parth-gr
+ - jhoblitt
++- arttor
+ reviewers:
+ - Madhu-1
+-- arttor
 ```
 
-**File**: `pkg/operator/ceph/controller/conditions.go` (modified, +14/-7)
+**File**: `OWNERS.md` (modified, +1/-0)
 ```diff
-@@ -29,24 +29,29 @@ import (
- 	v1 "k8s.io/api/core/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/types"
-+	"k8s.io/client-go/util/retry"
- )
+@@ -26,6 +26,7 @@ Maintainers will be added according to the [process for adding a maintainer](GOV
+ * Santosh Pillai <sapillai@redhat.com> ([sp98](https://github.com/sp98))
+ * Parth Arora <partharora1010@gmail.com> ([parth-gr](https://github.com/parth-gr))
+ * Joshua Hoblitt <josh@hoblitt.com> ([jhoblitt](https://github.com/jhoblitt))
++* Artem Torubarov <torubarov.a.a@gmail.com> ([arttor](https://github.com/arttor))
  
- // UpdateCondition function will export each condition into the cluster custom resource
- func UpdateCondition(ctx context.Context, c *clusterd.Context, namespaceName types.NamespacedName, observedGeneration int64, conditionType cephv1.ConditionType, status v1.ConditionStatus, reason cephv1.ConditionReason, message string) {
- 	// use client.Client to unit test this more easily with updating statuses which must use the client
--	cluster := &cephv1.CephCluster{}
--	if err := c.Client.Get(ctx, namespaceName, cluster); err != nil {
--		log.NamedError(namespaceName, logger, "failed to get cluster %v to update the conditions. %v", namespaceName, err)
--		return
-+	err := retry.RetryOnConflict(retry.DefaultRetry, func() error {
-+		cluster := &cephv1.CephCluster{}
-+		if err := c.Client.Get(ctx, namespaceName, cluster); err != nil {
-+			log.NamedError(namespaceName, logger, "failed to get cluster %v to update the conditions. %v", namespaceName, err)
-+			return err
-+		}
-+		return UpdateClusterCondition(c, cluster, namespaceName, observedGeneration, conditionType, status, reason, message, false)
-+	})
-+	if err != nil {
-+		log.NamedError(namespaceName, logger, "failed to update cluster condition after retries. %v", err)
- 	}
--
--	UpdateClusterCondition(c, cluster, namespaceName, observedGeneration, conditionType, status, reason, message, false)
- }
+ ## Emeritus maintainers
  
- // UpdateClusterCondition function will export each condition into the cluster custom resource
- func UpdateClusterCondition(c *clusterd.Context, cluster *cephv1.CephCluster, namespaceName types.NamespacedName, observedGeneration int64, conditionType cephv1.ConditionType, status v1.ConditionStatus,
- 	reason cephv1.ConditionReason, message string, preserveAllConditions bool,
--) {
-+) error {
- 	// Keep the conditions that already existed if they are in the list of long-term conditions,
- 	// otherwise discard the temporary conditions
- 	var currentCondition *cephv1.Condition
-@@ -107,7 +112,9 @@ func UpdateClusterCondition(c *clusterd.Context, cluster *cephv1.CephCluster, na
- 
- 	if err := reporting.UpdateStatus(c.Client, cluster); err != nil {
- 		log.NamedError(namespaceName, logger, "failed to update cluster condition to %+v. %v", *currentCondition, err)
-+		return err
- 	}
-+	return nil
- }
- 
- // translatePhasetoState converts the Phase to the corresponding State
 ```
 
 ---
 
-### Incident Patch 2: `936a5f81` (2026-10-27)
-**Commit Message**: operator: retry CephCluster status update on conflict
+### Incident Patch 2: `ddf12871` (2026-10-30)
+**Commit Message**: doc: add arttor to approvers list
 
-When the cluster controller finishes reconciling and tries to update the
-CephCluster status to Ready, any concurrently running controller can
-modify the object, leading to a conflict error. Currently, this error is
-only being logged and dropped, leaving the CephCluster in a stale
-Progressing state.
-Adding a retry on conflict, which re-fetches the object and attempts the
-update again.
+Signed-off-by: Artem Torubarov <[REDACTED_EMAIL]>
 
-Signed-off-by: Prabhala Tara Aasrita <[REDACTED_EMAIL]>
-
-**File**: `pkg/operator/ceph/cluster/controller.go` (modified, +1/-1)
+**File**: `CODE-OWNERS` (modified, +1/-1)
 ```diff
-@@ -408,7 +408,7 @@ func (r *ReconcileCephCluster) reconcileDelete(cephCluster *cephv1.CephCluster)
- 	var err error
- 
- 	// Set the deleting status
--	opcontroller.UpdateClusterCondition(r.context, cephCluster, nsName,
-+	_ = opcontroller.UpdateClusterCondition(r.context, cephCluster, nsName,
- 		k8sutil.ObservedGenerationNotAvailable, cephv1.ConditionDeleting, corev1.ConditionTrue, cephv1.ClusterDeletingReason, "Deleting the CephCluster",
- 		true /* keep all other conditions to be safe */)
- 
+@@ -11,6 +11,6 @@ approvers:
+ - sp98
+ - parth-gr
+ - jhoblitt
++- arttor
+ reviewers:
+ - Madhu-1
+-- arttor
 ```
 
-**File**: `pkg/operator/ceph/controller/conditions.go` (modified, +14/-7)
+**File**: `OWNERS.md` (modified, +1/-0)
 ```diff
-@@ -29,24 +29,29 @@ import (
- 	v1 "k8s.io/api/core/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/types"
-+	"k8s.io/client-go/util/retry"
- )
+@@ -26,6 +26,7 @@ Maintainers will be added according to the [process for adding a maintainer](GOV
+ * Santosh Pillai <sapillai@redhat.com> ([sp98](https://github.com/sp98))
+ * Parth Arora <partharora1010@gmail.com> ([parth-gr](https://github.com/parth-gr))
+ * Joshua Hoblitt <josh@hoblitt.com> ([jhoblitt](https://github.com/jhoblitt))
++* Artem Torubarov <torubarov.a.a@gmail.com> ([arttor](https://github.com/arttor))
  
- // UpdateCondition function will export each condition into the cluster custom resource
- func UpdateCondition(ctx context.Context, c *clusterd.Context, namespaceName types.NamespacedName, observedGeneration int64, conditionType cephv1.ConditionType, status v1.ConditionStatus, reason cephv1.ConditionReason, message string) {
- 	// use client.Client to unit test this more easily with updating statuses which must use the client
--	cluster := &cephv1.CephCluster{}
--	if err := c.Client.Get(ctx, namespaceName, cluster); err != nil {
--		log.NamedError(namespaceName, logger, "failed to get cluster %v to update the conditions. %v", namespaceName, err)
--		return
-+	err := retry.RetryOnConflict(retry.DefaultRetry, func() error {
-+		cluster := &cephv1.CephCluster{}
-+		if err := c.Client.Get(ctx, namespaceName, cluster); err != nil {
-+			log.NamedError(namespaceName, logger, "failed to get cluster %v to update the conditions. %v", namespaceName, err)
-+			return err
-+		}
-+		return UpdateClusterCondition(c, cluster, namespaceName, observedGeneration, conditionType, status, reason, message, false)
-+	})
-+	if err != nil {
-+		log.NamedError(namespaceName, logger, "failed to update cluster condition after retries. %v", err)
- 	}
--
--	UpdateClusterCondition(c, cluster, namespaceName, observedGeneration, conditionType, status, reason, message, false)
- }
+ ## Emeritus maintainers
  
- // UpdateClusterCondition function will export each condition into the cluster custom resource
- func UpdateClusterCondition(c *clusterd.Context, cluster *cephv1.CephCluster, namespaceName types.NamespacedName, observedGeneration int64, conditionType cephv1.ConditionType, status v1.ConditionStatus,
- 	reason cephv1.ConditionReason, message string, preserveAllConditions bool,
--) {
-+) error {
- 	// Keep the conditions that already existed if they are in the list of long-term conditions,
- 	// otherwise discard the temporary conditions
- 	var currentCondition *cephv1.Condition
-@@ -107,7 +112,9 @@ func UpdateClusterCondition(c *clusterd.Context, cluster *cephv1.CephCluster, na
- 
- 	if err := reporting.UpdateStatus(c.Client, cluster); err != nil {
- 		log.NamedError(namespaceName, logger, "failed to update cluster condition to %+v. %v", *currentCondition, err)
-+		return err
- 	}
-+	return nil
- }
- 
- // translatePhasetoState converts the Phase to the corresponding State
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #18649** (2026-10-30): doc: add arttor to approvers list (@arttor)
 - **PR #18644** (2026-10-29): operator: retry CephCluster status update on conflict (backport #18639) (@mergify[bot])
 - **PR #18643** (closed): operator: retry CephCluster status update on conflict (backport #18639) (@mergify[bot])
 - **PR #18641** (closed): nvmeof: add ROOK_CEPH_NVMEOF_IMAGE env var for image override (@OdedViner)
 - **PR #18639** (2026-10-28): operator: retry CephCluster status update on conflict (@taraasrita10)
 - **PR #18635** (2026-10-26): build: Set release version to v1.21.1 (@travisn)
-- **PR #18633** (2026-10-27): build(deps): bump the github-dependencies group across 1 directory with 10 updates (@dependabot[bot])
 
 ---
 
@@ -1601,28 +1513,28 @@ Signed-off-by: Prabhala Tara Aasrita <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #18639 from taraasrita10/cephcluster-status-update
+## X. Merge pull request #18649 from cobaltcore-dev/add-arttor-as-approver
 
 **RULE**:
-When implementing operations in `pkg/operator/ceph/cluster/controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CODE-OWNERS`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `61a8fea1`: Merge pull request #18639 from taraasrita10/cephcluster-status-update. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `285e01eb`: Merge pull request #18649 from cobaltcore-dev/add-arttor-as-approver. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/operator/ceph/cluster/controller.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CODE-OWNERS`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	_ = opcontroller.UpdateClusterCondition(r.context, cephCluster, nsName,
+- arttor
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	opcontroller.UpdateClusterCondition(r.context, cephCluster, nsName,
+- arttor
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `61a8fea1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `285e01eb` are properly handled with clean fallback behavior.

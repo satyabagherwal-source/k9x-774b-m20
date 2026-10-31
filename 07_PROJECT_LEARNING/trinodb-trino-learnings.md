@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `eb21c0d1`  
+> **Source Version**: `ef92bc17`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T04:54:37.742Z  
+> **Timestamp**: 2026-10-31T01:21:33.499Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T04:54:37.296Z  
+> **Harvest Timestamp**: 2026-10-31T01:21:32.973Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13385 stars
+- **Stars / Engagement**: 13386 stars
 
 ---
 
@@ -1862,327 +1862,136 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eb21c0d1` (2026-10-29)
-**Commit Message**: Avoid oversized null row builders
+### Incident Patch 1: `aaed7bd6` (2026-10-29)
+**Commit Message**: Classify MongoDB timeout errors as external errors
 
-Null-row temporary builders inherited page-sized capacities.
-
-**File**: `core/trino-spi/src/main/java/io/trino/spi/block/RowBlockBuilder.java` (modified, +2/-2)
+**File**: `plugin/trino-mongodb/src/main/java/io/trino/plugin/mongodb/MongoSession.java` (modified, +2/-1)
 ```diff
-@@ -488,7 +488,7 @@ public BlockBuilder newBlockBuilderLike(int expectedEntries, BlockBuilderStatus
-     {
-         BlockBuilder[] newBlockBuilders = new BlockBuilder[fieldBlockBuilders.length];
-         for (int i = 0; i < fieldBlockBuilders.length; i++) {
--            newBlockBuilders[i] = fieldBlockBuilders[i].newBlockBuilderLike(blockBuilderStatus);
-+            newBlockBuilders[i] = fieldBlockBuilders[i].newBlockBuilderLike(expectedEntries, blockBuilderStatus);
-         }
-         return new RowBlockBuilder(blockBuilderStatus, newBlockBuilders, expectedEntries, null);
-     }
-@@ -497,7 +497,7 @@ private Block nullRle(int length)
-     {
-         Block[] fieldBlocks = new Block[fieldBlockBuilders.length];
-         for (int i = 0; i < fieldBlockBuilders.length; i++) {
--            fieldBlocks[i] = fieldBlockBuilders[i].newBlockBuilderLike(null).appendNull().build();
-+            fieldBlocks[i] = fieldBlockBuilders[i].newBlockBuilderLike(1, null).appendNull().build();
-         }
- 
-         RowBlock nullRowBlock = createRowBlockInternal(0, 1, new long[] {0}, fieldBlocks);
+@@ -29,6 +29,7 @@
+ import com.mongodb.DBRef;
+ import com.mongodb.MongoCommandException;
+ import com.mongodb.MongoNamespace;
++import com.mongodb.MongoTimeoutException;
+ import com.mongodb.client.FindIterable;
+ import com.mongodb.client.MongoClient;
+ import com.mongodb.client.MongoCollection;
+@@ -268,7 +269,7 @@ public MongoTable getTable(SchemaTableName tableName)
+             Throwable cause = e.getCause();
+             if (cause != null) {
+                 throwIfInstanceOf(cause, TrinoException.class);
+-                if (cause instanceof MongoCommandException) {
++                if (cause instanceof MongoCommandException || cause instanceof MongoTimeoutException) {
+                     throw new TrinoException(MONGODB_CLUSTER_ERROR, cause);
+                 }
+             }
 ```
 
-**File**: `core/trino-spi/src/main/java/io/trino/spi/block/VariantBlockBuilder.java` (modified, +2/-2)
+**File**: `plugin/trino-mongodb/src/test/java/io/trino/plugin/mongodb/TestMongoSession.java` (modified, +24/-0)
 ```diff
-@@ -414,8 +414,8 @@ public BlockBuilder newBlockBuilderLike(int expectedEntries, BlockBuilderStatus
-     {
-         return new VariantBlockBuilder(
-                 blockBuilderStatus,
--                (VariableWidthBlockBuilder) metadataBlockBuilder.newBlockBuilderLike(blockBuilderStatus),
--                (VariableWidthBlockBuilder) valuesBlockBuilder.newBlockBuilderLike(blockBuilderStatus),
-+                (VariableWidthBlockBuilder) metadataBlockBuilder.newBlockBuilderLike(expectedEntries, blockBuilderStatus),
-+                (VariableWidthBlockBuilder) valuesBlockBuilder.newBlockBuilderLike(expectedEntries, blockBuilderStatus),
-                 expectedEntries,
-                 null);
-     }
-```
-
-**File**: `core/trino-spi/src/test/java/io/trino/spi/block/TestRowBlockBuilder.java` (modified, +20/-0)
-```diff
-@@ -14,6 +14,7 @@
- package io.trino.spi.block;
+@@ -15,7 +15,11 @@
  
  import com.google.common.collect.ImmutableList;
-+import io.trino.spi.type.Type;
- import org.junit.jupiter.api.Test;
+ import com.google.common.collect.ImmutableMap;
++import com.mongodb.MongoTimeoutException;
++import com.mongodb.client.MongoClient;
++import com.mongodb.client.MongoClients;
+ import io.trino.spi.connector.ColumnHandle;
++import io.trino.spi.connector.SchemaTableName;
+ import io.trino.spi.predicate.Domain;
+ import io.trino.spi.predicate.TupleDomain;
+ import io.trino.spi.predicate.ValueSet;
+@@ -27,7 +31,9 @@
+ import java.util.Optional;
  
- import java.util.ArrayList;
-@@ -22,7 +23,9 @@
- import static io.trino.spi.type.BigintType.BIGINT;
- import static io.trino.spi.type.BooleanType.BOOLEAN;
- import static io.trino.spi.type.IntegerType.INTEGER;
-+import static io.trino.spi.type.RowType.anonymous;
- import static io.trino.spi.type.VarcharType.VARCHAR;
-+import static io.trino.spi.type.VariantType.VARIANT;
+ import static io.airlift.slice.Slices.utf8Slice;
++import static io.trino.plugin.mongodb.MongoErrorCode.MONGODB_CLUSTER_ERROR;
+ import static io.trino.plugin.mongodb.MongoSession.projectSufficientColumns;
++import static io.trino.spi.ErrorType.EXTERNAL;
+ import static io.trino.spi.predicate.Range.equal;
+ import static io.trino.spi.predicate.Range.greaterThan;
+ import static io.trino.spi.predicate.Range.greaterThanOrEqual;
+@@ -38,6 +44,8 @@
+ import static io.trino.spi.type.DoubleType.DOUBLE;
+ import static io.trino.spi.type.RealType.REAL;
+ import static io.trino.spi.type.VarcharType.createUnboundedVarcharType;
++import static io.trino.testing.assertions.TrinoExceptionAssert.assertTrinoExceptionThrownBy;
++import static io.trino.type.InternalTypeManager.TESTING_TYPE_MANAGER;
+ import static java.util.Arrays.asList;
  import static org.assertj.core.api.Assertions.assertThat;
- import static org.assertj.core.api.Assertions.assertThatThrownBy;
  
-@@ -42,6 +45,23 @@ public void testBuilderProducesNullRleForNullRows()
-         assertIsAllNulls(blockBuilder().appendNull().appendNull().build(), 2);
-     }
+@@ -52,6 +60,22 @@ public class TestMongoSession
+ 
+     private static final MongoColumnHandle ID_COL = new MongoColumnHandle("_id", ImmutableList.of(), ObjectIdType.OBJECT_ID, false, false, Optional.empty());
  
 +    @Test
-+    void testNewBlockBuilderLikeExpectedEntries()
++    public void testGetTableWithUnreachableMongoDbSrv()
 +    {
-+        List<Type> fieldTypes = List.of(VARCHAR, VARIANT, anonymous(List.of(VARCHAR, BIGINT)));
-+        RowBlockBuilder blockBuilder = new RowBlockBuilder(fieldTypes, null, 1024);
-+        for (int position = 0; position < 1024; position++) {
-+            blockBuilder.appendNull();
-+        }
++        try (MongoClient client = MongoClients.create("mongodb+srv://localhost/?serverSelectionTimeoutMS=100")) {
++            MongoSession session = new MongoSession(
++                    TESTING_TYPE_MANAGER,
++                    () -> client,
++                    new MongoClientConfig());
 +
-+        BlockBuilder singleRowBuilder = blockBuilder.newBlockBuilderLike(1, null).appendNull();
-+        RowBlockBuilder expected = new RowBlockBuilder(fieldTypes, null, 1);
-+        expected.appendNull();
-+        assertThat(singleRowBuilder.getRetainedSizeInBytes()).isEqualTo(expected.getRetainedSizeInBytes());
-+        assertIsAllNulls(singleRowBuilder.build(), 1);
-+        assertIsAllNulls(blockBuilder.build(), 1024);
++            assertThat(MONGODB_CLUSTER_ERROR.toErrorCode().getType()).isEqualTo(EXTERNAL);
++            assertTrinoExceptionThrownBy(() -> session.getTable(new SchemaTableName("test", "test")))
++                    .hasErrorCode(MONGODB_CLUSTER_ERROR)
++                    .hasCauseInstanceOf(MongoTimeoutException.class);
++        }
 +    }
 +
      @Test
-     void buildEntry()
+     public void testFloatingPointInfinityBounds()
      {
 ```
 
 ---
 
-### Incident Patch 2: `4be27d19` (2026-10-26)
-**Commit Message**: Use MemoryContext in AvroPageSource
+### Incident Patch 2: `0cbe0b61` (2026-10-30)
+**Commit Message**: Fix type of CHAR literal with non-BMP characters
 
-AvroPageSourceFactory implemented the deprecated createPageSource
-overload, so the guessed reader memory of AvroPageSource was accounted
-only by polling getMemoryUsage. Report it to the MemoryContext instead
-and release it when the page source is closed.
+CHAR literal type length was computed from the number of UTF-16 code
+units, so a literal containing a supplementary character got a type
+longer than its value, and the value was padded with extra spaces.
 
-**File**: `plugin/trino-hive/src/main/java/io/trino/plugin/hive/avro/AvroPageSource.java` (modified, +8/-7)
+**File**: `core/trino-main/src/main/java/io/trino/sql/analyzer/ExpressionAnalyzer.java` (modified, +1/-1)
 ```diff
-@@ -20,6 +20,7 @@
- import io.trino.hive.formats.avro.AvroTypeException;
- import io.trino.spi.TrinoException;
- import io.trino.spi.connector.ConnectorPageSource;
-+import io.trino.spi.connector.MemoryContext;
- import io.trino.spi.connector.SourcePage;
- import org.apache.avro.Schema;
- 
-@@ -36,17 +37,22 @@ public class AvroPageSource
-     private static final long GUESSED_MEMORY_USAGE = DataSize.of(16, DataSize.Unit.MEGABYTE).toBytes();
- 
-     private final String fileName;
-+    private final MemoryContext memoryContext;
-     private final AvroFileReader avroFileReader;
- 
-     public AvroPageSource(
-             TrinoInputFile inputFile,
-             Schema schema,
-             AvroTypeBlockHandler avroTypeManager,
-             long offset,
--            long length)
-+            long length,
-+            MemoryContext memoryContext)
-             throws IOException, AvroTypeException
-     {
-         fileName = requireNonNull(inputFile, "inputFile is null").location().fileName();
-+        this.memoryContext = requireNonNull(memoryContext, "memoryContext is null");
-+        // Report before the reader is opened, so that exceeding the memory limit leaks no resources
-+        memoryContext.setBytes(GUESSED_MEMORY_USAGE);
-         avroFileReader = new AvroFileReader(inputFile, schema, avroTypeManager, offset, OptionalLong.of(length));
-     }
- 
-@@ -91,16 +97,11 @@ public SourcePage getNextSourcePage()
+@@ -1667,7 +1667,7 @@ protected Type visitGenericLiteral(GenericLiteral node, Context context)
+             return setExpressionType(
+                     node,
+                     switch (node.getType()) {
+-                        case String value when value.equalsIgnoreCase("CHAR") -> CharType.createCharType(node.getValue().length());
++                        case String value when value.equalsIgnoreCase("CHAR") -> CharType.createCharType(node.getValue().codePointCount(0, node.getValue().length()));
+                         case String value when value.equalsIgnoreCase("TIME") -> processTimeLiteral(node);
+                         case String value when value.equalsIgnoreCase("TIMESTAMP") -> processTimestampLiteral(node);
+                         default -> {
+```
+
+**File**: `core/trino-main/src/test/java/io/trino/type/TestCharParametricType.java` (modified, +10/-0)
+```diff
+@@ -36,4 +36,14 @@ public void charIsCreatedWithLength()
+                     .isEqualTo("   abc\n   ");
          }
      }
- 
--    @Override
--    public long getMemoryUsage()
--    {
--        return GUESSED_MEMORY_USAGE;
--    }
--
-     @Override
-     public void close()
-             throws IOException
-     {
-         avroFileReader.close();
-+        memoryContext.setBytes(0);
-     }
++
++    @Test
++    public void charLengthCountsCodePoints()
++    {
++        try (QueryAssertions assertions = new QueryAssertions()) {
++            assertThat(assertions.expression("CHAR '𝒦𝒫𝒰𝒦𝒟𝒥𝒜'"))
++                    .hasType(createCharType(7))
++                    .isEqualTo("𝒦𝒫𝒰𝒦𝒟𝒥𝒜");
++        }
++    }
  }
 ```
 
-**File**: `plugin/trino-hive/src/main/java/io/trino/plugin/hive/avro/AvroPageSourceFactory.java` (modified, +7/-4)
-```diff
-@@ -32,6 +32,7 @@
- import io.trino.spi.connector.ConnectorPageSource;
- import io.trino.spi.connector.ConnectorSession;
- import io.trino.spi.connector.EmptyPageSource;
-+import io.trino.spi.connector.MemoryContext;
- import io.trino.spi.predicate.TupleDomain;
- import org.apache.avro.Schema;
- import org.apache.avro.SchemaBuilder;
-@@ -88,7 +89,8 @@ public Optional<ConnectorPageSource> createPageSource(
-             Optional<AcidInfo> acidInfo,
-             OptionalInt bucketNumber,
-             boolean originalFile,
--            AcidTransaction transaction)
-+            AcidTransaction transaction,
-+            MemoryContext memoryContext)
-     {
-         if (!AVRO_SERDE_CLASS.equals(schema.serializationLibraryName())) {
-             return Optional.empty();
-@@ -111,7 +113,7 @@ public Optional<ConnectorPageSource> createPageSource(
-             return Optional.of(new EmptyPageSource());
-         }
- 
--        return Optional.of(projectColumnDereferences(columns, baseColumns -> createPageSource(session, trinoFileSystem, inputFile, start, actualSplitSize, schema, baseColumns)));
-+        return Optional.of(projectColumnDereferences(columns, baseColumns -> createPageSource(session, trinoFileSystem, inputFile, start, actualSplitSize, schema, baseColumns, memoryContext)));
-     }
- 
-     private static AvroPageSource createPageSource(
-@@ -121,7 +123,8 @@ private static AvroPageSource createPageSource(
-             long start,
-             long length,
-             io.trino.plugin.hive.Schema schema,
--            List<HiveColumnHandle> columns)
-+            List<HiveColumnHandle> columns,
-+            MemoryContext memoryContext)
-     {
-         verify(columns.stream().allMatch(HiveColumnHandle::isBaseColumn), "All columns must be base columns");
-         Schema tableSchema;
-@@ -143,7 +146,7 @@ private static AvroPageSource createPageSource(
-         int hiveTimestampPrecision = getTimestampPrecision(session).getPrecision();
- 
-         try {
--            return new AvroPageSource(inputFile, maskedSchema, new HiveAvroTypeBlockHandler(createTimestampType(hiveTimestampPrecision)), start, length);
-+            return new AvroPageSource(inputFile, maskedSchema, new HiveAvroTypeBlockHandler(createTimestampType(hiveTimestampPrecision)), start, length, memoryContext);
-         }
-         catch (IOException e) {
-             throw new TrinoException(HIVE_CANNOT_OPEN_SPLIT, e);
-```
-
-**File**: `plugin/trino-hive/src/test/java/io/trino/plugin/hive/avro/TestAvroPageSource.java` (added, +147/-0)
-```diff
-@@ -0,0 +1,147 @@
-+/*
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+package io.trino.plugin.hive.avro;
-+
-+import com.google.common.collect.ImmutableList;
-+import com.google.common.collect.ImmutableMap;
-+import io.airlift.units.DataSize;
-+import io.trino.filesystem.Location;
-+import io.trino.filesystem.TrinoFileSystemFactory;
-+import io.trino.filesystem.TrinoInputFile;
-+import io.trino.filesystem.TrinoInputStream;
-+import io.trino.filesystem.memory.MemoryFileSystemFactory;
-+import io.trino.filesystem.memory.MemoryInputFile;
-+import io.trino.hive.formats.avro.HiveAvroTypeBlockHandler;
-+import io.trino.spi.TrinoException;
-+import io.trino.spi.connector.ConnectorPageSource;
-+import io.trino.spi.connector.SourcePage;
-+import io.trino.spi.predicate.TupleDomain;
-+import org.apache.avro.Schema;
-+import org.apache.avro.SchemaBuilder;
-+import org.apache.avro.file.DataFileWriter;
-+import org.apache.avro.generic.GenericDatumWriter;
-+import org.apache.avro.generic.GenericRecord;
-+import org.apache.avro.generic.GenericRecordBuilder;
-+import org.junit.jupiter.api.Test;
-+
-+import java.io.ByteArrayOutputStream;
-+import java.io.IOException;
-+import java.util.Optional;
-+import java.util.OptionalInt;
-+import java.util.concurrent.atomic.AtomicInteger;
-+import java.util.concurrent.atomic.AtomicLong;
-+
-+import static io.airlift.slice.Slices.wrappedBuffer;
-+import static io.airlift.units.DataSize.Unit.MEGABYTE;
-+import static io.trino.hive.formats.HiveClassNames.AVRO_SERDE_CLASS;
-+import static io.trino.hive.formats.avro.AvroHiveConstants.SCHEMA_LITERAL;
-+import static io.trino.metastore.HiveType.HIVE_LONG;
-+import static io.trino.plugin.hive.HiveColumnHandle.ColumnType.REGULAR;
-+import static io.trino.plugin.hive.HiveColumnHandle.createBaseColumn;
-+import static io.trino.plugin.hive.HiveTestUtils.SESSION;
-+import static io.trino.plugin.hive.acid.AcidTransaction.NO_ACID_TRANSACTION;
-+import static io.trino.spi.StandardErrorCode.EXCEEDED_LOCAL_MEMORY_LIMIT;
-+import static io.trino.spi.type.BigintType.BIGINT;
-+import static io.trino.spi.type.TimestampType.TIMESTAMP_MILLIS;
-+import static org.assertj.core.api.Assertions.assertThat;
-+import static org.assertj.core.api.Assertions.assertThatThrownBy;
-+
-+final class TestAvroPageSource
-+{
-+    private static final Schema AVRO_SCHEMA = SchemaBuilder.record("test").fields().requiredLong("value").endRecord();
-+    private static final int ROW_COUNT = 1000;
-+    private static final long GUESSED_MEMORY_USAGE = DataSize.of(16, MEGABYTE).toBytes();
-+
-+    @Test
-+    void testReportsMemoryUsageToMemoryContext()
-+            throws IOException
-+    {
-+        TrinoFileSystemFactory fileSystemFactory = new MemoryFileSystemFactory();
-+        Location location = Location.of("memory:///test.avro");
-+        byte[] data = createAvroFile();
-+        fileSystemFactory.create(SESSION).newOutputFile(location).createOrOverwrite(data);
-+
-+        AtomicLong reportedBytes = new AtomicLong(-1);
-+        ConnectorPageSource pageSource = new AvroPageSourceFactory(fileSystemFactory).createPageSource(
-+                        SESSION,
-+                        location,
-+                        0,
-+                        data.length,
-+                        data.length,
-+                        0,
-+                        new io.trino.plugin.hive.Schema(AVRO_SERDE_CLASS, false, ImmutableMap.of(SCHEMA_LITERAL, AVRO_SCHEMA.toString())),
-+                        ImmutableList.of(createBaseColumn("value", 0, HIVE_LONG, BIGINT, REGULAR, Optional.empty())),
-+                        TupleDomain.all(),
-+                        Optional.empty(),
-+                        OptionalInt.empty(),
-+                        false,
-+                        NO_ACID_TRANSACTION,
-+                        reportedBytes::set)
-+                .orElseThrow();
-+        try (pageSource) {
-+            assertThat(reportedBytes).hasValue(GUESSED_MEMORY_USAGE);
-+            // the memory must not be accounted for again when getMemoryUsage is polled
-+            assertThat(pageSource.getMemoryUsage()).isZero();
-+
-+            int positions = 0;
-+            while (!pageSource.isFinished()) {
-+                SourcePage page = pageSource.getNextSourcePage();
-+                if (page != null) {
-+                    positions += page.getPositionCount();
-+                }
-+            }
-+            assertThat(positions).isEqualTo(ROW_COUNT);
-+            assertThat(reportedBytes).hasValue(GUESSED_MEMORY_USAGE);
-+        }
-+   
-```
-
 #### Recent Merged Pull Requests:
-- **PR #31890** (2026-10-29): Avoid oversized null row builders (@wendigo)
-- **PR #31878** (2026-10-29): Bump org.mariadb.jdbc:mariadb-java-client from 3.5.10 to 3.5.11 (@dependabot[bot])
-- **PR #31877** (2026-10-29): Bump dep.okhttp.version from 5.5.0 to 5.5.1 (@dependabot[bot])
-- **PR #31874** (closed): Fix row predicate domain extraction (@akasakariko)
-- **PR #31873** (closed): Use DeltaLengthByteArrayEncoding in CheckpointWriter (@ebyhr)
-- **PR #31872** (2026-10-29): Speed up translation of large discrete domains (@raunaqmorarka)
+- **PR #31915** (2026-10-30): Bind CHAR parameters as char in JDBC setObject  (@findepi)
+- **PR #31912** (2026-10-30): Fix type of CHAR literal with non-BMP characters (@findepi)
+- **PR #31910** (2026-10-30): Resolve Faker functions only in the default schema (@chenjian2664)
+- **PR #31904** (2026-10-30): Remove redundant dependencies from trino-faulttolerant-tests (@ebyhr)
+- **PR #31903** (2026-10-30): Remove unused duct-tape library (@ebyhr)
+- **PR #31902** (2026-10-30): Remove ClickHouse dependencies from root pom.xml (@ebyhr)
 
 ---
 
@@ -2202,30 +2011,29 @@ and release it when the page source is closed.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Avoid oversized null row builders
+## X. Classify MongoDB timeout errors as external errors
 
 **RULE**:
-When implementing operations in `core/trino-spi/src/main/java/io/trino/spi/block/RowBlockBuilder.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `plugin/trino-mongodb/src/main/java/io/trino/plugin/mongodb/MongoSession.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eb21c0d1`: Avoid oversized null row builders. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aaed7bd6`: Classify MongoDB timeout errors as external errors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-spi/src/main/java/io/trino/spi/block/RowBlockBuilder.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugin/trino-mongodb/src/main/java/io/trino/plugin/mongodb/MongoSession.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-            newBlockBuilders[i] = fieldBlockBuilders[i].newBlockBuilderLike(expectedEntries, blockBuilderStatus);
-            fieldBlocks[i] = fieldBlockBuilders[i].newBlockBuilderLike(1, null).appendNull().build();
+import com.mongodb.MongoTimeoutException;
+                if (cause instanceof MongoCommandException || cause instanceof MongoTimeoutException) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-            newBlockBuilders[i] = fieldBlockBuilders[i].newBlockBuilderLike(blockBuilderStatus);
-            fieldBlocks[i] = fieldBlockBuilders[i].newBlockBuilderLike(null).appendNull().build();
+                if (cause instanceof MongoCommandException) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eb21c0d1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aaed7bd6` are properly handled with clean fallback behavior.

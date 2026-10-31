@@ -6404,3 +6404,9 @@ Every entry in this ledger must capture:
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `ddf515c5` | Multi-dimensional audit evidence | 2026-10-31T01:15:10.323Z |
 | `learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-10-31T01:15:14.704Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `a714386f` | Multi-dimensional audit evidence | 2026-10-31T01:15:16.008Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `2d4aed8d` | Multi-dimensional audit evidence | 2026-10-31T01:21:22.322Z |
+| `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `c803cca1` | Multi-dimensional audit evidence | 2026-10-31T01:21:27.088Z |
+| `learn-github-rook-rook` | `https://github.com/rook/rook` | `285e01eb` | Multi-dimensional audit evidence | 2026-10-31T01:21:28.851Z |
+| `learn-huggingface-lodestones-kromoss` | `https://huggingface.co/lodestones/Kromoss` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-10-31T01:21:30.896Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `ef92bc17` | Multi-dimensional audit evidence | 2026-10-31T01:21:33.898Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `2f1bdadc` | Multi-dimensional audit evidence | 2026-10-31T01:21:35.017Z |

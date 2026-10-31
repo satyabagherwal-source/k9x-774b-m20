@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "54ee07c6",
+    "sourceVersion": "2f1bdadc",
     "license": "MIT",
-    "contentHash": "2578c919276b082652fc0c11b628247394998f97ccc21cf0836810486cf64615",
-    "lastHarvestedAt": "2026-10-31T00:41:27.058Z",
+    "contentHash": "1c77e86f23829faf360fba59ffb50519e466c6cb4d732092513261bed6d09156",
+    "lastHarvestedAt": "2026-10-31T01:21:35.017Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -2613,10 +2613,10 @@
     "repository": "zulip/zulip",
     "platform": "github",
     "sourceUrl": "https://github.com/zulip/zulip",
-    "sourceVersion": "00635bc3",
+    "sourceVersion": "c803cca1",
     "license": "Apache-2.0",
-    "contentHash": "50c638e5048a39d9c0b7466c4761599a68c1a6f2f19af971f347beb153c1ba9b",
-    "lastHarvestedAt": "2026-10-28T04:41:58.787Z",
+    "contentHash": "dc6b3bdba2a9708c5a5644b7362e5755a1721f830e6417a7b220ac5cda78de08",
+    "lastHarvestedAt": "2026-10-31T01:21:27.088Z",
     "learningId": "learn-github-zulip-zulip"
   },
   "goodrain-rainbond": {
@@ -3183,10 +3183,10 @@
     "repository": "fallow-rs/fallow",
     "platform": "github",
     "sourceUrl": "https://github.com/fallow-rs/fallow",
-    "sourceVersion": "40e3eb97",
+    "sourceVersion": "2d4aed8d",
     "license": "MIT",
-    "contentHash": "d7d4c713c2d9bd5c80d34f25a39f739af72016df2cada716b837e3eb1b661fc8",
-    "lastHarvestedAt": "2026-10-29T12:26:02.778Z",
+    "contentHash": "6a5d9a731e8c13f47800f7da86679f47ee3a97a089e419fa8a73c3ee28c15c58",
+    "lastHarvestedAt": "2026-10-31T01:21:22.322Z",
     "learningId": "learn-github-fallow-rs-fallow"
   },
   "expo-create-react-native-app": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "eb21c0d1",
+    "sourceVersion": "ef92bc17",
     "license": "Apache-2.0",
-    "contentHash": "333a0dbb335eedc7b759ea3831bc964c8008d258ef268fa2d3601036680a8fd7",
-    "lastHarvestedAt": "2026-10-30T04:54:38.184Z",
+    "contentHash": "ce83b77807f381fc1eae88ec76733139f7435508489dc326de98d8b3a25e2c03",
+    "lastHarvestedAt": "2026-10-31T01:21:33.898Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
@@ -5963,10 +5963,10 @@
     "repository": "rook/rook",
     "platform": "github",
     "sourceUrl": "https://github.com/rook/rook",
-    "sourceVersion": "61a8fea1",
+    "sourceVersion": "285e01eb",
     "license": "Apache-2.0",
-    "contentHash": "b91784086871d12370847c05f7b8827672856c467aaf0449c8f723c1fc6edd53",
-    "lastHarvestedAt": "2026-10-30T05:46:02.326Z",
+    "contentHash": "7d26a62a115899ac5812bf510ecda4e6957381f66bcf00bdf5f0c218475d9d6e",
+    "lastHarvestedAt": "2026-10-31T01:21:28.851Z",
     "learningId": "learn-github-rook-rook"
   },
   "genkit-ai-genkit": {
@@ -10405,8 +10405,8 @@
     "sourceUrl": "https://huggingface.co/lodestones/Kromoss",
     "sourceVersion": "hf-lodestones-kromoss",
     "license": "Open-Source",
-    "contentHash": "133cdee81537e0c7f9f3684bbae12e31120d8a5c08901adf98f7830266b41863",
-    "lastHarvestedAt": "2026-10-25T09:37:59.518Z",
+    "contentHash": "2a4ad9a50f02e655f71629bc5e4463c4b4fdef8f6c7f159773730644512bf5cc",
+    "lastHarvestedAt": "2026-10-31T01:21:30.896Z",
     "learningId": "learn-huggingface-lodestones-kromoss"
   },
   "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16": {

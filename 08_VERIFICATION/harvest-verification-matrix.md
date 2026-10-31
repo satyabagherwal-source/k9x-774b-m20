@@ -6395,3 +6395,9 @@
 | `CYCLE-20261031-LK6N` | `2026-10-31T01:15:10.319Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5980` | Yes (`9db5a8b3...`) |
 | `CYCLE-20261031-LNKC` | `2026-10-31T01:15:14.700Z` | `dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5981, Rule 5982, Rule 5983` | Yes (`55d83685...`) |
 | `CYCLE-20261031-LOKK` | `2026-10-31T01:15:16.004Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md` | Yes (`1c1b3c11...`) |
+| `CYCLE-20261031-TJ7Z` | `2026-10-31T01:21:22.319Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5984` | Yes (`6a5d9a73...`) |
+| `CYCLE-20261031-TMWE` | `2026-10-31T01:21:27.086Z` | `zulip/zulip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5985` | Yes (`dc6b3bdb...`) |
+| `CYCLE-20261031-TO9C` | `2026-10-31T01:21:28.848Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5986` | Yes (`7d26a62a...`) |
+| `CYCLE-20261031-TPU6` | `2026-10-31T01:21:30.894Z` | `lodestones/Kromoss` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5987, Rule 5988, Rule 5989` | Yes (`2a4ad9a5...`) |
+| `CYCLE-20261031-TS5K` | `2026-10-31T01:21:33.896Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5990` | Yes (`ce83b778...`) |
+| `CYCLE-20261031-TT0N` | `2026-10-31T01:21:35.015Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5991` | Yes (`1c77e86f...`) |
