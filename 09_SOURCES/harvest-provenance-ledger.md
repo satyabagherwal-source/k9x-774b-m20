@@ -6506,3 +6506,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen-image-2-1` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-31T06:45:24.611Z |
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `5ef8d0c3` | Multi-dimensional audit evidence | 2026-10-31T06:45:29.181Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `081ff52e` | Multi-dimensional audit evidence | 2026-10-31T06:45:31.864Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `14cf6a68` | Multi-dimensional audit evidence | 2026-10-31T06:52:22.213Z |
+| `learn-huggingface-contrastive-lm-clm-v0-1-8b` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-10-31T06:52:31.243Z |

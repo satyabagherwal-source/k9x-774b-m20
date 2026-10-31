@@ -6497,3 +6497,5 @@
 | `CYCLE-20261031-E8ZD` | `2026-10-31T06:45:24.601Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | Yes (`0620b4c4...`) |
 | `CYCLE-20261031-ECII` | `2026-10-31T06:45:29.178Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6109` | Yes (`8fe95dd4...`) |
 | `CYCLE-20261031-EEL1` | `2026-10-31T06:45:31.861Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6110` | Yes (`6bba0088...`) |
+| `CYCLE-20261031-N77M` | `2026-10-31T06:52:22.210Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6111` | Yes (`7b7e3234...`) |
+| `CYCLE-20261031-NE6F` | `2026-10-31T06:52:31.239Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3273, Rule 6112` | Yes (`ab3272b6...`) |

@@ -325,8 +325,8 @@
     "sourceUrl": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
     "sourceVersion": "hf-contrastive-lm-clm-v0.1-8b",
     "license": "Open-Source",
-    "contentHash": "d4ed4555f2dfd1e151b90cc602f4cfc680ea4138df6b753759f466b54266fc94",
-    "lastHarvestedAt": "2026-10-28T04:35:27.277Z",
+    "contentHash": "ab3272b688f3e2fa0b775bab8ba663a7a39d96233205ae895fb38dc1dcc7ee90",
+    "lastHarvestedAt": "2026-10-31T06:52:31.243Z",
     "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b"
   },
   "hf-nvidia-nemotron-3-diarization": {
@@ -5343,10 +5343,10 @@
     "repository": "embassy-rs/embassy",
     "platform": "github",
     "sourceUrl": "https://github.com/embassy-rs/embassy",
-    "sourceVersion": "75f40b38",
+    "sourceVersion": "14cf6a68",
     "license": "Apache-2.0",
-    "contentHash": "938a6e026a048d5206e367afdbac88f1dd70500f9646155be5235f261cd0899b",
-    "lastHarvestedAt": "2026-10-30T06:50:01.203Z",
+    "contentHash": "7b7e3234fba29e2352616f9f0e8c0c0c78d04e09dec1b53e71daa62b4c0de134",
+    "lastHarvestedAt": "2026-10-31T06:52:22.213Z",
     "learningId": "learn-github-embassy-rs-embassy"
   },
   "jpush-aurora-imui": {

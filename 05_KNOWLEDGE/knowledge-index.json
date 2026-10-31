@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T06:45:31.783Z",
+  "last_updated": "2026-10-31T06:52:31.161Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11358,8 +11358,8 @@
       "slug": "embassy-rs-embassy",
       "platform": "github",
       "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "75f40b38",
-      "content_hash": "938a6e026a048d5206e367afdbac88f1dd70500f9646155be5235f261cd0899b",
+      "source_version": "14cf6a68",
+      "content_hash": "7b7e3234fba29e2352616f9f0e8c0c0c78d04e09dec1b53e71daa62b4c0de134",
       "dossier_path": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "promoted_rules": [
@@ -11412,6 +11412,11 @@
           "number": 5637,
           "title": "chacha counter wrap on 32 bit targets",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6111,
+          "title": "Merge pull request #7397 from Abrahamh08/fix/stm32h7-qspi-mdma-flash-size",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11419,7 +11424,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T06:50:01.107Z",
+      "verified_at": "2026-10-31T06:52:22.112Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -20951,7 +20956,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
       "source_version": "hf-contrastive-lm-clm-v0.1-8b",
-      "content_hash": "d4ed4555f2dfd1e151b90cc602f4cfc680ea4138df6b753759f466b54266fc94",
+      "content_hash": "ab3272b688f3e2fa0b775bab8ba663a7a39d96233205ae895fb38dc1dcc7ee90",
       "dossier_path": "07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md",
       "promoted_rules": [
@@ -20980,7 +20985,7 @@
         {
           "number": 3273,
           "title": "Frozen-Encoder Contrastive Decoupling",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 3274,
@@ -21000,6 +21005,11 @@
         {
           "number": 4270,
           "title": "Last-Token Causal Sequence Pooling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6112,
+          "title": "State-Action Embedding Caching Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -21021,7 +21031,7 @@
         "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv44mqua",
         "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv4hvkw7"
       ],
-      "verified_at": "2026-10-28T04:35:27.166Z",
+      "verified_at": "2026-10-31T06:52:31.142Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -116010,7 +116020,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-20T16:44:29.353Z"
+      "verified_at": "2026-10-31T06:52:31.142Z"
     },
     "rule-3274": {
       "learning_id": "rule-3274",
@@ -160271,6 +160281,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T06:45:31.763Z"
+    },
+    "rule-6111": {
+      "learning_id": "rule-6111",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6111,
+      "title": "Merge pull request #7397 from Abrahamh08/fix/stm32h7-qspi-mdma-flash-size",
+      "source_url": "https://github.com/embassy-rs/embassy",
+      "source_version": "14cf6a68",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T06:52:22.112Z"
+    },
+    "rule-6112": {
+      "learning_id": "rule-6112",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6112,
+      "title": "State-Action Embedding Caching Invariant",
+      "source_url": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
+      "source_version": "hf-contrastive-lm-clm-v0.1-8b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T06:52:31.142Z"
     }
   },
   "aliases": {

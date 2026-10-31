@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T06:45:31.870Z",
-  "total_cycles_completed": 6474,
-  "total_learnings_persisted": 6474,
-  "total_rules_promoted": 6100,
+  "last_updated": "2026-10-31T06:52:31.248Z",
+  "total_cycles_completed": 6476,
+  "total_learnings_persisted": 6476,
+  "total_rules_promoted": 6103,
   "history": [
-    {
-      "timestamp": "2026-10-30T20:22:06.383Z",
-      "repository": "zarf-dev/zarf",
-      "learningId": "learn-github-zarf-dev-zarf",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T20:22:08.433Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T20:22:10.901Z",
       "repository": "doobidoo/mcp-memory-service",
@@ -1403,6 +1389,20 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T06:52:22.219Z",
+      "repository": "embassy-rs/embassy",
+      "learningId": "learn-github-embassy-rs-embassy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T06:52:31.248Z",
+      "repository": "Contrastive-LM/CLM-v0.1-8B",
+      "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T06:45:31.874Z",
+  "last_updated": "2026-10-31T06:52:31.252Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -380,14 +380,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-      "content_hash": "d4ed4555f2dfd1e151b90cc602f4cfc680ea4138df6b753759f466b54266fc94",
-      "verified_at": "2026-10-28T04:35:27.292Z",
+      "content_hash": "ab3272b688f3e2fa0b775bab8ba663a7a39d96233205ae895fb38dc1dcc7ee90",
+      "verified_at": "2026-10-31T06:52:31.251Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T04:35:27.292Z"
+      "last_updated": "2026-10-31T06:52:31.251Z"
     },
     "nvidia/Nemotron-3-Diarization": {
       "repository": "nvidia/Nemotron-3-Diarization",
@@ -8136,14 +8136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-embassy-rs-embassy",
-      "content_hash": "938a6e026a048d5206e367afdbac88f1dd70500f9646155be5235f261cd0899b",
-      "verified_at": "2026-10-30T06:50:01.212Z",
+      "content_hash": "7b7e3234fba29e2352616f9f0e8c0c0c78d04e09dec1b53e71daa62b4c0de134",
+      "verified_at": "2026-10-31T06:52:22.222Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T06:50:01.212Z"
+      "last_updated": "2026-10-31T06:52:22.222Z"
     },
     "jpush/aurora-imui": {
       "repository": "jpush/aurora-imui",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source**: github ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
-> **Source Version**: `75f40b38`  
+> **Source Version**: `14cf6a68`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T06:50:00.576Z  
+> **Timestamp**: 2026-10-31T06:52:21.538Z  
 > **Learning ID**: `learn-github-embassy-rs-embassy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T06:49:59.010Z  
+> **Harvest Timestamp**: 2026-10-31T06:52:21.370Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Modern embedded framework, using Rust and async.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10048 stars
+- **Stars / Engagement**: 10054 stars
 
 ---
 
@@ -1435,13 +1435,11 @@ unsafe fn bounce_chunks_inout(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7395** (2026-10-30): **Revert "stm32/eth: set v2 TX descriptor frame length"**
-  *Symptoms*: Reverts embassy-rs/embassy#7386
-  **Post-Mortem & Fix Analysis**:
-  > reverted by request of @jordens 
+- **Issue #7398** (2026-10-30): **embassy-usb: generate config.rs in a deterministic order**
+  *Symptoms*: build.rs collected the config values in a HashMap and wrote config.rs by iterating it, so the constants came out in a different order on every build. The generated source, and with it the crate hash, changed from one build of the same sources to the next, which breaks reproducible builds and caches of dependent crates (e.g. Nix): a dependent built against one build of embassy-usb fails with E0463 against another.  Use a BTreeMap so config.rs is written sorted by name, as ekv (embassy-rs/ekv#27) and smoltcp do.
 
-- **Issue #7390** (2026-10-29): **fix: chacha counter wrap on 32 bit targets**
-  *Symptoms*: Fix an issue with chacha on 32 bit targets where the counter can wrap around, causing either a panic or (if overflow-checks are disabled) an infinite loop.  Adds a HIL test that runs the chacha suites through the rustcrypto drivers on the nrf54l15 dk.
+- **Issue #7397** (2026-10-30): **examples/stm32h7: fix off-by-one flash size in qspi_mdma**
+  *Symptoms*: `MAX_ADDRESS` is the last byte but was used as the size, so reads could not include the last byte, and a write or erase running past the end wrapped to address 1 instead of 0 (which would both be erased because erase wrapped the same way, so the write succeeds).
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1458,179 +1456,221 @@ unsafe fn bounce_chunks_inout(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6af156ff` (2026-10-29)
-**Commit Message**: fix: chacha counter wrap on 32 bit targets
+### Incident Patch 1: `14cf6a68` (2026-10-30)
+**Commit Message**: Merge pull request #7397 from Abrahamh08/fix/stm32h7-qspi-mdma-flash-size
 
-Fix an issue with chacha on 32 bit targets where the counter can wrap
-around, causing either a panic or (if overflow-checks are disabled) an
-infinite loop.
+examples/stm32h7: fix off-by-one flash size in qspi_mdma
 
-Adds a HIL test that runs the chacha suites through the rustcrypto
-drivers on the nrf54l15 dk.
-
-**File**: `embassy-crypto-rustcrypto/src/chacha.rs` (modified, +3/-1)
+**File**: `examples/stm32h7/src/bin/qspi_mdma.rs` (modified, +11/-11)
 ```diff
-@@ -43,7 +43,9 @@ macro_rules! impl_stream {
-                 fn keystream(&mut self, mut buf: cipher::inout::InOutBuf<'_, '_, u8>) {
-                     while !buf.is_empty() {
-                         let blocks = buf.len() / BLOCK;
--                        let until_wrap = (u32::MAX - self.counter) as usize + 1;
-+                        // 2^32 blocks (counter 0) does not fit a 32-bit usize. Saturating is exact
-+                        // here: `blocks` is at most usize::MAX / 64.
-+                        let until_wrap = ((u32::MAX - self.counter) as usize).saturating_add(1);
-                         let n = blocks.min(until_wrap);
-                         let (head, tail) = buf.split_at(n * BLOCK);
-                         buf = tail;
-```
-
-**File**: `tests/nrf/Cargo.toml` (modified, +9/-1)
-```diff
-@@ -30,6 +30,7 @@ panic-probe = { version = "1.0.0", features = ["print-defmt"] }
- portable-atomic = { version = "1.6.0" }
- embassy-crypto = { version = "0.1.0", path = "../../embassy-crypto", features = ["defmt"] }
- embassy-crypto-test = { version = "0.1.0", path = "../../embassy-crypto-test", features = ["defmt", "rng"] }
-+embassy-crypto-rustcrypto = { version = "0.1.0", path = "../../embassy-crypto-rustcrypto", features = ["embassy-crypto-chacha8", "embassy-crypto-chacha12", "embassy-crypto-chacha20"], optional = true }
+@@ -49,7 +49,7 @@ const READ_PARAMS_BIT_ODS2: u8 = 1 << 7;
+ // Memory array specifications as defined in the datasheet.
+ const SECTOR_SIZE: u32 = 4096;
+ const PAGE_SIZE: u32 = 256;
+-const MAX_ADDRESS: u32 = 0x7FFFFF;
++const FLASH_SIZE: u32 = 8 * 1024 * 1024;
  
- [features]
- nrf51422 = ["embassy-nrf/nrf51",         "embassy-nrf/time-driver-rtc1", "portable-atomic/unsafe-assume-single-core"]
-@@ -51,6 +52,8 @@ two-uarts = []
+ // Max Sector Erase time is 300ms
+ const SECTOR_ERASE_TIMEOUT: Duration = Duration::from_millis(600);
+@@ -83,7 +83,7 @@ impl<MODE: Mode> Flash<'_, MODE> {
+     }
  
- # The direct-API crypto tests.
- crypto = []
-+# The `embassy-crypto-rustcrypto` software drivers.
-+embassy-crypto-rustcrypto = ["dep:embassy-crypto-rustcrypto"]
- # The accelerator has AES-256 and AES-GCM, which the CryptoCell only has in its 312 version.
- aes256 = []
- # The accelerator has the SHA-512 family.
-@@ -168,6 +171,11 @@ name = "crypto_chacha"
- path = "src/bin/crypto_chacha.rs"
- required-features = [ "embassy-crypto",]
+     pub fn read(&mut self, address: u32, buffer: &mut [u8]) {
+-        assert!(address + buffer.len() as u32 <= MAX_ADDRESS);
++        assert!(address + buffer.len() as u32 <= FLASH_SIZE);
  
-+[[bin]]
-+name = "crypto_chacha_rustcrypto"
-+path = "src/bin/crypto_chacha_rustcrypto.rs"
-+required-features = [ "embassy-crypto-rustcrypto",]
-+
- [[bin]]
- name = "crypto_ec"
- path = "src/bin/crypto_ec.rs"
-@@ -306,6 +314,6 @@ build = [
-   { target = "thumbv8m.main-none-eabihf", features = ["nrf5340", "embassy-crypto-aes256"], artifact-dir = "out/tests/nrf5340-dk" },
-   { target = "thumbv8m.main-none-eabihf", features = ["nrf9160", "crypto"], artifact-dir = "out/tests/nrf9160-dk" },
-   { target = "thumbv8m.main-none-eabihf", features = ["nrf9160", "embassy-crypto"], artifact-dir = "out/tests/nrf9160-dk" },
--  { target = "thumbv8m.main-none-eabihf", features = ["nrf54l15", "crypto"], artifact-dir = "out/tests/nrf54l15-dk" },
-+  { target = "thumbv8m.main-none-eabihf", features = ["nrf54l15", "crypto", "embassy-crypto-rustcrypto"], artifact-dir = "out/tests/nrf54l15-dk" },
-   { target = "thumbv8m.main-none-eabihf", features = ["nrf54l15", "embassy-crypto-aes256", "embassy-crypto-sha512"], artifact-dir = "out/tests/nrf54l15-dk" }
- ]
-```
-
-**File**: `tests/nrf/src/bin/crypto_chacha_rustcrypto.rs` (added, +47/-0)
-```diff
-@@ -0,0 +1,47 @@
-+// required-features: embassy-crypto-rustcrypto
-+#![no_std]
-+#![no_main]
-+
-+//! ChaCha through the `embassy-crypto-rustcrypto` software drivers, against the shared
-+//! known-answer suite.
-+//!
-+//! The vectors start at block counter 0 and wrap the 32-bit counter, which used to make the
-+//! driver loop forever on targets with a 32-bit `usize`. Host tests cannot catch that.
-+
-+#[path = "../common.rs"]
-+mod common;
-+use defmt::{error, info};
-+use defmt_rtt as _;
-+use embassy_crypto_rustcrypto as _;
-+use embassy_executor::Spawner;
-+use panic_probe as _;
-+
-+teleprobe_meta::timeout!(120);
-+
-+/// Run every suite, logging each result, and fail at the end if any failed.
-+macro_rules! suites {
-+    ($($(#[$meta:meta])* $name:ident),* $(,)?) => {{
-+        let mut ok = true;
-+        $(
-+            $(#[$meta])*
-+            match embassy_crypto_test::$name() {
-+                Ok(stats) => info!("{}: {:?}", stringify!($name), stats),
-+                Err(e) => {
-+                    error!("{}: {:?}", stringify!($name), e);
-+                    ok = false;
-+                }
-+            }
-+        )*
-+        defmt::assert!(ok, "some suites failed");
-+    }};
-+}
-+
-+#[embassy_executor::main]
-+async fn main(_spawner: Spawner) {
-+    let _p = embassy_nrf::init(Default::default());
-+
-+    suites!(chacha8, chacha12, chacha20);
-+
-+    info!("Test OK");
-+    cortex_m::asm::bkpt();
-+}
+         let transaction = TransferConfig {
+             iwidth: QspiWidth::SING,
+@@ -113,7 +113,7 @@ impl<MODE: Mode> Flash<'_, MODE> {
+     }
+ 
+     pub fn write(&mut self, mut address: u32, data: &[u8]) {
+-        assert!(address <= MAX_ADDRESS);
++        assert!(address < FLASH_SIZE);
+         assert!(!data.is_empty());
+         self.erase(address, data.len() as u32);
+ 
+@@ -150,12 +150,12 @@ impl<MODE: Mode> Flash<'_, MODE> {
+ 
+             // Jump to the next page.
+             address += page_remainder;
+-            address %= MAX_ADDRESS;
++            address %= FLASH_SIZE;
+         }
+     }
+ 
+     pub fn erase(&mut self, mut address: u32, mut length: u32) {
+-        assert!(address <= MAX_ADDRESS);
++        assert!(address < FLASH_SIZE);
+         assert!(length > 0);
+ 
+         loop {
+@@ -185,7 +185,7 @@ impl<MODE: Mode> Flash<'_, MODE> {
+ 
+             // Jump to the next sector.
+             address += sector_remainder;
+-            address %= MAX_ADDRESS;
++            address %= FLASH_SIZE;
+         }
+     }
+ 
+@@ -335,7 +335,7 @@ impl<'a> Flash<'a, Async> {
+     }
+ 
+     pub async fn read_async(&mut self, address: u32, buffer: &mut [u8]) {
+-        assert!(address + buffer.len() as u32 <= MAX_ADDRESS);
++        assert!(address + buffer.len() as u32 <= FLASH_SIZE);
+ 
+         let transaction = TransferConfig {
+             iwidth: QspiWidth::SING,
+@@ -350,7 +350,7 @@ impl<'a> Flash<'a, Async> {
+     }
+ 
+     pub async fn write_async(&mut self, mut address: u32, data: &[u8]) {
+-        assert!(address <= MAX_ADDRESS);
++        assert!(address < FLASH_SIZE);
+         assert!(!data.is_empty());
+         self.erase_async(address, data.len() as u32).await;
+         let mut length = data.len() as u32;
+@@ -387,12 +387,12 @@ impl<'a> Flash<'a, Async> {
+ 
+             // Jump to the next page.
+             address += page_remainder;
+-            address %= MAX_ADDRESS;
++            address %= FLASH_SIZE;
+         }
+     }
+ 
+     pub async fn erase_async(&mut self, mut address: u32, mut length: u32) {
+-        assert!(address <= MAX_ADDRESS);
++        assert!(address < FLASH_SIZE);
+         assert!(length > 0);
+ 
+         loop {
+@@ -422,7 +422,7 @@ impl<'a> Flash<'a, Async> {
+ 
+             // Jump to the next sector.
+             address += sector_remainder;
+-            address %= MAX_ADDRESS;
++            address %= FLASH_SIZE;
+         }
+     }
+ 
 ```
 
 ---
 
-### Incident Patch 2: `75f40b38` (2026-10-30)
-**Commit Message**: Merge pull request #7395 from embassy-rs/revert-7386-fix/stm32-eth-v2-tx-frame-length
+### Incident Patch 2: `701d808d` (2026-10-30)
+**Commit Message**: examples/stm32h7: fix off-by-one flash size in qspi_mdma
 
-Revert "stm32/eth: set v2 TX descriptor frame length"
+MAX_ADDRESS is the last byte (0x7FFFFF) but was used as the size: reads
+could not include the last byte, and a write or erase running past the
+end wrapped to address 1 instead of 0. Use the 8 MiB size instead.
 
-**File**: `embassy-stm32/src/eth/v2/descriptors.rs` (modified, +1/-5)
+**File**: `examples/stm32h7/src/bin/qspi_mdma.rs` (modified, +11/-11)
 ```diff
-@@ -95,12 +95,8 @@ impl TDes {
-     /// LD: Contains last buffer of packet
-     /// CIC_FULL: let the MAC compute and insert the IP/TCP/UDP checksums.
-     pub(crate) fn set_owned(&mut self) {
--        // TDES3[14:0] is the total packet length. TDES2 carries the only
--        // buffer's length, which is also the total length for this one-buffer
--        // descriptor implementation.
--        let frame_len = self.tdes2.get() & EMAC_TDES2_B1L;
-         self.tdes3
--            .set(EMAC_DES3_FD | EMAC_DES3_LD | EMAC_DES3_OWN | EMAC_TDES3_CIC_FULL | frame_len);
-+            .set(EMAC_DES3_FD | EMAC_DES3_LD | EMAC_DES3_OWN | EMAC_TDES3_CIC_FULL);
+@@ -49,7 +49,7 @@ const READ_PARAMS_BIT_ODS2: u8 = 1 << 7;
+ // Memory array specifications as defined in the datasheet.
+ const SECTOR_SIZE: u32 = 4096;
+ const PAGE_SIZE: u32 = 256;
+-const MAX_ADDRESS: u32 = 0x7FFFFF;
++const FLASH_SIZE: u32 = 8 * 1024 * 1024;
+ 
+ // Max Sector Erase time is 300ms
+ const SECTOR_ERASE_TIMEOUT: Duration = Duration::from_millis(600);
+@@ -83,7 +83,7 @@ impl<MODE: Mode> Flash<'_, MODE> {
      }
  
-     #[cfg(feature = "ptp")]
-```
-
----
-
-### Incident Patch 3: `ed12c707` (2026-10-30)
-**Commit Message**: Revert "stm32/eth: set v2 TX descriptor frame length"
-
-**File**: `embassy-stm32/src/eth/v2/descriptors.rs` (modified, +1/-5)
-```diff
-@@ -95,12 +95,8 @@ impl TDes {
-     /// LD: Contains last buffer of packet
-     /// CIC_FULL: let the MAC compute and insert the IP/TCP/UDP checksums.
-     pub(crate) fn set_owned(&mut self) {
--        // TDES3[14:0] is the total packet length. TDES2 carries the only
--        // buffer's length, which is also the total length for this one-buffer
--        // descriptor implementation.
--        let frame_len = self.tdes2.get() & EMAC_TDES2_B1L;
-         self.tdes3
--            .set(EMAC_DES3_FD | EMAC_DES3_LD | EMAC_DES3_OWN | EMAC_TDES3_CIC_FULL | frame_len);
-+            .set(EMAC_DES3_FD | EMAC_DES3_LD | EMAC_DES3_OWN | EMAC_TDES3_CIC_FULL);
+     pub fn read(&mut self, address: u32, buffer: &mut [u8]) {
+-        assert!(address + buffer.len() as u32 <= MAX_ADDRESS);
++        assert!(address + buffer.len() as u32 <= FLASH_SIZE);
+ 
+         let transaction = TransferConfig {
+             iwidth: QspiWidth::SING,
+@@ -113,7 +113,7 @@ impl<MODE: Mode> Flash<'_, MODE> {
      }
  
-     #[cfg(feature = "ptp")]
+     pub fn write(&mut self, mut address: u32, data: &[u8]) {
+-        assert!(address <= MAX_ADDRESS);
++        assert!(address < FLASH_SIZE);
+         assert!(!data.is_empty());
+         self.erase(address, data.len() as u32);
+ 
+@@ -150,12 +150,12 @@ impl<MODE: Mode> Flash<'_, MODE> {
+ 
+             // Jump to the next page.
+             address += page_remainder;
+-            address %= MAX_ADDRESS;
++            address %= FLASH_SIZE;
+         }
+     }
+ 
+     pub fn erase(&mut self, mut address: u32, mut length: u32) {
+-        assert!(address <= MAX_ADDRESS);
++        assert!(address < FLASH_SIZE);
+         assert!(length > 0);
+ 
+         loop {
+@@ -185,7 +185,7 @@ impl<MODE: Mode> Flash<'_, MODE> {
+ 
+             // Jump to the next sector.
+             address += sector_remainder;
+-            address %= MAX_ADDRESS;
++            address %= FLASH_SIZE;
+         }
+     }
+ 
+@@ -335,7 +335,7 @@ impl<'a> Flash<'a, Async> {
+     }
+ 
+     pub async fn read_async(&mut self, address: u32, buffer: &mut [u8]) {
+-        assert!(address + buffer.len() as u32 <= MAX_ADDRESS);
++        assert!(address + buffer.len() as u32 <= FLASH_SIZE);
+ 
+         let transaction = TransferConfig {
+             iwidth: QspiWidth::SING,
+@@ -350,7 +350,7 @@ impl<'a> Flash<'a, Async> {
+     }
+ 
+     pub async fn write_async(&mut self, mut address: u32, data: &[u8]) {
+-        assert!(address <= MAX_ADDRESS);
++        assert!(address < FLASH_SIZE);
+         assert!(!data.is_empty());
+         self.erase_async(address, data.len() as u32).await;
+         let mut length = data.len() as u32;
+@@ -387,12 +387,12 @@ impl<'a> Flash<'a, Async> {
+ 
+             // Jump to the next page.
+             address += page_remainder;
+-            address %= MAX_ADDRESS;
++            address %= FLASH_SIZE;
+         }
+     }
+ 
+     pub async fn erase_async(&mut self, mut address: u32, mut length: u32) {
+-        assert!(address <= MAX_ADDRESS);
++        assert!(address < FLASH_SIZE);
+         assert!(length > 0);
+ 
+         loop {
+@@ -422,7 +422,7 @@ impl<'a> Flash<'a, Async> {
+ 
+             // Jump to the next sector.
+             address += sector_remainder;
+-            address %= MAX_ADDRESS;
++            address %= FLASH_SIZE;
+         }
+     }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7398** (2026-10-30): embassy-usb: generate config.rs in a deterministic order (@Sandvoxel)
+- **PR #7397** (2026-10-30): examples/stm32h7: fix off-by-one flash size in qspi_mdma (@Abrahamh08)
 - **PR #7395** (2026-10-30): Revert "stm32/eth: set v2 TX descriptor frame length" (@xoviat)
+- **PR #7394** (2026-10-30): [MCXA] use WAKETIMER for LPTMR time-driver alarms (@felipebalbi)
+- **PR #7391** (2026-10-30): nrf: enable i2s on the nrf91 family (@thijsc)
 - **PR #7390** (2026-10-29): fix: chacha counter wrap on 32 bit targets (@lulf)
-- **PR #7388** (2026-10-29): stm32/spi: end async slave transfers at deselect, drop the TXC busy-wait (@Sandvoxel)
-- **PR #7386** (2026-10-29): stm32/eth: set v2 TX descriptor frame length (@R4zvi)
-- **PR #7385** (2026-10-29): stm32/timer/input_capture: allow any mode & selection for input capture with DMA (@Clematrics)
-- **PR #7382** (closed): Dev (@GustawB)
 
 ---
 
@@ -1650,30 +1690,48 @@ Revert "stm32/eth: set v2 TX descriptor frame length"
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. chacha counter wrap on 32 bit targets
+## X. Merge pull request #7397 from Abrahamh08/fix/stm32h7-qspi-mdma-flash-size
 
 **RULE**:
-When implementing operations in `embassy-crypto-rustcrypto/src/chacha.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `examples/stm32h7/src/bin/qspi_mdma.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6af156ff`: chacha counter wrap on 32 bit targets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `14cf6a68`: Merge pull request #7397 from Abrahamh08/fix/stm32h7-qspi-mdma-flash-size. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `embassy-crypto-rustcrypto/src/chacha.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/stm32h7/src/bin/qspi_mdma.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                        // 2^32 blocks (counter 0) does not fit a 32-bit usize. Saturating is exact
-                        // here: `blocks` is at most usize::MAX / 64.
-                        let until_wrap = ((u32::MAX - self.counter) as usize).saturating_add(1);
+const FLASH_SIZE: u32 = 8 * 1024 * 1024;
+        assert!(address + buffer.len() as u32 <= FLASH_SIZE);
+        assert!(address < FLASH_SIZE);
+            address %= FLASH_SIZE;
+        assert!(address < FLASH_SIZE);
+            address %= FLASH_SIZE;
+        assert!(address + buffer.len() as u32 <= FLASH_SIZE);
+        assert!(address < FLASH_SIZE);
+            address %= FLASH_SIZE;
+        assert!(address < FLASH_SIZE);
+            address %= FLASH_SIZE;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                        let until_wrap = (u32::MAX - self.counter) as usize + 1;
+const MAX_ADDRESS: u32 = 0x7FFFFF;
+        assert!(address + buffer.len() as u32 <= MAX_ADDRESS);
+        assert!(address <= MAX_ADDRESS);
+            address %= MAX_ADDRESS;
+        assert!(address <= MAX_ADDRESS);
+            address %= MAX_ADDRESS;
+        assert!(address + buffer.len() as u32 <= MAX_ADDRESS);
+        assert!(address <= MAX_ADDRESS);
+            address %= MAX_ADDRESS;
+        assert!(address <= MAX_ADDRESS);
+            address %= MAX_ADDRESS;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6af156ff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `14cf6a68` are properly handled with clean fallback behavior.

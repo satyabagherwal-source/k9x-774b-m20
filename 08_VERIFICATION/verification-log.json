@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261029-4M3R",
-    "timestamp": "2026-10-29T00:02:39.975Z",
-    "repository": "paradedb/paradedb",
-    "learningId": "learn-github-paradedb-paradedb",
-    "contentHash": "ed801206cb804f7affad6744c14ddef452555d225adb73f47b2f4d4384e013b4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-CXR2",
-    "timestamp": "2026-10-29T00:09:08.318Z",
-    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-    "contentHash": "fcb0563f9b22bce7ee765c7fd479ad864e1bfeac70a899629b13e640c8c67f91",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261029-LT2Q",
     "timestamp": "2026-10-29T00:16:02.162Z",
     "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
@@ -7492,6 +7462,36 @@
     "contentHash": "6bba0088afc249b0496aa629bb23af09b3e8b07dd975b5b3bc2047ecefbb7a45",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-N77M",
+    "timestamp": "2026-10-31T06:52:22.210Z",
+    "repository": "embassy-rs/embassy",
+    "learningId": "learn-github-embassy-rs-embassy",
+    "contentHash": "7b7e3234fba29e2352616f9f0e8c0c0c78d04e09dec1b53e71daa62b4c0de134",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-NE6F",
+    "timestamp": "2026-10-31T06:52:31.239Z",
+    "repository": "Contrastive-LM/CLM-v0.1-8B",
+    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+    "contentHash": "ab3272b688f3e2fa0b775bab8ba663a7a39d96233205ae895fb38dc1dcc7ee90",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
