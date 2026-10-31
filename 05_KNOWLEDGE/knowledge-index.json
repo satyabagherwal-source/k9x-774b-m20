@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T14:59:29.510Z",
+  "last_updated": "2026-10-31T15:14:42.134Z",
   "total_verified_learnings": 1184,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -19482,7 +19482,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/bigscience/bloom",
       "source_version": "hf-bigscience-bloom",
-      "content_hash": "251058e0d4977d04874e735a5815216cb31ed4f8e236c38363dde8c6f92a1db4",
+      "content_hash": "8ad2c1d5e088c3b6c71a8f7f5f9ce0142fee2a0fb65b20c16cba91fa21597d73",
       "dossier_path": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
       "promoted_rules": [
@@ -19530,6 +19530,16 @@
           "number": 5314,
           "title": "KV Cache Invariant for Autoregressive Generation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6229,
+          "title": "Causal Attention Padding Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6230,
+          "title": "Numerical Stability in Softmax for High-Dimensional Attention",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -19549,7 +19559,7 @@
         "learn-huggingface-hf-bigscience-bloom-mv3wl1kr",
         "learn-huggingface-hf-bigscience-bloom-mv4ba34m"
       ],
-      "verified_at": "2026-10-28T14:42:51.283Z",
+      "verified_at": "2026-10-31T15:14:42.114Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162631,6 +162641,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T14:45:52.959Z"
+    },
+    "rule-6229": {
+      "learning_id": "rule-6229",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6229,
+      "title": "Causal Attention Padding Invariant",
+      "source_url": "https://huggingface.co/bigscience/bloom",
+      "source_version": "hf-bigscience-bloom",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T15:14:42.114Z"
+    },
+    "rule-6230": {
+      "learning_id": "rule-6230",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6230,
+      "title": "Numerical Stability in Softmax for High-Dimensional Attention",
+      "source_url": "https://huggingface.co/bigscience/bloom",
+      "source_version": "hf-bigscience-bloom",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T15:14:42.114Z"
     }
   },
   "aliases": {

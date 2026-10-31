@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T14:59:41.061Z",
-    "lastVerified": "2026-10-31T14:59:41.061Z",
+    "lastChecked": "2026-10-31T15:14:44.765Z",
+    "lastVerified": "2026-10-31T15:14:44.765Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -345,9 +345,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T14:39:35.642Z",
+    "lastChecked": "2026-10-31T15:14:42.602Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T14:39:35.642Z"
+    "lastVerified": "2026-10-31T15:14:42.602Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1549,9 +1549,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-10-31T11:53:36.027Z",
+    "lastChecked": "2026-10-31T15:14:37.556Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-10-31T11:53:36.027Z"
+    "lastVerified": "2026-10-31T15:14:37.556Z"
   },
   "valeriansaliou-sonic": {
     "name": "valeriansaliou/sonic",
@@ -4721,9 +4721,9 @@
   "cozodb-cozo": {
     "name": "cozo",
     "officialUrl": "https://github.com/cozodb/cozo",
-    "lastChecked": "2026-10-30T23:05:23.787Z",
+    "lastChecked": "2026-10-31T15:14:40.063Z",
     "revisionIdentifier": "481af058",
-    "lastVerified": "2026-10-30T23:05:23.787Z"
+    "lastVerified": "2026-10-31T15:14:40.063Z"
   },
   "telemt-telemt": {
     "name": "telemt/telemt",
@@ -4869,13 +4869,13 @@
     "officialUrl": "https://huggingface.co/bigscience/bloom",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T14:42:37.831Z",
-    "lastVerified": "2026-10-28T14:42:37.831Z",
+    "lastChecked": "2026-10-31T15:14:30.113Z",
+    "lastVerified": "2026-10-31T15:14:30.113Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-bigscience-bloom",
-    "contentHash": "251058e0d4977d04874e735a5815216cb31ed4f8e236c38363dde8c6f92a1db4",
-    "promotedRulesCount": 3,
+    "contentHash": "8ad2c1d5e088c3b6c71a8f7f5f9ce0142fee2a0fb65b20c16cba91fa21597d73",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -5923,9 +5923,9 @@
   "checkmarx-kics": {
     "name": "kics",
     "officialUrl": "https://github.com/Checkmarx/kics",
-    "lastChecked": "2026-10-30T23:51:36.464Z",
+    "lastChecked": "2026-10-31T15:14:35.091Z",
     "revisionIdentifier": "0f99087a",
-    "lastVerified": "2026-10-30T23:51:36.464Z"
+    "lastVerified": "2026-10-31T15:14:35.091Z"
   },
   "starrocks-starrocks": {
     "name": "StarRocks/starrocks",
@@ -7510,9 +7510,9 @@
   "kosi-libs-kodein": {
     "name": "Kodein",
     "officialUrl": "https://github.com/kosi-libs/Kodein",
-    "lastChecked": "2026-10-28T20:08:38.219Z",
+    "lastChecked": "2026-10-31T15:14:32.558Z",
     "revisionIdentifier": "f26ea0c9",
-    "lastVerified": "2026-10-28T20:08:38.219Z"
+    "lastVerified": "2026-10-31T15:14:32.558Z"
   },
   "killercup-cargo-edit": {
     "name": "cargo-edit",
@@ -7753,9 +7753,9 @@
   "imsnif-diskonaut": {
     "name": "diskonaut",
     "officialUrl": "https://github.com/imsnif/diskonaut",
-    "lastChecked": "2026-10-30T19:27:56.854Z",
+    "lastChecked": "2026-10-31T15:14:27.557Z",
     "revisionIdentifier": "65cd8290",
-    "lastVerified": "2026-10-30T19:27:56.854Z"
+    "lastVerified": "2026-10-31T15:14:27.557Z"
   },
   "hf-phocinae-phocinae-largha-150m-v1": {
     "name": "Phocinae/Phocinae-Largha-150M-v1",

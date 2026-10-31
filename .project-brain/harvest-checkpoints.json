@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T14:59:29.619Z",
+  "last_updated": "2026-10-31T15:14:42.226Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1235,14 +1235,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-bigscience-bloom",
-      "content_hash": "251058e0d4977d04874e735a5815216cb31ed4f8e236c38363dde8c6f92a1db4",
-      "verified_at": "2026-10-28T14:42:51.373Z",
+      "content_hash": "8ad2c1d5e088c3b6c71a8f7f5f9ce0142fee2a0fb65b20c16cba91fa21597d73",
+      "verified_at": "2026-10-31T15:14:42.225Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T14:42:51.373Z"
+      "last_updated": "2026-10-31T15:14:42.225Z"
     },
     "openai/gpt-oss-20b": {
       "repository": "openai/gpt-oss-20b",

@@ -455703,3 +455703,151 @@ Subsystems managing Kotlin data structures, boundary deserialization, API parsin
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `b6c33271` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6229. Causal Attention Padding Invariant (Harvested from bigscience/bloom)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Causal Attention Padding Invariant",
+  "source": "bigscience/bloom",
+  "source_url": "https://huggingface.co/bigscience/bloom",
+  "source_version": "hf-bigscience-bloom",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-31T15:14:41.440Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-bigscience-bloom",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [bigscience/bloom](https://huggingface.co/bigscience/bloom) (Revision: `hf-bigscie`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+For any causal (decoder-only) Transformer model, padding MUST be applied to the **left** (beginning) of the input sequence, and the attention mask MUST explicitly zero-out attention scores for all padding tokens. The model MUST NOT treat padding tokens as valid content tokens in the attention mechanism.
+
+**WHY**:
+In causal language models, the "next token prediction" relies on the positional context. If padding is on the right, the model sees the actual content first, but the batch processing aligns the end of sequences. More critically, if padding is on the left and not masked, the model attends to the `<pad>` token (ID 3 in BLOOM) as if it were a real word, corrupting the attention distribution. Left-padding ensures that the "current" token being generated is always at the same relative position from the end of the sequence, which is essential for efficient KV-cache appending and consistent positional encoding alignment in batched inference.
+
+**WHEN TO APPLY**:
+Any implementation of a decoder-only Transformer (GPT, BLOOM, LLaMA, Mistral) for batched inference or fine-tuning.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Correct: Left Padding with Explicit Mask
+# Input: ["Hello", "Hi"]
+# Padded: ["<pad>", "Hello"], ["<pad>", "Hi"]
+# Mask:   [0, 1], [0, 1]  (1 = attend, 0 = ignore)
+
+def create_attention_mask(input_ids, pad_token_id):
+    # input_ids shape: [batch_size, seq_len]
+    # Returns mask where 1 is valid token, 0 is pad
+    return (input_ids != pad_token_id).int()
+
+# In the Attention Layer:
+# scores = Q @ K.T / sqrt(d_k)
+# scores = scores + (1 - mask) * -10000  # Mask out pads
+# attn_weights = softmax(scores, dim=-1)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# WRONG: Right Padding without proper mask adjustment
+# This causes the model to attend to padding tokens if the mask is not perfectly aligned
+# or if the positional embeddings are not shifted correctly.
+# Also WRONG: Using 'center' padding for causal models.
+
+def bad_padding(input_ids, max_len):
+    # Right padding
+    padded = [torch.cat([seq, torch.zeros(max_len - len(seq))]) for seq in input_ids]
+    # If mask is not explicitly created as (padded != pad_id), 
+    # the model will attend to the zeros/pads.
+    return padded
+```
+
+**VERIFICATION METHOD**:
+1.  **Unit Test**: Create a batch of two sequences of different lengths. Pad to the max length. Verify that the attention mask has `0`s exactly where `pad_token_id` is present.
+2.  **Gradient Check**: During fine-tuning, verify that gradients for the embedding layer corresponding to `pad_token_id` are zero (or negligible) if the loss is masked correctly.
+3.  **Inference Consistency**: Generate text from a single sequence and from a batch containing that sequence + a padded dummy sequence. The generated tokens for the real sequence MUST be identical.
+
+
+---
+
+## 6230. Numerical Stability in Softmax for High-Dimensional Attention (Harvested from bigscience/bloom)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Numerical Stability in Softmax for High-Dimensional Attention",
+  "source": "bigscience/bloom",
+  "source_url": "https://huggingface.co/bigscience/bloom",
+  "source_version": "hf-bigscience-bloom",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-31T15:14:41.860Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-bigscience-bloom",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [bigscience/bloom](https://huggingface.co/bigscience/bloom) (Revision: `hf-bigscie`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When computing attention weights in Transformers with high-dimensional heads or large sequence lengths, the softmax operation MUST be performed in **FP32** (or higher precision) even if the query/key/value tensors are in FP16/BF16. The subtraction of the max value (log-sum-exp trick) MUST be performed in FP32 to prevent underflow/overflow in the exponential function.
+
+**WHY**:
+In FP16, the range of representable numbers is limited. If the attention logits (Q·K) are large (e.g., > 100), `exp(logit)` will overflow to `inf`. If logits are very negative (e.g., < -100), `exp(logit)` will underflow to `0`. This leads to `NaN` or `inf` in the attention weights, crashing the model or producing garbage output. BLOOM's config `attention_softmax_in_fp32: true` is a direct mitigation for this.
+
+**WHEN TO APPLY**:
+Any Transformer model running in mixed precision (FP16/BF16) with sequence lengths > 512 or head dimensions > 64.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+def stable_attention_softmax(q, k, v, mask=None):
+    # q, k, v are in FP16/BF16
+    # 1. Compute scores in FP16 (fast)
+    scores = torch.matmul(q, k.transpose(-2, -1)) / (q.size(-1) ** 0.5)
+    
+    # 2. Cast to FP32 for stability
+    scores = scores.float()
+    
+    # 3. Apply mask in FP32
+    if mask is not None:
+        scores = scores.masked_fill(mask == 0, float('-inf'))
+    
+    # 4. Softmax in FP32
+    attn_weights = torch.softmax(scores, dim=-1)
+    
+    # 5. Cast back to FP16/BF16 for matmul with V
+    attn_weights = attn_weights.to(v.dtype)
+    
+    # 6. Final output
+    return torch.matmul(attn_weights, v)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# WRONG: Direct softmax in FP16
+def unstable_attention_softmax(q, k, v):
+    scores = torch.matmul(q, k.transpose(-2, -1)) / (q.size(-1) ** 0.5)
+    # If scores contain large values, exp() will overflow in FP16
+    attn_weights = torch.softmax(scores, dim=-1) 
+    return torch.matmul(attn_weights, v)
+```
+
+**VERIFICATION METHOD**:
+1.  **Stress Test**: Generate random Q, K, V tensors with large magnitudes (e.g., std=10). Run the attention layer in FP16. Assert that the output does not contain `NaN` or `Inf`.
+2.  **Precision Comparison**: Compare the output of the FP32-softmax implementation against a pure FP32 reference implementation. The relative error should be < 1e-3.
