@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source**: github ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
-> **Source Version**: `139738f7`  
+> **Source Version**: `6148ff16`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T00:41:22.258Z  
+> **Timestamp**: 2026-10-31T13:06:47.474Z  
 > **Learning ID**: `learn-github-rustls-rustls`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T00:41:21.337Z  
+> **Harvest Timestamp**: 2026-10-31T13:06:47.232Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern TLS library in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7721 stars
+- **Stars / Engagement**: 7722 stars
 
 ---
 
@@ -1571,6 +1571,7 @@ pub(crate) fn config(opts: &Options, key_log: &Arc<KeyLogMemo>) -> Arc<ClientCon
         .with_custom_certificate_verifier(Arc::new(DummyServerAuth::new(
             &opts.trusted_cert_file,
             opts.ocsp,
+            opts.enable_ocsp_stapling,
             opts.expected_server_names(),
             &provider,
         )));
@@ -1653,6 +1654,7 @@ pub(crate) fn config(opts: &Options, key_log: &Arc<KeyLogMemo>) -> Arc<ClientCon
 struct DummyServerAuth {
     parent: Arc<dyn ServerVerifier>,
     ocsp: OcspValidation,
+    enable_ocsp_stapling: bool,
     expect_server_names: Vec<ServerName<'static>>,
     server_name_index: AtomicUsize,
 }
@@ -1661,6 +1663,7 @@ impl DummyServerAuth {
     fn new(
         trusted_cert_file: &str,
         ocsp: OcspValidation,
+        enable_ocsp_stapling: bool,
         expect_server_names: Vec<ServerName<'static>>,
         provider: &CryptoProvider,
     ) -> Self {
@@ -1671,6 +1674,7 @@ impl DummyServerAuth {
                     .unwrap(),
             ),
             ocsp,
+            enable_ocsp_stapling,
             expect_server_names,
             server_name_index: AtomicUsize::new(0),
         }
@@ -1715,7 +1719,7 @@ impl ServerVerifier for DummyServerAuth {
     }
 
     fn request_ocsp_response(&self) -> bool {
-        true
+        self.enable_ocsp_stapling
     }
 
     fn hash_config(&self, h: &mut dyn Hasher) {
@@ -1789,12 +1793,7 @@ impl client::ClientCredentialResolver for MultipleClientCredentialResolver {
 
         quit(match all_must_match_issuer {
             true => ":NO_MATCHING_ISSUER:",
-            false => ":NO_COMMON_SIGNATURE_ALGORITHMS:",
-        })
-    }
-
-    fn supported_certificate_types(&self) -> &'static [CertificateType] {
-        match self.de
+        
 ```
 
 ### Core Architecture Module: `bogo/src/compress.rs`
@@ -2271,331 +2270,329 @@ fn exec(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `139738f7` (2026-10-30)
-**Commit Message**: Ensure hashing of type_id is for concrete type
+### Incident Patch 1: `6148ff16` (2026-10-14)
+**Commit Message**: Reject TLS1.3 negotiated via legacy_version
 
-Fix the tests for this feature so each tests precisely one
-change at a time, and is capable of resumption otherwise.
+TLS1.3 is only selectable through the supported_versions extension, and
+RFC 9846 section 4.2.3 requires aborting with a protocol_version alert
+when a TLS1.3 ServerHello carries a legacy_version other than 0x0303.
+The client previously honoured a legacy_version of 0x0304, negotiating
+TLS1.3 without the extension (and ignoring the extension when present),
+and never examined the HelloRetryRequest legacy_version at all.
 
-**File**: `rustls-test/tests/api/resume.rs` (modified, +64/-48)
+**File**: `bogo/src/main.rs` (modified, +6/-0)
 ```diff
-@@ -2,26 +2,27 @@
- 
- #![allow(clippy::disallowed_types, clippy::duplicate_mod)]
- 
-+use core::hash::Hasher;
- use core::sync::atomic::{AtomicUsize, Ordering};
- use core::time::Duration;
- use std::fmt;
- use std::sync::Arc;
- 
--use rustls::client::{Resumption, TicketRequest};
-+use rustls::client::{ClientCredentialResolver, CredentialRequest, Resumption, TicketRequest};
- use rustls::crypto::kx::NamedGroup;
--use rustls::crypto::{CertificateIdentity, Identity, TicketProducer};
--use rustls::enums::ProtocolVersion;
-+use rustls::crypto::{CertificateIdentity, Identity, SelectedCredential, TicketProducer};
-+use rustls::enums::{CertificateType, ProtocolVersion};
- use rustls::error::{ApiMisuse, Error, PeerMisbehaved};
- use rustls::server::{ServerSessionKey, Tls13Tickets};
- use rustls::{
-     ClientConfig, ClientSide, Connection, HandshakeKind, ServerConfig, ServerSide, Tcp, VecInput,
- };
- use rustls_test::{
--    ClientConfigExt, ClientStorage, ClientStorageOp, ErrorFromPeer, KeyType, MultiTest,
--    ServerConfigExt, do_handshake, do_handshake_collecting_early_data, do_handshake_until_error,
--    make_client_config, make_client_config_with_auth, make_client_config_with_kx_groups, make_pair,
--    make_pair_for_arc_configs, make_pair_for_configs, make_server_config,
--    make_server_config_with_kx_groups, transfer, webpki_server_verifier_builder,
-+    ClientStorage, ClientStorageOp, ErrorFromPeer, KeyType, MultiTest, ServerConfigExt,
-+    do_handshake, do_handshake_collecting_early_data, do_handshake_until_error, make_client_config,
-+    make_client_config_with_kx_groups, make_pair, make_pair_for_arc_configs, make_pair_for_configs,
-+    make_server_config, make_server_config_with_kx_groups, transfer,
-+    webpki_server_verifier_builder,
- };
- 
- use super::provider;
-@@ -80,14 +81,14 @@ fn client_only_attempts_resumption_with_compatible_security() {
-         assert_eq!(client.handshake_kind(), Some(HandshakeKind::Resumed));
- 
-         // disallowed case: unmatching `client_auth_cert_resolver`
--        let client_config = ClientConfig::builder(base_client_config.provider().clone())
--            .add_root_certs(expect.key_type)
--            .with_client_credential_resolver(
--                make_client_config_with_auth(expect.key_type, base_client_config.provider())
--                    .resolver()
--                    .clone(),
--            )
-+        let mut client_config = ClientConfig::builder(base_client_config.provider().clone())
-+            .dangerous()
-+            .with_custom_certificate_verifier(base_client_config.verifier().clone())
-+            .with_client_credential_resolver(Arc::new(ForwardingResolver(
-+                base_client_config.resolver().clone(),
-+            )))
-             .unwrap();
-+        client_config.resumption = base_client_config.resumption.clone();
- 
-         let mut client_output = Vec::new();
-         let mut server_output = Vec::new();
-@@ -107,39 +108,54 @@ fn client_only_attempts_resumption_with_compatible_security() {
-         assert_eq!(client.handshake_kind(), Some(HandshakeKind::Full));
- 
-         // disallowed case: unmatching `verifier`
--        if !expect.client_auth {
--            let mut client_config = ClientConfig::builder(base_client_config.provider().clone())
--                .dangerous()
--                .with_custom_certificate_verifier(Arc::new(
--                    webpki_server_verifier_builder(
--                        expect.key_type.client_root_store(),
--                        base_client_config.provider(),
--                    )
--                    .allow_unknown_revocation_status()
--                    .build()
--                    .unwrap(),
--                ))
--                .with_client_credential_resolver(client_config.resolver().clone())
--                .unwrap();
--            client_config.resumption = base_client_config.resumption.clone();
--
--            let mut client_output = Vec::new();
--            let mut server_output = Vec::new();
--            let (mut client, mut server) = make_pair_for_configs(
--                client_config,
--                ServerConfig::clone(&server_config),
--                &mut client_output,
--            );
--            do_handshake(
--                &mut client_input,
--                &mut client_output,
--                &mut client,
--                &mut server_input,
--                &mut server_output,
--                &mut server,
--            );
--            assert_eq!(client.handshake_kind(), Some(HandshakeKind::Full));
--        }
-+        let mut client_config = ClientConfig::builder(base_client_config.provider().clone())
-+            .dangerous()
-+            .with_custom_certificate_verifier(Arc::new(
-+                webpki_server_verifier_builder(
-+                    expect.key_type.client_root_store(),
-+                    base_client_config.provider(),
-+                )
-+                .allow_unknown_revocation_status()
-+                .build()
-+                .unwrap(),
-+            ))
-+            .
+@@ -980,6 +980,12 @@ fn handle_err(opts: &Options, err: Error) -> ! {
+         Error::PeerMisbehaved(PeerMisbehaved::SelectedTls12UsingTls13VersionExtension) => {
+             quit(":SELECTED_TLS12_USING_TLS13_VERSION_EXTENSION:")
+         }
++        Error::PeerMisbehaved(PeerMisbehaved::SelectedTls13UsingLegacyVersionField) => {
++            quit(":SELECTED_TLS13_USING_LEGACY_VERSION_FIELD:")
++        }
++        Error::PeerMisbehaved(PeerMisbehaved::IllegalHelloRetryRequestWithWrongLegacyVersion) => {
++            quit(":ILLEGAL_HELLO_RETRY_REQUEST_WITH_WRONG_LEGACY_VERSION:")
++        }
+         Error::PeerMisbehaved(PeerMisbehaved::OfferedIncorrectCompressions) => {
+             quit(":INVALID_COMPRESSION_LIST:")
+         }
 ```
 
-**File**: `rustls/src/client/config.rs` (modified, +9/-13)
+**File**: `rustls/src/client/hs.rs` (modified, +18/-0)
 ```diff
-@@ -78,12 +78,14 @@ pub struct ClientConfig {
-     /// configs share a single [`Resumption`].
-     ///
-     /// However, resumption is only allowed between two `ClientConfig`s if their
--    /// `client_auth_cert_resolver` (ie, potential client authentication credentials)
--    /// and `verifier` (ie, server certificate verification settings):
-+    /// `client_auth_cert_resolver` (ie, potential client authentication credentials),
-+    /// `verifier` (ie, server certificate verification settings), and `time_provider`
-+    /// (ie, verification time source):
-     ///
-     /// - are the same type (determined by hashing their `TypeId`), and
-     /// - input the same data into [`ServerVerifier::hash_config()`] and
--    ///   [`ClientCredentialResolver::hash_config()`].
-+    ///   [`ClientCredentialResolver::hash_config()`] (note that time providers are
-+    ///   assumed to have no state and do not have a `hash_config()`.)
-     ///
-     /// To illustrate, imagine two `ClientConfig`s `A` and `B`.  `A` fully validates
-     /// the server certificate, `B` does not.  If `A` and `B` shared a resumption store,
-@@ -387,7 +389,7 @@ impl ClientSessionKey<'_> {
+@@ -222,10 +222,20 @@ impl ExpectServerHello {
  
- /// A trait for the ability to choose a certificate chain and
- /// private key for the purposes of client authentication.
--pub trait ClientCredentialResolver: fmt::Debug + Send + Sync {
-+pub trait ClientCredentialResolver: fmt::Debug + Send + Sync + Any {
-     /// Resolve a client certificate chain/private key to use as the client's identity.
-     ///
-     /// The [`SelectedCredential`] returned from this method contains an identity and a
-@@ -496,19 +498,13 @@ impl SecurityDomain {
+         let config = &self.input.config;
  
-         // Include TypeId of impl, so two different types with different non-configured
-         // behavior do not collide even if their `hash_config()`s are the same.
--        client_auth_cert_resolver
--            .type_id()
--            .hash(&mut DynHasher(&mut adapter));
-+        Any::type_id(client_auth_cert_resolver.as_ref()).hash(&mut DynHasher(&mut adapter));
-         client_auth_cert_resolver.hash_config(&mut adapter);
++        // TLS1.3 is selected with the `supported_versions` extension alone;
++        // a server doing so sets `legacy_version` to TLS1.2, and without the
++        // extension a ServerHello negotiates "TLS 1.2 or prior":
++        //
++        // > A client which receives a TLS 1.3 Server Hello with a
++        // > legacy_version value not equal to 0x0303 MUST abort the handshake
++        // > with a "protocol_version" alert.
++        // <https://www.rfc-editor.org/rfc/rfc9846#section-4.2.3>
+         let server_version = if server_hello.legacy_version == ProtocolVersion::TLSv1_2 {
+             server_hello
+                 .selected_version
+                 .unwrap_or(server_hello.legacy_version)
++        } else if server_hello.legacy_version == ProtocolVersion::TLSv1_3 {
++            return Err(PeerMisbehaved::SelectedTls13UsingLegacyVersionField.into());
+         } else {
+             server_hello.legacy_version
+         };
+@@ -335,6 +345,14 @@ impl ExpectServerHelloOrHelloRetryRequest {
+             return Err(PeerMisbehaved::IllegalHelloRetryRequestWithWrongSessionId.into());
+         }
  
--        verifier
--            .type_id()
--            .hash(&mut DynHasher(&mut adapter));
-+        Any::type_id(verifier.as_ref()).hash(&mut DynHasher(&mut adapter));
-         verifier.hash_config(&mut adapter);
- 
--        time_provider
--            .type_id()
--            .hash(&mut DynHasher(&mut adapter));
-+        Any::type_id(time_provider.as_ref()).hash(&mut DynHasher(&mut adapter));
- 
-         let config_hash = h.finish().as_ref()[..32]
-             .try_into()
++        // Or carries a `legacy_version` other than TLS1.2, which (given the
++        // shared meaning above) requires the same "protocol_version" abort as
++        // for a ServerHello.
++        // <https://www.rfc-editor.org/rfc/rfc9846#section-4.2.3>
++        if hrr.legacy_version != ProtocolVersion::TLSv1_2 {
++            return Err(PeerMisbehaved::IllegalHelloRetryRequestWithWrongLegacyVersion.into());
++        }
++
+         // Or asks us to talk a protocol we didn't offer, or doesn't support HRR at all.
+         let Some(ProtocolVersion::TLSv1_3) = hrr.supported_versions else {
+             return Err(PeerMisbehaved::IllegalHelloRetryRequestWithUnsupportedVersion.into());
 ```
 
-**File**: `rustls/src/client/test.rs` (modified, +80/-4)
+**File**: `rustls/src/client/test.rs` (modified, +98/-4)
 ```diff
-@@ -9,18 +9,19 @@ use std::vec;
- 
- use pki_types::{CertificateDer, FipsStatus, ServerName, UnixTime};
- 
-+use super::handy::FailResolveClientCert;
- use super::{Tls12Session, Tls13ClientSessionInput, Tls13Session};
- use crate::client::{
--    ClientConfig, ClientSessionKey, ClientSessionMemoryCache, ClientSessionStore, Resumption,
--    Tls12Resumption,
-+    ClientConfig, ClientCredentialResolver, ClientSessionKey, ClientSessionMemoryCache,
-+    ClientSessionStore, CredentialRequest, Resumption, Tls12Resumption,
- };
- use crate::crypto::cipher::{EncodableVersion, Payload, Record, RecordEncrypter};
- use crate::crypto::kx::{self, NamedGroup, SharedSecret, StartedKeyExchange, SupportedKxGroup};
- use crate::crypto::test_provider::{FakeKeyExchangeGroup, KEY_EXCHANGE_GROUP, TLS_TEST_SUITE};
- use crate::crypto::tls13::OkmBlock;
- use crate::crypto::{
--    CipherSuite, Credentials, CryptoProvider, Identity, SignatureScheme, SingleCredential,
--    TEST_PROVIDER, TLS13_TEST_SUITE, tls12_only, tls13_only, tls13_suite,
-+    CipherSuite, Credentials, CryptoProvider, Identity, SelectedCredential, SignatureScheme,
-+    SingleCredential, TEST_PROVIDER, TLS13_TEST_SUITE, tls12_only, tls13_only, tls13_suite,
- };
- use crate::enums::{CertificateType, HandshakeType, ProtocolVersion};
- use crate::error::{Error, PeerIncompatible, PeerMisbehaved};
-@@ -37,6 +38,7 @@ use crate::pki_types::PrivateKeyDer;
- use crate::pki_types::pem::PemObject;
- use crate::suites::Suite;
- use crate::sync::Arc;
-+use crate::time_provider::{DefaultTimeProvider, TimeProvider};
- use crate::tls13::Tls13ProtocolSuite;
- use crate::tls13::key_schedule::{derive_traffic_iv, derive_traffic_key};
- use crate::verify::{
-@@ -636,6 +638,80 @@ impl ServerVerifier for ExpectSha1EcdsaVerifier {
-     fn hash_config(&self, _: &mut dyn Hasher) {}
+@@ -283,7 +283,7 @@ fn test_client_rejects_server_hello_with_varied_session_id() {
+                 random: Random([0; 32]),
+                 compression_method: Compression::Null,
+                 cipher_suite: TLS13_TEST_SUITE.suite(),
+-                legacy_version: ProtocolVersion::TLSv1_3,
++                legacy_version: ProtocolVersion::TLSv1_2,
+                 session_id: SessionId::empty(),
+                 extensions: Box::new(ServerExtensions {
+                     key_share: Some(KeyShareEntry {
+@@ -295,6 +295,7 @@ fn test_client_rejects_server_hello_with_varied_session_id() {
+                             .to_vec()
+                             .into(),
+                     }),
++                    selected_version: Some(ProtocolVersion::TLSv1_3),
+                     ..ServerExtensions::default()
+                 }),
+             },
+@@ -311,6 +312,94 @@ fn test_client_rejects_server_hello_with_varied_session_id() {
+     );
  }
  
 +#[test]
-+fn config_hash_includes_concrete_type_of_each_component() {
-+    fn config_hash(
-+        time_provider: Arc<dyn TimeProvider>,
-+        verifier: Arc<dyn ServerVerifier>,
-+        resolver: Arc<dyn ClientCredentialResolver>,
-+    ) -> [u8; 32] {
-+        ClientConfig::builder_with_details(Arc::new(TEST_PROVIDER), time_provider)
-+            .dangerous()
-+            .with_custom_certificate_verifier(verifier)
-+            .with_client_credential_resolver(resolver)
-+            .unwrap()
-+            .config_hash()
-+    }
++fn test_client_rejects_server_hello_with_tls13_legacy_version() {
++    let config = ClientConfig::builder(Arc::new(tls13_only(TEST_PROVIDER.clone())))
++        .with_root_certificates(roots())
++        .with_no_client_auth()
++        .unwrap();
++    let mut tls = Vec::new();
++    let mut conn = Arc::new(config)
++        .connect(ServerName::try_from("localhost").unwrap())
++        .build(&mut tls)
++        .unwrap();
 +
-+    let base = || {
-+        config_hash(
-+            Arc::new(DefaultTimeProvider),
-+            Arc::new(ServerVerifierRequiringRpk),
-+            Arc::new(FailResolveClientCert {}),
-+        )
++    // server tries to select TLS1.3 with `legacy_version` instead of
++    // the `supported_versions` extension.
++    let sh = Message {
++        version: EncodableVersion::Legacy(ProtocolVersion::TLSv1_3),
++        payload: MessagePayload::handshake(HandshakeMessagePayload(HandshakePayload::ServerHello(
++            ServerHelloPayload {
++                random: Random([0; 32]),
++                compression_method: Compression::Null,
++                cipher_suite: TLS13_TEST_SUITE.suite(),
++                legacy_version: ProtocolVersion::TLSv1_3,
++                session_id: client_hello_in(&tls).session_id,
++                extensions: Box::new(ServerExtensions {
++                    key_share: Some(KeyShareEntry {
++                        group: KEY_EXCHANGE_GROUP.name(),
++                        payload: KEY_EXCHANGE_GROUP
++                            .start()
++                            .unwrap()
++                            .pub_key()
++                            .to_vec()
++                            .into(),
++                    }),
++                    ..ServerExtensions::default()
++                }),
++            },
++        ))),
 +    };
-+    assert_eq!(base(), base());
 +
-+    assert_ne!(
-+        base(),
-+        config_hash(
-+            Arc::new(FixedTimeProvider),
-+            Arc::new(ServerVerifierRequiringRpk),
-+            Arc::new(FailResolveClientCert {}),
-+        )
-+    );
-+    assert_ne!(
-+        base(),
-+        config_hash(
-+            Arc::new(DefaultTimeProvider),
-+            Arc::new(ExpectSha1EcdsaVerifier::default()),
-+            Arc::new(FailResolveClientCert {}),
-+        )
-+    );
-+    assert_ne!(
-+        base(),
-+        config_hash(
-+            Arc::new(DefaultTimeProvider),
-+            Arc::new(ServerVerifierRequiringRpk),
-+            Arc::new(NoCredentialResolver),
-+        )
++    let mut input = VecInput::default();
++    input
++        .read(&mut sh.into_wire_bytes().as_slice())
++        .unwrap();
++    assert_eq!(
++        process(&mut input, &mut conn).unwrap_err(),
++        PeerMisbehaved::SelectedTls13UsingLegacyVersionField.into()
 +    );
 +}
 +
-+#[derive(Debug)]
-+struct FixedTimeProvider;
++#[test]
++fn test_client_rejects_hrr_with_wrong_legacy_version() {
++    let config = ClientConfig::builder(Arc::new(TEST_PROVIDER.clone()))
++        .with_root_certificates(roots())
++        .with_no_client_auth()
++        .unwrap();
++    let mut tls = Vec::new();
++    let mut conn = Arc::new(config)
++        .connect(ServerName::try_from("localhost").unwrap())
++        .build(&mut tls)
++        .unwrap();
 +
-+impl TimeProvider for FixedTimeProvider {
-+    fn current_time(&self) -> Option<UnixTime> {
-+        Some(UnixTime::since_unix_epoch(Duration::from_secs(1)))
-+    }
-+}
++    // server replies with an otherwise-acceptable HRR whose `legacy_version`
++    // is not TLS1.2.
++    let hrr = Message {
++        version: EncodableVersion::Legacy(ProtocolVersion::TLSv1_3),
++        payload: MessagePayload::handshake(HandshakeMessagePayload(
++            HandshakePayload::HelloRetryRequest(HelloRetryRequest {
++                cipher_suite: CipherSuite::TLS13_AES_128_GCM_SHA256,
++                legacy_version: ProtocolVersion::TLSv1_3,
++                session_id: client_hello_in(&tls).session_id,
++                extensions: HelloRetryRequestExtensions {
++                    cookie: Some(SizedPayload::from(vec![1, 2, 3, 4])),
++                    ..HelloRetryRequestExtensions::default()
++                },
++            }),
++        )),
++    };
 +
-+#[derive(Debug)]
-+struct NoCredentialResolver;
-+
-+impl ClientCredentialResolver for NoCredentialResolver {
-+    fn resolve(&self, _: &CredentialRequest<'_>) -> Option<SelectedCredential> {
-+        None
-+    }
-+
-+    fn supported_certificate_types(&self) -> &'static [CertificateType] {
-+        &[]
-+    }
-+
-+    fn hash_config(&self, _: &mut dyn Hasher) {}
++    let mut input = VecInput::default();
++    input
++        .read(&mut hrr.into_wire_bytes().as_slice())
++        .unwrap();
++    assert_eq!(
++        process(&mut input, &mut conn).unwrap_err(),
++        PeerMisbehaved::IllegalHelloRetryRequestWithWrongLegacyVersion.into()
++    );
 +}
 +
  #[test]
- fn test_client_requiring_rpk_rejects_server_that_only_offers_x509_id_by_omission() {
-     client_requiring_rpk_receives_server_ee(
+ fn test_client_rejects_tls12_server_hello_echoing_compatibility_session_id() {
+     let config = ClientConfig::builder(Arc::new(TEST_PROVIDER.clone()))
+@@ -804,7 +893,7 @@ fn client_requiring_rpk_receives_server_ee(
+                 random: Random([0; 32]),
+                 compression_method: Compression::Null,
+                 cipher_suite: TLS13_TEST_SUITE.suite(),
+-                legacy_version: ProtocolVersion::TLSv1_3,
++                legacy_version: ProtocolVersion::TLSv1_2,
+                 session_id: client_hello_in(&tls).session_id,
+                 extensions: Box::new(ServerExtensions {
+                     key_share: Some(KeyShareEntry {
+@@ -8
 ```
 
-**File**: `rustls/src/time_provider.rs` (modified, +2/-1)
+**File**: `rustls/src/error/mod.rs` (modified, +5/-0)
 ```diff
-@@ -1,5 +1,6 @@
- //! The library's source of time.
+@@ -1201,6 +1201,7 @@ pub enum PeerMisbehaved {
+     IllegalHelloRetryRequestWithUnofferedCipherSuite,
+     IllegalHelloRetryRequestWithUnofferedNamedGroup,
+     IllegalHelloRetryRequestWithUnsupportedVersion,
++    IllegalHelloRetryRequestWithWrongLegacyVersion,
+     IllegalHelloRetryRequestWithWrongSessionId,
+     IllegalHelloRetryRequestWithInvalidEch,
+     IllegalMiddleboxChangeCipherSpec,
+@@ -1239,6 +1240,7 @@ pub enum PeerMisbehaved {
+     SelectedDifferentProtocolVersionAfterRetry,
+     SelectedInvalidPsk,
+     SelectedTls12UsingTls13VersionExtension,
++    SelectedTls13UsingLegacyVersionField,
+     SelectedUnofferedApplicationProtocol,
+     SelectedUnofferedCertCompression,
+     SelectedUnofferedCipherSuite,
+@@ -1300,6 +1302,9 @@ impl From<PeerMisbehaved> for AlertDescription {
  
-+use core::any::Any;
- use core::fmt::Debug;
+             PeerMisbehaved::NonEmptyRenegotiationInfo => Self::HandshakeFailure,
  
- use pki_types::UnixTime;
-@@ -8,7 +9,7 @@ use pki_types::UnixTime;
- ///
- /// This is used to, for example, check if a certificate has expired during
- /// certificate validation, or to check the age of a ticket.
--pub trait TimeProvider: Debug + Send + Sync {
-+pub trait TimeProvider: Debug + Send + Sync + Any {
-     /// Returns the current wall time.
-     ///
-     /// This is not required to be monotonic.
++            PeerMisbehaved::IllegalHelloRetryRequestWithWrongLegacyVersion
++            | PeerMisbehaved::SelectedTls13UsingLegacyVersionField => Self::ProtocolVersion,
++
+             _ => Self::IllegalParameter,
+         }
+     }
 ```
 
-**File**: `rustls/src/verify.rs` (modified, +2/-1)
+---
+
+### Incident Patch 2: `09d2baa2` (2026-10-16)
+**Commit Message**: bogo: only request OCSP with -enable-ocsp-stapling
+
+This lets SendUnsolicitedOCSPOnCertificate-TLS13 run.
+
+**File**: `bogo/config.json.in` (modified, +0/-1)
 ```diff
-@@ -1,4 +1,5 @@
- use alloc::vec::Vec;
-+use core::any::Any;
- use core::fmt::Debug;
- use core::hash::Hasher;
- use core::ops::Deref;
-@@ -25,7 +26,7 @@ use crate::x509::wrap_in_sequence;
+@@ -97,7 +97,6 @@
+     "SendClientVersion-RSA": "no rsa kem",
+     "SendFallbackSCSV": "fallback scsv not implemented",
+     "SendSCTListOnResume-TLS-TLS12": "no sct stapling",
+-    "SendUnsolicitedOCSPOnCertificate-TLS13": "we unconditionally request a stapled OCSP response",
+     "SendUnsolicitedSCTOnCertificate-TLS13": "SCT stapling not supported",
+     "SendV2ClientHello-*": "we only support >=TLS1.2",
+     "Server-JDK11*": "workarounds for oracle engineering quality",
+```
+
+**File**: `bogo/src/client.rs` (modified, +5/-1)
+```diff
+@@ -72,6 +72,7 @@ pub(crate) fn config(opts: &Options, key_log: &Arc<KeyLogMemo>) -> Arc<ClientCon
+         .with_custom_certificate_verifier(Arc::new(DummyServerAuth::new(
+             &opts.trusted_cert_file,
+             opts.ocsp,
++            opts.enable_ocsp_stapling,
+             opts.expected_server_names(),
+             &provider,
+         )));
+@@ -154,6 +155,7 @@ pub(crate) fn config(opts: &Options, key_log: &Arc<KeyLogMemo>) -> Arc<ClientCon
+ struct DummyServerAuth {
+     parent: Arc<dyn ServerVerifier>,
+     ocsp: OcspValidation,
++    enable_ocsp_stapling: bool,
+     expect_server_names: Vec<ServerName<'static>>,
+     server_name_index: AtomicUsize,
+ }
+@@ -162,6 +164,7 @@ impl DummyServerAuth {
+     fn new(
+         trusted_cert_file: &str,
+         ocsp: OcspValidation,
++        enable_ocsp_stapling: bool,
+         expect_server_names: Vec<ServerName<'static>>,
+         provider: &CryptoProvider,
+     ) -> Self {
+@@ -172,6 +175,7 @@ impl DummyServerAuth {
+                     .unwrap(),
+             ),
+             ocsp,
++            enable_ocsp_stapling,
+             expect_server_names,
+             server_name_index: AtomicUsize::new(0),
+         }
+@@ -216,7 +220,7 @@ impl ServerVerifier for DummyServerAuth {
+     }
  
- /// Something that can verify a server certificate chain, and verify
- /// signatures made by certificates.
--pub trait ServerVerifier: Debug + Send + Sync {
-+pub trait ServerVerifier: Debug + Send + Sync + Any {
-     /// Verify the server's identity.
-     ///
-     /// Note that none of the certificates have been parsed yet, so it is the responsibility of
+     fn request_ocsp_response(&self) -> bool {
+-        true
++        self.enable_ocsp_stapling
+     }
+ 
+     fn hash_config(&self, h: &mut dyn Hasher) {
+```
+
+**File**: `bogo/src/opts.rs` (modified, +5/-1)
+```diff
+@@ -47,6 +47,7 @@ pub(crate) struct Options {
+     pub(crate) max_version: Option<ProtocolVersion>,
+     pub(crate) min_version: Option<ProtocolVersion>,
+     pub(crate) ocsp: OcspValidation,
++    pub(crate) enable_ocsp_stapling: bool,
+     pub(crate) offer_no_client_cas: bool,
+     pub(crate) on_initial_expect_curve_id: Option<NamedGroup>,
+     pub(crate) on_initial_expect_ech_accept: bool,
+@@ -136,6 +137,7 @@ impl Options {
+             max_version: None,
+             min_version: None,
+             ocsp: OcspValidation::default(),
++            enable_ocsp_stapling: false,
+             offer_no_client_cas: false,
+             on_initial_expect_curve_id: None,
+             on_initial_expect_ech_accept: false,
+@@ -646,6 +648,9 @@ impl Options {
+             "-server-preference" => {
+                 self.server_preference = true;
+             }
++            "-enable-ocsp-stapling" => {
++                self.enable_ocsp_stapling = true;
++            }
+             "-fail-ocsp-callback" => {
+                 self.ocsp = OcspValidation::Reject;
+             }
+@@ -663,7 +668,6 @@ impl Options {
+             // defaults:
+             "-decline-alpn"
+             | "-enable-all-curves"
+-            | "-enable-ocsp-stapling"
+             | "-expect-no-session"
+             | "-expect-ticket-renewal"
+             | "-forbid-renegotiation-after-handshake"
 ```
 
 #### Recent Merged Pull Requests:
@@ -2624,65 +2621,33 @@ change at a time, and is capable of resumption otherwise.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Ensure hashing of type_id is for concrete type
+## X. Reject TLS1.3 negotiated via legacy_version
 
 **RULE**:
-When implementing operations in `rustls-test/tests/api/resume.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bogo/src/main.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `139738f7`: Ensure hashing of type_id is for concrete type. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6148ff16`: Reject TLS1.3 negotiated via legacy_version. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls-test/tests/api/resume.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `bogo/src/main.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use core::hash::Hasher;
-use rustls::client::{ClientCredentialResolver, CredentialRequest, Resumption, TicketRequest};
-use rustls::crypto::{CertificateIdentity, Identity, SelectedCredential, TicketProducer};
-use rustls::enums::{CertificateType, ProtocolVersion};
-    ClientStorage, ClientStorageOp, ErrorFromPeer, KeyType, MultiTest, ServerConfigExt,
-    do_handshake, do_handshake_collecting_early_data, do_handshake_until_error, make_client_config,
-    make_client_config_with_kx_groups, make_pair, make_pair_for_arc_configs, make_pair_for_configs,
-    make_server_config, make_server_config_with_kx_groups, transfer,
-    webpki_server_verifier_builder,
-        let mut client_config = ClientConfig::builder(base_client_config.provider().clone())
-            .dangerous()
-            .with_custom_certificate_verifier(base_client_config.verifier().clone())
-            .with_client_credential_resolver(Arc::new(ForwardingResolver(
-                base_client_config.resolver().clone(),
-            )))
-        client_config.resumption = base_client_config.resumption.clone();
-        let mut client_config = ClientConfig::builder(base_client_config.provider().clone())
-            .dangerous()
-     
+        Error::PeerMisbehaved(PeerMisbehaved::SelectedTls13UsingLegacyVersionField) => {
+            quit(":SELECTED_TLS13_USING_LEGACY_VERSION_FIELD:")
+        }
+        Error::PeerMisbehaved(PeerMisbehaved::IllegalHelloRetryRequestWithWrongLegacyVersion) => {
+            quit(":ILLEGAL_HELLO_RETRY_REQUEST_WITH_WRONG_LEGACY_VERSION:")
+        }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use rustls::client::{Resumption, TicketRequest};
-use rustls::crypto::{CertificateIdentity, Identity, TicketProducer};
-use rustls::enums::ProtocolVersion;
-    ClientConfigExt, ClientStorage, ClientStorageOp, ErrorFromPeer, KeyType, MultiTest,
-    ServerConfigExt, do_handshake, do_handshake_collecting_early_data, do_handshake_until_error,
-    make_client_config, make_client_config_with_auth, make_client_config_with_kx_groups, make_pair,
-    make_pair_for_arc_configs, make_pair_for_configs, make_server_config,
-    make_server_config_with_kx_groups, transfer, webpki_server_verifier_builder,
-        let client_config = ClientConfig::builder(base_client_config.provider().clone())
-            .add_root_certs(expect.key_type)
-            .with_client_credential_resolver(
-                make_client_config_with_auth(expect.key_type, base_client_config.provider())
-                    .resolver()
-                    .clone(),
-            )
-        if !expect.client_auth {
-            let mut client_config = ClientConfig::builder(base_client_config.provider().clone())
-                .dangerous()
-                .with_custom_certificate_verifier(Arc::new(
-                    webpki_server_veri
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `139738f7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6148ff16` are properly handled with clean fallback behavior.

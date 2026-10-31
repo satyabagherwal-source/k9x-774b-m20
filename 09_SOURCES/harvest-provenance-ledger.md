@@ -6582,3 +6582,7 @@ Every entry in this ledger must capture:
 | `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `dd4fca39` | Multi-dimensional audit evidence | 2026-10-31T12:59:57.588Z |
 | `learn-github-insertkoinio-koin` | `https://github.com/InsertKoinIO/koin` | `d486a5e8` | Multi-dimensional audit evidence | 2026-10-31T13:00:02.533Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `fef259d7` | Multi-dimensional audit evidence | 2026-10-31T13:00:10.288Z |
+| `learn-github-lysine-dev-okio` | `https://github.com/lysine-dev/okio` | `61d53efb` | Multi-dimensional audit evidence | 2026-10-31T13:06:42.242Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `6148ff16` | Multi-dimensional audit evidence | 2026-10-31T13:06:48.090Z |
+| `learn-huggingface-google-t5-t5-small` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-31T13:06:48.514Z |
+| `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `8602a9e3` | Multi-dimensional audit evidence | 2026-10-31T13:06:49.262Z |

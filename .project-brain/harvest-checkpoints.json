@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T13:00:10.317Z",
+  "last_updated": "2026-10-31T13:06:49.273Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -965,14 +965,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-t5-t5-small",
-      "content_hash": "494705963e9f182b0136a8961aaca272cf78660c16424852447fc898a73e9734",
-      "verified_at": "2026-10-28T12:39:58.537Z",
+      "content_hash": "adefac1508ef34c12533536a8c2078fade8f5b084958b5f4053bd326da5d28bc",
+      "verified_at": "2026-10-31T13:06:48.522Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T12:39:58.537Z"
+      "last_updated": "2026-10-31T13:06:48.522Z"
     },
     "maxrave-dev/kotlin-footguns": {
       "repository": "maxrave-dev/kotlin-footguns",
@@ -4176,14 +4176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustls-rustls",
-      "content_hash": "62e1646e0835f09a6914031223a78eaa2bc9031a6169525c1a0db2f440d79f4e",
-      "verified_at": "2026-10-31T00:41:22.987Z",
+      "content_hash": "73c11ee134e3ff0a30e59af03d2772c5d2175defa86ce83d4e19b0a7506289d8",
+      "verified_at": "2026-10-31T13:06:48.097Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T00:41:22.987Z"
+      "last_updated": "2026-10-31T13:06:48.097Z"
     },
     "liyupi/yu-ai-agent": {
       "repository": "liyupi/yu-ai-agent",
@@ -5151,14 +5151,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-seekstorm-seekstorm",
-      "content_hash": "2e409d6ceacbff11744739de1e1f1d0625d7c484c0789debd62a824fec40f8d7",
-      "verified_at": "2026-10-27T19:32:08.223Z",
+      "content_hash": "3dbafd230c17e5d530b8da2698c640584b667cdf197caa186af75ebe15d4aa67",
+      "verified_at": "2026-10-31T13:06:49.272Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T19:32:08.223Z"
+      "last_updated": "2026-10-31T13:06:49.272Z"
     },
     "serafimcloud/21st": {
       "repository": "serafimcloud/21st",
@@ -10041,14 +10041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lysine-dev-okio",
-      "content_hash": "6fa84d1f7b6c76c28639b425ee987c529f91bfa784a13b741200c170a89095ef",
-      "verified_at": "2026-10-27T22:49:52.101Z",
+      "content_hash": "edbe568eb6700e0216b498ae29ea2aadd26d8f01d4afb9fe0d369a0dc65ad1d4",
+      "verified_at": "2026-10-31T13:06:42.250Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T22:49:52.101Z"
+      "last_updated": "2026-10-31T13:06:42.250Z"
     },
     "nginx/kubernetes-ingress": {
       "repository": "nginx/kubernetes-ingress",

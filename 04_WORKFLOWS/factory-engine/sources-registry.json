@@ -1,21 +1,20 @@
 {
   "rustls-rustls": {
-    "name": "rustls",
+    "name": "rustls/rustls",
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T09:36:51.823Z",
-    "lastVerified": "2026-10-31T09:36:51.823Z",
+    "lastChecked": "2026-10-31T13:06:47.232Z",
+    "lastVerified": "2026-10-31T13:06:47.232Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
-    "contentHash": "62e1646e0835f09a6914031223a78eaa2bc9031a6169525c1a0db2f440d79f4e",
+    "contentHash": "73c11ee134e3ff0a30e59af03d2772c5d2175defa86ce83d4e19b0a7506289d8",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "139738f7"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tanstack-router": {
     "name": "router",
@@ -40,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T13:00:12.839Z",
-    "lastVerified": "2026-10-31T13:00:12.839Z",
+    "lastChecked": "2026-10-31T13:06:51.918Z",
+    "lastVerified": "2026-10-31T13:06:51.918Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -243,12 +242,12 @@
     "revisionIdentifier": "3a8f3f35"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T12:39:41.713Z",
-    "lastVerified": "2026-10-31T12:39:41.713Z",
+    "lastChecked": "2026-10-31T13:06:48.546Z",
+    "lastVerified": "2026-10-31T13:06:48.546Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -257,7 +256,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6fee7dae"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -3715,11 +3715,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "seekstorm-seekstorm": {
-    "name": "SeekStorm",
+    "name": "SeekStorm/SeekStorm",
     "officialUrl": "https://github.com/SeekStorm/SeekStorm",
-    "lastChecked": "2026-10-30T20:36:22.145Z",
-    "revisionIdentifier": "ab61bc73",
-    "lastVerified": "2026-10-30T20:36:22.145Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-31T13:06:49.011Z",
+    "lastVerified": "2026-10-31T13:06:49.011Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-seekstorm-seekstorm",
+    "contentHash": "3dbafd230c17e5d530b8da2698c640584b667cdf197caa186af75ebe15d4aa67",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "pemistahl-grex": {
     "name": "grex",
@@ -3833,13 +3843,13 @@
     "officialUrl": "https://huggingface.co/google-t5/t5-small",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T12:36:46.818Z",
-    "lastVerified": "2026-10-28T12:36:46.818Z",
+    "lastChecked": "2026-10-31T13:06:36.053Z",
+    "lastVerified": "2026-10-31T13:06:36.053Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-google-t5-t5-small",
-    "contentHash": "494705963e9f182b0136a8961aaca272cf78660c16424852447fc898a73e9734",
-    "promotedRulesCount": 2,
+    "contentHash": "adefac1508ef34c12533536a8c2078fade8f5b084958b5f4053bd326da5d28bc",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -4822,12 +4832,12 @@
     "lastVerified": "2026-10-31T09:46:57.373Z"
   },
   "aquasecurity-trivy": {
-    "name": "aquasecurity/trivy",
+    "name": "trivy",
     "officialUrl": "https://github.com/aquasecurity/trivy",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T21:30:00.141Z",
-    "lastVerified": "2026-10-30T21:30:00.141Z",
+    "lastChecked": "2026-10-31T13:06:41.034Z",
+    "lastVerified": "2026-10-31T13:06:41.034Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aquasecurity-trivy",
@@ -4836,7 +4846,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e2c05f7a"
   },
   "amrdeveloper-gql": {
     "name": "GQL",
@@ -6449,11 +6460,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "lysine-dev-okio": {
-    "name": "okio",
+    "name": "lysine-dev/okio",
     "officialUrl": "https://github.com/lysine-dev/okio",
-    "lastChecked": "2026-10-28T17:42:44.716Z",
-    "revisionIdentifier": "3377b13c",
-    "lastVerified": "2026-10-28T17:42:44.716Z"
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-10-31T13:06:41.528Z",
+    "lastVerified": "2026-10-31T13:06:41.528Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-lysine-dev-okio",
+    "contentHash": "edbe568eb6700e0216b498ae29ea2aadd26d8f01d4afb9fe0d369a0dc65ad1d4",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "juicedata-juicefs": {
     "name": "juicedata/juicefs",
@@ -6863,9 +6884,9 @@
   "medialab-xan": {
     "name": "xan",
     "officialUrl": "https://github.com/medialab/xan",
-    "lastChecked": "2026-10-30T16:29:43.129Z",
+    "lastChecked": "2026-10-31T13:06:33.506Z",
     "revisionIdentifier": "15b46b5a",
-    "lastVerified": "2026-10-30T16:29:43.129Z"
+    "lastVerified": "2026-10-31T13:06:33.506Z"
   },
   "hf-zai-org-glm-5.3": {
     "name": "zai-org/GLM-5.3",

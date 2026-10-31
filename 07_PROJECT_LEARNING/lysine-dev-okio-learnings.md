@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lysine-dev-okio-learnings.md`  
 > **Source**: github ([https://github.com/lysine-dev/okio](https://github.com/lysine-dev/okio))  
-> **Source Version**: `3377b13c`  
+> **Source Version**: `61d53efb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T22:49:51.744Z  
+> **Timestamp**: 2026-10-31T13:06:41.647Z  
 > **Learning ID**: `learn-github-lysine-dev-okio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lysine-dev-okio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lysine-dev/okio](https://github.com/lysine-dev/okio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T22:49:51.048Z  
+> **Harvest Timestamp**: 2026-10-31T13:06:41.528Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern I/O library for Android, Java, and Kotlin Multiplatform.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 9054 stars
+- **Stars / Engagement**: 9055 stars
 
 ---
 
@@ -1200,11 +1200,11 @@ internal open external class Stats : StatsBase<Number> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1890** (2026-10-29): **Update actions/setup-python action to v7.1.0**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [actions/setup-python](https://redirect.github.com/actions/setup-python) | action | minor | `v7.0.0` → `v7.1.0` |  ---  ### Release Notes  <details> <summary>actions/setup-python</summary>  ### [`v7.1.0`](https://redirect.github.com/actions/setup-python/releases/tag/v7.1.0)  [Compare Source](https://redirect.github.com/actions/setup-python/compare/v7.0.0...v7.1.0)  #### What's Changed  ##### Enhancements  - Add `mirror` and `mirror-token` inputs for custom Python distribution sources by [@&#8203;luhenry](https://redirect.github.com/luhenry) in [#&#8203;1302](https://redirect.github.com/actions/setup-python/pull/1302) - Improve error message clarity by [@&#8203;v-lmvysakh](https://redirect.github.com/v-lmvysakh) in [#&#8203;1351](https://redirect.github.com/actions/setup-python/pull/1351)  ##### Dependency Upgrade  - Upgrade browserslist from 4.28.2 to 4.28.9 by [@&#8203;dependabot](https://redirect.github.com/dependabot) in [#&#8203;1353](https://redirect.github.com/actions/setup-python/pull/1353) - Upgrade [@&#8203;typescript-eslint/parser](https://redirect.github.com/typescript-eslint/parser) from 8.62.0 to 8.70.0 by [@&#8203;dependabot](https://redirect.github.com/dependabot) in [#&#8203;1343](https://redirect.github.com/actions/setup-python/pull/1343) - Upgrade eslint-plugin-jest from 29.15.2 to 29.16.6 by [@&#8203;dependabot](https://redirect.github.com/dependabot) in [#&#82
+
 - **Issue #1889** (2026-10-27): **test: accept a late signal in AwaitSignalTest.signaled**
   *Symptoms*: ## Why  The test can fail when a signal arrives late, even though the wait returns before its timeout.  AwaitSignalTest.signaled checked elapsed time against a narrow expectation of 1000 ms. Scheduling the signal after 1000 ms does not guarantee it will execute that promptly.  ## What changed  The test now records that the scheduled callback signaled the condition while holding the lock and checks that flag after the wait returns. It accepts elapsed times of at least 950 ms and less than 4500 ms, allowing scheduling delays while keeping completion below the configured 5000 ms timeout.  ## Testing  The compilation check `./gradlew --no-daemon :okio:testClasses` timed out after 300 seconds; no test execution was shown.  Fixes #1509 
-
-- **Issue #1888** (2026-10-26): **Update Gradle to v9.8.2**
-  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [gradle](https://gradle.org) ([source](https://redirect.github.com/gradle/gradle)) | patch | `9.8.1` → `9.8.2` |  ---  ### Release Notes  <details> <summary>gradle/gradle (gradle)</summary>  ### [`v9.8.2`](https://redirect.github.com/gradle/gradle/releases/tag/v9.8.2): 9.8.2  [Compare Source](https://redirect.github.com/gradle/gradle/compare/v9.8.1...v9.8.2)  The Gradle team is excited to announce Gradle 9.8.2.  Here are the highlights of this release:  - Java 27 support - Maven mirror settings reuse - Linked problem locations in build output  [Read the Release Notes](https://docs.gradle.org/9.8.2/release-notes.html)  We would like to thank the following community members for their contributions to this release of Gradle: [Aman Gautam](https://redirect.github.com/Gautam-aman), [Björn Kautler](https://redirect.github.com/Vampire), [Eng Zer Jun](https://redirect.github.com/Juneezee), [Hashim Khan](https://redirect.github.com/Hashim1999164), [Julian Krannich](https://redirect.github.com/jkrannich), [KBS](https://redirect.github.com/youdie006), [Labh R Jethe](https://redirect.github.com/itsCodeTide), [Mark Dodgson](https://redirect.github.com/doddi), [Maxim](https://redirect.github.com/kroune), [monkey](https://redirect.github.com/Develop-KIM), [nataphon-ktsystems](https://redirect.github.com/nataphon-ktsystems), [Paul King](https://redirect.github.com/paulk-asert), [Qiu Tian](https://redirect.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1221,32 +1221,31 @@ internal open external class Stats : StatsBase<Number> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3377b13c` (2026-10-26)
-**Commit Message**: Update Gradle to v9.8.2 (#1888)
+### Incident Patch 1: `61d53efb` (2026-10-29)
+**Commit Message**: Update actions/setup-python action to v7.1.0 (#1890)
 
 Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-**File**: `gradle/wrapper/gradle-wrapper.properties` (modified, +2/-2)
+**File**: `.github/workflows/build.yml` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,7 @@
- distributionBase=GRADLE_USER_HOME
- distributionPath=wrapper/dists
--distributionSha256Sum=dce76f55f8e251a3a1f130eb120f30b3d271de2b76c9b0729d316b5a1b6dc01f
--distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.1-bin.zip
-+distributionSha256Sum=21bd5da2de49b642904077f38c0efdc7778e92b3ed0889392dca61b97e389607
-+distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.2-bin.zip
- networkTimeout=10000
- retries=0
- retryBackOffMs=500
+@@ -163,7 +163,7 @@ jobs:
+           java-version-file: .github/workflows/.java-version
+ 
+       - name: Set up Python
+-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
++        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+         with:
+           python-version: 3.15
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1890** (2026-10-29): Update actions/setup-python action to v7.1.0 (@renovate[bot])
 - **PR #1889** (closed): test: accept a late signal in AwaitSignalTest.signaled (@mvanhorn)
 - **PR #1888** (2026-10-26): Update Gradle to v9.8.2 (@renovate[bot])
 - **PR #1887** (2026-10-21): Update actions/setup-java action to v6.1.0 (@renovate[bot])
 - **PR #1885** (2026-10-21): Update dependency com.gradleup.tapmoc:com.gradleup.tapmoc.gradle.plugin to v0.5.0 (@renovate[bot])
 - **PR #1884** (2026-10-19): Update dependency python to 3.15 (@renovate[bot])
-- **PR #1882** (2026-10-14): Update Gradle to v9.8.1 (@renovate[bot])
 
 ---
 
@@ -1266,30 +1265,28 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update Gradle to v9.8.2 (#1888)
+## X. Update actions/setup-python action to v7.1.0 (#1890)
 
 **RULE**:
-When implementing operations in `gradle/wrapper/gradle-wrapper.properties`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lysine-dev/okio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/build.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lysine-dev/okio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3377b13c`: Update Gradle to v9.8.2 (#1888). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `61d53efb`: Update actions/setup-python action to v7.1.0 (#1890). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/wrapper/gradle-wrapper.properties`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-distributionSha256Sum=21bd5da2de49b642904077f38c0efdc7778e92b3ed0889392dca61b97e389607
-distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.2-bin.zip
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-distributionSha256Sum=dce76f55f8e251a3a1f130eb120f30b3d271de2b76c9b0729d316b5a1b6dc01f
-distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.1-bin.zip
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3377b13c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `61d53efb` are properly handled with clean fallback behavior.

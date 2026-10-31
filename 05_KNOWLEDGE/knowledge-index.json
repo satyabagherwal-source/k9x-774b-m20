@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T13:00:10.241Z",
+  "last_updated": "2026-10-31T13:06:49.182Z",
   "total_verified_learnings": 1183,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -23816,7 +23816,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google-t5/t5-small",
       "source_version": "hf-google-t5-t5-small",
-      "content_hash": "494705963e9f182b0136a8961aaca272cf78660c16424852447fc898a73e9734",
+      "content_hash": "adefac1508ef34c12533536a8c2078fade8f5b084958b5f4053bd326da5d28bc",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
       "promoted_rules": [
@@ -23859,6 +23859,21 @@
           "number": 5282,
           "title": "Relative Attention Bucketing Logarithmic Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6203,
+          "title": "Token ID Zero-Conflict Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6204,
+          "title": "Relative Position Bias Extrapolation Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6205,
+          "title": "Task-Specific Prefix Conditioning Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -23879,7 +23894,7 @@
         "learn-huggingface-hf-google-t5-t5-small-mv498vvv",
         "learn-huggingface-hf-google-t5-t5-small-mv4mm4dm"
       ],
-      "verified_at": "2026-10-28T12:39:58.465Z",
+      "verified_at": "2026-10-31T13:06:48.426Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37292,8 +37307,8 @@
       "slug": "lysine-dev-okio",
       "platform": "github",
       "source_url": "https://github.com/lysine-dev/okio",
-      "source_version": "3377b13c",
-      "content_hash": "6fa84d1f7b6c76c28639b425ee987c529f91bfa784a13b741200c170a89095ef",
+      "source_version": "61d53efb",
+      "content_hash": "edbe568eb6700e0216b498ae29ea2aadd26d8f01d4afb9fe0d369a0dc65ad1d4",
       "dossier_path": "07_PROJECT_LEARNING/lysine-dev-okio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lysine-dev-okio-learnings.md",
       "promoted_rules": [
@@ -37306,6 +37321,11 @@
           "number": 5040,
           "title": "Update Gradle to v9.8.2 (#1888)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6202,
+          "title": "Update actions/setup-python action to v7.1.0 (#1890)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37313,7 +37333,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T22:49:52.032Z",
+      "verified_at": "2026-10-31T13:06:42.153Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49094,8 +49114,8 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "139738f7",
-      "content_hash": "62e1646e0835f09a6914031223a78eaa2bc9031a6169525c1a0db2f440d79f4e",
+      "source_version": "6148ff16",
+      "content_hash": "73c11ee134e3ff0a30e59af03d2772c5d2175defa86ce83d4e19b0a7506289d8",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
@@ -49158,6 +49178,11 @@
           "number": 5963,
           "title": "Ensure hashing of type_id is for concrete type",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6204,
+          "title": "Reject TLS1.3 negotiated via legacy_version",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49165,7 +49190,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T00:41:22.870Z",
+      "verified_at": "2026-10-31T13:06:48.002Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49829,8 +49854,8 @@
       "slug": "seekstorm-seekstorm",
       "platform": "github",
       "source_url": "https://github.com/SeekStorm/SeekStorm",
-      "source_version": "ab61bc73",
-      "content_hash": "2e409d6ceacbff11744739de1e1f1d0625d7c484c0789debd62a824fec40f8d7",
+      "source_version": "8602a9e3",
+      "content_hash": "3dbafd230c17e5d530b8da2698c640584b667cdf197caa186af75ebe15d4aa67",
       "dossier_path": "07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
       "promoted_rules": [
@@ -49850,7 +49875,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T19:32:08.117Z",
+      "verified_at": "2026-10-31T13:06:49.165Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162085,6 +162110,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T13:00:10.228Z"
+    },
+    "rule-6202": {
+      "learning_id": "rule-6202",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6202,
+      "title": "Update actions/setup-python action to v7.1.0 (#1890)",
+      "source_url": "https://github.com/lysine-dev/okio",
+      "source_version": "61d53efb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T13:06:42.153Z"
+    },
+    "rule-6204": {
+      "learning_id": "rule-6204",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6204,
+      "title": "Relative Position Bias Extrapolation Guard",
+      "source_url": "https://huggingface.co/google-t5/t5-small",
+      "source_version": "hf-google-t5-t5-small",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T13:06:48.426Z"
+    },
+    "rule-6203": {
+      "learning_id": "rule-6203",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6203,
+      "title": "Token ID Zero-Conflict Invariant",
+      "source_url": "https://huggingface.co/google-t5/t5-small",
+      "source_version": "hf-google-t5-t5-small",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T13:06:48.426Z"
+    },
+    "rule-6205": {
+      "learning_id": "rule-6205",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6205,
+      "title": "Task-Specific Prefix Conditioning Invariant",
+      "source_url": "https://huggingface.co/google-t5/t5-small",
+      "source_version": "hf-google-t5-t5-small",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T13:06:48.426Z"
     }
   },
   "aliases": {

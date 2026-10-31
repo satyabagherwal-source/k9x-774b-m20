@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261029-CQ9H",
-    "timestamp": "2026-10-29T23:28:39.413Z",
-    "repository": "saltstack/salt",
-    "learningId": "learn-github-saltstack-salt",
-    "contentHash": "2ac01539a60836dae1901fa8e27e6b13e6fd17d9751b0097fee9e9e024697a53",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-CSMB",
-    "timestamp": "2026-10-29T23:28:42.467Z",
-    "repository": "typedb/typedb",
-    "learningId": "learn-github-typedb-typedb",
-    "contentHash": "f7d1bb581b3c908c7f0117d11b0664b6eebd928560f2e713b02a67ac3ed56b2a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-KOLM",
-    "timestamp": "2026-10-29T23:34:50.506Z",
-    "repository": "Orange-OpenSource/hurl",
-    "learningId": "learn-github-orange-opensource-hurl",
-    "contentHash": "e07e3b206f809e79e52f59ae80aff0c5517eb056ac8ac2ab8e50deff8eff4b32",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-KV2M",
-    "timestamp": "2026-10-29T23:34:58.894Z",
-    "repository": "aws/aws-cdk",
-    "learningId": "learn-github-aws-aws-cdk",
-    "contentHash": "6ecc4d2c1558085832dc5bd570735697570110e986456e20513da06da236f1d1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261029-KZJE",
     "timestamp": "2026-10-29T23:35:04.682Z",
     "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -7492,6 +7432,66 @@
     "contentHash": "f06a6ccd607b7b9675487bb68f45214b511e2e11b6491616479da87c78c5e4e3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-0LHB",
+    "timestamp": "2026-10-31T13:06:42.239Z",
+    "repository": "lysine-dev/okio",
+    "learningId": "learn-github-lysine-dev-okio",
+    "contentHash": "edbe568eb6700e0216b498ae29ea2aadd26d8f01d4afb9fe0d369a0dc65ad1d4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-0PZR",
+    "timestamp": "2026-10-31T13:06:48.087Z",
+    "repository": "rustls/rustls",
+    "learningId": "learn-github-rustls-rustls",
+    "contentHash": "73c11ee134e3ff0a30e59af03d2772c5d2175defa86ce83d4e19b0a7506289d8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-0QBJ",
+    "timestamp": "2026-10-31T13:06:48.511Z",
+    "repository": "google-t5/t5-small",
+    "learningId": "learn-huggingface-google-t5-t5-small",
+    "contentHash": "adefac1508ef34c12533536a8c2078fade8f5b084958b5f4053bd326da5d28bc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-0QW5",
+    "timestamp": "2026-10-31T13:06:49.253Z",
+    "repository": "SeekStorm/SeekStorm",
+    "learningId": "learn-github-seekstorm-seekstorm",
+    "contentHash": "3dbafd230c17e5d530b8da2698c640584b667cdf197caa186af75ebe15d4aa67",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

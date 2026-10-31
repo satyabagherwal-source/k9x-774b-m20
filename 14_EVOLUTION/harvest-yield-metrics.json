@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T13:00:10.293Z",
-  "total_cycles_completed": 6550,
-  "total_learnings_persisted": 6550,
-  "total_rules_promoted": 6197,
+  "last_updated": "2026-10-31T13:06:49.269Z",
+  "total_cycles_completed": 6554,
+  "total_learnings_persisted": 6554,
+  "total_rules_promoted": 6202,
   "history": [
-    {
-      "timestamp": "2026-10-31T00:20:40.869Z",
-      "repository": "sqlpage/SQLPage",
-      "learningId": "learn-github-sqlpage-sqlpage",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T00:27:32.087Z",
-      "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
-      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T00:34:19.575Z",
-      "repository": "FalkorDB/FalkorDB",
-      "learningId": "learn-github-falkordb-falkordb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T00:34:25.413Z",
-      "repository": "mattermost/mattermost",
-      "learningId": "learn-github-mattermost-mattermost",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T00:34:27.007Z",
       "repository": "mistralai/Timestral-209M",
@@ -1403,6 +1375,34 @@
       "repository": "doobidoo/mcp-memory-service",
       "learningId": "learn-github-doobidoo-mcp-memory-service",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T13:06:42.247Z",
+      "repository": "lysine-dev/okio",
+      "learningId": "learn-github-lysine-dev-okio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T13:06:48.094Z",
+      "repository": "rustls/rustls",
+      "learningId": "learn-github-rustls-rustls",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T13:06:48.519Z",
+      "repository": "google-t5/t5-small",
+      "learningId": "learn-huggingface-google-t5-t5-small",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T13:06:49.269Z",
+      "repository": "SeekStorm/SeekStorm",
+      "learningId": "learn-github-seekstorm-seekstorm",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

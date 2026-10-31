@@ -755,8 +755,8 @@
     "sourceUrl": "https://huggingface.co/google-t5/t5-small",
     "sourceVersion": "hf-google-t5-t5-small",
     "license": "Open-Source",
-    "contentHash": "494705963e9f182b0136a8961aaca272cf78660c16424852447fc898a73e9734",
-    "lastHarvestedAt": "2026-10-28T12:39:58.529Z",
+    "contentHash": "adefac1508ef34c12533536a8c2078fade8f5b084958b5f4053bd326da5d28bc",
+    "lastHarvestedAt": "2026-10-31T13:06:48.514Z",
     "learningId": "learn-huggingface-google-t5-t5-small"
   },
   "hf-comfy-org-minimax-h3": {
@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "139738f7",
+    "sourceVersion": "6148ff16",
     "license": "NOASSERTION",
-    "contentHash": "62e1646e0835f09a6914031223a78eaa2bc9031a6169525c1a0db2f440d79f4e",
-    "lastHarvestedAt": "2026-10-31T00:41:22.977Z",
+    "contentHash": "73c11ee134e3ff0a30e59af03d2772c5d2175defa86ce83d4e19b0a7506289d8",
+    "lastHarvestedAt": "2026-10-31T13:06:48.090Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -3353,10 +3353,10 @@
     "repository": "SeekStorm/SeekStorm",
     "platform": "github",
     "sourceUrl": "https://github.com/SeekStorm/SeekStorm",
-    "sourceVersion": "ab61bc73",
+    "sourceVersion": "8602a9e3",
     "license": "Apache-2.0",
-    "contentHash": "2e409d6ceacbff11744739de1e1f1d0625d7c484c0789debd62a824fec40f8d7",
-    "lastHarvestedAt": "2026-10-27T19:32:08.198Z",
+    "contentHash": "3dbafd230c17e5d530b8da2698c640584b667cdf197caa186af75ebe15d4aa67",
+    "lastHarvestedAt": "2026-10-31T13:06:49.262Z",
     "learningId": "learn-github-seekstorm-seekstorm"
   },
   "serafimcloud-21st": {
@@ -6653,10 +6653,10 @@
     "repository": "lysine-dev/okio",
     "platform": "github",
     "sourceUrl": "https://github.com/lysine-dev/okio",
-    "sourceVersion": "3377b13c",
+    "sourceVersion": "61d53efb",
     "license": "Apache-2.0",
-    "contentHash": "6fa84d1f7b6c76c28639b425ee987c529f91bfa784a13b741200c170a89095ef",
-    "lastHarvestedAt": "2026-10-27T22:49:52.094Z",
+    "contentHash": "edbe568eb6700e0216b498ae29ea2aadd26d8f01d4afb9fe0d369a0dc65ad1d4",
+    "lastHarvestedAt": "2026-10-31T13:06:42.242Z",
     "learningId": "learn-github-lysine-dev-okio"
   },
   "nginx-kubernetes-ingress": {
