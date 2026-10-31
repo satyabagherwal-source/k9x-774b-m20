@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T01:53:50.603Z",
+  "last_updated": "2026-10-31T02:00:36.152Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12899,8 +12899,8 @@
       "slug": "feathersjs-feathers",
       "platform": "github",
       "source_url": "https://github.com/feathersjs/feathers",
-      "source_version": "cd5e59b9",
-      "content_hash": "cf2877bcbfabfbff0e0a91889e71295bd1849257f7692ddc42dc240f00d2eae8",
+      "source_version": "8c007bc4",
+      "content_hash": "7b769367c8dc270c6ffc88f1437a79b324263de20ca1db5e22cc9614e2fd030e",
       "dossier_path": "07_PROJECT_LEARNING/feathersjs-feathers-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/feathersjs-feathers-learnings.md",
       "promoted_rules": [
@@ -12925,7 +12925,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T05:24:36.078Z",
+      "verified_at": "2026-10-31T02:00:27.154Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43685,8 +43685,8 @@
       "slug": "opentofu-opentofu",
       "platform": "github",
       "source_url": "https://github.com/opentofu/opentofu",
-      "source_version": "073d2cd5",
-      "content_hash": "bc670c8b8eefe32e4b10f3603619d1f5774146e2b706e73993fb21fba43c4599",
+      "source_version": "6356fbe3",
+      "content_hash": "c1ec3bd26c3e0b861aca570220c98416e1953f8b8eb0aa485ec90bcd848345f3",
       "dossier_path": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "promoted_rules": [
@@ -43734,6 +43734,11 @@
           "number": 5626,
           "title": "Update cosign (#4791)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6003,
+          "title": "Allow overriding non-computed fields in tests (#4777)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43741,7 +43746,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T06:23:24.704Z",
+      "verified_at": "2026-10-31T02:00:30.548Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58492,8 +58497,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "b286efd7",
-      "content_hash": "801df97a169325087389ccbbe499594f3ca778ea7cf72d4caafe31fc3cac3dd2",
+      "source_version": "6ce4c398",
+      "content_hash": "8cf2d75047e3f4b27b0c1a5142cabfde2885e8865978fc0f21a60d0a6b2c9248",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -58546,6 +58551,11 @@
           "number": 5347,
           "title": "[#35462] DocDB: Fix RemoveTabletServerTest.MayStillHoldLease by waiting for a po",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6004,
+          "title": "[#36245] YSQL: Fix spurious wait in org.yb.pgsql.TestPgRegressIsolationObjectLoc",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58553,7 +58563,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T05:39:29.369Z",
+      "verified_at": "2026-10-31T02:00:36.135Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59088,8 +59098,8 @@
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "a0468502",
-      "content_hash": "342873094fea829810ca14d26135a21864698eb9c7e54c447d64c100bd612ba3",
+      "source_version": "baedd5dc",
+      "content_hash": "0ff15a5cf4fa5e7aece3124331e6c50ecc43f2c66788a3dbb4a86be35bef08b4",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "promoted_rules": [
@@ -59127,6 +59137,11 @@
           "number": 5535,
           "title": "Edge: record every WorkOS user from webhooks",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6002,
+          "title": "Web: page layout",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59134,7 +59149,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T17:40:32.250Z",
+      "verified_at": "2026-10-31T02:00:22.421Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -120548,7 +120563,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/InternScience/Sage-A1.5",
       "source_version": "hf-internscience-sage-a1.5",
-      "content_hash": "2c53b7d3c37e253d8e320898fe8e7185a2a897bfd7652882144a1637594e09c2",
+      "content_hash": "10b8ec42c76147a1655e8d1948396580c2d67aa4be4e92141261922364872a44",
       "dossier_path": "07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md",
       "promoted_rules": [
@@ -120573,7 +120588,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T14:03:28.950Z",
+      "verified_at": "2026-10-31T02:00:20.410Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -158185,6 +158200,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T01:53:50.574Z"
+    },
+    "rule-6002": {
+      "learning_id": "rule-6002",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6002,
+      "title": "Web: page layout",
+      "source_url": "https://github.com/zeronsh/zeron",
+      "source_version": "baedd5dc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:00:22.421Z"
+    },
+    "rule-6003": {
+      "learning_id": "rule-6003",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6003,
+      "title": "Allow overriding non-computed fields in tests (#4777)",
+      "source_url": "https://github.com/opentofu/opentofu",
+      "source_version": "6356fbe3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:00:30.548Z"
+    },
+    "rule-6004": {
+      "learning_id": "rule-6004",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6004,
+      "title": "[#36245] YSQL: Fix spurious wait in org.yb.pgsql.TestPgRegressIsolationObjectLoc",
+      "source_url": "https://github.com/yugabyte/yugabyte-db",
+      "source_version": "6ce4c398",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:00:36.135Z"
     }
   },
   "aliases": {

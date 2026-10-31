@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T01:53:42.498Z",
+  "last_updated": "2026-10-31T02:00:27.251Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3445,6 +3445,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-kuddev-pebrel"
+    },
+    {
+      "id": "CD-7SKY",
+      "directive_title": "docs: add a security policy",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "feathersjs/feathers",
+      "source_commit": "8c007bc4",
+      "date_staged": "2026-10-31",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-feathersjs-feathers"
     }
   ]
 }

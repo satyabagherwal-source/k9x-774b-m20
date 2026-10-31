@@ -2903,10 +2903,10 @@
     "repository": "feathersjs/feathers",
     "platform": "github",
     "sourceUrl": "https://github.com/feathersjs/feathers",
-    "sourceVersion": "cd5e59b9",
+    "sourceVersion": "8c007bc4",
     "license": "MIT",
-    "contentHash": "cf2877bcbfabfbff0e0a91889e71295bd1849257f7692ddc42dc240f00d2eae8",
-    "lastHarvestedAt": "2026-10-28T05:24:36.182Z",
+    "contentHash": "7b769367c8dc270c6ffc88f1437a79b324263de20ca1db5e22cc9614e2fd030e",
+    "lastHarvestedAt": "2026-10-31T02:00:27.241Z",
     "learningId": "learn-github-feathersjs-feathers"
   },
   "litmuschaos-litmus": {
@@ -3433,10 +3433,10 @@
     "repository": "zeronsh/zeron",
     "platform": "github",
     "sourceUrl": "https://github.com/zeronsh/zeron",
-    "sourceVersion": "a0468502",
+    "sourceVersion": "baedd5dc",
     "license": "MIT",
-    "contentHash": "342873094fea829810ca14d26135a21864698eb9c7e54c447d64c100bd612ba3",
-    "lastHarvestedAt": "2026-10-29T17:40:32.349Z",
+    "contentHash": "0ff15a5cf4fa5e7aece3124331e6c50ecc43f2c66788a3dbb4a86be35bef08b4",
+    "lastHarvestedAt": "2026-10-31T02:00:22.503Z",
     "learningId": "learn-github-zeronsh-zeron"
   },
   "welldone-software-why-did-you-render": {
@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "b286efd7",
+    "sourceVersion": "6ce4c398",
     "license": "NOASSERTION",
-    "contentHash": "801df97a169325087389ccbbe499594f3ca778ea7cf72d4caafe31fc3cac3dd2",
-    "lastHarvestedAt": "2026-10-30T05:39:29.496Z",
+    "contentHash": "8cf2d75047e3f4b27b0c1a5142cabfde2885e8865978fc0f21a60d0a6b2c9248",
+    "lastHarvestedAt": "2026-10-31T02:00:36.214Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {
@@ -6363,10 +6363,10 @@
     "repository": "opentofu/opentofu",
     "platform": "github",
     "sourceUrl": "https://github.com/opentofu/opentofu",
-    "sourceVersion": "073d2cd5",
+    "sourceVersion": "6356fbe3",
     "license": "MPL-2.0",
-    "contentHash": "bc670c8b8eefe32e4b10f3603619d1f5774146e2b706e73993fb21fba43c4599",
-    "lastHarvestedAt": "2026-10-30T06:23:24.811Z",
+    "contentHash": "c1ec3bd26c3e0b861aca570220c98416e1953f8b8eb0aa485ec90bcd848345f3",
+    "lastHarvestedAt": "2026-10-31T02:00:30.630Z",
     "learningId": "learn-github-opentofu-opentofu"
   },
   "surrealdb-surrealdb": {
@@ -10505,8 +10505,8 @@
     "sourceUrl": "https://huggingface.co/InternScience/Sage-A1.5",
     "sourceVersion": "hf-internscience-sage-a1.5",
     "license": "Open-Source",
-    "contentHash": "2c53b7d3c37e253d8e320898fe8e7185a2a897bfd7652882144a1637594e09c2",
-    "lastHarvestedAt": "2026-10-26T14:03:29.026Z",
+    "contentHash": "10b8ec42c76147a1655e8d1948396580c2d67aa4be4e92141261922364872a44",
+    "lastHarvestedAt": "2026-10-31T02:00:20.498Z",
     "learningId": "learn-huggingface-internscience-sage-a1-5"
   },
   "hf-recursivesi-flint": {

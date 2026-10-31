@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source**: github ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
-> **Source Version**: `a0468502`  
+> **Source Version**: `baedd5dc`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T17:40:31.661Z  
+> **Timestamp**: 2026-10-31T02:00:21.926Z  
 > **Learning ID**: `learn-github-zeronsh-zeron`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T17:35:30.359Z  
+> **Harvest Timestamp**: 2026-10-31T02:00:21.920Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A native control plane for Claude Code, Codex, Cursor, Devin and other coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3419 stars
+- **Stars / Engagement**: 3424 stars
 
 ---
 
@@ -1600,11 +1600,11 @@ enum TextEngine {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1089** (2026-10-27): **Folded user bubbles fade out; long chats scroll smoothly again**
-  *Symptoms*: ## Fold fade  A folded user bubble used to clip at five lines and add a `...` line. With Markdown in bubbles, block gaps and inline-code washes don't sit on the line grid, so the clip often sliced a line in half. Now the fold's bottom fades out over its last line and a half and the `...` is gone. Opening the bubble shows the whole prompt with no fade.  The fade composes with the transcript's own top/bottom fade (new `EdgeFaded::compose_vertical`), so a folded bubble still fades under the titlebar and composer. Without that, the nested scope would replace the transcript's fade inside the bubble.  | | Before | After | |---|---|---| | Dark | ![](https://raw.githubusercontent.com/zeronsh/zeron/bdbe3b51/docs/screenshots/user-bubble-fade/before-dark.png) | ![](https://raw.githubusercontent.com/zeronsh/zeron/bdbe3b51/docs/screenshots/user-bubble-fade/after-dark.png) | | Light | ![](https://raw.githubusercontent.com/zeronsh/zeron/bdbe3b51/docs/screenshots/user-bubble-fade/before-light.png) | ![](https://raw.githubusercontent.com/zeronsh/zeron/bdbe3b51/docs/screenshots/user-bubble-fade/after-light.png) |  Opened: ![](https://raw.githubusercontent.com/zeronsh/zeron/bdbe3b51/docs/screenshots/user-bubble-fade/after-dark-open.png)  ## Scrolling long chats  Profiled with `perf` on an optimized build with frame pointers, wheel-scrolling a 600-prompt chat. Two causes:  1. **The rail rebuilt itself every frame**, at about 14% of main-thread samples. It cloned the entire transcript, rebuilt ev
+- **Issue #1115** (2026-10-30): **Edge: profile routes**
+  *Symptoms*: Edge: public profile routes and supporting assets.  - Username claim and lookup in the user directory, with tests. - Public read routes behind a per-IP gate, exposing only public fields. - A static web page and image route served by the edge worker, with tests.  Verified on staging. Merging deploys the edge.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  
 
-- **Issue #1088** (2026-10-27): **Access modes and plan mode for every agent; Muse answers every approval stage**
-  *Symptoms*: ## Summary  **Muse can run more than single commands now.** Muse splits a compound command (`mkdir -p out && touch out/x`) into approval *stages* and moves to the next one with `approval/updated`. Zeron only answered `approval/requested`, so stage 2 waited forever. The sandbox setting didn't help: it only turned off Muse's filesystem sandbox, never its approvals. Each stage is now decided exactly once. Full access launches Muse with `allowAll`, the `:unrestricted` profile and `--disable-sandbox`; Supervised asks you about each stage ("step 2 of 2 in `…`").  On top of that fix, chats get **access modes** and **plan mode**, chosen from a new chip in the composer:  | Mode | What it means | |---|---| | **Supervised** | Ask before commands and file changes | | **Auto-accept edits** | Apply edits, ask before anything else | | **Full access** | Run commands and edits without asking (the default, and how every chat ran before this) | | **Plan** (switch) | Explore and propose a plan before changing anything |  Approvals reach you as the existing question card ("Muse wants to run `cargo test`. Allow it?"). Only an explicit **Yes** allows, and only once. No, free text, or closing the card refuses.  ## How each agent maps the modes  | Agent | Supervised | Auto-accept edits | Full access | Plan | |---|---|---|---|---| | Claude Code | `--permission-mode default`, every `can_use_tool` asked | `acceptEdits`, other tools asked | as before | `--permission-mode plan`; `ExitPlanMode` asks | | Co
+- **Issue #1113** (2026-10-30): **Edge: record every WorkOS organization and its members**
+  *Symptoms*: The user directory now also records every WorkOS organization and who's in it.  - `/workos/webhook` handles `organization.*` and `organization_membership.*` created, updated and deleted events, under the same rules as users: the newest `updated_at` wins, and a delete leaves a tombstone nothing revives. A deleted org's name, external id and domains are cleared. - New tables live in the existing `users1` Durable Object, so there's no new binding or migration. - `GET /admin/organizations[?format=csv]` (ADMIN_TOKEN) lists each org with its members. Memberships are joined to users on read, so a member shows their current profile and drops out once their user or org is deleted, whatever order deliveries arrive in. - `memberCount` counts active members; `members` also lists inactive and pending ones.  Rollout: after this deploys, subscribe the production webhook endpoint to the six new events. Before that, the old code acknowledges and drops them. Existing orgs then need a one-off backfill.  Tested with 8 new workerd tests, and a backfill run against a local edge with a mock WorkOS.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  <!-- codesmith:footer --> --- <a href="https://app.blacksmith.sh/zeronsh/codesmith/zeron/pr/1113?autoLogin=true&ref=codesmith_pr_footer"><picture><source media="(prefers-color-scheme: dark)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v3.svg"><source media="(prefers-color-scheme: light)" srcset="http
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1621,730 +1621,208 @@ enum TextEngine {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a0468502` (2026-10-29)
-**Commit Message**: Edge: record every WorkOS user from webhooks
-
-A UserDirectory Durable Object (users1) keeps each WorkOS user's name,
-email, profile picture and join date. POST /workos/webhook takes signed
-user.created/updated/deleted events (WORKOS_WEBHOOK_SECRET); out-of-order
-deliveries keep the newest profile, and a delete clears the profile and
-leaves a tombstone. GET /admin/users[?format=csv] reads it back behind
-ADMIN_TOKEN.
+### Incident Patch 1: `baedd5dc` (2026-10-31)
+**Commit Message**: Web: page layout
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
 
-**File**: `edge/src/cloud/billing.ts` (modified, +11/-6)
+**File**: `apps/card-web/site/pages.mjs` (modified, +4/-19)
 ```diff
-@@ -135,6 +135,16 @@ export const usageCsv = (data: UsageExport): string => {
-   return `${lines.join("\n")}\n`;
- };
+@@ -21,13 +21,6 @@ export const escapeHtml = (s) =>
  
-+/** Whether the request carries the operator's `ADMIN_TOKEN` bearer. */
-+export const adminAuthorized = async (request: Request, adminToken: string): Promise<boolean> => {
-+  // Header only (never `?token=`: query strings end up in logs).
-+  const header = request.headers.get("authorization") ?? "";
-+  const token = header.toLowerCase().startsWith("bearer ") ? header.slice(7).trim() : "";
-+  // Compare digests so neither the content nor the length leaks via timing.
-+  const [given, expected] = await Promise.all([sha256B64url(token), sha256B64url(adminToken)]);
-+  return token !== "" && constantTimeEqual(given, expected);
-+};
-+
- /** `/admin/cloud/usage`, `/admin/cloud/credits`, `/admin/cloud/machine` and
-  * `/admin/cloud/limits` — undefined when not one of them. */
- export const handleAdminRoute = async (
-@@ -144,12 +154,7 @@ export const handleAdminRoute = async (
- ): Promise<Response | undefined> => {
-   if (!ADMIN_PATHS.has(url.pathname)) return undefined;
-   if (!env.ADMIN_TOKEN) return json({ error: "not_found" }, 404);
--  // Header only (never `?token=`: query strings end up in logs).
--  const header = request.headers.get("authorization") ?? "";
--  const token = header.toLowerCase().startsWith("bearer ") ? header.slice(7).trim() : "";
--  // Compare digests so neither the content nor the length leaks via timing.
--  const [given, expected] = await Promise.all([sha256B64url(token), sha256B64url(env.ADMIN_TOKEN)]);
--  if (!token || !constantTimeEqual(given, expected)) {
-+  if (!(await adminAuthorized(request, env.ADMIN_TOKEN))) {
-     return jsonError(401, "unauthenticated", "Admin token required.");
-   }
-   if (url.pathname === "/admin/cloud/credits") return grantCredits(request, env);
-```
-
-**File**: `edge/src/env.ts` (modified, +6/-0)
-```diff
-@@ -26,6 +26,12 @@ export interface Env {
-    * routes (code exchange, refresh, orgs). Unset ⇒ those routes answer 501,
-    * matching the old apps/server dev-mode behavior. */
-   WORKOS_API_KEY?: string;
-+  /** Signing secret of the WorkOS webhook endpoint `https://<edge>/workos/webhook`
-+   * (wrangler secret), subscribed to user.created/updated/deleted. Unset ⇒
-+   * that route answers 503 and WorkOS retries. */
-+  WORKOS_WEBHOOK_SECRET?: string;
-+  /** Every WorkOS user's profile and join date (`users1`; user-directory.ts). */
-+  USER_DIRECTORY?: DurableObjectNamespace<import("./user-directory").UserDirectory>;
-   /** APNs auth key (contents of AuthKey_XXXX.p8, wrangler secret) and its
-    * key id. Unset ⇒ session notifications are decided and logged, not sent. */
-   APNS_KEY_P8?: string;
-```
-
-**File**: `edge/src/index.ts` (modified, +8/-1)
-```diff
-@@ -47,6 +47,10 @@
-  *   POST /admin/cloud/machine           — ADMIN_TOKEN (a user's machine size)
-  *   POST /admin/cloud/limits            — ADMIN_TOKEN (a user's awake/chat caps)
-  *   POST /stripe/webhook | GET /billing/done — pre-bearer billing (Stripe-signed / static page)
-+ *
-+ * User directory (user-directory.ts):
-+ *   POST /workos/webhook                — pre-bearer, WorkOS-signed user.* events
-+ *   GET  /admin/users[?format=csv]      — ADMIN_TOKEN (every user's profile + join date)
-  */
- import { authenticate } from "./auth";
- import { chatRoute } from "./chat-route";
-@@ -75,9 +79,10 @@ import { FakeProvider } from "./cloud/providers/fake";
- import { runnerChatGate, runnerDeviceGate } from "./runner-access";
- import { runnerRefusal } from "./runner-policy";
- import { handleVaultRoute } from "./vault-routes";
-+import { handleUserDirectoryRoute, UserDirectory } from "./user-directory";
- import installSh from "./install.sh";
+ /** The public card's keys, in the order the edge serves them; a page embeds
+  * these and only these. */
+-// "004·182", as the card prints it.
+-const serial = (n) => {
+-  const v = Math.max(0, Math.trunc(Number(n) || 0));
+-  const pad = (x) => String(x % 1000).padStart(3, "0");
+-  return `${pad(Math.trunc(v / 1000))}·${pad(v)}`;
+-};
+-
+ export const PUBLIC_KEYS = ["username", "firstName", "userNumber", "joinedOn", "badges", "scene", "holo", "sky"];
  
--export { SessionRoom, DeviceRoom, RegistryRoom, ChatRoom, PreviewRoom, CloudAccount, CloudIndex };
-+export { SessionRoom, DeviceRoom, RegistryRoom, ChatRoom, PreviewRoom, CloudAccount, CloudIndex, UserDirectory };
- export { ProvisionWorkflow, WakeWorkflow, SleepWorkflow, DeleteWorkflow };
- 
- const ID_RE = /^[A-Za-z0-9_-]{1,128}$/;
-@@ -137,6 +142,8 @@ export default {
-     if (billingRouted) return billingRouted;
-     const runnerRouted = await handleRunnerPublicRoute(request, env, url);
-     if (runnerRouted) return runnerRouted;
-+    const usersRouted = await handleUserDirectoryRoute(request, env, url);
-+    if (usersRouted) return usersRouted;
- 
-     const auth = await authenticate(env, request);
-     if (!auth) return json({ error: "unauthenticated" }, 401);
-```
-
-**File**: `edge/src/user-directory.ts` (added, +265/-0)
-```diff
-@@ -0,0 +1,265 @@
-+/**
-+ * UserDirectory — ONE Durable Object (`users1`) recording every WorkOS user:
-+ * name, email, profile picture and when they joined (WorkOS `created_at`).
-+ *
-+ * Fed by WorkOS webhooks (`user.created`, `user.updated`, `user.deleted`) at
-+ * `POST /workos/webhook`, signed with the endpoint's secret
-+ * (`WORKOS_WEBHOOK_SECRET`). Deliveries can arrive out of order and retry,
-+ * so a write lands only when its `updated_at` is at least the stored one;
-+ * a delete leaves a tombstone (id, joined, deleted) with the profile cleared,
-+ * and nothing revives it.
-+ *
-+ * `GET /admin/users[?format=csv]` (ADMIN_TOKEN) reads the table back.
-+ *
-+ * Writes are one row per sign-up or profile change, so a single instance is
-+ * not a hotspot.
-+ */
-+import { DurableObject } from "cloudflare:workers";
-+import type { Env } from "./env";
-+import { json, jsonError } from "./http";
-+import { adminAuthorized } from "./cloud/billing";
-+
-+export const USER_DIRECTORY_NAME = "users1";
-+
-+/** The fields of a WorkOS user object this directory keeps (wire names). */
-+export interface WorkOsUser {
-+  readonly id: string;
-+  readonly email: string;
-+  readonly first_name: string | null;
-+  readonly last_name: string | null;
-+  readonly profile_picture_url: string | null;
-+  readonly created_at: string;
-+  readonly updated_at: string;
-+}
-+
-+export interface DirectoryUser {
-+  readonly userId: string;
-+  readonly email: string | null;
-+  readonly name: string | null;
-+  readonly firstName: string | null;
-+  readonly lastName: string | null;
-+  readonly profilePictureUrl: string | null;
-+  /** ISO 8601, WorkOS `created_at`. */
-+  readonly joinedAt: string;
-+  readonly updatedAt: string;
-+  readonly deletedAt: string | null;
-+}
-+
-+export class UserDirectory extends DurableObject<Env> {
-+  constructor(ctx: DurableObjectState, env: Env) {
-+    super(ctx, env);
-+    this.ctx.storage.sql.exec(`CREATE TABLE IF NOT EXISTS users (
-+      user_id TEXT PRIMARY KEY, email TEXT, first_name TEXT, last_name TEXT,
-+      profile_picture_url TEXT, created_at TEXT NOT NULL, updated_at TEXT NOT NULL,
-+      deleted_at TEXT, recorded_at INTEGER NOT NULL)`);
-+  }
-+
-+  /** Record a user's current profile; stale or post-delete writes are no-ops.
-+   * Answers whether the row changed. */
-+  upsert(user: WorkOsUser): boolean {
-+    const cursor = this.ctx.storage.sql.exec(
-+      `INSERT INTO users (user_id, email, first_name, last_name, profile_picture_url, created_at, updated_at, recorded_at)
-+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-+       ON CONFLICT (user_id) DO UPDATE SET
-+         email = excluded.email, first_name = excluded.first_name, last_name = excluded.last_name,
-+         profile_picture_url = excluded.profile_picture_url, created_at = excluded.created_at,
-+         updated_at = excluded.updated_at, recorded_at = excluded.recorded_at
-+       WHERE users.deleted_at IS NULL AND excluded.updated_at >= users.updated_at`,
-+      user.id,
-+      user.email,
-+      user.first_name,
-+      user.last_name,
-+      user.profile_picture_url,
-+      user.created_at,
-+      user.updated_at,
-+      Date.now()
-+    );
-+    return cursor.rowsWritten > 0;
-+  }
-+
-+  /** Tombstone a deleted user: keep id + joined date, drop the profile. */
-+  remove(user: WorkOsUser, deletedAt: string): void {
-+    this.ctx.storage.sql.exec(
-+      `INSERT INTO users (user_id, created_at, updated_at, deleted_at, recorded_at) VALUES (?, ?, ?, ?, ?)
-+       ON CONFLICT (user_id) DO UPDATE SET
-+         email = NULL, first_name = NULL, last_name = NULL, profile_picture_url = NULL,
-+         deleted_at = excluded.deleted_at, recorded_at = excluded.recorded_at`,
-+      user.id,
-+      user.created_at,
-+      user.updated_at,
-+      deletedAt,
-+      Date.now()
-+    );
-+  }
-+
-+  list(): DirectoryUser[] {
-+    return [...this.ctx.storage.sql.exec("SELECT * FROM users ORDER BY created_at")].map((row) => {
-+      const first = row.first_name as string | null;
-+      const last = row.last_name as string | null;
-+      const name = [first, last].filter(Boolean).join(" ");
-+      return {
-+        userId: row.user_id as string,
-+        email: row.email as string | null,
-+        name: name || null,
-+        firstName: first,
-+        lastName: last,
-+        profilePictureUrl: row.profile_picture_url as string | null,
-+        joinedAt: row.created_at as string,
-+        updatedAt: row.updated_at as string,
-+        deletedAt: row.deleted_at as string | null
-+      };
-+    });
-+  }
-+}
-+
-+export const userDirectoryStub = (env: Pick<Env, "USER_DIRECTORY">) =>
-+  env.USER_DIRECTORY ? env.USER_DIRECTORY.get(env.USER_DIRECTORY.idFromName(USER_DIRECTORY_NAME)) : undefined;
-+
-+// ── webhook signature ───────────────────────────────────────────────────────
-+
-+/** How far a webhook's signed timestamp may drift (the WorkOS SDK default). */
-+export const WORKOS_SIGNATURE_TOLERANCE_MS = 180_000;
-+
-+const hex = (bytes: ArrayBuffer): string =>
-+  [...new Uint8Array(bytes)].map((b) => b.to
-```
-
-**File**: `edge/test/workerd/fixture.ts` (modified, +4/-0)
-```diff
-@@ -15,12 +15,14 @@ import { previewRoute } from "../../src/preview-route";
- import { releaseRoute } from "../../src/releases";
- import { runnerRefusal } from "../../src/runner-policy";
- import { handleVaultRoute } from "../../src/vault-routes";
-+import { handleUserDirectoryRoute } from "../../src/user-directory";
- export { DeviceRoom } from "../../src/device-room";
- export { ChatRoom } from "../../src/chat-room";
- export { PreviewRoom } from "../../src/preview-room";
- export { RegistryRoom } from "../../src/registry-room";
- export { CloudAccount } from "../../src/cloud/cloud-account";
- export { CloudIndex } from "../../src/cloud/cloud-index";
-+export { UserDirectory } from "../../src/user-directory";
- export { DeleteWorkflow, ProvisionWorkflow, SleepWorkflow, WakeWorkflow } from "../../src/cloud/workflows";
- 
- /** Bare SQLite-backed DO; tests reach its real `ctx.storage.sql` via
-@@ -117,6 +119,8 @@ export default {
-     if (billing) return billing;
-     const runner = await handleRunnerPublicRoute(request, env, url);
-     if (runner) return runner;
-+    const users = await handleUserDirectoryRoute(request, env, url);
-+    if (users) return users;
-     const auth = await authenticate(env, request);
-     if (!auth) return new Response("Unauthorized", { status: 401 });
-     const refused = runnerRefusal(auth, request.method, url);
-```
-
-**File**: `edge/test/workerd/user-directory.workerd.test.ts` (added, +103/-0)
-```diff
-@@ -0,0 +1,103 @@
-+import { SELF } from "cloudflare:test";
-+import { describe, expect, it } from "vitest";
-+import { signWorkOsPayload, verifyWorkOsSignature } from "../../src/user-directory";
-+
-+const SECRET = "workos_whsec_test";
-+
-+const user = (id: string, overrides: Record<string, unknown> = {}) => ({
-+  object: "user",
-+  id,
-+  email: `${id}@example.com`,
-+  first_name: "Ada",
-+  last_name: "Lovelace",
-+  profile_picture_url: "https://workoscdn.com/images/v1/abc",
-+  email_verified: true,
-+  created_at: "2026-10-01T10:00:00.000Z",
-+  updated_at: "2026-10-01T10:00:00.000Z",
-+  ...overrides
-+});
-+
-+/** POST a WorkOS-signed webhook (or a badly signed one). */
-+const webhook = async (event: string, data: Record<string, unknown>, opts: { secret?: string; t?: number } = {}) => {
-+  const payload = JSON.stringify({ id: `event_${crypto.randomUUID()}`, event, data, created_at: new Date().toISOString() });
-+  const t = opts.t ?? Date.now();
-+  const v1 = await signWorkOsPayload(opts.secret ?? SECRET, t, payload);
-+  return SELF.fetch("https://edge.test/workos/webhook", {
-+    method: "POST",
-+    headers: { "content-type": "application/json", "workos-signature": `t=${t}, v1=${v1}` },
-+    body: payload
-+  });
-+};
-+
-+type Listed = {
-+  count: number;
-+  users: { userId: string; email: string | null; name: string | null; profilePictureUrl: string | null; joinedAt: string; deletedAt: string | null }[];
-+};
-+
-+const listUsers = async (token = "test-admin-token") =>
-+  SELF.fetch("https://edge.test/admin/users", { headers: { authorization: `Bearer ${token}` } });
-+
-+const find = async (id: string) => ((await (await listUsers()).json()) as Listed).users.find((u) => u.userId === id);
-+
-+describe("user directory", () => {
-+  it("verifies WorkOS signatures within tolerance only", async () => {
-+    const payload = '{"id":"event_1"}';
-+    const t = 1_800_000_000_000;
-+    const v1 = await signWorkOsPayload("s", t, payload);
-+    expect(await verifyWorkOsSignature("s", `t=${t}, v1=${v1}`, payload, t + 1000)).toBe(true);
-+    expect(await verifyWorkOsSignature("s", `t=${t}, v1=${v1}`, `${payload} `, t)).toBe(false);
-+    expect(await verifyWorkOsSignature("other", `t=${t}, v1=${v1}`, payload, t)).toBe(false);
-+    expect(await verifyWorkOsSignature("s", `t=${t}, v1=${v1}`, payload, t + 181_000)).toBe(false);
-+    expect(await verifyWorkOsSignature("s", null, payload, t)).toBe(false);
-+  });
-+
-+  it("records a new user's name, email, picture and join date", async () => {
-+    const res = await webhook("user.created", user("user_created1"));
-+    expect(res.status).toBe(200);
-+    expect(await res.json()).toEqual({ received: true, applied: true });
-+    expect(await find("user_created1")).toMatchObject({
-+      email: "user_created1@example.com",
-+      name: "Ada Lovelace",
-+      profilePictureUrl: "https://workoscdn.com/images/v1/abc",
-+      joinedAt: "2026-10-01T10:00:00.000Z",
-+      deletedAt: null
-+    });
-+  });
-+
-+  it("rejects bad signatures and stale timestamps", async () => {
-+    expect((await webhook("user.created", user("user_forged"), { secret: "wrong" })).status).toBe(400);
-+    expect((await webhook("user.created", user("user_forged"), { t: Date.now() - 10 * 60_000 })).status).toBe(400);
-+    expect(await find("user_forged")).toBeUndefined();
-+  });
-+
-+  it("keeps the newest profile when deliveries arrive out of order", async () => {
-+    await webhook("user.updated", user("user_order", { first_name: "New", updated_at: "2026-10-02T00:00:00.000Z" }));
-+    const stale = await webhook("user.created", user("user_order", { first_name: "Old" }));
-+    expect(await stale.json()).toEqual({ received: true, applied: false });
-+    expect((await find("user_order"))?.name).toBe("New Lovelace");
-+  });
-+
-+  it("clears a deleted user's profile and never revives it", async () => {
-+    await webhook("user.created", user("user_gone"));
-+    await webhook("user.deleted", user("user_gone"));
-+    await webhook("user.updated", user("user_gone", { updated_at: "2026-10-09T00:00:00.000Z" }));
-+    const gone = await find("user_gone");
-+    expect(gone).toMatchObject({ email: null, name: null, profilePictureUrl: null, joinedAt: "2026-10-01T10:00:00.000Z" });
-+    expect(gone?.deletedAt).toBeTruthy();
-+  });
-+
-+  it("acknowledges events it doesn't track", async () => {
-+    const res = await webhook("organization.created", { id: "org_1" });
-+    expect(await res.json()).toEqual({ received: true });
-+  });
-+
-+  it("lists users only with the admin token, as JSON or CSV", async () => {
-+    expect((await listUsers("nope")).status).toBe(401);
-+    await webhook("user.created", user("user_csv", { first_name: "Grace, Jr.", last_name: null }));
-+    const csv = await (
-+      await SELF.fetch("https://edge.test/admin/users?format=csv", { headers: { authorization: "Bearer test-admin-token" } })
-+    ).text();
-+    expect(csv.split("\n")[0]).toBe("user_id,email,name,first_name,last_name,profile_picture_url,joined_at,updated_at,deleted_
-```
-
-**File**: `edge/vitest.workerd.config.ts` (modified, +3/-1)
-```diff
-@@ -46,7 +46,8 @@ export default defineConfig({
-           PREVIEW_ROOMS: { className: "PreviewRoom", useSQLite: true },
-           REGISTRY_ROOMS: { className: "RegistryRoom", useSQLite: true },
-           CLOUD_ACCOUNTS: { className: "CloudAccount", useSQLite: true },
--          CLOUD_INDEX: { className: "CloudIndex", useSQLite: true }
-+          CLOUD_INDEX: { className: "CloudIndex", useSQLite: true },
-+          USER_DIRECTORY: { className: "UserDirectory", useSQLite: true }
-         },
-         workflows: {
-           CLOUD_PROVISION: { name: "test-cloud-provision", className: "ProvisionWorkflow" },
-@@ -76,6 +77,7 @@ export default defineConfig({
-           STRIPE_API_URL: "https://stripe.test",
-           CLOUD_MAX_AWAKE: "2",
-           ADMIN_TOKEN: "test-admin-token",
-+          WORKOS_WEBHOOK_SECRET: "workos_whsec_test",
-           RUNNER_JWT_PRIVATE_KEY: JSON.stringify(runnerKeys.privateKey.export({ format: "jwk" })),
-           RUNNER_JWT_PUBLIC_KEY: JSON.stringify(runnerKeys.publicKey.export({ format: "jwk" }))
-         },
-```
-
-**File**: `edge/wrangler.jsonc` (modified, +12/-5)
-```diff
-@@ -49,7 +49,9 @@
-       // session's machine (own sandbox, runner key, lifecycle), usage meter.
-       { "name": "CLOUD_ACCOUNTS", "class_name": "CloudAccount" },
-       // index1 — every user who ever had Cloud (billing walk list).
--      { "name": "CLOUD_INDEX", "class_name": "CloudIndex" }
-+      { "name": "CLOUD_INDEX", "class_name": "CloudIndex" },
-+      // users1 — every WorkOS user's profile + join date (user-directory.ts).
-+      { "name": "USER_DIRECTORY", "class_name": "UserDirectory" }
-     ]
-   },
-   "migrations": [
-@@ -70,7 +72,8 @@
-       "new_sqlite_classes": ["ChatRoom"]
-     },
-     { "tag": "v4", "new_sqlite_classes": ["PreviewRoom"] },
--    { "tag": "v5", "new_sqlite_classes": ["CloudAccount", "CloudIndex"] }
-+    { "tag": "v5", "new_sqlite_classes": ["CloudAccount", "CloudIndex"] },
-+    { "tag": "v6", "new_sqlite_classes": ["UserDirectory"] }
-   ],
-   // Cloud device lifecycle (src/cloud/workflows.ts). Workflow names are
-   // account-wide: the dev/test wrangler configs must never reuse them.
-@@ -123,8 +126,11 @@
-     //   CLOUD_ACCESS            who Cloud is offered to: "everyone", or WorkOS
-     //                           user/org ids (comma or space separated). Unset ⇒
-     //                           nobody. A secret so it changes without a deploy.
--    //   ADMIN_TOKEN             operator bearer for GET /admin/cloud/usage
--    //                           (unset ⇒ that route 404s)
-+    //   ADMIN_TOKEN             operator bearer for GET /admin/cloud/usage and
-+    //                           GET /admin/users (unset ⇒ those routes 404)
-+    //   WORKOS_WEBHOOK_SECRET   signing secret of the WorkOS webhook endpoint
-+    //                           https://<edge>/workos/webhook, subscribed to
-+    //                           user.created, user.updated, user.deleted
-     //   STRIPE_SECRET_KEY       Stripe API key (billing; src/cloud/stripe.ts)
-     //   STRIPE_WEBHOOK_SECRET   signing secret of the webhook endpoint
-     //                           https://<edge>/stripe/webhook, subscribed to
-@@ -192,7 +198,8 @@
-           { "name": "REGISTRY_ROOMS", "class_name": "RegistryRoom" },
-           { "name": "CHAT_ROOMS", "class_name": "ChatRoom" },
-           { "name": "CLOUD_ACCOUNTS", "class_name": "CloudAccount" },
--          { "name": "CLOUD_INDEX", "class_name": "CloudIndex" }
-+          { "name": "CLOUD_INDEX", "class_name": "CloudIndex" },
-+          { "name": "USER_DIRECTORY", "class_name": "UserDirectory" }
-         ]
-       },
-       "workflows": [
+ /** Exactly the public card: the known keys in their order, badges reduced
+@@ -111,23 +104,15 @@ ${options.site ? `<meta name="twitter:site" content="${escapeHtml(options.site)}
+ <meta property="og:image:alt" content="${escapeHtml(alt)}" />
+ <link rel="canonical" href="${urls.page}" />
+ <style>
+-  main { min-height: 100vh; min-height: 100dvh; display: grid; grid-template-rows: 1fr auto; }
+-  .stage { height: min(100vh, 100dvh); min-height: 560px; }
+-  footer { display: flex; flex-wrap: wrap; gap: 4px 12px; justify-content: center; align-items: baseline; padding: 0 16px 32px; color: var(--muted); font-size: 13px; }
+-  footer b { color: var(--ink); font-weight: 600; }
+-  footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--faint); }
+-  /* On a phone, the card alone: it fills the screen, nothing under it. */
+-  @media (max-width: 640px) {
+-    main { grid-template-rows: 1fr; }
+-    .stage { min-height: 0; }
+-    footer { display: none; }
+-  }
++  /* The card alone, filling the window, nothing to scroll to. */
++  html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
++  main { height: 100vh; height: 100dvh; }
++  .stage { height: 100%; }
+ </style>`;
+   return `${head(title, description, urls, meta)}
+ <body>
+ <main>
+   <div class="stage" id="stage" data-mode="share"><img class="fallback" alt="${escapeHtml(alt)}" data-src="${urls.image}" /></div>
+-  <footer><b>${escapeHtml(name)}</b><span>@${escapeHtml(card.username)}</span><span>${serial(card.userNumber)}</span><span>joined ${escapeHtml(card.joinedOn)}</span><a href="https://zeron.sh">zeron.sh</a></footer>
+ </main>
+ ${dataBlock(card)}
+ <script type="module" src="${urls.page_script}"></script>
 ```
 
 ---
 
-### Incident Patch 2: `8b7afb30` (2026-10-28)
-**Commit Message**: Bump version to v0.2.129
+### Incident Patch 2: `0a7d6b9b` (2026-10-31)
+**Commit Message**: Edge: admin profile option
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
 
-**File**: `Cargo.lock` (modified, +30/-30)
+**File**: `edge/src/index.ts` (modified, +1/-1)
 ```diff
-@@ -13319,7 +13319,7 @@ dependencies = [
- 
- [[package]]
- name = "zatex"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "tiny-skia",
-  "ttf-parser",
-@@ -13570,7 +13570,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "anyhow",
-  "clap",
-@@ -13593,7 +13593,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-audio"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "base64 0.22.1",
-  "cpal 0.18.2",
-@@ -13605,7 +13605,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-client"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -13636,7 +13636,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-doc"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "chrono",
-  "loro",
-@@ -13650,7 +13650,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-engine"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "alacritty_terminal",
-  "anyhow",
-@@ -13701,7 +13701,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-harness"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -13731,14 +13731,14 @@ dependencies = [
- 
- [[package]]
- name = "zeron-markdown"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "pulldown-cmark",
- ]
- 
- [[package]]
- name = "zeron-mcp"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -13759,7 +13759,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-mobile"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "async-trait",
-  "serde",
-@@ -13786,26 +13786,26 @@ dependencies = [
- 
- [[package]]
- name = "zeron-mobile-bindgen"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "uniffi",
- ]
- 
- [[package]]
- name = "zeron-notify"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "objc",
-  "tracing",
- ]
- 
- [[package]]
- name = "zeron-orb"
--version = "0.2.128"
-+version = "0.2.129"
- 
- [[package]]
- name = "zeron-preview"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -13833,7 +13833,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-proto"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "chrono",
-  "pulldown-cmark",
-@@ -13844,7 +13844,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-rpc"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -13865,7 +13865,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-sync"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "block2 0.6.2",
-  "chrono",
-@@ -13888,7 +13888,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-syntax"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "thiserror 2.0.20",
-  "tree-sitter",
-@@ -13923,14 +13923,14 @@ dependencies = [
- 
- [[package]]
- name = "zeron-term"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "alacritty_terminal",
- ]
- 
- [[package]]
- name = "zeron-term-link"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -13947,7 +13947,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-text"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "core-foundation 0.10.1",
-  "core-graphics 0.24.0",
-@@ -13964,7 +13964,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-theme"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "anyhow",
-  "clap",
-@@ -13979,7 +13979,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-ui"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "alacritty_terminal",
-  "anyhow",
-@@ -14062,7 +14062,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-update"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "anyhow",
-  "futures",
-@@ -14078,11 +14078,11 @@ dependencies = [
- 
- [[package]]
- name = "zeron-veil"
--version = "0.2.128"
-+version = "0.2.129"
- 
- [[package]]
- name = "zeron-visual"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "base64 0.22.1",
-  "gltf",
-@@ -14094,7 +14094,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-visual-gpu"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "image",
-  "pollster 0.4.0",
-@@ -14105,7 +14105,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-voice"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "anyhow",
-  "cpal 0.17.3",
-@@ -14122,7 +14122,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-voice-media"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "async-trait",
-  "semver",
-@@ -14137,7 +14137,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-voice-session"
--version = "0.2.128"
-+version = "0.2.129"
- dependencies = [
-  "async-trait",
-  "futures",
+@@ -54,7 +54,7 @@
+  *   GET  /admin/organizations[?format=csv] — ADMIN_TOKEN (every org with its members)
+  *   GET|POST /admin/badges              — ADMIN_TOKEN (list / define badges)
+  *   POST /admin/badges/{grant|revoke}   — ADMIN_TOKEN (give or take a badge from users)
+- *   POST /admin/usernames/{set|clear}   — ADMIN_TOKEN (give or take a username)
++ *   POST /admin/usernames/{set|clear|face} — ADMIN_TOKEN (give or take a username; pick a card's scene and foil)
+  *
+  * Member cards (card-routes.ts):
+  *   GET  /cards/:username               — pre-bearer, a card as JSON
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `edge/src/user-directory.ts` (modified, +37/-6)
 ```diff
-@@ -34,7 +34,7 @@ members = [
- ]
+@@ -36,13 +36,13 @@
+  * deleted user's URL. The scene count a card derives from (card.ts) is stored
+  * on the user at their first name, not with the name: a rename or a new claim
+  * after an operator's clear keeps the card. Operators set or clear names at
+- * `POST /admin/usernames/{set|clear}`.
++ * `POST /admin/usernames/{set|clear|face}`.
+  *
+  * Writes are one row per sign-up or profile change, so a single instance is
+  * not a hotspot.
+  */
+ import { DurableObject } from "cloudflare:workers";
+-import { CARD_SCENES, cardFirstName, deriveCard, type CardFace } from "./card";
++import { CARD_SCENES, HOLOS, cardFirstName, deriveCard, type CardFace, type Holo } from "./card";
+ import { forgetCard } from "./card-cache";
+ import type { Env } from "./env";
+ import { json, jsonError } from "./http";
+@@ -208,6 +208,9 @@ export class UserDirectory extends DurableObject<Env> {
+     this.ctx.storage.sql.exec("CREATE UNIQUE INDEX IF NOT EXISTS users_by_number ON users (user_number)");
+     this.numberUsers();
+     if (!columns.includes("card_scenes")) this.ctx.storage.sql.exec("ALTER TABLE users ADD COLUMN card_scenes INTEGER");
++    // An operator's choice of scene and foil for a card (null: the seed's).
++    if (!columns.includes("card_scene")) this.ctx.storage.sql.exec("ALTER TABLE users ADD COLUMN card_scene INTEGER");
++    if (!columns.includes("card_holo")) this.ctx.storage.sql.exec("ALTER TABLE users ADD COLUMN card_holo TEXT");
+     this.ctx.storage.sql.exec(`CREATE TABLE IF NOT EXISTS usernames (
+       username TEXT PRIMARY KEY, user_id TEXT NOT NULL, claimed_at INTEGER NOT NULL, retired_at INTEGER,
+       CHECK (length(username) BETWEEN 3 AND 20 AND username GLOB '[a-z0-9]*' AND username NOT GLOB '*[^a-z0-9_-]*'))`);
+@@ -461,6 +464,15 @@ export class UserDirectory extends DurableObject<Env> {
+     });
+   }
  
- [workspace.package]
--version = "0.2.128"
-+version = "0.2.129"
- edition = "2024"
- license = "MIT"
- publish = false
++  /** An operator picks a card's scene and foil, over what its seed gives
++   * (null puts that one back to the seed's). Answers the user's name, or
++   * undefined if the user isn't a live directory user. */
++  setCardFace(userId: string, scene: number | null, holo: Holo | null): string | null | undefined {
++    if (this.userRefusal(userId)) return undefined;
++    this.ctx.storage.sql.exec("UPDATE users SET card_scene = ?, card_holo = ? WHERE user_id = ?", scene, holo, userId);
++    return this.username(userId);
++  }
++
+   /** An operator takes a user's name away. It stays retired unless `release`
+    * frees it for someone else. Answers the name, or null if they held none. */
+   clearUsername(userId: string, release: boolean): string | null {
+@@ -475,7 +487,7 @@ export class UserDirectory extends DurableObject<Env> {
+   card(username: string): PublicCard | undefined {
+     const [row] = this.ctx.storage.sql
+       .exec(
+-        `SELECT u.user_id, u.user_number, u.first_name, u.created_at, u.card_scenes
++        `SELECT u.user_id, u.user_number, u.first_name, u.created_at, u.card_scenes, u.card_scene, u.card_holo
+          FROM usernames n JOIN users u ON u.user_id = n.user_id
+          WHERE n.username = ? AND n.retired_at IS NULL AND u.deleted_at IS NULL`,
+         username
+@@ -490,7 +502,10 @@ export class UserDirectory extends DurableObject<Env> {
+       )
+       .toArray();
+     // Field by field, never spread from a row: a new column must not go public.
+-    const { scene, holo, sky } = deriveCard(row.user_id as string, row.card_scenes as number);
++    const seeded = deriveCard(row.user_id as string, row.card_scenes as number);
++    const scene = row.card_scene === null ? seeded.scene : (row.card_scene as number);
++    const holo = row.card_holo === null ? seeded.holo : (row.card_holo as Holo);
++    const sky = seeded.sky;
+     return {
+       username,
+       firstName: cardFirstName(row.first_name as string | null, username),
+@@ -867,17 +882,33 @@ const handleBadgeRoute = async (
+  *                                     allowed here, retired ones are not
+  *   POST /clear {userId, release?}  — answers {cleared}, the name taken away.
+  *                                     It stays retired unless `release` frees it.
++ *   POST /face  {userId, scene, holo} — an operator's pick of the card's scene
++ *                                     (0-based) and foil over the seed's; null
++ *                                     puts either back. Answers the card.
+  */
+ const handleUsernameAdminRoute = async (
+   request: Request,
+   directory: DurableObjectStub<UserDirectory>,
+   action: string
+ ): Promise<Response> => {
+-  if (action !== "set" && action !== "clear") return jsonError(404, "not_found", "Not found.");
++  if (action !== "set" && action !== "clear" && action !== "face") return jsonError(404, "not_found", "Not found.");
+   if (request.method !== "POST") return jsonError(405, "method_not_allowed", "POST only.");
+   const body = await readJson(request);
+   const userId = body?.userId;
+   if (typeof userId !== "string" || !USER_ID_RE.test(userId)) return jsonError(400, "bad_request", "Expected {use
+```
+
+**File**: `edge/test/workerd/usernames.workerd.test.ts` (modified, +25/-0)
+```diff
+@@ -489,6 +489,31 @@ describe("a card over time", () => {
+     expect(await directory().card("steadycard")).toMatchObject({ firstName: "Renamed", ...deriveCard(id, CARD_SCENES) });
+   });
+ 
++  it("lets an operator pick a card's scene and foil, and put them back", async () => {
++    const id = "user_facepick";
++    await signUp(id);
++    expect((await claim(id, "facepick")).status).toBe(200);
++    const seeded = deriveCard(id, CARD_SCENES);
++    const picked = await admin("/admin/usernames/face", { userId: id, scene: 2, holo: "glyph" });
++    expect(picked.status).toBe(200);
++    expect(await picked.json()).toMatchObject({ username: "facepick", scene: 2, holo: "glyph", sky: seeded.sky });
++    expect(await (await readCard("facepick")).json()).toMatchObject({ scene: 2, holo: "glyph" });
++    expect(Object.keys((await (await readCard("facepick")).json()) as object)).toEqual([
++      "username", "firstName", "userNumber", "joinedOn", "badges", "scene", "holo", "sky"
++    ]);
++    // A rename keeps the pick.
++    expect(await (await admin("/admin/usernames/set", { userId: id, username: "facepick2" })).json()).toMatchObject({ scene: 2, holo: "glyph" });
++    // Null puts each back to the seed's.
++    expect(await (await admin("/admin/usernames/face", { userId: id, scene: null, holo: null })).json()).toMatchObject({
++      scene: seeded.scene,
++      holo: seeded.holo
++    });
++    expect((await admin("/admin/usernames/face", { userId: id, scene: CARD_SCENES })).status).toBe(400);
++    expect((await admin("/admin/usernames/face", { userId: id, holo: "neon" })).status).toBe(400);
++    expect((await admin("/admin/usernames/face", { userId: id, scene: 1 }, "wrong-token")).status).toBe(401);
++    expect((await admin("/admin/usernames/face", { userId: "user_nobodyhere", scene: 1 })).status).toBe(404);
++  });
++
+   it("keeps a card claimed at 20 scenes once more are added", async () => {
+     expect(CARD_SCENES).toBe(26);
+     const id = idMovedBy(26, "user_at20", 20);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1089** (2026-10-27): Folded user bubbles fade out; long chats scroll smoothly again (@zeronsh[bot])
-- **PR #1088** (2026-10-27): Access modes and plan mode for every agent; Muse answers every approval stage (@zeronsh[bot])
-- **PR #1074** (closed): Side chats report back without flooding the chat that started them (@zeronsh[bot])
-- **PR #1070** (2026-10-26): Landing: a privacy policy at zeron.sh/privacy (@zeronsh[bot])
-- **PR #1069** (2026-10-26): Cloud: per-account caps on awake machines and chats (@wingleeio)
-- **PR #1068** (2026-10-26): Messages an agent sends other chats read as one line naming the recipient (desktop, iOS, Android) (@wingleeio)
+- **PR #1115** (2026-10-30): Edge: profile routes (@wingleeio)
+- **PR #1113** (2026-10-30): Edge: record every WorkOS organization and its members (@wingleeio)
+- **PR #1107** (2026-10-30): Edge: a stored user number for every user in the directory (@wingleeio)
+- **PR #1106** (2026-10-29): Direct links: let WebRTC packets fragment, so links over Tailscale carry data (@wingleeio)
+- **PR #1105** (2026-10-29): Edge: badges for users in the directory (@wingleeio)
+- **PR #1099** (2026-10-29): Add fx as a native ACP provider (@zeronsh[bot])
 
 ---
 
@@ -2364,43 +1842,49 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Edge: record every WorkOS user from webhooks
+## X. Web: page layout
 
 **RULE**:
-When implementing operations in `edge/src/cloud/billing.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/card-web/site/pages.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a0468502`: Edge: record every WorkOS user from webhooks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `baedd5dc`: Web: page layout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `edge/src/cloud/billing.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/card-web/site/pages.mjs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/** Whether the request carries the operator's `ADMIN_TOKEN` bearer. */
-export const adminAuthorized = async (request: Request, adminToken: string): Promise<boolean> => {
-  // Header only (never `?token=`: query strings end up in logs).
-  const header = request.headers.get("authorization") ?? "";
-  const token = header.toLowerCase().startsWith("bearer ") ? header.slice(7).trim() : "";
-  // Compare digests so neither the content nor the length leaks via timing.
-  const [given, expected] = await Promise.all([sha256B64url(token), sha256B64url(adminToken)]);
-  return token !== "" && constantTimeEqual(given, expected);
-};
-
-  if (!(await adminAuthorized(request, env.ADMIN_TOKEN))) {
+  /* The card alone, filling the window, nothing to scroll to. */
+  html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+  main { height: 100vh; height: 100dvh; }
+  .stage { height: 100%; }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  // Header only (never `?token=`: query strings end up in logs).
-  const header = request.headers.get("authorization") ?? "";
-  const token = header.toLowerCase().startsWith("bearer ") ? header.slice(7).trim() : "";
-  // Compare digests so neither the content nor the length leaks via timing.
-  const [given, expected] = await Promise.all([sha256B64url(token), sha256B64url(env.ADMIN_TOKEN)]);
-  if (!token || !constantTimeEqual(given, expected)) {
+// "004·182", as the card prints it.
+const serial = (n) => {
+  const v = Math.max(0, Math.trunc(Number(n) || 0));
+  const pad = (x) => String(x % 1000).padStart(3, "0");
+  return `${pad(Math.trunc(v / 1000))}·${pad(v)}`;
+};
+
+  main { min-height: 100vh; min-height: 100dvh; display: grid; grid-template-rows: 1fr auto; }
+  .stage { height: min(100vh, 100dvh); min-height: 560px; }
+  footer { display: flex; flex-wrap: wrap; gap: 4px 12px; justify-content: center; align-items: baseline; padding: 0 16px 32px; color: var(--muted); font-size: 13px; }
+  footer b { color: var(--ink); font-weight: 600; }
+  footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--faint); }
+  /* On a phone, the card alone: it fills the screen, nothing under it. */
+  @media (max-width: 640px) {
+    main { grid-template-rows: 1fr; }
+    .stage { min-height: 0; }
+    footer { display: none; }
+  }
+  <footer><b>${escapeHtml(name)}</b><span>@${escapeHtml(card.username)}</span><span>${serial(card.userNumber)}</span><span>joined ${escapeHtml(card.joinedOn)}</span><a href="https://zeron.sh">zeron.sh</a></footer>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a0468502` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `baedd5dc` are properly handled with clean fallback behavior.

@@ -6420,3 +6420,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-xhtoken-spark-x2-6-4b` | `https://huggingface.co/XHToken/Spark-X2.6-4B` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-10-31T01:53:42.343Z |
 | `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `cf6bafb2` | Multi-dimensional audit evidence | 2026-10-31T01:53:42.492Z |
 | `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `1408ae4a` | Multi-dimensional audit evidence | 2026-10-31T01:53:50.688Z |
+| `learn-huggingface-internscience-sage-a1-5` | `https://huggingface.co/InternScience/Sage-A1.5` | `hf-interns` | Multi-dimensional audit evidence | 2026-10-31T02:00:20.498Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `baedd5dc` | Multi-dimensional audit evidence | 2026-10-31T02:00:22.503Z |
+| `learn-github-feathersjs-feathers` | `https://github.com/feathersjs/feathers` | `8c007bc4` | Multi-dimensional audit evidence | 2026-10-31T02:00:27.241Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `6356fbe3` | Multi-dimensional audit evidence | 2026-10-31T02:00:30.630Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `6ce4c398` | Multi-dimensional audit evidence | 2026-10-31T02:00:36.214Z |

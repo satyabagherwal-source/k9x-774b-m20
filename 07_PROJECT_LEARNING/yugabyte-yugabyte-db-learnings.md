@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `b286efd7`  
+> **Source Version**: `6ce4c398`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T05:39:29.238Z  
+> **Timestamp**: 2026-10-31T02:00:35.669Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T05:39:28.454Z  
+> **Harvest Timestamp**: 2026-10-31T02:00:35.662Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10637 stars
+- **Stars / Engagement**: 10640 stars
 
 ---
 
@@ -2250,14 +2250,14 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #36315** (2026-10-30): **[#36232] DocDB: Keep log_stop_retaining_min_disk_mb in KB**
-  *Symptoms*: ## Summary https://github.com/yugabyte/yugabyte-db/commit/a4eb718254006acf3d39aa5df2580c59371195b1 switched `log_stop_retaining_min_disk_mb` from KB to MB. This does not account for users who already have the value set which would have their value of `log_stop_retaining_min_disk_mb` become 1024 times bigger.  ## Fix Fixes #36232  This reverts the flag to KB and updates the help text and stable docs. In `CDCServiceTestMinSpace`, the simulated free space is now one byte below the threshold, so it stays above the WAL segment pre-allocation size.  ## Upgrade/Rollback safety - **From a stable release (2024.2 to 2026.1):** no change; those releases read the flag as KB. - **From a 2.31.0.x build containing a4eb7182540:** explicitly set values become 1024x smaller (N MB becomes N KB), so space-based WAL GC triggers later. Multiply explicit settings by 1024 when upgrading. Rolling back to such a build reverses this. - **Mixed-version clusters:** each node reads its own flag, and no wire format or persisted state changes.  ## Test plan ``` ./yb_build.sh debug --cxx-test cdc_service-int-test --gtest_filter CDCServiceTestMinSpace.TestLogRetentionByOpId_MinSpace ./yb_build.sh debug --cxx-test xcluster-test --gtest_filter XClusterTest.TestPrematureLogGC ```
-
-- **Issue #36274** (2026-10-30): **[PLAT-23451] YBA: Merge audit additional details atomically in parallel prechecks**
-  *Symptoms*: ## Summary  A software upgrade with `runOnlyPrechecks: true` puts all its prechecks into one `AllPreflightChecks` subtask group, so they run in parallel. `CheckUpgrade` (adds `finalizeRequired`, `ysqlMajorVersionUpgrade`) and `PGUpgradeTServerCheck` (adds the `pg_upgrade --check` output: `checks`, `title`, `overallStatus`) each read the task's audit additional details, added their fields and saved the whole object back. When they overlapped, whichever saved last dropped the other's fields, so callers reading the precheck result from the audit could find no PG upgrade checks.  This change: - adds `AuditService.mergeAdditionalDetails(taskUUID, fields)`, which reads, merges and saves the details under one lock (`AuditService` is a singleton); `updateAdditionalDetails` is now synchronized as well - uses it in `CheckUpgrade` and `PGUpgradeTServerCheck` instead of their own copy-and-save  ## Upgrade/Rollback safety  No schema, API or persisted format changes; the audit details keep the same fields.  ## Test plan  - New `AuditTest` cases: merge keeps existing fields, 8 parallel merges keep all fields, merge without an audit row is a no-op. - `sbt "testOnly com.yugabyte.yw.models.AuditTest com.yugabyte.yw.commissioner.tasks.subtasks.check.CheckUpgradeTest com.yugabyte.yw.commissioner.tasks.subtasks.check.PGUpgradeTServerCheckTest"`: 32 passed.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #36483** (2026-10-31): **[YSQL] Build 13d0651c on master: 2 lanes broken**
+  *Symptoms*: Jira Link: [DB-25519](https://yugabyte.atlassian.net/browse/DB-25519) _Filed automatically by [Grissom](https://github.com/yugabyte/agent-k/blob/main/bots/grissom/README.md) (internal docs), which watches YugabyteDB's scheduled builds on `master` and the supported release branches for builds where a lane breaks or many tests fail the same way. Everything below is measured from those builds; how it decides, and how to stop it, is at the end._  ## Summary  The scheduled build of `master` at 13d0651c has a lane-level failure; the affected lane(s) are not judged test by test.  - Failing lanes: `alma8-clang21-release`, `arm-alma8-clang21-release` - Failing build types: release  ## Urgency  S2 lane broken / cluster (`priority/high`).  ## What is being tested  Every lane of the scheduled build (build types release, tsan, fastdebug, asan, debug).  ## What is the failure  - `alma8-clang21-release`: build step failed while configuring (cmake), before compiling: New add_dependencies on rpc-test fails when tests are filtered out; no tests ran ([CSI launch 185812](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/185812), [build log](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/185812/890324279/890324280/log), [Jenkins console](https://jenkins.dev.yugabyte.com/job/github-yugabyte-db-alma8-master-clang21-release/1597/console))    Read from the log by a model as a compile or link error (confidence 0.90): CMake configure failed at src/yb/rpc/CMakeLists.txt:183, where 5c9c8cb176 added
   **Post-Mortem & Fix Analysis**:
-  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/yugabyte/yugabyte-db?pullRequest=36274) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/yugabyte/yugabyte-db?pullRequest=36274) before we can accept your contribution.<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/yugabyte/yugabyte-db?pullRequest=36274) it.</sub>
-  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/36274) <!-- Reviewable:end --> 
+  > Grissom: **suspected root cause**.  Range [`(fc87b774, 13d0651c]`](https://github.com/yugabyte/yugabyte-db/compare/fc87b774...13d0651c): 8 commits. A build-level break: 2 lane(s) broken in this build, so the onset is this build; the range starts at the previous scheduled build.  1. [13d0651c1f](https://github.com/yugabyte/yugabyte-db/commit/13d0651c1f2540f2fe03fca6b9253a5767b7c940) `[#35773] YSQL: Make a retried UpgradeYsql wait for the upgrade already running (#36003)` (myang2021) -- confidence 0.20: The broken line 'add_dependencies(rpc-test generate_test_certs)' comes from 5c9c8cb176, which was already in the passing build fc87b774. So the bug was latent, and it only shows when the C++ test filter leaves rpc-test out ('included: 1, excluded: 656'). This is the only candidate that changes a C++ gtest source (pg_libpq-test.cc), so it is the most likely reason a changed-test filter kept just one C++ test. It is still a weak guess. 2. [61fd6dae11](https://github.com/yugabyte/yugabyte-db
+  > /grissom deep-analyze Why do the two lanes fail differently (alma8: the rpc-test CMake error from 5c9c8cb176; arm: a sysbench segfault in the PGO workload), and is this issue's onset and range right, given that 5c9c8cb176 predates fc87b774? 
+
+- **Issue #36471** (2026-10-31): **[pg19] YSQL: Let yb_extension members create roles in extension scripts**
+  *Symptoms*: ## Summary  On pg19, a `yb_extension` member can't install orafce ("permission denied to create role"), which fails `TestPgRegressAuth`. Since orafce 4.10 ([ae9d0302be6](https://github.com/orafce/orafce/commit/ae9d0302be607f86bdfecbf24e962678e6282e75)), its install script creates the role `orafce_set_umask`. pg19 ships 4.16 ([18814c4c725](https://github.com/yugabyte/yugabyte-db/commit/18814c4c725bd11552556c31cf63c3a3fb9a6949)), and YB runs the script as the member, who lacks CREATEROLE. Master ships orafce 4.9, which creates no role.  Fix: skip the CREATEROLE check in `CreateRole()` for a `yb_extension` member during CREATE EXTENSION, as [a8733341c84](https://github.com/yugabyte/yugabyte-db/commit/a8733341c847cb99918421fc5da04209f9572bb3) does for other checks. This doesn't give the member CREATEROLE: outside CREATE EXTENSION it still can't create roles. The SUPERUSER, CREATEDB, REPLICATION and BYPASSRLS checks still apply.  ## Test Plan  `./yb_build.sh release --java-test 'org.yb.pgsql.TestPgRegressAuth#schedule'` passes with [#36455](https://github.com/yugabyte/yugabyte-db/pull/36455) applied. By hand: the member still can't run `CREATE ROLE` outside an extension, or create a SUPERUSER role from an extension script. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2274,1037 +2274,723 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c4bda916` (2026-10-30)
-**Commit Message**: [#35781] DocDB: Replace WAL segments of idle tablets with a quiescent marker (#35782)
+### Incident Patch 1: `4184fe31` (2026-10-30)
+**Commit Message**: [#36245] YSQL: Fix spurious wait in org.yb.pgsql.TestPgRegressIsolationObjectLockingPorted#testPgRegress (#36246)
 
 ## Summary
 
-The main goal of this change is to let a tablet that receives no
-operations for a while bootstrap without reading or writing its WAL
-(#35781).
-Today every restart of such a tablet replays the tail of its last
-segment, because retryable requests are flushed only at rollover, and
-also either scans the unclosed last segment or creates and fsyncs a new
-one.
-In `many_tablets_bootstrap-itest`, 2000 tablets with 33 MB of flushed
-WAL each read 27 GB per restart, which takes 55 s with a cold page
-cache.
+The YB isolationtester treats any step that runs longer than
+`YB_NUM_SECONDS_TO_WAIT_TO_ASSUME_SESSION_BLOCKED` as blocked. On TSAN,
+the `s2a` step of `fk-partitioned-1` (`ALTER TABLE pfk ATTACH
+PARTITION`) sometimes takes longer than that even when no lock blocks
+it, so the output shows an unexpected `<waiting ...>`. Lint does not
+allow edits to the upstream-named spec, so the object-locking schedule
+now runs a new `yb.port.fk-partitioned-1` copy instead. In that copy,
+`s2a` is annotated `(yb_never_waits)` in the 11 permutations where it
+runs before `s1d` or after `s1c` and so cannot be blocked; the expected
+output is unchanged.
 
-An idle tablet now flushes all storages and replaces its WAL segments
-with a small `quiescent_marker` file (`QuiescentMarkerPB`).
-The marker states that every op up to its op id L is durable in all
-storages, and carries what bootstrap would otherwise take from the
-replaced segments: L, its hybrid time and restart-safe time, the
-monotonic counter and the next segment number.
-The file is a PB container; since #35791 its header embeds only the
-`QuiescentMarkerPB` and `OpIdPB` descriptors, so it is under 1 KB.
-The design is in `architecture/design/docdb-quiescent-tablets.md`.
+---
+_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed
+the failure logs, wrote the change, and verified it locally._
 
-Entering the mode (`
+## Test plan
 
-**File**: `architecture/design/docdb-quiescent-tablets.md` (added, +162/-0)
+./yb_build.sh tsan --clang21 --java-test
+'org.yb.pgsql.TestPgRegressIsolationObjectLockingPorted#testPgRegress'
+-n 180 --stop-at-failure -- -p 6
+Ran the above locally with no failures.
+Before the fix, this test reproduced locally (same test command and -p /
+env as above, without -
+
+**File**: `src/postgres/src/test/isolation/expected/yb.port.fk-partitioned-1.out` (added, +133/-0)
 ```diff
-@@ -0,0 +1,162 @@
-+# Quiescent tablets
+@@ -0,0 +1,133 @@
++Parsed test spec with 2 sessions
 +
-+Status: in development.
++starting permutation: s1b s1d s1c s2b s2a s2c
++step s1b: begin;
++step s1d: delete from ppk1 where a = 1;
++step s1c: commit;
++step s2b: begin;
++step s2a: alter table pfk attach partition pfk1 for values in (1);
++ERROR:  insert or update on table "pfk1" violates foreign key constraint "pfk_a_fkey"
++step s2c: commit;
 +
-+## Motivation
++starting permutation: s1b s1d s2b s1c s2a s2c
++step s1b: begin;
++step s1d: delete from ppk1 where a = 1;
++step s2b: begin;
++step s1c: commit;
++step s2a: alter table pfk attach partition pfk1 for values in (1);
++ERROR:  insert or update on table "pfk1" violates foreign key constraint "pfk_a_fkey"
++step s2c: commit;
 +
-+A tablet that receives no operations for a while should bootstrap without reading or writing its WAL, and should keep no WAL on disk. Today every restart of such a tablet, graceful or not, reads and fsyncs WAL files even though all of its data is flushed.
++starting permutation: s1b s1d s2b s2a s1c s2c
++step s1b: begin;
++step s1d: delete from ppk1 where a = 1;
++step s2b: begin;
++step s2a: alter table pfk attach partition pfk1 for values in (1); <waiting ...>
++step s1c: commit;
++step s2a: <... completed>
++ERROR:  insert or update on table "pfk1" violates foreign key constraint "pfk_a_fkey"
++step s2c: commit;
 +
-+With everything flushed, bootstrap still:
++starting permutation: s1b s2b s1d s1c s2a s2c
++step s1b: begin;
++step s2b: begin;
++step s1d: delete from ppk1 where a = 1;
++step s1c: commit;
++step s2a: alter table pfk attach partition pfk1 for values in (1);
++ERROR:  insert or update on table "pfk1" violates foreign key constraint "pfk_a_fkey"
++step s2c: commit;
 +
-+- Replays from `min(flushed op id, retryable requests op id)`. `TabletBootstrapStatePB` is flushed only from `pre_log_rollover_callback`, so replay starts near the beginning of the last segment (`SkipFlushedEntries`). In `many_tablets_bootstrap-itest`, 1000 tablets with 0.85 MB of flushed WAL each read 851 MB per restart.
-+- After a graceful restart, the last segment is closed, so `FinishBootstrap` creates a new segment, which costs a file fsync and a WAL directory fsync.
-+- After a non-graceful restart, the last segment has no footer, so `Log::ReuseAsActiveSegment` reads it in full to find its end and rebuild its footer and log index.
++starting permutation: s1b s2b s1d s2a s1c s2c
++step s1b: begin;
++step s2b: begin;
++step s1d: delete from ppk1 where a = 1;
++step s2a: alter table pfk attach partition pfk1 for values in (1); <waiting ...>
++step s1c: commit;
++step s2a: <... completed>
++ERROR:  insert or update on table "pfk1" violates foreign key constraint "pfk_a_fkey"
++step s2c: commit;
 +
-+When nothing needs replay, the WAL provides only: the last and committed op id, orphaned replicates, retryable requests, the hybrid clock (`UpdateClock` per entry), the monotonic counter (`UpdateMonotonicCounter`) and the restart-safe time of the last entry. All of this fits in a small file.
++starting permutation: s1b s2b s2a s1d s2c s1c
++step s1b: begin;
++step s2b: begin;
++step s2a: alter table pfk attach partition pfk1 for values in (1);
++step s1d: delete from ppk1 where a = 1; <waiting ...>
++step s2c: commit;
++step s1d: <... completed>
++ERROR:  update or delete on table "ppk1" violates foreign key constraint "pfk_a_fkey1" on table "pfk"
++step s1c: commit;
 +
-+Switching into and out of this mode is expected to be rare. Its cost is paid at the switch, not at every restart.
++starting permutation: s1b s2b s2a s2c s1d s1c
++step s1b: begin;
++step s2b: begin;
++step s2a: alter table pfk attach partition pfk1 for values in (1);
++step s2c: commit;
++step s1d: delete from ppk1 where a = 1;
++ERROR:  update or delete on table "ppk1" violates foreign key constraint "pfk_a_fkey1" on table "pfk"
++step s1c: commit;
 +
-+## Design: the marker replaces a log prefix
++starting permutation: s2b s1b s1d s1c s2a s2c
++step s2b: begin;
++step s1b: begin;
++step s1d: delete from ppk1 where a = 1;
++step s1c: commit;
++step s2a: alter table pfk attach partition pfk1 for values in (1);
++ERROR:  insert or update on table "pfk1" violates foreign key constraint "pfk_a_fkey"
++step s2c: commit;
 +
-+A quiescent tablet replaces its WAL segments with a small file, the quiescent marker. It is like the last included index and term of a Raft snapshot, where the flushed storages play the role of the snapshot.
++starting permutation: s2b s1b s1d s2a s1c s2c
++step s2b: begin;
++step s1b: begin;
++step s1d: delete from ppk1 where a = 1;
++step s2a: alter table pfk attach partition pfk1 for values in (1); <waiting ...>
++step s1c: commit;
++step s2a: <... completed>
++ERROR:  insert or update on table "pfk1" violates foreign key constraint "pfk_a_fkey"
++step s2c: commit;
 +
-+The marker states: every op with index up to L is durable in every storage, and segments that hold ops up to L may be absent. Storages here are the regular DB, the intents DB, vector indexes, the superblock, consensus metadata and the retryable requests.
++starting permutation: s2b s1b s2a s1d s2c s1c
++step s2b: begin;
++step s1b: begin;
++step s2a: alter table pfk attach partition pfk1 for values in (1);
++step s1d: delete from ppk1 where a = 1; <waiting ...>
++step s2c: commit;
++step s1d: <... completed>
++ERROR:  update or delete on table "ppk1" violates foreign key constraint "pfk_a_fkey1" on table "pfk"
++step s1c: commit;
 +
-+- **Used together with the segments.** The log is the marker followed by the segments that hold ops after L. Bootstrap starts from the marker's values and replays the segments on top, so each value is the max of the two. Segments whose max index is at most L are leftovers and are deleted when the log opens.
-+- **Valid after leaving the mode.** New appends only add ops after L, so the marker stays true. Nothing deletes it on the first append. GC may later delete segments after L as usual, and the marker is then only a lower bound.
-+- **Rewritten on re-entry.** Entering the mode again overwrites it with a larger L.
-+- **Removed with the WAL directory.** Tablet delete, tombstone and the remote bootstrap destination replace the directory and the marker with it.
++starting permutation: s2b s1b s2a s2c s1d s1c
++step s2b: begin;
++step s1b: begin;
++step s2a: alter table pfk attach partition pfk1 for values in (1);
++step s2c: commit;
++step s1d: delete from ppk1 where a = 1;
++ERROR:  update or delete on table "ppk1" violates foreign key constraint "pfk_a_fkey1" on table "pfk"
++step s1c: commit;
 +
-+The tablet is quiescent when the marker exists and there are no segments (`TabletPeer::IsQuiescent`). The first append after that starts a new segment at L+1.
++starting permutation: s2b s2a s1b s1d s2c s1c
++step s2b: begin;
++step s2a: alter table pfk attach partition pfk1 for values in (1);
++step s1b: begin;
++step s1d: delete from ppk1 where a = 1; <waiting ...>
++step s2c: commit;
++step s1d: <... completed>
++ERROR:  update or delete on table "ppk1" violates foreign key constraint "pfk_a_fkey1" on table "pfk"
++step s1c: commit;
 +
-+```mermaid
-+stateDiagram-v2
-+    Active --> Entering: idle for quiescent_tablet_idle_sec
-+    Entering --> Active: give up
-+    Entering --> Quiescent: marker written, segments up to L deleted
-+    Quiescent --> Active: first append starts a segment at L+1
-+```
++starting permutation: s2b s2a s1b s2c s1d s1c
++step s2b: begin;
++step s2a: alter table pfk attach partition pfk1 for values in (1);
++step s1b: begin;
++step s2c: commit;
++step s1d: delete from ppk1 where a = 1;
++ERROR:  update or delete on table "ppk1" violates foreign key constraint "pfk_a_fkey1" on table "pfk"
++step s1c: commit;
 +
-+A restart in the quiescent state reads no WAL. Any append returns the tablet to active without touching the marker.
-+
-+## Marker contents and location
-+
-+`QuiescentMarkerPB` (`log.proto`) holds what bootstrap would otherwise take from the WAL, plus a guard.
-+
-+| Field | Used for |
-+| --- | --- |
-+| `tablet_id` | Rejecting a marker that came with another tablet's files |
-+| `op_id` (L) | `last_id` and `last_committed_id` in `ConsensusBootstrapInfo`; lookup of the op preceding the first append |
-+| `hybrid_time` of L | `clock->Update`, `MvccManager::SetLastReplicated` |
-+| `monotonic_counter` | `Tablet::UpdateMonotonicCounter`; the counter exists only in replicate messages |
-+| `entry_time` of the batch with L | `RetryableRequests::Clock().Adjust` |
-+| `last_segment_sequence_number` | Numbering of the next segment |
-+
-+The file is `quiescent_marker` in the WAL directory, next to the bootstrap state file, so it shares the directory's lifecycle. `IsLogFileName` does not match it, so `LogReader` skips it. It is a PB container: `pb_util::WritePBContainerToPath` writes it to a temp file, fsyncs it, renames it and fsyncs the directory. The container header embeds only the descriptors of the types the message reaches (#35791), here `QuiescentMarkerPB` and `OpIdPB`, so the file stays under 1 KB, and `yb-pbc-dump` can print it.
-+
-+## Entering the mode
-+
-+A replica enters the mode after nothing was appended to its log for `quiescent_tablet_idle_sec` (default 600). `TSTabletManager` keeps a priority queue of tablets ordered by when each could enter the mode: its last append time plus the idle period. A background task wakes for the earliest one, and at least once a minute, or once per idle period if that is shorter, to pick up new tablets and `quiescent_tablet_idle_sec` raised from 0. It starts only after the tserver 
++starting permutation: s2b s2a s2c s1b s1d s1c
++step s2b: begin;
++step s2a: alter table pfk attach partition pfk1 for values in (1);
++step s2c: commit;
++step s1b: begin;
++step s1d: delete from ppk1 where a = 1;
++ERROR:  update or delete on table "ppk1" violates foreign key constraint "pfk_a_fkey1" on table "pfk"
++step s1c: commit;
 ```
 
-**File**: `src/yb/consensus/consensus.proto` (modified, +3/-0)
+**File**: `src/postgres/src/test/isolation/specs/yb.port.fk-partitioned-1.spec` (added, +48/-0)
 ```diff
-@@ -357,6 +357,9 @@ message ConsensusRequestPB {
- 
-   // If enabled, a trace will be collected for this RPC and returned in the response.
-   optional bool trace_requested = 12;
-+
-+  // The last op replicated to all peers tracked by the leader.
-+  optional OpIdPB all_replicated_op_id = 13;
- }
- 
- message ConsensusResponsePB {
-```
-
-**File**: `src/yb/consensus/consensus_queue.cc` (modified, +13/-2)
-```diff
-@@ -78,6 +78,7 @@ using namespace yb::size_literals;
- DECLARE_uint64(rpc_max_message_size);
- 
- DECLARE_uint64(consensus_max_batch_size_bytes);
-+DECLARE_bool(enable_quiescent_tablets);
- DECLARE_int32(raft_heartbeat_interval_ms);
- DECLARE_double(leader_failure_max_missed_heartbeat_periods);
- 
-@@ -579,6 +580,9 @@ Status PeerMessageQueue::RequestForPeer(const string& uuid,
-     }
- 
-     request->set_caller_term(queue_state_.current_term);
-+    if (FLAGS_enable_quiescent_tablets) {
-+      queue_state_.all_replicated_op_id.ToPB(request->mutable_all_replicated_op_id());
-+    }
-     unreachable_time =
-         MonoTime::Now().GetDeltaSince(peer->last_successful_communication_time);
-     if (member_type) *member_type = peer->member_type;
-@@ -1139,6 +1143,7 @@ Result<const PeerMessageQueue::TrackedPeer*> PeerMessageQueue::FindClosestPeerFo
-   LocalityLevel best_locality_level =
-       TablespaceParser::GetLocalityLevel(src_cloud_info, local_peer_pb_.cloud_info());
-   PeerMessageQueue::TrackedPeer* rbs_source = local_peer_;
-+  const auto min_anchorable_index = VERIFY_RESULT(log_cache_.min_anchorable_index());
-   for (auto it = peers_map_.begin(); it != peers_map_.end(); it++) {
-     // don't consider locality of remote_tracked_peer with itself
-     if (!it->second->cloud_info.has_value() || remote_tracked_peer == it->second ||
-@@ -1147,14 +1152,15 @@ Result<const PeerMessageQueue::TrackedPeer*> PeerMessageQueue::FindClosestPeerFo
-     }
- 
-     // Consider only those followers as rbs source which are in the same term as the leader
--    // and have last_received_opid >= leader log's min available index.
-+    // and have last_received_opid >= leader log's min anchorable index, since the source anchors
-+    // the leader's log at its last op.
-     // TODO: Add a gflag that sets the max allowed difference between the leader's last
-     // logged opid and that of the rbs source. Reject peer as an rbs source if
-     // leader->last_received.index - remote_peer->last_received.index > flag_value
-     OpId remote_last_received_opid = it->second->last_received;
-     if (it->second->member_type != PeerMemberType::VOTER ||
-         remote_last_received_opid.term != queue_state_.current_term ||
--        remote_last_received_opid.index < VERIFY_RESULT(log_cache_.earliest_op_index()) ||
-+        remote_last_received_opid.index < min_anchorable_index ||
-         !it->second->is_last_exchange_successful) {
-       continue;
-     }
-@@ -1760,6 +1766,11 @@ OpId PeerMessageQueue::TEST_GetAllReplicatedIndex() const {
-   return queue_state_.all_replicated_op_id;
- }
- 
-+OpId PeerMessageQueue::GetAllReplicatedOpId() const {
-+  LockGuard lock(queue_lock_);
-+  return queue_state_.mode == Mode::LEADER ? queue_state_.all_replicated_op_id : OpId::Min();
+@@ -0,0 +1,48 @@
++# Verify that cloning a foreign key constraint to a partition ensures
++# that referenced values exist, even if they're being concurrently
++# deleted.
++setup {
++drop table if exists ppk, pfk, pfk1;
++  create table ppk (a int primary key) partition by list (a);
++  create table ppk1 partition of ppk for values in (1);
++  insert into ppk values (1);
++  create table pfk (a int references ppk) partition by list (a);
++  create table pfk1 (a int not null);
++  insert into pfk1 values (1);
 +}
 +
- OpId PeerMessageQueue::GetAllAppliedOpId() const {
-   LockGuard lock(queue_lock_);
-   return queue_state_.all_applied_op_id;
++session s1
++step s1b	{	begin; }
++step s1d	{	delete from ppk1 where a = 1; }
++step s1c	{	commit; }
++
++session s2
++step s2b	{	begin; }
++step s2a	{	alter table pfk attach partition pfk1 for values in (1); }
++step s2c	{	commit; }
++
++teardown	{	drop table ppk, pfk, pfk1; }
++
++# YB: s2a can only wait when it runs between s1d and s1c.  Elsewhere it is
++# annotated yb_never_waits so a slow ATTACH PARTITION (e.g. on TSAN) is not
++# reported as waiting by the YB isolationtester's assume-blocked timeout.
++permutation s1b s1d s1c s2b s2a(yb_never_waits) s2c
++permutation s1b s1d s2b s1c s2a(yb_never_waits) s2c
++permutation s1b s1d s2b s2a s1c s2c
++#permutation s1b s1d s2b s2a s2c s1c
++permutation s1b s2b s1d s1c s2a(yb_never_waits) s2c
++permutation s1b s2b s1d s2a s1c s2c
++#permutation s1b s2b s1d s2a s2c s1c
++#permutation s1b s2b s2a s1d s1c s2c
++permutation s1b s2b s2a(yb_never_waits) s1d s2c s1c
++permutation s1b s2b s2a(yb_never_waits) s2c s1d s1c
++permutation s2b s1b s1d s1c s2a(yb_never_waits) s2c
++permutation s2b s1b s1d s2a s1c s2c
++#permutation s2b s1b s1d s2a s2c s1c
++#permutation s2b s1b s2a s1d s1c s2c
++permutation s2b s1b s2a(yb_never_waits) s1d s2c s1c
++permutation s2b s1b s2a(yb_never_waits) s2c s1d s1c
++#permutation s2b s2a s1b s1d s1c s2c
++permutation s2b s2a(yb_never_waits) s1b s1d s2c s1c
++permutation s2b s2a(yb_never_waits) s1b s2c s1d s1c
++permutation s2b s2a(yb_never_waits) s2c s1b s1d s1c
 ```
 
-**File**: `src/yb/consensus/consensus_queue.h` (modified, +3/-0)
+**File**: `src/postgres/src/test/isolation/yb_pg_isolation_object_locking_schedule` (modified, +1/-1)
 ```diff
-@@ -366,6 +366,9 @@ class PeerMessageQueue {
- 
-   OpId TEST_GetCommittedIndex() const;
- 
-+  // Returns the last op replicated to all tracked peers, or OpId::Min() if not in leader mode.
-+  OpId GetAllReplicatedOpId() const;
-+
-   OpId GetAllAppliedOpId() const;
- 
-   // Returns the current majority replicated OpId, for tests.
-```
-
-**File**: `src/yb/consensus/log-test.cc` (modified, +202/-0)
-```diff
-@@ -587,6 +587,39 @@ TEST_F(LogTest, WalStateAfterTailReplacedByEarlierTerm) {
-   ASSERT_OK(log_->Close());
- }
- 
-+// Entries replayed from closed segments become durable before the first append starts a segment,
-+// otherwise memtable flushes of them would wait for a WAL fsync.
-+TEST_F(LogTest, WalStateOfReplayedEntriesWithoutActiveSegment) {
-+  options_.durable_wal_write = false;
-+  options_.interval_durable_wal_write = MonoDelta::FromSeconds(3600);
-+  options_.bytes_durable_wal_write_mb = 1024;
-+  BuildLog();
-+  auto op_id = MakeOpId(1, 1);
-+  ASSERT_OK(AppendNoOps(&op_id, 10));
-+  ASSERT_OK(log_->Close());
-+
-+  BuildLog(/* byte_limit = */ -1, CreateNewSegment::kFalse);
-+  log_->DisableSync();
-+  SegmentSequence segments;
-+  ASSERT_OK(ASSERT_RESULT(log_->GetLogReader())->GetSegmentsSnapshot(&segments));
-+  for (const auto& segment : segments) {
-+    auto read_result = segment->ReadEntries();
-+    ASSERT_OK(read_result.status);
-+    for (size_t i = 0; i != read_result.entries.size(); ++i) {
-+      ASSERT_OK(log_->Append(
-+          read_result.entries[i], read_result.entry_metadata[i], SkipWalWrite::kTrue));
-+    }
-+  }
-+  ASSERT_OK(log_->EnsureSegmentInitialized());
-+  ASSERT_OK(log_->ReEnableSyncIfRequired());
-+  const OpId last_op_id(1, 10);
-+  ASSERT_EQ(log_->GetLatestEntryOpId(), last_op_id);
-+  ASSERT_OK(WaitFor(
-+      [this, &last_op_id] { return log_->WalState(last_op_id) == WalEntryState::kDurable; },
-+      10s, "Replayed entries durable"));
-+  ASSERT_OK(log_->Close());
-+}
-+
- // Regression test for part of KUDU-735:
- // if a log is not preallocated, we should properly track its on-disk size as we append to
- // it.
-@@ -2462,4 +2495,173 @@ TEST_F(LogTest, YB_RELEASE_ONLY_TEST(TestSegmentAllocationFailureAndRecovery)) {
-   ASSERT_OK(log_->Close());
- }
- 
-+// Reopening a log with a closed last segment starts no segment until the first append.
-+TEST_F(LogTest, LazySegmentAllocation) {
-+  BuildLog();
-+  auto op_id = MakeOpId(1, 1);
-+  ASSERT_OK(AppendNoOps(&op_id, 3));
-+  ASSERT_OK(log_->Close());
-+  CheckRightNumberOfSegmentFiles(1);
-+
-+  BuildLog(/* byte_limit = */ -1, CreateNewSegment::kFalse);
-+  ASSERT_OK(log_->EnsureSegmentInitialized());
-+  ASSERT_EQ(log_->TEST_ActiveSegment(), nullptr);
-+  ASSERT_EQ(log_->num_segments(), 1);
-+
-+  ASSERT_OK(AppendNoOp(&op_id));
-+  ASSERT_NE(log_->TEST_ActiveSegment(), nullptr);
-+  ASSERT_EQ(log_->num_segments(), 2);
-+  ASSERT_EQ(log_->GetLatestEntryOpId(), OpId(1, 4));
-+  // The index of the segment before the new one is loaded lazily.
-+  ASSERT_EQ(ASSERT_RESULT(log_->LookupOpId(1)), OpId(1, 1));
-+  ASSERT_OK(log_->Close());
-+  CheckRightNumberOfSegmentFiles(2);
-+}
-+
-+// Replaces all segments with a marker, reopens the log and continues it after the marker.
-+TEST_F(LogTest, QuiescentMarker) {
-+  options_.segment_size_bytes = std::numeric_limits<size_t>::max();
-+  BuildLog();
-+  auto op_id = MakeOpId(1, 1);
-+  ASSERT_OK(AppendNoOps(&op_id, 5));
-+  ASSERT_OK(RollLog());
-+  ASSERT_OK(AppendNoOps(&op_id, 5));
-+  const OpId last_op_id(1, 10);
-+  ASSERT_EQ(log_->num_segments(), 2);
-+  ASSERT_EQ(ASSERT_RESULT(log_->MinAnchorableIndex()), 1);
-+
-+  QuiescentMarkerPB marker;
-+  ASSERT_TRUE(log_->CloseActiveSegment(OpId(1, 9), &marker).IsTryAgain());
-+  ASSERT_NE(log_->TEST_ActiveSegment(), nullptr);
-+
-+  ASSERT_OK(log_->CloseActiveSegment(last_op_id, &marker));
-+  ASSERT_EQ(log_->TEST_ActiveSegment(), nullptr);
-+  ASSERT_EQ(OpId::FromPB(marker.op_id()), last_op_id);
-+  ASSERT_EQ(marker.tablet_id(), kTestTablet);
-+  ASSERT_NE(marker.hybrid_time(), 0);
-+  marker.set_monotonic_counter(42);
-+  ASSERT_OK(log_->WriteQuiescentMarker(marker));
-+  // Every bootstrap reads it.
-+  ASSERT_LT(ASSERT_RESULT(env_->GetFileSize(Log::QuiescentMarkerPath(tablet_wal_path_))), 1_KB);
-+  ASSERT_EQ(ASSERT_RESULT(log_->DeleteSegmentsCoveredByQuiescentMarker()), 2);
-+  ASSERT_EQ(log_->num_segments(), 0);
-+  CheckRightNumberOfSegmentFiles(0);
-+  ASSERT_EQ(ASSERT_RESULT(log_->LookupOpId(last_op_id.index)), last_op_id);
-+  ASSERT_NOK(log_->LookupOpId(last_op_id.index - 1));
-+  ASSERT_EQ(log_->GetMinReplicateIndex(), last_op_id.index + 1);
-+  // A peer at L can be sent the ops after it.
-+  ASSERT_EQ(ASSERT_RESULT(log_->MinAnchorableIndex()), last_op_id.index);
-+  int num_gced = 0;
-+  ASSERT_OK(log_->TEST_GC(last_op_id.index, &num_gced));
-+  ASSERT_EQ(num_gced, 0);
-+  ASSERT_OK(log_->Close());
-+  // Remote bootstrap may recreate the WAL dir of a closed log.
-+  ASSERT_TRUE(log_->WriteQuiescentMarker(marker).IsIllegalState());
-+
-+  BuildLog(/* byte_limit = */ -1, CreateNewSegment::kFalse);
-+  ASSERT_OK(log_->EnsureSegmentInitialized());
-+  ASSERT_EQ(log_->num_segments(), 0);
-+  ASSERT_EQ(log_->GetLatestEntryOpId(), last_op_id);
-+  auto loaded_marker = log_->quiescent_marker();
-+  ASSERT_TRUE(loaded_marker);
-+  ASSERT_EQ(loaded_marker->monotonic_counter(), 42);
-+  ASSERT_EQ(ASSERT_RESULT(log_->LookupOpId(last_op_id.index)), last_op_id);
-+  ASSERT_EQ(log_->GetMinReplicateIndex(), last_op_id.index + 1);
-+ 
-```
-
-**File**: `src/yb/consensus/log.cc` (modified, +340/-48)
-```diff
-@@ -97,12 +97,16 @@ using namespace std::placeholders;
- 
- METRIC_DECLARE_gauge_int64(log_wal_sync_overdue_ms);
- 
-+DEFINE_RUNTIME_AUTO_bool(enable_quiescent_tablets, kLocalPersisted, false, true,
-+    "Replace WAL segments of an idle tablet with a quiescent marker, so its bootstrap reads no "
-+    "WAL. Binaries without this feature cannot bootstrap such a tablet.");
-+
- // Log retention configuration.
- // -----------------------------
- DEFINE_RUNTIME_int32(log_min_segments_to_retain, 2,
-     "The minimum number of past log segments to keep at all times,"
-     " regardless of what is required for durability. "
--    "Must be at least 1.");
-+    "Must be at least 1. A tablet in the quiescent mode (enable_quiescent_tablets) keeps none.");
- TAG_FLAG(log_min_segments_to_retain, advanced);
- 
- DEFINE_RUNTIME_int32(log_min_seconds_to_retain, 900,
-@@ -112,7 +116,9 @@ DEFINE_RUNTIME_int32(log_min_seconds_to_retain, 900,
-     "set long enough such that a tablet server which has temporarily failed can be "
-     "restarted within the given time period. If a server is down for longer than this "
-     "amount of time, it is possible that its tablets will be re-replicated on other "
--    "machines. This value should match follower_unavailable_considered_failed_sec.");
-+    "machines. This value should match follower_unavailable_considered_failed_sec. "
-+    "A tablet in the quiescent mode (enable_quiescent_tablets) keeps no segments; it enters "
-+    "the mode only when every peer has its last op.");
- TAG_FLAG(log_min_seconds_to_retain, advanced);
- 
- // Flag to enable background log sync. When enabled, we DON'T wait for performing fsync until
-@@ -255,6 +261,11 @@ DEFINE_RUNTIME_AUTO_bool(store_last_wal_op_log_ht, kLocalPersisted, false, true,
- static std::string kSegmentPlaceholderFilePrefix = ".tmp.newsegment";
- static std::string kSegmentPlaceholderFileTemplate = kSegmentPlaceholderFilePrefix + "XXXXXX";
- 
-+// Must not match IsLogFileName.
-+static constexpr auto kQuiescentMarkerFileName = "quiescent_marker";
-+// WritePBContainerToPath writes the marker to such a temp file and renames it.
-+static constexpr auto kQuiescentMarkerTempFilePrefix = "quiescent_marker.tmp.";
-+
- namespace yb::log {
- 
- using env_util::OpenFileForRandom;
-@@ -271,7 +282,8 @@ bool IsRolloverMarkerType(LogEntryTypePB type) {
- 
- bool IsMarkerType(LogEntryTypePB type) {
-   return IsRolloverMarkerType(type) ||
--         type == LogEntryTypePB::FLUSH_MARKER;
-+         type == LogEntryTypePB::FLUSH_MARKER ||
-+         type == LogEntryTypePB::CLOSE_SEGMENT_MARKER;
- }
- 
- Status FsyncFile(Env* env, const std::string& path) {
-@@ -404,6 +416,10 @@ class Log::LogEntryBatch {
-   // Segment sequence number for this entry batch.
-   int64_t active_segment_sequence_number_;
- 
-+  // Arguments of CLOSE_SEGMENT_MARKER.
-+  OpId expected_last_op_id_;
-+  QuiescentMarkerPB* quiescent_marker_ = nullptr;
-+
-   enum LogEntryState {
-     kEntryInitialized,
-     kEntryReserved,
-@@ -766,12 +782,22 @@ int64_t Log::WalSyncOverdueMs() const {
- Status Log::Init() {
-   std::lock_guard write_lock(state_lock_);
-   CHECK_EQ(kLogInitialized, log_state_);
-+  const auto wal_dir_files = VERIFY_RESULT(get_env()->GetChildren(wal_dir_, ExcludeDots::kTrue));
-+  RETURN_NOT_OK(LoadQuiescentMarker(wal_dir_files));
-   // Init the index
-   log_index_ = VERIFY_RESULT(LogIndex::NewLogIndex(wal_dir_));
-   // Reader for previous segments.
-   reader_ = VERIFY_RESULT(LogReader::Open(
-       get_env(), log_index_, log_prefix_, wal_dir_, table_metric_entity_.get(),
--      tablet_metric_entity_.get(), read_wal_mem_tracker_));
-+      tablet_metric_entity_.get(), read_wal_mem_tracker_, &wal_dir_files));
-+
-+  // Segments covered by the marker remain when entering the mode crashed, or gave up after writing
-+  // the marker. The wal size metric still counts them only after an in-process reopen: otherwise it
-+  // is zero and loaded from the remaining segments below.
-+  SegmentSequence leftover_segments;
-+  RETURN_NOT_OK(TrimSegmentsCoveredByQuiescentMarkerUnlocked(&leftover_segments));
-+  RETURN_NOT_OK(DeleteSegmentFiles(
-+      leftover_segments, /* update_metrics= */ metrics_ && metrics_->wal_size->value() != 0));
- 
-   // The case where we are continuing an existing log.  We must pick up where the previous WAL left
-   // off in terms of sequence numbers.
-@@ -812,7 +838,7 @@ Status Log::Init() {
-   }
- 
-   if (create_new_segment_at_start_) {
--    RETURN_NOT_OK(EnsureSegmentInitializedUnlocked());
-+    RETURN_NOT_OK(EnsureSegmentInitializedUnlocked(CreateNewSegment::kTrue));
-   }
-   return Status::OK();
- }
-@@ -858,6 +884,84 @@ Status Log::CloseCurrentSegment() {
-   return status;
- }
- 
-+Status Log::StartActiveSegment() {
-+  if (allocation_state() == SegmentAllocationState::kAllocationNotStarted) {
-+    RETURN_NOT_OK(AsyncAllocateSegment());
-+  }
-+  auto status = allocation_status_.Get();
-+  if (!status.ok()) {
-+    allocation_state_.store(
-+        SegmentAllocationState::kAllocationNotStarted, std::memory_order_releas
-```
-
-**File**: `src/yb/consensus/log.h` (modified, +87/-5)
-```diff
-@@ -265,6 +265,13 @@ class Log : public RefCountedThreadSafe<Log> {
- 
-   int64_t GetMinReplicateIndex() const;
- 
-+  // Returns the index of the earliest op in the log.
-+  Result<int64_t> EarliestOpIndex() const EXCLUDES(state_lock_);
-+
-+  // Returns the lowest index at which a log anchor can be registered: a peer whose last op has
-+  // this index can be sent the following ops. It is L for a quiescent log, whose ops start at L+1.
-+  Result<int64_t> MinAnchorableIndex() const EXCLUDES(state_lock_);
-+
-   // Runs the garbage collector on the set of previous segments. Segments that only refer to in-mem
-   // state that has been flushed are candidates for garbage collection.
-   //
-@@ -321,11 +328,13 @@ class Log : public RefCountedThreadSafe<Log> {
-   Result<bool>  ReuseAsActiveSegment(
-       const scoped_refptr<ReadableLogSegment>& recover_segment) EXCLUDES(active_segment_mutex_);
- 
--  // For a log created with CreateNewSegment::kFalse, this is used to finish log initialization by
--  // either allocating a new segment or reused left in-progress segment that doesn't have footer.
--  Status EnsureSegmentInitialized();
-+  // For a log created with CreateNewSegment::kFalse, this is used to finish log initialization.
-+  // Reuses the left in-progress segment that doesn't have footer. Otherwise the next segment is
-+  // allocated by the first append.
-+  Status EnsureSegmentInitialized() EXCLUDES(state_lock_);
- 
--  Status EnsureSegmentInitializedUnlocked() REQUIRES(state_lock_);
-+  Status EnsureSegmentInitializedUnlocked(CreateNewSegment create_new_segment)
-+      REQUIRES(state_lock_);
- 
-   // Returns the total size of the current segments, in bytes.
-   // Returns 0 if the log is shut down.
-@@ -410,7 +419,48 @@ class Log : public RefCountedThreadSafe<Log> {
-   // If max_included_op_id is specified - only part of the log up to and including
-   // max_included_op_id is copied.
-   // Flushes necessary files and uses hard links where it is safe.
--  Status CopyTo(const std::string& dest_wal_dir, OpId max_included_op_id = OpId());
-+  // The quiescent marker, if any, is copied with dest_tablet_id.
-+  Status CopyTo(
-+      const std::string& dest_wal_dir, OpId max_included_op_id = OpId(),
-+      const std::string& dest_tablet_id = std::string());
-+
-+  // Closes the active segment without starting a new one, if the last appended op is
-+  // expected_last_op_id. Runs on the appender thread. Fills marker with the values of that op,
-+  // except monotonic_counter.
-+  // Returns TryAgain if another op was appended.
-+  Status CloseActiveSegment(const OpId& expected_last_op_id, QuiescentMarkerPB* marker);
-+
-+  // Durably writes the quiescent marker to the WAL dir and makes it the marker of this log.
-+  Status WriteQuiescentMarker(const QuiescentMarkerPB& marker) EXCLUDES(state_lock_);
-+
-+  // Deletes segments that contain only ops covered by the marker. Returns the number of deleted
-+  // segments.
-+  Result<size_t> DeleteSegmentsCoveredByQuiescentMarker() EXCLUDES(state_lock_);
-+
-+  // Returns true if the segment is closed and the marker covers all its ops. Covered segments
-+  // form a prefix of the log.
-+  static bool SegmentCoveredByQuiescentMarker(
-+      const ReadableLogSegment& segment, const QuiescentMarkerPB& marker);
-+
-+  // Returns when a REPLICATE message was last appended, or when the log was opened.
-+  CoarseTimePoint last_append_time() const {
-+    return last_append_time_.load(std::memory_order_acquire);
-+  }
-+
-+  // Returns the op id of the quiescent marker, or an empty op id if the log has no marker.
-+  OpId quiescent_marker_op_id() const;
-+
-+  std::optional<QuiescentMarkerPB> quiescent_marker() const EXCLUDES(state_lock_);
-+
-+  // Looks up the op id for the given index in the log reader or the quiescent marker.
-+  Result<OpId> LookupOpId(int64_t op_index) const EXCLUDES(state_lock_);
-+
-+  static std::string QuiescentMarkerPath(const std::string& wal_dir);
-+
-+  static Result<QuiescentMarkerPB> ReadQuiescentMarkerFile(Env* env, const std::string& wal_dir);
-+
-+  static Status WriteQuiescentMarkerFile(
-+      Env* env, const std::string& wal_dir, const QuiescentMarkerPB& marker);
- 
-   // Waits until all entries flushed, then resets last appended, synced and durable op ids to op_id.
-   Status ResetLastSyncedEntryOpId(const OpId& op_id);
-@@ -494,6 +544,27 @@ class Log : public RefCountedThreadSafe<Log> {
-   // Writes the footer and closes the current segment.
-   Status CloseCurrentSegment() EXCLUDES(active_segment_mutex_);
- 
-+  // Starts a new active segment, when there is none.
-+  Status StartActiveSegment() EXCLUDES(active_segment_mutex_);
-+
-+  // Waits for the segment allocation in progress, if any, and drops the allocated segment.
-+  Status DropAllocatedSegment();
-+
-+  Status DoCloseActiveSegment(const OpId& expected_last_op_id, QuiescentMarkerPB* marker)
-+      EXCLUDES(state_lock_, active_segment_mutex_);
-+
-+  // Loads the quiescent marker from the WAL dir, if there is one, and continues the log after it.
-+  // 
-```
-
-**File**: `src/yb/consensus/log.proto` (modified, +18/-0)
-```diff
-@@ -58,6 +58,8 @@ enum LogEntryTypePB {
-   // Async roll over active log segment, and halve the cur_max_segment_size of the next segment
-   // if it's greater than initial_max_segment_size.
-   ASYNC_ROLLOVER_AT_FLUSH_MARKER = 1000;
-+  // Close active log segment without starting a new one, if the last appended op is as expected.
-+  CLOSE_SEGMENT_MARKER = 1001;
- };
- 
- // An entry in the WAL/state machine log.
-@@ -95,6 +97,22 @@ message LogSegmentHeaderPB {
-   optional uint32 DEPRECATED_schema_version = 8;
- }
- 
-+// Quiescent marker, stored in a file next to the WAL segments. Every op up to op_id is durable in
-+// all tablet storages, so segments that contain only such ops may be absent.
-+// The remaining fields carry what tablet bootstrap would otherwise take from those segments.
-+message QuiescentMarkerPB {
-+  optional bytes tablet_id = 1;
-+  optional OpIdPB op_id = 2;
-+  // Hybrid time of the op at op_id.
-+  optional fixed64 hybrid_time = 3;
-+  // Max monotonic counter of ops up to op_id.
-+  optional int64 monotonic_counter = 4;
-+  // Restart-safe time of the batch that contains the op at op_id.
-+  optional uint64 entry_time = 5;
-+  // Sequence number of the last segment that existed when the marker was written.
-+  optional int64 last_segment_sequence_number = 6;
-+}
-+
- // A header for a log index block that are stored inside WAL segment file.
- message LogIndexBlockHeaderPB {
-   required int64 start_op_index = 1;
+@@ -1,4 +1,4 @@
+-test: fk-partitioned-1
++test: yb.port.fk-partitioned-1
+ test: propagate-lock-delete
+ test: multiple-cic
+ test: alter-table-2
 ```
 
 ---
 
-### Incident Patch 2: `5c9c8cb1` (2026-10-30)
-**Commit Message**: [DB-25162] DocDB: Require TLS when RPC client certificates are required (#36001)
+### Incident Patch 2: `3a23463d` (2026-10-30)
+**Commit Message**: [#34267] YSQL: fix embedded index merge scan on expression columns (#36184)
 
 ## Summary
 
-With `use_node_to_node_encryption=true` and
-`node_to_node_encryption_use_client_certificates=true`, a server still
-accepted plaintext RPC connections whenever `allow_insecure_connections`
-was `true`, which is its default. A plaintext connection carries no
-client certificate, so requiring client certificates had no effect
-unless operators also knew to set `allow_insecure_connections=false`.
+On an embedded index, such as a colocated index,
+yb_finalize_merge_scan_stream_cols truncates a merge scan path's
+pathkeys before the first expression index column (see commit
+194de21b2f51eb47a48f3009e510fb62b21db195).  There is a flaw in how it
+determines what is considered "the first expression index column":
 
-**Change**
-- With `use_node_to_node_encryption=true`,
-`node_to_node_encryption_use_client_certificates=true` now requires
-`allow_insecure_connections=false`. Delayed gflag validators on all
-three flags (`secure.cc`, `secure_stream.cc`) reject the combination, so
-the process refuses to start (and `set_flag` refuses to create the
-combination at runtime) instead of silently accepting plaintext. Without
-node-to-node encryption the client certificate flag has no effect, so
-the rule isn't enforced.
-- `allow_insecure_connections` is retagged from UNKNOWN to NON_RUNTIME.
-No behavior change: `set_flag` already needed `force` for it, which
-YBA's TlsToggle passes.
-- New server metrics: `rpc_inbound_tls_handshakes_
+- Reality: for an embedded index scan, merge scan currently cannot merge
+  sort on an expression column (see #36180).
+- Implementation before this fix: the guard added by commit
+  194de21b2f51eb47a48f3009e510fb62b21db195 attempts to determine such
+  columns by checking if the equivalence class containing that column
+  does not have any plain Vars of the relation.  The problem with this
+  is that an equivalence class containing both a Var and expression will
+  not be flagged under this rule, but it is very much possible for
+  either of them to actually be used for the merge sort depending on its
+  position in the list of index keys and which of them are occupied as
+  stream keys.  The same goes for a class whose single member is a plain
+  column cast to a binary-compatible type, which th
 
-**File**: `src/yb/rpc/CMakeLists.txt` (modified, +2/-0)
+**File**: `src/postgres/src/backend/optimizer/util/yb_merge_scan.c` (modified, +9/-40)
 ```diff
-@@ -179,6 +179,8 @@ ADD_YB_TEST(periodic-test)
- ADD_YB_TEST(reactor-test)
- ADD_YB_TEST(rpc-bench RUN_SERIAL true)
- ADD_YB_TEST(rpc-test)
-+# TestRpcClientCertificates uses the generated test certificates.
-+add_dependencies(rpc-test generate_test_certs)
- ADD_YB_TEST(rpc_retrier-test)
- ADD_YB_TEST(rpc_stub-test RUN_SERIAL true)
- ADD_YB_TEST(scheduler-test)
-```
-
-**File**: `src/yb/rpc/refined_stream.cc` (modified, +5/-2)
-```diff
-@@ -228,8 +228,11 @@ Status RefinedStream::StartHandshake() {
- 
- Result<size_t> RefinedStream::Handshake() {
-   auto handshake_status = refiner_->Handshake();
--  LOG_IF_WITH_PREFIX(INFO, !handshake_status.ok()) << "Handshake failed: " << handshake_status;
--  RETURN_NOT_OK(handshake_status);
-+  if (!handshake_status.ok()) {
-+    // A client retrying against a server that rejects it fails once per retry.
-+    YB_LOG_WITH_PREFIX_EVERY_N_SECS(INFO, 10) << "Handshake failed: " << handshake_status;
-+    return handshake_status;
-+  }
- 
-   if (state_ == RefinedStreamState::kEnabled) {
-     return Read();
-```
-
-**File**: `src/yb/rpc/rpc-test.cc` (modified, +135/-0)
-```diff
-@@ -61,6 +61,7 @@
- #include "yb/util/format.h"
- #include "yb/util/logging_test_util.h"
- #include "yb/util/net/net_util.h"
-+#include "yb/util/path_util.h"
- #include "yb/util/result.h"
- #include "yb/util/status_format.h"
- #include "yb/util/status_log.h"
-@@ -76,11 +77,14 @@ METRIC_DECLARE_event_stats(rpc_incoming_queue_time);
- METRIC_DECLARE_counter(tcp_bytes_sent);
- METRIC_DECLARE_counter(tcp_bytes_received);
- METRIC_DECLARE_counter(rpcs_timed_out_early_in_queue);
-+METRIC_DECLARE_counter(rpc_inbound_tls_handshakes_rejected);
-+METRIC_DECLARE_counter(rpc_inbound_insecure_connections_rejected);
- 
- DEFINE_NON_RUNTIME_int32(rpc_test_connection_keepalive_num_iterations, 1,
-   "Number of iterations in TestRpc.TestConnectionKeepalive");
- 
- DECLARE_bool(TEST_pause_calculator_echo_request);
-+DECLARE_bool(allow_insecure_connections);
- DECLARE_bool(binary_call_parser_reject_on_mem_tracker_hard_limit);
- DECLARE_bool(enable_rpc_keepalive);
- DECLARE_int32(num_connections_to_server);
-@@ -91,6 +95,7 @@ DECLARE_string(vmodule);
- DECLARE_uint64(rpc_connection_timeout_ms);
- DECLARE_uint64(rpc_read_buffer_size);
- DECLARE_uint64(rpc_max_message_size);
-+DECLARE_bool(verify_server_endpoint);
- 
- using namespace std::chrono_literals;
- using std::string;
-@@ -1435,6 +1440,136 @@ TEST_F(TestRpcSecure, CantAllocateReadBuffer) {
-   RunSecureTest(&TestCantAllocateReadBuffer, SetupServerForTestCantAllocateReadBuffer());
+@@ -475,34 +475,6 @@ ybFindPathkeyTle(List *tlist, EquivalenceClass *ec, Relids relids,
+ 	return NULL;
  }
  
-+// Uses the certificates from build-support/generate_test_certificates.sh. The server always
-+// presents node.127.0.0.2 from the given directory; endpoint checks are off because the test
-+// server listens on 127.0.0.1.
-+class TestRpcClientCertificates : public RpcTestBase {
-+ public:
-+  void SetUp() override {
-+    RpcTestBase::SetUp();
-+    ANNOTATE_UNPROTECTED_WRITE(FLAGS_verify_server_endpoint) = false;
-+  }
-+
-+ protected:
-+  static constexpr auto kClientNode = "127.0.0.4";
-+
-+  // Trusts the CAs in ca_file, and presents node.<node> from cert_dir unless node is empty.
-+  Result<std::unique_ptr<SecureContext>> CreateContextFromFiles(
-+      RequireClientCertificate require_client_certificate, const std::string& ca_file,
-+      const std::string& cert_dir, const std::string& node, const std::string& required_uid = {}) {
-+    auto context = std::make_unique<SecureContext>(
-+        require_client_certificate, UseClientCertificate(!node.empty()), required_uid);
-+    if (node.empty()) {
-+      RETURN_NOT_OK(context->AddCertificateAuthorityFile(ca_file));
-+      return context;
-+    }
-+    faststring cert, key;
-+    RETURN_NOT_OK(ReadFileToString(
-+        Env::Default(), JoinPathSegments(cert_dir, Format("node.$0.crt", node)), &cert));
-+    RETURN_NOT_OK(ReadFileToString(
-+        Env::Default(), JoinPathSegments(cert_dir, Format("node.$0.key", node)), &key));
-+    RETURN_NOT_OK(context->UseCertificates(ca_file, cert, key));
-+    return context;
-+  }
-+
-+  Result<std::unique_ptr<SecureContext>> CreateContext(
-+      RequireClientCertificate require_client_certificate, const std::string& sub_dir,
-+      const std::string& node, const std::string& required_uid = {}) {
-+    auto dir = sub_dir.empty() ? GetCertsDir() : JoinPathSegments(GetCertsDir(), sub_dir);
-+    return CreateContextFromFiles(
-+        require_client_certificate, JoinPathSegments(dir, "ca.crt"), dir, node, required_uid);
-+  }
-+
-+  // Replaces any running server. Contexts are kept until the fixture is destroyed, after the
-+  // servers using them.
-+  Status StartServer(const std::string& sub_dir = "", const std::string& required_uid = {}) {
-+    server_contexts_.push_back(VERIFY_RESULT(CreateContext(
-+        RequireClientCertificate::kTrue, sub_dir, "127.0.0.2", required_uid)));
-+    StartTestServerWithGeneratedCode(
-+        CreateSecureMessenger(
-+            "TestServer", server_contexts_.back().get(), kDefaultServerMessengerOptions),
-+        &server_hostport_);
-+    return Status::OK();
-+  }
-+
-+  std::unique_ptr<Messenger> CreateSecureMessenger(
-+      const std::string& name, const SecureContext* context,
-+      const MessengerOptions& options = kDefaultClientMessengerOptions) {
-+    auto builder = CreateMessengerBuilder(name, options);
-+    builder.SetListenProtocol(SecureStreamProtocol());
-+    builder.SetUncompressedProtocol(SecureStreamProtocol());
-+    builder.AddStreamFactory(
-+        SecureStreamProtocol(),
-+        SecureStreamFactory(TcpStream::Factory(), MemTracker::GetRootTracker(), context));
-+    return EXPECT_RESULT(builder.Build());
-+  }
-+
-+  // Calls the server from a client using client_context, or plaintext if it is null.
-+  Status CallServer(const SecureContext* client_context) {
-+    auto client_messenger = rpc::CreateAutoShutdownMessengerHolder(
-+        client_context ? CreateSecureMessenger("Client", client_context)
-+                       : CreateMessenger("Client"));
-+    ProxyCache proxy_cache(client_messenger.get());
-+    CalculatorServiceProxy proxy(&proxy_cache, server_hostport_);
-+
-+    RpcController controller;
-+    co
+-/*
+- * Whether ec has a member that is a plain column of the relation relids,
+- * possibly relabeled.
+- */
+-static bool
+-ybEclassHasRelVar(EquivalenceClass *ec, Relids relids)
+-{
+-	ListCell   *lc2;
+-	bool		found = false;
+-
+-	foreach(lc2, ec->ec_members)
+-	{
+-		EquivalenceMember *em = (EquivalenceMember *) lfirst(lc2);
+-		if (bms_equal(em->em_relids, relids))
+-		{
+-			Expr	   *expr = em->em_expr;
+-			while (IsA(expr, RelabelType))
+-				expr = ((RelabelType *) expr)->arg;
+-			if (IsA(expr, Var))
+-			{
+-				found = true;
+-				break;
+-			}
+-		}
+-	}
+-	return found;
+-}
+-
+ /*
+  * Get sort info for given pathkeys corresponding to tlist.  In case a pathkey
+  * matches multiple columns in tlist, avoid the columns that are pinned as
+@@ -658,13 +630,11 @@ ybEqualityIndexClause(IndexOptInfo *index, List *indexclauses, int indexcol)
+  * the same stream keys.  The pathkeys are final only after this call, which
+  * can truncate them on an embedded index.
+  *
+- * On an embedded index, such as a colocated index, pggate compares each merge
+- * sort value in the table row.  So when embedded, *pathkeys is truncated
+- * before the first pathkey whose EquivalenceClass has no plain column of the
+- * relation, and *yb_distinct_nkeys is set to -1 if the truncation cuts into
+- * the pathkeys that span the distinct prefix.
+- * TODO(#34267): the merge compares the index column the pathkey resolves to,
+- * which can be an expression column even when the class has a plain column.
++ * On an embedded index, pggate compares each merge sort value in the table
++ * row, which has no value for an expression index column.  So when embedded,
++ * *pathkeys is truncated before the first pathkey that resolves to an
++ * expression column, and *yb_distinct_nkeys is set to -1 if the truncation
++ * cuts into the pathkeys that span the distinct prefix.
+  *
+  * Each index column before the last merge sort column is one of:
+  *
+@@ -725,7 +695,10 @@ yb_finalize_merge_scan_stream_cols(IndexOptInfo *index, Relids relids,
+ 											pathkey->pk_eclass, relids,
+ 											saop_idxs, &em);
+ 
+-		if (embedded && !ybEclassHasRelVar(pathkey->pk_eclass, relids))
++		/* Not an ordering the merge can compare on. */
++		if (!tle)
++			return NIL;
++		if (embedded && index->indexkeys[tle->resno - 1] == 0)
+ 		{
+ 			*pathkeys = list_truncate(*pathkeys, foreach_current_index(lc));
+ 
+@@ -739,10 +712,6 @@ yb_finalize_merge_scan_stream_cols(IndexOptInfo *index, Relids relids,
+ 				*yb_distinct_nkeys = -1;
+ 			break;
+ 		}
+-
+-		/* Not an ordering the merge can compare on. */
+-		if (!tle)
+-			return NIL;
+ 		sort_idxs = bms_add_member(sort_idxs, tle->resno - 1);
+ 		last_sort_indexcol = Max(last_sort_indexcol, tle->resno - 1);
+ 	}
 ```
 
-**File**: `src/yb/rpc/secure.cc` (modified, +23/-2)
+**File**: `src/postgres/src/test/regress/expected/yb.orig.merge_scan_colocated.out` (modified, +102/-0)
 ```diff
-@@ -19,6 +19,7 @@
- #include "yb/rpc/tcp_stream.h"
+@@ -5081,10 +5081,112 @@ EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+Set(yb_max_mer
  
- #include "yb/util/env.h"
-+#include "yb/util/flag_validators.h"
- #include "yb/util/format.h"
- #include "yb/util/net/net_util.h"
- #include "yb/util/path_util.h"
-@@ -28,14 +29,34 @@
- 
- using std::string;
- 
-+DECLARE_bool(allow_insecure_connections);
+ EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+Set(yb_max_merge_scan_streams 64)*/ SELECT r5, 1, r5 FROM r5n WHERE r2 IN (0, 1, 2, 3) ORDER BY (r3 + r4) DESC, r2, n LIMIT 5;
+ (output identical to previous)
++-- Expression column tied to a plain column
++-- Third hint is to encourage merge scan by pinning the index and disabling
++-- sort.
++-- TODO(#36180): the third hint should use merge scan.
++\set query ':P :Q SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;'
++\set Q3 '/*+IndexScan(r5n r5n_r2_expr_r21_expr1_r22_r5_idx) Set(yb_max_merge_scan_streams 64) Set(enable_sort off)*/'
++\i :run_query
++\set _echo_run_query :ECHO
++\set ECHO none
++EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+Set(yb_max_merge_scan_streams 0)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
++                                  QUERY PLAN                                   
++-------------------------------------------------------------------------------
++ Limit (actual rows=5 loops=1)
++   Output: r4, r2, n
++   ->  Sort (actual rows=5 loops=1)
++         Output: r4, r2, n
++         Sort Key: r5n.r4, r5n.n
++         Sort Method: top-N heapsort
++         ->  Index Scan using r5n_pkey on public.r5n (actual rows=224 loops=1)
++               Output: r4, r2, n
++               Index Cond: (r5n.r2 = ANY ('{0,1,2,3}'::bigint[]))
++               Storage Filter: (r5n.r4 = ((r5n.r3)::numeric + r5n.r4))
++(10 rows)
 +
- DEFINE_NON_RUNTIME_bool(use_node_to_node_encryption, false, "Use node to node encryption.");
- 
- DEFINE_NON_RUNTIME_bool(node_to_node_encryption_use_client_certificates, false,
-     "Should client certificates be sent and verified for encrypted node to node "
--    "communication.");
-+    "communication. Requires allow_insecure_connections=false when "
-+    "use_node_to_node_encryption is set.");
++EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+Set(yb_max_merge_scan_streams 64)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
++(output identical to previous)
++EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+IndexScan(r5n r5n_r2_expr_r21_expr1_r22_r5_idx) Set(yb_max_merge_scan_streams 64) Set(enable_sort off)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
++                                              QUERY PLAN                                               
++-------------------------------------------------------------------------------------------------------
++ Limit (actual rows=5 loops=1)
++   Output: r4, r2, n
++   ->  Sort (actual rows=5 loops=1)
++         Output: r4, r2, n
++         Sort Key: r5n.r4, r5n.n
++         Sort Method: top-N heapsort
++         ->  Index Scan using r5n_r2_expr_r21_expr1_r22_r5_idx on public.r5n (actual rows=224 loops=1)
++               Output: r4, r2, n
++               Index Cond: (r5n.r2 = ANY ('{0,1,2,3}'::bigint[]))
++               Storage Filter: (r5n.r4 = ((r5n.r3)::numeric + r5n.r4))
++(10 rows)
 +
-+// Client certificates only take effect with node to node encryption, so the rule is not enforced
-+// without it.
-+DEFINE_validator(use_node_to_node_encryption,
-+    FLAG_DELAYED_COND_VALIDATOR(
-+        !_value || !FINAL_FLAG_VALUE(node_to_node_encryption_use_client_certificates) ||
-+            !FINAL_FLAG_VALUE(allow_insecure_connections),
-+        "node_to_node_encryption_use_client_certificates requires "
-+        "allow_insecure_connections=false"));
++/*+Set(yb_max_merge_scan_streams 0)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
++ r4 | r2 |   n   
++----+----+-------
++  0 |  0 |     6
++  0 |  0 |     8
++  0 |  2 |    23
++  0 |  3 | 10037
++  0 |  0 | 20009
++(5 rows)
 +
-+DEFINE_validator(node_to_node_encryption_use_client_certificates,
-+    FLAG_DELAYED_COND_VALIDATOR(
-+        !_value || !FINAL_FLAG_VALUE(use_node_to_node_encryption) ||
-+            !FINAL_FLAG_VALUE(allow_insecure_connections),
-+        "Requires allow_insecure_connections=false when use_node_to_node_encryption is set"));
- 
- DEFINE_NON_RUNTIME_string(node_to_node_encryption_required_uid, "",
--    "Allow only certificates with specified uid. Empty to allow any.");
-+    "Allow only certificates with specified uid. Empty to allow any. The uid is matched against "
-+    "the certificate's common name, UID attribute or otherName subject alternative name. It is "
-+    "checked on server to server connections too, so every node certificate must carry it.");
- 
- DEFINE_NON_RUNTIME_string(certs_dir, "",
-     "Directory that contains certificate authority, private key and certificates for "
++/*+Set(yb_max_merge_scan_streams 64)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
++(output identical to previous)
++/*+IndexScan(r5n r5n_r2_expr_r21_expr1_r22_r5_idx) Set(yb_max_merge_scan_streams 64) Set(enable_sort off)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
++(output identical to previous)
++\unset Q3
+ -- (Reset the explain change)
+ \set explain 'EXPLAIN (ANALYZE, DIST, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF)'
+ -- (Drop this index)
+ DROP INDEX r5n_r2_expr_r21_expr1_r22_r5_idx;
++--
++-- Cast expression secondary index
++--
++CREATE INDEX NONCONCURRENTLY ON r5n (r2 ASC, (r3::oid), r4);
++ANALYZE r5n;
++-- Following queries send various numbers of requests/scan various number of rows
++-- due to non-deterministic order of equal rows in merge sort, hide their DIST
++\set explain 'EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF)'
++-- Order by the cast expression
++-- TODO(#36180): this should use merge scan.
++\set query ':P :Q SELECT r3, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) ORDER BY r3::oid, n LIMIT 5;'
++\i :run_query
++\set _echo_run_query :ECHO
++\set ECHO none
++EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+Set(yb_max_merge_scan_streams 0)*/ SELECT r3, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) ORDER BY r3::oid, n LIMIT 5;
++                                   QUERY PLAN                                   
++--------------------------------------------------------------------------------
++ Limit (actual rows=5 loops=1)
++   Output: r3, r2, n, ((r3)::oid)
++   ->  Sort (actual rows=5 loops=1)
++         Output: r3, r2, n, ((r3)::oid)
++         Sort Key: r5n.r3 USING <, r5n.n
++         Sort Method: top-N heapsort
++         ->  Index Scan using r5n_pkey on public.r5n (actual rows=2045 loops=1)
++               Output: r3, r2, n, (r3)::oid
++               Index Cond: (r5n.
 ```
 
-**File**: `src/yb/rpc/secure_stream.cc` (modified, +50/-5)
+**File**: `src/postgres/src/test/regress/expected/yb.orig.merge_scan_range.out` (modified, +129/-0)
 ```diff
-@@ -31,7 +31,9 @@
+@@ -5140,10 +5140,139 @@ EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+Set(yb_max_mer
  
- #include "yb/util/enums.h"
- #include "yb/util/errno.h"
-+#include "yb/util/flag_validators.h"
- #include "yb/util/logging.h"
-+#include "yb/util/metrics.h"
- #include "yb/util/scope_exit.h"
- #include "yb/util/shared_lock.h"
- #include "yb/util/status_format.h"
-@@ -45,8 +47,9 @@
- 
- using namespace std::literals;
- 
--DEFINE_UNKNOWN_bool(allow_insecure_connections, true,
--    "Whether we should allow insecure connections.");
-+DEFINE_NON_RUNTIME_bool(allow_insecure_connections, true,
-+    "Whether we should allow insecure connections. Must be false when "
-+    "use_node_to_node_encryption and node_to_node_encryption_use_client_certificates are set.");
- DEFINE_UNKNOWN_bool(dump_certificate_entries, false, "Whether we should dump certificate entries.");
- DEFINE_UNKNOWN_bool(verify_client_endpoint, false, "Whether client endpoint should be verified.");
- DEFINE_UNKNOWN_bool(verify_server_endpoint, true, "Whether server endpoint should be verified.");
-@@ -62,6 +65,31 @@ DEFINE_UNKNOWN_string(cipher_list, "",
- DEFINE_UNKNOWN_string(ciphersuites, "",
-               "Define the available TLSv1.3 ciphersuites.");
- 
-+DECLARE_bool(node_to_node_encryption_use_client_certificates);
-+DECLARE_bool(use_node_to_node_encryption);
+ EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+Set(yb_max_merge_scan_streams 64)*/ SELECT r5, 1, r5 FROM r5n WHERE r2 IN (0, 1, 2, 3) ORDER BY (r3 + r4) DESC, r2, n LIMIT 5;
+ (output identical to previous)
++-- Expression column tied to a plain column
++-- Third hint is to encourage merge scan by pinning the index and disabling
++-- sort.
++\set query ':P :Q SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;'
++\set Q3 '/*+IndexScan(r5n r5n_r2_expr_r21_expr1_r22_r5_idx) Set(yb_max_merge_scan_streams 64) Set(enable_sort off)*/'
++\i :run_query
++\set _echo_run_query :ECHO
++\set ECHO none
++EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+Set(yb_max_merge_scan_streams 0)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
++                                  QUERY PLAN                                   
++-------------------------------------------------------------------------------
++ Limit (actual rows=5 loops=1)
++   Output: r4, r2, n
++   ->  Sort (actual rows=5 loops=1)
++         Output: r4, r2, n
++         Sort Key: r5n.r4, r5n.n
++         Sort Method: top-N heapsort
++         ->  Index Scan using r5n_pkey on public.r5n (actual rows=224 loops=1)
++               Output: r4, r2, n
++               Index Cond: (r5n.r2 = ANY ('{0,1,2,3}'::bigint[]))
++               Storage Filter: (r5n.r4 = ((r5n.r3)::numeric + r5n.r4))
++(10 rows)
 +
-+// A plaintext connection carries no client certificate, so accepting one would make the client
-+// certificate requirement meaningless.
-+DEFINE_validator(allow_insecure_connections,
-+    FLAG_DELAYED_COND_VALIDATOR(
-+        !_value || !FINAL_FLAG_VALUE(use_node_to_node_encryption) ||
-+            !FINAL_FLAG_VALUE(node_to_node_encryption_use_client_certificates),
-+        "Must be false when use_node_to_node_encryption and "
-+        "node_to_node_encryption_use_client_certificates are set"));
++EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+Set(yb_max_merge_scan_streams 64)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
++(output identical to previous)
++EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+IndexScan(r5n r5n_r2_expr_r21_expr1_r22_r5_idx) Set(yb_max_merge_scan_streams 64) Set(enable_sort off)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
++                                              QUERY PLAN                                              
++------------------------------------------------------------------------------------------------------
++ Limit (actual rows=5 loops=1)
++   Output: r4, r2, n
++   ->  Incremental Sort (actual rows=5 loops=1)
++         Output: r4, r2, n
++         Sort Key: r5n.r4, r5n.n
++         Presorted Key: r5n.r4
++         Full-sort Groups: 1  Sort Method: top-N heapsort
++         ->  Index Scan using r5n_r2_expr_r21_expr1_r22_r5_idx on public.r5n (actual rows=25 loops=1)
++               Output: r4, r2, n
++               Index Cond: (r5n.r2 = ANY ('{0,1,2,3}'::bigint[]))
++               Merge Sort Key: ((r5n.r3)::numeric + r5n.r4)
++               Merge Stream Key: r5n.r2
++               Merge Streams: 4
++               Merge Cond: (r5n.r2 = ANY ('{0,1,2,3}'::bigint[]))
++               Storage Filter: (r5n.r4 = ((r5n.r3)::numeric + r5n.r4))
++(15 rows)
 +
-+METRIC_DEFINE_counter(server, rpc_inbound_tls_handshakes_rejected,
-+                      "Inbound TLS Handshakes Rejected",
-+                      yb::MetricUnit::kConnections,
-+                      "Number of inbound RPC connections whose TLS handshake failed, for example "
-+                      "because the client certificate was missing, untrusted or had the wrong "
-+                      "UID.");
++/*+Set(yb_max_merge_scan_streams 0)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
++ r4 | r2 |   n   
++----+----+-------
++  0 |  0 |     6
++  0 |  0 |     8
++  0 |  2 |    23
++  0 |  3 | 10037
++  0 |  0 | 20009
++(5 rows)
 +
-+METRIC_DEFINE_counter(server, rpc_inbound_insecure_connections_rejected,
-+                      "Inbound Insecure Connections Rejected",
-+                      yb::MetricUnit::kConnections,
-+                      "Number of inbound RPC connections rejected because they did not start a TLS "
-+                      "handshake.");
++/*+Set(yb_max_merge_scan_streams 64)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
++(output identical to previous)
++/*+IndexScan(r5n r5n_r2_expr_r21_expr1_r22_r5_idx) Set(yb_max_merge_scan_streams 64) Set(enable_sort off)*/ SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;
++(output identical to previous)
++\unset Q3
+ -- (Reset the explain change)
+ \set explain 'EXPLAIN (ANALYZE, DIST, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF)'
+ -- (Drop this index)
+ DROP INDEX r5n_r2_expr_r21_expr1_r22_r5_idx;
++--
++-- Cast expression secondary index
++--
++CREATE INDEX NONCONCURRENTLY ON r5n (r2 ASC, (r3::oid), r4)
++SPLIT AT VALUES (
++    (1),
++    (2),
++    (2, 2),
++    (2, 2, 2),
++    (3));
++ANALYZE r5n;
++-- Following queries send various numbers of requests/scan various number of rows
++-- due to non-deterministic order of equal rows in merge sort, hide their DIST
++\set explain 'EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF)'
++-- Order by the cast expression
++\set query ':P :Q SELECT r3, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) ORDER BY r3::oid, n LIMIT 5;'
++\i :run_query
++\set _echo_run_query :ECHO
++\set ECHO none
++EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF) /*+Set(yb_max_merge_scan_streams 0)*/ SELECT r3, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) ORDER BY r3::oid, n LIMIT 5;
++                                   QUERY PLAN                                   
++--------------------------------------------------------------------------------
++ Limit (actual rows=5 loops=1)
++   Output: r3, r2, n, ((r3)::oid)
++   ->  Sort (actual rows=5 loops=1)
++         Output: r3, r2, n, ((r3)::oid)
+```
+
+**File**: `src/postgres/src/test/regress/sql/yb.orig.merge_scan_colocated.sql` (modified, +30/-0)
+```diff
+@@ -724,12 +724,42 @@ ANALYZE r5n;
+ \set query ':explain :Q SELECT r5, 1, r5 FROM r5n WHERE r2 IN (0, 1, 2, 3) ORDER BY (r3 + r4) DESC, r2, n LIMIT 5;'
+ \i :run_query
+ 
++-- Expression column tied to a plain column
++-- Third hint is to encourage merge scan by pinning the index and disabling
++-- sort.
++-- TODO(#36180): the third hint should use merge scan.
++\set query ':P :Q SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;'
++\set Q3 '/*+IndexScan(r5n r5n_r2_expr_r21_expr1_r22_r5_idx) Set(yb_max_merge_scan_streams 64) Set(enable_sort off)*/'
++\i :run_query
++\unset Q3
 +
- #define YB_RPC_SSL_TYPE(name) \
-   struct BOOST_PP_CAT(name, Free) { \
-     void operator()(name* value) const { \
-@@ -738,7 +766,8 @@ Status SecureContext::TEST_GenerateKeys(int bits, const std::string& common_name
- class SecureRefiner : public StreamRefiner {
-  public:
-   SecureRefiner(const SecureContext& context, const StreamCreateData& data)
--    : secure_context_(*context.impl_), remote_hostname_(data.remote_hostname) {
-+    : secure_context_(*context.impl_), remote_hostname_(data.remote_hostname),
-+      metric_entity_(data.metric_entity) {
-   }
+ -- (Reset the explain change)
+ \set explain 'EXPLAIN (ANALYZE, DIST, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF)'
  
-  private:
-@@ -747,6 +776,7 @@ class SecureRefiner : public StreamRefiner {
-   }
+ -- (Drop this index)
+ DROP INDEX r5n_r2_expr_r21_expr1_r22_r5_idx;
  
-   Status Handshake() ON_REACTOR_THREAD override;
-+  Status DoHandshake() ON_REACTOR_THREAD;
-   Status Init();
- 
-   Status Send(OutboundDataPtr data) ON_REACTOR_THREAD override;
-@@ -782,6 +812,7 @@ class SecureRefiner : public StreamRefiner {
- 
-   const SecureContext::Impl& secure_context_;
-   const std::string remote_hostname_;
-+  const scoped_refptr<MetricEntity> metric_entity_;
-   RefinedStream* stream_ = nullptr;
-   std::vector<std::string> certificate_entries_;
- 
-@@ -849,8 +880,14 @@ Status SecureRefiner::ProcessHeader() {
-   }
- 
-   if (!FLAGS_allow_insecure_connections) {
--    return STATUS_FORMAT(NetworkError, "Insecure connection header: $0",
--                         Slice(bytes, 2).ToDebugHexString());
-+    if (metric_entity_) {
-+      METRIC_rpc_inbound_insecure_connections_rejected.Instantiate(metric_entity_)->Increment();
-+    }
-+    auto status = STATUS_FORMAT(
-+        NetworkError, "Insecure connection header: $0, address: $1",
-+        Slice(bytes, 2).ToDebugHexString(), stream_->Remote().address());
-+    YB_LOG_WITH_PREFIX_EVERY_N_SECS(INFO, 10) << "Rejected connection: " << status;
-+    return status;
-   }
- 
-   return Established(RefinedStreamState::kDisabled);
-@@ -914,6 +951,14 @@ void SecureRefiner::DecryptReceived() {
- }
- 
- Status SecureRefiner::Handshake() {
-+  auto status = DoHandshake();
-+  if (!status.ok() && stream_->local_side() == LocalSide::kServer && metric_entity_) {
-+    METRIC_rpc_inbound_tls_handshakes_rejected.Instantiate(metric_entity_)->Increment();
-+  }
-+  return status;
-+}
++--
++-- Cast expression secondary index
++--
++CREATE INDEX NONCONCURRENTLY ON r5n (r2 ASC, (r3::oid), r4);
++ANALYZE r5n;
 +
-+Status SecureRefiner::DoHandshake() {
-   RETURN_NOT_OK(Init());
++-- Following queries send various numbers of requests/scan various number of rows
++-- due to non-deterministic order of equal rows in merge sort, hide their DIST
++\set explain 'EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF)'
++
++-- Order by the cast expression
++-- TODO(#36180): this should use merge scan.
++\set query ':P :Q SELECT r3, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) ORDER BY r3::oid, n LIMIT 5;'
++\i :run_query
++
++-- (Reset the explain change)
++\set explain 'EXPLAIN (ANALYZE, DIST, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF)'
++
++-- (Drop this index)
++DROP INDEX r5n_r2_r3_r4_idx;
++
+ -- test yb_enable_advanced_index_cond_fold flag off
+ SET yb_enable_advanced_index_cond_fold = off;
+ \set query ':P :Q SELECT r1, r3, r4, r5, n, r2 FROM r5n WHERE r1 = 7 AND r2 IN (1, 2, 3, 4) AND r2 IN (0, 2, 4, 6, 8) ORDER BY r3, r4, r5, n LIMIT 5;'
+```
+
+**File**: `src/postgres/src/test/regress/sql/yb.orig.merge_scan_range.sql` (modified, +34/-0)
+```diff
+@@ -758,12 +758,46 @@ ANALYZE r5n;
+ \set query ':explain :Q SELECT r5, 1, r5 FROM r5n WHERE r2 IN (0, 1, 2, 3) ORDER BY (r3 + r4) DESC, r2, n LIMIT 5;'
+ \i :run_query
  
-   DecryptReceived();
++-- Expression column tied to a plain column
++-- Third hint is to encourage merge scan by pinning the index and disabling
++-- sort.
++\set query ':P :Q SELECT r4, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) AND r4 = r3 + r4 ORDER BY r4, n LIMIT 5;'
++\set Q3 '/*+IndexScan(r5n r5n_r2_expr_r21_expr1_r22_r5_idx) Set(yb_max_merge_scan_streams 64) Set(enable_sort off)*/'
++\i :run_query
++\unset Q3
++
+ -- (Reset the explain change)
+ \set explain 'EXPLAIN (ANALYZE, DIST, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF)'
+ 
+ -- (Drop this index)
+ DROP INDEX r5n_r2_expr_r21_expr1_r22_r5_idx;
+ 
++--
++-- Cast expression secondary index
++--
++CREATE INDEX NONCONCURRENTLY ON r5n (r2 ASC, (r3::oid), r4)
++SPLIT AT VALUES (
++    (1),
++    (2),
++    (2, 2),
++    (2, 2, 2),
++    (3));
++ANALYZE r5n;
++
++-- Following queries send various numbers of requests/scan various number of rows
++-- due to non-deterministic order of equal rows in merge sort, hide their DIST
++\set explain 'EXPLAIN (ANALYZE, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF)'
++
++-- Order by the cast expression
++\set query ':P :Q SELECT r3, r2, n FROM r5n WHERE r2 IN (0, 1, 2, 3) ORDER BY r3::oid, n LIMIT 5;'
++\i :run_query
++
++-- (Reset the explain change)
++\set explain 'EXPLAIN (ANALYZE, DIST, VERBOSE, COSTS OFF, SUMMARY OFF, TIMING OFF)'
++
++-- (Drop this index)
++DROP INDEX r5n_r2_r3_r4_idx;
++
+ -- test yb_enable_advanced_index_cond_fold flag off
+ SET yb_enable_advanced_index_cond_fold = off;
+ \set query ':P :Q SELECT r1, r3, r4, r5, n, r2 FROM r5n WHERE r1 = 7 AND r2 IN (1, 2, 3, 4) AND r2 IN (0, 2, 4, 6, 8) ORDER BY r3, r4, r5, n LIMIT 5;'
 ```
 
 ---
 
-### Incident Patch 3: `0281fab9` (2026-10-29)
-**Commit Message**: [#35726] yugabyted: Fix the daemon crash seconds after start on macOS 26 and later (#35728)
+### Incident Patch 3: `39d017c2` (2026-10-31)
+**Commit Message**: [#35950] DocDB: Add catalog manager locking guide to the review guide (#35951)
 
 ## Summary
 
-A background `yugabyted start` forked twice and let the grandchild carry
-on as the daemon in the forked copy of the launcher, without exec. A
-process that has forked without exec runs on its parent's library state,
-which system libraries need not support, and on macOS 26 and later the
-daemon's first host-name lookup crashed it (#35726). The daemon died
-seconds after start and left yb-master, yb-tserver and postgres running
-unsupervised, so `yugabyted stop` and `yugabyted status` acted on a dead
-pidfile.
+Add more instructions for review or modifications of master code. 
 
-The grandchild now execs the same command line with the same
-interpreter, so the daemon starts as a new process. The exec is
-unconditional: it is correct on every platform, and a platform check
-would save only the daemon's second pass over the command line. The
-launcher waits for the daemon's startup report on a pipe instead of a
-`multiprocessing.Queue`, which cannot cross the exec. The daemon
-inherits the pipe's write end and finds the write end's descriptor
-number in `YUGABYTED_DAEMON_STATUS_FD`, an environment variable set only
-for the daemon.
+The REVIEW.md captures known rules for master lock order at review time.
 
-Side effects:
+The claude rules tells LLMs to look for this section when making
+changes.
 
-- The daemon par
-
-**File**: `bin/yugabyted` (modified, +110/-19)
+**File**: `.claude/rules/catalog-manager-changes.md` (added, +20/-0)
 ```diff
-@@ -6,11 +6,12 @@ import atexit
- from dataclasses import dataclass
- import json
- import logging
--import multiprocessing
- import os
- import re
- import resource
-+import select
- import shutil
-+import struct
- import subprocess
- import sys
- import time
-@@ -30,14 +31,12 @@ from threading import Thread, Event
- # Version-dependent imports
- PY_VERSION = sys.version_info[0]
- if PY_VERSION < 3:
--    import Queue as queue
-     from urllib2 import Request, urlopen, URLError, HTTPError
-     from urllib import urlencode
-     from random import SystemRandom
-     _sysrand = SystemRandom()
-     PASSWORD_GENNERATOR = _sysrand.choice
- else:
--    import queue
-     from urllib.request import Request, urlopen
-     from urllib.error import URLError, HTTPError
-     from urllib.parse import urlencode, urlparse
-@@ -71,13 +70,17 @@ OS_NAME = OS_DETAILS[0]
+@@ -0,0 +1,20 @@
++---
++paths:
++  - "src/yb/master/**"
++---
++
++# Catalog manager changes
++
++You are changing master code.  Changes to catalog objects (namespaces,
++tables, tablets, and other copy-on-write (COW) objects) here commonly cause
++deadlocks, objects stuck after a master leader failover, and master leader
++stalls.
++
++Before you add or move a lock acquisition, a sys catalog write, or a step of a
++multi-step operation, read the "Catalog manager changes" section of
++`REVIEW.md` and follow it.  It covers the required lock order (leader shared
++lock -> `CatalogManager::mutex_` -> namespace -> table -> tablet COW locks,
++each kind sorted by id), the rule to commit COW write locks in the reverse
++order of acquisition, resumption after failover between persisted steps,
++deadlocks with concurrent operations, and keeping `CatalogManager::mutex_` out
++of RPCs and IO.
+```
+
+**File**: `REVIEW.md` (modified, +31/-1)
+```diff
+@@ -114,12 +114,42 @@ Do new names and terms match the vocabulary the codebase already uses for the sa
  
- # Script constants.
- SCRIPT_NAME = os.path.basename(__file__)
-+SCRIPT_PATH = os.path.abspath(__file__)
- YUGABYTE_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
- YUGABYTE_JENKINS_BUILD_DIR = os.getenv("BUILD_ROOT",
-                                        os.path.dirname(
-                                            os.path.dirname(os.path.realpath(__file__))))
- TRUE_CHOICES = ["true", "True", "t", "T", "yes", "Yes", "y", "Y", "1"]
- FALSE_CHOICES = ["false", "False", "f", "F", "no", "No", "n", "N", "0"]
- BOOL_CHOICES = TRUE_CHOICES + FALSE_CHOICES
-+# Set for the daemon by ControlScript.daemonize(): the descriptor of the write end of the
-+# DaemonStatusPipe through which the daemon reports to the process that launched it.
-+DAEMON_STATUS_FD_ENV = "YUGABYTED_DAEMON_STATUS_FD"
- FAULT_TOLERANCE_CHOICES = ["zone", "region", "cloud"]
- START_FAULT_TOLERANCE_CHOICES = ["none", "zone", "region", "cloud"]
- SLACK_LINK = "https://www.yugabyte.com/slack"
-@@ -777,13 +780,18 @@ class ControlScript(object):
-             Output.print_out("{} is already running!".format(SCRIPT_NAME))
-             sys.exit(1)
+ Regardless of PR type, give these areas extra attention:
  
--        Output.print_and_log("Starting {}...".format(SCRIPT_NAME))
-+        if self.script.daemon_status.in_daemon:
-+            # This process is the daemon that daemonize() exec()ed.  The paths that validation
-+            # makes absolute have been resolved in the launcher's directory, so the daemon can
-+            # leave that directory now.
-+            os.chdir(YUGABYTE_DIR)
-+            Output.log("Daemon process begins execution.")
-+        else:
-+            Output.print_and_log("Starting {}...".format(SCRIPT_NAME))
-         self.set_env_vars()
+-- **`src/yb/master/`** (catalog manager, leader election) — concurrency and state-machine correctness.
++- **`src/yb/master/`** (catalog manager, leader election) — concurrency and state-machine correctness. See [Catalog manager changes](#catalog-manager-changes).
+ - **`src/yb/tablet/`** and **`src/yb/docdb/`** — write/read path, MVCC, transaction handling.
+ - **`src/yb/cdc/`** and **`src/yb/cdc_consumer/`** — replication-stream correctness, idempotency.
+ - **`src/postgres/`** — PostgreSQL-fork merges; double-check that upstream Postgres semantics are preserved. Also check the diff against the fork conventions in `.claude/skills/pg-code-style-guide/SKILL.md`: YB additions yb-prefixed and clustered behind `/* YB ... */` marker comments, upstream-owned lines left byte-identical (no style fixes or rewrapping), and regress test changes respecting the upstream-named / `yb.port.*` / `yb.orig.*` taxonomy. Flag violations — they surface as merge conflicts on the next PG major-version merge.
+ - **`managed/`** (YBA platform) — orchestration logic, especially around node lifecycle and cluster-wide ops.
  
--        if self.configs.temp_data.get("background"):
--            # In daemon mode, self.daemonize() forks. The child process then executes
--            # normal control flow. The parent process waits for the child process until
--            # a status message can be printed to the terminal and then exits within daemonize.
-+        if self.configs.temp_data.get("background") and not self.script.daemon_status.in_daemon:
-+            # Runs this command again as the daemon, waits for its status and exits.
-             self.daemonize()
-         self.script.write_pid(os.getpid())
- 
-@@ -3781,7 +3789,7 @@ class ControlScript(object):
-             Output.log("Received signal: {}".format(signum), logging.DEBUG)
-         Output.print_and_log("Shutting down...")
-         Output.console_access = False
--        self.script.daemon_success.put(-1)
-+        self.script.daemon_status.report(-1)
- 
-         # Shutdown all callhome threads gracefully
-         self.shutdown_callhome_thread(timeout=5)
-@@ -4173,7 +4181,7 @@ class ControlScript(object):
-                 if self.configs.temp_data.get("background"):
-                     # Let original process know daemon was successful so it can exit.
-                     # This is to display the initial status message.
--                    self.script.daemon_success.put(1)
-+                    self.script.daemon_status.report(1)
-                     # Ignore any console output as important information will be logged.
-                     with open('/dev/null', 'r+') as dev_null:
-                         Output.console_access = False
-@@ -4436,7 +4444,7 @@ class ControlScript(object):
-                 if self.configs.temp_data.get("background"):
-                     # Let original process know daemon was successful so it can exit.
-                     # This is to display the initial status message.
--                    self.script.daemon_success.put(1)
-+                    self.script.daemon_status.report(1)
-                     # Ignore any console output as important information will be logged.
-                     with open('/dev/null', 'r+') as dev_null:
-                         Output.console_access = False
-@@ -5004,6 +5012,12 @@ class ControlScript(object):
- 
-     # Pushes yugabyted script to background as a daemon. The process is not tied to a shell, but
-     # it will not survive between machine restarts.
-+    #
-+    # The grandchild exec()s this command again rather than carrying on as a 
++## Catalog manager changes
++
++For changes to catalog objects (namespaces, tables, tablets, and other COW objects) in `src/yb/master/`, check:
++
++1. **Lock order.** Every acquisition follows the [lock order](#catalog-manager-lock-order) below. Flag an inversion at HIGH.
++2. **Failover between persisted steps.** An operation that persists several states to the sys catalog can stop after any of them when the master leader fails. For each persisted intermediate state, check that the new leader resumes the operation to completion or rolls it back, and that it does not leave an object stuck in that state. Flag a state that no code path on the new leader picks up at HIGH.
++3. **Deadlocks with other operations.** List the other operations that can run on the same objects at the same time, such as tserver heartbeats, the load balancer, tablet splitting, background tasks, DDL rollback, backfill, xCluster/CDC, and snapshot restore. Check each one for a lock cycle with the change, including cycles through waits that are not locks, such as a lock held while waiting for an RPC callback that needs the same lock. Flag a possible deadlock at HIGH.
++4. **Hold time of `CatalogManager::mutex_`.** `CatalogManager::mutex_` must be held as briefly as possible and never across an RPC, a sys catalog write, or other IO. It is a spinlock and most master leader RPCs take it, so a thread that blocks while holding it stalls those RPCs and burns CPU in the waiting threads (#23040). Long holds of COW locks can also stall other operations, but `mutex_` is far more sensitive. The leader shared lock is held for the whole duration of many RPCs and does not have this restriction. Flag at HIGH, unless it is an already existing issue, then it is MEDIUM.
++
++### Catalog manager lock order
++
++Code in `src/yb/master/` must acquire locks in this order. A thread that holds a lock may only acquire locks that come later in the list.
++
++1. `ScopedLeaderSharedLock::leader_shared_lock_`, usually taken with the `SCOPED_LEADER_SHARED_LOCK` macro.
++2. `CatalogManager::mutex_`.
++3. Namespace COW locks (`NamespaceInfo`), sorted by `namespace_id`.
++4. Table COW locks (`TableInfo`), sorted by `table_id`.
++5. Tablet COW locks (`TabletInfo`), sorted by `tablet_id`.
++6. `CatalogManager::state_lock_` (this position is less certain).
++
++COW lock means the read/write/commit lock of a copy-on-write catalog object (`src/yb/util/rwc_lock.h`). Several objects of the same kind must be locked in id order; an unsorted loop over tablets or tables that takes write locks is a deadlock risk.
++
++Commit COW write locks in the reverse order of acquisition: a lock acquired later commits earlier. This applies to all COW objects: tablets commit before their table, and of two tables the one with the larger `table_id` commits first. A commit on object A waits until every reader of A releases its read lock. If the committing thread still holds a write lock on an object B that comes after A, a reader that holds A and then tries to lock B (a correct acquisition order) waits for the writer, while the writer waits for that reader: deadlock. Heartbeat processing is one such reader: it holds a table read lock while it takes tablet write locks (#10304, #32090). Debug builds assert the table/tablet case through the held-tablet-write-lock count in `src/yb/master/catalog_entity_info.h`. Code paths exempt from that assert are marked with `TableCommitLockAssertSuppression` (`src/yb/util/cow_object.h`).
++
++Inversions to flag at HIGH:
++
++- A COW lock taken before `CatalogManager::mutex_` on the same thread, or a `SCOPED_LEADER_SHARED_LOCK` taken while `mutex_` or a COW lock is held.
++- Several objects of one kind locked without sorting by id.
++- A CO
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #36315** (2026-10-30): [#36232] DocDB: Keep log_stop_retaining_min_disk_mb in KB (@vivian-dai)
-- **PR #36274** (2026-10-30): [PLAT-23451] YBA: Merge audit additional details atomically in parallel prechecks (@artem-mindrov)
-- **PR #36270** (2026-10-29): [BACKPORT 2026.1][PLAT-23339] YBA: Honor --root-ca in yba universe create (#35909) (@Deepti-yb)
-- **PR #36242** (2026-10-29): [PLAT-23226] YBA: Fix RollbackResizeNodeTest compile after buildTaskStatus gained rollbackBlockedTargets (@vipul-yb)
-- **PR #36183** (2026-10-30): [#36173] YSQL: move embedded merge pathkey cut into the stream key loop (@jasonyb)
-- **PR #36179** (2026-10-30): [BACKPORT 2025.2][#36012] YSQL: reset yb_distinct_nkeys after the colocated merge cut (#36021) (@jasonyb)
+- **PR #36471** (2026-10-31): [pg19] YSQL: Let yb_extension members create roles in extension scripts (@teyenc)
+- **PR #36469** (2026-10-30): [#36468] Build: Add xCluster team to CODEOWNERS (@hulien22)
+- **PR #36457** (2026-10-30): [DOC-1553] Docs: Add the Scarf pixel to the docs site header (@amiramm)
+- **PR #36455** (2026-10-30): [pg19] test: Fix yb.orig.roles for PG 16+ role rules (@teyenc)
+- **PR #36452** (2026-10-31): [BACKPORT 2026.1][#35884] YSQL: Accept ysql_yb_major_version_upgrade_compatibility=15 (#35888) (@ninilo97)
+- **PR #36448** (2026-10-30): [pg19] test: Restore upstream's REFRESH MATERIALIZED VIEW block in yb.port.privileges (@teyenc)
 
 ---
 
@@ -3324,35 +3010,56 @@ Side effects:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [#35781] DocDB: Replace WAL segments of idle tablets with a quiescent marker (#3
+## X. [#36245] YSQL: Fix spurious wait in org.yb.pgsql.TestPgRegressIsolationObjectLoc
 
 **RULE**:
-When implementing operations in `architecture/design/docdb-quiescent-tablets.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/postgres/src/test/isolation/expected/yb.port.fk-partitioned-1.out`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c4bda916`: [#35781] DocDB: Replace WAL segments of idle tablets with a quiescent marker (#35782). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4184fe31`: [#36245] YSQL: Fix spurious wait in org.yb.pgsql.TestPgRegressIsolationObjectLockingPorted#testPgRegress (#36246). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `architecture/design/docdb-quiescent-tablets.md`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/postgres/src/test/isolation/expected/yb.port.fk-partitioned-1.out`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-# Quiescent tablets
+Parsed test spec with 2 sessions
 
-Status: in development.
+starting permutation: s1b s1d s1c s2b s2a s2c
+step s1b: begin;
+step s1d: delete from ppk1 where a = 1;
+step s1c: commit;
+step s2b: begin;
+step s2a: alter table pfk attach partition pfk1 for values in (1);
+ERROR:  insert or update on table "pfk1" violates foreign key constraint "pfk_a_fkey"
+step s2c: commit;
 
-## Motivation
+starting permutation: s1b s1d s2b s1c s2a s2c
+step s1b: begin;
+step s1d: delete from ppk1 where a = 1;
+step s2b: begin;
+step s1c: commit;
+step s2a: alter table pfk attach partition pfk1 for values in (1);
+ERROR:  insert or update on table "pfk1" violates foreign key constraint "pfk_a_fkey"
+step s2c: commit;
 
-A tablet that receives no operations for a while should bootstrap without reading or writing its WAL, and should keep no WAL on disk. Today every restart of such a tablet, graceful or not, reads and fsyncs WAL files even though all of its data is flushed.
+starting permutation: s1b s1d s2b s2a s1c s2c
+step s1b: begin;
+step s1d: delete from ppk1 where a = 1;
+step s2b: begin;
+step s2a: alter table pfk attach partition pfk1 for values in (1); <waiting ...>
+step s1c: commit;
+step s2a: <... completed>
+ERROR:  insert or update on table "pfk1" violates foreign key constraint "pfk_a_fkey"
+step s2c: commit;
 
-With everything flushed, bootstrap still:
-
-- Replays from `min(flushed op id, retryable requests op id)`. `TabletBootstrapStatePB` is flushed only from `pre_log_rollover_callback`, so replay starts near the beginning of the last segment (`SkipFlushedEntries`). In `many_tablets_bootstrap-itest`, 1000 tablets with 0.85 MB of flushed WAL each read 851 MB per restart.
-- After a graceful restart, the last segment is closed, so `FinishBootstrap` creates a new segment, which costs a file fsync and a WAL directory fsync.
-- After a non-graceful restart, the last segment has no footer, so `Log::ReuseAsActiveSegment` reads it in full to find its end and rebuild its footer and log index.
-
-When nothing needs replay, the WAL provides only: the last and committed op id, orphaned replicates, retryable requests, the hybrid clock (`UpdateClock` per entry), the monotonic counter (`UpdateM
+starting permutation: s1b s2b s1d s1c s2a s2c
+step s1b: begin;
+step s2b: begin;
+step s1d: delete from ppk1 where a = 1;
+step s1c: commit;
+step s2a: alter table pfk attach partition pfk1 for values
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3362,4 +3069,4 @@ When nothing needs replay, the WAL provides only: the last and committed op id, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c4bda916` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4184fe31` are properly handled with clean fallback behavior.

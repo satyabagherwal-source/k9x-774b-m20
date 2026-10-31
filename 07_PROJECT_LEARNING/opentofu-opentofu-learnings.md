@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source**: github ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
-> **Source Version**: `073d2cd5`  
+> **Source Version**: `6356fbe3`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T06:23:24.145Z  
+> **Timestamp**: 2026-10-31T02:00:30.076Z  
 > **Learning ID**: `learn-github-opentofu-opentofu`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T06:23:23.818Z  
+> **Harvest Timestamp**: 2026-10-31T02:00:30.070Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenTofu lets you declaratively manage your cloud infrastructure.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 30673 stars
+- **Stars / Engagement**: 30681 stars
 
 ---
 
@@ -1419,127 +1419,287 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `073d2cd5` (2026-10-29)
-**Commit Message**: Update cosign (#4791)
+### Incident Patch 1: `6356fbe3` (2026-10-30)
+**Commit Message**: Allow overriding non-computed fields in tests (#4777)
 
-Signed-off-by: Larry Bordowitz <[REDACTED_EMAIL]>
+Signed-off-by: Alex McGrath <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/release.yml` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -84,7 +84,7 @@ jobs:
-       - name: Install cosign
-         uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
-         with:
--          cosign-release: v2.2.0
-+          cosign-release: v2.4.3
+@@ -19,6 +19,7 @@ ENHANCEMENTS:
+ - `mock_provider` now supports the `source` argument that can get a file or directory with specific provider overrides ([#4532](https://github.com/opentofu/opentofu/pull/4532))
+ - Module outputs now support specifying their type. ([#4645](https://github.com/opentofu/opentofu/pull/4645))
+ - The `tofu` cli will now read `*.tfrc` file to load its configuration from system standard directories. ([#4624](https://github.com/opentofu/opentofu/pull/4624))
++- `override_data`/`override_resource` blocks may override non-computed fields in tofu test. ([#4777](https://github.com/opentofu/opentofu/pull/4777))
  
-       - name: Setup snapcraft
-         run: |
+ BUG FIXES:
+ 
+```
+
+**File**: `internal/command/test_test.go` (modified, +4/-0)
+```diff
+@@ -1638,6 +1638,10 @@ func TestTest_InstanceOverride(t *testing.T) {
+ 			expected: "3 passed, 0 failed.",
+ 			code:     0,
+ 		},
++		"config_override": {
++			expected: "1 passed, 0 failed.",
++			code:     0,
++		},
+ 	}
+ 
+ 	providerSource, close := newMockProviderSource(t, map[string][]string{
+```
+
+**File**: `internal/command/testdata/test/override_instance_config_override/main.tf` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++data "test_data_source" "conf" {
++  id = "id"
++}
++
++output "out_data" {
++  value = "data ${data.test_data_source.conf.id} ${data.test_data_source.conf.value}"
++}
+```
+
+**File**: `internal/command/testdata/test/override_instance_config_override/main.tftest.hcl` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++override_data {
++  target = data.test_data_source.conf
++  values = {
++    id    = "overridden_id"
++	value = "overridden_content"
++  }
++}
++
++run "argument_in_values_is_accepted" {
++  command = plan
++
++  assert {
++    condition     = output.out_data == "data id overridden_content"
++    error_message = "expected data id overridden_content"
++  }
++}
+```
+
+**File**: `internal/configs/hcl2shim/mock_value_composer.go` (modified, +4/-19)
+```diff
+@@ -83,19 +83,19 @@ composeMockValueForAttributes generates a new mocked value based on the given sc
+ For write-only attributes, it always returns null value based on the attribute's schema.
+ For all other attribute configurations, the generated value follows the truth table below:
+ Required  Optional  Computed  Has config  Has Override  Result
+-t         f         f         t           t             Error - Not Allowed to override config
++t         f         f         t           t             Config - allowed to have the override specified but the config is used if specifie
+ t         f         f         t           f             Config
+ t         f         f         f           t             Error - Required field in config not provided
+ t         f         f         f           f             Error - Required field in config not provided
+-f         t         f         t           t             Error - Not Allowed to override config
++f         t         f         t           t             Config - allowed to have the override specified but the config is used if specified
+ f         t         f         t           f             Config
+ f         t         f         f           t             Override Value
+ f         t         f         f           f             NullVal of the attribute type
+-f         t         t         t           t             Error - Not Allowed to override config
++f         t         t         t           t             Config - allowed to have the override specified but the config is used if specified
+ f         t         t         t           f             Config
+ f         t         t         f           t             Override
+ f         t         t         f           f             GenVal
+-f         f         t         t           t             Error - Not Allowed to override config
++f         f         t         t           t             Error - Config not allowed here
+ f         f         t         t           f             Error - Config not allowed here
+ f         f         t         f           t             Override
+ f         f         t         f           f             GenVal
+@@ -128,21 +128,6 @@ func (mvc MockValueComposer) composeMockValueForAttributes(attrs map[string]*con
+ 
+ 		// Validation of overridden values
+ 		if hasOverride {
+-			if hasConfig {
+-				diags = diags.Append(tfdiags.WholeContainingBody(
+-					tfdiags.Error,
+-					fmt.Sprintf("Invalid mock/override field `%v`", k),
+-					"The field is ignored since overriding configuration values is not allowed.",
+-				))
+-			}
+-			if !attr.Computed {
+-				diags = diags.Append(tfdiags.WholeContainingBody(
+-					tfdiags.Error,
+-					fmt.Sprintf("Non-computed field `%v` is not allowed to be overridden", k),
+-					"Overriding non-computed fields is not allowed, so this field cannot be processed.",
+-				))
+-			}
+-
+ 			var err error
+ 			ovConvert, err = convert.Convert(overrideValue, attr.ImpliedType())
+ 			if err != nil {
+```
+
+**File**: `internal/configs/hcl2shim/mock_value_composer_test.go` (modified, +4/-1)
+```diff
+@@ -752,7 +752,10 @@ func TestComposeMockValueBySchema(t *testing.T) {
+ 			defaults: map[string]cty.Value{
+ 				"config-field": cty.StringVal("str"),
+ 			},
+-			wantError: true,
++			wantVal: cty.ObjectVal(map[string]cty.Value{
++				"config-field": cty.StringVal("iAmFromConfig"),
++			}),
++			wantError: false,
+ 		},
+ 		"override-of-write-only-without-config": {
+ 			schema: &configschema.Block{
+```
+
+**File**: `website/docs/cli/commands/test/index.mdx` (modified, +2/-2)
+```diff
+@@ -566,7 +566,7 @@ These blocks consist of the following elements:
+ | Name     | Type         | Description                                                                                                            |
+ |:--------:|:------------:|------------------------------------------------------------------------------------------------------------------------|
+ | target   | reference    | Required. Address of the target resource or data source to be overridden.                                              |
+-| values   | object       | Custom values for computed attributes and blocks to be used instead of automatically generated.                        |
++| values   | object       | Custom values for attributes and blocks to be used instead of automatically generated or configured values.            |
+ 
+ You can use `override_resource` or `override_data` blocks for the whole test file or inside a single `run` block. The latter takes precedence if both specified for the same `target`.
+ 
+@@ -622,7 +622,7 @@ When generating these values, OpenTofu cannot follow custom provider logic, so i
+ :::tip Note
+ 
+ You can set custom values to use instead of automatically generated ones via respective mock or override fields.
+-Keep in mind, it's only possible for computed attributes and configuration values cannot be changed.
++Keep in mind, it's possible for both computed/non-computed attributes to be changed, however configuration values cannot.
+ 
+ :::
+ 
 ```
 
 ---
 
-### Incident Patch 2: `0040cbf0` (2026-10-29)
-**Commit Message**: Allow only map and object type in the value that a encryption method can receive (#4781)
+### Incident Patch 2: `80bb49e3` (2026-10-27)
+**Commit Message**: Don't re-decode during drifted resources
 
-Signed-off-by: Andrei Ciobanu <[REDACTED_EMAIL]>
+Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
 
-**File**: `internal/encryption/keyprovider/output.go` (modified, +1/-1)
+**File**: `internal/engine/planning/plan_context.go` (modified, +3/-27)
 ```diff
-@@ -24,7 +24,7 @@ type Output struct {
+@@ -16,7 +16,6 @@ import (
+ 	"github.com/opentofu/opentofu/internal/plans"
+ 	"github.com/opentofu/opentofu/internal/states"
+ 	"github.com/opentofu/opentofu/internal/tfdiags"
+-	"github.com/zclconf/go-cty/cty"
+ )
  
- func DecodeOutput(val cty.Value, subject hcl.Range) (Output, hcl.Diagnostics) {
- 	var out Output
--	if !val.CanIterateElements() {
-+	if !val.Type().IsMapType() && !val.Type().IsObjectType() {
- 		return out, hcl.Diagnostics{{
- 			Severity: hcl.DiagError,
- 			Summary:  "Expected key_provider value",
+ // planContext is our shared state for the various parts of a single call
+@@ -142,7 +141,7 @@ type planContextResult struct {
+ func (p *planContext) managedResourceChangesBetweenUpgradeAndRefresh(ctx context.Context, objects *resourceInstanceObjects) ([]*plans.ResourceInstanceChangeSrc, tfdiags.Diagnostics) {
+ 	var diags tfdiags.Diagnostics
+ 
+-	/*TODO potential optimization, compare with skipping the decodes below
++	/*TODO potential optimization, maybe not needed since we no-longet do decodes below
+ 	if newState.ManagedResourcesEqual(oldState) && moves.Changes.Len() == 0 {
+ 		// Nothing to do, because we only detect and report drift for managed
+ 		// resource instances.
+@@ -194,7 +193,6 @@ func (p *planContext) managedResourceChangesBetweenUpgradeAndRefresh(ctx context
+ 			// We don't report drift in case of resource type change
+ 			continue
+ 		}
+-		newIS := obj.RefreshedState
+ 
+ 		schema, _ := p.providers.ResourceTypeSchema(
+ 			ctx,
+@@ -210,31 +208,9 @@ func (p *planContext) managedResourceChangesBetweenUpgradeAndRefresh(ctx context
+ 			))
+ 			continue
+ 		}
+-		ty := schema.Block.ImpliedType()
+ 
+-		// TODO revisit this decode as it's extra work that's not nessesary
+-		oldVal, err := oldIS.Value.Decode(ty)
+-		if err != nil {
+-			diags = diags.Append(tfdiags.Sourceless(
+-				tfdiags.Warning,
+-				"Failed to decode resource from state",
+-				fmt.Sprintf("Error decoding %q from prior state: %s", addr.String(), err),
+-			))
+-			continue
+-		}
+-
+-		newVal := cty.NullVal(ty)
+-		if newIS != nil {
+-			newVal, err = newIS.Value.Decode(ty)
+-			if err != nil {
+-				diags = diags.Append(tfdiags.Sourceless(
+-					tfdiags.Warning,
+-					"Failed to decode resource from state",
+-					fmt.Sprintf("Error decoding %q from prior state: %s", addr.String(), err),
+-				))
+-				continue
+-			}
+-		}
++		oldVal := obj.UpgradedValue
++		newVal := obj.RefreshedValue
+ 
+ 		if oldVal.RawEquals(newVal) && addr.Equal(prevRunAddr) {
+ 			// No drift if the two values are semantically equivalent
 ```
 
-**File**: `internal/encryption/keyprovider/output_test.go` (modified, +70/-0)
+**File**: `internal/engine/planning/plan_managed.go` (modified, +5/-0)
 ```diff
-@@ -8,6 +8,7 @@ package keyprovider_test
- import (
- 	"testing"
+@@ -212,6 +212,7 @@ func (p *planGlue) planDesiredManagedResourceInstance(
+ 		// TODO Identity passthrough
+ 		prevState = &resources.ManagedResourceStateWithIdentity{ValueWithPrivate: *prevValue}
+ 		ret.UpgradedState = prevStateFull
++		ret.UpgradedValue = prevValue.Value
  
-+	"github.com/hashicorp/hcl/v2"
- 	"github.com/opentofu/opentofu/internal/encryption/keyprovider"
- 	"github.com/zclconf/go-cty/cty"
- )
-@@ -92,3 +93,72 @@ func TestOutputCty(t *testing.T) {
- 		})
+ 		if prevStateInfo.isImplicit() {
+ 			// due to a quirk in how moves are handled,
+@@ -254,6 +255,7 @@ func (p *planGlue) planDesiredManagedResourceInstance(
+ 		}
+ 		if prevState != nil {
+ 			ret.PlaceholderValue = prevState.Value
++			ret.UpgradedValue = prevState.Value
+ 
+ 			if isGeneratingConfiguration {
+ 				// Pretend the configuration always was the imported value.
+@@ -319,6 +321,7 @@ func (p *planGlue) planDesiredManagedResourceInstance(
+ 		if prevState != nil {
+ 			// Improve what we know about the potential value
+ 			ret.PlaceholderValue = prevState.Value
++			ret.RefreshedValue = prevState.Value
+ 
+ 			if isGeneratingConfiguration {
+ 				// Pretend the configuration always was the refreshed value.
+@@ -662,6 +665,7 @@ func (p *planGlue) planUnwantedManagedResourceInstanceObject(
+ 	// TODO Identity passthrough
+ 	prevState := &resources.ManagedResourceStateWithIdentity{ValueWithPrivate: *prevValue}
+ 	ret.PlaceholderValue = prevState.Value
++	ret.UpgradedValue = prevState.Value
+ 
+ 	// Include destroy provisioner dependencies
+ 	for _, p := range meta.PostCreateProvisioners {
+@@ -690,6 +694,7 @@ func (p *planGlue) planUnwantedManagedResourceInstanceObject(
+ 			return ret, diags
+ 		}
+ 		ret.PlaceholderValue = prevState.Value
++		ret.RefreshedValue = prevState.Value
  	}
- }
-+
-+func TestDecodeOutput(t *testing.T) {
-+	src := hcl.Range{
-+		Filename: "test.tf",
-+		Start:    hcl.Pos{Line: 1, Column: 1, Byte: 1},
-+		End:      hcl.Pos{Line: 1, Column: 1, Byte: 1},
-+	}
-+	testCases := map[string]struct {
-+		input          cty.Value
-+		expectedOutput keyprovider.Output
-+		expectedDiags  hcl.Diagnostics
-+	}{
-+		"wrong type - string": {
-+			input:         cty.StringVal("wrong value"),
-+			expectedDiags: hcl.Diagnostics{&hcl.Diagnostic{Summary: "Expected key_provider value", Detail: "Expected a key_provider compatible value, found string instead", Subject: &src}},
-+		},
-+		"wrong type - number": {
-+			input:         cty.NumberFloatVal(4.2),
-+			expectedDiags: hcl.Diagnostics{&hcl.Diagnostic{Summary: "Expected key_provider value", Detail: "Expected a key_provider compatible value, found number instead", Subject: &src}},
-+		},
-+		"wrong type - list": {
-+			input:         cty.ListVal([]cty.Value{cty.StringVal("val")}),
-+			expectedDiags: hcl.Diagnostics{&hcl.Diagnostic{Summary: "Expected key_provider value", Detail: "Expected a key_provider compatible value, found list of string instead", Subject: &src}},
-+		},
-+		"wrong type - set": {
-+			input:         cty.SetVal([]cty.Value{cty.StringVal("val")}),
-+			expectedDiags: hcl.Diagnostics{&hcl.Diagnostic{Summary: "Expected key_provider value", Detail: "Expected a key_provider compatible value, found set of string instead", Subject: &src}},
-+		},
-+		"wrong map content": {
-+			input:         cty.MapVal(map[string]cty.Value{"wrong_key": cty.StringVal("just a value")}),
-+			expectedDiags: hcl.Diagnostics{&hcl.Diagnostic{Summary: "Missing encryption_key value", Detail: "An encryption_key value is required in the key_provider compatible object at this location", Subject: &src}},
-+		},
-+		"wrong object content": {
-+			input:         cty.ObjectVal(map[string]cty.Value{"wrong_key": cty.StringVal("just a value")}),
-+			expectedDiags: hcl.Diagnostics{&hcl.Diagnostic{Summary: "Missing encryption_key value", Detail: "An encryption_key value is required in the key_provider compatible object at this location", Subject: &src}},
-+		},
-+		"map with a wrong type of the encryption_key entry": {
-+			input:         cty.MapVal(map[string]cty.Value{"encryption_key": cty.StringVal("just a value")}),
-+			expectedDiags: hcl.Diagnostics{&hcl.Diagnostic{Summary: "Unsuitable value type", Detail: "Unsuitable value: list of number required, but have string", Subject: &src}},
-+		},
-+		"object with a wrong type of the encryption_key entry": {
-+			input:         cty.ObjectVal(map[string]cty.Value{"encryption_key": cty.StringVal("just a value")}),
-+			expectedDiags: hcl.Diagnostics{&hcl.Diagnostic{Summary: "Unsuitable value type", Detail: "Unsuitable value: list of number required, but have string", Subject: &src}},
-+		},
-+		"map with valid encryption_key": {
-+			input:          cty.MapVal(map[string]cty.Value{"encryption_key": cty.ListVal([]cty.Value{cty.NumberIntVal(int64('k')), cty.NumberIntVal(int64('e')), cty.NumberIntVal(int64('y'))})}),
-+			expectedOutput: keyprovider.Output{EncryptionKey: []byte("key")},
-+		},
-+		"object with valid encryption_key": {
-+			input:          cty.ObjectVal(map[string]cty.Value{"encryption_key": cty.ListVal([]cty.Value{cty.NumberIntVal(int64('k')), cty.NumberIntVal(int64('e')), cty.NumberIntVal(int64('y'))})}),
-+			expectedOutput: keyprovider.Output{EncryptionKey: []byte("key")},
-+		},
-+	}
-+	for name, tc := range testCases {
-+		t.Run(name, func(t *testing.T) {
-+			output, diags := keyprovider.DecodeOutput(tc.input, src)
-+			gotErr := diags.Error()
-+			wantErr := tc.expectedDiags.Error()
-+			if gotErr != wantErr {
-+				t.Errorf("unexpected returned error\n\tgot: %s\n\twant: %s", gotErr, wantErr)
-+			}
-+			gotVal := output.Cty()
-+			wantVal := tc.expectedOutput.Cty()
-+			if !gotVal.Equals(wantVal).True() {
-+				t.Fatalf("incorrect output value\n\tgot: %s\n\twant: %s", gotVal.GoString(), wantVal.GoString())
-+			}
-+		})
-+	}
-+}
+ 
+ 	if prevState.Value.IsNull() {
+```
+
+**File**: `internal/engine/planning/plan_resource_instance.go` (modified, +2/-0)
+```diff
+@@ -48,9 +48,11 @@ type resourceInstanceObject struct {
+ 	// UpgradedState is the previous state value after processing
+ 	// Upgrades and Moves.
+ 	UpgradedState *states.ResourceInstanceObjectFullSrc
++	UpgradedValue cty.Value
+ 	// UpgradedState is the upgraded state value after processing
+ 	// Refreshes. Will be nil if the object no-longer exists.
+ 	RefreshedState *states.ResourceInstanceObjectFullSrc
++	RefreshedValue cty.Value
+ 
+ 	// PlannedChange is the change that the planning engine has decided for
+ 	// this resource instance object.
 ```
 
 #### Recent Merged Pull Requests:
@@ -1568,28 +1728,28 @@ Signed-off-by: Andrei Ciobanu <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update cosign (#4791)
+## X. Allow overriding non-computed fields in tests (#4777)
 
 **RULE**:
-When implementing operations in `.github/workflows/release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `073d2cd5`: Update cosign (#4791). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6356fbe3`: Allow overriding non-computed fields in tests (#4777). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          cosign-release: v2.4.3
+- `override_data`/`override_resource` blocks may override non-computed fields in tofu test. ([#4777](https://github.com/opentofu/opentofu/pull/4777))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-          cosign-release: v2.2.0
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `073d2cd5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6356fbe3` are properly handled with clean fallback behavior.

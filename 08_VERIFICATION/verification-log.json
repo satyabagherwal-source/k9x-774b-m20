@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-IE3I",
-    "timestamp": "2026-10-28T20:01:26.238Z",
-    "repository": "LiquidAI/d1-3B",
-    "learningId": "learn-huggingface-liquidai-d1-3b",
-    "contentHash": "fd76c2d8b01c0cc6150caec90174edc0d0302167b3e0c414b4d209e942296b41",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-IQEB",
-    "timestamp": "2026-10-28T20:01:42.179Z",
-    "repository": "volcengine/OpenViking",
-    "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "275c1a5dffb01c1032cbdf8806751e93bc81b8427908e37402e9b93b1076169d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-IR7N",
-    "timestamp": "2026-10-28T20:01:43.235Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "7137d1df4f3b34af46f0449424489dd1226e9f398dd0afdeb79e013dffbea64e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-ROD0",
-    "timestamp": "2026-10-28T20:08:39.444Z",
-    "repository": "zenbu-labs/terminal-browser",
-    "learningId": "learn-github-zenbu-labs-terminal-browser",
-    "contentHash": "b620877f84f6e09744bfb4274b6e38b3fb1b2c815dd02c2d3cc7285d3cae08f4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-RTNF",
-    "timestamp": "2026-10-28T20:08:46.299Z",
-    "repository": "projectcontour/contour",
-    "learningId": "learn-github-projectcontour-contour",
-    "contentHash": "f765451d79a1f264a68db03628b73bfbcfb2ce071ccea011ab930beb9bd0d131",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-RVQ1",
     "timestamp": "2026-10-28T20:08:48.985Z",
     "repository": "Cactus-Compute/whistle",
@@ -7490,6 +7415,81 @@
     "repository": "linkerd/linkerd2",
     "learningId": "learn-github-linkerd-linkerd2",
     "contentHash": "3f23f2d3ae7925a7bdfd01497c1ac83879be937fc5becbaebc22facda76fb51d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-7NDB",
+    "timestamp": "2026-10-31T02:00:20.495Z",
+    "repository": "InternScience/Sage-A1.5",
+    "learningId": "learn-huggingface-internscience-sage-a1-5",
+    "contentHash": "10b8ec42c76147a1655e8d1948396580c2d67aa4be4e92141261922364872a44",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-7OX0",
+    "timestamp": "2026-10-31T02:00:22.500Z",
+    "repository": "zeronsh/zeron",
+    "learningId": "learn-github-zeronsh-zeron",
+    "contentHash": "0ff15a5cf4fa5e7aece3124331e6c50ecc43f2c66788a3dbb4a86be35bef08b4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-7SKM",
+    "timestamp": "2026-10-31T02:00:27.238Z",
+    "repository": "feathersjs/feathers",
+    "learningId": "learn-github-feathersjs-feathers",
+    "contentHash": "7b769367c8dc270c6ffc88f1437a79b324263de20ca1db5e22cc9614e2fd030e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-7V6R",
+    "timestamp": "2026-10-31T02:00:30.627Z",
+    "repository": "opentofu/opentofu",
+    "learningId": "learn-github-opentofu-opentofu",
+    "contentHash": "c1ec3bd26c3e0b861aca570220c98416e1953f8b8eb0aa485ec90bcd848345f3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-7ZHV",
+    "timestamp": "2026-10-31T02:00:36.211Z",
+    "repository": "yugabyte/yugabyte-db",
+    "learningId": "learn-github-yugabyte-yugabyte-db",
+    "contentHash": "8cf2d75047e3f4b27b0c1a5142cabfde2885e8865978fc0f21a60d0a6b2c9248",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
