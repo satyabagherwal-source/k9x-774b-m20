@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T11:46:46.237Z",
+  "last_updated": "2026-10-31T11:53:43.246Z",
   "total_verified_learnings": 1183,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -24438,7 +24438,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
-      "content_hash": "cec87647009b8ac7142e5dda180121c98ed6949a79337d37bfd735a3a171b4cb",
+      "content_hash": "6ec1711ec5eeaa6e298474527f705e1818788212481c1229d5fb0d0439405d11",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -24506,7 +24506,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv47q2a0",
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv4l09tk"
       ],
-      "verified_at": "2026-10-28T11:05:02.374Z",
+      "verified_at": "2026-10-31T11:53:29.987Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58280,8 +58280,8 @@
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "22cd0239",
-      "content_hash": "f102e3635f2a432643b30ca3db5879689c409bc6ef9a6c32e83ad67e7692a0a6",
+      "source_version": "c7abfced",
+      "content_hash": "db230c468ae415d4dbdabbed3be2ff0d44d03f1e3be33bd5df082790ad7f3c98",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "promoted_rules": [
@@ -58349,6 +58349,11 @@
           "number": 5837,
           "title": "engine): a lone background merge waits until its reservation fits (#2709)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6185,
+          "title": "aggs): bound hdr number_of_significant_value_digits; one request hung a search t",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58356,7 +58361,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T19:05:44.716Z",
+      "verified_at": "2026-10-31T11:53:43.227Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -161766,6 +161771,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T11:46:46.216Z"
+    },
+    "rule-6185": {
+      "learning_id": "rule-6185",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6185,
+      "title": "aggs): bound hdr number_of_significant_value_digits; one request hung a search t",
+      "source_url": "https://github.com/xerj-org/xerj",
+      "source_version": "c7abfced",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T11:53:43.227Z"
     }
   },
   "aliases": {

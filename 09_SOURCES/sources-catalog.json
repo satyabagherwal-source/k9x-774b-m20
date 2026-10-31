@@ -615,8 +615,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "cec87647009b8ac7142e5dda180121c98ed6949a79337d37bfd735a3a171b4cb",
-    "lastHarvestedAt": "2026-10-28T11:05:02.467Z",
+    "contentHash": "6ec1711ec5eeaa6e298474527f705e1818788212481c1229d5fb0d0439405d11",
+    "lastHarvestedAt": "2026-10-31T11:53:30.099Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf"
   },
   "hf-facebook-sam3": {
@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "22cd0239",
+    "sourceVersion": "c7abfced",
     "license": "Apache-2.0",
-    "contentHash": "f102e3635f2a432643b30ca3db5879689c409bc6ef9a6c32e83ad67e7692a0a6",
-    "lastHarvestedAt": "2026-10-30T19:05:44.820Z",
+    "contentHash": "db230c468ae415d4dbdabbed3be2ff0d44d03f1e3be33bd5df082790ad7f3c98",
+    "lastHarvestedAt": "2026-10-31T11:53:43.330Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {

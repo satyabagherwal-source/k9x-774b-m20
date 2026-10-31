@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T11:46:46.332Z",
+  "last_updated": "2026-10-31T11:53:43.340Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -770,14 +770,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-      "content_hash": "cec87647009b8ac7142e5dda180121c98ed6949a79337d37bfd735a3a171b4cb",
-      "verified_at": "2026-10-28T11:05:02.476Z",
+      "content_hash": "6ec1711ec5eeaa6e298474527f705e1818788212481c1229d5fb0d0439405d11",
+      "verified_at": "2026-10-31T11:53:30.112Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T11:05:02.476Z"
+      "last_updated": "2026-10-31T11:53:30.112Z"
     },
     "unsloth/Qwen3.8-27B-GGUF": {
       "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -4281,14 +4281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xerj-org-xerj",
-      "content_hash": "f102e3635f2a432643b30ca3db5879689c409bc6ef9a6c32e83ad67e7692a0a6",
-      "verified_at": "2026-10-30T19:05:44.830Z",
+      "content_hash": "db230c468ae415d4dbdabbed3be2ff0d44d03f1e3be33bd5df082790ad7f3c98",
+      "verified_at": "2026-10-31T11:53:43.339Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T19:05:44.830Z"
+      "last_updated": "2026-10-31T11:53:43.339Z"
     },
     "markmead/hyperui": {
       "repository": "markmead/hyperui",

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T11:46:46.328Z",
-  "total_cycles_completed": 6527,
-  "total_learnings_persisted": 6527,
-  "total_rules_promoted": 6177,
+  "last_updated": "2026-10-31T11:53:43.335Z",
+  "total_cycles_completed": 6529,
+  "total_learnings_persisted": 6529,
+  "total_rules_promoted": 6178,
   "history": [
-    {
-      "timestamp": "2026-10-30T23:05:17.189Z",
-      "repository": "Automattic/harper",
-      "learningId": "learn-github-automattic-harper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T23:05:21.308Z",
-      "repository": "kirillzyusko/react-native-keyboard-controller",
-      "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T23:15:03.252Z",
       "repository": "max-sixty/worktrunk",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-31T11:46:46.328Z",
       "repository": "callstack/agent-device",
       "learningId": "learn-github-callstack-agent-device",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T11:53:30.105Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T11:53:43.335Z",
+      "repository": "xerj-org/xerj",
+      "learningId": "learn-github-xerj-org-xerj",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
