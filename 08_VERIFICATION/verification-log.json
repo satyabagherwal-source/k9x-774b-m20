@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-Y4G6",
-    "timestamp": "2026-10-30T04:25:13.734Z",
-    "repository": "mfontanini/presenterm",
-    "learningId": "learn-github-mfontanini-presenterm",
-    "contentHash": "f152cd42ec8d4c37ba1f2b7e871cfb33c0ee46dc7154c93962e77faab58ee2ec",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-YDEL",
-    "timestamp": "2026-10-30T04:25:25.341Z",
-    "repository": "apache/shardingsphere",
-    "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "6f0ccb8ab6b31dfc30fb89cf48ab910e992e8f9febbc362349d59e00c426f11e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-AMFN",
     "timestamp": "2026-10-30T04:34:56.915Z",
     "repository": "rqlite/rqlite",
@@ -7492,6 +7462,36 @@
     "contentHash": "77152442d63909abe3e3df90f32c4c7189b9cdee3e6c6db2646b9e882e60142a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-32G6",
+    "timestamp": "2026-10-31T14:32:36.390Z",
+    "repository": "necolas/react-native-web",
+    "learningId": "learn-github-necolas-react-native-web",
+    "contentHash": "14d78936b8f6d3852e7b948726215800525099988cbae08c0c4f297cfb33947c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-35ZJ",
+    "timestamp": "2026-10-31T14:32:40.975Z",
+    "repository": "Tongyi-MAI/Z-Image-Turbo",
+    "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
+    "contentHash": "60b50c194567eec1548e932db3c88b7ec271ef5321a33d156fb869a45f113521",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

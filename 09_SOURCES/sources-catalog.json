@@ -895,8 +895,8 @@
     "sourceUrl": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
     "sourceVersion": "hf-tongyi-mai-z-image-turbo",
     "license": "Open-Source",
-    "contentHash": "291ca9a5deb053fee48a8e2a9a2ae5a6a04b0adf4063d9aa2bc227f6eece351b",
-    "lastHarvestedAt": "2026-10-28T14:08:37.648Z",
+    "contentHash": "60b50c194567eec1548e932db3c88b7ec271ef5321a33d156fb869a45f113521",
+    "lastHarvestedAt": "2026-10-31T14:32:40.979Z",
     "learningId": "learn-huggingface-tongyi-mai-z-image-turbo"
   },
   "hf-meta-llama-meta-llama-3-8b-instruct": {
@@ -7123,10 +7123,10 @@
     "repository": "necolas/react-native-web",
     "platform": "github",
     "sourceUrl": "https://github.com/necolas/react-native-web",
-    "sourceVersion": "b7ebd988",
+    "sourceVersion": "646103a4",
     "license": "MIT",
-    "contentHash": "ebc89de9d3d809ff18137ae87b4f38613b3fb24ad91a652c7aa1494d60125b7a",
-    "lastHarvestedAt": "2026-10-28T19:31:50.062Z",
+    "contentHash": "14d78936b8f6d3852e7b948726215800525099988cbae08c0c4f297cfb33947c",
+    "lastHarvestedAt": "2026-10-31T14:32:36.393Z",
     "learningId": "learn-github-necolas-react-native-web"
   },
   "zvec-ai-zvec-grep": {

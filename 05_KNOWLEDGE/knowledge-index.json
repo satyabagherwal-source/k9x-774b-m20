@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T14:25:55.497Z",
+  "last_updated": "2026-10-31T14:32:40.901Z",
   "total_verified_learnings": 1184,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -29895,7 +29895,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
       "source_version": "hf-tongyi-mai-z-image-turbo",
-      "content_hash": "291ca9a5deb053fee48a8e2a9a2ae5a6a04b0adf4063d9aa2bc227f6eece351b",
+      "content_hash": "60b50c194567eec1548e932db3c88b7ec271ef5321a33d156fb869a45f113521",
       "dossier_path": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
       "promoted_rules": [
@@ -29907,7 +29907,7 @@
         {
           "number": 1047,
           "title": "Single-Stream Attention Memory Optimization",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1048,
@@ -29958,6 +29958,11 @@
           "number": 4433,
           "title": "VRAM-Bounded Deployment Invariant for Consumer Hardware",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6224,
+          "title": "Distilled Scheduler Step Size Invariance",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -29978,7 +29983,7 @@
         "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4ar4th",
         "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4o4v7p"
       ],
-      "verified_at": "2026-10-28T14:08:37.573Z",
+      "verified_at": "2026-10-31T14:32:40.883Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41499,8 +41504,8 @@
       "slug": "necolas-react-native-web",
       "platform": "github",
       "source_url": "https://github.com/necolas/react-native-web",
-      "source_version": "b7ebd988",
-      "content_hash": "ebc89de9d3d809ff18137ae87b4f38613b3fb24ad91a652c7aa1494d60125b7a",
+      "source_version": "646103a4",
+      "content_hash": "14d78936b8f6d3852e7b948726215800525099988cbae08c0c4f297cfb33947c",
       "dossier_path": "07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
       "promoted_rules": [
@@ -41523,6 +41528,11 @@
           "number": 5072,
           "title": "Add \"type\" prop for elements rendered as <button> (#2930)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6223,
+          "title": "[fix] Text: shrink below the longest word in a flex row, as View does (#2922)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41530,7 +41540,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T19:31:49.934Z",
+      "verified_at": "2026-10-31T14:32:36.300Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84105,15 +84115,15 @@
       "learning_id": "rule-1047",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1047,
-      "title": "Single-Stream Attention Memory Optimization (Harvested from Tongyi-MAI/Z-Image-Turbo)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Single-Stream Attention Memory Optimization",
+      "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
+      "source_version": "hf-tongyi-mai-z-image-turbo",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.817Z"
+      "verified_at": "2026-10-31T14:32:40.883Z"
     },
     "rule-1048": {
       "learning_id": "rule-1048",
@@ -162517,6 +162527,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T14:25:55.485Z"
+    },
+    "rule-6223": {
+      "learning_id": "rule-6223",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6223,
+      "title": "[fix] Text: shrink below the longest word in a flex row, as View does (#2922)",
+      "source_url": "https://github.com/necolas/react-native-web",
+      "source_version": "646103a4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T14:32:36.300Z"
+    },
+    "rule-6224": {
+      "learning_id": "rule-6224",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6224,
+      "title": "Distilled Scheduler Step Size Invariance",
+      "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
+      "source_version": "hf-tongyi-mai-z-image-turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T14:32:40.883Z"
     }
   },
   "aliases": {

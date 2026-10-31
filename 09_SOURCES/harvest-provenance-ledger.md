@@ -6612,3 +6612,5 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `279a17f6` | Multi-dimensional audit evidence | 2026-10-31T14:19:44.472Z |
 | `learn-huggingface-deepseek-ai-deepseek-v4-pro` | `https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-31T14:25:54.189Z |
 | `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `69c6653a` | Multi-dimensional audit evidence | 2026-10-31T14:25:55.545Z |
+| `learn-github-necolas-react-native-web` | `https://github.com/necolas/react-native-web` | `646103a4` | Multi-dimensional audit evidence | 2026-10-31T14:32:36.393Z |
+| `learn-huggingface-tongyi-mai-z-image-turbo` | `https://huggingface.co/Tongyi-MAI/Z-Image-Turbo` | `hf-tongyi-` | Multi-dimensional audit evidence | 2026-10-31T14:32:40.979Z |

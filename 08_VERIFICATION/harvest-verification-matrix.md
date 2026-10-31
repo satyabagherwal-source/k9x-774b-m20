@@ -6603,3 +6603,5 @@
 | `CYCLE-20261031-MITW` | `2026-10-31T14:19:44.468Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6221` | Yes (`52c4752c...`) |
 | `CYCLE-20261031-UG3Q` | `2026-10-31T14:25:54.182Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`ca4d5869...`) |
 | `CYCLE-20261031-UH5J` | `2026-10-31T14:25:55.543Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6222` | Yes (`77152442...`) |
+| `CYCLE-20261031-32G6` | `2026-10-31T14:32:36.390Z` | `necolas/react-native-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6223` | Yes (`14d78936...`) |
+| `CYCLE-20261031-35ZJ` | `2026-10-31T14:32:40.975Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1047, Rule 6224` | Yes (`60b50c19...`) |
