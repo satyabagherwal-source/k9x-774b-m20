@@ -6450,3 +6450,7 @@ Every entry in this ledger must capture:
 | `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `07796bd7` | Multi-dimensional audit evidence | 2026-10-31T03:02:48.467Z |
 | `learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf` | `https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-31T03:12:35.864Z |
 | `learn-huggingface-huggingfacebio-carbon-x` | `https://huggingface.co/HuggingFaceBio/Carbon-X` | `hf-hugging` | Multi-dimensional audit evidence | 2026-10-31T03:19:21.907Z |
+| `learn-huggingface-nanbeige-nanbeige4-3-33b` | `https://huggingface.co/Nanbeige/Nanbeige4.3-33B` | `hf-nanbeig` | Multi-dimensional audit evidence | 2026-10-31T03:26:04.166Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `e0be1edf` | Multi-dimensional audit evidence | 2026-10-31T03:26:04.607Z |
+| `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `f1de7f97` | Multi-dimensional audit evidence | 2026-10-31T03:26:12.300Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `a64d2d98` | Multi-dimensional audit evidence | 2026-10-31T03:26:17.373Z |

@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "4b4d8cd5",
+    "sourceVersion": "e0be1edf",
     "license": "Apache-2.0",
-    "contentHash": "07236104327b0ee6b04a34e358835c73b48864a2eb6dd0c3e9e3f9d9081c337f",
-    "lastHarvestedAt": "2026-10-30T00:33:13.966Z",
+    "contentHash": "fd68fa5231c67d589fc5de9ac4fe88c67e8a5a04bb4c98be6aa1b9574d3d3c5d",
+    "lastHarvestedAt": "2026-10-31T03:26:04.607Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "b60d74c5",
+    "sourceVersion": "a64d2d98",
     "license": "Apache-2.0",
-    "contentHash": "81b3aa5524d4d38afedc05b765608d17ea4220e3e45d0727d597a029f96a8037",
-    "lastHarvestedAt": "2026-10-30T06:57:00.263Z",
+    "contentHash": "7e53a503d5c1fda9681e48cbd823d79ba413a5e065ad2e77bddbb787e6eba504",
+    "lastHarvestedAt": "2026-10-31T03:26:17.373Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {
@@ -6793,10 +6793,10 @@
     "repository": "projectcontour/contour",
     "platform": "github",
     "sourceUrl": "https://github.com/projectcontour/contour",
-    "sourceVersion": "05abe826",
+    "sourceVersion": "f1de7f97",
     "license": "Apache-2.0",
-    "contentHash": "0565e439ff3dd6bf37741e6b12bf49746bc5a409fb9e4d92d1bcb11176d05f5c",
-    "lastHarvestedAt": "2026-10-30T08:19:29.050Z",
+    "contentHash": "cad9af0e69e9554c4b7e72732800c2726e87f886bb1a9c60de2142d451a33cdb",
+    "lastHarvestedAt": "2026-10-31T03:26:12.300Z",
     "learningId": "learn-github-projectcontour-contour"
   },
   "topoteretes-cognee": {
@@ -10705,8 +10705,8 @@
     "sourceUrl": "https://huggingface.co/Nanbeige/Nanbeige4.3-33B",
     "sourceVersion": "hf-nanbeige-nanbeige4.3-33b",
     "license": "Open-Source",
-    "contentHash": "545e22d7b2b9da911dd8d50d26dcaac22ee4a19b435a4c09cf6a29929c1ebb61",
-    "lastHarvestedAt": "2026-10-25T15:15:52.704Z",
+    "contentHash": "6f75363f5b7b6edd85731b001e09393311f05f2132d642f16e7b4e238d968c92",
+    "lastHarvestedAt": "2026-10-31T03:26:04.166Z",
     "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b"
   },
   "kajisho5-ffmpeg-skill": {

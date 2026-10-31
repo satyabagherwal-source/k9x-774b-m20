@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T03:19:21.917Z",
+  "last_updated": "2026-10-31T03:26:17.384Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6186,14 +6186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gitoxidelabs-gitoxide",
-      "content_hash": "07236104327b0ee6b04a34e358835c73b48864a2eb6dd0c3e9e3f9d9081c337f",
-      "verified_at": "2026-10-30T00:33:13.972Z",
+      "content_hash": "fd68fa5231c67d589fc5de9ac4fe88c67e8a5a04bb4c98be6aa1b9574d3d3c5d",
+      "verified_at": "2026-10-31T03:26:04.616Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T00:33:13.972Z"
+      "last_updated": "2026-10-31T03:26:04.616Z"
     },
     "devhubapp/devhub": {
       "repository": "devhubapp/devhub",
@@ -8931,14 +8931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vespa-engine-vespa",
-      "content_hash": "81b3aa5524d4d38afedc05b765608d17ea4220e3e45d0727d597a029f96a8037",
-      "verified_at": "2026-10-30T06:57:00.272Z",
+      "content_hash": "7e53a503d5c1fda9681e48cbd823d79ba413a5e065ad2e77bddbb787e6eba504",
+      "verified_at": "2026-10-31T03:26:17.383Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T06:57:00.272Z"
+      "last_updated": "2026-10-31T03:26:17.383Z"
     },
     "radix-ui/themes": {
       "repository": "radix-ui/themes",
@@ -10251,14 +10251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectcontour-contour",
-      "content_hash": "0565e439ff3dd6bf37741e6b12bf49746bc5a409fb9e4d92d1bcb11176d05f5c",
-      "verified_at": "2026-10-30T08:19:29.058Z",
+      "content_hash": "cad9af0e69e9554c4b7e72732800c2726e87f886bb1a9c60de2142d451a33cdb",
+      "verified_at": "2026-10-31T03:26:12.310Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T08:19:29.058Z"
+      "last_updated": "2026-10-31T03:26:12.310Z"
     },
     "topoteretes/cognee": {
       "repository": "topoteretes/cognee",
@@ -16086,14 +16086,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nanbeige-nanbeige4-3-33b",
-      "content_hash": "545e22d7b2b9da911dd8d50d26dcaac22ee4a19b435a4c09cf6a29929c1ebb61",
-      "verified_at": "2026-10-25T15:15:52.709Z",
+      "content_hash": "6f75363f5b7b6edd85731b001e09393311f05f2132d642f16e7b4e238d968c92",
+      "verified_at": "2026-10-31T03:26:04.182Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T15:15:52.709Z"
+      "last_updated": "2026-10-31T03:26:04.182Z"
     },
     "kajisho5/ffmpeg-skill": {
       "repository": "kajisho5/ffmpeg-skill",

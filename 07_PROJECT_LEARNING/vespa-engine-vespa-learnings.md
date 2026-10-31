@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
-> **Source Version**: `b60d74c5`  
+> **Source Version**: `a64d2d98`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T06:56:59.653Z  
+> **Timestamp**: 2026-10-31T03:26:16.712Z  
 > **Learning ID**: `learn-github-vespa-engine-vespa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T06:56:59.559Z  
+> **Harvest Timestamp**: 2026-10-31T03:26:16.705Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI search platform
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7154 stars
+- **Stars / Engagement**: 7155 stars
 
 ---
 
@@ -1065,41 +1065,421 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8330be68` (2026-10-29)
-**Commit Message**: Merge pull request #38353 from vespa-engine/toregge/handle-modified-shared-library-prefix-in-vespamalloc-fixup
+### Incident Patch 1: `dd2e7486` (2026-10-29)
+**Commit Message**: Invert struct field indexes in the memory index
 
-Ignore generated files.
+Prepare for indexing strings inside array-of-struct: Resolve names lke
+"array_of_struct.f", "map.key", "map.value" or "map.value.f" as field
+paths and extract the values with DocumentFieldExtractor, giving an
+array of strings corresponding to the structs elements in the array field.
 
-**File**: `vespamalloc/src/tests/doubledelete/.gitignore` (modified, +1/-0)
+Only paths into an array of struct or a map are resolved this way;
+otherwise the mismatch is logged and the index stays empty, as for other
+schema mismatches.
+
+This is the memory index part only: proton feeding and matching, and
+the config model deriving these indexes, are separate changes.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `searchlib/src/tests/memoryindex/document_inverter/document_inverter_test.cpp` (modified, +185/-3)
 ```diff
-@@ -1,6 +1,7 @@
- .depend
- Makefile
- doubledelete_test
-+doubledelete_test.sh
- doubledelete_testd
- expectsignal
- vespamalloc_doubledelete_test_app
+@@ -1,8 +1,15 @@
+ // Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
+ 
++#include <vespa/document/datatype/collectiondatatype.h>
+ #include <vespa/document/datatype/datatype.h>
++#include <vespa/document/datatype/documenttype.h>
++#include <vespa/document/datatype/mapdatatype.h>
++#include <vespa/document/datatype/structdatatype.h>
++#include <vespa/document/fieldvalue/arrayfieldvalue.h>
+ #include <vespa/document/fieldvalue/document.h>
++#include <vespa/document/fieldvalue/mapfieldvalue.h>
+ #include <vespa/document/fieldvalue/stringfieldvalue.h>
++#include <vespa/document/fieldvalue/structfieldvalue.h>
+ #include <vespa/document/repo/newconfigbuilder.h>
+ #include <vespa/searchlib/index/field_length_calculator.h>
+ #include <vespa/searchlib/memoryindex/document_inverter.h>
+@@ -23,8 +30,13 @@
+ 
+ namespace search::memoryindex {
+ 
++using document::ArrayFieldValue;
+ using document::DataType;
+ using document::Document;
++using document::MapFieldValue;
++using document::StringFieldValue;
++using document::StructDataType;
++using document::StructFieldValue;
+ using index::FieldLengthCalculator;
+ using index::Schema;
+ using search::test::DocBuilder;
+@@ -87,6 +99,85 @@ Document::UP makeDoc15(DocBuilder& b) {
+     return b.make_document("id:ns:searchdocument::15");
+ }
+ 
++Schema make_default_schema(DocBuilder& b) {
++    return SchemaBuilder(b).add_all_indexes().build();
++}
++
++DocBuilder::AddFieldsType make_struct_add_fields() {
++    return [](auto& builder, auto& doc) noexcept {
++        using namespace document::new_config_builder;
++        auto elem = doc.createStruct("elem")
++                        .addField("name", builder.stringTypeRef())
++                        .addField("other", builder.stringTypeRef())
++                        .ref();
++        auto elem_array = doc.createArray(elem).ref();
++        auto string_map = doc.createMap(builder.stringTypeRef(), builder.stringTypeRef()).ref();
++        auto elem_map = doc.createMap(builder.stringTypeRef(), elem).ref();
++        doc.addField("sa", elem_array)
++            .addField("m", string_map)
++            .addField("sm", elem_map)
++            .addField("s", elem)
++            .addField("bad", elem_array);
++    };
++}
++
++/*
++ * Indexes of struct fields in an array of struct and maps, named by their field path and with one
++ * array element per element in the complex field. Also indexes that cannot be struct field indexes:
++ * a struct field in a plain struct, and a struct field index that is not an array of string.
++ */
++Schema make_struct_schema(DocBuilder&) {
++    using search::index::schema::CollectionType;
++    using search::index::schema::DataType;
++    Schema schema;
++    schema.addIndexField({"sa.name", DataType::STRING, CollectionType::ARRAY});
++    schema.addIndexField({"m.key", DataType::STRING, CollectionType::ARRAY});
++    schema.addIndexField({"m.value", DataType::STRING, CollectionType::ARRAY});
++    schema.addIndexField({"sm.value.name", DataType::STRING, CollectionType::ARRAY});
++    schema.addIndexField({"s.name", DataType::STRING, CollectionType::ARRAY});
++    schema.addIndexField({"bad.name", DataType::STRING, CollectionType::SINGLE});
++    return schema;
++}
++
++StructFieldValue make_elem(DocBuilder& b, const std::string& complex_field_name, const std::string& name) {
++    StringFieldBuilder sfb(b);
++    const auto&        field_type = b.get_document_type().getField(complex_field_name).getDataType();
++    const auto*        array_type = field_type.cast_collection();
++    const auto&        elem_type = dynamic_cast<const StructDataType&>(
++        array_type != nullptr ? array_type->getNestedType() : field_type.cast_map()->getValueType());
++    StructFieldValue elem(elem_type);
++    if (!name.empty()) { // when empty, name is missing, but the element must still be counted
++        elem.setValue("name", sfb.tokenize(name).build());
++    }
++    elem.setValue("other", sfb.tokenize("not indexed").build());
++    return elem;
++}
++
++ArrayFieldValue make_elem_array(DocBuilder& b, const std::string& field_name, const std::vector<std::string>& names) {
++    auto array = b.make_array(field_name);
++    for (const auto& name : names) {
++        array.add(make_elem(b, field_name, name));
++    }
++    return array;
++}
++
++Document::UP make_struct_doc(DocBuilder& b, const std::string& id) {
++    StringFieldBuilder sfb(b);
++    auto               doc = b.make_document(id);
++    doc->setValue("sa", make_elem_array(b, "sa", {"foo bar", "", "baz"}));
++    MapFieldValue map(b.get_document_type().getField("m").getDataType());
++    map.put(sfb.tokenize("key").build(), sfb.tokenize("value").build());
++    doc->setValue("m", map);
++    MapFieldValue elem_map(b.get_document_type().getField("sm").getDataType());
++    elem_map.put(sfb.tokenize("k0").build(), make_elem(b, "sm", "qux"));
++    elem_map.put(sfb.tokenize("k1").build(), make_elem(b, "sm", ""));
++    elem_map.put(sfb.tokenize("k2").build(), make_elem(b, "sm", "quux"));
++    
 ```
 
-**File**: `vespamalloc/src/tests/overwrite/.gitignore` (modified, +1/-0)
+**File**: `searchlib/src/vespa/searchlib/memoryindex/invert_context.cpp` (modified, +61/-2)
 ```diff
-@@ -1,5 +1,6 @@
- .depend
- Makefile
-+overwrite_test.sh
- vespamalloc_overwrite_test_app
- vespamalloc_expectsignal-overwrite_app
- vespamalloc_overwrite_test_with_vespamallocd_app
+@@ -4,9 +4,14 @@
+ 
+ #include "document_inverter_context.h"
+ 
++#include <vespa/document/base/exceptions.h>
++#include <vespa/document/base/fieldpath.h>
+ #include <vespa/document/datatype/documenttype.h>
+ #include <vespa/document/fieldvalue/document.h>
++#include <vespa/searchcommon/common/schema.h>
++#include <vespa/searchlib/common/document_field_extractor.h>
+ #include <vespa/searchlib/index/schema_index_fields.h>
++#include <vespa/vespalib/util/exceptions.h>
+ 
+ #include <vespa/log/log.h>
+ LOG_SETUP(".memoryindex.invert_context");
+@@ -16,9 +21,35 @@ namespace search::memoryindex {
+ using document::Document;
+ using document::DocumentType;
+ using document::Field;
++using document::FieldPath;
++using search::index::Schema;
+ 
+ namespace {
+ 
++/*
++ * Returns the field path of an index of a struct field in an array of struct or map
++ * (e.g. "array_of_struct.f", "map.key", "map.value" or "map.value.f"), or nullptr if the name
++ * does not resolve to such a field path in the document type.
++ */
++std::unique_ptr<const FieldPath> get_struct_field_path(const DocumentType& doc_type, const std::string& name) {
++    if (name.find('.') == std::string::npos) {
++        return {};
++    }
++    auto field_path = std::make_unique<FieldPath>();
++    try {
++        doc_type.buildFieldPath(*field_path, name);
++    } catch (document::FieldNotFoundException&) {
++        return {};
++    } catch (vespalib::IllegalArgumentException&) {
++        return {};
++    }
++    const auto& complex_type = (*field_path)[0].getDataType();
++    if (!(complex_type.isArray() || complex_type.isMap()) || !DocumentFieldExtractor::isSupported(*field_path)) {
++        return {};
++    }
++    return field_path;
++}
++
+ std::unique_ptr<document::Field> get_field(const DocumentType& doc_type, const std::string& name) {
+     std::unique_ptr<Field> fp;
+     if (!doc_type.hasField(name)) {
+@@ -32,6 +63,35 @@ std::unique_ptr<document::Field> get_field(const DocumentType& doc_type, const s
+     return fp;
+ }
+ 
++/*
++ * A struct field index gets one element per element in the complex field, so the schema
++ * must have it as an array of string, and the struct field must be a string.
++ */
++bool is_valid_struct_field_index(const Schema::IndexField& index_field, const FieldPath& field_path) {
++    return index_field.getDataType() == Schema::DataType::STRING &&
++           index_field.getCollectionType() == Schema::CollectionType::ARRAY &&
++           field_path.back().getDataType() == *document::DataType::STRING;
++}
++
++InvertContext::IndexedField make_indexed_field(const DocumentType& doc_type, const Schema::IndexField& index_field) {
++    auto& name = index_field.getName();
++    auto  struct_field_path = get_struct_field_path(doc_type, name);
++    if (!struct_field_path) {
++        return {get_field(doc_type, name), {}};
++    }
++    if (!is_valid_struct_field_index(index_field, *struct_field_path)) {
++        LOG(error,
++            "Mismatch between documentdefinition and schema. "
++            "Index '%s' (%s %s) from schema is a struct field of type %s in document type '%s', "
++            "expected an array of string index of a string struct field",
++            name.c_str(), getTypeName(index_field.getCollectionType()).c_str(),
++            getTypeName(index_field.getDataType()).c_str(), struct_field_path->back().getDataType().getName().c_str(),
++            doc_type.getName().c_str());
++        return {};
++    }
++    return {{}, std::move(struct_field_path)};
++}
++
+ } // namespace
+ 
+ InvertContext::InvertContext(vespalib::ISequencedTaskExecutor::ExecutorId id)
+@@ -55,8 +115,7 @@ void InvertContext::set_data_type(const DocumentInverterContext& doc_inv_context
+     _document_fields.clear();
+     auto& schema = doc_inv_context.get_schema();
+     for (auto field_id : get_fields()) {
+-        auto& name = schema.getIndexField(field_id).getName();
+-        _document_fields.emplace_back(get_field(doc_type, name));
++        _document_fields.emplace_back(make_indexed_field(doc_type, schema.getIndexField(field_id)));
+     }
+     _document_uri_fields.clear();
+     auto& schema_index_fields = doc_inv_context.get_schema_index_fields();
+```
+
+**File**: `searchlib/src/vespa/searchlib/memoryindex/invert_context.h` (modified, +17/-3)
+```diff
+@@ -8,6 +8,7 @@ namespace document {
+ class DataType;
+ class Document;
+ class Field;
++class FieldPath;
+ } // namespace document
+ 
+ namespace search::index {
+@@ -29,11 +30,24 @@ class DocumentInverterContext;
+  * RemoveTask operations have completed).
+  */
+ class InvertContext : public BundledFieldsContext {
+-    using IndexedFields = std::vector<std::unique_ptr<const document::Field>>;
++public:
++    /*
++     * Where the value of an index is found in the document. At most one of these is set: the document field,
++     * or the field path of an index of a struct field in an array of struct or map. Neither is set when the
++     * index does not match the document type.
++     */
++    struct IndexedField {
++        std::unique_ptr<const document::Field>     field;
++        std::unique_ptr<const document::FieldPath> struct_field_path;
++    };
++
++private:
++    using IndexedFields = std::vector<IndexedField>;
++    using IndexedUriFields = std::vector<std::unique_ptr<const document::Field>>;
+     std::vector<uint32_t>             _pushers;
+     std::string                       _document_field_names;
+     mutable IndexedFields             _document_fields;
+-    mutable IndexedFields             _document_uri_fields;
++    mutable IndexedUriFields          _document_uri_fields;
+     mutable const document::DataType* _data_type;
+ 
+ public:
+@@ -44,7 +58,7 @@ class InvertContext : public BundledFieldsContext {
+     const std::vector<uint32_t>& get_pushers() const noexcept { return _pushers; }
+     void set_data_type(const DocumentInverterContext& doc_inv_context, const document::Document& doc) const;
+     const IndexedFields& get_document_fields() const noexcept { return _document_fields; }
+-    const IndexedFields& get_document_uri_fields() const noexcept { return _document_uri_fields; }
++    const IndexedUriFields& get_document_uri_fields() const noexcept { return _document_uri_fields; }
+ };
+ 
+ } // namespace search::memoryindex
+```
+
+**File**: `searchlib/src/vespa/searchlib/memoryindex/invert_task.cpp` (modified, +16/-1)
+```diff
+@@ -8,6 +8,9 @@
+ #include "url_field_inverter.h"
+ 
+ #include <vespa/document/fieldvalue/document.h>
++#include <vespa/searchlib/common/document_field_extractor.h>
++
++#include <optional>
+ 
+ namespace search::memoryindex {
+ 
+@@ -44,8 +47,20 @@ InvertTask::~InvertTask() = default;
+ void InvertTask::run() {
+     _context.set_data_type(_inv_context, _doc);
+     auto document_field_itr = _context.get_document_fields().begin();
++    // Shared by the struct field indexes, so that e.g. "sa.f1" and "sa.f2" only deserialize "sa" once.
++    // The extracted string values refer to the cached complex field value owned by the extractor.
++    std::optional<DocumentFieldExtractor> field_extractor;
+     for (auto field_id : _context.get_fields()) {
+-        _inverters[field_id]->invertField(_lid, get_field_value(_doc, *document_field_itr), _doc);
++        auto& indexed_field = *document_field_itr;
++        if (indexed_field.struct_field_path) {
++            if (!field_extractor.has_value()) {
++                field_extractor.emplace(_doc);
++            }
++            _inverters[field_id]->invertField(_lid, field_extractor->getFieldValue(*indexed_field.struct_field_path),
++                                              _doc);
++        } else {
++            _inverters[field_id]->invertField(_lid, get_field_value(_doc, indexed_field.field), _doc);
++        }
+         ++document_field_itr;
+     }
+     auto document_uri_field_itr = _context.get_document_uri_fields().begin();
+```
+
+---
+
+### Incident Patch 2: `b890a2ce` (2026-10-29)
+**Commit Message**: fix: don't flatten parallel region
+
+**File**: `config-model-api/src/main/java/com/yahoo/config/application/api/DeploymentInstanceSpec.java` (modified, +21/-15)
+```diff
+@@ -212,26 +212,32 @@ private void validateChangeBlockers(List<DeploymentSpec.ChangeBlocker> changeBlo
+         }
+     }
+ 
+-    /** Returns whether an upgrade starting at the given instant can reach all production regions, in order, within deadline */
++    /** Returns whether an upgrade starting at the given instant can reach all production regions within deadline */
+     private boolean canUpgradeWithinDeadline(Instant instant) {
+         instant = instant.truncatedTo(ChronoUnit.HOURS);
+-        Duration step = Duration.ofHours(1);
+         Instant deadline = instant.plus(Duration.ofDays(maxUpgradeBlockingDays));
+-        // Parallel regions are treated as serial, which is conservative
+-        List<Optional<RegionName>> regions = zones().stream()
+-                                                    .filter(zone -> zone.environment().isProduction())
+-                                                    .map(DeploymentSpec.DeclaredZone::region)
+-                                                    .distinct()
+-                                                    .toList();
++        Instant readyAt = concerns(prod) ? upgradeReadyAt(this, instant, deadline)
++                                         : upgradeReadyAt(instant, deadline, Optional.empty());
++        return ! readyAt.isAfter(deadline);
++    }
++
++    private Instant upgradeReadyAt(DeploymentSpec.Step step, Instant instant, Instant deadline) {
++        if (step instanceof DeploymentSpec.DeclaredZone zone && zone.environment().isProduction())
++            return upgradeReadyAt(instant, deadline, zone.region());
++
+         Instant current = instant;
+-        for (Optional<RegionName> region : regions.isEmpty() ? List.of(Optional.<RegionName>empty()) : regions) {
+-            for ( ; ! canUpgradeAt(current, region); current = current.plus(step)) {
+-                if (current.isAfter(deadline)) {
+-                    return false;
+-                }
+-            }
++        for (DeploymentSpec.Step nested : step.steps()) {
++            Instant readyAt = upgradeReadyAt(nested, step.isOrdered() ? current : instant, deadline);
++            if (readyAt.isAfter(current)) current = readyAt;
++            if (current.isAfter(deadline)) break;
+         }
+-        return true;
++        return current;
++    }
++
++    private Instant upgradeReadyAt(Instant instant, Instant deadline, Optional<RegionName> region) {
++        while ( ! instant.isAfter(deadline) && ! canUpgradeAt(instant, region))
++            instant = instant.plus(1, ChronoUnit.HOURS);
++        return instant;
+     }
+ 
+     /** Returns the upgrade policy of this, which is {@link DeploymentSpec.UpgradePolicy#defaultPolicy} by default */
+```
+
+**File**: `config-model-api/src/test/java/com/yahoo/config/application/api/DeploymentSpecTest.java` (modified, +26/-0)
+```diff
+@@ -1035,6 +1035,32 @@ public void regionSpecificChangeBlockersCannotTogetherBlockRolloutBeyondDeadline
+         DeploymentSpec.fromXml(regionsSpec(blockers, "ap-northeast-1", "us-west-1"));
+     }
+ 
++    @Test
++    public void regionSpecificChangeBlockersAllowParallelRolloutInEitherOrder() {
++        String blockers = "<block-change from-date='2017-09-01' to-date='2017-09-20'><region>us-west-1</region></block-change>" +
++                          "<block-change from-date='2017-09-18' to-date='2017-10-07'><region>ap-northeast-1</region></block-change>";
++        for (String regions : List.of("<region>us-west-1</region><region>ap-northeast-1</region>",
++                                      "<region>ap-northeast-1</region><region>us-west-1</region>")) {
++            DeploymentSpec.fromXml("<deployment><instance id='default'>" + blockers +
++                                   "<prod><parallel>" + regions + "</parallel></prod></instance></deployment>");
++        }
++    }
++
++    @Test
++    public void regionSpecificChangeBlockersRespectOrderingWithinAndAfterParallelSteps() {
++        String blockers = "<block-change from-date='2017-09-01' to-date='2017-09-20'><region>us-west-1</region></block-change>" +
++                          "<block-change from-date='2017-09-18' to-date='2017-10-07'><region>ap-northeast-1</region></block-change>";
++        for (String steps : List.of("<parallel><steps><region>us-west-1</region><region>ap-northeast-1</region></steps>" +
++                                     "<region>eu-west-1</region></parallel>",
++                                     "<parallel><region>us-west-1</region><region>eu-west-1</region></parallel>" +
++                                     "<region>ap-northeast-1</region>")) {
++            assertEquals("Cannot block Vespa upgrades for longer than 21 consecutive days",
++                         assertThrows(IllegalArgumentException.class,
++                                      () -> DeploymentSpec.fromXml("<deployment><instance id='default'>" + blockers +
++                                                                   "<prod>" + steps + "</prod></instance></deployment>")).getMessage());
++        }
++    }
++
+     private static String regionsSpec(String blockers, String... regions) {
+         StringBuilder xml = new StringBuilder("<deployment><instance id='default'>").append(blockers).append("<prod>");
+         for (String region : regions) xml.append("<region>").append(region).append("</region>");
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #38364** (2026-10-29): Move DocumentFieldExtractor from searchcore to searchlib (@arnej27959)
-- **PR #38356** (2026-10-29): Make `in` operator taggable (@radu-gheorghe)
-- **PR #38355** (2026-10-29): Inherit only exact version matches (@bratseth)
-- **PR #38354** (2026-10-29): chore: update third-party attributions (@github-actions[bot])
-- **PR #38353** (2026-10-29): Ignore generated files. (@toregge)
-- **PR #38352** (2026-10-29): Compute sparse tensor WAND dot product directly (@arnej27959)
+- **PR #38375** (2026-10-30): Exclude Maven 4 XML API artifacts from maven-archiver in bundle-plugin (@arnej27959)
+- **PR #38373** (2026-10-30): All file references must be local to the test package (@ean)
+- **PR #38372** (2026-10-30): Add (and use) BFloat16 precision centroids (@vekterli)
+- **PR #38371** (2026-10-30): Migrate custom enforcer rules to the current Maven Enforcer API (@arnej27959)
+- **PR #38370** (2026-10-30): Add for_each_field expression to the indexing language (@arnej27959)
+- **PR #38368** (2026-10-30): Update language server changenotes for 2.6.2 (@bratseth)
 
 ---
 
@@ -1119,21 +1499,46 @@ Ignore generated files.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #38353 from vespa-engine/toregge/handle-modified-shared-libra
+## X. Invert struct field indexes in the memory index
 
 **RULE**:
-When implementing operations in `vespamalloc/src/tests/doubledelete/.gitignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `searchlib/src/tests/memoryindex/document_inverter/document_inverter_test.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8330be68`: Merge pull request #38353 from vespa-engine/toregge/handle-modified-shared-library-prefix-in-vespamalloc-fixup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dd2e7486`: Invert struct field indexes in the memory index. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `vespamalloc/src/tests/doubledelete/.gitignore`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `searchlib/src/tests/memoryindex/document_inverter/document_inverter_test.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-doubledelete_test.sh
+#include <vespa/document/datatype/collectiondatatype.h>
+#include <vespa/document/datatype/documenttype.h>
+#include <vespa/document/datatype/mapdatatype.h>
+#include <vespa/document/datatype/structdatatype.h>
+#include <vespa/document/fieldvalue/arrayfieldvalue.h>
+#include <vespa/document/fieldvalue/mapfieldvalue.h>
+#include <vespa/document/fieldvalue/structfieldvalue.h>
+using document::ArrayFieldValue;
+using document::MapFieldValue;
+using document::StringFieldValue;
+using document::StructDataType;
+using document::StructFieldValue;
+Schema make_default_schema(DocBuilder& b) {
+    return SchemaBuilder(b).add_all_indexes().build();
+}
+
+DocBuilder::AddFieldsType make_struct_add_fields() {
+    return [](auto& builder, auto& doc) noexcept {
+        using namespace document::new_config_builder;
+        auto elem = doc.createStruct("elem")
+                        .addField("name", builder.stringTypeRef())
+                        .addField("other", builder.stringTypeRef())
+                        .ref();
+        auto elem_array = doc.createArray(elem).ref();
+        auto string_map = doc.createMap(builder.stringTypeRef(), builder.stringTypeRef()).ref();
+        auto elem_map = doc.createMap(bui
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1143,4 +1548,4 @@ doubledelete_test.sh
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8330be68` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dd2e7486` are properly handled with clean fallback behavior.

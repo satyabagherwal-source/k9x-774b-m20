@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T03:19:21.819Z",
+  "last_updated": "2026-10-31T03:26:17.293Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14367,8 +14367,8 @@
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "4b4d8cd5",
-      "content_hash": "07236104327b0ee6b04a34e358835c73b48864a2eb6dd0c3e9e3f9d9081c337f",
+      "source_version": "e0be1edf",
+      "content_hash": "fd68fa5231c67d589fc5de9ac4fe88c67e8a5a04bb4c98be6aa1b9574d3d3c5d",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "promoted_rules": [
@@ -14416,6 +14416,11 @@
           "number": 5569,
           "title": "Update `pulldown-cmark` to fix the CI advisory check",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6043,
+          "title": "gix): recompute trust when staging embedded repositories",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14423,7 +14428,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T00:33:13.907Z",
+      "verified_at": "2026-10-31T03:26:04.504Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45788,8 +45793,8 @@
       "slug": "projectcontour-contour",
       "platform": "github",
       "source_url": "https://github.com/projectcontour/contour",
-      "source_version": "05abe826",
-      "content_hash": "0565e439ff3dd6bf37741e6b12bf49746bc5a409fb9e4d92d1bcb11176d05f5c",
+      "source_version": "f1de7f97",
+      "content_hash": "cad9af0e69e9554c4b7e72732800c2726e87f886bb1a9c60de2142d451a33cdb",
       "dossier_path": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "promoted_rules": [
@@ -45837,6 +45842,11 @@
           "number": 5682,
           "title": "Delimiter-Consistent Cluster Load Assignment (CLA) Identifier Contract",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6044,
+          "title": "Use unique filter names for Lua misdirected-request and cookie-rewrite filters (",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45844,7 +45854,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T08:19:28.951Z",
+      "verified_at": "2026-10-31T03:26:12.196Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56425,8 +56435,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "b60d74c5",
-      "content_hash": "81b3aa5524d4d38afedc05b765608d17ea4220e3e45d0727d597a029f96a8037",
+      "source_version": "a64d2d98",
+      "content_hash": "7e53a503d5c1fda9681e48cbd823d79ba413a5e065ad2e77bddbb787e6eba504",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -56484,6 +56494,11 @@
           "number": 5640,
           "title": "Merge pull request #38353 from vespa-engine/toregge/handle-modified-shared-libra",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6045,
+          "title": "Invert struct field indexes in the memory index",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56491,7 +56506,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T06:57:00.170Z",
+      "verified_at": "2026-10-31T03:26:17.273Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -132332,7 +132347,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Nanbeige/Nanbeige4.3-33B",
       "source_version": "hf-nanbeige-nanbeige4.3-33b",
-      "content_hash": "545e22d7b2b9da911dd8d50d26dcaac22ee4a19b435a4c09cf6a29929c1ebb61",
+      "content_hash": "6f75363f5b7b6edd85731b001e09393311f05f2132d642f16e7b4e238d968c92",
       "dossier_path": "07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md",
       "promoted_rules": [],
@@ -132341,7 +132356,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T15:15:52.651Z",
+      "verified_at": "2026-10-31T03:26:04.053Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -158974,6 +158989,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T03:19:21.798Z"
+    },
+    "rule-6043": {
+      "learning_id": "rule-6043",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6043,
+      "title": "gix): recompute trust when staging embedded repositories",
+      "source_url": "https://github.com/GitoxideLabs/gitoxide",
+      "source_version": "e0be1edf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T03:26:04.504Z"
+    },
+    "rule-6044": {
+      "learning_id": "rule-6044",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6044,
+      "title": "Use unique filter names for Lua misdirected-request and cookie-rewrite filters (",
+      "source_url": "https://github.com/projectcontour/contour",
+      "source_version": "f1de7f97",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T03:26:12.196Z"
+    },
+    "rule-6045": {
+      "learning_id": "rule-6045",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6045,
+      "title": "Invert struct field indexes in the memory index",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "a64d2d98",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T03:26:17.273Z"
     }
   },
   "aliases": {

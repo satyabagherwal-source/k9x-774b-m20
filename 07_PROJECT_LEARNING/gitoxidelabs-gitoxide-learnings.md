@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source**: github ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
-> **Source Version**: `4b4d8cd5`  
+> **Source Version**: `e0be1edf`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T00:33:13.541Z  
+> **Timestamp**: 2026-10-31T03:26:03.914Z  
 > **Learning ID**: `learn-github-gitoxidelabs-gitoxide`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T00:33:12.376Z  
+> **Harvest Timestamp**: 2026-10-31T03:26:03.906Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An idiomatic, lean, fast & safe pure Rust implementation of Git
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12080 stars
+- **Stars / Engagement**: 12090 stars
 
 ---
 
@@ -1615,10 +1615,8 @@ where
 - **Issue #3139** (2026-10-29): **Preserve Cargo.lock in dependency checks**
   *Symptoms*: > [!NOTE] > This description was written by GPT-6.1 Sol, an LLM, using the Codex harness.  Dependency checks should validate the versions committed in `Cargo.lock`. Without `--locked`, Cargo can create a missing lockfile or update one that no longer resolves the manifests while preparing cargo-deny's dependency graph. The checks can therefore succeed against a different resolution from the one under review.  Add `--locked` to both cargo-deny CI jobs, `just audit`, and the local CI pre-check. These cargo-deny invocations now fail if Cargo needs to create or change the lockfile, requiring the dependency resolution to be updated explicitly.  Validation:  - `just audit` passes all four checks locally with cargo-deny 0.20.2 and freshly fetched RustSec data; the local CI pre-check's cargo-deny command also passes. `Cargo.lock` remains unchanged. - A disposable stale-lockfile fixture confirms that `--locked` prevents regeneration and fails, while the otherwise identical unlocked command regenerates its lockfile and passes. - Bash syntax, workflow structure (`actionlint -shellcheck=''`), and whitespace checks pass. - [Fork CI](https://github.com/EliahKagan/gitoxide/actions/runs/40969798848) passed both cargo-deny jobs with `--workspace --all-features --locked`, reporting `advisories ok` and `bans ok, licenses ok, sources ok`. Workspace tests passed on Linux, Windows, and macOS. This run tested the same file tree as the final commit; only its message was subsequently amended.  
 
-- **Issue #3137** (2026-10-29): **Restore transitive soundness advisory reporting**
-  *Symptoms*: > [!NOTE] > This description was written by GPT-6.1 Sol using the Codex harness at Eliah Kagan's direction.  An advisory-coverage review across GitoxideLabs, prompted by recent RustSec findings, revealed that gitoxide had silently lost reporting for transitive soundness advisories. Cargo-deny changed its default to `unsound = "workspace"`; gitoxide inherited that default through an action update. Explicitly setting `unsound = "all"` restores the earlier coverage. Soundness advisories can be security-relevant even when a concrete exploit has not been established.  The same commit updates the affected locked dependencies, so enabling the broader check does not introduce a commit with known advisory failures:  | Dependency | Update | Advisory | | --- | --- | --- | | `event-listener` | 5.4.1 → 5.4.2 | [RUSTSEC-2026-0221](https://rustsec.org/advisories/RUSTSEC-2026-0221.html) | | `lru` | 0.18.0 → 0.18.2 | [RUSTSEC-2026-0253](https://rustsec.org/advisories/RUSTSEC-2026-0253.html) | | `tokio` | 1.52.3 → 1.53.3 | [RUSTSEC-2026-0386](https://rustsec.org/advisories/RUSTSEC-2026-0386.html) |  The updates satisfy existing manifest constraints and gitoxide's MSRV. Cargo-deny continues to check its selected dependency graph; this setting does not make it audit every lockfile entry.  Validation: all four cargo-deny checks pass with `--workspace --all-features --locked`, using cargo-deny 0.20.2 and a copied RustSec database from October 29. Tix's 808 tests and the blocking/req
-  **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"abedf6012867118aca41f5155f3b0a0498989071","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-10-29T22:28:32.997549Z">2026-10-29T22:28:32.997549Z</relative-time> | `abedf60` | Draft marked ready |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review"
+- **Issue #3138** (2026-10-30): **fix(gix): reject symlinks in configured submodule paths**
+  *Symptoms*: ## Tasks  This section is for Byron only. Models continuing this PR must not add, remove, check, uncheck, rename, or reorder checkboxes here.  - [x] refackiew  ----  Everything below this line was generated by `Codex`.  Created by Codex on behalf of Byron. Byron will review before this is ready to merge.  Configured submodule paths could resolve through symbolic links during repository lookup. This change rejects those paths before inspecting or opening the submodule, including status with `ignore=all`. Missing paths for uninitialized submodules and symlinks in the superproject's own path remain supported.  Bare superprojects now use only their modules-directory fallback, without probing the caller's current directory or inventing a worktree for a bare submodule repository. An isolated regression covers that behavior.  The motivation is the submodule-inspection report in [GHSA-2rx9-36wh-cm54](https://github.com/GitoxideLabs/gitoxide/security/advisories/GHSA-2rx9-36wh-cm54). The earlier fix in `392336fb114` already recomputes submodule trust; path validation is a separate requirement, so this change retains `open::Options`'s `Clone` implementation.  ### Advisory summary  - Severity: medium (CVSS 3.1: 5.3). - Package: `gix` (Rust), reported affected range `>= 0.52.0, <= 0.90.0`. - Patched version and CVE: not assigned in the advisory. - Disclosure status: private triage; report details are omitted here.  ### Validation  The new regression failed before the fix and covers 13 pat
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1635,535 +1633,539 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `15c81322` (2026-10-28)
-**Commit Message**: Update `pulldown-cmark` to fix the CI advisory check
-
-`cargo-deny-advisories` fails on PR #3125 because the existing lockfile resolves
-`pulldown-cmark 0.13.4` through `tui-markdown` and `gix-tix`.
-`RUSTSEC-2026-0414` reports exponential parser-event growth for empty wikilink
-display text when `ENABLE_WIKILINKS` is enabled, potentially exhausting memory.
-
-Update only the locked version and checksum to `0.13.5`, which fixes the
-vulnerability. This dependency was already present in the base commit, so keep
-the CI repair separate from the configuration subsection changes.
-
-Validation: `cargo deny --workspace --all-features check advisories` and
-`GIX_TEST_IGNORE_ARCHIVES=1 cargo test -p gix-tix --features sha1 --locked`.
-
-**File**: `Cargo.lock` (modified, +2/-2)
-```diff
-@@ -4296,9 +4296,9 @@ dependencies = [
- 
- [[package]]
- name = "pulldown-cmark"
--version = "0.13.4"
-+version = "0.13.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e9f068eba8e7071c5f9511831b44f32c740d5adf574e990f946ddb53db2f314e"
-+checksum = "278e9268c93b9e498a2da46c34d90ba93a3255eb99009646398f34bc73ab36eb"
- dependencies = [
-  "bitflags 2.13.0",
-  "getopts",
-```
-
----
-
-### Incident Patch 2: `73436f5c` (2026-10-29)
-**Commit Message**: fix(gix-path): lazily discover Windows Git fallback installations
-
-rubber-stamped the various tests that assert laziness, which is the majority
-of the code.
-The implementation is simple and clever, as it simply chains iterators, which
-naturally are evaluated lazily. I merely glanced at it though, as this is hard
-to review without any code intelligence support - in other words, it's just a
-review staring at the changes in the editor, while also trusting Astra quite a bit.
+### Incident Patch 1: `1e9051bf` (2026-10-30)
+**Commit Message**: fix(gix): recompute trust when staging embedded repositories
 
 <!-- agent -->
-Starship loads Git installation configuration while rendering a prompt. The
-expanded Windows discovery eagerly initialized every fallback, including
-Scoop version directories and uninstall registrations, even when Git was
-already available on `PATH`. Native configuration paths also triggered an
-unnecessary MSYS2 runtime lookup before checking whether conversion was
-needed. Per-process caching still repeated that work on subsequent prompts.
+The caller audit after GHSA-2rx9-36wh-cm54 found another repository open
+that copied the parent's determined trust. Although `Submodule::open()`
+already clears `git_dir_trust`, `Pipeline::worktree_file_to_object()`
+cloned its options unchanged when turning directories into gitlinks.
+This bypasses independent ownership-based trust determination and also
+affects `gix-tix` staging.
 
-Search fallback sources incrementally in their existing order, and defer
-registry hives, views, and uninstall entries until iteration reaches them.
-Cache the selected fallback and the executable's `PATH` provenance so the
-public invocation no longer needs a rever
+Clear cached trust and repository-local environment overrides before
+opening the embedded repository, matching `Submodule::open()`. Keep
+`Options::Clone` unchanged and preserve intentional API configuration.
+Path validation and trust determination protect different boundaries.
 
-**File**: `gix-path/src/env/git/mod.rs` (modified, +109/-48)
+The public regression observes trust through a configuration-section
+filter while opening a fixture submodule. It failed with inherited
+`Reduced` trust, despite the child being owned by the current user, and
+now sees independently determined `Full` trust. Existing opening-path
+and reload regressions continue to pass.
+
+Assisted-by: GPT 6.1 Sol
+Co-authored-by: GPT 6.1 Sol <[REDACTED_EMAIL]>
+
+**File**: `gix/src/filter.rs` (modified, +3/-1)
 ```diff
-@@ -10,17 +10,28 @@ use std::sync::LazyLock;
- #[cfg(windows)]
- mod registry;
+@@ -206,7 +206,9 @@ impl Pipeline<'_> {
+             (id, kind)
+         } else if md.is_dir() {
+             gix_fs::symlink::validate_relative_path(&parent_dir, std::path::Path::new(file_name))?;
+-            let Some(submodule_repo) = crate::open_opts(&path, repo.open_options().clone()).ok() else {
++            let mut options = repo.open_options().clone().without_repository_environment_overrides();
++            options.git_dir_trust = None;
++            let Some(submodule_repo) = crate::open_opts(&path, options).ok() else {
+                 return Ok(None);
+             };
+             let Some(id) = submodule_repo.head_id().ok() else {
+```
+
+**File**: `gix/tests/gix/repository/filter.rs` (modified, +33/-0)
+```diff
+@@ -220,6 +220,39 @@ fn pipeline_worktree_file_to_object() -> TestResult {
+     Ok(())
+ }
  
--/// Other places to find Git in.
-+/// Other places to find Git in, probing each source only after earlier candidates are exhausted.
- #[cfg(windows)]
--pub(super) static ALTERNATIVE_LOCATIONS: LazyLock<Vec<PathBuf>> = LazyLock::new(|| {
--    let mut locations = locations_under_program_files(|key| std::env::var_os(key));
--    locations.extend(locations_under_scoop(|key| std::env::var_os(key)));
--    locations.extend(locations_under_package_managers(|key| std::env::var_os(key)));
--    locations.extend(registry::installation_bins());
--    locations
--});
--#[cfg(not(windows))]
--pub(super) static ALTERNATIVE_LOCATIONS: LazyLock<Vec<PathBuf>> = LazyLock::new(Vec::new);
-+fn alternative_locations<I: IntoIterator<Item = PathBuf>>(
-+    var_os: impl Fn(&str) -> Option<std::ffi::OsString> + Copy,
-+    registered: impl FnOnce() -> I,
-+) -> impl Iterator<Item = PathBuf> {
-+    std::iter::once_with(move || locations_under_program_files(var_os))
-+        .flatten()
-+        .chain(locations_under_scoop(var_os))
-+        .chain(locations_under_package_managers(var_os))
-+        .chain(std::iter::once_with(registered).flatten())
++#[test]
++#[cfg(unix)]
++fn worktree_file_to_object_recomputes_submodule_trust() -> TestResult {
++    fn check_submodule_trust(meta: &gix_config::file::Metadata) -> bool {
++        if meta
++            .path
++            .as_ref()
++            .is_some_and(|path| path.ends_with(Path::new("modules/submodule/config")))
++        {
++            assert_eq!(
++                meta.trust,
++                gix_sec::Trust::Full,
++                "the fixture submodule is owned by this user, regardless of the parent's forced trust"
++            );
++        }
++        true
++    }
++    let repo = named_subrepo_opts(
++        "repo_with_untracked_files.sh",
++        ".",
++        gix::open::Options::isolated()
++            .with(gix_sec::Trust::Reduced)
++            .filter_config_section(check_submodule_trust),
++    )?;
++    assert_eq!(repo.git_dir_trust(), gix_sec::Trust::Reduced, "parent trust is forced");
++    let (mut pipe, index) = repo.filter_pipeline(None)?;
++    assert!(
++        pipe.worktree_file_to_object("submodule".into(), &index)?.is_some(),
++        "opening the submodule consults its local core.worktree configuration"
++    );
++    Ok(())
 +}
 +
-+#[cfg(windows)]
-+fn alternative_executable() -> Option<&'static Path> {
-+    static EXECUTABLE: LazyLock<Option<PathBuf>> = LazyLock::new(|| {
-+        alternative_locations(|key| env::var_os(key), registry::installation_bins)
-+            .map(|prefix| prefix.join(EXE_NAME))
-+            .find(|path| path.is_file())
-+    });
-+    EXECUTABLE.as_deref()
-+}
- 
- #[cfg(windows)]
- fn locations_under_program_files<F>(var_os_func: F) -> Vec<PathBuf>
-@@ -102,25 +113,32 @@ where
- }
- 
- #[cfg(windows)]
--fn locations_under_scoop(var_os: impl Fn(&str) -> Option<std::ffi::OsString>) -> Vec<PathBuf> {
--    let absolute = |name| var_os(name).map(PathBuf::from).filter(|path| path.is_absolute());
-+fn locations_under_scoop(var_os: impl Fn(&str) -> Option<std::ffi::OsString>) -> impl Iterator<Item = PathBuf> {
-+    let absolute = move |name| var_os(name).map(PathBuf::from).filter(|path| path.is_absolute());
-     // Scoop exports GIT_INSTALL_ROOT even when its root was configured outside the environment.
-     // Find the stable `current` installation without relying on Scoop's shims being on PATH.
--    let mut locations: Vec<_> = absolute("GIT_INSTALL_ROOT")
--        .map(|root| root.join("cmd"))
--        .into_iter()
--        .collect();
--    for (variable, default_base) in [("SCOOP", "USERPROFILE"), ("SCOOP_GLOBAL", "ProgramData")] {
--        if let Some(root) = absolute(variable).or_else(|| absolute(default_base).map(|base| base.join("scoop"))) {
-+    [
-+        ("GIT_INSTALL_ROOT", None),
-+        ("SCOOP", Some("USERPROFILE")),
-+        ("SCOOP_GLOBAL", Some("ProgramData")),
-+    ]
-+    .into_iter()
-+    .filter_map(move |(variable, default_base)| {
-+        let root = absolute(variable).or_else(|| absolute(default_base?).map(|base| base.join("scoop")))?;
-+        Some((root, default_base.is_some()))
-+    })
-+    .flat_map(|(root, is_scoop)| {
-+        if is_scoop {
-             let app = root.join("apps/git");
-             let current = app.join("current/cmd");
--            if !current.join(EXE_NAME).is_file() {
--                locations.extend(scoop_version_without_junction(&app));
--            }
--            locations.push(current);
-+            let version = (!current.join(EXE_NAME).is_file())
-+                .then(|| scoop_version_without_junction(&app))
-+                .flatten();
-+            version.into_iter().chain(Some(current))
-+        } else {
-+            None.into_iter().chain(Some(root.join("cmd")))
-         }
--    }
--    locations
-+    })
- }
- 
- #[cfg(windows)]
-@@ -149,7 +167,9 @@ fn scoop_version_without_junction(app: &Path) -> Option<PathBuf> {
- }
- 
- #[cfg(windows)]
--fn locations_under_package_managers(var_os: impl Fn(&str) -> Option<std::ffi::OsString>) -> Vec<PathBuf> {
-+fn locations_under_package_managers(
-+    var_os: impl Fn(&str) -> Option<std::ffi::OsString>,
-+) -> impl Iterator<Item = PathBuf> {
-     // These are stable entry points, including WinGet's links for custom portable roots.
-     // Only the active Conda/Mamba environment participates; do not pick an inactive environment.
-     [
-@@ -161,27 +181,65 @@ fn locations_under_package_managers(var_os: impl Fn(&str) -> Option<std::ffi::Os
-         ("GIT_INSTALL_ROOT", "usr/bin"),
-     ]
-     .into_iter()
--    .filter_map(|(variable, suffix)| {
-+    .filter_map(move |(variable, suffix)| {
-         var_os(variable)
-             .map(PathBuf::from)
-             .filter(|root| root.is_absolute())
-             .map(|root| root.join(suffix))
-     })
--    .collect()
- }
- 
--/// Keep the selected path internally even when the public invocation is just `git.exe`.
--pub(super) fn exe_path() -> Option<&'static Path> {
--    static PATH: LazyLock<Option<PathBuf>> = LazyLock::new(|| {
--        env::var_os("PATH")
--            .iter()
--            .flat_map(env::split_pat
-```
-
-**File**: `gix-path/src/env/git/registry.rs` (modified, +84/-35)
-```diff
-@@ -8,46 +8,59 @@ use winreg::{
- const UNINSTALL: &str = r"Software\Microsoft\Windows\CurrentVersion\Uninstall";
- 
- /// Installer registrations also cover custom roots, without guessing directories on each drive.
--pub(super) fn installation_bins() -> Vec<PathBuf> {
-+pub(super) fn installation_bins() -> impl Iterator<Item = PathBuf> {
-     let mut locations = Vec::new();
-     // Prefer the current user's installations, and 64-bit entries within each hive.
--    for hive in [HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE] {
--        let root = RegKey::predef(hive);
--        for view in [KEY_WOW64_64KEY, KEY_WOW64_32KEY] {
--            if let Some(bin) = root
--                .open_subkey_with_flags(r"Software\GitForWindows", KEY_READ | view)
--                .ok()
--                .and_then(|key| key.get_value::<OsString, _>("InstallPath").ok())
--                .and_then(absolute)
--                .map(|root| root.join("cmd"))
--            {
--                push_unique(&mut locations, bin);
--            }
--            let Ok(uninstall) = root.open_subkey_with_flags(UNINSTALL, KEY_READ | view) else {
--                continue;
--            };
--            // Qt's MSYS2 installer uses a generated product UUID as the key name.
--            let mut names: Vec<_> = uninstall.enum_keys().filter_map(Result::ok).collect();
--            names.sort();
--            for name in names {
--                let Some(bin) = uninstall
--                    .open_subkey_with_flags(name, KEY_READ | view)
--                    .ok()
--                    .and_then(|key| msys2_bin(|name| key.get_value(name).ok()))
--                else {
--                    continue;
--                };
--                push_unique(&mut locations, bin);
-+    [HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE]
-+        .into_iter()
-+        .flat_map(|hive| {
-+            [KEY_WOW64_64KEY, KEY_WOW64_32KEY].into_iter().flat_map(move |view| {
-+                registration_bins(
-+                    move || {
-+                        RegKey::predef(hive)
-+                            .open_subkey_with_flags(r"Software\GitForWindows", KEY_READ | view)
-+                            .ok()
-+                            .and_then(|key| key.get_value::<OsString, _>("InstallPath").ok())
-+                            .and_then(absolute)
-+                            .map(|root| root.join("cmd"))
-+                    },
-+                    move || {
-+                        RegKey::predef(hive)
-+                            .open_subkey_with_flags(UNINSTALL, KEY_READ | view)
-+                            .ok()
-+                            .into_iter()
-+                            .flat_map(move |uninstall| {
-+                                // Qt's MSYS2 installer uses a generated product UUID as the key name.
-+                                let mut names: Vec<_> = uninstall.enum_keys().filter_map(Result::ok).collect();
-+                                names.sort();
-+                                names.into_iter().filter_map(move |name| {
-+                                    uninstall
-+                                        .open_subkey_with_flags(name, KEY_READ | view)
-+                                        .ok()
-+                                        .and_then(|key| msys2_bin(|name| key.get_value(name).ok()))
-+                                })
-+                            })
-+                    },
-+                )
-+            })
-+        })
-+        .filter(move |bin| {
-+            if locations.contains(bin) {
-+                false
-+            } else {
-+                locations.push(bin.clone());
-+                true
-             }
--        }
--    }
--    locations
-+        })
- }
- 
--fn push_unique(locations: &mut Vec<PathBuf>, bin: PathBuf) {
--    if !locations.contains(&bin) {
--        locations.push(bin);
--    }
-+fn registration_bins<I: IntoIterator<Item = PathBuf>>(
-+    git_for_windows: impl FnOnce() -> Option<PathBuf>,
-+    msys2: impl FnOnce() -> I,
-+) -> impl Iterator<Item = PathBuf> {
-+    std::iter::once_with(git_for_windows)
-+        .flatten()
-+        .chain(std::iter::once_with(msys2).flatten())
- }
- 
- fn absolute(value: OsString) -> Option<PathBuf> {
-@@ -66,6 +79,42 @@ fn msys2_bin(value: impl Fn(&str) -> Option<OsString>) -> Option<PathBuf> {
- mod tests {
-     use super::*;
- 
-+    #[test]
-+    fn registration_probes_are_deferred_until_needed() {
-+        let probes = std::cell::RefCell::new(Vec::new());
-+        let mut bins = registration_bins(
-+            || {
-+                probes.borrow_mut().push("git");
-+                Some(PathBuf::from("C:/Git/cmd"))
-+            },
-+            || {
-+                probes.borrow_mut().push("uninstall");
-+                ["C:/msys64/usr/bin", "D:/msys64/usr/bin"].into_iter().map(|bin| {
-+                    probes.borrow_mut().push(bin);
-+                    PathBuf::from(bin)
-+                })
-+            },
-+        );
-+        assert!(
-+            probes.borrow().is_empty(),
-+            "constructing c
-```
-
-**File**: `gix-path/src/env/git/tests.rs` (modified, +151/-23)
-```diff
-@@ -502,7 +502,7 @@ mod locations {
-         ///
-         /// The idea here is to obtain this information, which the `alternative_locations()` unit
-         /// test uses to learn the expected alternative locations, without duplicating *any* of the
--        /// approach used for `ALTERNATIVE_LOCATIONS`, so it can be used to test that. The approach
-+        /// approach used for `locations_under_program_files`, so it can be used to test that. The approach
-         /// here is also more reliable than using environment variables, but it is a bit more
-         /// complex, and it requires either additional dependencies or the use of unsafe code.
-         ///
-@@ -511,7 +511,7 @@ mod locations {
-         /// folder is not available to 32-bit processes. See the [`KNOWNFOLDDERID`][knownfolderid]
-         /// documentation.
-         ///
--        /// If in the future the implementation of `ALTERNATIVE_LOCATIONS` uses these techniques,
-+        /// If in the future the implementation of `locations_under_program_files` uses these techniques,
-         /// then this function can be changed to use environment variables and renamed accordingly.
-         ///
-         /// [known-folders]: https://learn.microsoft.com/en-us/windows/win32/shell/known-folders
-@@ -631,7 +631,7 @@ mod locations {
- 
-     impl<'a> RelativeUserGitBinPaths<'a> {
-         /// Assert that `locations` leads with the given user path prefix, and extract the suffixes.
--        fn assert_from(pf_user: &'a Path, locations: &'static [PathBuf]) -> Self {
-+        fn assert_from(pf_user: &'a Path, locations: &'a [PathBuf]) -> Self {
-             match locations {
-                 [path1, path2, path3, path4, ..] => {
-                     let suffix_user_arm64 = path1
-@@ -685,7 +685,7 @@ mod locations {
- 
-     impl<'a> RelativeGlobalGitBinPaths<'a> {
-         /// Assert that `locations` trails with the given global path prefixes, and extract the suffixes.
--        fn assert_from(pf: &'a ProgramFilesPaths, locations: &'static [PathBuf]) -> Self {
-+        fn assert_from(pf: &'a ProgramFilesPaths, locations: &'a [PathBuf]) -> Self {
-             match locations {
-                 [_, _, _, _, path5, path6, path7, path8] => {
-                     let prefix_64bit = pf
-@@ -759,7 +759,7 @@ mod locations {
- 
-     impl<'a> RelativeGitBinPaths<'a> {
-         /// Assert that `locations` has the given path prefixes, and extract the suffixes.
--        fn assert_from(pf: &'a ProgramFilesPaths, locations: &'static [PathBuf]) -> Self {
-+        fn assert_from(pf: &'a ProgramFilesPaths, locations: &'a [PathBuf]) -> Self {
-             let user = RelativeUserGitBinPaths::assert_from(&pf.user, locations);
-             let global = RelativeGlobalGitBinPaths::assert_from(pf, locations);
-             Self { global, user }
-@@ -772,15 +772,152 @@ mod locations {
-         }
-     }
- 
-+    #[test]
-+    fn path_hits_do_not_inspect_fallbacks() -> gix_error::TestResult {
-+        let fixture = std::path::absolute(gix_testtools::scripted_fixture_read_only(
-+            "windows-git-installations.sh",
-+        )?)?;
-+        if gix_testtools::run_in_isolated_process()? {
-+            return Ok(());
-+        }
-+        let _cwd = gix_testtools::set_current_dir(&fixture)?;
-+        let bin = fixture.join("path");
-+        for path in [bin.as_os_str(), OsStr::new("path")] {
-+            let executable = super::super::find_executable(Some(path), || {
-+                panic!("a PATH hit must not inspect alternative locations")
-+            })
-+            .expect("the fixture has Git on PATH");
-+            assert_eq!(
-+                executable.path,
-+                bin.join("git.exe"),
-+                "retain an absolute path for companion discovery, including relative PATH entries"
-+            );
-+            assert_eq!(
-+                executable.invocation(),
-+                Path::new("git.exe"),
-+                "PATH hits use a short invocation"
-+            );
-+        }
-+
-+        let missing = fixture.join("missing");
-+        for path in [None, Some(missing.as_os_str())] {
-+            let fallback = super::super::find_executable(path, || Some(bin.join("git.exe")))
-+                .expect("an absent or unsuccessful PATH reaches the fallback");
-+            assert_eq!(
-+                fallback.invocation(),
-+                bin.join("git.exe"),
-+                "fallback invocations are absolute"
-+            );
-+        }
-+        Ok(())
-+    }
-+
-+    #[test]
-+    fn alternative_sources_are_lazy() {
-+        use std::cell::Cell;
-+
-+        let lookups = Cell::new(0);
-+        let mut locations = super::super::alternative_locations(
-+            |key| {
-+                lookups.set(lookups.get() + 1);
-+                match key {
-+                    "ProgramFiles" => Some("C:/early".into()),
-+                    "LocalAppData" | "ProgramW6432" | "ProgramFiles(x86)" => None,
-+                    _ => panic!("package roots must not be inspected before Program Files is exhausted"),
-```
-
-**File**: `gix-path/src/env/mod.rs` (modified, +8/-19)
-```diff
-@@ -6,8 +6,6 @@ use std::{
- use bstr::{BString, ByteSlice};
- use std::sync::LazyLock;
- 
--use crate::env::git::EXE_NAME;
--
- mod auxiliary;
- mod git;
- 
-@@ -125,24 +123,15 @@ pub fn shell_command() -> std::process::Command {
- /// installation outside `PATH`, `GIT_INSTALL_ROOT` can name its root (containing `usr/bin`).
- /// Finally, registered Git for Windows and MSYS2 installations are searched, including custom
- /// roots, preferring current-user registrations to machine registrations.
-+/// Fallback sources are inspected only when earlier locations do not contain Git, and the
-+/// selected executable is cached for the lifetime of the process.
- pub fn exe_invocation() -> &'static Path {
--    if cfg!(windows) {
--        /// The path to the Git executable as located in the `PATH` or in other locations that it's
--        /// known to be installed to. It's `None` if no executable could be found.
--        static EXECUTABLE_PATH: LazyLock<Option<PathBuf>> = LazyLock::new(|| {
--            git::exe_path().map(|exe_path| {
--                let is_in_alternate_location = git::ALTERNATIVE_LOCATIONS
--                    .iter()
--                    .any(|prefix| exe_path.strip_prefix(prefix).is_ok());
--                if is_in_alternate_location {
--                    exe_path.to_owned()
--                } else {
--                    EXE_NAME.into()
--                }
--            })
--        });
--        EXECUTABLE_PATH.as_deref().unwrap_or(Path::new(git::EXE_NAME))
--    } else {
-+    #[cfg(windows)]
-+    {
-+        git::exe_invocation()
-+    }
-+    #[cfg(not(windows))]
-+    {
-         Path::new("git")
-     }
- }
-```
-
-**File**: `gix-path/tests/path/env.rs` (modified, +21/-0)
-```diff
-@@ -120,6 +120,27 @@ mod windows_installations {
-         discover("SCOOP", "custom", "git.exe", true, false)
-     }
- 
-+    #[test]
-+    fn path_inside_a_package_installation_keeps_the_short_invocation() -> gix_error::TestResult {
-+        let fixture = std::path::absolute(gix_testtools::scripted_fixture_read_only(
-+            "windows-git-installations.sh",
-+        )?)?;
-+        if gix_testtools::run_in_isolated_process()? {
-+            return Ok(());
-+        }
-+        let root = fixture.join("conda");
-+        let bin = root.join("Library/bin");
-+        let _env = gix_testtools::Env::new()
-+            .set("PATH", bin.to_str().expect("UTF-8 fixture path"))
-+            .set("CONDA_PREFIX", root.to_str().expect("UTF-8 fixture path"));
-+        assert_eq!(
-+            gix_path::env::exe_invocation(),
-+            std::path::Path::new("git.exe"),
-+            "PATH provenance determines the invocation without searching alternative locations"
-+        );
-+        Ok(())
-+    }
-+
-     /// Assert Git discovery in an isolated child process with host installation variables cleared.
-     ///
-     /// Set `variable` to the fixture-relative `root` to select the installation to discover.
+ #[test]
+ #[cfg(unix)]
+ fn worktree_file_to_object_opens_submodules_after_path_options_were_consumed() -> TestResult {
 ```
 
 ---
 
-### Incident Patch 3: `0632c3b4` (2026-10-28)
-**Commit Message**: Avoid a Git Bash subshell in the submodule URL fixture
+### Incident Patch 2: `ef37e22b` (2026-10-30)
+**Commit Message**: fix(gix): reject symlinked ancestors during file-to-object conversion
 
-`test-fixtures-windows (windows-11-arm)` on PR #3125 fails in
-`submodule::url::native_relative_urls_match_git` while creating its fixture.
-Git Bash exits with `0x80000004` inside the command substitution that reads back
-`remote.origin.url` for the empty-origin case. The URL assertion is never reached;
-all other 5,207 tests in the job pass.
+<!-- agent -->
+The submodule path audit found `Pipeline::worktree_file_to_object()`
+opening embedded repositories without validating their worktree paths.
+This API is also used by `gix-tix` when staging changes. A directory link
+could redirect both repository lookup and ordinary file reads.
 
-Mitigate this apparent Windows ARM shell flake by redirecting Git's output to the
-existing `remote-url` file and comparing it with Bash's builtin `read`. This
-removes the subshell at the observed crash site while retaining every URL pair,
-including the empty origin, and the check that Git stored each input unchanged.
+Validate the parent before metadata or reads, retaining trackable leaf
+symlinks. Validate the entire directory path before opening an embedded
+repository. Reject paths without a file name and paths escaping the root;
+keep the original spelling so trailing separators cannot bypass checks.
 
-Validation: the four available `submodule::url` integration tests pass on macOS
-with SHA-1 and SHA-256 fixtures. `bash -n` and `git diff --check` pass.
-The Windows-specific test will be validated by CI.
+The regression failed before the fix by turning the repository behind a
+directory symlink into a gitlink. It covers repository, file, and leaf-link
+lookups through ancestors, trailing separators, dot/parent aliases, and
+invalid root-only paths; existing valid leaf-link behavior still passes.
+Run the writable fixture directly because its FIFO cannot be copied.
 
-**File**: `gix/tests/fixtures/make_submodule_urls.sh` (modified, +4/-2)
+Assisted-by: GPT 6.1 Sol
+Co-authored-by: GPT 6.1 Sol <[REDACTED_EMAIL]>
+
+**File**: `gix/src/filter.rs` (modified, +9/-0)
 ```diff
-@@ -45,11 +45,13 @@ while IFS='|' read -r remote_url module_url; do
-   case_dir="resolution/$i"
-   mkdir -p "$case_dir"
-   cp -R seed "$case_dir/worktree"
--  printf '%s\n' "$remote_url" >"$case_dir/remote-url"
-   printf '%s\n' "$module_url" >"$case_dir/module-url"
-   # Keep Git Bash from rewriting absolute URL paths as native command arguments.
-   MSYS2_ARG_CONV_EXCL='*' git -C "$case_dir/worktree" config remote.origin.url "$remote_url"
--  test "$(git -C "$case_dir/worktree" config --get remote.origin.url)" = "$remote_url"
-+  # Avoid command-substitution forks that can crash Git Bash on Windows ARM.
-+  git -C "$case_dir/worktree" config --get remote.origin.url >"$case_dir/remote-url"
-+  IFS= read -r configured_remote_url <"$case_dir/remote-url"
-+  test "$configured_remote_url" = "$remote_url"
-   printf '%s\n' '[submodule "m1"]' 'path = m1' "url = $module_url" >"$case_dir/worktree/.gitmodules"
-   record_init "$case_dir"
- done <<'CASES'
+@@ -149,6 +149,7 @@ impl Pipeline<'_> {
+     /// and it should match the state used when [instantiating this instance](Self::new()).
+     ///
+     /// Return `Ok(None)` the file didn't exist in the worktree, or if it was of an untrackable type.
++    /// Reject paths outside the worktree or through symlinked ancestors, while allowing leaf symlinks.
+     pub fn worktree_file_to_object(
+         &mut self,
+         rela_path: &BStr,
+@@ -159,6 +160,13 @@ impl Pipeline<'_> {
+         let worktree_dir = repo
+             .workdir()
+             .ok_or_else(|| Error::from_error(message("Cannot add worktree files in bare repositories")))?;
++        let Some(file_name) = rela_path_as_path.file_name() else {
++            bail!(gix_error::validation("A worktree file path must have a file name").with_input(rela_path));
++        };
++        let parent_dir = gix_fs::symlink::validate_relative_path(
++            worktree_dir,
++            rela_path_as_path.parent().expect("a file path has a parent"),
++        )?;
+         let path = worktree_dir.join(&rela_path_as_path);
+         let md = match std::fs::symlink_metadata(&path) {
+             Ok(md) => md,
+@@ -197,6 +205,7 @@ impl Pipeline<'_> {
+             };
+             (id, kind)
+         } else if md.is_dir() {
++            gix_fs::symlink::validate_relative_path(&parent_dir, std::path::Path::new(file_name))?;
+             let Some(submodule_repo) = crate::open_opts(&path, repo.open_options().clone()).ok() else {
+                 return Ok(None);
+             };
+```
+
+**File**: `gix/tests/fixtures/repo_with_untracked_files.sh` (modified, +2/-1)
+```diff
+@@ -9,11 +9,12 @@ git init embedded-repository
+ git init -q
+ echo content >file
+ ln -s file link
++ln -s . directory-link
+ 
+ echo binary >exe && chmod +x exe
+ mkfifo fifo
+ 
+ git submodule add ./embedded-repository submodule
+ 
+ mkdir empty-dir
+-git init uninitialized-embedded-repository
+\ No newline at end of file
++git init uninitialized-embedded-repository
+```
+
+**File**: `gix/tests/gix/repository/filter.rs` (modified, +36/-5)
+```diff
+@@ -131,7 +131,7 @@ fn legacy_driver_names_are_canonical() -> TestResult {
+ #[test]
+ #[cfg(unix)]
+ fn pipeline_worktree_file_to_object() -> TestResult {
+-    let repo = named_repo("repo_with_untracked_files.sh")?;
++    let repo = named_repo("repo_with_untracked_files.sh")?.with_object_memory();
+     let work_dir = repo.workdir().expect("non-bare");
+     let (mut pipe, index) = repo.filter_pipeline(None)?;
+     fn take_two<A, B, C>(t: Option<(A, B, C)>) -> Option<(A, B)> {
+@@ -145,10 +145,13 @@ fn pipeline_worktree_file_to_object() -> TestResult {
+         take_two(pipe.worktree_file_to_object("embedded-repository".into(), &index)?),
+         Some((submodule_id, gix::object::tree::EntryKind::Commit))
+     );
+-    assert_eq!(
+-        take_two(pipe.worktree_file_to_object("submodule".into(), &index)?),
+-        Some((submodule_id, gix::object::tree::EntryKind::Commit))
+-    );
++    for path in ["submodule", "submodule/", "submodule/.", "empty-dir/../submodule"] {
++        assert_eq!(
++            take_two(pipe.worktree_file_to_object(path.into(), &index)?),
++            Some((submodule_id, gix::object::tree::EntryKind::Commit)),
++            "directory validation preserves safe path spellings: {path}"
++        );
++    }
+     assert_eq!(
+         take_two(pipe.worktree_file_to_object("uninitialized-embedded-repository".into(), &index)?),
+         None,
+@@ -186,6 +189,34 @@ fn pipeline_worktree_file_to_object() -> TestResult {
+         None,
+         "untrackable entries are just ignored as if they didn't exist"
+     );
++    for path in [
++        "directory-link/embedded-repository",
++        "directory-link/submodule",
++        "directory-link/file",
++        "directory-link/link",
++        "directory-link/",
++        "directory-link/.",
++        "empty-dir/../directory-link/",
++        "empty-dir/../directory-link/.",
++        "directory-link/../file",
++        "../file",
++    ] {
++        let err = pipe
++            .worktree_file_to_object(path.into(), &index)
++            .expect_err("object creation must not traverse a symlink");
++        assert!(err.is_validation(), "the unsafe path is rejected: {path}: {err:?}");
++    }
++    for path in ["", ".", "..", "empty-dir/.."] {
++        let err = pipe
++            .worktree_file_to_object(path.into(), &index)
++            .expect_err("a path without a file name must not be added, even if it has a parent");
++        assert!(err.is_validation(), "the path without a file name is rejected: {path}");
++        assert_eq!(
++            err.metadata().next().expect("the validation error retains its input")["input"],
++            gix_error::MetadataValue::from(path.as_bytes()),
++            "the original path bytes remain available in the validation error"
++        );
++    }
+     Ok(())
+ }
+ 
+```
+
+---
+
+### Incident Patch 3: `a9f1f1ed` (2026-10-29)
+**Commit Message**: fix(gix)!: reject symlinks in configured submodule paths
+
+- Some API modifications to capture optionality of worktree directories with type system
+- mostly rubber-stamped tests, based on their titles
+
+<!-- agent -->
+Submodule inspection must validate the configured worktree path before
+using it to locate a repository. This addresses GHSA-2rx9-36wh-cm54.
+The earlier trust fix in `392336fb114` already recomputes trust when
+opening a submodule, but ownership checks cannot validate the selected
+repository's relationship to the superproject.
+
+Check each configured path component before
+looking for its `.git` entry. Reject symlinks before normalizing away
+parent components, permit missing paths for uninitialized submodules,
+and preserve symlinks in the superproject's own path. The shared lookup
+covers `git_dir_try_old_form()`, `state()`, `open()`, and `status()`,
+including `Ignore::All`.
+
+The regression failed before this change. Its read-only fixture covers
+13 path variants, also checked locally against Git's submodule helper.
+Existing tests preserve uninitialized submodules, linked worktrees, and
+independent trust determination.
+
+Git reference: `validate_submodule_path()` in `submodule
+
+**File**: `gix/src/submodule/mod.rs` (modified, +42/-21)
+```diff
+@@ -210,27 +210,36 @@ impl Submodule<'_> {
+         git_dir_from_name(self.state.repo.git_dir(), self.validated_name()?)
+     }
+ 
+-    /// Return the path to the location at which the workdir would be checked out.
++    /// Return the submodule's checkout location, or `None` if the superproject has no working directory.
+     ///
+-    /// Note that it may be a path relative to the repository if, for some reason, the parent directory
+-    /// doesn't have a working dir set.
+-    pub fn work_dir(&self) -> Result<PathBuf> {
+-        let worktree_git = gix_path::from_bstr(self.path()?)?;
+-        Ok(match self.state.repo.workdir() {
+-            None => worktree_git.into_owned(),
+-            Some(prefix) => prefix.join(worktree_git),
+-        })
++    /// The returned directory might not exist yet. Use [`path()`](Self::path()) to obtain the configured
++    /// relative path regardless of whether the superproject has a working directory.
++    pub fn work_dir(&self) -> Result<Option<PathBuf>> {
++        let Some(work_dir) = self.state.repo.workdir() else {
++            return Ok(None);
++        };
++        Ok(Some(work_dir.join(gix_path::from_bstr(self.path()?)?)))
+     }
+ 
+-    /// Return the path at which the repository of the submodule should be located, or the path inside of
+-    /// the superproject's worktree where it actually *is* located if the submodule in the 'old-form', thus is a directory
+-    /// inside of the superproject's work-tree.
++    /// Return the submodule's repository location, honoring old-form `.git` directories and gitdir
++    /// file targets in the superproject's worktree.
++    ///
++    /// Fall back to the name-derived [`git_dir()`](Self::git_dir()) when no checkout `.git` entry exists.
++    /// This fallback directory might not exist yet for uninitialized submodules.
+     ///
+     /// Note that paths returned aren't fully verified, i.e. the `.git` repository might be corrupt or otherwise
+     /// invalid - it's left to the caller to try to open it. `.git` files are parsed when present and their target
+     /// is required to be a directory though, as a malformed gitdir file means a broken submodule checkout.
+     ///
+-    /// Also note that the fallback path returned for uninitialized submodules may not actually exist.
++    /// Symbolic links in the configured submodule path are rejected. Symlinks in the superproject's
++    /// own path are allowed.
++    ///
++    /// Without a superproject worktree, there is no checkout `.git` entry to inspect. Repository lookup
++    /// therefore uses the name-derived location returned by [`git_dir()`](Self::git_dir()).
++    /// For example, a bare superproject at `/repos/project.git` with submodule name `library` and configured
++    /// path `vendor/lib` returns `/repos/project.git/modules/library`, even if that directory does not exist.
++    /// It does not inspect `vendor/lib/.git` relative to the current directory, as there is no superproject
++    /// worktree to anchor that checkout path.
+     pub fn git_dir_try_old_form(&self) -> Result<PathBuf> {
+         self.git_dir_try_old_form_inner(true)
+     }
+@@ -244,7 +253,9 @@ impl Submodule<'_> {
+         let git_dir = self
+             .git_dir()
+             .or_raise(|| gix_error::validation("The submodule name is invalid"))?;
+-        let worktree_gitdir = self.worktree_gitdir()?;
++        let Some(worktree_gitdir) = self.worktree_gitdir()? else {
++            return Ok(git_dir);
++        };
+         let git_dir = if worktree_gitdir.is_dir() {
+             worktree_gitdir
+         } else if worktree_gitdir.is_file() {
+@@ -286,8 +297,8 @@ impl Submodule<'_> {
+             .any(|section| section.header().subsection_name() == Some(self.name.as_ref()));
+         Ok(State {
+             repository_exists: maybe_old_path.is_dir(),
+-            is_old_form: worktree_git.is_dir(),
+-            worktree_checkout: worktree_git.exists(),
++            is_old_form: worktree_git.as_deref().is_some_and(Path::is_dir),
++            worktree_checkout: worktree_git.as_deref().is_some_and(Path::exists),
+             superproject_configuration,
+         })
+     }
+@@ -319,9 +330,10 @@ impl Submodule<'_> {
+         options.git_dir_trust = None;
+         match crate::open_opts(self.git_dir_try_old_form()?, options) {
+             Ok(mut repo) => {
+-                if repo.workdir().is_none() {
+-                    let wd = self.work_dir()?;
+-                    // We should always have a workdir, as bare submodules don't exist.
++                if repo.workdir().is_none()
++                    && let Some(wd) = self.work_dir()?
++                {
++                    // Submodules of a checked-out superproject should always have a workdir.
+                     // However, it's possible for no workdir to be accessible if there is a symlink in the way.
+                     // Just setting it by hand fixes this issue effectively, even though the question remains
+                     // if this should work automatically.
+@@ -
+```
+
+**File**: `gix/tests/fixtures/make_submodule_symlink_paths.sh` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++#!/usr/bin/env bash
++set -eu -o pipefail
++
++# Configured submodule paths must not traverse symlinks, even without index gitlinks.
++# Cover old-form and gitdir-file repositories, dangling links, and lexical aliases.
++git init -q other
++git init -q superproject
++(cd superproject
++  git init -q actual/old
++  git init -q --separate-git-dir "$PWD/modern.git" actual/modern
++  ln -s .. parent
++  ln -s ../other leaf
++  ln -s actual inside
++  ln -s missing dangling
++  ln -s / absolute
++  mkdir deps
++  ln -s ../../other deps/nested
++
++  case_number=0
++  for path in parent/other leaf inside/old inside/modern dangling dangling/child \
++              absolute/missing deps/nested parent//other parent/./other leaf/ leaf/. inside/../actual/old
++  do
++    case_number=$((case_number + 1))
++    git config -f .gitmodules "submodule.case-$case_number.path" "$path"
++    git config -f .gitmodules "submodule.case-$case_number.url" ../other
++  done
++  git add .gitmodules parent leaf inside dangling absolute deps/nested
++  git commit -qm "configured paths through symlinks"
++)
++git clone -q --bare superproject bare.git
++git init -q --bare bare.git/modules/case-1
++
++# A regular file obstructing the checkout must still allow the modules-directory fallback.
++git init -q obstructed
++(cd obstructed
++  git init -q --bare .git/modules/module
++  git config -f .git/modules/module/config core.bare false
++  git config -f .git/modules/module/config core.worktree ../../../blocked/child
++  git config -f .gitmodules submodule.module.path blocked/child
++  git config -f .gitmodules submodule.module.url ../other
++  touch blocked
++)
+```
+
+**File**: `gix/tests/gix/submodule.rs` (modified, +136/-2)
+```diff
+@@ -277,6 +277,130 @@ mod open {
+ 
+     use crate::{submodule::repo, util::named_subrepo_opts};
+ 
++    #[test]
++    #[cfg(unix)]
++    fn configured_paths_reject_symlinks() -> TestResult {
++        let fixture = gix_testtools::scripted_fixture_read_only("make_submodule_symlink_paths.sh")?;
++        let repo = gix::open_opts(fixture.join("superproject"), gix::open::Options::isolated())?;
++        let mut count = 0;
++        for sm in repo.submodules()?.expect("fixture has configured submodules") {
++            let path = sm.path()?;
++            assert!(sm.git_dir()?.starts_with(repo.git_dir()), "the name itself is valid");
++            for err in [
++                sm.git_dir_try_old_form()
++                    .expect_err("repository lookup rejects symlinks"),
++                sm.state().expect_err("state inspection rejects symlinks"),
++                sm.open().expect_err("opening rejects symlinks"),
++            ] {
++                assert!(
++                    err.downcast_any_ref::<gix_error::Message>()
++                        .is_some_and(|error| error.class == Some(gix_error::Class::Validation)),
++                    "path {path:?} fails validation: {err:?}"
++                );
++                assert!(
++                    err.to_string().contains("symbolic link"),
++                    "the error identifies the symlink in {path:?}: {err:?}"
++                );
++            }
++            #[cfg(feature = "status")]
++            for ignore in [
++                gix::submodule::config::Ignore::None,
++                gix::submodule::config::Ignore::All,
++            ] {
++                let err = sm
++                    .status(ignore, false)
++                    .expect_err("even coarse state rejects symlinks");
++                assert!(
++                    err.to_string().contains("symbolic link"),
++                    "status rejects the symlink in {path:?}: {err:?}"
++                );
++            }
++            count += 1;
++        }
++        assert_eq!(count, 13, "all symlink variants were exercised");
++        Ok(())
++    }
++
++    #[test]
++    #[cfg(unix)]
++    fn bare_superproject_does_not_inspect_the_current_directory() -> TestResult {
++        if gix_testtools::run_in_isolated_process()? {
++            return Ok(());
++        }
++        let fixture = gix::path::realpath(gix_testtools::scripted_fixture_read_only(
++            "make_submodule_symlink_paths.sh",
++        )?)?;
++        let repo = gix::open_opts(fixture.join("bare.git"), gix::open::Options::isolated())?;
++        let _cwd = gix_testtools::set_current_dir(fixture.join("superproject"))?;
++        assert!(repo.workdir().is_none(), "the superproject has no worktree");
++        for sm in repo.submodules()?.expect("submodules are read from HEAD") {
++            assert_eq!(
++                sm.work_dir()?,
++                None,
++                "a bare superproject has no submodule checkout location"
++            );
++            let expected_git_dir = sm.git_dir()?;
++            assert_eq!(
++                sm.git_dir_try_old_form()?,
++                expected_git_dir,
++                "bare superprojects return the name-derived location even if it does not exist"
++            );
++            let state = sm.state()?;
++            assert!(!state.worktree_checkout, "the caller's directory is not a checkout");
++            assert!(!state.is_old_form, "no old-form lookup occurs without a worktree");
++            let opened = sm.open()?;
++            assert_eq!(opened.is_some(), sm.name() == "case-1", "only one repository exists");
++            assert_eq!(state.repository_exists, opened.is_some(), "state agrees with opening");
++            if let Some(opened) = opened {
++                assert_eq!(opened.git_dir(), expected_git_dir, "the intended repository opens");
++                assert!(
++                    opened.workdir().is_none(),
++                    "no worktree is invented from the caller's cwd"
++                );
++            }
++            #[cfg(feature = "status")]
++            assert_eq!(
++                sm.status(gix::submodule::config::Ignore::All, false)?.state,
++                state,
++                "coarse status also ignores the caller's directory"
++            );
++        }
++        Ok(())
++    }
++
++    #[test]
++    #[cfg(unix)]
++    fn non_directory_path_prefix_allows_repository_fallback() -> TestResult {
++        let fixture = gix_testtools::scripted_fixture_read_only("make_submodule_symlink_paths.sh")?;
++        let repo = gix::open_opts(fixture.join("obstructed"), gix::open::Options::isolated())?;
++        let sm = repo
++            .submodules()?
++            .expect("configured submodules")
++            .next()
++            .expect("module");
++        let expected_git_dir = repo.git_dir().join("modules/module");
++        assert_eq!(
++            sm.git_dir_try_old_form()?,
++            expected_git_dir,
++            "a non-directory obstruction leaves the fallback available"
++        );
++        let state 
+```
+
+**File**: `gix/tests/submodule_open.rs` (modified, +2/-2)
+```diff
+@@ -20,8 +20,8 @@ fn on_nested_symlink() -> gix_testtools::TestResult {
+     let repo = gix::discover_opts(".", Default::default(), gix::open::Options::isolated())?;
+     let sm = repo.submodules()?.into_iter().flatten().next().expect("one submodule");
+     assert_eq!(
+-        sm.work_dir()?,
+-        p("../../m1"),
++        sm.work_dir()?.as_deref(),
++        Some(p("../../m1")),
+         "the workdir remains relative and is available"
+     );
+     let sm_repo = sm.open()?.expect("repo is present and accessible");
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #3139** (2026-10-29): Preserve Cargo.lock in dependency checks (@EliahKagan)
+- **PR #3138** (2026-10-30): fix(gix): reject symlinks in configured submodule paths (@Byron)
 - **PR #3137** (2026-10-29): Restore transitive soundness advisory reporting (@EliahKagan)
 - **PR #3136** (2026-10-29): Correct why `release.yml` avoids YAML anchors (@EliahKagan)
 - **PR #3135** (2026-10-29): Update `libz-sys` to fix the CI advisory check (@EliahKagan)
 - **PR #3132** (2026-10-29): fix(gix-path): discover Windows package-manager Git installations and MSYS2 companions (@Byron)
-- **PR #3131** (2026-10-29): fix(gix-odb): grow automatically sized index slots during refresh (@stephenprater)
 
 ---
 
@@ -2183,30 +2185,30 @@ The Windows-specific test will be validated by CI.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update `pulldown-cmark` to fix the CI advisory check
+## X. gix): recompute trust when staging embedded repositories
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gix/src/filter.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `15c81322`: Update `pulldown-cmark` to fix the CI advisory check. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1e9051bf`: gix): recompute trust when staging embedded repositories. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `gix/src/filter.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.13.5"
-checksum = "278e9268c93b9e498a2da46c34d90ba93a3255eb99009646398f34bc73ab36eb"
+            let mut options = repo.open_options().clone().without_repository_environment_overrides();
+            options.git_dir_trust = None;
+            let Some(submodule_repo) = crate::open_opts(&path, options).ok() else {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.13.4"
-checksum = "e9f068eba8e7071c5f9511831b44f32c740d5adf574e990f946ddb53db2f314e"
+            let Some(submodule_repo) = crate::open_opts(&path, repo.open_options().clone()).ok() else {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `15c81322` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1e9051bf` are properly handled with clean fallback behavior.
