@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T20:23:17.433Z",
+  "last_updated": "2026-10-31T20:32:05.697Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -24784,7 +24784,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jialinyyzz/humanizer",
       "source_version": "hf-jialinyyzz-humanizer",
-      "content_hash": "14f400da815703166329fc7d63f79f21d6cdf245376b8c88aade5e8393f313ee",
+      "content_hash": "04faaac258ae8796487b67c6b1d1e9122613de6d9f55c462cfb7d54c186f8d58",
       "dossier_path": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
       "promoted_rules": [
@@ -24881,7 +24881,7 @@
         "learn-huggingface-hf-jialinyyzz-humanizer-mv41atmq",
         "learn-huggingface-hf-jialinyyzz-humanizer-mv4fa4lf"
       ],
-      "verified_at": "2026-10-28T18:57:36.445Z",
+      "verified_at": "2026-10-31T20:31:53.980Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48403,8 +48403,8 @@
       "slug": "redisearch-redisearch",
       "platform": "github",
       "source_url": "https://github.com/RediSearch/RediSearch",
-      "source_version": "4c77833a",
-      "content_hash": "3290601ef025037b0993174ffb3cd604a1e1aa78c074ef7393c87511d552a179",
+      "source_version": "4be31bd5",
+      "content_hash": "33f6198d6c924ac5d2b53a3a2ef85dcc0123a06d481af3def5e1de64c5f0ec91",
       "dossier_path": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "promoted_rules": [
@@ -48469,7 +48469,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T03:52:31.866Z",
+      "verified_at": "2026-10-31T20:32:05.671Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

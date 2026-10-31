@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T20:23:17.543Z",
+  "last_updated": "2026-10-31T20:32:05.814Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1760,14 +1760,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-jialinyyzz-humanizer",
-      "content_hash": "14f400da815703166329fc7d63f79f21d6cdf245376b8c88aade5e8393f313ee",
-      "verified_at": "2026-10-28T18:57:36.563Z",
+      "content_hash": "04faaac258ae8796487b67c6b1d1e9122613de6d9f55c462cfb7d54c186f8d58",
+      "verified_at": "2026-10-31T20:31:54.103Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T18:57:36.563Z"
+      "last_updated": "2026-10-31T20:31:54.103Z"
     },
     "autotrust/JEV-27B-VL": {
       "repository": "autotrust/JEV-27B-VL",
@@ -9156,14 +9156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-redisearch-redisearch",
-      "content_hash": "3290601ef025037b0993174ffb3cd604a1e1aa78c074ef7393c87511d552a179",
-      "verified_at": "2026-10-31T03:52:32.017Z",
+      "content_hash": "33f6198d6c924ac5d2b53a3a2ef85dcc0123a06d481af3def5e1de64c5f0ec91",
+      "verified_at": "2026-10-31T20:32:05.813Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T03:52:32.017Z"
+      "last_updated": "2026-10-31T20:32:05.813Z"
     },
     "taiga-family/taiga-ui": {
       "repository": "taiga-family/taiga-ui",

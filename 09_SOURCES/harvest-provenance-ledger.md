@@ -6713,3 +6713,5 @@ Every entry in this ledger must capture:
 | `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `f3be7b00` | Multi-dimensional audit evidence | 2026-10-31T20:23:14.282Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `49aa9c85` | Multi-dimensional audit evidence | 2026-10-31T20:23:15.527Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `1eb9489f` | Multi-dimensional audit evidence | 2026-10-31T20:23:17.532Z |
+| `learn-huggingface-jialinyyzz-humanizer` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-10-31T20:31:54.094Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `4be31bd5` | Multi-dimensional audit evidence | 2026-10-31T20:32:05.804Z |
