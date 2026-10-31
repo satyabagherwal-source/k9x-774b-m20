@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T23:50:00.982Z",
-  "total_cycles_completed": 6737,
-  "total_learnings_persisted": 6737,
-  "total_rules_promoted": 6376,
+  "last_updated": "2026-10-31T23:56:35.731Z",
+  "total_cycles_completed": 6738,
+  "total_learnings_persisted": 6738,
+  "total_rules_promoted": 6379,
   "history": [
-    {
-      "timestamp": "2026-10-31T12:29:47.556Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T12:39:27.583Z",
       "repository": "google/electra-base-discriminator",
@@ -1403,6 +1396,13 @@
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T23:56:35.731Z",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

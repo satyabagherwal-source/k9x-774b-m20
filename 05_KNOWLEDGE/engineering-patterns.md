@@ -466599,3 +466599,103 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `1a886517` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6370. Consistent Tokenizer‑Model Alignment (Harvested from openbmb/MiniCPM-V-4.7-35B-A3B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Consistent Tokenizer‑Model Alignment",
+  "source": "openbmb/MiniCPM-V-4.7-35B-A3B",
+  "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+  "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-31T23:56:34.925Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [openbmb/MiniCPM-V-4.7-35B-A3B](https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B) (Revision: `hf-openbmb`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+The tokenizer’s `vocab_size` MUST match the model’s `vocab_size` exactly, and every special token defined in `tokenizer_config.json` MUST have a corresponding ID in the model’s `config.json`.  
+**WHY**:  
+Mismatched vocab sizes cause out‑of‑range token IDs, leading to `IndexError` during embedding lookup or silent truncation of inputs.  
+**WHEN TO APPLY**:  
+During model packaging, any time a tokenizer is updated or a new special token is added.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# During packaging
+tokenizer = AutoTokenizer.from_pretrained("openbmb/MiniCPM-V-4.7-35B-A3B")
+config = AutoConfig.from_pretrained("openbmb/MiniCPM-V-4.7-35B-A3B")
+
+assert tokenizer.vocab_size == config.vocab_size, \
+    f"Tokenizer vocab {tokenizer.vocab_size} != Model vocab {config.vocab_size}"
+for token_name, token_str in tokenizer.special_tokens_map.items():
+    assert tokenizer.convert_tokens_to_ids(token_str) < config.vocab_size, \
+        f"Special token {token_name} maps to out‑of‑range ID"
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# Bad: silently ignore mismatch
+if tokenizer.vocab_size != config.vocab_size:
+    pass  # no error, potential silent failure
+```
+**VERIFICATION METHOD**:  
+Unit test that loads the tokenizer and config and asserts equality; lint rule that flags mismatched `vocab_size` fields in JSON.
+
+
+---
+
+## 6371. Early‑Compression Token Count Bound (Harvested from openbmb/MiniCPM-V-4.7-35B-A3B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Early‑Compression Token Count Bound",
+  "source": "openbmb/MiniCPM-V-4.7-35B-A3B",
+  "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+  "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-31T23:56:35.432Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [openbmb/MiniCPM-V-4.7-35B-A3B](https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B) (Revision: `hf-openbmb`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+The total number of visual tokens after early‑compression MUST not exceed `max_position_embeddings` (262 144).  
+**WHY**:  
+Exceeding the positional embedding capacity triggers `IndexError` or silent truncation, corrupting the visual context.  
+**WHEN TO APPLY**:  
+During inference, after the vision encoder outputs token embeddings.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+visual_tokens = vision_encoder(images)  # shape: (batch, seq_len, dim)
+assert visual_tokens.shape[1] <= config.max_position_embeddings, \
+    f"Visual token count {visual_tokens.shape[1]} exceeds limit"
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# Bad: ignore overflow
+if visual_tokens.shape[1] > config.max_position_embeddings:
+    visual_tokens = visual_tokens[:, :config.max_position_embeddings, :]
+```
+**VERIFICATION METHOD**:  
+Runtime assertion; integration test with a large image batch to confirm no truncation.

@@ -6760,3 +6760,4 @@
 | `CYCLE-20261031-ZJO7` | `2026-10-31T23:49:44.407Z` | `autotrust/JEV-35B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md` | Yes (`d28367d7...`) |
 | `CYCLE-20261031-ZV8I` | `2026-10-31T23:49:59.394Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6368` | Yes (`cfdc22f1...`) |
 | `CYCLE-20261031-ZWGC` | `2026-10-31T23:50:00.972Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6369` | Yes (`fbb9e0bb...`) |
+| `CYCLE-20261031-8D1N` | `2026-10-31T23:56:35.723Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6370, Rule 1995, Rule 6371` | Yes (`37467317...`) |

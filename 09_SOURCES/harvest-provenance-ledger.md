@@ -6769,3 +6769,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-jev-35b` | `https://huggingface.co/autotrust/JEV-35B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-31T23:49:44.417Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `31315b3d` | Multi-dimensional audit evidence | 2026-10-31T23:49:59.398Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `1a886517` | Multi-dimensional audit evidence | 2026-10-31T23:50:00.976Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-31T23:56:35.726Z |

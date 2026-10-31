@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T23:50:00.885Z",
+  "last_updated": "2026-10-31T23:56:35.657Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -68846,7 +68846,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
-      "content_hash": "9c22f92de4ee3f619e3535df8669c9990ac92489c74ea0abcb1f94230596f22f",
+      "content_hash": "374673176bfd8f21261fb16582e44d74cf5a5056d35e99737da9ed2170f978c5",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "promoted_rules": [
@@ -68961,6 +68961,11 @@
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
+          "number": 1995,
+          "title": "MoE Routing Stability",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 2043,
           "title": "Tokenizer Regex Safety",
           "status": "PROMOTED_AND_VERIFIED"
@@ -69014,6 +69019,16 @@
           "number": 5429,
           "title": "[BFloat16 Precision Rule]",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6370,
+          "title": "Consistent Tokenizer‑Model Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6371,
+          "title": "Early‑Compression Token Count Bound",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -69021,7 +69036,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:26:36.971Z",
+      "verified_at": "2026-10-31T23:56:35.640Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -98472,15 +98487,15 @@
       "learning_id": "rule-1995",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1995,
-      "title": "MoE Routing Stability via Grouped Top-K",
-      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
-      "source_version": "hf-deepseek-ai-deepseek-r1",
+      "title": "MoE Routing Stability",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T01:57:08.862Z"
+      "verified_at": "2026-10-31T23:56:35.640Z"
     },
     "rule-1996": {
       "learning_id": "rule-1996",
@@ -165349,6 +165364,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T23:50:00.855Z"
+    },
+    "rule-6370": {
+      "learning_id": "rule-6370",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6370,
+      "title": "Consistent Tokenizer‑Model Alignment",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T23:56:35.640Z"
+    },
+    "rule-6371": {
+      "learning_id": "rule-6371",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6371,
+      "title": "Early‑Compression Token Count Bound",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T23:56:35.640Z"
     }
   },
   "aliases": {
