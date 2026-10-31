@@ -19966,5 +19966,17 @@
     "downloads": 0,
     "qualityScore": 1400,
     "discoveredAt": "2026-10-31T10:38:03.935Z"
+  },
+  {
+    "name": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+    "fullName": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+    "url": "https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: AtomicChat/LFM3-1.7B-Uncensored-GGUF (147 likes, 38382 downloads)",
+    "likes": 147,
+    "downloads": 38382,
+    "qualityScore": 3470,
+    "discoveredAt": "2026-10-31T13:58:56.628Z"
   }
 ]

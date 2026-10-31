@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T13:54:31.213Z",
+  "last_updated": "2026-10-31T14:01:19.862Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1100,14 +1100,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-1-schnell",
-      "content_hash": "e123aec246da4161a9ed9fcd98de0a4afcc735edbcacca6b0719ebb86b776995",
-      "verified_at": "2026-10-28T13:36:48.644Z",
+      "content_hash": "453fbfedd2538a28abcb3b84b2058550584995cb068bfbffede5f484d8ce767b",
+      "verified_at": "2026-10-31T14:01:13.295Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T13:36:48.644Z"
+      "last_updated": "2026-10-31T14:01:13.295Z"
     },
     "MiniMaxAI/MiniMax-H3": {
       "repository": "MiniMaxAI/MiniMax-H3",
@@ -17534,6 +17534,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-31T10:40:28.611Z"
+    },
+    "AtomicChat/LFM3-1.7B-Uncensored-GGUF": {
+      "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
+      "content_hash": "0c1d83e8dad587c927c0a7f081a970941446e66baa7d8eda82027a1bfdac4183",
+      "verified_at": "2026-10-31T14:01:19.861Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-31T14:01:19.861Z"
     }
   },
   "repos": {

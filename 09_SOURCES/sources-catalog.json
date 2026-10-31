@@ -855,8 +855,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
     "sourceVersion": "hf-black-forest-labs-flux.1-schnell",
     "license": "Open-Source",
-    "contentHash": "e123aec246da4161a9ed9fcd98de0a4afcc735edbcacca6b0719ebb86b776995",
-    "lastHarvestedAt": "2026-10-28T13:36:48.637Z",
+    "contentHash": "453fbfedd2538a28abcb3b84b2058550584995cb068bfbffede5f484d8ce767b",
+    "lastHarvestedAt": "2026-10-31T14:01:13.286Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell"
   },
   "hf-minimaxai-minimax-h3": {
@@ -11648,5 +11648,15 @@
     "contentHash": "1e11819b7551b7f8667248084a0d0ff692f06bd2b8bd53020ad353712b1919da",
     "lastHarvestedAt": "2026-10-31T10:40:28.604Z",
     "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k"
+  },
+  "hf-atomicchat-lfm3-1.7b-uncensored-gguf": {
+    "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+    "sourceVersion": "hf-atomicchat-lfm3-1.7b-uncensored-gguf",
+    "license": "Open-Source",
+    "contentHash": "0c1d83e8dad587c927c0a7f081a970941446e66baa7d8eda82027a1bfdac4183",
+    "lastHarvestedAt": "2026-10-31T14:01:19.852Z",
+    "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf"
   }
 }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T13:54:31.114Z",
-  "total_verified_learnings": 1183,
+  "last_updated": "2026-10-31T14:01:19.771Z",
+  "total_verified_learnings": 1184,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -19838,7 +19838,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
       "source_version": "hf-black-forest-labs-flux.1-schnell",
-      "content_hash": "e123aec246da4161a9ed9fcd98de0a4afcc735edbcacca6b0719ebb86b776995",
+      "content_hash": "453fbfedd2538a28abcb3b84b2058550584995cb068bfbffede5f484d8ce767b",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "promoted_rules": [
@@ -20003,7 +20003,7 @@
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4acall",
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4np6ca"
       ],
-      "verified_at": "2026-10-28T13:36:48.553Z",
+      "verified_at": "2026-10-31T14:01:13.172Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162375,6 +162375,72 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T13:54:31.080Z"
+    },
+    "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf": {
+      "learning_id": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+      "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+      "slug": "hf-atomicchat-lfm3-1.7b-uncensored-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+      "source_version": "hf-atomicchat-lfm3-1.7b-uncensored-gguf",
+      "content_hash": "0c1d83e8dad587c927c0a7f081a970941446e66baa7d8eda82027a1bfdac4183",
+      "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 6217,
+          "title": "Surgical Safety Ablation via Linear Projection",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6218,
+          "title": "Quantization-Aware Ablation Ordering",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-31T14:01:19.751Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-6217": {
+      "learning_id": "rule-6217",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6217,
+      "title": "Surgical Safety Ablation via Linear Projection",
+      "source_url": "https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+      "source_version": "hf-atomicchat-lfm3-1.7b-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T14:01:19.751Z"
+    },
+    "rule-6218": {
+      "learning_id": "rule-6218",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6218,
+      "title": "Quantization-Aware Ablation Ordering",
+      "source_url": "https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+      "source_version": "hf-atomicchat-lfm3-1.7b-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T14:01:19.751Z"
     }
   },
   "aliases": {

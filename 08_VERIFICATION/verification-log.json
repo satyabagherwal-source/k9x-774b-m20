@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-86ZC",
-    "timestamp": "2026-10-30T03:37:04.344Z",
-    "repository": "yuezhiai/jonex",
-    "learningId": "learn-github-yuezhiai-jonex",
-    "contentHash": "be89b16c379c66021e0f32f75dfa6eb38e96e42ac2121593546d7f6c2fbd4c04",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-8AZM",
-    "timestamp": "2026-10-30T03:37:09.538Z",
-    "repository": "thebaselab/codeapp",
-    "learningId": "learn-github-thebaselab-codeapp",
-    "contentHash": "95726c63598fd5afd031748e630eec65c26c244a650a6f8f0c8b65197571e10d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-N17N",
     "timestamp": "2026-10-30T03:48:36.707Z",
     "repository": "projectdiscovery/nuclei",
@@ -7492,6 +7462,36 @@
     "contentHash": "9e7d06fc0e36de1855a0678074e8551e25d1ca3e9fa414cd91ff7cecbb411781",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-YPFG",
+    "timestamp": "2026-10-31T14:01:13.276Z",
+    "repository": "black-forest-labs/FLUX.1-schnell",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
+    "contentHash": "453fbfedd2538a28abcb3b84b2058550584995cb068bfbffede5f484d8ce767b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-YUI1",
+    "timestamp": "2026-10-31T14:01:19.849Z",
+    "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+    "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
+    "contentHash": "0c1d83e8dad587c927c0a7f081a970941446e66baa7d8eda82027a1bfdac4183",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

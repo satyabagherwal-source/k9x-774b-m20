@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T13:54:31.208Z",
-  "total_cycles_completed": 6570,
-  "total_learnings_persisted": 6570,
-  "total_rules_promoted": 6213,
+  "last_updated": "2026-10-31T14:01:19.858Z",
+  "total_cycles_completed": 6572,
+  "total_learnings_persisted": 6572,
+  "total_rules_promoted": 6215,
   "history": [
-    {
-      "timestamp": "2026-10-31T01:15:14.710Z",
-      "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
-      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T01:15:16.020Z",
-      "repository": "arangodb/arangodb",
-      "learningId": "learn-github-arangodb-arangodb",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T01:21:22.325Z",
       "repository": "fallow-rs/fallow",
@@ -1403,6 +1389,20 @@
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T14:01:13.291Z",
+      "repository": "black-forest-labs/FLUX.1-schnell",
+      "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T14:01:19.858Z",
+      "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+      "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
