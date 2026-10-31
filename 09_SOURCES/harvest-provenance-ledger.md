@@ -6379,3 +6379,7 @@ Every entry in this ledger must capture:
 | `learn-github-googleworkspace-cli` | `https://github.com/googleworkspace/cli` | `cd3697e0` | Multi-dimensional audit evidence | 2026-10-31T00:05:32.383Z |
 | `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `4ce2a715` | Multi-dimensional audit evidence | 2026-10-31T00:05:34.883Z |
 | `learn-huggingface-comfy-org-moss-image` | `https://huggingface.co/Comfy-Org/MOSS-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-31T00:05:39.733Z |
+| `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `3f1257ce` | Multi-dimensional audit evidence | 2026-10-31T00:20:33.412Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `13348998` | Multi-dimensional audit evidence | 2026-10-31T00:20:37.983Z |
+| `learn-huggingface-comfy-org-z_image_turbo` | `https://huggingface.co/Comfy-Org/z_image_turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-31T00:20:39.182Z |
+| `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `2d45bd4d` | Multi-dimensional audit evidence | 2026-10-31T00:20:40.865Z |

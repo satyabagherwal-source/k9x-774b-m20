@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T00:05:39.654Z",
+  "last_updated": "2026-10-31T00:20:40.790Z",
   "total_verified_learnings": 1179,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -46691,8 +46691,8 @@
       "slug": "react-hook-form-react-hook-form",
       "platform": "github",
       "source_url": "https://github.com/react-hook-form/react-hook-form",
-      "source_version": "70bfa3ae",
-      "content_hash": "3199236986162bead61c38e2eb1f6f53770228fe084e3b74b41ad860e8ee5d51",
+      "source_version": "3f1257ce",
+      "content_hash": "5eff67aaea5eeff3fe989c37a873c28786cb12c6a1ac375f2c0a97292fb7b415",
       "dossier_path": "07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
       "promoted_rules": [
@@ -46725,6 +46725,11 @@
           "number": 5165,
           "title": "🐞 fix(useController): read the current unregistration option on unmount (#13956",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5952,
+          "title": "🐞 fix(validate): apply a submit's own form-level validate result when a newer c",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46732,7 +46737,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T03:49:40.398Z",
+      "verified_at": "2026-10-31T00:20:33.298Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51321,8 +51326,8 @@
       "slug": "sqlpage-sqlpage",
       "platform": "github",
       "source_url": "https://github.com/sqlpage/SQLPage",
-      "source_version": "41dd9db2",
-      "content_hash": "b5fe8e2497324d83831160560774bbd316fbd1fea8a61ee189a45a088c8e8519",
+      "source_version": "2d45bd4d",
+      "content_hash": "9f577e887a0dcb88b76acd68591fcb83cb285da8c6f8553c1610789767d28034",
       "dossier_path": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "promoted_rules": [
@@ -51355,6 +51360,11 @@
           "number": 5588,
           "title": "Fail-Closed Error Response Boundary Isolation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5957,
+          "title": "table) :: show striped rows in dark mode (#1579)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51362,7 +51372,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T03:49:00.601Z",
+      "verified_at": "2026-10-31T00:20:40.774Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52860,8 +52870,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "1a28f170",
-      "content_hash": "955f469ab0b2fc08a9903f7c5c0ed527ca8ab5ca7447f72482c8e8f56c72e421",
+      "source_version": "13348998",
+      "content_hash": "a2bf6f90a673603b4fc079dbd51ab263c323a4c1381143da7288da8cc26d2715",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -52989,6 +52999,11 @@
           "number": 5862,
           "title": "wgengine/netstack: disable RACK again",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5953,
+          "title": "ssh/tailssh: stop killing session processes on graceful disconnects",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52996,7 +53011,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T20:22:08.325Z",
+      "verified_at": "2026-10-31T00:20:37.900Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -101006,7 +101021,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/z_image_turbo",
       "source_version": "hf-comfy-org-z_image_turbo",
-      "content_hash": "6cfd82cf4627c83e8b7300f361a83043a4732c397d604ce10e3f7a935647f633",
+      "content_hash": "cc565d381162b397ceabb1363ea86b3867795eaa747d0c63e41285f88e01c90b",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md",
       "promoted_rules": [
@@ -101029,6 +101044,21 @@
           "number": 4381,
           "title": "Distillation Patch Isolation via LoRA",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5954,
+          "title": "Heterogeneous Hardware Quantization Provisioning",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5955,
+          "title": "Component Decoupling for Modular AI Pipelines",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5956,
+          "title": "Workflow Contract Enforcement via Naming Conventions",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -101036,7 +101066,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T16:34:46.985Z",
+      "verified_at": "2026-10-31T00:20:39.105Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -157201,6 +157231,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T00:05:39.635Z"
+    },
+    "rule-5952": {
+      "learning_id": "rule-5952",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5952,
+      "title": "🐞 fix(validate): apply a submit's own form-level validate result when a newer c",
+      "source_url": "https://github.com/react-hook-form/react-hook-form",
+      "source_version": "3f1257ce",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:20:33.298Z"
+    },
+    "rule-5953": {
+      "learning_id": "rule-5953",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5953,
+      "title": "ssh/tailssh: stop killing session processes on graceful disconnects",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "13348998",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:20:37.900Z"
+    },
+    "rule-5954": {
+      "learning_id": "rule-5954",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5954,
+      "title": "Heterogeneous Hardware Quantization Provisioning",
+      "source_url": "https://huggingface.co/Comfy-Org/z_image_turbo",
+      "source_version": "hf-comfy-org-z_image_turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:20:39.105Z"
+    },
+    "rule-5955": {
+      "learning_id": "rule-5955",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5955,
+      "title": "Component Decoupling for Modular AI Pipelines",
+      "source_url": "https://huggingface.co/Comfy-Org/z_image_turbo",
+      "source_version": "hf-comfy-org-z_image_turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:20:39.105Z"
+    },
+    "rule-5956": {
+      "learning_id": "rule-5956",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5956,
+      "title": "Workflow Contract Enforcement via Naming Conventions",
+      "source_url": "https://huggingface.co/Comfy-Org/z_image_turbo",
+      "source_version": "hf-comfy-org-z_image_turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:20:39.105Z"
+    },
+    "rule-5957": {
+      "learning_id": "rule-5957",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5957,
+      "title": "table) :: show striped rows in dark mode (#1579)",
+      "source_url": "https://github.com/sqlpage/SQLPage",
+      "source_version": "2d45bd4d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:20:40.774Z"
     }
   },
   "aliases": {

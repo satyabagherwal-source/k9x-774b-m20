@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md`  
 > **Source**: github ([https://github.com/react-hook-form/react-hook-form](https://github.com/react-hook-form/react-hook-form))  
-> **Source Version**: `70bfa3ae`  
+> **Source Version**: `3f1257ce`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T03:49:40.044Z  
+> **Timestamp**: 2026-10-31T00:20:32.787Z  
 > **Learning ID**: `learn-github-react-hook-form-react-hook-form`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react-hook-form/react-hook-form](https://github.com/react-hook-form/react-hook-form))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T03:49:40.037Z  
+> **Harvest Timestamp**: 2026-10-31T00:20:31.944Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 📋 React Hooks for form state management and validation (Web + React Native)
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 44883 stars
+- **Stars / Engagement**: 44897 stars
 
 ---
 
@@ -781,351 +781,485 @@ export default <T extends FieldValues, K extends ReadFormState>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `70bfa3ae` (2026-10-28)
-**Commit Message**: 🐞 fix(useController): read the current unregistration option on unmount (#13956)
+### Incident Patch 1: `c792f337` (2026-10-28)
+**Commit Message**: 🐞 fix(validate): apply a submit's own form-level validate result when a newer call starts (#13954)
 
-**File**: `src/__tests__/useController.test.tsx` (modified, +45/-0)
-```diff
-@@ -788,6 +788,51 @@ describe('useController', () => {
-     expect(data).toBeUndefined();
-   });
- 
-+  it.each([
-+    [false, true, undefined],
-+    [true, false, undefined],
-+    [false, false, undefined],
-+    [true, true, undefined],
-+    [false, true, false],
-+    [true, false, false],
-+    [false, true, true],
-+    [true, false, true],
-+  ])(
-+    'use the current shouldUnregister option on unmount (%s -> %s, field: %s)',
-+    (initial, next, shouldUnregister) => {
-+      const form = renderHook(
-+        ({ shouldUnregister }) =>
-+          useForm({
-+            defaultValues: { test: 'default' },
-+            shouldUnregister,
-+          }),
-+        { initialProps: { shouldUnregister: initial } },
-+      );
-+      const field = renderHook(() =>
-+        useController({
-+          name: 'test',
-+          control: form.result.current.control,
-+          shouldUnregister,
-+        }),
-+      );
-+
-+      act(() => {
-+        field.result.current.field.onChange('updated');
-+      });
-+
-+      form.rerender({ shouldUnregister: next });
-+      field.rerender();
-+
-+      expect(form.result.current.getValues()).toEqual({ test: 'updated' });
-+
-+      field.unmount();
-+
-+      expect(form.result.current.getValues()).toEqual(
-+        next || shouldUnregister ? {} : { test: 'updated' },
-+      );
-+    },
-+  );
-+
-   it('always get the latest value for onBlur event', async () => {
-     const watchResults: unknown[] = [];
- 
-```
+Since #13951, a validateForm call that a newer call has overtaken
+applies nothing and returns true. handleSubmit ignores that value and
+decides on _formState.errors. If the newer call has not settled yet,
+the submit's rejection is dropped and onValid gets the values it
+rejected. A keystroke under mode onChange can start that newer call
+during a pending submit, and so can an isValid check under the
+default mode.
 
-**File**: `src/useController.ts` (modified, +5/-2)
-```diff
-@@ -271,10 +271,13 @@ export function useController<
-     }
- 
-     return () => {
-+      const shouldUnregisterField =
-+        control._options.shouldUnregister || shouldUnregister;
-+
-       (
-         isArrayField
--          ? _shouldUnregisterField && !control._state.action
--          : _shouldUnregisterField
-+          ? shouldUnregisterField && !control._state.action
-+          : shouldUnregisterField
-       )
-         ? control.unregister(name)
-         : updateMounted(name, false);
-```
-
----
-
-### Incident Patch 2: `813f827e` (2026-10-27)
-**Commit Message**: 🐞 fix(useFieldArray): only apply reValidateMode onSubmit after a submit (#13952)
+Skip the call id check for submit calls, so a submit applies its own
+result as it did before #13951. The reset check still applies to
+every call.
 
 Co-authored-by: Bill <[REDACTED_EMAIL]>
 
-**File**: `src/__tests__/useFieldArray.test.tsx` (modified, +66/-0)
+**File**: `src/__tests__/useForm.test.tsx` (modified, +170/-0)
 ```diff
-@@ -6644,6 +6644,72 @@ describe('useFieldArray with checkbox', () => {
-       expect(screen.queryByTestId('error')?.textContent).toBe(errorAfterAppend);
-     },
-   );
+@@ -3616,6 +3616,176 @@ describe('useForm', () => {
+       );
+     });
+ 
++    describe('when a newer validate starts while the submit validates', () => {
++      const setup = async (mode?: Mode, taken = 'taken') => {
++        const calls: {
++          username: string;
++          resolve: (result: true | string) => void;
++        }[] = [];
++        const onValid = jest.fn();
++        const onInvalid = jest.fn();
 +
-+  it.each(['onChange', 'onTouched', 'all'] as const)(
-+    'validate field array operations before submit when mode is %s and reValidateMode is onSubmit',
-+    async (mode) => {
-+      const App = () => {
-+        const {
-+          control,
-+          handleSubmit,
-+          formState: { errors },
-+        } = useForm({
-+          mode,
-+          reValidateMode: 'onSubmit',
-+          defaultValues: {
-+            test: [{ name: 'a' }],
-+          },
++        const App = () => {
++          const {
++            register,
++            handleSubmit,
++            formState: { errors, isValid },
++          } = useForm<{ username: string }>({
++            mode,
++            defaultValues: { username: '' },
++            validate: ({ formValues }) =>
++              new Promise((resolve) => {
++                calls.push({ username: formValues.username, resolve });
++              }),
++          });
++
++          return (
++            <form onSubmit={handleSubmit(onValid, onInvalid)}>
++              <input {...register('username')} />
++              <p>{errors.form ? errors.form.message : 'no form error'}</p>
++              <p>{isValid ? 'valid' : 'invalid'}</p>
++              <button>submit</button>
++            </form>
++          );
++        };
++
++        render(<App />);
++
++        const answer = (username: string) =>
++          username === taken ? `"${taken}" is taken` : true;
++
++        // Settling a change's validate starts its isValid check,
++        // so drain until none is left
++        const settleRest = async () => {
++          while (calls.length) {
++            const { username, resolve } = calls.shift()!;
++            await act(async () => {
++              resolve(answer(username));
++            });
++          }
++        };
++
++        await settleRest();
++        expect(screen.getByText('valid')).toBeVisible();
++
++        fireEvent.change(screen.getByRole('textbox'), {
++          target: { value: 'taken' },
++        });
++        fireEvent.click(screen.getByRole('button'));
++        fireEvent.change(screen.getByRole('textbox'), {
++          target: { value: 'taken1' },
 +        });
 +
-+        const { fields, append, remove } = useFieldArray({
-+          control,
-+          name: 'test',
-+          rules: { required: 'Add an item' },
-+        });
++        expect(calls.map(({ username }) => username)).toEqual([
++          'taken',
++          'taken',
++          'taken1',
++        ]);
++        const [older, submit, newer] = calls.splice(0);
 +
-+        return (
-+          <form onSubmit={handleSubmit(() => {})}>
-+            {errors.test?.root?.message && (
-+              <p data-testid="error">{errors.test.root.message}</p>
-+            )}
-+            <p>rows: {fields.length}</p>
-+
-+            <button type="button" onClick={() => append({ name: 'b' })}>
-+              append
-+            </button>
-+            <button type="button" onClick={() => remove(0)}>
-+              remove
-+            </button>
-+            <button type="submit">submit</button>
-+          </form>
-+        );
++        return { older, submit, newer, onValid, onInvalid, settleRest };
 +      };
 +
-+      render(<App />);
++      it('not submit the value when the submit settles before the newer validate', async () => {
++        const { older, submit, newer, onValid, onInvalid, settleRest } =
++          await setup('onChange');
 +
-+      await act(async () => {
-+        fireEvent.click(screen.getByRole('button', { name: 'remove' }));
++        await act(async () => {
++          submit.resolve('"taken" is taken');
++        });
++
++        expect(onValid).not.toHaveBeenCalled();
++        expect(onInvalid).toHaveBeenCalledTimes(1);
++        expect(screen.getByText('"taken" is taken')).toBeVisible();
++        expect(screen.getByText('invalid')).toBeVisible();
++
++        await act(async () => {
++          older.resolve('"taken" is taken');
++        });
++        await act(async () => {
++          newer.resolve(true);
++        });
++        await settleRest();
++
++        expect(screen.getByText('no form error')).toBeVisible();
++        expect(screen.getByText('valid')).toBeVisible();
 +      });
 +
-+      screen.getByText('rows: 0');
-+      expect(await screen.findByTestId('error')).toHaveTextContent(
-+        'Add an item',
-+      );
++      it('not submit the value when the newer validate settles first', async () => {
++        const { older, submit, newer, onValid, onInvalid, settleRest } =
++          await setup('onChange');
 +
-+      await act(async () => {
-+        fireEvent.click(screen.getByRole('button', { name: 'submit' }));
++        await act(async () => {
++          newer.resolve(true);
++        });
++        await act(async () => {
++          older.resolve('"taken" is taken');
++        });
++        await act(async () => {
++          submit.resolve('"taken" is taken');
++        });
++
++        expect(onValid).not.toHaveBeenCalled();
++        expect(onInvalid).toHaveBeenCalledTimes(1);
++
++        await settleRest();
++
++        expect(screen.getByText('no form error')).toBeVisible();
 +      });
 +
-+      expect(screen.getByTestId('error')).toHaveTextContent('Add an item');
++      it('not submit the value when an isValid check starts during the submit', async () => {
++        const { older, submit, newer, onValid, onInvalid, settleRest } =
++          await setup();
 +
-+      await act(async () => {
-+        fireEvent.click(screen.getByRole('button', { name: 'append' }));
++        await act(async () => {
++          older.resolve('"taken" is taken');
++        });
++        await act(async () => {
++          submit.resolve('"taken" is taken');
++        });
++
++        expect(onValid).not.toHaveBeenCalled();
++        expect(onInvalid).toHaveBeenCalledTimes(1);
++        expect(screen.getByText('"taken" is taken')).toBeVisible();
++        expect(screen.getByText('invalid')).toBeVisible();
++
++        await act(async () => {
++          newer.resolve(true);
++        });
++        await settleRest();
++
++        expect(screen.getByText('no form error')).toBeVisible();
++        expect(screen.getByText('valid')).toBeVisible();
 +      });
 +
-+      screen.getByText('rows: 1');
-+      expect(screen.getByTestId('error')).toHaveTextContent('Add an item');
-+    },
-+  );
- });
- 
- it('not lose defaultValues when useFieldArray and watch are used together', async () => {
++      it('submit the value its own validate accepted when the newer validate rejects', async () => {
++        const { older, submit, newer, onValid, onInvalid, settleRest } =
++          await setup('onChange', 't
 ```
 
-**File**: `src/useFieldArray.ts` (modified, +1/-1)
+**File**: `src/logic/createFormControl.ts` (modified, +2/-1)
 ```diff
-@@ -384,7 +384,7 @@ export function useFieldArray<
-     if (
-       _actioned.current &&
-       (!validationModes.isOnSubmit || control._formState.isSubmitted) &&
--      !reValidateModes.isOnSubmit &&
-+      !(control._formState.isSubmitted && reValidateModes.isOnSubmit) &&
-       (!validationModes.isOnBlur ||
-         (control._formState.isSubmitted && reValidateModes.isOnChange))
-     ) {
+@@ -849,7 +849,8 @@ export function createFormControl<
+ 
+       if (
+         resetCallId !== _resetCallId ||
+-        validateFormCallId !== _validateFormCallId
++        (eventType !== EVENTS.SUBMIT &&
++          validateFormCallId !== _validateFormCallId)
+       ) {
+         return true;
+       }
 ```
 
 ---
 
-### Incident Patch 3: `9d8041c3` (2026-10-27)
-**Commit Message**: 🐞 fix(validate): ignore an older form level validate result that settles last (#13951)
+### Incident Patch 2: `8eef3e0a` (2026-10-30)
+**Commit Message**: 🐞 fix #13961 type regression (#13963)
 
-**File**: `src/__tests__/useForm.test.tsx` (modified, +114/-0)
+**File**: `reports/api-extractor.api.md` (modified, +3/-1)
 ```diff
-@@ -3502,6 +3502,120 @@ describe('useForm', () => {
-       expect(result.current.getErrors('form.lastName')).toBeUndefined();
-     });
+@@ -256,7 +256,9 @@ export type FieldError = {
+ // @public (undocumented)
+ export type FieldErrors<T extends FieldValues = FieldValues> = Partial<FieldErrorsImpl<DeepRequired<T>>> & {
+     root?: Record<string, GlobalError> & GlobalError;
+-    form?: Record<string, GlobalError> & GlobalError;
++    form?: GlobalError & (string extends keyof T ? unknown : {
++        [K in keyof T]?: GlobalError;
++    });
+ };
  
-+    it('keep the latest form-level errors when an older async validate resolves last', async () => {
-+      const resolvers: Record<string, (result: true | string) => void> = {};
-+
-+      const App = () => {
-+        const {
-+          register,
-+          formState: { errors, isValid },
-+        } = useForm<{ username: string }>({
-+          mode: 'onChange',
-+          defaultValues: { username: '' },
-+          validate: ({ formValues }) =>
-+            new Promise((resolve) => {
-+              resolvers[formValues.username] = resolve;
-+            }),
-+        });
-+
-+        return (
-+          <form>
-+            <input {...register('username')} />
-+            <p>{errors.form?.message}</p>
-+            <p>{isValid ? 'valid' : 'invalid'}</p>
-+          </form>
-+        );
-+      };
-+
-+      render(<App />);
-+
-+      await act(async () => {
-+        resolvers[''](true);
-+      });
-+
-+      fireEvent.change(screen.getByRole('textbox'), {
-+        target: { value: 'a' },
-+      });
-+      fireEvent.change(screen.getByRole('textbox'), {
-+        target: { value: 'ab' },
-+      });
-+
-+      await act(async () => {
-+        resolvers.ab(true);
-+      });
-+      await act(async () => {
-+        resolvers.a('"a" is taken');
-+      });
-+
-+      expect(screen.queryByText('"a" is taken')).not.toBeInTheDocument();
-+      expect(screen.getByText('valid')).toBeVisible();
-+    });
-+
-+    it('ignore an older trigger form-level result that resolves after a newer one', async () => {
-+      const resolvers: ((result: true | string) => void)[] = [];
-+      const { result } = renderHook(() => {
-+        const form = useForm<{ username: string }>({
-+          validate: () =>
-+            new Promise((resolve) => {
-+              resolvers.push(resolve);
-+            }),
-+        });
-+        form.formState.isValid;
-+        return form;
-+      });
-+
-+      await act(async () => {
-+        resolvers.splice(0).forEach((resolve) => resolve(true));
-+      });
-+
-+      let first!: Promise<boolean>;
-+      let second!: Promise<boolean>;
-+
-+      act(() => {
-+        first = result.current.trigger();
-+        second = result.current.trigger();
-+      });
-+
-+      await act(async () => {
-+        resolvers[1](true);
-+      });
-+      await act(async () => {
-+        resolvers[0]('stale');
-+      });
-+
-+      expect(await first).toBe(true);
-+      expect(await second).toBe(true);
-+      expect(result.current.getErrors('form')).toBeUndefined();
-+      expect(result.current.formState.isValid).toBe(true);
-+    });
-+
-+    it('still apply a slow form-level validate result when no newer call started', async () => {
-+      const resolvers: ((result: true | string) => void)[] = [];
-+      const { result } = renderHook(() =>
-+        useForm<{ username: string }>({
-+          validate: () =>
-+            new Promise((resolve) => {
-+              resolvers.push(resolve);
-+            }),
-+        }),
-+      );
-+
-+      let pending!: Promise<boolean>;
-+
-+      act(() => {
-+        pending = result.current.trigger();
-+      });
-+
-+      await act(async () => {
-+        resolvers[0]('taken');
-+      });
-+
-+      expect(await pending).toBe(false);
-+      expect(result.current.getErrors('form')).toEqual(
-+        expect.objectContaining({ message: 'taken' }),
-+      );
-+    });
-+
-     it.each([
-       { description: 'an empty object', validResult: {} },
-       {
+ // @public (undocumented)
 ```
 
-**File**: `src/logic/createFormControl.ts` (modified, +6/-1)
+**File**: `src/__typetest__/errors.test-d.ts` (modified, +22/-2)
 ```diff
-@@ -239,6 +239,7 @@ export function createFormControl<
-   };
+@@ -24,6 +24,18 @@ import { _ } from './__fixtures__';
+     type _t4 = Expect<Equal<typeof formType, string | number | undefined>>;
+   }
  
-   let _setValidCallId = 0;
-+  let _validateFormCallId = 0;
-   let _resetCallId = 0;
-   let _registerCallId = 0;
-   const _registerCallIds: Record<InternalFieldName, number> = {};
-@@ -838,14 +839,18 @@ export function createFormControl<
-   }) => {
-     if (_options.validate) {
-       const resetCallId = _resetCallId;
-+      const validateFormCallId = ++_validateFormCallId;
-       const result = await _options.validate({
-         formValues: _formValues,
-         formState: _formState,
-         name,
-         eventType,
++  /** it should accept a form-level error object */
++  {
++    const errors: FieldErrors = { form: { type: 'server', message: 'Failed' } };
++    const typedErrors: FieldErrors<{ firstName: string }> = {
++      form: {
++        type: 'server',
++        message: 'Failed',
++        firstName: { type: 'validate', message: 'Invalid' },
++      },
++    };
++  }
++
+   /** it should support optional record fields */
+   {
+     const actual = _ as FieldErrors<{
+@@ -49,7 +61,11 @@ import { _ } from './__fixtures__';
+           >;
+         } & {
+           root?: Record<string, GlobalError> & GlobalError;
+-          form?: Record<string, GlobalError> & GlobalError;
++          form?: GlobalError & {
++            test?: GlobalError;
++            test1?: GlobalError;
++            attachment?: GlobalError;
++          };
+         }
+       >
+     >;
+@@ -80,7 +96,11 @@ import { _ } from './__fixtures__';
+           >;
+         } & {
+           root?: Record<string, GlobalError> & GlobalError;
+-          form?: Record<string, GlobalError> & GlobalError;
++          form?: GlobalError & {
++            test?: GlobalError;
++            test1?: GlobalError;
++            attachment?: GlobalError;
++          };
+         }
+       >
+     >;
+```
+
+**File**: `src/__typetest__/opaqueTypes.test-d.ts` (modified, +1/-1)
+```diff
+@@ -122,7 +122,7 @@ declare module '../types/utils' {
+           bar?: Merge<FieldError, { baz?: FieldError }>;
+         } & {
+           root?: Record<string, GlobalError> & GlobalError;
+-          form?: Record<string, GlobalError> & GlobalError;
++          form?: GlobalError & { foo?: GlobalError; bar?: GlobalError };
+         }
+       >
+     >;
+```
+
+**File**: `src/types/errors.ts` (modified, +2/-1)
+```diff
+@@ -56,7 +56,8 @@ export type FieldErrors<T extends FieldValues = FieldValues> = Partial<
+   FieldErrorsImpl<DeepRequired<T>>
+ > & {
+   root?: Record<string, GlobalError> & GlobalError;
+-  form?: Record<string, GlobalError> & GlobalError;
++  form?: GlobalError &
++    (string extends keyof T ? unknown : { [K in keyof T]?: GlobalError });
+ };
+ 
+ /** Resolves the error type stored by {@link FieldErrors} for a field path. */
+```
+
+---
+
+### Incident Patch 3: `3f1257ce` (2026-10-30)
+**Commit Message**: 🐞 fix(setValue): send the field array row notification with the current values (#13965)
+
+Since #13665, setValue on a field inside a field array row sends one more
+notification per row after the field's own, and reused the values snapshot
+taken before the first one went out. A subscribe callback that sets a
+sibling field during the first notification wrote _formValues, and the row
+notification then put the old value back on the sibling's Controller and
+on a whole-array useWatch, while getValues() returned the new one.
+
+Each row notification now clones the values as they are when it is sent.
+It still sends undefined when no values subscriber matched.
+
+Fixes #13964
+
+**File**: `src/__tests__/useForm/setValue.test.tsx` (modified, +159/-0)
+```diff
+@@ -13,6 +13,7 @@ import { Controller } from '../../controller';
+ import type { Control } from '../../types';
+ import { useFieldArray } from '../../useFieldArray';
+ import { useForm } from '../../useForm';
++import { useWatch } from '../../useWatch';
+ import get from '../../utils/get';
+ import isFunction from '../../utils/isFunction';
+ import noop from '../../utils/noop';
+@@ -1406,6 +1407,164 @@ describe('setValue', () => {
+     );
+   });
+ 
++  it('show the value a values subscriber sets on a sibling field in the same field array row', () => {
++    type FormValues = { rows: { a: string; b: string }[] };
++
++    const App = () => {
++      const { control, setValue, subscribe } = useForm<FormValues>({
++        defaultValues: { rows: [{ a: '1', b: '1!' }] },
++      });
++      const { fields } = useFieldArray({ control, name: 'rows' });
++
++      React.useEffect(() => {
++        return subscribe({
++          name: 'rows.0.a',
++          exact: true,
++          formState: { values: true },
++          callback: ({ name, values }) => {
++            if (name === 'rows.0.a') {
++              setValue('rows.0.b', `${values.rows[0].a}!`);
++            }
++          },
++        });
++      }, [setValue, subscribe]);
++
++      return (
++        <div>
++          {fields.map((field, index) => (
++            <div key={field.id}>
++              <Controller
++                control={control}
++                name={`rows.${index}.b` as const}
++                render={({ field }) => <input aria-label="b" {...field} />}
++              />
++              <Controller
++                control={control}
++                name={`rows.${index}` as const}
++                render={({ field: { value } }) => (
++                  <p data-testid="row">{value.b}</p>
++                )}
++              />
++            </div>
++          ))}
++          <button onClick={() => setValue('rows.0.a', '2')}>update</button>
++        </div>
++      );
++    };
++
++    render(<App />);
++
++    expect(screen.getByLabelText('b')).toHaveValue('1!');
++
++    fireEvent.click(screen.getByRole('button'));
++
++    expect(screen.getByLabelText('b')).toHaveValue('2!');
++    expect(screen.getByTestId('row').textContent).toEqual('2!');
++  });
++
++  it('show the value a values subscriber sets in a field array row to a useWatch of the whole array', () => {
++    type FormValues = { rows: { a: number; b: number }[] };
++
++    const WatchedRows = ({ control }: { control: Control<FormValues> }) => {
++      const rows = useWatch({ control, name: 'rows' });
++
++      return <p data-testid="rows">{rows[0].b}</p>;
++    };
++
++    const App = () => {
++      const { control, setValue, subscribe } = useForm<FormValues>({
++        defaultValues: { rows: [{ a: 1, b: 2 }] },
++      });
++      useFieldArray({ control, name: 'rows' });
++
++      React.useEffect(() => {
++        return subscribe({
++          name: 'rows.0.a',
++          exact: true,
++          formState: { values: true },
++          callback: ({ name, values }) => {
++            if (name === 'rows.0.a') {
++              setValue('rows.0.b', values.rows[0].a * 2);
++            }
++          },
++        });
++      }, [setValue, subscribe]);
++
++      return (
++        <div>
++          <WatchedRows control={control} />
++          <button onClick={() => setValue('rows.0.a', 5)}>update</button>
++        </div>
++      );
++    };
++
++    render(<App />);
++
++    expect(screen.getByTestId('rows').textContent).toEqual('2');
++
++    fireEvent.click(screen.getByRole('button'));
++
++    expect(screen.getByTestId('rows').textContent).toEqual('10');
++  });
++
++  it('show the value a values subscriber sets on a sibling field in a nested field array row', () => {
++    type FormValues = { rows: { items: { x: string; y: string }[] }[] };
++
++    const Items = ({ control }: { control: Control<FormValues> }) => {
++      const { fields } = useFieldArray({ control, name: 'rows.0.items' });
++
++      return (
++        <div>
++          {fields.map((field, index) => (
++            <Controller
++              key={field.id}
++              control={control}
++              name={`rows.0.items.${index}.y` as const}
++              render={({ field }) => <input aria-label="y" {...field} />}
++            />
++          ))}
++        </div>
++      );
++    };
++
++    const App = () => {
++      const { control, setValue, subscribe } = useForm<FormValues>({
++        defaultValues: { rows: [{ items: [{ x: '1', y: '1!' }] }] },
++      });
++      useFieldArray({ control, name: 'rows' });
++
++      React.useEffect(() => {
++        return subscribe({
++          name: 'rows.0.items.0.x',
++          exact: true,
++          formState: { values: true },
++          callback: ({ name, values }) => {
++            if (name === 'rows.0.items.0.x') {
++              setValue('rows.0.items.0.y', `${values.rows[0].items[0].x}!`);
++            }
++          },
++        });
++      }, [setValue, subscribe]);
++
++      return (
++        <div>
++          <Items control={control} />
++          <button onClick={
+```
+
+**File**: `src/logic/createFormControl.ts` (modified, +4/-1)
+```diff
+@@ -1305,7 +1305,10 @@ export function createFormControl<
        });
  
--      if (resetCallId !== _resetCallId) {
-+      if (
-+        resetCallId !== _resetCallId ||
-+        validateFormCallId !== _validateFormCallId
-+      ) {
-         return true;
+       for (const itemName of fieldArrayItemNames) {
+-        _subjects.state.next({ name: itemName, values });
++        _subjects.state.next({
++          name: itemName,
++          values: values && cloneObject(_formValues),
++        });
        }
- 
+     }
+   };
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13956** (2026-10-28): fix(useController): read the current unregistration option on unmount (@clean99)
-- **PR #13952** (2026-10-27): fix(useFieldArray): only apply reValidateMode onSubmit after a submit (@dfedoryshchev)
-- **PR #13951** (2026-10-27): fix(validate): ignore an older form level validate result that settles last (@KooYS)
-- **PR #13950** (2026-10-27): fix(setValue): select empty-string checkbox options (@clean99)
-- **PR #13949** (2026-10-26): build(deps): bump fast-uri from 3.1.8 to 3.1.9 (@dependabot[bot])
-- **PR #13948** (2026-10-26):  🐞 fix #13844 issue formState value flip (@bluebill1049)
+- **PR #13965** (2026-10-30): fix(setValue): send the field array row notification with the current values (@maxymlyskov)
+- **PR #13963** (2026-10-30): 🐞 fix #13961 type regression (@bluebill1049)
+- **PR #13962** (closed): fix: clear resolver validation state after rejection (@charan-rathore)
+- **PR #13960** (2026-10-29): fix: focus the first enabled option in radio and checkbox groups (@charan-rathore)
+- **PR #13959** (closed): 🐞 fix(remove): preserve falsy elements when removing array items (@hardikkaurani)
+- **PR #13958** (closed): 🐞 fix(isPlainObject): support plain objects with an own constructor property (@hardikkaurani)
 
 ---
 
@@ -1145,65 +1279,57 @@ Co-authored-by: Bill <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🐞 fix(useController): read the current unregistration option on unmount (#13956
+## X. 🐞 fix(validate): apply a submit's own form-level validate result when a newer c
 
 **RULE**:
-When implementing operations in `src/__tests__/useController.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-hook-form/react-hook-form. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/__tests__/useForm.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-hook-form/react-hook-form. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `70bfa3ae`: 🐞 fix(useController): read the current unregistration option on unmount (#13956). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c792f337`: 🐞 fix(validate): apply a submit's own form-level validate result when a newer call starts (#13954). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/__tests__/useController.test.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/__tests__/useForm.test.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  it.each([
-    [false, true, undefined],
-    [true, false, undefined],
-    [false, false, undefined],
-    [true, true, undefined],
-    [false, true, false],
-    [true, false, false],
-    [false, true, true],
-    [true, false, true],
-  ])(
-    'use the current shouldUnregister option on unmount (%s -> %s, field: %s)',
-    (initial, next, shouldUnregister) => {
-      const form = renderHook(
-        ({ shouldUnregister }) =>
-          useForm({
-            defaultValues: { test: 'default' },
-            shouldUnregister,
-          }),
-        { initialProps: { shouldUnregister: initial } },
-      );
-      const field = renderHook(() =>
-        useController({
-          name: 'test',
-          control: form.result.current.control,
-          shouldUnregister,
-        }),
-      );
+    describe('when a newer validate starts while the submit validates', () => {
+      const setup = async (mode?: Mode, taken = 'taken') => {
+        const calls: {
+          username: string;
+          resolve: (result: true | string) => void;
+        }[] = [];
+        const onValid = jest.fn();
+        const onInvalid = jest.fn();
 
-      act(() => {
-        field.result.current.field.onChange('updated');
-      });
+        const App = () => {
+          const {
+            register,
+            handleSubmit,
+            formState: { errors, isValid },
+          } = useForm<{ username: string }>({
+            mode,
+            defaultValues: { username: '' },
+            validate: ({ formValues }) =>
+              new Promise((resolve) => {
+                calls.push({ username: formValues.username, resolve });
+              }),
+          });
 
-      form.rerender({ shouldUnregister: next });
-      field.rerender();
+          return (
+            <form onSubmit={handleSubmit(onValid, onInvalid)}>
+              <input {...register('username')} />
+              <p>{errors.form ? errors.form.message : 'no form error'}</p>
+              <p>{isValid ? 'valid' : 'invalid'}</p>
+              <button>submit</button>
+            </form>
+          );
+        };
 
-      expect(form.result.current.getValues()).toEqual({ test: 'updated' });
+        render(<App />);
 
-      field.unmount();
-
-      expect(form.result.current.getValues()).toEqual(
-        next || shouldUnregister ? {} : { test: 'updated' },
-      );
-    },
-  );
-
+        const answer = (username: string) =>
+          usern
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1213,4 +1339,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `70bfa3ae` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c792f337` are properly handled with clean fallback behavior.

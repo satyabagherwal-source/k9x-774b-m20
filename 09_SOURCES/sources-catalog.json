@@ -2193,10 +2193,10 @@
     "repository": "react-hook-form/react-hook-form",
     "platform": "github",
     "sourceUrl": "https://github.com/react-hook-form/react-hook-form",
-    "sourceVersion": "70bfa3ae",
+    "sourceVersion": "3f1257ce",
     "license": "MIT",
-    "contentHash": "3199236986162bead61c38e2eb1f6f53770228fe084e3b74b41ad860e8ee5d51",
-    "lastHarvestedAt": "2026-10-28T03:49:40.475Z",
+    "contentHash": "5eff67aaea5eeff3fe989c37a873c28786cb12c6a1ac375f2c0a97292fb7b415",
+    "lastHarvestedAt": "2026-10-31T00:20:33.412Z",
     "learningId": "learn-github-react-hook-form-react-hook-form"
   },
   "higress-group-higress": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "1a28f170",
+    "sourceVersion": "13348998",
     "license": "BSD-3-Clause",
-    "contentHash": "955f469ab0b2fc08a9903f7c5c0ed527ca8ab5ca7447f72482c8e8f56c72e421",
-    "lastHarvestedAt": "2026-10-30T20:22:08.428Z",
+    "contentHash": "a2bf6f90a673603b4fc079dbd51ab263c323a4c1381143da7288da8cc26d2715",
+    "lastHarvestedAt": "2026-10-31T00:20:37.983Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -4723,10 +4723,10 @@
     "repository": "sqlpage/SQLPage",
     "platform": "github",
     "sourceUrl": "https://github.com/sqlpage/SQLPage",
-    "sourceVersion": "41dd9db2",
+    "sourceVersion": "2d45bd4d",
     "license": "MIT",
-    "contentHash": "b5fe8e2497324d83831160560774bbd316fbd1fea8a61ee189a45a088c8e8519",
-    "lastHarvestedAt": "2026-10-30T03:49:00.699Z",
+    "contentHash": "9f577e887a0dcb88b76acd68591fcb83cb285da8c6f8553c1610789767d28034",
+    "lastHarvestedAt": "2026-10-31T00:20:40.865Z",
     "learningId": "learn-github-sqlpage-sqlpage"
   },
   "douyinfe-semi-design": {
@@ -7005,8 +7005,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/z_image_turbo",
     "sourceVersion": "hf-comfy-org-z_image_turbo",
     "license": "Open-Source",
-    "contentHash": "6cfd82cf4627c83e8b7300f361a83043a4732c397d604ce10e3f7a935647f633",
-    "lastHarvestedAt": "2026-10-25T16:34:47.043Z",
+    "contentHash": "cc565d381162b397ceabb1363ea86b3867795eaa747d0c63e41285f88e01c90b",
+    "lastHarvestedAt": "2026-10-31T00:20:39.182Z",
     "learningId": "learn-huggingface-comfy-org-z_image_turbo"
   },
   "jhspetersson-fselect": {

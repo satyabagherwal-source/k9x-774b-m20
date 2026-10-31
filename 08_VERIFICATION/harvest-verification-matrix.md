@@ -6370,3 +6370,7 @@
 | `CYCLE-20261031-40GR` | `2026-10-31T00:05:32.379Z` | `googleworkspace/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5949` | Yes (`b03b5863...`) |
 | `CYCLE-20261031-42E8` | `2026-10-31T00:05:34.880Z` | `dkhamsing/open-source-ios-apps` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3068` | Yes (`23040da8...`) |
 | `CYCLE-20261031-464X` | `2026-10-31T00:05:39.729Z` | `Comfy-Org/MOSS-Image` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5950, Rule 5951` | Yes (`51369f0b...`) |
+| `CYCLE-20261031-NBPC` | `2026-10-31T00:20:33.408Z` | `react-hook-form/react-hook-form` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5952` | Yes (`5eff67aa...`) |
+| `CYCLE-20261031-NF87` | `2026-10-31T00:20:37.975Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5953` | Yes (`a2bf6f90...`) |
+| `CYCLE-20261031-NG5N` | `2026-10-31T00:20:39.179Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5954, Rule 5955, Rule 5956` | Yes (`cc565d38...`) |
+| `CYCLE-20261031-NHGE` | `2026-10-31T00:20:40.862Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5957` | Yes (`9f577e88...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `1a28f170`  
+> **Source Version**: `13348998`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T20:22:07.694Z  
+> **Timestamp**: 2026-10-31T00:20:37.433Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T20:22:07.523Z  
+> **Harvest Timestamp**: 2026-10-31T00:20:36.619Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38362 stars
+- **Stars / Engagement**: 38374 stars
 
 ---
 
@@ -821,339 +821,598 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1a28f170` (2026-10-30)
-**Commit Message**: wgengine/netstack: disable RACK again
+### Incident Patch 1: `13348998` (2026-10-30)
+**Commit Message**: ssh/tailssh: stop killing session processes on graceful disconnects
 
-Several reports including a severe internal issue have demonstrated use
-cases where the current RACK implementation still fails too poorly to be
-our enabled default.
+Monitor teardown SIGHUPed and SIGKILLed every remembered child group
+when the transport closed. sshd signals nothing at a non-PTY session
+end; background jobs with redirected stdio survive and reparent to
+init. Clients rely on that: VS Code Remote-SSH starts its remote
+server as a plain background job in the session's group and expects
+it to outlive connection drops, and tailscale upgrades run as
+non-PTY execs whose work should survive a daemon restart.
 
-Updates #21946
-Updates #21651
-Updates #18307
+Use an explicit graceful monitor close to preserve session jobs on
+ordinary disconnect and daemon shutdown. Close PTY masters normally,
+letting the terminal driver signal the foreground group, but do not
+signal non-PTY jobs. Remove Linux Pdeathsig from session children;
+forwarding children retain it and always die with the connection.
 
-Signed-off-by: James Tucker <[REDACTED_EMAIL]>
+Commit duration and recording-failure termination to the monitor
+before publishing cancellation or writing the termination message.
+The monitor owns per-session HUP-to-KILL escalation even after the
+leader exits or the connection closes. Revocation arms connection-wide
+cleanup. Pin every termination target's leader until after SIGKI
 
-**File**: `wgengine/netstack/netstack.go` (modified, +11/-9)
+**File**: `ssh/tailssh/connmonitor.go` (modified, +12/-4)
 ```diff
-@@ -409,16 +409,18 @@ func Create(logf logger.Logf, tundev *tstun.Wrapper, e wgengine.Engine, mc *magi
- 	if tcpipErr != nil {
- 		return nil, fmt.Errorf("could not set cubic congestion control: %v", tcpipErr)
- 	}
--	if rack, ok := netstackEnableRACK().Get(); ok {
--		recovery := tcpip.TCPRecovery(0)
--		if rack {
--			recovery = tcpip.TCPRACKLossDetection
--		}
--		tcpipErr = ns.ipstack.SetTransportProtocolOption(tcp.ProtocolNumber, &recovery)
--		if tcpipErr != nil {
--			return nil, fmt.Errorf("could not set TCP loss recovery: %v", tcpipErr)
--		}
-+
-+	// Disable RACK by default (again), the conditions under which it performs
-+	// poorly are too common still. See google/gvisor#16670, #21946, #18714.
-+	recovery := tcpip.TCPRecovery(0)
-+	if rack, ok := netstackEnableRACK().Get(); ok && rack {
-+		recovery = tcpip.TCPRACKLossDetection
- 	}
-+	tcpipErr = ns.ipstack.SetTransportProtocolOption(tcp.ProtocolNumber, &recovery)
-+	if tcpipErr != nil {
-+		return nil, fmt.Errorf("could not set TCP loss recovery: %v", tcpipErr)
-+	}
-+
- 	err := setTCPBufSizes(ns.ipstack)
- 	if err != nil {
- 		return nil, err
-```
-
-**File**: `wgengine/netstack/netstack_test.go` (modified, +1/-1)
-```diff
-@@ -973,7 +973,7 @@ func TestEnableRACKKnob(t *testing.T) {
- 		env  string
- 		want tcpip.TCPRecovery
- 	}{
--		{"", tcpip.TCPRACKLossDetection},
-+		{"", 0},
- 		{"false", 0},
- 		{"true", tcpip.TCPRACKLossDetection},
- 	} {
-```
-
----
-
-### Incident Patch 2: `1b68f62b` (2026-10-30)
-**Commit Message**: tstest/natlab: add a new portmapper VM test (#22071)
-
-This test encodes the current behaviour of the Tailscale client.
-It only covers the creation of new mappings.
-
-Updates #21713
-
-Change-Id: Ia44877036569660f4129484d5059ed22ffbf9cda
-Signed-off-by: Francois Marier <[REDACTED_EMAIL]>
-
-**File**: `tstest/natlab/vmtest/portmapper_test.go` (added, +162/-0)
-```diff
-@@ -0,0 +1,162 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+package vmtest_test
-+
-+import (
-+	"fmt"
-+	"testing"
+@@ -6,11 +6,13 @@
+ package tailssh
+ 
+ import (
++	"context"
+ 	"errors"
+ 	"fmt"
+ 	"os"
+ 	"strconv"
+ 	"sync"
 +	"time"
-+
-+	"tailscale.com/tstest/natlab/vmtest"
-+	"tailscale.com/tstest/natlab/vnet"
-+)
-+
-+// TestPortmapCreate checks whether a disco ping reaches a node directly when
-+// its router offers the given port mapping services, and which protocol the
-+// client uses to create its mapping.
-+func TestPortmapCreate(t *testing.T) {
-+	tests := []struct {
-+		name        string
-+		pinger      vmtest.AddNodeFunc
-+		targetNAT   vnet.NAT
-+		targetSvcs  []vnet.NetworkService
-+		wantDirect  bool
-+		wantMapping vnet.NetworkService // empty if no mapping is expected
-+		altMapping  vnet.NetworkService // also accepted, if not empty
-+	}{
-+		// No portmapping protocols available
-+		{
-+			name:       "none",
-+			pinger:     hard,
-+			targetNAT:  vnet.HardNAT,
-+			wantDirect: false,
-+		},
-+		{
-+			name:        "not-needed",
-+			pinger:      easyAF, // addr-only filtering => no portmapping needed
-+			targetNAT:   vnet.HardNAT,
-+			wantDirect:  true,
-+			wantMapping: "",
-+		},
-+		// Normal cases (portmapping required for direct connections)
-+		{
-+			name:        "pcp-only",
-+			pinger:      hard,
-+			targetNAT:   vnet.HardNAT,
-+			targetSvcs:  []vnet.NetworkService{vnet.PCP},
-+			wantDirect:  true,
-+			wantMapping: vnet.PCP,
-+		},
-+		{
-+			name:        "pmp-only",
-+			pinger:      hard,
-+			targetNAT:   vnet.HardNAT,
-+			targetSvcs:  []vnet.NetworkService{vnet.NATPMP},
-+			wantDirect:  true,
-+			wantMapping: vnet.NATPMP,
-+		},
-+		{
-+			name:        "upnp-only",
-+			pinger:      hard,
-+			targetNAT:   vnet.HardNAT,
-+			targetSvcs:  []vnet.NetworkService{vnet.UPnP},
-+			wantDirect:  true,
-+			wantMapping: vnet.UPnP,
-+		},
-+		{
-+			name:        "pcp-and-pmp",
-+			pinger:      hard,
-+			targetNAT:   vnet.HardNAT,
-+			targetSvcs:  []vnet.NetworkService{vnet.PCP, vnet.NATPMP},
-+			wantDirect:  true,
-+			wantMapping: vnet.NATPMP,
-+		},
-+		{
-+			name:        "pcp-and-upnp",
-+			pinger:      hard,
-+			targetNAT:   vnet.HardNAT,
-+			targetSvcs:  []vnet.NetworkService{vnet.PCP, vnet.UPnP},
-+			wantDirect:  true,
-+			wantMapping: vnet.PCP,
-+			// TODO(fmarier): the client sometimes uses UPnP here. Before
-+			// its first probe, it tries NAT-PMP and ignores the router's
-+			// PCP "unsupported version" reply (tailscale#21799). After a
-+			// timeout, it falls back to UPnP. If the probe hasn't found the
-+			// UPnP server yet, that fails and the next attempt uses PCP.
-+			// Remove this field once we have stabilized which protocol we get.
-+			altMapping: vnet.UPnP,
-+		},
-+		{
-+			name:        "pmp-and-upnp",
-+			pinger:      hard,
-+			targetNAT:   vnet.HardNAT,
-+			targetSvcs:  []vnet.NetworkService{vnet.NATPMP, vnet.UPnP},
-+			wantDirect:  true,
-+			wantMapping: vnet.NATPMP,
-+		},
-+		{
-+			name:        "all",
-+			pinger:      hard,
-+			targetNAT:   vnet.HardNAT,
-+			targetSvcs:  []vnet.NetworkService{vnet.PCP, vnet.NATPMP, vnet.UPnP},
-+			wantDirect:  true,
-+			wantMapping: vnet.NATPMP,
-+		},
-+		// Portmapping also needed behind EasyNAT (endpoint-independent mapping,
-+		// but addr+port filtering)
-+		{
-+			name:        "easy-all",
-+			pinger:      hard,
-+			targetNAT:   vnet.EasyNAT,
-+			targetSvcs:  []vnet.NetworkService{vnet.PCP, vnet.NATPMP, vnet.UPnP},
-+			wantDirect:  true,
-+			wantMapping: vnet.NATPMP,
-+		},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			env := vmtest.New(t)
-+			pinger := tt.pinger(env)
-+			n := env.NumNodes()
-+			opts := []any{
-+				fmt.Sprintf("2.%d.%d.%d", n, n, n), // public IP
-+				fmt.Sprintf("10.7.%d.1/24", n),
-+				tt.targetNAT,
-+			}
-+			for _, s := range tt.targetSvcs {
-+				opts = append(opts, s)
-+			}
-+			router := env.AddNetwork(opts...)
-+			target := env.AddNode(fmt.Sprintf("node-%d", n), router)
-+			env.Start()
-+
-+			res, err := env.PingSettle(pinger, target, 15*time.Second)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			if gotDirect := res.Endpoint != ""; gotDirect != tt.wantDirect {
-+				t.Fatalf("ping direct = %v (endpoint %q), want %v", gotDirect, res.Endpoint, tt.wantDirect)
-+			}
-+
-+			mappings := router.PortMappings()
-+			if tt.wantMapping == "" {
-+				if len(mappings) != 0 {
-+					t.Errorf("got port mappings %v, want none", mappings)
-+				}
-+				return
-+			}
-+			if len(mappings) != 1 {
-+				t.Fatalf("got port mappings %v, want one", mappings)
-+			}
-+			for wan, pm := range mappings {
-+				if got := pm.Service; got != tt.wantMapping && got != tt.altMapping {
-+					t.Errorf("port mapping made with %v, want %v", got, tt.wantMapping)
-+				}
-+				if want := wan.String(); want != res.Endpoint {
-+					t.Errorf("ping went to %v, want port mapped endpoint %v", res.Endpoint, want)
-+				}
-+			}
-+		})
-+	}
-+}
-```
-
-**File**: `tstest/natlab/vnet/conf.go` (modified, +6/-0)
-```diff
-@@ -405,6 +405,12 @@ func (n *Network) BlackholeControlForAddr(addr netip.Addr) {
- 	n.network.BlackholeControlForAddr(addr)
+ )
+ 
+ // connMonitorState owns the connection's process monitor. It is started
+@@ -96,10 +98,9 @@ func (c *conn) monitorCreds() (uid, gid uint32, groups []uint32, err error) {
+ 	return uint32(u64), uint32(g64), groups, nil
  }
  
-+// PortMappings returns the router's unexpired port mappings, keyed by WAN
-+// IP:port.
-+func (n *Network) PortMappings() map[netip.AddrPort]PortMapping {
-+	return n.network.portMappings()
-+}
-+
- // NetworkService is a service that can be added to a network.
- type NetworkService string
+-// closeConnMonitor closes the conn's monitor, if one was spawned. It
+-// runs from HandleSSHConn's defer after the SSH connection is done.
+-// Closing the RPC channel triggers the monitor's teardown in monitor.go.
+-// Closing a second time is a no-op.
++// closeConnMonitor closes the connection monitor, if any.
++// If monitorKillAll is set, teardown must terminate all session children.
++// Subsequent calls have no effect.
+ func (c *conn) closeConnMonitor() {
+ 	c.monitor.mu.Lock()
+ 	mc := c.monitor.mon
+@@ -109,6 +110,13 @@ func (c *conn) closeConnMonitor() {
+ 	if mc == nil {
+ 		return
+ 	}
++	if c.monitorKillAll.Load() {
++		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
++		if err := mc.KillAll(ctx); err != nil {
++			c.logf("ssh: arming monitor kill-all: %v", err)
++		}
++		cancel()
++	}
+ 	if err := mc.Close(); err != nil {
+ 		c.logf("ssh: closing connection monitor: %v", err)
+ 	}
+```
+
+**File**: `ssh/tailssh/fwdchild.go` (modified, +2/-1)
+```diff
+@@ -147,7 +147,8 @@ func fwdSpawnChild(m *monitor, spec fwdChildSpec) (*exec.Cmd, *net.UnixConn, err
+ 	// which surfaces as the op's error.
+ 	var attr *syscall.SysProcAttr
+ 	if os.Getuid() != 0 && uint64(m.args.uid) == uint64(os.Getuid()) && uint64(m.args.gid) == uint64(os.Getgid()) {
+-		attr = monChildAttr(false) // Setpgid, and Pdeathsig on linux. Identity is inherited.
++		attr = fwdChildAttr(m.args)
++		attr.Credential = nil // Inherit credentials but retain Pdeathsig.
+ 	} else {
+ 		attr = fwdChildAttr(m.args) // born unprivileged (Credential) in its own group
+ 	}
+```
+
+**File**: `ssh/tailssh/incubator_plan9.go` (modified, +3/-4)
+```diff
+@@ -430,10 +430,9 @@ func (ss *sshSession) waitMonitorProcess() (code int, ok bool, err error) {
+ 	return 0, false, nil
+ }
+ 
+-// hangupMonitorProcess is the plan9 seam of the monitor session path.
+-// It always reports false, so sessions hang up their directly-started
+-// child.
+-func (ss *sshSession) hangupMonitorProcess() bool {
++// hangupMonitorProcess returns false on Plan 9, which launches children directly.
++// See [sshSession.hangupProcess].
++func (ss *sshSession) hangupMonitorProcess(mandated bool) bool {
+ 	return false
+ }
  
 ```
 
-**File**: `tstest/natlab/vnet/vnet.go` (modified, +27/-10)
+**File**: `ssh/tailssh/monitor.go` (modified, +116/-46)
 ```diff
-@@ -674,9 +674,21 @@ func (m MAC) String() string {
- 	return fmt.Sprintf("%02x:%02x:%02x:%02x:%02x:%02x", m[0], m[1], m[2], m[3], m[4], m[5])
- }
+@@ -19,9 +19,9 @@
+ // localUser, is fixed in argv at spawn. Only the event loop touches
+ // the RPC channel, the child table, and file descriptors.
+ //
+-// RPC EOF or an external SIGHUP tears the connection down. Every child
+-// group is SIGHUPed, then a bounded reap sweep runs, and surviving
+-// groups are SIGKILLed before the monitor exits.
++// Graceful close preserves session children unless termination is required.
++// RPC loss and external SIGHUP terminate all children. Forwarding children
++// always terminate.
  
--type portMapping struct {
--	dst    netip.AddrPort // LAN IP:port
--	expiry time.Time
-+type PortMapping struct {
-+	dst     netip.AddrPort // LAN IP:port
-+	expiry  time.Time
-+	Service NetworkService
+ package tailssh
+ 
+@@ -53,8 +53,7 @@ const (
+ 	// result. On expiry the child's group is SIGKILLed.
+ 	monFwdOpDeadline = 10 * time.Second
+ 
+-	// monTeardownReap bounds each reap phase in teardown. The monitor
+-	// stops waiting after this interval even if children remain.
++	// monTeardownReap bounds the teardown grace period and reap wait.
+ 	monTeardownReap = 2 * time.Second
+ )
+ 
+@@ -67,6 +66,24 @@ type monChild struct {
+ 	pgid    int   // the child's process group. Equal to its pid.
+ 	id      int64 // exec request ID, or zero for a forwarding child
+ 	oneshot bool  // dialer or listener child. Outcome carried by the op reply.
++
++	// killAt is the SIGKILL deadline. While nonzero, the leader remains
++	// unreaped to prevent PID and process-group reuse.
++	killAt time.Time
 +}
 +
-+func (n *network) portMappings() map[netip.AddrPort]PortMapping {
-+	n.natMu.Lock()
-+	defer n.natMu.Unlock()
-+	now := time.Now()
-+	ret := maps.Clone(n.portMap)
-+	maps.DeleteFunc(ret, func(_ netip.AddrPort, pm PortMapping) bool {
-+		return now.After(pm.expiry)
-+	})
-+	return ret
++// beginTermination sends SIGHUP and sets the SIGKILL deadline once.
++func (c *monChild) beginTermination(grace time.Duration) {
++	if c.killAt.IsZero() {
++		c.killAt = time.Now().Add(grace)
++		_ = killGroup(c.pgid, unix.SIGHUP)
++	}
++}
++
++// kill sends SIGKILL and permits reaping the leader.
++func (c *monChild) kill() {
++	_ = killGroup(c.pgid, unix.SIGKILL)
++	c.killAt = time.Time{}
  }
  
- // writerFunc is a function that writes an Ethernet frame to a connected client.
-@@ -723,7 +735,7 @@ type network struct {
- 	natStyle    syncs.AtomicValue[NAT]
- 	natMu       sync.Mutex // held while using + changing natTable
- 	natTable    NATTable
--	portMap     map[netip.AddrPort]portMapping    // WAN ip:port -> LAN ip:port
-+	portMap     map[netip.AddrPort]PortMapping    // WAN ip:port -> LAN ip:port
- 	portMapFlow map[portmapFlowKey]netip.AddrPort // (lanAP, peerWANAP) -> portmapped wanAP
+ // monitor is the running ssh-monitor process state, owned entirely by
+@@ -78,6 +95,12 @@ type monitor struct {
+ 	hup      chan os.Signal
+ 	broken   bool // a reply or notification write failed. Leave the loop.
  
- 	macMu     sync.Mutex
-@@ -2775,11 +2787,15 @@ func (n *network) doPortMap(src netip.Addr, dstLANPort, wantExtPort uint16, sec
++	// killAll requires teardown to terminate all session children.
++	killAll bool
++
++	// gracefulClose records receipt of an explicit close request.
++	gracefulClose bool
++
+ 	// pendingFds holds relayed dial/listen descriptors, keyed by request
+ 	// ID, from the reply write until tailscaled's fdack receipt. See
+ 	// replyFD and the monitor_rpc.go header for the darwin kernel
+@@ -268,13 +291,34 @@ func (m *monitor) loop() error {
+ 	signal.Notify(sigchld, syscall.SIGCHLD)
+ 	defer signal.Stop(sigchld)
+ 
++	escalation := time.NewTimer(time.Hour)
++	defer escalation.Stop()
+ 	for {
++		escalation.Stop()
++		var next time.Time
++		for _, c := range m.children {
++			if !c.killAt.IsZero() && (next.IsZero() || c.killAt.Before(next)) {
++				next = c.killAt
++			}
++		}
++		var escalate <-chan time.Time
++		if !next.IsZero() {
++			escalation.Reset(time.Until(next))
++			escalate = escalation.C
++		}
+ 		select {
++		case <-escalate:
++			for _, c := range m.children {
++				if !c.killAt.IsZero() && !time.Now().Before(c.killAt) {
++					c.kill()
++				}
++			}
++			m.sweep(m.children, true)
+ 		case <-m.hup:
+ 			m.teardown()
+ 			return nil
+ 		case <-sigchld:
+-			m.sweep(true)
++			m.sweep(m.children, true)
+ 		case ev := <-events:
+ 			if ev.err != nil {
+ 				// EOF, an I/O error, or a protocol error means the
+@@ -283,7 +327,7 @@ func (m *monitor) loop() error {
+ 				return nil
+ 			}
+ 			m.handle(ev.f, ev.fds)
+-			if m.broken {
++			if m.broken || m.gracefulClose {
+ 				m.teardown()
+ 				return nil
+ 			}
+@@ -308,6 +352,16 @@ func (m *monitor) handle(f rpcFrame, fds []int) {
+ 	case opSignal:
+ 		closeFds(fds)
+ 		m.handleSignal(f)
++	case opTerminate:
++		closeFds(fds)
++		m.handleTerminate(f)
++	case opClose:
++		closeFds(fds)
++		m.gracefulClose = true
++		m.reply(rpcOKReply(f.ID, opClose))
++	case opKillAll:
++		closeFds(fds)
++		m.handleKillAll(f)
+ 	case opFdAck:
+ 		closeFds(fds)
+ 		if fds, ok := m.pendingFds[f.ID]; ok {
+@@ -512,6 +566,21 @@ func (m *monitor) handleSignal(f rpcFrame) {
+ 	m.reply(rpcOKReply(f.ID, opSignal))
+ }
+ 
++// handleTerminate schedules group termination before acknowledging the request.
++func (m *monitor) handleTerminate(f rpcFrame) {
++	c, ok := m.children[f.Pid]
++	if !ok || f.ChildID == 0 || c.id != f.ChildID {
++		m.reply(rpcErrReply(f.ID, opTerminate, fmt.Errorf("terminate: stale child handle")))
++		return
++	}
++	if f.Grace <= 0 {
++		m.reply(rpcErrReply(f.ID, opTerminate, fmt.Errorf("terminate: invalid grace period")))
++		return
++	}
++	c.beginTermination(f.Grace)
++	m.reply(rpcOKReply(f.ID, opTerminate))
++}
++
+ // killGroup signals the process group pgid with kill(-pgid, sig), so
+ // a child's descendants, such as a shell's subprocesses, die with it.
+ func killGroup(pgid int, sig unix.Signal) error {
+@@ -661,22 +730,26 @@ func (m *monitor) replyFD(f rpcFrame, fds ...int) {
+ 	m.pendingFds[f.ID] = fds
+ }
+ 
+-// sweep reaps exited children with wait4(WNOHANG) and drops them from
+-// the child table. With notify set, it emits one unsolicited exit
+-// notification per reaped pid.
+-func (m *monitor) sweep(notify bool) {
+-	for pid, c := range m.children {
++// sweep r
+```
+
+**File**: `ssh/tailssh/monitor_client.go` (modified, +35/-5)
+```diff
+@@ -90,6 +90,7 @@ type monitorClient struct {
+ 	// writeMu serializes writeFrame, so the client has one logical
+ 	// writer.
+ 	writeMu sync.Mutex
++	closeMu sync.Mutex // serializes Close
+ 
+ 	mu      sync.Mutex // guards the fields below
+ 	nextID  int64
+@@ -318,6 +319,28 @@ func (mc *monitorClient) Signal(ctx context.Context, child monitorProcess, sig s
+ 	return err
+ }
+ 
++// Terminate sends SIGHUP to child's group and schedules SIGKILL after grace.
++// Escalation continues after leader exit or graceful close.
++func (mc *monitorClient) Terminate(ctx context.Context, child monitorProcess, grace time.Duration) error {
++	r, _, err := mc.call(ctx, rpcTerminateReq(child, grace))
++	if err != nil && r.Op == "" {
++		// Require connection-wide termination if the request was not acknowledged.
++		mc.c.Close()
++	}
++	return err
++}
++
++// KillAll requires teardown to terminate all session children.
++// Call it before [monitorClient.Close] when access is revoked.
++func (mc *monitorClient) KillAll(ctx context.Context) error {
++	_, _, err := mc.call(ctx, rpcKillAllReq(0))
++	if err != nil {
++		// Require connection-wide termination if revocation was not acknowledged.
++		mc.c.Close()
++	}
++	return err
++}
++
+ // Dial dials a unix socket through a relay child running with the
+ // connection's bound identity. The returned data socket and lifetime pipe
+ // are acknowledged to the monitor on receipt, releasing its held copies.
+@@ -435,19 +458,26 @@ func wrapListenerFD(fd int, name string) (net.Listener, error) {
+ 	return ln, nil
+ }
+ 
+-// Close tears the connection down by closing the RPC channel, which
+-// triggers the monitor's teardown. Close waits for the monitor to
+-// exit. A wedged monitor is killed after the forwarding-op deadline,
+-// both teardown reap sweeps, and a margin for scheduling and child reap.
++// Close requests graceful teardown and waits for the monitor to exit.
++// RPC loss without a graceful close request terminates all children.
++// A monitor that exceeds the shutdown timeout is killed.
+ func (mc *monitorClient) Close() error {
++	mc.closeMu.Lock()
++	defer mc.closeMu.Unlock()
+ 	mc.mu.Lock()
+ 	if mc.closed {
+ 		mc.mu.Unlock()
+ 		return nil
+ 	}
+-	mc.closed = true
+ 	mc.mu.Unlock()
+ 
++	ctx, cancel := context.WithTimeout(context.Background(), monFwdOpDeadline)
++	// RPC loss without this request requires connection-wide termination.
++	_, _, _ = mc.call(ctx, rpcFrame{Op: opClose})
++	cancel()
++	mc.mu.Lock()
++	mc.closed = true
++	mc.mu.Unlock()
+ 	mc.c.Close()
+ 	<-mc.done
+ 	waitErr := make(chan error, 1)
+```
+
+**File**: `ssh/tailssh/monitor_lifecycle_test.go` (modified, +61/-35)
+```diff
+@@ -15,9 +15,11 @@ import (
+ 	"time"
+ )
+ 
+-// TestMonitorExecCancellationAfterDispatch delays the exec reply until after
+-// cancellation. The session must retain the child handle and terminate it.
+-func TestMonitorExecCancellationAfterDispatch(t *testing.T) {
++// newTestMonitorClient connects a monitorClient to a fake RPC peer.
++// Cleanup closes the socket and waits for the read loop.
++// The client has no child process and cannot use [monitorClient.Close].
++func newTestMonitorClient(t *testing.T) (*monitorClient, *rpcConn) {
++	t.Helper()
+ 	client, peer := rpcTestPair(t)
+ 	mc := &monitorClient{
+ 		c:       client.c,
+@@ -30,6 +32,13 @@ func TestMonitorExecCancellationAfterDispatch(t *testing.T) {
+ 		client.c.Close()
+ 		<-mc.done
+ 	})
++	return mc, peer
++}
++
++// TestMonitorExecCancellationAfterDispatch delays the exec reply until after
++// cancellation. The session must retain the child handle and terminate it.
++func TestMonitorExecCancellationAfterDispatch(t *testing.T) {
++	mc, peer := newTestMonitorClient(t)
+ 	c := &conn{srv: &server{logf: t.Logf}}
+ 	c.monitor.mon = mc
+ 	mc.SetExitCallback(c.monitor.exits.dispatchExit)
+@@ -73,16 +82,16 @@ func TestMonitorExecCancellationAfterDispatch(t *testing.T) {
  	}
  
- 	// See if they already have a mapping and extend expiry if so.
-+	// TODO(fmarier): renewing with a different protocol overwrites the
-+	// service that created the mapping, so PortMappings only reports the
-+	// most recent one.
- 	for k, v := range n.portMap {
- 		if v.dst == dst {
--			n.portMap[k] = portMapping{
--				dst:    dst,
--				expiry: time.Now().Add(time.Duration(sec) * time.Second),
-+			n.portMap[k] = PortMapping{
-+				dst:     dst,
-+				expiry:  time.Now().Add(time.Duration(sec) * time.Second),
-+				Service: service,
- 			}
- 			n.logf("vnet: renewed %v mapping from %v to %v", service, wanAP, dst)
- 			return k.Port(), true
-@@ -2788,9 +2804,10 @@ func (n *network) doPortMap(src netip.Addr, dstLANPort, wantExtPort uint16, sec
+ 	hungup := make(chan bool, 1)
+-	go func() { hungup <- ss.hangupMonitorProcess() }()
++	go func() { hungup <- ss.hangupMonitorProcess(true) }()
+ 	frame, fds, err = peer.readFrame()
+ 	closeFds(fds)
+ 	if err != nil {
+ 		t.Fatal(err)
+ 	}
+-	if frame.Op != opSignal || frame.Pid != child.PID || frame.ChildID != child.ID || frame.Sig != "SIGHUP" {
++	if frame.Op != opTerminate || frame.Pid != child.PID || frame.ChildID != child.ID || frame.Grace <= 0 {
+ 		t.Fatalf("hangup frame=%+v", frame)
+ 	}
+-	if err := peer.writeFrame(rpcOKReply(frame.ID, opSignal)); err != nil {
++	if err := peer.writeFrame(rpcOKReply(frame.ID, opTerminate)); err != nil {
+ 		t.Fatal(err)
+ 	}
+ 	if !<-hungup {
+@@ -96,8 +105,7 @@ func TestMonitorExecCancellationAfterDispatch(t *testing.T) {
+ 	case <-time.After(5 * time.Second):
+ 		t.Fatal("exit notification not delivered")
+ 	}
+-	// Escalation must neither consume the result nor send another signal.
+-	ss.escalateMonitorProcess(mc)
++	// Each wait must return the same exit status.
+ 	for range 2 {
+ 		code, ok, err := ss.waitMonitorProcess()
+ 		if code != 129 || !ok || err != nil {
+@@ -106,6 +114,46 @@ func TestMonitorExecCancellationAfterDispatch(t *testing.T) {
+ 	}
+ }
  
- 	for range 20_000 {
- 		if wanAP.Port() > 0 && !n.natTable.IsPublicPortUsed(wanAP) {
--			mak.Set(&n.portMap, wanAP, portMapping{
--				dst:    dst,
--				expiry: time.Now().Add(time.Duration(sec) * time.Second),
-+			mak.Set(&n.portMap, wanAP, PortMapping{
-+				dst:     dst,
-+				expiry:  time.Now().Add(time.Duration(sec) * time.Second),
-+				Service: service,
- 			})
- 			n.logf("vnet: allocated %v mapping from %v to %v", service, wanAP, dst)
- 			return wanAP.Port(), true
++// TestMonitorPolicyCancellationWaitsForCommit checks that cancellation is
++// published only after the monitor acknowledges termination.
++func TestMonitorPolicyCancellationWaitsForCommit(t *testing.T) {
++	mc, peer := newTestMonitorClient(t)
++	c := &conn{}
++	c.monitor.mon = mc
++	ctx, cancel := context.WithCancelCause(context.Background())
++	defer cancel(nil)
++	ss := &sshSession{conn: c, ctx: ctx, cancelCtx: cancel, logf: t.Logf,
++		osSessionState: osSessionState{monChild: monitorProcess{PID: 42, ID: 1}},
++	}
++	finished := make(chan struct{})
++	go func() {
++		ss.cancelWithTermination(userVisibleError{msg: "policy termination", error: context.DeadlineExceeded})
++		close(finished)
++	}()
++	frame, fds, err := peer.readFrame()
++	closeFds(fds)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if frame.Op != opTerminate || frame.Pid != 42 || frame.ChildID != 1 {
++		t.Fatalf("termination frame = %+v", frame)
++	}
++	if ctx.Err() != nil {
++		t.Fatal("cancellation published before monitor acknowledgment")
++	}
++	if err := peer.writeFrame(rpcOKReply(frame.ID, opTerminate)); err != nil {
++		t.Fatal(err)
++	}
++	select {
++	case <-finished:
++	case <-time.After(5 * time.Second):
++		t.Fatal("policy cancellation did not finish")
++	}
++	if _, ok := context.Cause(ctx).(SSHTerminationError); !ok {
++		t.Fatalf("cancellation cause = %v; want SSHTerminationError", context.Cause(ctx))
++	}
++}
++
+ // A locally rejected request must not kill other sessions on the connection.
+ func TestMonitorValidationFailureKeepsChannel(t *testing.T) {
+ 	for _, tt := range []struct {
+@@ -160,26 +208,15 @@ func TestMonitorWriteFailureClosesChannel(t *testing.T) {
+ 			name = "partial_write"
+ 		}
+ 		t.Run(name, func(t *testing.T) {
+-			client, peer := rpcTestPair(t)
+-			mc := &monitorClient{
+-				c:       client.c,
+-				rpc:     client,
+-				pending: make(map[int64]chan *rpcResult),
+-				done:    make(chan struct{}),
+-			}
+-			go mc.readLoop()
+-			t.Cleanup(func() {
+-				client.c.Close()
+-				<-mc.done
+-			})
++			mc, peer := newTestMonitorClient(t)
+ 			frame := rpcPingReq(0)
+ 			if partial {
+-				if err := client.c.SetWriteBuffer(1024); err != nil {
++				if err := mc.c.SetWriteBuffer(1024); err != nil {
+ 					t.Fatal(err)
+ 				}
+-				client.writeTimeout = 100 * time.Millisecond
++				mc.rpc.writeTimeout = 100 * time.Millisecond
+ 				frame = rpcExecReq(0, []string{strings.Repeat("x", 100<<10)}, nil, "", false, false, 0)
+-			} else if err := client.c.CloseWrite(); err != nil {
++			} else if err := mc.c.CloseWrite(); err != nil {
+ 				t.Fatal(err)
+ 			}
+ 			if _, _, err := mc.call(mustCtx(t), frame)
+```
+
+**File**: `ssh/tailssh/monitor_linux.go` (modified, +10/-13)
+```diff
+@@ -12,16 +12,15 @@ import (
+ 	"golang.org/x/sys/unix"
+ )
+ 
+-// monChildAttr returns the SysProcAttr for one monitor child. A ctty
+-// child gets Setsid+Setctty with the PTY child endpoint as fd 0; Setpgid is
+-// set only for non-ctty children. Pdeathsig is advisory: it fires on
+-// the exit of the creating thread, not the process, per golang/go#27505.
++// monChildAttr returns process attributes for a session child.
++// With ctty, the child starts a session with fd 0 as its controlling terminal.
++// Otherwise it starts a process group.
++// Pdeathsig is unset so the child can survive monitor exit.
+ func monChildAttr(ctty bool) *syscall.SysProcAttr {
+ 	return &syscall.SysProcAttr{
+-		Setpgid:   !ctty,
+-		Setsid:    ctty,
+-		Setctty:   ctty,
+-		Pdeathsig: unix.SIGHUP,
++		Setpgid: !ctty,
++		Setsid:  ctty,
++		Setctty: ctty,
+ 	}
+ }
+ 
+@@ -37,11 +36,9 @@ func scrubFds() error {
+ 	return scrubFdsByScan("/proc/self/fd")
+ }
+ 
+-// fwdChildAttr returns the SysProcAttr for a one-shot forwarding child
+-// whose identity must be applied, that is a root monitor's child. The
+-// Credential carries the connection's bound identity from ma. The child
+-// leads its own group so the op deadline and teardown can kill the
+-// whole group, and Pdeathsig is set as in monChildAttr.
++// fwdChildAttr returns process attributes for a forwarding child.
++// The child runs with ma's credentials in its own process group.
++// Pdeathsig sends SIGHUP when the creating thread exits. See golang/go#27505.
+ func fwdChildAttr(ma monitorArgs) *syscall.SysProcAttr {
+ 	return &syscall.SysProcAttr{
+ 		Credential: &syscall.Credential{
+```
+
+**File**: `ssh/tailssh/monitor_rpc.go` (modified, +24/-12)
+```diff
+@@ -51,13 +51,16 @@ import (
+ 
+ // Monitor RPC operations.
+ const (
+-	opDial   = "dial"   // request {net:"unix"|"tcp", addr}. reply {ok} + socket (and lifetime pipe writer for unix)
+-	opListen = "listen" // request {net:"unix"|"tcp", addr, unlink?, agent?}. reply {ok, path} + listener fd
+-	opExec   = "exec"   // request {argv, env, dir?, ctty?, envfd?, fds:0-4} + SCM_RIGHTS fds. reply {ok, pid, childID}
+-	opSignal = "signal" // request {pid, childID, sig}. reply {ok}
+-	opPing   = "ping"   // request {}. reply {ok}
+-	opExit   = "exit"   // unsolicited notification {pid, childID, code}. no request ID
+-	opFdAck  = "fdack"  // request {id of the reply whose descriptors were received}. no fds, no reply
++	opDial      = "dial"      // request {net:"unix"|"tcp", addr}. reply {ok} + socket (and lifetime pipe writer for unix)
++	opListen    = "listen"    // request {net:"unix"|"tcp", addr, unlink?, agent?}. reply {ok, path} + listener fd
++	opExec      = "exec"      // request {argv, env, dir?, ctty?, envfd?, fds:0-4} + SCM_RIGHTS fds. reply {ok, pid, childID}
++	opSignal    = "signal"    // request {pid, childID, sig}. reply {ok}
++	opTerminate = "terminate" // request {pid, childID, grace}. reply {ok}. Schedule group termination
++	opClose     = "close"     // request {}. reply {ok}. Graceful teardown
++	opPing      = "ping"      // request {}. reply {ok}
++	opKillAll   = "killall"   // request {}. reply {ok}. Terminate all session children at teardown
++	opExit      = "exit"      // unsolicited notification {pid, childID, code}. no request ID
++	opFdAck     = "fdack"     // request {id of the reply whose descriptors were received}. no fds, no reply
+ )
+ 
+ const (
+@@ -125,11 +128,12 @@ type rpcFrame struct {
+ 	// this flag is not a privilege boundary against tailscaled.
+ 	Incubator bool `json:"incubator,omitzero"`
+ 
+-	// signal request, exit notification, and exec reply.
+-	Pid     int    `json:"pid,omitzero"`
+-	ChildID int64  `json:"childID,omitzero"` // exec request ID; required for signals
+-	Sig     string `json:"sig,omitempty"`
+-	Code    int    `json:"code,omitzero"` // exit notification only
++	// Signal and terminate requests, exit notifications, and exec replies.
++	Pid     int           `json:"pid,omitzero"`
++	ChildID int64         `json:"childID,omitzero"` // exec request ID; required for signals
++	Sig     string        `json:"sig,omitempty"`
++	Code    int           `json:"code,omitzero"`  // exit notification only
++	Grace   time.Duration `json:"grace,omitzero"` // HUP-to-KILL delay for terminate
+ 
+ 	// Reply fields.
+ 	OK   bool   `json:"ok,omitzero"`
+@@ -141,6 +145,10 @@ func rpcPingReq(id int64) rpcFrame {
+ 	return rpcFrame{ID: id, Op: opPing}
+ }
+ 
++func rpcKillAllReq(id int64) rpcFrame {
++	return rpcFrame{ID: id, Op: opKillAll}
++}
++
+ func rpcDialReq(id int64, network, addr string) rpcFrame {
+ 	return rpcFrame{ID: id, Op: opDial, Net: network, Addr: addr}
+ }
+@@ -153,6 +161,10 @@ func rpcExecReq(id int64, argv, env []string, dir string, ctty, envFd bool, nfds
+ 	return rpcFrame{ID: id, Op: opExec, Argv: argv, Env: env, Dir: dir, Ctty: ctty, EnvFd: envFd, Fds: nfds}
+ }
+ 
++func rpcTerminateReq(child monitorProcess, grace time.Duration) rpcFrame {
++	return rpcFrame{Op: opTerminate, Pid: child.PID, ChildID: child.ID, Grace: grace}
++}
++
+ func rpcSignalReq(id int64, child monitorProcess, sig string) rpcFrame {
+ 	return rpcFrame{ID: id, Op: opSignal, Pid: child.PID, ChildID: child.ID, Sig: sig}
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22100** (closed): wgengine/magicsock: handle UDP read errors instead of dying (@illotum)
 - **PR #22092** (2026-10-30): wgengine/netstack: disable RACK again (@raggi)
 - **PR #22088** (2026-10-30): ipn/ipnlocal,wgengine{,/magicsock}: cleanup TSMP disco logs (@cmol)
+- **PR #22077** (2026-10-30): ssh/tailssh: stop killing session processes on graceful disconnects (@raggi)
 - **PR #22073** (2026-10-30): feature/conn25: block private destinations (@mazdakn)
 - **PR #22071** (2026-10-30): tstest/natlab: add a new portmapper VM test (@fmarier)
-- **PR #22069** (2026-10-29): wgengine/netstack: add TS_NETSTACK_ENABLE_RACK opt-out (@raggi)
-- **PR #22066** (2026-10-29): ssh/tailssh: bound session teardown so shutdown can't wedge on it (@raggi)
 
 ---
 
@@ -1173,46 +1432,42 @@ Signed-off-by: Francois Marier <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. wgengine/netstack: disable RACK again
+## X. ssh/tailssh: stop killing session processes on graceful disconnects
 
 **RULE**:
-When implementing operations in `wgengine/netstack/netstack.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ssh/tailssh/connmonitor.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1a28f170`: wgengine/netstack: disable RACK again. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `13348998`: ssh/tailssh: stop killing session processes on graceful disconnects. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `wgengine/netstack/netstack.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ssh/tailssh/connmonitor.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-
-	// Disable RACK by default (again), the conditions under which it performs
-	// poorly are too common still. See google/gvisor#16670, #21946, #18714.
-	recovery := tcpip.TCPRecovery(0)
-	if rack, ok := netstackEnableRACK().Get(); ok && rack {
-		recovery = tcpip.TCPRACKLossDetection
-	tcpipErr = ns.ipstack.SetTransportProtocolOption(tcp.ProtocolNumber, &recovery)
-	if tcpipErr != nil {
-		return nil, fmt.Errorf("could not set TCP loss recovery: %v", tcpipErr)
+	"context"
+	"time"
+// closeConnMonitor closes the connection monitor, if any.
+// If monitorKillAll is set, teardown must terminate all session children.
+// Subsequent calls have no effect.
+	if c.monitorKillAll.Load() {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		if err := mc.KillAll(ctx); err != nil {
+			c.logf("ssh: arming monitor kill-all: %v", err)
+		}
+		cancel()
 	}
-
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	if rack, ok := netstackEnableRACK().Get(); ok {
-		recovery := tcpip.TCPRecovery(0)
-		if rack {
-			recovery = tcpip.TCPRACKLossDetection
-		}
-		tcpipErr = ns.ipstack.SetTransportProtocolOption(tcp.ProtocolNumber, &recovery)
-		if tcpipErr != nil {
-			return nil, fmt.Errorf("could not set TCP loss recovery: %v", tcpipErr)
-		}
+// closeConnMonitor closes the conn's monitor, if one was spawned. It
+// runs from HandleSSHConn's defer after the SSH connection is done.
+// Closing the RPC channel triggers the monitor's teardown in monitor.go.
+// Closing a second time is a no-op.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1a28f170` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `13348998` are properly handled with clean fallback behavior.
