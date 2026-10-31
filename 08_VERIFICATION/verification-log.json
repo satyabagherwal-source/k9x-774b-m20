@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-1QYA",
-    "timestamp": "2026-10-28T20:44:28.978Z",
-    "repository": "NativeScript/NativeScript",
-    "learningId": "learn-github-nativescript-nativescript",
-    "contentHash": "237791fe1dc9525cf9ebb5df14ef1433d39c92338a0f08a488e592033deeb7b7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-1R6V",
-    "timestamp": "2026-10-28T20:44:29.287Z",
-    "repository": "Kong/kubernetes-ingress-controller",
-    "learningId": "learn-github-kong-kubernetes-ingress-controller",
-    "contentHash": "4ac6ca7a5e27e7602ba8fcf95d66b530b7b86dfefd24e9855a578f1df75b5c35",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-1VLS",
     "timestamp": "2026-10-28T20:44:35.008Z",
     "repository": "milvus-io/milvus",
@@ -7490,6 +7460,36 @@
     "repository": "k3s-io/k3s",
     "learningId": "learn-github-k3s-io-k3s",
     "contentHash": "374c0f5bfd8ce21161d436d8bc96a001d949476a489fac731e8b274c4f4baa23",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-776M",
+    "timestamp": "2026-10-31T02:27:59.134Z",
+    "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
+    "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
+    "contentHash": "95a6e9b074238d41c51d58e0eb9c6f73abdb8bbea92ed67623e5e682dc68d9c1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-78CF",
+    "timestamp": "2026-10-31T02:28:00.639Z",
+    "repository": "prometheus/prometheus",
+    "learningId": "learn-github-prometheus-prometheus",
+    "contentHash": "fa24d217cb5c034b194bf5736d9601f45b7e5b687671538d5171258ae490df4d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

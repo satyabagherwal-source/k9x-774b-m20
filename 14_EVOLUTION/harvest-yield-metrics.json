@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T02:21:24.978Z",
-  "total_cycles_completed": 6404,
-  "total_learnings_persisted": 6404,
-  "total_rules_promoted": 5992,
+  "last_updated": "2026-10-31T02:28:00.647Z",
+  "total_cycles_completed": 6406,
+  "total_learnings_persisted": 6406,
+  "total_rules_promoted": 5996,
   "history": [
-    {
-      "timestamp": "2026-10-30T15:49:19.735Z",
-      "repository": "kgateway-dev/kgateway",
-      "learningId": "learn-github-kgateway-dev-kgateway",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T15:49:21.074Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T15:49:23.800Z",
       "repository": "alibaba/zvec",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-31T02:21:24.978Z",
       "repository": "k3s-io/k3s",
       "learningId": "learn-github-k3s-io-k3s",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T02:27:59.141Z",
+      "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
+      "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T02:28:00.647Z",
+      "repository": "prometheus/prometheus",
+      "learningId": "learn-github-prometheus-prometheus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

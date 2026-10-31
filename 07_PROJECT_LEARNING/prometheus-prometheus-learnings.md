@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source**: github ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
-> **Source Version**: `a87694bb`  
+> **Source Version**: `9e28ec50`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T06:50:10.089Z  
+> **Timestamp**: 2026-10-31T02:28:00.059Z  
 > **Learning ID**: `learn-github-prometheus-prometheus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T06:50:06.305Z  
+> **Harvest Timestamp**: 2026-10-31T02:27:59.658Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Prometheus monitoring system and time series database.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 66853 stars
+- **Stars / Engagement**: 66866 stars
 
 ---
 
@@ -747,6 +747,7 @@ import (
 	"math"
 	"slices"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 	"unique"
@@ -793,6 +794,11 @@ const (
 	reasonUnintentionalDroppedSeries = "unintentionally_dropped_series"
 	reasonNHCBNotSupported           = "nhcb_in_rw1_not_supported"
 	reasonNHCBConversionError        = "nhcb_to_classic_conversion_error"
+	reasonClassicHistogramNotAllowed = "classic_histogram_not_allowed"
+	// TODO(bwplotka): Temporary, fixed in https://github.com/prometheus/prometheus/pull/20070.
+	reasonDetachedExemplarNotAllowed = "detached_exemplar_not_allowed"
+	reasonMissingMetadataType        = "missing_metadata_type"
+	reasonMissingStartTimestamp      = "missing_start_timestamp"
 )
 
 type queueManagerMetrics struct {
@@ -957,12 +963,7 @@ func newQueueManagerMetrics(r prometheus.Registerer, rn, e string) *queueManager
 		Name:        "exemplars_dropped_total",
 		Help:        "Total number of exemplars which were dropped after being read from the WAL before being sent via remote write, either via relabelling, due to being too old or unintentionally because of an unknown reference ID.",
 		ConstLabels: constLabels,
-	}, []string{"reason"})
-	m.droppedHistogramsTotal = prometheus.NewCounterVec(prometheus.CounterOpts{
-		Namespace:   namespace,
-		Subsystem:   subsystem,
-		Name:        "histograms_dropped_total",
-		Help:        "Total number of histograms which were dropped after being read from the WAL before being sent via remote write, either via relabelling, due to being too old or unintentio
+	}, []string{"reason
 ```
 
 ### Core Architecture Module: `tsdb/chunks/chunk_write_queue.go`
@@ -1500,11 +1501,11 @@ func openDir(path string) (fd syscall.Handle, err error) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #20237** (2026-10-30): **chore(compliance): enable stateless and stateless-st remote write sender tests**
+  *Symptoms*: Bump `github.com/prometheus/compliance` to latest `main` and run `sender.StatelessComplianceTests()` and `sender.StatelessSTComplianceTests()` against both `server` and `agent` modes in `TestRemoteWriteSender` now that `remote_write.mode` (#20098) is merged.  Commits: - `compliance: enable stateless and stateless-st remote write sender tests`  ```release-notes NONE ```
+
 - **Issue #20227** (2026-10-29): **docs: simplify 3.16 changelog PR references**
   *Symptoms*: As we usually do <!--     - Please give your PR a title in the form "area: short description".  For example "tsdb: reduce disk usage by 95%"      - Please sign CNCF's Developer Certificate of Origin and sign-off your commits by adding the -s / --signoff flag to `git commit`. See https://github.com/apps/dco for more information.      - If the PR adds or changes a behaviour or fixes a bug of an exported API it would need a unit/e2e test.      - Where possible use only exported APIs for tests to simplify the review and make it as close as possible to an actual library usage.      - Performance improvements would need a benchmark test to prove it.      - All exposed objects should have a comment.      - All comments should start with a capital letter and end with a full stop.  -->  #### Which issue(s) does the PR fix: <!-- If it applies. Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. More at https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword -->  #### Release notes for end users (**ALL** commits must be considered). *Reviewers should verify clarity and quality.*  <!-- Write NONE only if there is no user-facing change.  Otherwise use one of: [FEATURE] [ENHANCEMENT] [PERF] [BUGFIX] [SECURITY] [CHANGE] Following the pattern `[TYPE] Component: description.`  Example: [
-
-- **Issue #20224** (2026-10-29): **docs: fix flag name for start timestamp processing in API reference**
-  *Symptoms*: ```release-notes [BUGFIX] Docs: Name the correct flag (`--enable-feature=use-start-timestamps`) for the engine-level start timestamp setting in the HTTP API reference. ```  The two `X-Prometheus-Use-Start-Timestamps` header entries in `docs/querying/api.md` point to `--promql.use-start-timestamps`. There is no such flag.  The setting is the `use-start-timestamps` feature flag, enabled with `--enable-feature=use-start-timestamps`, as documented in `docs/feature_flags.md`.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1521,355 +1522,119 @@ func openDir(path string) (fd syscall.Handle, err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d6909724` (2026-10-29)
-**Commit Message**: fix(storage/remote): fall back to WAL metadata when type-and-unit labels are empty (#20223)
+### Incident Patch 1: `4e062fea` (2026-10-30)
+**Commit Message**: Merge pull request #20226 from roidelapluie/roidelapluie/pr-20204-synctest
 
-* storage/remote: fall back to WAL metadata when type-and-unit labels are empty
+tsdb: use synctest for series eviction reader wait test
 
-When --enable-feature=type-and-unit-labels is enabled, __type__ or __unit__ may be absent on a series (or removed via write_relabel_configs) even when WAL metadata is present. Fall back to the cached series metadata for Type and Unit when the corresponding label is not set.
-
-Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
-
-* storage/remote: add test cases for partial type and unit label fallback
-
-Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
-
-* docs: document type and unit label fallback to metadata records
-
-Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
-
-**File**: `docs/feature_flags.md` (modified, +1/-0)
+**File**: `tsdb/head_series_eviction_test.go` (modified, +47/-35)
 ```diff
-@@ -273,6 +273,7 @@ when wrong types are used on wrong functions, automatic renames, delta types and
- When this feature is enabled and the metadata WAL records exists, in an unlikely situation when type or unit are different across those,
- the Prometheus outputs intends to prefer the `__type__` and `__unit__` labels values. For example on Remote Write 2.0,
- if  the metadata record somehow (e.g. due to bug) says "counter", but `__type__="gauge"` the remote time series will be set to a gauge.
-+If either `__type__` or `__unit__` is missing on the series, for example when dropped via relabeling, Remote Write 2.0 falls back to the corresponding value from the metadata record.
+@@ -20,6 +20,7 @@ import (
+ 	"slices"
+ 	"strconv"
+ 	"testing"
++	"testing/synctest"
+ 	"time"
  
- ## Use Uncached IO
- 
-```
-
-**File**: `storage/remote/queue_manager.go` (modified, +20/-19)
-```diff
-@@ -2317,28 +2317,29 @@ func populateV2TimeSeries(symbolTable *writev2.SymbolsTable, batch []timeSeries,
- 	var nPendingSamples, nPendingExemplars, nPendingHistograms, nUnexpectedMetadata int
- 	for nPending, d := range batch {
- 		pendingData[nPending].Samples = pendingData[nPending].Samples[:0]
--		switch {
--		case enableTypeAndUnitLabels:
-+		var (
-+			mType = model.MetricTypeUnknown
-+			unit  string
-+			help  string
-+		)
-+		if !metadata.IsZeroHandle(d.metadata) {
-+			meta := d.metadata.Value()
-+			mType = meta.Type
-+			unit = meta.Unit
-+			help = meta.Help
-+		}
-+		if enableTypeAndUnitLabels {
- 			m := schema.NewMetadataFromLabels(d.seriesLabels)
--			pendingData[nPending].Metadata.Type = writev2.FromMetadataType(m.Type)
--			pendingData[nPending].Metadata.UnitRef = symbolTable.Symbolize(m.Unit)
--			pendingData[nPending].Metadata.HelpRef = 0 // Type and unit does not give us help.
--			// Use Help from d.metadata if available.
--			if !metadata.IsZeroHandle(d.metadata) {
--				pendingData[nPending].Metadata.HelpRef = symbolTable.Symbolize(d.metadata.Value().Help)
-+			if m.Type != model.MetricTypeUnknown {
-+				mType = m.Type
-+			}
-+			if m.Unit != "" {
-+				unit = m.Unit
- 			}
--		case !metadata.IsZeroHandle(d.metadata):
--			meta := d.metadata.Value()
--			pendingData[nPending].Metadata.Type = writev2.FromMetadataType(meta.Type)
--			pendingData[nPending].Metadata.HelpRef = symbolTable.Symbolize(meta.Help)
--			pendingData[nPending].Metadata.UnitRef = symbolTable.Symbolize(meta.Unit)
--		default:
--			// Safeguard against sending garbage in case of not having metadata
--			// for whatever reason.
--			pendingData[nPending].Metadata.Type = writev2.FromMetadataType(model.MetricTypeUnknown)
--			pendingData[nPending].Metadata.UnitRef = 0
--			pendingData[nPending].Metadata.HelpRef = 0
- 		}
-+		pendingData[nPending].Metadata.Type = writev2.FromMetadataType(mType)
-+		pendingData[nPending].Metadata.UnitRef = symbolTable.Symbolize(unit)
-+		pendingData[nPending].Metadata.HelpRef = symbolTable.Symbolize(help)
- 
- 		if sendExemplars {
- 			pendingData[nPending].Exemplars = pendingData[nPending].Exemplars[:0]
-```
-
-**File**: `storage/remote/queue_manager_test.go` (modified, +39/-0)
-```diff
-@@ -2904,6 +2904,45 @@ func TestPopulateV2TimeSeries_MetadataAndTypeAndUnit(t *testing.T) {
- 			expectedUnit:      "requests",
- 			enableTypeAndUnit: true,
- 		},
-+		{
-+			name:      "type-and-unit-fallback-to-meta-when-labels-missing",
-+			typeLabel: "",
-+			unitLabel: "",
-+			metadata: &metadata.Metadata{
-+				Type: model.MetricTypeGauge,
-+				Unit: "bytes",
-+				Help: "Test metric",
-+			},
-+			expectedType:      writev2.Metadata_METRIC_TYPE_GAUGE,
-+			expectedUnit:      "bytes",
-+			enableTypeAndUnit: true,
-+		},
-+		{
-+			name:      "type-from-label-unit-from-meta",
-+			typeLabel: "counter",
-+			unitLabel: "",
-+			metadata: &metadata.Metadata{
-+				Type: model.MetricTypeGauge,
-+				Unit: "bytes",
-+				Help: "Test metric",
-+			},
-+			expectedType:      writev2.Metadata_METRIC_TYPE_COUNTER,
-+			expectedUnit:      "bytes",
-+			enableTypeAndUnit: true,
-+		},
-+		{
-+			name:      "type-from-meta-unit-from-label",
-+			typeLabel: "",
-+			unitLabel: "requests",
-+			metadata: &metadata.Metadata{
-+				Type: model.MetricTypeGauge,
-+				Unit: "bytes",
-+				Help: "Test metric",
-+			},
-+			expectedType:      writev2.Metadata_METRIC_TYPE_GAUGE,
-+			expectedUnit:      "requests",
-+			enableTypeAndUnit: true,
-+		},
+ 	prom_testutil "github.com/prometheus/client_golang/prometheus/testutil"
+@@ -744,42 +745,53 @@ func TestSeriesEviction_QueryStartingAtLastTimestampIsWaitedForByNextEviction(t
  	}
- 
- 	for _, tc := range testCases {
-```
-
----
-
-### Incident Patch 2: `243670f1` (2026-10-29)
-**Commit Message**: Merge pull request #20169 from roidelapluie/roidelapluie/promql-unquoted-utf8-default
-
-promql: enable unquoted UTF-8 names by default
-
-**File**: `cmd/prometheus/features_test.go` (modified, +0/-11)
-```diff
-@@ -132,17 +132,6 @@ func TestSetFeatureListOptions_MetadataWALRecords(t *testing.T) {
- 	require.True(t, c.agent.EnableMetadataWALRecords)
+ 	for name, openQuery := range queriers {
+ 		t.Run(name, func(t *testing.T) {
+-			testDB := newSeriesEvictionTestDB(t)
+-			db := testDB.db
+-
+-			// The first eviction selects the series to evict, then series 0 gets a late sample, and so it is not
+-			// evicted. A query for the timestamp of the late sample is opened after the first eviction waited for the
+-			// readers, so it has the series 0 in the set being evicted, and the late sample is in the head only.
+-			db.compactHeadViewBeforeEvictTestingCallback = func() {
+-				app := db.Appender(context.Background())
+-				_, err := app.Append(0, evictionTestLabels(0), lateSampleTs, 42)
++			synctest.Test(t, func(t *testing.T) {
++				testDB := newSeriesEvictionTestDB(t)
++				db := testDB.db
++
++				// The first eviction selects the series to evict, then series 0 gets a late sample, and so it is not
++				// evicted. A query for the timestamp of the late sample is opened after the first eviction waited for the
++				// readers, so it has the series 0 in the set being evicted, and the late sample is in the head only.
++				db.compactHeadViewBeforeEvictTestingCallback = func() {
++					app := db.Appender(context.Background())
++					_, err := app.Append(0, evictionTestLabels(0), lateSampleTs, 42)
++					require.NoError(t, err)
++					require.NoError(t, app.Commit())
++				}
++				var reading *readingSeries
++				db.Head().testAfterWaitingForReadersToEvictSeries = func() {
++					reading = openQuery(t, db, lateSampleTs, lateSampleTs)
++				}
++				require.NoError(t, db.CompactSelectedSeries(testDB.evictedRefs))
++				require.NotNil(t, reading)
++				require.Equal(t, uint64(evictionTestSeries-evictionTestEvictedSeries+1), db.Head().NumSeries())
++
++				// The second eviction persists the late sample, and its last timestamp is the one the query starts at.
++				done := make(chan error, 1)
++				go func() { done <- db.CompactSelectedSeries(testDB.evictedRefs[:1]) }()
++				synctest.Wait()
++
++				// The query is still open, so the eviction must be waiting for it.
++				select {
++				case err := <-done:
++					require.FailNow(t, "the eviction must wait for the query that starts at its last timestamp", "eviction returned: %v", err)
++				default:
++				}
++				samples, err := reading.read()
+ 				require.NoError(t, err)
+-				require.NoError(t, app.Commit())
+-			}
+-			var reading *readingSeries
+-			db.Head().testAfterWaitingForReadersToEvictSeries = func() {
+-				reading = openQuery(t, db, lateSampleTs, lateSampleTs)
+-			}
+-			require.NoError(t, db.CompactSelectedSeries(testDB.evictedRefs))
+-			require.NotNil(t, reading)
+-			require.Equal(t, uint64(evictionTestSeries-evictionTestEvictedSeries+1), db.Head().NumSeries())
+-
+-			// The second eviction persists the late sample, and its last timestamp is the one the query starts at.
+-			done := make(chan error, 1)
+-			go func() { done <- db.CompactSelectedSeries(testDB.evictedRefs[:1]) }()
+-
+-			// The query is still open, so the eviction must keep waiting for it, with the series in the head.
+-			select {
+-			case err := <-done:
+-				require.FailNow(t, "the eviction must wait for the query that starts at its last timestamp", "eviction returned: %v", err)
+-			case <-time.After(time.Second):
+-			}
+-			samples, err := reading.read()
+-			require.NoError(t, err)
+-			require.Equal(t, map[string]int{evictionTestLabels(0).String(): 1}, samples)
+-			require.NoError(t, reading.close())
+-
+-			require.NoError(t, <-done)
++				require.Equal(t, map[string]int{evictionTestLabels(0).String(): 1}, samples)
++				require.NoError(t, reading.close())
++
++				// Advance fake time past the reader-wait polling interval.
++				time.Sleep(time.Second)
++				synctest.Wait()
++				select {
++				case err := <-done:
++					require.NoError(t, err)
++				default:
++					t.Fatal("the eviction must complete after the query closes")
++				}
++			})
+ 		})
+ 	}
  }
- 
--func TestSetFeatureListOptions_UnquotedUTF8Names(t *testing.T) {
--	for _, enabled := range []bool{false, true} {
--		c := &flagConfig{}
--		if enabled {
--			c.featureList = []string{"promql-unquoted-utf8-names"}
--		}
--		require.NoError(t, c.setFeatureListOptions(promslog.NewNopLogger()))
--		require.Equal(t, enabled, c.parserOpts.EnableUnquotedUTF8Names)
--	}
--}
--
- func TestSetFeatureListOptions_OTLPDeltaToCumulativeDeprecated(t *testing.T) {
- 	var output bytes.Buffer
- 	logger := promslog.New(&promslog.Config{Writer: &output})
-```
-
-**File**: `cmd/prometheus/main.go` (modified, +2/-3)
-```diff
-@@ -265,8 +265,7 @@ func (c *flagConfig) setFeatureListOptions(logger *slog.Logger) error {
- 				c.enableConcurrentRuleEval = true
- 				logger.Info("Experimental concurrent rule evaluation enabled.")
- 			case "promql-unquoted-utf8-names":
--				c.parserOpts.EnableUnquotedUTF8Names = true
--				logger.Info("Experimental unquoted UTF-8 names enabled.")
-+				logger.Warn("This option for --enable-feature is now permanently enabled and therefore a no-op.", "option", o)
- 			case "promql-experimental-functions":
- 				c.parserOpts.EnableExperimentalFunctions = true
- 				logger.Info("Experimental PromQL functions enabled.")
-@@ -666,7 +665,7 @@ func main() {
- 	a.Flag("scrape.discovery-reload-interval", "Interval used by scrape manager to throttle target groups updates.").
- 		Hidden().Default("5s").SetValue(&cfg.scrape.DiscoveryReloadInterval)
- 
--	a.Flag("enable-feature", "Comma separated feature names to enable. Valid options: concurrent-rule-eval, created-timestamp-zero-ingestion, delayed-compaction, exemplar-storage, extra-scrape-metrics, histograms-st-encoding, memory-snapshot-on-shutdown, metadata-wal-records, old-ui, openmetrics2, otlp-deltatocumulative, otlp-native-delta-ingestion, promql-binop-fill-modifiers, promql-delayed-name-removal, promql-experimental-functions, promql-native-histograms-as-classic, promql-per-step-stats, promql-unquoted-utf8-names, query-cost, search-api, st-storage, st-synthesis, type-and-unit-labels, use-start-timestamps, use-uncached-io, xor2-encoding, zstd-scrape. See https://prometheus.io/docs/prometheus/latest/feature_flags/ for more details.").
-+	a.Flag("enable-feature", "Comma separated feature names to enable. Valid options: concurrent-rule-eval, created-timestamp-zero-ingestion, delayed-compaction, exemplar-storage, extra-scrape-metrics, histograms-st-encoding, memory-snapshot-on-shutdown, metadata-wal-records, old-ui, openmetrics2, otlp-deltatocumulative, otlp-native-delta-ingestion, promql-binop-fill-modifiers, promql-delayed-name-removal, promql-experimental-functions, promql-native-histograms-as-classic, promql-per-step-stats, query-cost, search-api, st-storage, st-synthesis, type-and-unit-labels, use-start-timestamps, use-uncached-io, xor2-encoding, zstd-scrape. See https://prometheus.io/docs/prometheus/latest/feature_flags/ for more details.").
- 		StringsVar(&cfg.featureList)
- 
- 	a.Flag("agent", "Run Prometheus in 'Agent mode'.").BoolVar(&agentMode)
-```
-
-**File**: `cmd/prometheus/testdata/features.json` (modified, +1/-1)
-```diff
-@@ -48,7 +48,7 @@
-     "smoothed": true,
-     "subqueries": true,
-     "type_and_unit_labels": false,
--    "unquoted_utf8_names": false,
-+    "unquoted_utf8_names": true,
-     "without": true
-   },
-   "promql_functions": {
-```
-
-**File**: `cmd/promtool/main.go` (modified, +2/-2)
-```diff
-@@ -324,7 +324,7 @@ func main() {
- 	promQLLabelsDeleteQuery := promQLLabelsDeleteCmd.Arg("query", "PromQL query.").Required().String()
- 	promQLLabelsDeleteName := promQLLabelsDeleteCmd.Arg("name", "Name of the label to delete.").Required().String()
- 
--	featureList := app.Flag("enable-feature", "Comma separated feature names to enable. Valid options: promql-experimental-functions, promql-delayed-name-removal, promql-unquoted-utf8-names. See https://prometheus.io/docs/prometheus/latest/feature_flags/ for more details").Default("").Strings()
-+	featureList := app.Flag("enable-feature", "Comma separated feature names to enable. Valid options: promql-experimental-functions, promql-delayed-name-removal. See https://prometheus.io/docs/prometheus/latest/feature_flags/ for more details").Default("").Strings()
- 
- 	documentationCmd := app.Command("write-documentation", "Generate command line documentation. Internal use.").Hidden()
- 
-@@ -367,7 +367,7 @@ func main() {
- 		for o := range strings.SplitSeq(f, ",") {
- 			switch o {
- 			case "promql-unquoted-utf8-names":
--				promtoolParserOpts.EnableUnquotedUTF8Names = true
-+				// This feature is now permanently enabled and therefore a no-op.
- 			case "promql-experimental-functions":
- 				promtoolParserOpts.EnableExperimentalFunctions = true
- 			case "promql-delayed-name-removal":
-```
-
-**File**: `docs/command-line/prometheus.md` (modified, +1/-1)
-```diff
-@@ -64,7 +64,7 @@ The Prometheus monitoring server
- | <code class="text-nowrap">--query.timeout</code> | Maximum time a query may take before being aborted. Use with server mode only. | `2m` |
- | <code class="text-nowrap">--query.max-concurrency</code> | Maximum number of queries executed concurrently. Use with server mode only. | `20` |
- | <code class="text-nowrap">--query.max-samples</code> | Maximum number of samples a single query can load into memory. Note that queries will fail if they try to load more samples than this into memory, so this also limits the number of samples a query can return. Use with server mode only. | `50000000` |
--| <code class="text-nowrap">--enable-feature</code> <code class="text-nowrap">...</code> | Comma separated feature names to enable. Valid options: concurrent-rule-eval, created-timestamp-zero-ingestion, delayed-compaction, exemplar-storage, extra-scrape-metrics, histograms-st-encoding, memory-snapshot-on-shutdown, metadata-wal-records, old-ui, openmetrics2, otlp-deltatocumulative, otlp-native-delta-ingestion, promql-binop-fill-modifiers, promql-delayed-name-removal, promql-experimental-functions, promql-native-histograms-as-classic, promql-per-step-stats, promql-unquoted-utf8-names, query-cost, search-api, st-storage, st-synthesis, type-and-unit-labels, use-start-timestamps, use-uncached-io, xor2-encoding, zstd-scrape. See https://prometheus.io/docs/prometheus/latest/feature_flags/ for more details. |  |
-+| <code class="text-nowrap">--enable-feature</code> <code class="text-nowrap">...</code> | Comma separated feature names to enable. Valid options: concurrent-rule-eval, created-timestamp-zero-ingestion, delayed-compaction, exemplar-storage, extra-scrape-metrics, histograms-st-encoding, memory-snapshot-on-shutdown, metadata-wal-records, old-ui, openmetrics2, otlp-deltatocumulative, otlp-native-delta-ingestion, promql-binop-fill-modifiers, promql-delayed-name-removal, promql-experimental-functions, promql-native-histograms-as-classic, promql-per-step-stats, query-cost, search-api, st-storage, st-synthesis, type-and-unit-labels, use-start-timestamps, use-uncached-io, xor2-encoding, zstd-scrape. See https://prometheus.io/docs/prometheus/latest/feature_flags/ for more details. |  |
- | <code class="text-nowrap">--agent</code> | Run Prometheus in 'Agent mode'. |  |
- | <code class="text-nowrap">--log.level</code> | Only log messages with the given severity or above. One of: [debug, info, warn, error] Deprecated: set runtime.log_level in the configuration file instead. | `info` |
- | <code class="text-nowrap">--log.format</code> | Output format of log messages. One of: [logfmt, json] | `logfmt` |
-```
-
-**File**: `docs/command-line/promtool.md` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@ Tooling for the Prometheus monitoring system.
- | <code class="text-nowrap">-h</code>, <code class="text-nowrap">--help</code> | Show context-sensitive help (also try --help-long and --help-man). |
- | <code class="text-nowrap">--version</code> | Show application version. |
- | <code class="text-nowrap">--experimental</code> | Enable experimental commands. |
--| <code class="text-nowrap">--enable-feature</code> <code class="text-nowrap">...</code> | Comma separated feature names to enable. Valid options: promql-experimental-functions, promql-delayed-name-removal, promql-unquoted-utf8-names. See https://prometheus.io/docs/prometheus/latest/feature_flags/ for more details |
-+| <code class="text-nowrap">--enable-feature</code> <code class="text-nowrap">...</code> | Comma separated feature names to enable. Valid options: promql-experimental-functions, promql-delayed-name-removal. See https://prometheus.io/docs/prometheus/latest/feature_flags/ for more details |
- 
- 
- 
-```
-
-**File**: `docs/feature_flags.md` (modified, +0/-18)
-```diff
-@@ -53,24 +53,6 @@ The Prometheus server exposes two counters for observability: `prometheus_engine
- When disabled in either the engine or the query, per-step statistics are not
- computed at all.
- 
--## Unquoted UTF-8 names in PromQL
--
--`--enable-feature=promql-unquoted-utf8-names`
--
--Allows Unicode letters and dots after the first character in unquoted metric and
--label names. For example:
--
--```promql
--http.server.request.duration{service.name="api"}
--温度{場所="東京"}
--sum by (service.name) (rate(http.server.requests[5m]))
--requests_total + on (service.name) group_left (équipe) service_info
--```
--
--See [metric and label names](querying/basics.md#metric-and-label-names) for the
--character rules and compatibility details. This flag is also supported by
--promtool when checking or testing rules and parsing or formatting queries.
--
- ## Experimental PromQL functions
- 
- `--enable-feature=promql-experimental-functions`
-```
-
-**File**: `docs/querying/basics.md` (modified, +3/-4)
-```diff
-@@ -356,14 +356,13 @@ syntax can be quoted. A quoted metric name goes inside the selector's braces:
- {"http.server.request.duration", "service.name"="api"}
- ```
- 
--With [`--enable-feature=promql-unquoted-utf8-names`](../feature_flags.md#unquoted-utf-8-names-in-promql),
--the same selector can be written as:
-+The same selector can be written without quotes:
- 
- ```promql
- http.server.request.duration{service.name="api"}
- ```
- 
--When this feature is enabled, unquoted names follow these rules:
-+Unquoted names follow these rules:
- 
- | Name | First character | Subsequent characters |
- | --- | --- | --- |
-@@ -395,7 +394,7 @@ a different name.
- 
- Quoted and unquoted spellings of the same name select the same series. Quoting
- remains supported and is required when targeting older PromQL parsers or servers
--without this feature enabled. The feature does not change storage, ingestion
-+without support for these names. These syntax rules do not change storage, ingestion
- validation, text exposition, or metric name translation.
- 
- ### Range Vector Selectors
-```
-
----
-
-### Incident Patch 3: `3751fccd` (2026-10-29)
-**Commit Message**: docs: fix flag name for start timestamp processing in API reference (#20224)
-
-The two X-Prometheus-Use-Start-Timestamps header entries name the
-engine-level setting --promql.use-start-timestamps. No such flag exists.
-The setting is the use-start-timestamps feature flag, enabled with
---enable-feature=use-start-timestamps, as feature_flags.md documents.
-
-Signed-off-by: Gauvain CLAUSS <[REDACTED_EMAIL]>
-
-**File**: `docs/querying/api.md` (modified, +2/-2)
-```diff
-@@ -113,7 +113,7 @@ URL query parameters:
- 
- Optional HTTP request headers:
- 
--- `X-Prometheus-Use-Start-Timestamps: <bool>`: Override the engine-level start timestamp processing setting (`--promql.use-start-timestamps`) for this query. When set to `true`, functions such as `rate()` will use start timestamps from ingested data. When set to `false`, start timestamp processing is disabled for this query. Optional. If omitted, the engine-level default is used.
-+- `X-Prometheus-Use-Start-Timestamps: <bool>`: Override the engine-level start timestamp processing setting (`--enable-feature=use-start-timestamps`) for this query. When set to `true`, functions such as `rate()` will use start timestamps from ingested data. When set to `false`, start timestamp processing is disabled for this query. Optional. If omitted, the engine-level default is used.
- 
- The current server time is used if the `time` parameter is omitted.
- 
-@@ -198,7 +198,7 @@ URL query parameters:
- 
- Optional HTTP request headers:
- 
--- `X-Prometheus-Use-Start-Timestamps: <bool>`: Override the engine-level start timestamp processing setting (`--promql.use-start-timestamps`) for this query. When set to `true`, functions such as `rate()` will use start timestamps from ingested data. When set to `false`, start timestamp processing is disabled for this query. Optional. If omitted, the engine-level default is used.
-+- `X-Prometheus-Use-Start-Timestamps: <bool>`: Override the engine-level start timestamp processing setting (`--enable-feature=use-start-timestamps`) for this query. When set to `true`, functions such as `rate()` will use start timestamps from ingested data. When set to `false`, start timestamp processing is disabled for this query. Optional. If omitted, the engine-level default is used.
- 
- You can URL-encode these parameters directly in the request body by using the `POST` method and
- `Content-Type: application/x-www-form-urlencoded` header. This is useful when specifying a large
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20237** (2026-10-30): chore(compliance): enable stateless and stateless-st remote write sender tests (@bwplotka)
 - **PR #20227** (2026-10-29): docs: simplify 3.16 changelog PR references (@roidelapluie)
+- **PR #20226** (2026-10-30): tsdb: use synctest for series eviction reader wait test (@roidelapluie)
+- **PR #20225** (2026-10-30): storage[PERF]: reuse histogram decoding targets (@pedro-stanaka)
 - **PR #20224** (2026-10-29): docs: fix flag name for start timestamp processing in API reference (@gauvainw)
 - **PR #20223** (2026-10-29): fix(storage/remote): fall back to WAL metadata when type-and-unit labels are empty (@bwplotka)
-- **PR #20217** (2026-10-29): chore: point pr-triage-board skill link to main branch (@bwplotka)
-- **PR #20215** (2026-10-28): ui: support PromQL bitwise operators (@roidelapluie)
-- **PR #20209** (2026-10-28): release-3.16: Cherrypick 32bit CI fix (@ywwg)
 
 ---
 
@@ -1889,28 +1654,75 @@ Signed-off-by: Gauvain CLAUSS <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. storage/remote): fall back to WAL metadata when type-and-unit labels are empty (
+## X. Merge pull request #20226 from roidelapluie/roidelapluie/pr-20204-synctest
 
 **RULE**:
-When implementing operations in `docs/feature_flags.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tsdb/head_series_eviction_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d6909724`: storage/remote): fall back to WAL metadata when type-and-unit labels are empty (#20223). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4e062fea`: Merge pull request #20226 from roidelapluie/roidelapluie/pr-20204-synctest. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/feature_flags.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tsdb/head_series_eviction_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-If either `__type__` or `__unit__` is missing on the series, for example when dropped via relabeling, Remote Write 2.0 falls back to the corresponding value from the metadata record.
+	"testing/synctest"
+			synctest.Test(t, func(t *testing.T) {
+				testDB := newSeriesEvictionTestDB(t)
+				db := testDB.db
+
+				// The first eviction selects the series to evict, then series 0 gets a late sample, and so it is not
+				// evicted. A query for the timestamp of the late sample is opened after the first eviction waited for the
+				// readers, so it has the series 0 in the set being evicted, and the late sample is in the head only.
+				db.compactHeadViewBeforeEvictTestingCallback = func() {
+					app := db.Appender(context.Background())
+					_, err := app.Append(0, evictionTestLabels(0), lateSampleTs, 42)
+					require.NoError(t, err)
+					require.NoError(t, app.Commit())
+				}
+				var reading *readingSeries
+				db.Head().testAfterWaitingForReadersToEvictSeries = func() {
+					reading = openQuery(t, db, lateSampleTs, lateSampleTs)
+				}
+				require.NoError(t, db.CompactSelectedSeries(testDB.evictedRefs))
+				require.NotNil(t, reading)
+				require.Equal(t, uint64(evictionTestSeries-evictionTestEvictedSeries+1), db.Head().NumSeries())
+
+				// The second eviction persists the late sample, and its last timestamp is the one the query starts at.
+				done := make(chan error, 1)
+		
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+			testDB := newSeriesEvictionTestDB(t)
+			db := testDB.db
+
+			// The first eviction selects the series to evict, then series 0 gets a late sample, and so it is not
+			// evicted. A query for the timestamp of the late sample is opened after the first eviction waited for the
+			// readers, so it has the series 0 in the set being evicted, and the late sample is in the head only.
+			db.compactHeadViewBeforeEvictTestingCallback = func() {
+				app := db.Appender(context.Background())
+				_, err := app.Append(0, evictionTestLabels(0), lateSampleTs, 42)
+				require.NoError(t, app.Commit())
+			}
+			var reading *readingSeries
+			db.Head().testAfterWaitingForReadersToEvictSeries = func() {
+				reading = openQuery(t, db, lateSampleTs, lateSampleTs)
+			}
+			require.NoError(t, db.CompactSelectedSeries(testDB.evictedRefs))
+			require.NotNil(t, reading)
+			require.Equal(t, uint64(evictionTestSeries-evictionTestEvictedSeries+1), db.Head().NumSeries())
+
+			// The second eviction persists the late sample, and its last timestamp is the one the query starts at.
+			done := make(chan error, 1)
+			go func() { done <- db.CompactSelectedSeries(testDB.evictedRefs[:1]) }()
+
+			// The query is still open, so 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d6909724` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4e062fea` are properly handled with clean fallback behavior.

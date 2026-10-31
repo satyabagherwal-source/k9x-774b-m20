@@ -6436,3 +6436,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-unsloth-flint-gguf` | `https://huggingface.co/unsloth/flint-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-31T02:21:18.421Z |
 | `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `33e27ca4` | Multi-dimensional audit evidence | 2026-10-31T02:21:20.014Z |
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `3461a87f` | Multi-dimensional audit evidence | 2026-10-31T02:21:24.972Z |
+| `learn-huggingface-minimaxai-minimax-m3-1-flash` | `https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash` | `hf-minimax` | Multi-dimensional audit evidence | 2026-10-31T02:27:59.137Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `9e28ec50` | Multi-dimensional audit evidence | 2026-10-31T02:28:00.642Z |

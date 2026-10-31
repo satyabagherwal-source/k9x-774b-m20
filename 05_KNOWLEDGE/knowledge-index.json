@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T02:21:24.888Z",
+  "last_updated": "2026-10-31T02:28:00.578Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -45949,8 +45949,8 @@
       "slug": "prometheus-prometheus",
       "platform": "github",
       "source_url": "https://github.com/prometheus/prometheus",
-      "source_version": "a87694bb",
-      "content_hash": "99b4658319633ba480f0427459925ca0e8aa0f6dc11930828f27aec0b726f709",
+      "source_version": "9e28ec50",
+      "content_hash": "fa24d217cb5c034b194bf5736d9601f45b7e5b687671538d5171258ae490df4d",
       "dossier_path": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "promoted_rules": [
@@ -46008,6 +46008,11 @@
           "number": 5638,
           "title": "storage/remote): fall back to WAL metadata when type-and-unit labels are empty (",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6018,
+          "title": "Merge pull request #20226 from roidelapluie/roidelapluie/pr-20204-synctest",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46015,7 +46020,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T06:50:10.630Z",
+      "verified_at": "2026-10-31T02:28:00.562Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -124378,7 +124383,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
       "source_version": "hf-minimaxai-minimax-m3.1-flash",
-      "content_hash": "d7689b4d21936af69e9575c1e5ecad934d9c8a1d88eb0969d2caa0f439593fd3",
+      "content_hash": "95a6e9b074238d41c51d58e0eb9c6f73abdb8bbea92ed67623e5e682dc68d9c1",
       "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md",
       "promoted_rules": [
@@ -124406,6 +124411,16 @@
           "number": 4927,
           "title": "Context Window and Positional Encoding Alignment",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6016,
+          "title": "MoE Expert Routing Stability Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6017,
+          "title": "Multimodal Token Framing Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -124413,7 +124428,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T17:37:54.755Z",
+      "verified_at": "2026-10-31T02:27:59.048Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -124434,7 +124449,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-27T17:37:54.755Z"
+      "verified_at": "2026-10-31T02:27:59.048Z"
     },
     "rule-3847": {
       "learning_id": "rule-3847",
@@ -158456,6 +158471,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T02:21:24.868Z"
+    },
+    "rule-6016": {
+      "learning_id": "rule-6016",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6016,
+      "title": "MoE Expert Routing Stability Guard",
+      "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
+      "source_version": "hf-minimaxai-minimax-m3.1-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:27:59.048Z"
+    },
+    "rule-6017": {
+      "learning_id": "rule-6017",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6017,
+      "title": "Multimodal Token Framing Consistency",
+      "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
+      "source_version": "hf-minimaxai-minimax-m3.1-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:27:59.048Z"
+    },
+    "rule-6018": {
+      "learning_id": "rule-6018",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6018,
+      "title": "Merge pull request #20226 from roidelapluie/roidelapluie/pr-20204-synctest",
+      "source_url": "https://github.com/prometheus/prometheus",
+      "source_version": "9e28ec50",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:28:00.562Z"
     }
   },
   "aliases": {

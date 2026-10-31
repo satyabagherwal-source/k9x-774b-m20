@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T02:21:28.518Z",
-    "lastVerified": "2026-10-31T02:21:28.518Z",
+    "lastChecked": "2026-10-31T02:28:03.179Z",
+    "lastVerified": "2026-10-31T02:28:03.179Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -244,8 +244,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T02:00:31.749Z",
-    "lastVerified": "2026-10-31T02:00:31.749Z",
+    "lastChecked": "2026-10-31T02:28:02.202Z",
+    "lastVerified": "2026-10-31T02:28:02.202Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1200,12 +1200,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "freenet-freenet-core": {
-    "name": "freenet/freenet-core",
+    "name": "freenet-core",
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T22:50:01.206Z",
-    "lastVerified": "2026-10-30T22:50:01.206Z",
+    "lastChecked": "2026-10-31T02:27:57.171Z",
+    "lastVerified": "2026-10-31T02:27:57.171Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
@@ -1214,7 +1214,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "50ae5918"
   },
   "clockworklabs-spacetimedb": {
     "name": "clockworklabs/SpacetimeDB",
@@ -2178,9 +2179,9 @@
   "danilowoz-react-content-loader": {
     "name": "react-content-loader",
     "officialUrl": "https://github.com/danilowoz/react-content-loader",
-    "lastChecked": "2026-10-28T05:55:04.180Z",
+    "lastChecked": "2026-10-31T02:27:52.019Z",
     "revisionIdentifier": "c8a6b6c6",
-    "lastVerified": "2026-10-28T05:55:04.180Z"
+    "lastVerified": "2026-10-31T02:27:52.019Z"
   },
   "chaos-mesh-chaos-mesh": {
     "name": "chaos-mesh/chaos-mesh",
@@ -2712,9 +2713,9 @@
   "rigellute-spotify-tui": {
     "name": "spotify-tui",
     "officialUrl": "https://github.com/Rigellute/spotify-tui",
-    "lastChecked": "2026-10-29T23:28:24.005Z",
+    "lastChecked": "2026-10-31T02:27:47.058Z",
     "revisionIdentifier": "c4dcf6b9",
-    "lastVerified": "2026-10-29T23:28:24.005Z"
+    "lastVerified": "2026-10-31T02:27:47.058Z"
   },
   "hf-akatz-ai-minimax-h3-character-swap-lora": {
     "name": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -6139,9 +6140,9 @@
   "olric-data-olric": {
     "name": "olric",
     "officialUrl": "https://github.com/olric-data/olric",
-    "lastChecked": "2026-10-30T06:10:23.547Z",
+    "lastChecked": "2026-10-31T02:27:59.499Z",
     "revisionIdentifier": "c49c44a8",
-    "lastVerified": "2026-10-30T06:10:23.547Z"
+    "lastVerified": "2026-10-31T02:27:59.499Z"
   },
   "graphprotocol-graph-node": {
     "name": "graph-node",
@@ -6950,14 +6951,14 @@
     "officialUrl": "https://github.com/prometheus/prometheus",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T06:50:06.305Z",
-    "lastVerified": "2026-10-30T06:50:06.305Z",
+    "lastChecked": "2026-10-31T02:27:59.658Z",
+    "lastVerified": "2026-10-31T02:27:59.658Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-prometheus-prometheus",
-    "contentHash": "99b4658319633ba480f0427459925ca0e8aa0f6dc11930828f27aec0b726f709",
+    "contentHash": "fa24d217cb5c034b194bf5736d9601f45b7e5b687671538d5171258ae490df4d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11930,6 +11931,23 @@
     "learningId": "learn-huggingface-unsloth-flint-gguf",
     "contentHash": "a8dabe2b85b94cab9a0e3e07b512d3bca81a3040d84be0ce6ef177e83df4345c",
     "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-minimaxai-minimax-m3.1-flash": {
+    "name": "MiniMaxAI/MiniMax-M3.1-Flash",
+    "officialUrl": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-31T02:27:49.621Z",
+    "lastVerified": "2026-10-31T02:27:49.621Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
+    "contentHash": "95a6e9b074238d41c51d58e0eb9c6f73abdb8bbea92ed67623e5e682dc68d9c1",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

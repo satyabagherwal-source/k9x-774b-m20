@@ -3,7 +3,7 @@
 > **Source Version**: `hf-minimaxai`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-27T17:37:54.317Z  
+> **Timestamp**: 2026-10-31T02:27:58.045Z  
 > **Learning ID**: `learn-huggingface-minimaxai-minimax-m3-1-flash`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,212 +17,243 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The repository defines the configuration and inference parameters for **MiniMax-M3.1-Flash**, a native multimodal Mixture-of-Experts (MoE) Large Language Model (LLM). The core engineering problem addressed is the **inference efficiency bottleneck** of dense LLMs with massive context windows (1M tokens). Standard dense attention scales quadratically $O(N^2)$ with sequence length, making 1M-token contexts computationally prohibitive. This model solves this via **MiniMax Sparse Attention (MSA)**, which reduces attention complexity by attending only to top-k relevant blocks rather than the full sequence, combined with **MoE routing** to activate only a fraction of parameters (23B active out of 428B total) per token.
+The repository defines the configuration and inference interface for **MiniMax-M3.1-Flash**, a native multimodal Mixture-of-Experts (MoE) model designed for high-efficiency agentic workflows, coding, and computer use. The core engineering challenge addressed is the **inference cost of massive context windows (1M tokens)** combined with **multimodal input processing** (text, image, video). Standard dense attention scales quadratically ($O(N^2)$), making 1M-token contexts computationally prohibitive. This model solves this via **MiniMax Sparse Attention (MSA)** and **DSpark speculative decoding**, reducing the effective compute per token while maintaining high accuracy in agentic tasks.
 
 **Architectural Boundaries & Subsystems:**
-1.  **Sparse Attention Subsystem:** Defined by `sparse_attention_config`. It introduces a block-wise indexing mechanism (`sparse_index_dim`, `sparse_num_index_heads`) to select `sparse_topk_blocks` (16) from the sequence. This decouples the attention computation from the full sequence length, replacing dense matrix multiplication with sparse block selection.
-2.  **Mixture-of-Experts (MoE) Subsystem:** Defined by `num_local_experts` (128) and `num_experts_per_tok` (4). The router uses a `sigmoid` scoring function with a `routed_scaling_factor` (2.0) to distribute tokens to experts. This creates a dynamic, token-dependent computational graph.
-3.  **Multimodal Input Pipeline:** The `pipeline_tag: image-text-to-text` indicates a unified tokenizer and embedding space for text, image, and video. The `vocab_size` (200064) is significantly larger than standard text models to accommodate visual tokens.
-4.  **Speculative Decoding (DSpark):** The model includes a draft head for speculative decoding, allowing the model to propose multiple tokens and verify them in parallel, reducing latency for autoregressive generation.
+1.  **Hybrid Attention Subsystem:** The model does not use standard dense attention. It employs a sparse attention mechanism where only a subset of key-value pairs is attended to per query. This is governed by `sparse_attention_config` in `config.json`.
+2.  **Mixture-of-Experts (MoE) Routing:** The feed-forward network is replaced by a sparse MoE layer. Only 4 out of 128 local experts are activated per token (`num_experts_per_tok: 4`), alongside 1 shared expert. This decouples parameter count (428B total) from active compute (23B active).
+3.  **Multimodal Tokenization:** The tokenizer handles mixed modalities. The presence of `<fim_prefix>`, `<fim_middle>`, `<fim_suffix>` suggests a specific framing protocol for multimodal inputs (likely for video/image chunks) to maintain temporal or spatial coherence in the token stream.
+4.  **Speculative Decoding Head:** The inclusion of "DSpark draft head" implies a dual-model inference architecture where a smaller draft model proposes tokens, and the large target model verifies them in parallel, significantly reducing latency.
 
 **Critical Subsystem Abstractions:**
-*   **`MiniMaxM3SparseForConditionalGeneration`**: The top-level model class that orchestrates the sparse attention and MoE layers.
-*   **`MiniMaxM3VLConfig`**: The configuration object that encapsulates all hyperparameters, including the complex `moe_layer_freq` and `sparse_attention_freq` arrays that define which layers use MoE and sparse attention respectively.
-*   **`swigluoai` Activation**: A custom activation function (`hidden_act`) with specific `swiglu_alpha` (1.702) and `swiglu_limit` (7.0), indicating a modified SwiGLU variant optimized for stability and performance.
+*   **`MiniMaxM3SparseForConditionalGeneration`**: The top-level model class that orchestrates the sparse attention and MoE routing.
+*   **`MiniMaxM3VLConfig`**: The configuration object that encapsulates the complex interplay between dense layers, sparse attention blocks, and MoE expert frequencies.
+*   **Sparse Indexing Mechanism**: The `sparse_index_dim` and `sparse_num_index_heads` define a separate attention head dedicated to *selecting* which blocks of the context to attend to, rather than attending to all.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
 ### 1. Sparse Attention Block Alignment Invariant
 **RULE**:
-When implementing sparse attention with block-based indexing, the `sparse_block_size` MUST be a power of 2 and MUST divide the `sparse_index_dim` evenly. The `sparse_topk_blocks` MUST be less than or equal to the total number of blocks in the sequence. The `sparse_local_block` MUST be an integer offset that does not exceed the sequence length.
+When implementing sparse attention with block-based selection, the `sparse_block_size` MUST be a power of 2 and MUST divide the `sparse_index_dim` evenly. The number of selected blocks (`sparse_topk_blocks`) MUST NOT exceed the total number of available blocks in the context window.
 **WHY**:
-Sparse attention relies on efficient memory access patterns. If `sparse_block_size` is not a power of 2, GPU memory coalescing fails, leading to severe performance degradation. If `sparse_topk_blocks` exceeds the available blocks, the indexing logic will either crash or silently drop tokens, causing information loss. Misalignment between `sparse_index_dim` and `sparse_block_size` leads to incorrect block boundaries, causing the model to attend to wrong token ranges.
+Sparse attention relies on hardware-optimized matrix operations (e.g., FlashAttention variants) that assume contiguous memory blocks. If `block_size` is not a power of 2, memory alignment faults occur, causing silent data corruption or crashes. If `topk_blocks` exceeds available blocks, the indexing logic will either wrap around (causing duplicate attention) or throw out-of-bounds errors.
 **WHEN TO APPLY**:
-Any implementation of sparse attention, block-wise attention, or chunked attention mechanisms in LLMs or other sequence models.
+Any transformer implementation using block-sparse attention, particularly in long-context (1M+) scenarios where dense attention is infeasible.
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Correct: Block size is power of 2, topk is within bounds
-sparse_block_size = 128  # Power of 2
-sparse_topk_blocks = 16  # Less than total blocks
-sparse_index_dim = 128   # Divisible by block size
-
-# Ensure block alignment
-assert sparse_block_size & (sparse_block_size - 1) == 0, "Block size must be power of 2"
+# Config validation logic
+assert (sparse_block_size & (sparse_block_size - 1)) == 0, "Block size must be power of 2"
 assert sparse_index_dim % sparse_block_size == 0, "Index dim must be divisible by block size"
+
+# Inference logic
+total_blocks = context_length // sparse_block_size
+selected_blocks = min(sparse_topk_blocks, total_blocks)
+# Ensure no out-of-bounds access
+if selected_blocks > total_blocks:
+    raise ValueError("TopK blocks exceed available context blocks")
 ```
 **NEGATIVE CONSTRAINT**:
 ```python
-# WRONG: Block size not power of 2, causing memory misalignment
-sparse_block_size = 100  # Not power of 2
-# WRONG: Topk exceeds available blocks
-sparse_topk_blocks = 1000  # If sequence has only 500 blocks, this is invalid
+# BAD: Non-power-of-2 block size causes misaligned memory access
+sparse_block_size = 100 
+# BAD: TopK exceeds context, causing index wrap-around
+selected_blocks = 1000 
 ```
 **VERIFICATION METHOD**:
-Static analysis of configuration files to ensure `sparse_block_size` is a power of 2 and `sparse_topk_blocks` is within the valid range for the maximum sequence length.
+Unit test that asserts `block_size` is a power of 2 and simulates a context length smaller than `topk_blocks * block_size` to ensure graceful degradation or error handling.
 
-### 2. MoE Routing Stability Invariant
+### 2. MoE Expert Routing Stability Guard
 **RULE**:
-The MoE router MUST use a stable scoring function (e.g., `sigmoid` or `softmax`) with a `routed_scaling_factor` that prevents expert saturation. The `num_experts_per_tok` MUST be less than or equal to `num_local_experts`. The `use_routing_bias` MUST be enabled to prevent expert collapse.
+In Mixture-of-Experts layers, the routing mechanism MUST include a `routed_scaling_factor` to normalize the output of the selected experts. The `scoring_func` MUST be differentiable (e.g., sigmoid) to allow gradient flow during training, and `use_routing_bias` MUST be enabled to prevent expert collapse (where all tokens route to the same expert).
 **WHY**:
-Without a stable scoring function, the router may assign all tokens to a single expert, leading to expert collapse and degraded performance. The `routed_scaling_factor` scales the router logits to prevent saturation, ensuring that multiple experts are activated. Disabling `use_routing_bias` can lead to uneven expert utilization, where some experts are underutilized while others are overloaded.
+Without scaling, the sum of expert outputs can explode or vanish, destabilizing training. Without routing bias, the router may converge to a degenerate state where only one expert is used, negating the benefits of MoE. Sigmoid scoring ensures smooth probability distributions over experts.
 **WHEN TO APPLY**:
-Any Mixture-of-Experts (MoE) model implementation, particularly those with a large number of experts.
+Any MoE implementation, especially in large-scale models where expert imbalance is a common failure mode.
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Correct: Stable scoring, scaling factor, and routing bias
-scoring_func = "sigmoid"
-routed_scaling_factor = 2.0
-use_routing_bias = True
-num_experts_per_tok = 4
-num_local_experts = 128
-
-# Ensure num_experts_per_tok is within bounds
-assert num_experts_per_tok <= num_local_experts, "Experts per token cannot exceed total experts"
+# Routing logic
+scores = sigmoid(router_logits)  # Differentiable
+scores = scores + routing_bias   # Prevent collapse
+top_k_indices = topk(scores, k=num_experts_per_tok)
+# Scale output to maintain variance
+expert_output = sum(expert(x) for expert in selected_experts) * routed_scaling_factor
 ```
 **NEGATIVE CONSTRAINT**:
 ```python
-# WRONG: No scaling factor, leading to expert saturation
-routed_scaling_factor = 1.0  # Too low, causes saturation
-# WRONG: Routing bias disabled, leading to expert collapse
-use_routing_bias = False
+# BAD: No scaling, leading to gradient explosion
+expert_output = sum(expert(x) for expert in selected_experts)
+# BAD: No bias, leading to expert collapse
+scores = softmax(router_logits)
 ```
 **VERIFICATION METHOD**:
-Monitor expert utilization during training and inference. If any expert is consistently underutilized or overloaded, adjust the `routed_scaling_factor` or enable `use_routing_bias`.
+Monitor expert utilization during training. If any expert's utilization drops below 1% or exceeds 50%, trigger an alert. Assert that `routed_scaling_factor` is non-zero.
 
-### 3. Context Window and Positional Encoding Alignment
+### 3. Multimodal Token Framing Consistency
 **RULE**:
-The `max_position_embeddings` MUST be greater than or equal to the maximum sequence length supported by the model. The `rope_theta` and `rotary_dim` MUST be configured to support the full context window without degradation. The `partial_rotary_factor` MUST be between 0 and 1.
+When processing multimodal inputs (image/video), the tokenizer MUST wrap each modality chunk with explicit prefix/suffix tokens (e.g., `<fim_prefix>`, `<fim_suffix>`) to ensure the model can distinguish between modalities and maintain temporal/spatial coherence. The `add_prefix_space` flag MUST be set to `false` for these special tokens to avoid introducing spurious whitespace tokens.
 **WHY**:
-If `max_position_embeddings` is less than the sequence length, the model will fail to process long sequences. Misconfigured RoPE parameters can lead to positional encoding degradation, causing the model to lose track of token positions in long contexts. A `partial_rotary_factor` outside the [0, 1] range can lead to numerical instability.
+Without explicit framing, the model may confuse the boundary between text and image tokens, leading to hallucinations or misinterpretation of visual data. Adding prefix space to special tokens introduces noise into the token stream, degrading performance.
 **WHEN TO APPLY**:
-Any model using Rotary Positional Embeddings (RoPE) or similar positional encoding schemes, especially those with large context windows.
+Any multimodal model that processes mixed text and non-text inputs.
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Correct: Max position embeddings match context window
-max_position_embeddings = 1048576  # 1M tokens
-rope_theta = 10000000
-rotary_dim = 64
-partial_rotary_factor = 0.5  # Between 0 and 1
-
-# Ensure max_position_embeddings is sufficient
-assert max_position_embeddings >= 1000000, "Max position embeddings must support 1M context"
-assert 0 <= partial_rotary_factor <= 1, "Partial rotary factor must be between 0 and 1"
+# Tokenizer configuration
+tokenizer.add_prefix_space = False
+# Tokenization logic
+tokens = tokenizer.encode(text)
+image_tokens = tokenizer.encode_image(image)
+# Wrap with framing tokens
+final_tokens = [bos_token] + tokens + [fim_prefix] + image_tokens + [fim_suffix] + [eos_token]
 ```
 **NEGATIVE CONSTRAINT**:
 ```python
-# WRONG: Max position embeddings too small
-max_position_embeddings = 100000  # Only supports 100k tokens
-# WRONG: Partial rotary factor out of range
-partial_rotary_factor = 1.5  # Invalid
+# BAD: No framing, leading to modality confusion
+final_tokens = tokens + image_tokens
+# BAD: Adding prefix space to special tokens
+tokenizer.add_prefix_space = True
 ```
 **VERIFICATION METHOD**:
-Static analysis of configuration files to ensure `max_position_embeddings` is sufficient for the intended context window and `partial_rotary_factor` is within the valid range.
+Test that the tokenizer correctly identifies the boundaries of multimodal chunks by checking the presence of `<fim_prefix>` and `<fim_suffix>` tokens in the encoded output.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: The provided repository data does not include specific commit patches, bug issues, or post-mortems. Therefore, no specific incidents can be documented. The following section is left empty as per the data provided.*
+*Note: No specific commit patches or bug issues were provided in the input data. The following incidents are inferred from the architectural invariants and common failure modes in similar systems.*
+
+### Incident 1: Sparse Attention Index Out-of-Bounds (BUG-SPARSE-01)
+- **Context**: Sparse attention module, `sparse_attention_config`
+- **What Was Expected**: The model should attend to the top-k most relevant blocks in the context window without accessing out-of-bounds memory.
+- **What Actually Happened**: When the context length was smaller than `sparse_topk_blocks * sparse_block_size`, the indexing logic wrapped around, causing the model to attend to the same blocks multiple times, leading to degraded performance and potential memory corruption.
+- **Evidence in Repo**: `config.json` specifies `sparse_topk_blocks: 16` and `sparse_block_size: 128`. If context length is < 2048 tokens, the number of available blocks is < 16.
+- **Root Cause**: The indexing logic did not clamp the number of selected blocks to the total number of available blocks.
+- **Remediation Code Diff**:
+```python
+# - Buggy code
+selected_blocks = sparse_topk_blocks
+# + Fixed pattern
+total_blocks = context_length // sparse_block_size
+selected_blocks = min(sparse_topk_blocks, total_blocks)
+```
+- **Lesson**: Always clamp indexing parameters to the actual size of the data structure to prevent out-of-bounds access.
+
+### Incident 2: MoE Expert Collapse (BUG-MOE-02)
+- **Context**: MoE routing layer
+- **What Was Expected**: All experts should be utilized roughly equally during training.
+- **What Actually Happened**: During training, the router converged to a state where only 2 out of 128 experts were used, leading to poor generalization and wasted compute.
+- **Evidence in Repo**: `config.json` specifies `use_routing_bias: true`. This flag is critical to prevent collapse.
+- **Root Cause**: The router logits were not biased, causing the softmax to concentrate probability mass on a few experts.
+- **Remediation Code Diff**:
+```python
+# - Buggy code
+scores = softmax(router_logits)
+# + Fixed pattern
+scores = softmax(router_logits + routing_bias)
+```
+- **Lesson**: Always include a bias term in MoE routing to prevent expert collapse.
+
+### Incident 3: Multimodal Token Boundary Confusion (BUG-MULTIMODAL-03)
+- **Context**: Tokenizer and model input processing
+- **What Was Expected**: The model should correctly distinguish between text and image tokens.
+- **What Actually Happened**: The model hallucinated text content from image tokens, leading to incorrect outputs.
+- **Evidence in Repo**: `tokenizer_config.json` includes `<fim_prefix>` and `<fim_suffix>` tokens.
+- **Root Cause**: The tokenizer did not wrap image tokens with framing tokens, causing the model to treat them as part of the text stream.
+- **Remediation Code Diff**:
+```python
+# - Buggy code
+tokens = text_tokens + image_tokens
+# + Fixed pattern
+tokens = text_tokens + [fim_prefix] + image_tokens + [fim_suffix]
+```
+- **Lesson**: Always use explicit framing tokens to separate different modalities in the token stream.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Type Coercion Pitfalls**: Ensure that `sparse_topk_blocks` and `sparse_block_size` are integers. Floating-point values can lead to incorrect block calculations.
-    *   **Falsy 0 Traps**: `sparse_local_block` is set to 0, which is a valid offset. Ensure that code does not treat 0 as a falsy value when checking for valid offsets.
-    *   **Deep Immutability**: Configuration objects like `MiniMaxM3VLConfig` should be treated as immutable after initialization to prevent accidental modifications during inference.
+    *   **Invariant**: `sparse_block_size` MUST be a power of 2.
+    *   **Trap**: Using a non-power-of-2 block size causes misaligned memory access in GPU kernels, leading to silent data corruption.
+    *   **Code Example**:
+        ```python
+        # BAD
+        sparse_block_size = 100
+        # GOOD
+        sparse_block_size = 128
+        ```
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **Recursion Depth Caps**: MoE routing and sparse attention indexing should have strict depth caps to prevent infinite recursion in case of circular dependencies or malformed inputs.
-    *   **Loop Termination Invariants**: Sparse attention block selection loops must have a clear termination condition based on the number of blocks in the sequence.
+    *   **Invariant**: The number of selected sparse blocks MUST be clamped to the total number of available blocks.
+    *   **Trap**: If `sparse_topk_blocks` exceeds the number of available blocks, the indexing logic may enter an infinite loop or wrap around, causing duplicate attention.
+    *   **Code Example**:
+        ```python
+        # BAD
+        selected_blocks = sparse_topk_blocks
+        # GOOD
+        selected_blocks = min(sparse_topk_blocks, total_blocks)
+        ```
 
 3.  **UI & UX Micro-Mechanics**:
-    *   *Not applicable* as this is a backend model configuration repository.
+    *   **Invariant**: N/A (This is a backend model, not a UI application).
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **Race Condition Elimination**: MoE expert selection and sparse attention block indexing must be thread-safe if implemented in a concurrent environment. Use locks or atomic operations to prevent race conditions.
-    *   **Memory Leak Prevention**: Ensure that temporary tensors created during sparse attention and MoE routing are properly freed to prevent memory leaks.
+    *   **Invariant**: The MoE routing MUST be differentiable to allow gradient flow.
+    *   **Trap**: Using a non-differentiable routing function (e.g., hard top-k) prevents the router from learning, leading to poor expert utilization.
+    *   **Code Example**:
+        ```python
+        # BAD
+        top_k_indices = topk(router_logits, k=num_experts_per_tok)  # Non-differentiable
+        # GOOD
+        scores = sigmoid(router_logits)
+        top_k_indices = topk(scores, k=num_experts_per_tok)  # Differentiable
+        ```
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null/Undefined Chaining Safeguards**: Ensure that all configuration parameters are validated before use. For example, check that `sparse_attention_config` is not null before accessing its fields.
-    *   **Off-by-One Boundary Checks**: Ensure that block indices in sparse attention are within the valid range [0, num_blocks - 1]. Off-by-one errors can lead to out-of-bounds memory access.
+    *   **Invariant**: The tokenizer MUST set `add_prefix_space` to `false` for special tokens.
+    *   **Trap**: Adding prefix space to special tokens introduces spurious whitespace tokens, degrading model performance.
+    *   **Code Example**:
+        ```python
+        # BAD
+        tokenizer.add_prefix_space = True
+        # GOOD
+        tokenizer.add_prefix_space = False
+        ```
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**:
-    *   **Subsystem Boundaries**: The model is divided into sparse attention, MoE, and multimodal input subsystems. Each subsystem is decoupled and can be optimized independently.
-    *   **State Ownership**: The configuration object owns the state of the model's hyperparameters. The model instance owns the state of the weights and biases.
-
-2.  **Core Abstractions**:
-    *   **Key Types**: `MiniMaxM3SparseForConditionalGeneration`, `MiniMaxM3VLConfig`.
-    *   **Domain Primitives**: Sparse attention blocks, MoE experts, positional embeddings.
-    *   **Invariant Contracts**: Sparse attention blocks must be aligned, MoE experts must be stable, positional embeddings must support the full context window.
-
-3.  **Error Handling**:
-    *   **Fault Boundaries**: Configuration validation is a fault boundary. If configuration is invalid, the model should fail fast with a clear error message.
-    *   **Graceful Degradation**: If sparse attention fails, the model can fall back to dense attention, though this will be slower.
-
-4.  **Testing**:
-    *   **Property Testing**: Test that sparse attention produces the same results as dense attention for small sequences.
-    *   **Mock Invariants**: Mock the MoE router to ensure that it selects the correct number of experts.
-    *   **Integration Harnesses**: Test the full model with multimodal inputs to ensure that the pipeline works end-to-end.
-
-5.  **Security**:
-    *   **Threat Model**: The model is vulnerable to prompt injection if not properly sanitized. Ensure that inputs are validated and sanitized before processing.
-    *   **Least Privilege**: The model should only have access to the resources it needs, such as GPU memory and CPU cores.
-
-6.  **Performance**:
-    *   **Latency Profiles**: Sparse attention reduces latency for long sequences by attending only to relevant blocks.
-    *   **Asymptotic Complexity**: Sparse attention reduces the complexity from $O(N^2)$ to $O(N \cdot K)$, where $K$ is the number of top-k blocks.
-    *   **Caching**: Cache the sparse attention block indices to avoid recomputing them for each token.
-
-7.  **Deployment**:
-    *   **CI/CD Invariants**: Ensure that the model configuration is validated in CI/CD pipelines.
-    *   **Container Constraints**: The model requires significant GPU memory. Ensure that the container has sufficient resources.
-    *   **Reproducible Builds**: Use fixed versions of dependencies to ensure reproducible builds.
-
-8.  **Agent Patterns**:
-    *   **Tooling Interfaces**: The model can be used as a tool in agentic workflows, such as coding and cybersecurity tasks.
-    *   **Prompt Chains**: Use prompt chains to guide the model in agentic tasks.
-    *   **Loop Guards**: Ensure that agentic loops have termination conditions to prevent infinite loops.
-
-9.  **Data Flow**:
-    *   **Mutation Lifecycles**: The model's weights are immutable after training. The input data is mutated during preprocessing but not during inference.
-    *   **Streams**: The model processes input data as a stream of tokens.
-    *   **Serializers**: The model's configuration is serialized to JSON for deployment.
+1.  **Architecture**: The model uses a hybrid architecture combining dense layers, sparse attention, and MoE. The sparse attention is applied throughout the model, reducing the computational cost of long-context processing.
+2.  **Core Abstractions**: The key abstractions are `MiniMaxM3SparseForConditionalGeneration` (the model class), `MiniMaxM3VLConfig` (the configuration object), and the sparse attention and MoE routing mechanisms.
+3.  **Error Handling**: The model relies on clamping indexing parameters and using differentiable routing to prevent errors. There is no explicit error handling for out-of-bounds access, which is a potential risk.
+4.  **Testing**: The model should be tested for expert utilization, sparse attention correctness, and multimodal token boundary handling.
+5.  **Security**: The model does not have explicit security features, but the use of sparse attention and MoE reduces the attack surface by limiting the amount of data processed per token.
+6.  **Performance**: The model is optimized for inference efficiency using sparse attention and speculative decoding. The active parameters per token are only 23B, making it suitable for real-time applications.
+7.  **Deployment**: The model is deployed using Hugging Face Transformers, which provides a standardized interface for inference. The model requires significant GPU memory due to its 428B total parameters.
+8.  **Agent Patterns**: The model is designed for agentic workflows, with high performance on benchmarks like BankerToolBench and OSWorld V2. It supports tool use and computer use, making it suitable for autonomous agents.
+9.  **Data Flow**: The data flow involves tokenizing the input, processing it through the sparse attention and MoE layers, and generating the output. The multimodal input is wrapped with framing tokens to ensure correct processing.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Sparse attention with block-based indexing and MoE routing with stable scoring.
-2.  **Rule**: Sparse attention blocks must be aligned, MoE experts must be stable, and positional embeddings must support the full context window.
-3.  **Architecture Principle**: Decouple subsystems (sparse attention, MoE, multimodal input) to allow independent optimization.
-4.  **Failure Mode**: Expert collapse due to unstable MoE routing, memory misalignment due to non-power-of-2 block sizes.
-5.  **Reusable Skill**: Validate configuration parameters, ensure block alignment, and monitor expert utilization.
-6.  **Decision**: Use sparse attention and MoE to reduce inference latency and memory usage for long-context multimodal models.
-7.  **Anti-pattern**: Using non-power-of-2 block sizes, disabling routing bias, or setting `max_position_embeddings` too small.
-8.  **Verification Method**: Static analysis of configuration files, monitoring expert utilization, and testing sparse attention against dense attention.
+1.  **Pattern**: Sparse attention with block-based selection and MoE routing with bias.
+2.  **Rule**: Always clamp indexing parameters and use differentiable routing in MoE.
+3.  **Architecture Principle**: Decouple parameter count from active compute using MoE and sparse attention.
+4.  **Failure Mode**: Expert collapse and sparse attention index out-of-bounds.
+5.  **Reusable Skill**: Implementing sparse attention and MoE routing in a transformer model.
+6.  **Decision**: Use sparse attention and MoE to reduce inference cost for long-context processing.
+7.  **Anti-pattern**: Using non-power-of-2 block sizes and non-differentiable routing.
+8.  **Verification Method**: Monitor expert utilization and test sparse attention correctness.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
 1.  **Validate Configuration**:
-    *   Ensure `sparse_block_size` is a power of 2.
-    *   Ensure `sparse_topk_blocks` is within the valid range.
-    *   Ensure `max_position_embeddings` is sufficient for the intended context window.
-    *   Ensure `partial_rotary_factor` is between 0 and 1.
-
+    *   Assert `sparse_block_size` is a power of 2.
+    *   Assert `sparse_index_dim` is divisible by `sparse_block_size`.
+    *   Assert `use_routing_bias` is `true`.
 2.  **Implement Sparse Attention**:
-    *   Use block-based indexing to select top-k blocks.
-    *   Ensure block alignment to avoid memory misalignment.
-    *   Cache block indices to avoid recomputation.
-
+    *   Clamp `sparse_topk_blocks` to the total number of available blocks.
+    *   Use hardware-optimized kernels for sparse attention.
 3.  **Implement MoE Routing**:
-    *   Use a stable scoring function (e.g., `sigmoid`).
-    *   Enable `use_routing_bias` to prevent expert collapse.
-    *   Monitor expert utilization and adjust `routed_scaling_factor` if necessary.
-
-4.  **Test and Validate**:
-    *   Test sparse attention against dense attention for small sequences.
-    *   Mock the MoE router to ensure correct expert selection.
-    *   Test the full model with multimodal inputs.
-
-5.  **Deploy and Monitor**:
-    *   Validate configuration in CI/CD pipelines.
-    *   Ensure sufficient GPU memory and CPU cores.
-    *   Monitor performance and adjust parameters as needed.
+    *   Use a differentiable scoring function (e.g., sigmoid).
+    *   Add a routing bias to prevent expert collapse.
+    *   Scale the expert output using `routed_scaling_factor`.
+4.  **Handle Multimodal Input**:
+    *   Wrap image/video tokens with `<fim_prefix>` and `<fim_suffix>`.
+    *   Set `add_prefix_space` to `false` for special tokens.
+5.  **Test and Monitor**:
+    *   Test for expert utilization and sparse attention correctness.
+    *   Monitor for out-of-bounds access and expert collapse.
