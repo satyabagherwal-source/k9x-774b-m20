@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T02:35:28.037Z",
-    "lastVerified": "2026-10-31T02:35:28.037Z",
+    "lastChecked": "2026-10-31T02:44:20.834Z",
+    "lastVerified": "2026-10-31T02:44:20.834Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -203,14 +203,14 @@
     "officialUrl": "https://github.com/bitnami/sealed-secrets",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T07:03:32.198Z",
-    "lastVerified": "2026-10-30T07:03:32.198Z",
+    "lastChecked": "2026-10-31T02:44:10.002Z",
+    "lastVerified": "2026-10-31T02:44:10.002Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitnami-sealed-secrets",
-    "contentHash": "41e6c1e6e657ddc183ffb48e2cac73acbf9bb66f2a0f265e48bc3b4c5ef5a2df",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 0,
+    "contentHash": "f211dcaed648c3e736ad95ea04d9b3a1d26acc9b507bfef92f18b066343d0301",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -425,8 +425,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T02:14:28.618Z",
-    "lastVerified": "2026-10-31T02:14:28.618Z",
+    "lastChecked": "2026-10-31T02:44:14.443Z",
+    "lastVerified": "2026-10-31T02:44:14.443Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1388,9 +1388,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-10-30T23:05:21.223Z",
+    "lastChecked": "2026-10-31T02:44:09.404Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-10-30T23:05:21.223Z"
+    "lastVerified": "2026-10-31T02:44:09.404Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -2356,9 +2356,9 @@
   "wix-react-native-navigation": {
     "name": "react-native-navigation",
     "officialUrl": "https://github.com/wix/react-native-navigation",
-    "lastChecked": "2026-10-28T06:18:26.646Z",
+    "lastChecked": "2026-10-31T02:44:04.442Z",
     "revisionIdentifier": "3cd6bfea",
-    "lastVerified": "2026-10-28T06:18:26.646Z"
+    "lastVerified": "2026-10-31T02:44:04.442Z"
   },
   "alexellis-k3sup": {
     "name": "k3sup",
@@ -2843,9 +2843,9 @@
   "asciinema-asciinema": {
     "name": "asciinema",
     "officialUrl": "https://github.com/asciinema/asciinema",
-    "lastChecked": "2026-10-29T23:41:21.405Z",
+    "lastChecked": "2026-10-31T02:43:59.421Z",
     "revisionIdentifier": "cf66ef4c",
-    "lastVerified": "2026-10-29T23:41:21.405Z"
+    "lastVerified": "2026-10-31T02:43:59.421Z"
   },
   "hf-xiaomimimo-mimo-v2.6-pro-rl": {
     "name": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -6242,12 +6242,12 @@
     "officialUrl": "https://github.com/ytsaurus/ytsaurus",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-30T06:23:31.889Z",
-    "lastVerified": "2026-10-30T06:23:31.889Z",
+    "lastChecked": "2026-10-31T02:44:17.248Z",
+    "lastVerified": "2026-10-31T02:44:17.248Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "d85f7d0d7335daf8180186d998e0b32bd1fca4571832e720871dea8a21813634",
+    "contentHash": "8777a89196e6f9fc2d615bbc0d0ab0dd4c81f007b1f0007ba9634b0b10ccceaf",
     "promotedRulesCount": 1,
     "recentFixesCount": 9,
     "closedIssuesCount": 2,
@@ -11965,6 +11965,23 @@
     "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
     "contentHash": "ea5e035549e1783c510e36c44e6cb0a13712b2617db427613a67c6f512780a66",
     "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-comfy-org-fibo-2.0": {
+    "name": "Comfy-Org/Fibo-2.0",
+    "officialUrl": "https://huggingface.co/Comfy-Org/Fibo-2.0",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-31T02:44:01.959Z",
+    "lastVerified": "2026-10-31T02:44:01.959Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-comfy-org-fibo-2-0",
+    "contentHash": "c0b6ab4f0d2e8c3deed016bea94795661c87ccf74e8bde417cb6f5551d6aa353",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

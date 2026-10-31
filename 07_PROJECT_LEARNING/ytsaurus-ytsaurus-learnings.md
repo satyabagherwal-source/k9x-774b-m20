@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `551d84e7`  
+> **Source Version**: `a88390c6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T06:23:31.896Z  
+> **Timestamp**: 2026-10-31T02:44:17.632Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T06:23:31.889Z  
+> **Harvest Timestamp**: 2026-10-31T02:44:17.248Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YTsaurus is a scalable and fault-tolerant open-source big data platform.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2326 stars
+- **Stars / Engagement**: 2327 stars
 
 ---
 
@@ -1198,295 +1198,219 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `34e9eea9` (2026-10-29)
-**Commit Message**: Fix unlock remove race
-commit_hash:6ed7c31e9012b5ffcdc2a7ea28706120d0398434
+### Incident Patch 1: `6d6f2b83` (2026-10-30)
+**Commit Message**: Fail operation instead of crashing controller on unavailable versioned input chunk
 
-**File**: `yt/yt/server/master/cypress_server/cypress_manager.cpp` (modified, +6/-4)
+With unavailable_chunk_tactics=skip, an input chunk that became unavailable at runtime made OnInputChunkUnavailable call GetSingleUnversionedChunk() on every data slice of its stripes. For dynamic table input those slices are versioned, so YT_VERIFY(IsTrivial()) fired and the controller crashed. The surrounding try/catch was dead: the assertion does not throw std::exception.
+
+Now a non-trivial slice fails the operation with a ChunkUnavailable error, as the catch intended.
+
+* Changelog entry
+Type: fix
+Component: controller-agent
+
+Fail the operation instead of crashing the controller when an input chunk of a dynamic table becomes unavailable with unavailable_chunk_tactics=skip.
+commit_hash:8b39df1e64cb435d6d24102ed1bb86ae414b8e15
+
+**File**: `yt/yt/server/controller_agent/controllers/input_manager.cpp` (modified, +8/-7)
 ```diff
-@@ -2047,6 +2047,12 @@ class TCypressManager
-             }
-         }
+@@ -1368,15 +1368,16 @@ void TInputManager::OnInputChunkUnavailable(TChunkId chunkId, TInputChunkDescrip
+                     std::remove_if(
+                         dataSlices.begin(),
+                         dataSlices.end(),
+-                        [&] (TDataSlicePtr slice) {
+-                            try {
++                        [&] (const TDataSlicePtr& slice) {
++                            if (slice->IsTrivial()) {
+                                 return chunkId == slice->GetSingleUnversionedChunk()->GetChunkId();
+-                            } catch (const std::exception& ex) {
+-                                //FIXME(savrus) allow data slices to be unavailable.
+-                                Host_->OnOperationFailed(TError(NChunkClient::EErrorCode::ChunkUnavailable, "Dynamic table chunk became unavailable")
+-                                    .With(ex));
+-                                return true;
+                             }
++                            //FIXME(savrus) allow data slices to be unavailable.
++                            Host_->OnOperationFailed(TError(
++                                NChunkClient::EErrorCode::ChunkUnavailable,
++                                "Dynamic table chunk %v became unavailable",
++                                chunkId));
++                            return true;
+                         }),
+                     dataSlices.end());
  
-+        // Local unbranching may release the last reference and post foreign object removal.
-+        // Post the foreign unlock first so that the foreign snapshot reference is released before removal.
-+        if (trunkNode->IsExternal()) {
-+            PostUnlockForeignNodeRequest(trunkNode, transaction, explicitOnly);
-+        }
-+
-         // Again, the order is crucial: first unbranch (or update) nodes, then destroy locks.
- 
-         if (strongestLockModeBefore != strongestLockModeAfter) {
-@@ -2055,10 +2061,6 @@ class TCypressManager
- 
-         RemoveTransactionNodeLocks(trunkNode, transaction, explicitOnly);
- 
--        if (trunkNode->IsExternal()) {
--            PostUnlockForeignNodeRequest(trunkNode, transaction, explicitOnly);
--        }
--
-         YT_TLOG_DEBUG("Node explicitly unlocked")
-             .With("NodeId", trunkNode->GetId())
-             .With("TransactionId", transaction->GetId());
 ```
 
-**File**: `yt/yt/tests/integration/cypress/test_cypress_acls.py` (modified, +0/-6)
+**File**: `yt/yt/tests/integration/dynamic_tables/test_map_reduce_over_dyntables.py` (modified, +44/-0)
 ```diff
-@@ -1545,12 +1545,6 @@ def do(input_path, expected_row, expect_alert):
-     @authors("shakurov", "danilalexeev")
-     @pytest.mark.parametrize("removal", ["abort", "unlock"])
-     def test_orphaned_node(self, removal):
--        if removal == "unlock":
--            # Using unlock() on snapshot branch leads to
--            # "Non-zero reference counter after object removal" alert.
--            # TODO(kvk1920): investigate it.
--            pytest.skip()
--
-         create_user("u")
+@@ -1223,6 +1223,50 @@ def test_index_deletions_preserved(self):
+             mode="ordered")
+         assert select_rows("value from [//tmp/index_table]") == [{"value": "boo"}]
  
-         create(
++    @authors("apollo1321")
++    def test_unavailable_versioned_chunk_skip_tactics(self):
++        sync_create_cells(1)
++
++        create_dynamic_table(
++            "//tmp/t_input",
++            schema=[
++                {"name": "k", "type": "int64", "sort_order": "ascending"},
++                {"name": "v", "type": "string"},
++            ],
++            replication_factor=1)
++        sync_mount_table("//tmp/t_input")
++        insert_rows("//tmp/t_input", [{"k": 1, "v": "a"}])
++        sync_unmount_table("//tmp/t_input")
++
++        chunk_id = get_singular_chunk_id("//tmp/t_input")
++        replicas = get(f"#{chunk_id}/@stored_replicas")
++        assert len(replicas) == 1
++        replica = str(replicas[0])
++
++        op = merge(
++            in_="//tmp/t_input",
++            out="<create=%true>//tmp/t_output",
++            mode="sorted",
++            track=False,
++            spec={
++                "suspend_operation_after_materialization": True,
++                "unavailable_chunk_strategy": "skip",
++                "unavailable_chunk_tactics": "skip",
++                "job_io": {
++                    "table_reader": {"retry_count": 1, "pass_count": 1},
++                },
++            })
++
++        wait(lambda: get(op.get_path() + "/@suspended"))
++        set_node_banned(replica, True)
++        try:
++            wait(lambda: get(f"#{chunk_id}/@replication_status/default/lost"))
++            op.resume()
++            with raises_yt_error("Dynamic table chunk .* became unavailable"):
++                op.track()
++        finally:
++            set_node_banned(replica, False)
++
+ 
+ ##################################################################
+ 
 ```
 
 ---
 
-### Incident Patch 2: `551d84e7` (2026-10-30)
-**Commit Message**: YT-30203: Fix group by
-commit_hash:417a6237f287bf608d70f2226c58368bb1260a33
+### Incident Patch 2: `897c4dfb` (2026-10-30)
+**Commit Message**: YQL-20905: Fix MATCH_RECOGNIZE crash with DeriveColumnOrder
 
-**File**: `yt/yt/library/query/engine/folding_profiler.cpp` (modified, +1/-0)
+Исправлено падение 15 тестов `MATCH_RECOGNIZE` в `AutoYqlSelect` при подстановке нетипизированной лямбды: проверяется наличие аннотации типа `measures` в `MatchRecognizeParams`.
+
+- [test_type-streaming.yql](https://nda.ya.ru/t/8ZgofA6y7ub8a6)
+- [alerts_without_order-streaming.yql](https://nda.ya.ru/t/RozT_BEq7ub8ei)
+- [alerts-streaming.yql](https://nda.ya.ru/t/fVG7LxcB7ub8fC)
+- [alerts_without_order.yql](https://nda.ya.ru/t/usjBFdNF7ub8fN)
+- [simple_paritioning-streaming.yql](https://nda.ya.ru/t/HQNSOTQi7ub8fY)
+- [simple_paritioning.yql](https://nda.ya.ru/t/oHe_0SKg7ub8fh)
+- [test_type.yql](https://nda.ya.ru/t/qTfr4zQ87ub8fx)
+- [alerts.yql](https://nda.ya.ru/t/Ltnx5WZ67ub8gA)
+- [after_match_skip_past_last_row.yql](https://nda.ya.ru/t/fgytQkZb7ub8gT)
+- [drop_out_of_order.yql](https://nda.ya.ru/t/hvvc_FjC7ub8gi)
+- [greedy_quantifiers.yql](https://nda.ya.ru/t/NHBHugxq7ub8gu)
+- [permute.yql](https://nda.ya.ru/t/P2z10qrB7ub8h2)
+- [alerts_many_order.yql](https://nda.ya.ru/t/6IjLDe6W7ub8h5)
+- [all_rows_per_match.yql](https://nda.ya.ru/t/gjZoKlGJ7ub8hL)
+- [measures_aggregate.yql](https://nda.ya.ru/t/4pDH-VLJ7ub8hT)
+commit_hash:bb
+
+**File**: `yql/essentials/core/type_ann/type_ann_match_recognize.cpp` (modified, +7/-0)
 ```diff
-@@ -2255,6 +2255,7 @@ void TQueryProfiler::Profile(
-                 for (const auto& item : orderClause->OrderItems) {
-                     orderExprIds.push_back(
-                         TExpressionProfiler::Profile(item.Expression, sourceSchema, &orderExprFragments));
-+                    Fold(orderExprIds.back());
-                     Fold(item.Descending);
-                     isDesc.push_back(item.Descending);
-                     orderColumnTypes.push_back(item.Expression->GetWireType());
+@@ -249,6 +249,13 @@ IGraphTransformer::TStatus MatchRecognizeParamsWrapper(const TExprNode::TPtr& in
+         return IGraphTransformer::TStatus::Error;
+     }
+     const auto measures = input->Child(0);
++    if (!measures->GetTypeAnn()) {
++        YQL_ENSURE(measures->Type() == TExprNode::Lambda);
++        ctx.Expr.AddError(TIssue(
++            ctx.Expr.GetPosition(measures->Pos()),
++            "Expected MatchRecognizeMeasures, but got lambda"));
++        return IGraphTransformer::TStatus::Error;
++    }
+     input->SetTypeAnn(measures->GetTypeAnn());
+     return IGraphTransformer::TStatus::Ok;
+ }
 ```
 
-**File**: `yt/yt/library/query/unittests/folding_profiler_ut.cpp` (modified, +181/-0)
+---
+
+### Incident Patch 3: `2e6faec7` (2026-10-30)
+**Commit Message**: YQL-20557: Fix pre-epoch date table initialization
+
+#### Fix pre-epoch date table initialization ✎
+
+Corrected the initial `dayOfYear` and `weekOfYear` values in the lookup table for the year preceding the epoch (1969). The previous incorrect values caused wrong `dayOfYear` and `weekOfYear` results when splitting datetime values that fall before 1970-01-01.
+
+<a href="https://nda.ya.ru/t/qa0kX64r7DqvtN"><font size="2">Autodescription by Yandex Code Assistant</font></a>
+commit_hash:7ec9c6e243ce8403d68911988490c1bc3733cfe9
+
+**File**: `yql/essentials/minikql/mkql_type_ops.cpp` (modified, +2/-2)
 ```diff
-@@ -803,6 +803,187 @@ TEST_P(TOrderByCacheTest, OrderItemCount)
-         {"a=1;b=2", "a=2;b=1"});
+@@ -794,9 +794,9 @@ class TDateTable {
+         ui32 prevYear = NUdf::MIN_YEAR - 1;
+         YearsOffsets_[0] = 0;
+ 
+-        ui32 dayOfYear = 365;
++        ui32 dayOfYear = 364;
+         ui32 dayOfWeek = 2;
+-        ui32 weekOfYear = 52;
++        ui32 weekOfYear = 53;
+         ui32 weekOfYearIso8601 = 1;
+ 
+         Months_[0] = 0;
+```
+
+**File**: `yql/essentials/minikql/mkql_type_ops_ut.cpp` (modified, +28/-0)
+```diff
+@@ -208,6 +208,34 @@ Y_UNIT_TEST(SplitMakeTzDatetime32vs64) {
+     RunTestForAllTimezones(TestSplitMakeTzDatetime32vs64, datetimeStep);
  }
  
-+TEST_P(TOrderByCacheTest, CombinedGroupByReusedExpressionRoot)
-+{
-+    CheckCacheReuse(
-+        {
-+            .Query = "a, b from `//t` group by a, b order by a+b, a limit 1",
-+            .ExpectedRows = {"a=1;b=2"},
-+        },
-+        {
-+            .Query = "a, b from `//t` group by a, b order by a+b, b limit 1",
-+            .ExpectedRows = {"a=2;b=1"},
-+        },
-+        MakeInputSplit(),
-+        {"a=1;b=2", "a=2;b=1"});
++Y_UNIT_TEST(SplitTzDatetime32vs64Pre1970) {
++    const ui16 tzId = GetTimezoneId("Etc/GMT+1");
++    ui32 year_n, month_n, day_n, hour_n, minute_n, second_n;
++    ui32 dayOfYear_n, weekOfYear_n, weekOfYearIso8601_n, dayOfWeek_n;
++    UNIT_ASSERT(SplitTzDatetime(0u, year_n, month_n, day_n, hour_n, minute_n, second_n,
++                                dayOfYear_n, weekOfYear_n, weekOfYearIso8601_n, dayOfWeek_n, tzId));
++    UNIT_ASSERT_VALUES_EQUAL(1969u, year_n);
++    UNIT_ASSERT_VALUES_EQUAL(12u, month_n);
++    UNIT_ASSERT_VALUES_EQUAL(31u, day_n);
++    UNIT_ASSERT_VALUES_EQUAL(365u, dayOfYear_n);
++    UNIT_ASSERT_VALUES_EQUAL(53u, weekOfYear_n);
++    UNIT_ASSERT_VALUES_EQUAL(1u, weekOfYearIso8601_n);
++    UNIT_ASSERT_VALUES_EQUAL(3u, dayOfWeek_n);
++
++    i32 year_w;
++    ui32 month_w, day_w, hour_w, minute_w, second_w;
++    ui32 dayOfYear_w, weekOfYear_w, weekOfYearIso8601_w, dayOfWeek_w;
++    UNIT_ASSERT(SplitTzDatetime64(0LL, year_w, month_w, day_w, hour_w, minute_w, second_w,
++                                  dayOfYear_w, weekOfYear_w, weekOfYearIso8601_w, dayOfWeek_w, tzId));
++    UNIT_ASSERT_VALUES_EQUAL(year_n, static_cast<ui32>(year_w));
++    UNIT_ASSERT_VALUES_EQUAL(month_n, month_w);
++    UNIT_ASSERT_VALUES_EQUAL(day_n, day_w);
++    UNIT_ASSERT_VALUES_EQUAL(dayOfYear_n, dayOfYear_w);
++    UNIT_ASSERT_VALUES_EQUAL(weekOfYear_n, weekOfYear_w);
++    UNIT_ASSERT_VALUES_EQUAL(weekOfYearIso8601_n, weekOfYearIso8601_w);
++    UNIT_ASSERT_VALUES_EQUAL(dayOfWeek_n, dayOfWeek_w);
 +}
 +
-+TEST_P(TOrderByCacheTest, CombinedGroupByExpressionRootOrder)
-+{
-+    CheckCacheReuse(
-+        {
-+            .Query = "a, b from `//t` group by a, b order by a+b, a, b limit 2",
-+            .ExpectedRows = {"a=1;b=2", "a=2;b=1"},
-+        },
-+        {
-+            .Query = "a, b from `//t` group by a, b order by a+b, b, a limit 2",
-+            .ExpectedRows = {"a=2;b=1", "a=1;b=2"},
-+        },
-+        MakeInputSplit(),
-+        {"a=1;b=2", "a=2;b=1"});
-+}
-+
-+TEST_P(TOrderByCacheTest, CombinedGroupByDescendingReusedExpressionRoot)
-+{
-+    CheckCacheReuse(
-+        {
-+            .Query = "a, b from `//t` group by a, b order by a+b desc, a desc limit 1",
-+            .ExpectedRows = {"a=2;b=1"},
-+        },
-+        {
-+            .Query = "a, b from `//t` group by a, b order by a+b desc, b desc limit 1",
-+            .ExpectedRows = {"a=1;b=2"},
-+        },
-+        MakeInputSplit(),
-+        {"a=1;b=2", "a=2;b=1"});
-+}
-+
-+TEST_P(TOrderByCacheTest, CombinedGroupByOffset)
-+{
-+    CheckCacheReuse(
-+        {
-+            .Query = "a, b from `//t` group by a, b order by a+b, a offset 1 limit 1",
-+            .ExpectedRows = {"a=2;b=1"},
-+        },
-+        {
-+            .Query = "a, b from `//t` group by a, b order by a+b, b offset 1 limit 1",
-+            .ExpectedRows = {"a=1;b=2"},
-+        },
-+        MakeInputSplit(),
-+        {"a=1;b=2", "a=2;b=1"});
-+}
-+
-+TEST_P(TOrderByCacheTest, CombinedGroupByStringExpressionRoot)
-+{
-+    CheckCacheReuse(
-+        {
-+            .Query = "a, b from `//t` group by a, b order by concat(a,b), a limit 1",
-+            .ExpectedRows = {"a=a;b=aa"},
-+        },
-+        {
-+            .Query = "a, b from `//t` group by a, b order by concat(a,b), b limit 1",
-+            .ExpectedRows = {"a=aa;b=a"},
-+        },
-+        MakeInputSplit(EValueType::String),
-+        {"a=a;b=aa", "a=aa;b=a"});
-+}
-+
-+TEST_P(TOrderByCacheTest, CombinedGroupByNullableExpressionRoot)
-+{
-+    CheckCacheReuse(
-+        {
-+            .Query = "a, b from `//t` group by a, b order by a+b, a limit 1",
-+            .ExpectedRows = {"a=#;b=1"},
-+        },
-+        {
-+            .Query = "a, b from `//t` group by a, b order by a+b, b limit 1",
-+            .ExpectedRows = {"a=2;b=#"},
-+        },
-+        MakeInputSplit(),
-+        {"a=#;b=1", "a=2;b=#"});
-+}
-+
-+TEST_P(TOrderByCacheTest, CombinedGroupByReusedCompoundExpressionRoot)
-+{
-+    CheckCacheReuse(
-+        {
-+            .Query = "a, b from `//t` group by a, b order by (a+b)*(a-b), a+b limit 1",
-+            .ExpectedRows = {"a=3;b=-1"},
-+        },
-+        {
-+            .Query = "a, b from `//t` group by a, b order by (a+b)*(a-b), a-b limit 1",
-+            .ExpectedRows = {"a=3;b=1"},
-+        },
-+        MakeInputSplit(),
-+        {"a=3;b=1", "a=3;b=-1"});
-+}
-+
-+TEST_P(TOrderByCacheTest, CombinedGroupByComputedKeys)
-+{
-+    CheckCacheReuse(
-+        {
-+            .Query = "x, y from `//t` group by a+1 as x, b-1 as y order by x+y, x limit 1",
-+            .ExpectedRows = {"x=1;y=2"},
-+        },
-+        {
-+            .Query = "x, y from `//t` group by a+1 as x, b-1 as y order by x+y, y limit 1",
-+            .ExpectedRows = {"x=2;y=1"},
-+        },
-+        MakeInputSplit(),
-+        {"a=0;b=3", "a=1;b=2"});
-+}
-+
-+TEST_P(TOrderByCacheTest, CombinedGroupByAggregatePayload)
-+{
-+    CheckCacheReuse(
-+        {
-+            .Query = "a, b, sum(v) as s from `//t` group by a, b order by a+b, a limit 1",
-+            .ExpectedRows = {"a=1;b=2;s=30"},
-+        },
-+        {
-+            .Query = "a, b, sum(v) as s from `//t` group by a, b order by a+b, b limit 1",
-+            .ExpectedRows = {"a=2;b=1;s=7"},
-+        },
-+        MakeSplit({{"a", EValueType::Int64}, {"b", EValueType::Int64}, {"v", EValueType::Int64}}),
-+        {"a=1;b=2;v=10", "a=2;b=1;v=3", "a=1;b=2;v=20", "a=2;b=1;v=4"});
-+}
-+
-+TEST_P(TOrderByCacheTest, CombinedGroupByDifferentDirections)
-+{
-+    CheckCacheReuse(
-+        {
-+            .Query = "a, b from `//t` group by a, b order by a+b, a limit 1",
-+            .ExpectedRows = {"a=1;b=2"},
-+        },
-+        {
-+            .Query = "a, b from `//t` group by a, b order by a+b, a desc limit 1",
-+            .ExpectedRows = {"a=2;b=1"},
-+        },
-+        MakeInputSplit(),
-+        {"a=1;b=2", "a=2;b=1"});
-+}
-+
-+TEST_P(TOrderByCacheTest, CombinedGroupByLiteralValues)
-+{
-+    CheckCacheReuse(
-+        {
-+            .Query = "a, b from `//t` group by a, b order by abs(a-1), b l
-```
-
----
-
-### Incident Patch 3: `7e077119` (2026-10-30)
-**Commit Message**: Build ESP-IDF 6.1 for ESP32-P4 with ya (3/3)
-
-Complete the ESP-IDF 6.1 import after source PRs [16446650](https://nda.ya.ru/t/FjiyOVw57vVfDQ and [16701564](https://nda.ya.ru/t/zBIfzMeF7vVfDR (merged into trunk).
-
-Register the generic Espressif GCC 15.2 toolchain using Sandbox resources, with scoped ESP32-P4 ABI and runtime settings.
-
-Add the remaining pinned ESP-IDF sources, an acyclic graph for the required standard components, and version-specific Kconfig, linker, partition, NVS and image tools.
-
-SDK-only application, feature and bootloader fixtures exercise component compilation and firmware linking; host-tool tests cover configuration and image generation.
-
-Keeps the existing ESP-IDF 5.5 C5/H2 paths isolated.
-commit_hash:337b88ef14deae6f10e33fca3016cdb76f3861af
-
-**File**: `build/ymake_conf.py` (modified, +10/-1)
-```diff
-@@ -121,7 +121,8 @@ def __init__(self, name, os, arch):
-         self.is_rv32imc_zicsr = self.arch in ('riscv32_imc_zicsr',)
-         self.is_rv32imc_zicsr_zifencei = self.arch in ('riscv32_imc_zicsr_zifencei',)
- 
--        self.is_riscv32 = self.is_rv32imc or self.is_rv32imc_zicsr or self.is_rv32imc_zicsr_zifencei
-+        self.is_riscv32_esp32p4 = self.arch == 'riscv32_esp32p4'
-+        self.is_riscv32 = self.is_rv32imc or self.is_rv32imc_zicsr or self.is_rv32imc_zicsr_zifencei or self.is_riscv32_esp32p4
-         self.is_riscv64 = self.arch == 'riscv64_aw'
-         self.is_riscv64_aw = self.arch == 'riscv64_aw'
- 
-@@ -266,6 +267,7 @@ def arch_variables(self):
-             (self.is_power8le, 'ARCH_POWER8LE'),
-             (self.is_power9le, 'ARCH_POWER9LE'),
-             (self.is_riscv32, 'ARCH_RISCV32'),
-+            (self.is_riscv32_esp32p4, 'ARCH_RISCV32_ESP32P4'),
-             (self.is_riscv64, 'ARCH_RISCV64'),
-             (self.is_riscv64_aw, 'ARCH_RISCV64_AW'),
-             (self.is_xtensa_hifi4, 'ARCH_XTENSA_HIFI4'),
-@@ -1351,6 +1353,13 @@ def get_os_sdk(target):
-             self.c_flags_platform.append('-march=armv8-a -mthumb -mabi=aapcs -mfpu=neon-fp-armv8 -mfloat-abi=hard')
-             self.setup_zephyr_armv7()
- 
-+        if target.is_riscv32_esp32p4:
-+            self.c_flags_platform.extend([
-+                '-march=rv32imafc_zicsr_zifencei_zaamo_zalrsc_xesploop_xespv',
-+                '-mabi=ilp32f',
-+                '-mtune=esp-base',
-+            ])
-+
-         if target.is_rv32imc:
-             self.c_flags_platform.append('-march=rv32imc')
- 
+ Y_UNIT_TEST(MakeTzDateRejectsInvalidDate) {
+     ui16 value = 123;
+     UNIT_ASSERT(!MakeTzDate(1970, 0, 1, value, 0));
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #1885** (closed): Run cross-cluster MR operations by ytsaurus Go SDK (@sagishev)
 - **PR #1884** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 - **PR #1883** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
+- **PR #1882** (closed): Fix group by alias (@Tony-Romanov)
 - **PR #1878** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 - **PR #1877** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
-- **PR #1873** (closed): Fix "yt execute" for commands without input data commit_hash:5378810e98c0c97bc9703c2b2319f52f5ef9bde5 (@koct9i)
 
 ---
 
@@ -1506,36 +1430,41 @@ commit_hash:337b88ef14deae6f10e33fca3016cdb76f3861af
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. unlock remove race
+## X. Fail operation instead of crashing controller on unavailable versioned input chu
 
 **RULE**:
-When implementing operations in `yt/yt/server/master/cypress_server/cypress_manager.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/yt/server/controller_agent/controllers/input_manager.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `34e9eea9`: unlock remove race. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6d6f2b83`: Fail operation instead of crashing controller on unavailable versioned input chunk. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/server/master/cypress_server/cypress_manager.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/server/controller_agent/controllers/input_manager.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        // Local unbranching may release the last reference and post foreign object removal.
-        // Post the foreign unlock first so that the foreign snapshot reference is released before removal.
-        if (trunkNode->IsExternal()) {
-            PostUnlockForeignNodeRequest(trunkNode, transaction, explicitOnly);
-        }
-
+                        [&] (const TDataSlicePtr& slice) {
+                            if (slice->IsTrivial()) {
+                            //FIXME(savrus) allow data slices to be unavailable.
+                            Host_->OnOperationFailed(TError(
+                                NChunkClient::EErrorCode::ChunkUnavailable,
+                                "Dynamic table chunk %v became unavailable",
+                                chunkId));
+                            return true;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-        if (trunkNode->IsExternal()) {
-            PostUnlockForeignNodeRequest(trunkNode, transaction, explicitOnly);
-        }
-
+                        [&] (TDataSlicePtr slice) {
+                            try {
+                            } catch (const std::exception& ex) {
+                                //FIXME(savrus) allow data slices to be unavailable.
+                                Host_->OnOperationFailed(TError(NChunkClient::EErrorCode::ChunkUnavailable, "Dynamic table chunk became unavailable")
+                                    .With(ex));
+                                return true;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `34e9eea9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6d6f2b83` are properly handled with clean fallback behavior.

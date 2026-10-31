@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T02:35:25.437Z",
+  "last_updated": "2026-10-31T02:44:18.198Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4822,8 +4822,8 @@
       "slug": "bitnami-sealed-secrets",
       "platform": "github",
       "source_url": "https://github.com/bitnami/sealed-secrets",
-      "source_version": "c22f5839",
-      "content_hash": "41e6c1e6e657ddc183ffb48e2cac73acbf9bb66f2a0f265e48bc3b4c5ef5a2df",
+      "source_version": "53625dfe",
+      "content_hash": "f211dcaed648c3e736ad95ea04d9b3a1d26acc9b507bfef92f18b066343d0301",
       "dossier_path": "07_PROJECT_LEARNING/bitnami-sealed-secrets-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitnami-sealed-secrets-learnings.md",
       "promoted_rules": [
@@ -4851,6 +4851,11 @@
           "number": 5646,
           "title": "Template Engine Execution Hardening & Environment Isolation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6025,
+          "title": "docs: fix typos in chart notes, values and docs (#2088)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4858,7 +4863,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T07:05:28.707Z",
+      "verified_at": "2026-10-31T02:44:11.366Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58474,8 +58479,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "551d84e7",
-      "content_hash": "d85f7d0d7335daf8180186d998e0b32bd1fca4571832e720871dea8a21813634",
+      "source_version": "a88390c6",
+      "content_hash": "8777a89196e6f9fc2d615bbc0d0ab0dd4c81f007b1f0007ba9634b0b10ccceaf",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -58533,6 +58538,11 @@
           "number": 5628,
           "title": "unlock remove race",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6028,
+          "title": "Fail operation instead of crashing controller on unavailable versioned input chu",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58540,7 +58550,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T06:23:32.416Z",
+      "verified_at": "2026-10-31T02:44:18.178Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -125665,7 +125675,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Fibo-2.0",
       "source_version": "hf-comfy-org-fibo-2.0",
-      "content_hash": "d4b53c752516398eec04a3dddf124186f58ae4ae929df1d368e59498f02e9ad0",
+      "content_hash": "c0b6ab4f0d2e8c3deed016bea94795661c87ccf74e8bde417cb6f5551d6aa353",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md",
       "promoted_rules": [
@@ -125693,6 +125703,16 @@
           "number": 4990,
           "title": "Tensor Key Remapping for Cross-Engine Interoperability",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6026,
+          "title": "Model Weight Key-Name Topological Isomorphism",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6027,
+          "title": "Quantization Precision Boundary Preservation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -125700,7 +125720,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T20:31:58.826Z",
+      "verified_at": "2026-10-31T02:44:14.902Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -158627,6 +158647,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T02:35:25.424Z"
+    },
+    "rule-6025": {
+      "learning_id": "rule-6025",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6025,
+      "title": "docs: fix typos in chart notes, values and docs (#2088)",
+      "source_url": "https://github.com/bitnami/sealed-secrets",
+      "source_version": "53625dfe",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:44:11.366Z"
+    },
+    "rule-6026": {
+      "learning_id": "rule-6026",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6026,
+      "title": "Model Weight Key-Name Topological Isomorphism",
+      "source_url": "https://huggingface.co/Comfy-Org/Fibo-2.0",
+      "source_version": "hf-comfy-org-fibo-2.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:44:14.902Z"
+    },
+    "rule-6027": {
+      "learning_id": "rule-6027",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6027,
+      "title": "Quantization Precision Boundary Preservation",
+      "source_url": "https://huggingface.co/Comfy-Org/Fibo-2.0",
+      "source_version": "hf-comfy-org-fibo-2.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:44:14.902Z"
+    },
+    "rule-6028": {
+      "learning_id": "rule-6028",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6028,
+      "title": "Fail operation instead of crashing controller on unavailable versioned input chu",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "a88390c6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:44:18.178Z"
     }
   },
   "aliases": {

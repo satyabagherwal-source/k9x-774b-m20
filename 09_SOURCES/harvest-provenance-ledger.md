@@ -6440,3 +6440,6 @@ Every entry in this ledger must capture:
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `9e28ec50` | Multi-dimensional audit evidence | 2026-10-31T02:28:00.642Z |
 | `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `89de8e38` | Multi-dimensional audit evidence | 2026-10-31T02:35:22.678Z |
 | `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-31T02:35:25.487Z |
+| `learn-github-bitnami-sealed-secrets` | `https://github.com/bitnami/sealed-secrets` | `53625dfe` | Multi-dimensional audit evidence | 2026-10-31T02:44:11.466Z |
+| `learn-huggingface-comfy-org-fibo-2-0` | `https://huggingface.co/Comfy-Org/Fibo-2.0` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-31T02:44:15.000Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `a88390c6` | Multi-dimensional audit evidence | 2026-10-31T02:44:18.277Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T02:35:25.494Z",
+  "last_updated": "2026-10-31T02:44:18.287Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "d85f7d0d7335daf8180186d998e0b32bd1fca4571832e720871dea8a21813634",
-      "verified_at": "2026-10-30T06:23:32.520Z",
+      "content_hash": "8777a89196e6f9fc2d615bbc0d0ab0dd4c81f007b1f0007ba9634b0b10ccceaf",
+      "verified_at": "2026-10-31T02:44:18.286Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T06:23:32.520Z"
+      "last_updated": "2026-10-31T02:44:18.286Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",
@@ -9891,14 +9891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitnami-sealed-secrets",
-      "content_hash": "41e6c1e6e657ddc183ffb48e2cac73acbf9bb66f2a0f265e48bc3b4c5ef5a2df",
-      "verified_at": "2026-10-30T07:05:28.798Z",
+      "content_hash": "f211dcaed648c3e736ad95ea04d9b3a1d26acc9b507bfef92f18b066343d0301",
+      "verified_at": "2026-10-31T02:44:11.475Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T07:05:28.798Z"
+      "last_updated": "2026-10-31T02:44:11.475Z"
     },
     "run-llama/llama_index": {
       "repository": "run-llama/llama_index",
@@ -15951,14 +15951,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-fibo-2-0",
-      "content_hash": "d4b53c752516398eec04a3dddf124186f58ae4ae929df1d368e59498f02e9ad0",
-      "verified_at": "2026-10-27T20:31:58.934Z",
+      "content_hash": "c0b6ab4f0d2e8c3deed016bea94795661c87ccf74e8bde417cb6f5551d6aa353",
+      "verified_at": "2026-10-31T02:44:15.011Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T20:31:58.934Z"
+      "last_updated": "2026-10-31T02:44:15.011Z"
     },
     "ornith-ai/Ornith-1.5-122B": {
       "repository": "ornith-ai/Ornith-1.5-122B",

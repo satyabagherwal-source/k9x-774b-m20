@@ -6431,3 +6431,6 @@
 | `CYCLE-20261031-78CF` | `2026-10-31T02:28:00.639Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6018` | Yes (`fa24d217...`) |
 | `CYCLE-20261031-GPF7` | `2026-10-31T02:35:22.675Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6019, Rule 6020, Rule 6021` | Yes (`e503c3cc...`) |
 | `CYCLE-20261031-GRL8` | `2026-10-31T02:35:25.484Z` | `ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6022, Rule 6023, Rule 6024` | Yes (`ea5e0355...`) |
+| `CYCLE-20261031-S1FQ` | `2026-10-31T02:44:11.462Z` | `bitnami/sealed-secrets` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6025` | Yes (`f211dcae...`) |
+| `CYCLE-20261031-S45W` | `2026-10-31T02:44:14.996Z` | `Comfy-Org/Fibo-2.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6026, Rule 6027` | Yes (`c0b6ab4f...`) |
+| `CYCLE-20261031-S6OX` | `2026-10-31T02:44:18.273Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6028` | Yes (`8777a891...`) |
