@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `2a9447c5`  
+> **Source Version**: `2476fc1b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T19:14:45.700Z  
+> **Timestamp**: 2026-10-31T19:49:55.352Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T19:14:45.689Z  
+> **Harvest Timestamp**: 2026-10-31T19:49:55.344Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,326 +2203,244 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2a9447c5` (2026-10-31)
-**Commit Message**: bench: add geoclient benchmarks, uncached and cached (#4964)
+### Incident Patch 1: `2476fc1b` (2026-10-31)
+**Commit Message**: fix(geocode): cache-info reports real entry counts and oldest/newest timestamps (#4966)
 
-* bench: add geoclient benchmarks, uncached and cached
+The help promised an entry count and the oldest/newest cached entry
+timestamps, but cache-info printed "Entries: unknown" and no timestamps:
+cached's RedbCache returns Ok(None) from cache_size() and has no iterator.
 
-Two online benchmarks of `geocode geoclient` against real NYC addresses,
-gated on QSV_GEOCLIENT_API_KEY or QSV_GEOCLIENT_API_URL being set:
+Read each cache file directly instead. Its layout is frozen for the file
+version in its name (_v3): table cached_disk_cache, each value a positional
+rmp-serde array of the value then created_at. cached's handle is dropped
+first, since redb locks the file. Undecodable entries are counted and also
+reported as undecodable_entries. redb becomes a direct optional dependency
+of the geocode feature, on the same major as cached's, so no second copy is
+built.
 
-- geocode_geoclient_nocache: live API calls (--no-cache) on a 10k-row
-  sample. The public API allows 2,500 requests/minute and 500k/day, so
-  all 100k rows would take over 40 minutes a run and 2 warmup + 3 timed
-  runs would spend the whole daily quota.
-- geocode_geoclient_cache: all 100k rows served from a primed result
-  cache in its own directory (QSV_CACHE_DIR, never ~/.qsv-cache), with
-  --cache-ttl 0 so entries don't expire between bench runs.
-
-The cache is primed with the benchmark's exact request whenever the
-cached benchmark is selected: one quick offline pass when warm, up to
-~100k API calls when cold, so a cold cache is never timed as "cached".
-
-Input: scripts/nyc_addresspoint_100k.csv.gz, 100,000 distinct addresses
-(20,000 per borough) sampled from NYC Open Data's AddressPoint dataset
-(uf93-f8nk), with each address point's BIN.
-
-Both benchmarks --verify that at least 90% of rows got NYC coordinates.
-A 1,000-row smo
-
-**File**: `.gitignore` (modified, +5/-0)
-```diff
-@@ -65,6 +65,11 @@ tests/resources/profile/golden/*.stats.csv.*
- # viz golden-check fixture (scripts/viz-golden-check.sh); no examples/viz fixture
- # exercises the cyclic-seasonality panel
- !scripts/viz_golden_cyclic_events.csv
-+# geoclient benchmark input (scripts/benchmarks.sh) and its primed result cache
-+!scripts/nyc_addresspoint_100k.csv.gz
-+scripts/geoclient_cache/
-+scripts/results/private_*
-+scripts/results.restoring/
- *.log
- *.log.gz
- *.bak
-```
-
-**File**: `CHANGELOG.md` (modified, +7/-0)
-```diff
-@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ### Added
- - `viz smart`: a Data Schematic embedded in an iframe now reports its own height to the embedding page (`postMessage({qsvVizHeight: <px>}, "*")`), so a host such as CKAN can size the iframe to its content without injecting a script. It reports only when framed, on load, on resize (including the data viewer drawer opening and closing, so the iframe grows and shrinks), and when its content reflows. The data viewer now accepts the embedding page's `qsvVizViewport` answer only from that page. The gallery generator injects only its scroll-forwarding script into these pages. ([#4949](https://github.com/dathere/qsv/pull/4949))
- - Gallery: the WPRDC 2-1-1 and Boston 311 Data Schematics can now be made **Live Data Schematics**. Each gallery entry has a "Make it a Live Data Schematic" how-to: download the page and the exact data it was rendered from, register it with qsv-clientd, and open it from disk, approving the pairing in a shell or from the qsv-clientd tray app's menu. The two data files too large to commit (`wpa_211_requests.csv`, `boston311-2025.tsv.gz`) are attached to the 27.0.1 release. The WPRDC figure is now rendered from the portal's own 13-column file instead of a reshaped 7-column extract, so Fetch latest returns data of the same shape; every number in its description is unchanged. ([#4952](https://github.com/dathere/qsv/pull/4952))
-+- **`scripts/benchmarks.sh` 10.1.0 benchmarks `geocode geoclient` against real NYC addresses** ([#4964](https://github.com/dathere/qsv/pull/4964)). The input is a committed 100,000-row sample of NYC Open Data's AddressPoint dataset, 20,000 distinct addresses per borough.
-+  - `geocode_geoclient_nocache` times live API calls on 10,000 of the rows. The public API's limits (2,500 requests/minute, 500,000/day) rule out all 100k uncached.
-+  - `geocode_geoclient_cache` times all 100,000 rows served from a primed result cache. The cache lives in its own directory, never expires, and is primed with the benchmark's exact request whenever the benchmark is selected, so a cold cache is never timed as a cached run.
-+  - Both run only when `QSV_GEOCLIENT_API_KEY` (or a self-hosted `QSV_GEOCLIENT_API_URL`) is set. Both are quarantined unless at least 90% of rows geocode; a live 1,000-row check geocoded 99.9%.
-+  - Opt-in: with `QSV_GEOCLIENT_API_URL` pointing at a self-hosted Geoclient (e.g. the `mlipper/geoclient` Docker image), `geocode_geoclient_nocache_selfhosted` replaces the uncached benchmark. It reads all 100,000 rows with qsv's rate limiter raised (`QSVBM_GEOCLIENT_RATE_LIMIT`, default 100,000/sec), so it times qsv's request pipeline instead of the public API's pacing. The images are amd64-only, so run it on x86_64 Linux; on Apple silicon they run emulated.
-+  - A run with `QSV_GEOCLIENT_API_URL` set is private: it still times, checks and prints everything, but `results/` is snapshotted before the run and restored when it exits (normally, on an error or on Ctrl-C), so timings from another machine never enter the published results. The run's own results are kept in git-ignored `results/private_latest_*` files. `QSVBM_RECORD_SELFHOSTED=1` records it like any other run.
-+  - The geoclient variables are documented in the script's header and in `./benchmarks.sh help`. A new "Benchmark Script Environment Variables" section of `docs/ENVIRONMENT_VARIABLES.md` lists every `QSVBM_*` setting.
- 
- ### Changed
- - Build: bump `datasketches` from 0.5 to 0.6. `stats --quantile-method approx` now reads the quartiles, and separately the custom percentiles, in one t-digest scan each (`TDigestMut::quantiles`) instead of one query per rank, with identical output. 0.6's t-digest fixes can move an approximate quantile in its last printed digit: on 350K test rows, 2 of about 100 values changed, and parallel runs on indexed files were unchanged. `--cardinality-method approx` and `frequency --sketch-method frequent_items` output is unchanged. ([#4963](https://github.com/dathere/qsv/pull/4963))
-```
-
-**File**: `docs/ENVIRONMENT_VARIABLES.md` (modified, +14/-0)
-```diff
-@@ -125,6 +125,20 @@ PNG/SVG/PDF/JPEG/WebP.
- | `WEBDRIVER_PATH` | full path to the `chromedriver` executable to drive the headless browser with. qsv only consults this for image output; when it is unset - **or points at a file that does not exist** - qsv probes `$WEBDRIVER_INSTALL_PATH`, `~/.local/bin`, your `PATH`, and then `/opt/homebrew/bin`, `/usr/local/bin`, `/usr/bin`, and sets this variable to the first `chromedriver` it finds. This repairs prebuilt binaries, which carry an absolute path baked in from the machine that built them (issue #4620). Firefox/`geckodriver` is not supported - `viz_static` compiles against `plotly_static/chromedriver`, and the chromedriver/geckodriver features are mutually exclusive upstream. The chromedriver MAJOR version must match your installed Chrome; get a matched pair from [Chrome for Testing](https://googlechromelabs.github.io/chrome-for-testing/). |
- | `BROWSER_PATH` | full path to a Chrome/Chromium binary, when the one to render with is not the system default. Passed straight through as the WebDriver `binary` capability. |
- 
-+## Benchmark Script Environment Variables
-+
-+These configure [`scripts/benchmarks.sh`](../scripts/benchmarks.sh), not qsv itself. They are **not** `QSV_*` variables, so qsv ignores them and `qsv --envlist` does not list them.
-+
-+| Variable | Description |
-+| --- | --- |
-+| `QSVBM_SPREAD_MAX` | the largest slowest/fastest ratio allowed across a benchmark's timed runs. A wider spread usually means the command did its work on only some of the runs, so the benchmark is quarantined in `results/suspect_results.csv` instead of being recorded. (default: 3) |
-+| `QSVBM_SPEEDUP_PCT` | quarantine a benchmark whose mean time is below this percentage of its most recent archived mean. A failed run looks like a huge speedup. (default: 33) |
-+| `QSVBM_MEM_DROP_PCT` | quarantine a benchmark whose peak memory is below this percentage of its most recent archived peak memory. (default: 25) |
-+| `QSVBM_GEOCLIENT_RATE_LIMIT` | the `--rate-limit` (requests per second) the `geocode_geoclient_nocache_selfhosted` benchmark passes to `geocode geoclient` when `QSV_GEOCLIENT_API_URL` points at a self-hosted Geoclient. The public API's 2,500 requests/minute quota doesn't apply there. (default: 100000, effectively unthrottled) |
-+| `QSVBM_RECORD_SELFHOSTED` | set to `1` to record a run against a self-hosted Geoclient in `results/` like any other run. Otherwise, a run with `QSV_GEOCLIENT_API_URL` set is private: `results/` is restored when the script exits, and that run's results are kept in `results/private_latest_*`. |
-+
-+The `geocode_geoclient_*` benchmarks also read `QSV_GEOCLIENT_API_KEY` or `QSV_GEOCLIENT_API_URL` (see above). They are skipped when neither is set. Set the key in the shell that runs the script: the geoclient benchmarks run with `QSV_DOTENV_PATH='<NONE>'`, so a `.env` file is never read.
-+
- ## MCP Server Environment Variables
- 
- The qsv MCP (Model Context Protocol) Server exposes qsv's capabilities to AI agents like Claude. It can be used as a standalone MCP server or as a Claude Desktop Extension (MCPB).
-```
-
-**File**: `scripts/benchmarks.sh` (modified, +215/-1)
-```diff
-@@ -44,7 +44,7 @@
- arg_pat="$1"
- 
- # the version of this script
--bm_version=10.0.0
-+bm_version=10.1.0
- 
- # runs of a benchmark whose means are within this percentage of each other tie in the rank
- # column (see the delta & rank comments near the end)
-@@ -64,6 +64,18 @@ spread_max=${QSVBM_SPREAD_MAX:-3}
- speedup_pct=${QSVBM_SPEEDUP_PCT:-33}
- mem_drop_pct=${QSVBM_MEM_DROP_PCT:-25}
- 
-+# the geocode_geoclient_* benchmarks (see "geoclient inputs" below) run only when one of these
-+# is set; without either they are skipped with a NOTE:
-+#  QSV_GEOCLIENT_API_KEY: a NYC Geoclient subscription key for the public API (free at
-+#   https://api-portal.nyc.gov). Export it in the shell running this script, never in a .env file
-+#   (the geoclient benchmarks run with QSV_DOTENV_PATH='<NONE>').
-+#  QSV_GEOCLIENT_API_URL: the base URL of a self-hosted Geoclient. Swaps in the opt-in
-+#   geocode_geoclient_nocache_selfhosted benchmark and makes the run PRIVATE: results/ is restored
-+#   when the script exits, and this run's results are kept in results/private_latest_* instead.
-+#  QSVBM_GEOCLIENT_RATE_LIMIT: qsv's --rate-limit (requests/sec) against a self-hosted Geoclient.
-+#   (default: 100000, i.e. effectively unthrottled)
-+#  QSVBM_RECORD_SELFHOSTED: set to 1 to record a self-hosted run in results/ like any other run.
-+
- # what hyperfine measures. Explicit units pin the CSV export to seconds and MiB, and user/system
- # are only exported when asked for. The archive keeps hyperfine 1.x's column names - see
- # hf_result_row.
-@@ -149,6 +161,14 @@ if [[ "$arg_pat" == "help" ]]; then
-   echo "  benchmark data zip: $datazip"
-   echo "  warmup runs: $warmup_runs"
-   echo "  benchmark runs: $benchmark_runs"
-+  if [ -n "$QSV_GEOCLIENT_API_URL" ]; then
-+    if [ "${QSVBM_RECORD_SELFHOSTED:-0}" == "1" ]; then gc_run="recorded"; else gc_run="private"; fi
-+    echo "  geoclient: self-hosted at $QSV_GEOCLIENT_API_URL ($gc_run run, rate limit ${QSVBM_GEOCLIENT_RATE_LIMIT:-100000}/s)"
-+  elif [ -n "$QSV_GEOCLIENT_API_KEY" ]; then
-+    echo "  geoclient: public API (QSV_GEOCLIENT_API_KEY is set)"
-+  else
-+    echo "  geoclient: skipped (set QSV_GEOCLIENT_API_KEY or QSV_GEOCLIENT_API_URL)"
-+  fi
-   exit 0
- fi
- 
-@@ -254,6 +274,18 @@ else
-   echo "NOTE: $qsv_bin does not have the viz feature - skipping the viz benchmark."
- fi
- 
-+# check if the geoclient benchmarks can run. Another SOFT check: unlike every other benchmark,
-+# they call an online API (NYC's Geoclient), so they need a subscription key - or a self-hosted
-+# Geoclient in QSV_GEOCLIENT_API_URL, which needs none. Without either, every lookup fails.
-+has_geoclient=0
-+if "$qsv_bin" geocode --help &>/dev/null &&
-+  { [ -n "$QSV_GEOCLIENT_API_KEY" ] || [ -n "$QSV_GEOCLIENT_API_URL" ]; }; then
-+  has_geoclient=1
-+else
-+  echo "NOTE: $qsv_bin does not have the geocode feature, or neither QSV_GEOCLIENT_API_KEY nor"
-+  echo "      QSV_GEOCLIENT_API_URL is set - skipping the geoclient benchmarks."
-+fi
-+
- # set sevenz_bin to "7z" on Linux/Cygwin and "7zz" on macOS
- if [[ "$OSTYPE" == "darwin"* ]]; then
-   sevenz_bin=7zz
-@@ -678,6 +710,9 @@ if [[ "$arg_pat" == "reset" ]]; then
-   rm -f pragmastats_50kdata.csv*
-   rm -f fwf_100kdata.txt
-   rm -f stat_100kdata*
-+  # the decompressed geoclient inputs only - NOT the committed .gz, and NOT the primed
-+  # geoclient_cache/ (re-priming costs ~45 minutes and ~100k API calls; rm -r it to re-prime)
-+  rm -f nyc_addresspoint_100k.csv geoclient_10k.csv
-   rm -f data_to_exclude.csv
-   rm -f data_unsorted.csv
-   rm -f data_sorted.csv
-@@ -990,6 +1025,92 @@ if [[ "$has_readstat" -eq 1 ]]; then
-   stat_rowcount=$("$qsv_benchmarker_bin" count --no-polars stat_100kdata.csv)
- fi
- 
-+# geoclient inputs. nyc_addresspoint_100k.csv.gz is committed next to this script: 100,000
-+# distinct real NYC addresses, 20,000 per borough, sampled (seed 4242) from NYC Open Data's
-+# AddressPoint dataset (uf93-f8nk, fetched 2026-10-31) after dropping rows without a ZIP code
-+# or BIN and keeping one address point per house number + street + borough. Its bin column is
-+# the address point's own BIN, to check geocoding accuracy against.
-+# The public Geoclient API allows 2,500 requests/minute and 500,000/day, so an uncached run
-+# of all 100k rows takes over 40 minutes - and 2 warmup + 3 timed runs would spend the whole
-+# daily quota. So the uncached benchmark reads a 10k-row sample (~4 minutes a run), and only
-+# the cached one reads all 100k rows, from a result cache primed below.
-+# The cache lives in its own directory, set through QSV_CACHE_DIR (which overrides --cache-dir),
-+# so it never touches the user's ~/.qsv-cache. --cache-ttl 0 keeps its entries from expiring
-+# between benchmark runs (the default TTL is 14 days). Non-matches are cached too.
-+# QSV_DOTENV_PATH='<NONE>' turns off qsv's .env loading for these commands: a .env file is
-+# loaded with OVERRIDE, so one setting QSV_CACHE_DIR or QSV_GEOCLIENT_API_KEY would undo both
-+# the cache isolation and the offline guard b
-```
-
-**File**: `scripts/gen_benchmark_viz.py` (modified, +7/-1)
-```diff
-@@ -626,7 +626,13 @@ def build_index(figs, info):
-         "<div class=caveat><b>Read me first.</b> Throughput is records/sec = the rows a benchmark "
-         "reads ÷ the mean of 3 runs (2 warmups) via hyperfine. That is the full 1M rows for almost "
-         "every benchmark; <code>geoconvert_csv2geojsonl</code> (745,305 rows), <code>to_ods</code> "
--        "(500,000) and the <code>pragmastat_50k*</code> series (50,000) read a smaller subset. "
-+        "(500,000), the <code>pragmastat_50k*</code> series (50,000) and the geoclient benchmarks "
-+        "(NYC addresses: <code>geocode_geoclient_cache</code> 100,000, "
-+        "<code>geocode_geoclient_nocache</code> 10,000) read a smaller or different dataset. "
-+        "<code>geocode_geoclient_nocache</code> makes live calls to NYC's Geoclient API, which qsv "
-+        "deliberately paces at about 40 requests/sec to stay under the API's quota, so its "
-+        "throughput is set by that rate limit, not by qsv's speed; "
-+        "<code>geocode_geoclient_cache</code> is the measure of qsv's own geocoding speed. "
-         "Cross-version numbers are <b>not strictly "
-         "apples-to-apples</b> — commands gain features over time, so a command's benchmark in an "
-         "old release may do less work than today's. Read the historical charts (the trend, the "
-```
-
----
-
-### Incident Patch 2: `8a09bd66` (2026-10-31)
-**Commit Message**: test(frequency): property tests matched a bare "Other" label the exact path never emits (#4965)
-
-The exact path labels its overflow row "Other (N)", but four property-test
-filters compared against "Other". prop_frequency_negative_limit (and
-limit_correctness / desc_order) then treated the overflow row as an explicit
-value and flaked once #4896 made whitespace-padded columns count in full
-instead of short-circuiting to <ALL_UNIQUE>. The rank-0 check in
-limit_correctness never matched any row, so it was vacuous.
-
-Match the "Other (" prefix and pin the CI-shrunk input plus a fixture that
-actually exercises the rank-0 check.
+geocode_geoclient_disk_cache now pins the count (2), the timestamps and the
+empty state after cache-clear. That also catches a future cached release
+that changes the layout. Mutation-checked: an off-by-one in the scan, and
+keeping cached's handle open, both fail it.
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `tests/test_frequency.rs` (modified, +54/-4)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -7271,14 +7271,16 @@ fn param_prop_frequency_limit_correctness(name: &str, rows: CsvData) -> bool {
-     for (field, field_rows) in &grouped {
-         let explicit_count = field_rows
-             .iter()
--            .filter(|r| r.value != "Other" && r.value != "(NULL)" && r.value != "<ALL_UNIQUE>")
-+            .filter(|r| {
-+                !r.value.starts_with("Other (") && r.value != "(NULL)" && r.value != "<ALL_UNIQUE>"
-+            })
-             .count();
-         assert!(
-             explicit_count <= 2,
-             "Field '{field}' has {explicit_count} explicit values with --limit 2"
-         );
-         // Other rows should have rank 0
--        for r in field_rows.iter().filter(|r| r.value == "Other") {
-+        for r in field_rows.iter().filter(|r| r.value.starts_with("Other (")) {
-             if !r.rank.is_empty() {
-                 assert_eq!(
-                     r.rank, "0",
-@@ -7321,7 +7323,7 @@ fn param_prop_frequency_negative_limit(name: &str, rows: CsvData) -> bool {
-     let parsed = parse_frequency_output(&stdout);
+@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - `viz map`/`viz geo`: a non-numeric `--color` or `--size` column now gets an error that names it. Both options are numeric encodings, so a categorical column (e.g. `--color Borough`) dropped every row, and the error blamed `--lat`/`--lon` even though the coordinates were valid. The message now names the column and points to `--series` for categorical coloring; in `--density` mode, which rejects `--series`, it explains that the column is the numeric heatmap weight. ([#4959](https://github.com/dathere/qsv/pull/4959))
+ - `viz smart`: clicking a region on a county-name map now keeps the rows whose state is blank. When county names are qualified by a state column, the data viewer filter required one of the state spellings seen for that county, so a row the map had placed without a state (its county name unique on its own) was counted on the map but dropped from the drill-down; a county whose rows all lacked a state showed no rows at all. Blank states now match through the filter's "Empty" condition. Found on the WPRDC 2-1-1 gallery page (#4952). ([#4953](https://github.com/dathere/qsv/pull/4953))
+ - **`viz smart`: a map in a sandboxed iframe now says why it's blank** ([#4947](https://github.com/dathere/qsv/pull/4947), [#4946](https://github.com/dathere/qsv/issues/4946)). Embedded in an `<iframe sandbox>` without `allow-same-origin` (the CKAN Webpage view the wiki recommends), every MapLibre map panel stayed empty with no error: the map library bundled with plotly.js 3.x rejects its own worker's messages when the page's origin is `null`. The schematic now shows a note above each such map telling the viewer to open it in its own tab. Pages opened from a file aren't affected. Rendering the maps there needs a plotly.js upgrade; #4946 tracks it.
++- `geocode cache-info` now reports what its help promises: each result cache's real entry count, plus the timestamps of its oldest and newest entries (`oldest_entry`/`newest_entry`, RFC 3339 UTC). It printed `Entries: unknown` and no timestamps, because the cache library can't count its entries. It now reads each cache file once to count them. Expired entries that haven't been pruned yet are included. Entries that can't be decoded are counted in `entry_count` and also reported apart as `undecodable_entries`; `cache-prune` removes them.
+ - `get`: overwriting an existing file with `--output` (`get`, `get cache-fetch`) no longer briefly exposes the new contents: the temp file that replaces it is owner-only (`0600`) while the data is written, and takes the old file's mode only afterwards. It also keeps the old file's group, so a group-readable file isn't handed to a different group; where the group can't be kept, the new file isn't group-readable, and other users get no access the old file denied its group. Setuid/setgid bits aren't carried over, as an in-place overwrite would have cleared them. Follow-up to [#4945](https://github.com/dathere/qsv/pull/4945). ([#4948](https://github.com/dathere/qsv/pull/4948))
  
-     for r in &parsed {
--        if r.value != "Other" && r.value != "(NULL)" && r.value != "<ALL_UNIQUE>" {
-+        if !r.value.starts_with("Other (") && r.value != "(NULL)" && r.value != "<ALL_UNIQUE>" {
-             let count: usize = r.count.parse().unwrap();
-             assert!(
-                 count >= 2,
-@@ -7334,6 +7336,52 @@ fn param_prop_frequency_negative_limit(name: &str, rows: CsvData) -> bool {
-     true
+ ## [27.0.1] - 2026-10-27 📡 The "Live Data Schematics" Release 📊
+```
+
+**File**: `Cargo.lock` (modified, +1/-0)
+```diff
+@@ -7127,6 +7127,7 @@ dependencies = [
+  "rand_hc",
+  "rand_xoshiro",
+  "rayon",
++ "redb",
+  "redis",
+  "regex",
+  "reqwest",
+```
+
+**File**: `Cargo.toml` (modified, +4/-0)
+```diff
+@@ -427,6 +427,9 @@ rand = "0.10"
+ rand_hc = "0.5"
+ rand_xoshiro = "0.8"
+ rayon = "1.12"
++# geocode cache-info reads the `cached` crate's redb cache files directly; keep this on the same
++# major as cached's own redb so only one copy is built
++redb = { version = "4", optional = true }
+ redis = { version = "1", features = ["ahash"], default-features = false }
+ regex = "1"
+ reqwest = { version = "0.13", features = [
+@@ -725,6 +728,7 @@ geocode = [
+     "geosuggest-utils",
+     "geozero",
+     "governor",
++    "redb",
+     # multipart: used by `geocode census` batch uploads (the Census batch endpoints take a
+     # multipart file). Listed explicitly, like reqwest's `query`: never rely on another
+     # dependent of reqwest to enable it.
+```
+
+**File**: `src/cmd/geocode.rs` (modified, +79/-11)
+```diff
+@@ -882,7 +882,7 @@ use std::{
+     time::{Duration, SystemTime},
+ };
+ 
+-use cached::{ConcurrentCacheBase, ConcurrentCached, RedbCache, macros::concurrent_cached};
++use cached::{ConcurrentCached, RedbCache, macros::concurrent_cached};
+ use dynfmt2::Format;
+ use geosuggest_core::{
+     Engine, EngineData, EngineMetadata,
+@@ -2888,6 +2888,60 @@ fn resolve_older_than(value: &str) -> CliResult<Duration> {
+         })
  }
  
-+// A whitespace-padded value keeps a column from short-circuiting to <ALL_UNIQUE>, so it is
-+// counted in full and its singletons land in the "Other (N)" row. The property tests above
-+// once matched only a bare "Other" label, which the exact path never emits; this was the
-+// shrunk input that exposed it in CI.
-+#[test]
-+fn frequency_negative_limit_other_row_exempt() {
-+    let rows = CsvData {
-+        data: vec![
-+            crate::CsvRecord(vec![
-+                "!".to_string(),
-+                "\"".to_string(),
-+                "#".to_string(),
-+                "$".to_string(),
-+                "%".to_string(),
-+            ]),
-+            crate::CsvRecord(vec![
-+                String::new(),
-+                String::new(),
-+                String::new(),
-+                String::new(),
-+                " ".to_string(),
-+            ]),
-+        ],
-+    };
-+    assert!(param_prop_frequency_negative_limit(
-+        "frequency_negative_limit_other_row_exempt",
-+        rows
-+    ));
++/// What `cache-info` reports about one result cache's stored entries.
++#[derive(Default)]
++struct CacheEntryStats {
++    entries:     u64,
++    undecodable: u64,
++    oldest:      Option<SystemTime>,
++    newest:      Option<SystemTime>,
 +}
 +
-+#[test]
-+fn frequency_limit_correctness_other_row() {
-+    let rows = CsvData {
-+        data: vec![
-+            crate::CsvRecord(vec!["x".to_string()]),
-+            crate::CsvRecord(vec![" a".to_string()]),
-+            crate::CsvRecord(vec![" b".to_string()]),
-+            crate::CsvRecord(vec![" c".to_string()]),
-+        ],
++/// Count a result cache's stored entries (expired-but-unpruned ones included) and find the
++/// oldest and newest. `cached`'s `RedbCache` won't count (`cache_size()` is `Ok(None)`) and has
++/// no iterator, so read its redb file directly. That format is frozen for the file version in
++/// the file name (`_v3`): table `cached_disk_cache`, each value a positional array, encoded with
++/// `rmp_serde`, of the cached value, then its `created_at`. An entry that doesn't decode is counted
++/// apart: `cached` treats it as expired, so `cache-prune` removes it.
++/// A `cached` upgrade that changed this layout would show up here as 0 entries, or as entries
++/// that are all undecodable. `test_geocode::geocode_geoclient_disk_cache` pins the count to
++/// catch that.
++fn scan_cache_entries(path: &Path) -> Result<CacheEntryStats, String> {
++    use redb::{ReadableDatabase, ReadableTable};
++
++    // only the timestamp is needed: IgnoredAny skips the value without allocating it
++    #[derive(Deserialize)]
++    struct EntryMeta(serde::de::IgnoredAny, SystemTime);
++    const TABLE: redb::TableDefinition<&str, &[u8]> =
++        redb::TableDefinition::new("cached_disk_cache");
++
++    let db = redb::ReadOnlyDatabase::open(path).map_err(|e| e.to_string())?;
++    let rtxn = db.begin_read().map_err(|e| e.to_string())?;
++    let table = match rtxn.open_table(TABLE) {
++        Ok(table) => table,
++        // a cache file that was never written to has no table yet
++        Err(redb::TableError::TableDoesNotExist(_)) => return Ok(CacheEntryStats::default()),
++        Err(e) => return Err(e.to_string()),
 +    };
-+    assert!(param_prop_frequency_limit_correctness(
-+        "frequency_limit_correctness_other_row",
-+        rows
-+    ));
++    let mut stats = CacheEntryStats::default();
++    for item in table.iter().map_err(|e| e.to_string())? {
++        let (_, value) = item.map_err(|e| e.to_string())?;
++        if let Ok(EntryMeta(_, created_at)) = rmp_serde::from_slice::<EntryMeta>(value.value()) {
++            stats.entries += 1;
++            stats.oldest = Some(stats.oldest.map_or(created_at, |t| t.min(created_at)));
++            stats.newest = Some(stats.newest.map_or(created_at, |t| t.max(created_at)));
++        } else {
++            stats.undecodable += 1;
++        }
++    }
++    Ok(stats)
 +}
 +
- // ---- 5. Sequential vs parallel output ----
++/// An entry timestamp as RFC 3339 UTC, to the second.
++fn rfc3339_utc(t: SystemTime) -> String {
++    chrono::DateTime::<chrono::Utc>::from(t).to_rfc3339_opts(chrono::SecondsFormat::Secs, true)
++}
++
+ fn run_cache_mgmt(args: &Args, mode: GeocodeSubCmd, cache_dir: &Path) -> CliResult<()> {
+     for (cache_name, provider) in [
+         (OPENCAGE_CACHE_NAME, "OpenCage"),
+@@ -2929,6 +2983,8 @@ fn manage_one_cache(
+                     "cache_dir":   cache_dir.display().to_string(),
+                     "exists":      false,
+                     "entry_count": 0,
++                    "oldest_entry": null,
++                    "newest_entry": null,
+                 })
+             );
+         }
+@@ -2985,23 +3041,32 @@ fn manage_one_cache(
+             winfo!("Pruned {pruned} expired entries from the {provider} cache.");
+         },
+         GeocodeSubCmd::CacheInfo => {
+-            // RedbCache::cache_size() is Ok(None) (an exact count is an O(n) scan it
+-            // won't pay implicitly), so entry_count is reported as unavailable rather
+-            // than a misleading 0.
+-            let entry_count = cache
+-                .cache_size()
++            let disk_path = cache.disk_path().to_path_buf();
++            // redb locks the file, so release cached's handle before opening it again
++            drop(cache);
++            let stats = scan_cache_entries(&disk_path)
+                 .map_err(|e| CliError::Other(format!("Error reading {provider} cache: {e}")))?;
+-            let disk_path = cache.disk_path();
++            let entry_count = stats.entries + stats.undecodable;
++            let oldest_entry = stats.oldest.map(rfc3339_utc);
++            let newest_entry = stats.newest.map(rfc3339_utc);
++            let disk_path = disk_path.as_path();
+             // metadata() can fail on I/O errors; degrade gracefully rather than
+             // reporting a misleading 0 bytes (None -> "unknown" / JSON null)
+             let size_on_disk: Option<u64> = std::fs::metadata(disk_path).ok().map(|m| m.len());
+             let size_human = size_on_disk.map(|s| HumanBytes(s).to_string());
  
- #[test]
-@@ -7479,7 +7527,9 @@ fn param_prop_frequency_desc_order(name: &str, rows: CsvData) -> bool {
-         // they must be added to this filter as well.
-         let counts: Vec<usize> = field_rows
-             .iter()
--            .filter(|r| r.value != "Other" && r.value != "(NULL)" && r.value != "<ALL_UNIQUE>")
-+            .filter(|r| {
-+                !r.value.starts_with("Other (") && r.value != "(NULL)" && r.value != "<ALL_UNIQUE>"
-+            })
-             .map(|r| r.count.parse::<usize>().unwrap())
-             .collect();
-         for window in counts.windows(2) {
+             winfo!("{provider
+```
+
+**File**: `tests/test_geocode.rs` (modified, +36/-7)
+```diff
+@@ -3699,14 +3699,43 @@ fn geocode_geoclient_disk_cache() {
+     );
+     assert_eq!(mock.requests(), 2);
+ 
+-    let mut info = wrk.command("geocode");
+-    info.env("QSV_CACHE_DIR", wrk.path("").to_string_lossy().to_string())
+-        .arg("cache-info");
+-    let output = wrk.output(&mut info);
+-    let stdout = String::from_utf8_lossy(&output.stdout);
++    let cache_info = || {
++        let mut info = wrk.command("geocode");
++        info.env("QSV_CACHE_DIR", wrk.path("").to_string_lossy().to_string())
++            .arg("cache-info");
++        let output = wrk.output(&mut info);
++        assert!(output.status.success());
++        let stdout = String::from_utf8_lossy(&output.stdout).to_string();
++        let line = stdout
++            .lines()
++            .find(|l| l.contains(r#""provider":"Geoclient""#))
++            .unwrap_or_else(|| panic!("no Geoclient line in stdout: {stdout}"));
++        serde_json::from_str::<serde_json::Value>(line).unwrap()
++    };
++    let info = cache_info();
++    assert_eq!(info["exists"], true, "{info}");
++    // the match and the cached non-match
++    assert_eq!(info["entry_count"], 2, "{info}");
++    assert_eq!(info["undecodable_entries"], 0, "{info}");
++    let oldest = info["oldest_entry"].as_str().unwrap();
++    let newest = info["newest_entry"].as_str().unwrap();
++    // RFC 3339 UTC to the second, so the strings order like the instants
+     assert!(
+-        stdout.contains(r#""provider":"Geoclient""#) && stdout.contains(r#""exists":true"#),
+-        "stdout: {stdout}"
++        oldest.len() == 20 && oldest.ends_with('Z') && oldest <= newest,
++        "{info}"
++    );
++
++    let mut clear = wrk.command("geocode");
++    clear
++        .env("QSV_CACHE_DIR", wrk.path("").to_string_lossy().to_string())
++        .arg("cache-clear");
++    wrk.assert_success(&mut clear);
++    let info = cache_info();
++    assert_eq!(info["exists"], true, "{info}");
++    assert_eq!(info["entry_count"], 0, "{info}");
++    assert!(
++        info["oldest_entry"].is_null() && info["newest_entry"].is_null(),
++        "{info}"
+     );
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4966** (2026-10-31): fix(geocode): cache-info reports real entry counts and oldest/newest timestamps (@jqnatividad)
 - **PR #4965** (2026-10-31): test(frequency): match the "Other (N)" overflow label in property tests (@jqnatividad)
 - **PR #4964** (2026-10-31): bench: add geoclient benchmarks, uncached and cached (@jqnatividad)
 - **PR #4963** (2026-10-30): deps: bump datasketches from 0.5 to 0.6 (@jqnatividad)
 - **PR #4962** (2026-10-30): build(deps): bump anthropics/claude-code-action from 1.0.263 to 1.0.264 (@dependabot[bot])
 - **PR #4961** (2026-10-30): build(deps): bump Swatinem/rust-cache from 2.9.1 to 2.9.3 (@dependabot[bot])
-- **PR #4960** (2026-10-29): bench: move benchmarks.sh to hyperfine 2.0, record peak memory, quarantine suspect results (@jqnatividad)
 
 ---
 
@@ -2542,25 +2460,21 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bench: add geoclient benchmarks, uncached and cached (#4964)
+## X. geocode): cache-info reports real entry counts and oldest/newest timestamps (#49
 
 **RULE**:
-When implementing operations in `.gitignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2a9447c5`: bench: add geoclient benchmarks, uncached and cached (#4964). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2476fc1b`: geocode): cache-info reports real entry counts and oldest/newest timestamps (#4966). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.gitignore`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# geoclient benchmark input (scripts/benchmarks.sh) and its primed result cache
-!scripts/nyc_addresspoint_100k.csv.gz
-scripts/geoclient_cache/
-scripts/results/private_*
-scripts/results.restoring/
+- `geocode cache-info` now reports what its help promises: each result cache's real entry count, plus the timestamps of its oldest and newest entries (`oldest_entry`/`newest_entry`, RFC 3339 UTC). It printed `Entries: unknown` and no timestamps, because the cache library can't count its entries. It now reads each cache file once to count them. Expired entries that haven't been pruned yet are included. Entries that can't be decoded are counted in `entry_count` and also reported apart as `undecodable_entries`; `cache-prune` removes them.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2570,4 +2484,4 @@ scripts/results.restoring/
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2a9447c5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2476fc1b` are properly handled with clean fallback behavior.

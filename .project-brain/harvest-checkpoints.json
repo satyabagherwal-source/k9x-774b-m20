@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T19:41:02.640Z",
+  "last_updated": "2026-10-31T19:51:59.868Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1700,14 +1700,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-      "content_hash": "dc272fbb4b8cafd749eb75c3f7457dd8794b368c5186c16a03035eb08594321f",
-      "verified_at": "2026-10-28T18:27:20.776Z",
+      "content_hash": "d6d05c4b644b9b9294e7725c93243c2c14e2119e259587945fe4dbe2070c2125",
+      "verified_at": "2026-10-31T19:51:59.867Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T18:27:20.777Z"
+      "last_updated": "2026-10-31T19:51:59.867Z"
     },
     "BAAI/bge-large-en-v1.5": {
       "repository": "BAAI/bge-large-en-v1.5",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "4f417311c69306ee213c528b228ba4cdbf75ea13771f5397c56824da9a4c5bde",
-      "verified_at": "2026-10-31T19:14:46.408Z",
+      "content_hash": "f660edd916cec73c9d78d9f23b85b8906dde02871990e12be4fc49cff45e3659",
+      "verified_at": "2026-10-31T19:49:56.147Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T19:14:46.408Z"
+      "last_updated": "2026-10-31T19:49:56.147Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -8856,14 +8856,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mariadb-server",
-      "content_hash": "b22f2736e562b0824e35a18c8676b41b9704ae1e6d2742dab82a9032dc7c030b",
-      "verified_at": "2026-10-30T06:50:12.672Z",
+      "content_hash": "ec44d353fb1ed35b5ee0869e940124081ea6758585ae83a8bb4e25d8e568d0d4",
+      "verified_at": "2026-10-31T19:49:55.312Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T06:50:12.672Z"
+      "last_updated": "2026-10-31T19:49:55.312Z"
     },
     "NG-ZORRO/ng-zorro-antd": {
       "repository": "NG-ZORRO/ng-zorro-antd",

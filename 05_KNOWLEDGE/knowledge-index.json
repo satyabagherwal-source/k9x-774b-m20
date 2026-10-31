@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T19:41:02.548Z",
+  "last_updated": "2026-10-31T19:51:59.726Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9057,8 +9057,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "2a9447c5",
-      "content_hash": "4f417311c69306ee213c528b228ba4cdbf75ea13771f5397c56824da9a4c5bde",
+      "source_version": "2476fc1b",
+      "content_hash": "f660edd916cec73c9d78d9f23b85b8906dde02871990e12be4fc49cff45e3659",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -9371,6 +9371,11 @@
           "number": 6293,
           "title": "bench: add geoclient benchmarks, uncached and cached (#4964)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6300,
+          "title": "geocode): cache-info reports real entry counts and oldest/newest timestamps (#49",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9378,7 +9383,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T19:14:46.298Z",
+      "verified_at": "2026-10-31T19:49:56.021Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25074,7 +25079,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
       "source_version": "hf-lilylilith-qi_2.1_anyangle",
-      "content_hash": "dc272fbb4b8cafd749eb75c3f7457dd8794b368c5186c16a03035eb08594321f",
+      "content_hash": "d6d05c4b644b9b9294e7725c93243c2c14e2119e259587945fe4dbe2070c2125",
       "dossier_path": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "promoted_rules": [
@@ -25158,6 +25163,16 @@
           "number": 5092,
           "title": "LoRA Conditioning Input Order Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6301,
+          "title": "Multimodal Token-Reference Binding Invariant in Diffusion Edit Pipelines",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6302,
+          "title": "LoRA Scaled Weight Merging Guard for Heterogeneous Edit Pipelines",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -25177,7 +25192,7 @@
         "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv40vjag",
         "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv4eu8wg"
       ],
-      "verified_at": "2026-10-28T18:27:20.651Z",
+      "verified_at": "2026-10-31T19:51:59.697Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37855,8 +37870,8 @@
       "slug": "mariadb-server",
       "platform": "github",
       "source_url": "https://github.com/MariaDB/server",
-      "source_version": "5104ebf8",
-      "content_hash": "b22f2736e562b0824e35a18c8676b41b9704ae1e6d2742dab82a9032dc7c030b",
+      "source_version": "4641beb5",
+      "content_hash": "ec44d353fb1ed35b5ee0869e940124081ea6758585ae83a8bb4e25d8e568d0d4",
       "dossier_path": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "promoted_rules": [
@@ -37889,6 +37904,11 @@
           "number": 5639,
           "title": "more doxygen formatting added.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6299,
+          "title": "MDEV-40553 fixup: GCC -Og -Wmaybe-uninitialized",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37896,7 +37916,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T06:50:12.570Z",
+      "verified_at": "2026-10-31T19:49:55.192Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -164008,6 +164028,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T19:41:02.528Z"
+    },
+    "rule-6299": {
+      "learning_id": "rule-6299",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6299,
+      "title": "MDEV-40553 fixup: GCC -Og -Wmaybe-uninitialized",
+      "source_url": "https://github.com/MariaDB/server",
+      "source_version": "4641beb5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T19:49:55.192Z"
+    },
+    "rule-6300": {
+      "learning_id": "rule-6300",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6300,
+      "title": "geocode): cache-info reports real entry counts and oldest/newest timestamps (#49",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "2476fc1b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T19:49:56.021Z"
+    },
+    "rule-6301": {
+      "learning_id": "rule-6301",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6301,
+      "title": "Multimodal Token-Reference Binding Invariant in Diffusion Edit Pipelines",
+      "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
+      "source_version": "hf-lilylilith-qi_2.1_anyangle",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T19:51:59.697Z"
+    },
+    "rule-6302": {
+      "learning_id": "rule-6302",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6302,
+      "title": "LoRA Scaled Weight Merging Guard for Heterogeneous Edit Pipelines",
+      "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
+      "source_version": "hf-lilylilith-qi_2.1_anyangle",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T19:51:59.697Z"
     }
   },
   "aliases": {

@@ -6702,3 +6702,6 @@ Every entry in this ledger must capture:
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `ecd256c9` | Multi-dimensional audit evidence | 2026-10-31T19:40:49.347Z |
 | `learn-huggingface-bingsu-adetailer` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-10-31T19:40:57.183Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `aa0953e9` | Multi-dimensional audit evidence | 2026-10-31T19:41:02.630Z |
+| `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `4641beb5` | Multi-dimensional audit evidence | 2026-10-31T19:49:55.304Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `2476fc1b` | Multi-dimensional audit evidence | 2026-10-31T19:49:56.138Z |
+| `learn-huggingface-lilylilith-qi_2-1_anyangle` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-10-31T19:51:59.856Z |
