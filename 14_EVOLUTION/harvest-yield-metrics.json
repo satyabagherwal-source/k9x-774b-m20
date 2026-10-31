@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T15:49:48.816Z",
-  "total_cycles_completed": 6602,
-  "total_learnings_persisted": 6602,
-  "total_rules_promoted": 6238,
+  "last_updated": "2026-10-31T15:56:42.115Z",
+  "total_cycles_completed": 6604,
+  "total_learnings_persisted": 6604,
+  "total_rules_promoted": 6239,
   "history": [
-    {
-      "timestamp": "2026-10-31T02:21:20.020Z",
-      "repository": "1jehuang/jcode",
-      "learningId": "learn-github-1jehuang-jcode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T02:21:24.978Z",
-      "repository": "k3s-io/k3s",
-      "learningId": "learn-github-k3s-io-k3s",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T02:27:59.141Z",
       "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
@@ -1403,6 +1389,20 @@
       "repository": "meta-llama/Llama-2-7b",
       "learningId": "learn-huggingface-meta-llama-llama-2-7b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T15:56:41.566Z",
+      "repository": "deepseek-ai/DeepSeek-V3",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T15:56:42.115Z",
+      "repository": "zed-industries/zed",
+      "learningId": "learn-github-zed-industries-zed",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

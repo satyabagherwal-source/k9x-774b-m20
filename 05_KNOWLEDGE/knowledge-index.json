@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T15:49:48.724Z",
+  "last_updated": "2026-10-31T15:56:42.016Z",
   "total_verified_learnings": 1184,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -22416,7 +22416,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
       "source_version": "hf-deepseek-ai-deepseek-v3",
-      "content_hash": "448f254f69f2ad749345385a2e45a4789720b33d3953c040eaf8d8b58bf0d803",
+      "content_hash": "6795fb3c8c925c3384f8e237d7f4418362465b2d7da84bd4a0f1c81f92659cfe",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md",
       "promoted_rules": [
@@ -22453,7 +22453,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv3x3khf",
         "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv4btd7d"
       ],
-      "verified_at": "2026-10-28T15:16:38.694Z",
+      "verified_at": "2026-10-31T15:56:41.423Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59768,8 +59768,8 @@
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "14b7b0ef",
-      "content_hash": "eb6f6465005a8f5895ada6e1edfe2e371a9461746f011d97c3a7a64d21647ff6",
+      "source_version": "ba63a022",
+      "content_hash": "4c7ce402ed21bfe213933e7b694cdb027806c811ed7a60aac06edc7e5c448098",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "promoted_rules": [
@@ -59827,6 +59827,11 @@
           "number": 5858,
           "title": "gpui_macos: Fix animations running at 30 fps on M5 Macs (#65472)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6240,
+          "title": "recent_projects: Show remote picker scrollbar (#63909)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59834,7 +59839,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T20:15:09.711Z",
+      "verified_at": "2026-10-31T15:56:41.987Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162845,6 +162850,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T15:49:48.704Z"
+    },
+    "rule-6240": {
+      "learning_id": "rule-6240",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6240,
+      "title": "recent_projects: Show remote picker scrollbar (#63909)",
+      "source_url": "https://github.com/zed-industries/zed",
+      "source_version": "ba63a022",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T15:56:41.987Z"
     }
   },
   "aliases": {

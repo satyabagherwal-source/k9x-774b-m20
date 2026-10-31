@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-EHT9",
-    "timestamp": "2026-10-30T06:01:56.397Z",
-    "repository": "open-policy-agent/opa",
-    "learningId": "learn-github-open-policy-agent-opa",
-    "contentHash": "c5f5880bb236e6438227044d4393aa2a1138fabf6d7242abdd95a82798c6a6b3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-PBDE",
-    "timestamp": "2026-10-30T06:10:21.266Z",
-    "repository": "JuulLabs/kable",
-    "learningId": "learn-github-juullabs-kable",
-    "contentHash": "2bfc7acbc77bf7a1eee8d0b75eef6d3a01b164922e9182bc82b810dac78df42b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-XA8B",
     "timestamp": "2026-10-30T06:16:33.035Z",
     "repository": "kucherenko/jscpd",
@@ -7492,6 +7462,36 @@
     "contentHash": "18c0ca147ee2632a1acbf0d3028958797d033eeb1e649376d05dd2f6acd8029e",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-37BH",
+    "timestamp": "2026-10-31T15:56:41.549Z",
+    "repository": "deepseek-ai/DeepSeek-V3",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+    "contentHash": "6795fb3c8c925c3384f8e237d7f4418362465b2d7da84bd4a0f1c81f92659cfe",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-37QX",
+    "timestamp": "2026-10-31T15:56:42.105Z",
+    "repository": "zed-industries/zed",
+    "learningId": "learn-github-zed-industries-zed",
+    "contentHash": "4c7ce402ed21bfe213933e7b694cdb027806c811ed7a60aac06edc7e5c448098",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

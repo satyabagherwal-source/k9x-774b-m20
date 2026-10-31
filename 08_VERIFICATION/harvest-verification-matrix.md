@@ -6625,3 +6625,5 @@
 | `CYCLE-20261031-U79Y` | `2026-10-31T15:49:41.590Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6236` | Yes (`bcc09028...`) |
 | `CYCLE-20261031-UA9L` | `2026-10-31T15:49:45.465Z` | `NativeScript/NativeScript` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6237` | Yes (`55284dae...`) |
 | `CYCLE-20261031-UCUE` | `2026-10-31T15:49:48.806Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6238, Rule 633, Rule 6239` | Yes (`18c0ca14...`) |
+| `CYCLE-20261031-37BH` | `2026-10-31T15:56:41.549Z` | `deepseek-ai/DeepSeek-V3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | Yes (`6795fb3c...`) |
+| `CYCLE-20261031-37QX` | `2026-10-31T15:56:42.105Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6240` | Yes (`4c7ce402...`) |

@@ -6634,3 +6634,5 @@ Every entry in this ledger must capture:
 | `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `d14dbd1e` | Multi-dimensional audit evidence | 2026-10-31T15:49:41.594Z |
 | `learn-github-nativescript-nativescript` | `https://github.com/NativeScript/NativeScript` | `49c79f42` | Multi-dimensional audit evidence | 2026-10-31T15:49:45.469Z |
 | `learn-huggingface-meta-llama-llama-2-7b` | `https://huggingface.co/meta-llama/Llama-2-7b` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-31T15:49:48.810Z |
+| `learn-huggingface-deepseek-ai-deepseek-v3` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-31T15:56:41.559Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `ba63a022` | Multi-dimensional audit evidence | 2026-10-31T15:56:42.109Z |

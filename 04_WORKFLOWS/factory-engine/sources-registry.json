@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T15:49:51.377Z",
-    "lastVerified": "2026-10-31T15:49:51.377Z",
+    "lastChecked": "2026-10-31T15:56:50.741Z",
+    "lastVerified": "2026-10-31T15:56:50.741Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -424,12 +424,12 @@
     "lastVerified": "2026-10-31T05:42:48.654Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T15:29:56.306Z",
-    "lastVerified": "2026-10-31T15:29:56.306Z",
+    "lastChecked": "2026-10-31T15:56:50.730Z",
+    "lastVerified": "2026-10-31T15:56:50.730Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -438,7 +438,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5fdfe09e"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1988,8 +1989,8 @@
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T12:29:44.919Z",
-    "lastVerified": "2026-10-31T12:29:44.919Z",
+    "lastChecked": "2026-10-31T15:56:45.864Z",
+    "lastVerified": "2026-10-31T15:56:45.864Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -5048,9 +5049,9 @@
   "gluesql-gluesql": {
     "name": "gluesql",
     "officialUrl": "https://github.com/gluesql/gluesql",
-    "lastChecked": "2026-10-30T23:44:50.771Z",
+    "lastChecked": "2026-10-31T15:56:48.296Z",
     "revisionIdentifier": "42a4b418",
-    "lastVerified": "2026-10-30T23:44:50.771Z"
+    "lastVerified": "2026-10-31T15:56:48.297Z"
   },
   "ekzhang-rustpad": {
     "name": "rustpad",
@@ -5165,13 +5166,13 @@
     "officialUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T15:16:26.339Z",
-    "lastVerified": "2026-10-28T15:16:26.339Z",
+    "lastChecked": "2026-10-31T15:56:38.475Z",
+    "lastVerified": "2026-10-31T15:56:38.475Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
-    "contentHash": "448f254f69f2ad749345385a2e45a4789720b33d3953c040eaf8d8b58bf0d803",
-    "promotedRulesCount": 3,
+    "contentHash": "6795fb3c8c925c3384f8e237d7f4418362465b2d7da84bd4a0f1c81f92659cfe",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -6239,9 +6240,9 @@
   "cycloidio-terracognita": {
     "name": "terracognita",
     "officialUrl": "https://github.com/cycloidio/terracognita",
-    "lastChecked": "2026-10-31T00:34:22.158Z",
+    "lastChecked": "2026-10-31T15:56:43.309Z",
     "revisionIdentifier": "802bd4b5",
-    "lastVerified": "2026-10-31T00:34:22.158Z"
+    "lastVerified": "2026-10-31T15:56:43.309Z"
   },
   "netflix-dynomite": {
     "name": "dynomite",
@@ -7704,9 +7705,9 @@
   "linkwarden-linkwarden": {
     "name": "linkwarden",
     "officialUrl": "https://github.com/linkwarden/linkwarden",
-    "lastChecked": "2026-10-28T20:50:47.294Z",
+    "lastChecked": "2026-10-31T15:56:40.770Z",
     "revisionIdentifier": "eff7c6b7",
-    "lastVerified": "2026-10-28T20:50:47.294Z"
+    "lastVerified": "2026-10-31T15:56:40.770Z"
   },
   "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b": {
     "name": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
@@ -7959,14 +7960,14 @@
     "officialUrl": "https://github.com/zed-industries/zed",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T20:15:08.182Z",
-    "lastVerified": "2026-10-30T20:15:08.182Z",
+    "lastChecked": "2026-10-31T15:56:41.005Z",
+    "lastVerified": "2026-10-31T15:56:41.005Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zed-industries-zed",
-    "contentHash": "eb6f6465005a8f5895ada6e1edfe2e371a9461746f011d97c3a7a64d21647ff6",
+    "contentHash": "4c7ce402ed21bfe213933e7b694cdb027806c811ed7a60aac06edc7e5c448098",
     "promotedRulesCount": 1,
-    "recentFixesCount": 20,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
