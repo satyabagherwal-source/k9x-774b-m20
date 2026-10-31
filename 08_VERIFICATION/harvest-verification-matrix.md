@@ -6439,3 +6439,4 @@
 | `CYCLE-20261031-FPT8` | `2026-10-31T03:02:36.140Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6033` | Yes (`c20e3583...`) |
 | `CYCLE-20261031-FWP5` | `2026-10-31T03:02:45.065Z` | `ornith-ai/Ornith-1.5-122B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6034, Rule 6035, Rule 6036` | Yes (`71ef22bc...`) |
 | `CYCLE-20261031-FZBJ` | `2026-10-31T03:02:48.463Z` | `StarTrail-org/LEANN` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6037` | Yes (`f90812cd...`) |
+| `CYCLE-20261031-SKK5` | `2026-10-31T03:12:35.861Z` | `orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6038, Rule 6039, Rule 6040` | Yes (`61b6a50a...`) |

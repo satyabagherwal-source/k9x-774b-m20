@@ -10675,8 +10675,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
     "sourceVersion": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
     "license": "Open-Source",
-    "contentHash": "32bd1693c4a6a25e8ccad3abde7e8d5e804804184cfe18d279d0978062796612",
-    "lastHarvestedAt": "2026-10-28T02:34:03.663Z",
+    "contentHash": "61b6a50a679da88ece23d7194f9381cff5b5dd164d0205d7d2578f689d0bca27",
+    "lastHarvestedAt": "2026-10-31T03:12:35.864Z",
     "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf"
   },
   "makecindy-cindy": {

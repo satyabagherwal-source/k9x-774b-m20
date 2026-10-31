@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-O57V",
-    "timestamp": "2026-10-28T21:29:53.515Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "56f8e0f9f7d5f134fd538eb7fc3729eefe3ce401f0014998cf5d1d64e7e70f34",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-OE1B",
     "timestamp": "2026-10-28T21:30:04.943Z",
     "repository": "FrancisRing/Prism",
@@ -7492,6 +7477,21 @@
     "contentHash": "f90812cd3b81ae953120da3a65382113c6d77a1ffafec75d60cdb07520e29b56",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-SKK5",
+    "timestamp": "2026-10-31T03:12:35.861Z",
+    "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+    "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
+    "contentHash": "61b6a50a679da88ece23d7194f9381cff5b5dd164d0205d7d2578f689d0bca27",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

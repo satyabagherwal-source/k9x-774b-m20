@@ -6448,3 +6448,4 @@ Every entry in this ledger must capture:
 | `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `17723968` | Multi-dimensional audit evidence | 2026-10-31T03:02:36.143Z |
 | `learn-huggingface-ornith-ai-ornith-1-5-122b` | `https://huggingface.co/ornith-ai/Ornith-1.5-122B` | `hf-ornith-` | Multi-dimensional audit evidence | 2026-10-31T03:02:45.068Z |
 | `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `07796bd7` | Multi-dimensional audit evidence | 2026-10-31T03:02:48.467Z |
+| `learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf` | `https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-31T03:12:35.864Z |

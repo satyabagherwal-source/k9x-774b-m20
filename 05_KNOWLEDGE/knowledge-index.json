@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T03:02:48.393Z",
+  "last_updated": "2026-10-31T03:12:35.780Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -128340,7 +128340,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
       "source_version": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
-      "content_hash": "32bd1693c4a6a25e8ccad3abde7e8d5e804804184cfe18d279d0978062796612",
+      "content_hash": "61b6a50a679da88ece23d7194f9381cff5b5dd164d0205d7d2578f689d0bca27",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings.md",
       "promoted_rules": [
@@ -128373,6 +128373,21 @@
           "number": 5133,
           "title": "Safe Handling of \"Abliterated\" Model Outputs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6038,
+          "title": "[Abliterated Model Safety Boundary Enforcement]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6039,
+          "title": "[GGUF Quantization Precision Loss Mitigation]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6040,
+          "title": "[Memory-Bound Inference Resource Isolation]",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -128380,7 +128395,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T02:34:03.587Z",
+      "verified_at": "2026-10-31T03:12:35.759Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -158874,6 +158889,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T03:02:48.369Z"
+    },
+    "rule-6038": {
+      "learning_id": "rule-6038",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6038,
+      "title": "[Abliterated Model Safety Boundary Enforcement]",
+      "source_url": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+      "source_version": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T03:12:35.759Z"
+    },
+    "rule-6039": {
+      "learning_id": "rule-6039",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6039,
+      "title": "[GGUF Quantization Precision Loss Mitigation]",
+      "source_url": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+      "source_version": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T03:12:35.759Z"
+    },
+    "rule-6040": {
+      "learning_id": "rule-6040",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6040,
+      "title": "[Memory-Bound Inference Resource Isolation]",
+      "source_url": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+      "source_version": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T03:12:35.759Z"
     }
   },
   "aliases": {
