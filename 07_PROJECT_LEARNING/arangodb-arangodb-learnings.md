@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `884f38b4`  
+> **Source Version**: `a714386f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T04:48:15.160Z  
+> **Timestamp**: 2026-10-31T01:15:15.752Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T04:48:14.113Z  
+> **Harvest Timestamp**: 2026-10-31T01:15:15.156Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🥑 ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 14289 stars
+- **Stars / Engagement**: 14290 stars
 
 ---
 
@@ -988,11 +988,11 @@ my sample apple
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #23556** (2026-10-30): **[COR-1200] Delete the old 1.78.0 boost version.**
+  *Symptoms*: ### Scope & Purpose  As boost is now updated to 1.92.0 and is downloaded via cmakes FetchContent, this 1.78.0 source is not needed anymore. 
+
 - **Issue #23550** (2026-10-28): **[COR-1230] (3.12.13) dont shutdown before upgrade**
   *Symptoms*: ### Scope & Purpose  Port of https://github.com/arangodb/arangodb/pull/23549 to the 3.12.13 release branch.
-
-- **Issue #23549** (2026-10-28): **[COR-1230] dont shutdown before upgrade**
-  *Symptoms*: ### Scope & Purpose  PR #23225 (commit a5ac47ca4f6) no longer registers the ServerFeature in upgrade mode. This however disabled the ShutdownFeature during its prepare().  Now the ShutdownFeature is no longer disabled in upgrade mode. This causes beginShutdown being called even before the UpgradeFeature starts. RocksDBEngine::beginShutdown being called before the compaction results in the compaction being canceled before it started.  The regression hasn't been released, so there's no CHANGELOG entry.  - [X] :hankey: Bugfix - [ ] :pizza: New feature - [ ] :fire: Performance improvement - [ ] :hammer: Refactoring/simplification  ### Checklist  - [X] Tests   - [X] **Regression tests** - [X] Backports   - [X] Backport for 3.12.13:   #### Related Information  - [X] GitHub issue / Jira ticket: https://arangodb.atlassian.net/browse/COR-1230  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1009,209 +1009,156 @@ my sample apple
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `884f38b4` (2026-10-29)
-**Commit Message**: Raise version to 3.12.14
+### Incident Patch 1: `d1a1582f` (2026-10-30)
+**Commit Message**: Fix unit tests
 
-**File**: `ARANGO-VERSION` (modified, +1/-1)
+**File**: `tests/ClusterEngine/ClusterIndexFactoryTest.cpp` (modified, +2/-2)
 ```diff
-@@ -1 +1 @@
--3.12.13-devel
-+3.12.14-devel
+@@ -53,7 +53,7 @@ TEST_F(ClusterIndexFactoryTest, edgeIndexCannotBeCreatedDirectly) {
+         IndexType::Edge, ctx);
+     FAIL() << "expected an exception";
+   } catch (basics::Exception const& ex) {
+-    EXPECT_EQ(ex.code(), TRI_ERROR_INTERNAL);
++    EXPECT_EQ(ex.code(), TRI_ERROR_BAD_PARAMETER);
+   }
+ }
+ 
+@@ -71,6 +71,6 @@ TEST_F(ClusterIndexFactoryTest, primaryIndexCannotBeCreatedDirectly) {
+         IndexType::Primary, ctx);
+     FAIL() << "expected an exception";
+   } catch (basics::Exception const& ex) {
+-    EXPECT_EQ(ex.code(), TRI_ERROR_INTERNAL);
++    EXPECT_EQ(ex.code(), TRI_ERROR_BAD_PARAMETER);
+   }
+ }
 ```
 
-**File**: `CHANGELOG` (modified, +111/-105)
+---
+
+### Incident Patch 2: `0f4c5ea5` (2026-10-30)
+**Commit Message**: Fix fullCount double-counting for COLLECT WITH COUNT (#23539)
+
+**File**: `CHANGELOG` (modified, +3/-0)
 ```diff
-@@ -1,96 +1,101 @@
--3.12.13 (XXXX-XX-XX)
-+3.12.14 (XXXX-XX-XX)
+@@ -1,6 +1,9 @@
+ 3.12.14 (XXXX-XX-XX)
  --------------------
  
--* BTS-2496: AQL `LENGTH()` and `COUNT()` of a subquery that contains a
--  `COLLECT` return the number of rows the subquery produces after the
--  `COLLECT` and any `FILTER` following it. For example,
++* Fixed an issue where AQL COLLECT WITH COUNT reported fullCount one too high 
++  when used with LIMIT and {fullCount: true}. The single result row was counted
++  twice: once when produced and again during the fullCount skip phase.
+ 
+ 3.12.13 (2026-10-28)
+ --------------------
+```
+
+**File**: `arangod/Aql/Executor/CountCollectExecutor.cpp` (modified, +4/-2)
+```diff
+@@ -55,7 +55,7 @@ auto CountCollectExecutor::produceRows(AqlItemBlockInputRange& inputRange,
+   // within a single call
+   TRI_ASSERT(inputRange.skippedInFlight() == 0 ||
+              inputRange.upstreamState() == ExecutorState::DONE);
+-  if (inputRange.upstreamState() == ExecutorState::DONE) {
++  if (!_rowAccounted && inputRange.upstreamState() == ExecutorState::DONE) {
+     // We have skipped all, report it.
+     // In general, we do not have an input row. In fact, we never fetch one.
+     output.setAllowSourceRowUninitialized();
+@@ -65,6 +65,7 @@ auto CountCollectExecutor::produceRows(AqlItemBlockInputRange& inputRange,
+                           InputAqlItemRow{CreateInvalidInputRowHint{}},
+                           AqlValue(AqlValueHintUInt(inputRange.skipAll())));
+     output.advanceRow();
++    _rowAccounted = true;
+   }
+   // We always send a hardLimit with fullcount to upstream
+   return {inputRange.upstreamState(), NoStats{},
+@@ -82,12 +83,13 @@ auto CountCollectExecutor::skipRowsRange(AqlItemBlockInputRange& inputRange,
+   // within a single call
+   TRI_ASSERT(inputRange.skippedInFlight() == 0 ||
+              inputRange.upstreamState() == ExecutorState::DONE);
+-  if (inputRange.upstreamState() == ExecutorState::DONE) {
++  if (!_rowAccounted && inputRange.upstreamState() == ExecutorState::DONE) {
+     // We have skipped all, report it.
+     auto skipped = inputRange.skipAll();
+     // We request to just forward, we do not even care how much
+     TRI_ASSERT(skipped == 0);
+     call.didSkip(1);
++    _rowAccounted = true;
+   }
+   // We always send a hardLimit with fullcount to upstream
+   return {inputRange.upstreamState(), NoStats{}, call.getSkipCount(),
+```
+
+**File**: `arangod/Aql/Executor/CountCollectExecutor.h` (modified, +3/-0)
+```diff
+@@ -108,6 +108,9 @@ class CountCollectExecutor {
+ 
+  private:
+   Infos const& _infos;
++  // COLLECT WITH COUNT produces exactly one row. After it was produced or
++  // skipped, fullCount must not count that same row again.
++  bool _rowAccounted{false};
+ };
+ 
+ }  // namespace aql
+```
+
+**File**: `tests/Aql/Executor/CountCollectExecutorTest.cpp` (modified, +17/-0)
+```diff
+@@ -238,6 +238,23 @@ TEST_P(CountCollectExecutorTest, count_input_fullCount) {
+       .run();
+ }
+ 
++// Produce the single count row, then fullCount-skip: the produced row must not
++// be counted again (LIMIT 0,1 RETURN n with {fullCount: true}).
++TEST_P(CountCollectExecutorTest, count_input_produce_then_fullCount) {
++  makeExecutorTestHelper<1, 1>()
++      .addConsumer<CountCollectExecutor>(MakeCountCollectRegisterInfos(1),
++                                         MakeCountCollectExecutorInfos(1),
++                                         ExecutionNode::COLLECT)
++      .expectedStats(ExecutionStats{})
++      .setInputSplitType(GetSplit())
++      .setInputValue({{0}, {1}, {2}, {3}})
++      .expectedState(ExecutionState::DONE)
++      .expectOutput({1}, {{4}})
++      .expectSkipped(0)
++      .setCall(AqlCall{0, true, 1, AqlCall::LimitType::HARD})
++      .run();
++}
 +
-+3.12.13 (2026-10-28)
-+--------------------
+ TEST_P(CountCollectExecutorTest, count_input_softlimit) {
+   makeExecutorTestHelper<1, 1>()
+       .addConsumer<CountCollectExecutor>(MakeCountCollectRegisterInfos(1),
+```
+
+**File**: `tests/js/client/aql/aql-fullcount.js` (modified, +11/-0)
+```diff
+@@ -245,6 +245,17 @@ function optimizerFullcountTestSuite () {
+ 
+       assertEqual(3, result.getExtra().stats.fullCount);
+       assertEqual(1, result.toArray().length);
++    },
 +
-+* BTS-2496: AQL `LENGTH()` and `COUNT()` of a subquery that contains a `COLLECT`
-+  return the number of rows the subquery produces after the `COLLECT` and any
-+  `FILTER` following it. For example,
-   `LENGTH(FOR d IN coll COLLECT WITH COUNT INTO c FILTER c > 0 RETURN true)`
--  returns `1` for a non-empty collection. The `optimize-count` optimizer rule
--  is not applied to such subqueries. Before, such expressions could return
--  `null` or `0`.
-+  returns `1` for a non-empty collection. The `optimize-count` optimizer rule is
-+  not applied to such subqueries. Before, such expressions could return `null`
-+  or `0`.
++    // COLLECT WITH COUNT always yields one row, fullCount must not count that
++    // row twice when LIMIT consumes it and then fast-forwards for fullCount.
++    testCollectWithCountLimitFullCount : function () {
++      let result = executeQuery(
++        "FOR doc IN UnitTestsCollection COLLECT WITH COUNT INTO n LIMIT 0, 1 RETURN n",
++        null, { fullCount: true });
++
++      assertEqual([3], result.toArray());
++      assertEqual(1, result.getExtra().stats.fullCount);
+     }
  
--* BTS-2502: When an AQL `FILTER` with `OR` is answered by several index
--  lookups in one `IndexNode`, for example `FILTER d.a == 1 OR d.b == 2` with
--  an index on each attribute, the query returns the rows of every lookup, no
--  matter how many rows each lookup produces. Affected versions skipped the
--  remaining lookups when the rows found so far added up to an exact multiple
--  of 1000, and the query silently returned too few results.
-+* BTS-2502: When an AQL `FILTER` with `OR` is answered by several index lookups
-+  in one `IndexNode`, for example `FILTER d.a == 1 OR d.b == 2` with an index on
-+  each attribute, the query returns the rows of every lookup, no matter how many
-+  rows each lookup produces. Affected versions skipped the remaining lookups
-+  when the rows found so far added up to an exact multiple of 1000, and the
-+  query silently returned too few results.
- 
- * COR-1209: Fixed a crash that occurs when a license is being activated.
- 
--* BTS-2497: Fixed AQL wrong result: ALL_SHORTEST_PATHS inside a loop returns no paths
--  for every row after one whose search is empty or starts at the target.
-+* BTS-2497: Fixed AQL wrong result: ALL_SHORTEST_PATHS inside a loop returns no
-+  paths for every row after one whose search is empty or starts at the target.
- 
--* COR-1045: Fixed a server crash when SEARCH on a search-alias view referenced a field
--  not covered by the inverted index and the query ran with `failOnWarning: true`.
-+* COR-1045: Fixed a server crash when SEARCH on a search-alias view referenced a
-+  field not covered by the inverted index and the query ran with
-+  `failOnWarning: true`.
- 
- * COR-1031: Adapt permissions for `PUT /_api/query/properties`: the endpoint now
--  asks the new permission `UpdateQueryProperties`, which is scoped to the database
--  of the request, instead of the admin permission `AdminAqlQueries`. With classic
--  authentication it requires read-write access to that database and not read-write
--  access to `_system`. Returns TRI_ERROR_FORBIDDEN on failure.
-+  asks the new permission `UpdateQueryProperties`, which is scoped to the
-+  database of the request, instead of the admin permission `AdminAqlQueries`.
-+  With classic authentication it requires read-write access to that database and
-+  not read-write access to `_system`. Returns TRI_ERROR_FORBIDDEN on failure.
- 
- * Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
-   dependencies.
- 
- * Updated ArangoDB Starter to v0.19.30.
- 
--* COR-1152: Fixed AQL FILTER conditions combining an equality set (IN list,
--  ==, or OR of ==) with a range operator (<, <=, >, >=) on the same string
--  attribute wrongly returning no results when byte order disagrees with ICU
--  collation order. The same fix applies to SEARCH conditions combining ==
--  or OR of == with a range operator.
-+* COR-1152: Fixed AQL FILTER conditions combining an equality set (IN list, ==,
-+  or OR of ==) with a range operator (<, <=, >, >=) on the same string attribute
-+  wrongly returning no results when byte order disagrees with ICU collation
-+  order. The same fix applies to SEARCH conditions combining == or OR of == with
-+  a range operator.
- 
- * The `--server.jwt-secret-folder` startup option now skips everything in the
-   folder that is not a regular file (e.g. subfolders, sockets, devices, named
-   pipes) instead of trying to load it as a JWT secret.
- 
- * Add `--http.max-decompressed-request-body-size` startup option, which limits
--  how large a compressed HTTP request body may be after decompression. The default
--  is 512 MiB.
-+  how large a compressed HTTP request body may be after decompression. The
-+  default is 512 MiB.
- 
--* COR-1086: Replaced deprecated OpenSSL functions with the proper newer,
--  higher level envelope calls. Removed unused functions and refactored some
--  minor parts of the SslInterface.
-+* COR-1086: Replaced deprecated OpenSSL functions with the proper newer, higher
-+  level envelope calls. Removed unused functions and refactored some minor parts
-+  of the SslInterface.
-```
-
-**File**: `CMakeLists.txt` (modified, +1/-1)
-```diff
-@@ -73,7 +73,7 @@ set(ARANGODB_VERSION_MINOR "12")
- 
- # when building the nightly ARANGODB_VERSION_PATCH will be set
- if(NOT DEFINED ARANGODB_VERSION_PATCH)
--  set(ARANGODB_VERSION_PATCH "13")
-+  set(ARANGODB_VERSION_PATCH "14")
-   set(ARANGODB_VERSION_RELEASE_TYPE "devel")
-   set(ARANGODB_VERSION_RELEASE_NUMBER "")
- else()
-```
-
-**File**: `OpenAPI/1-openapi.json` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@
-   },
-   "summary": "The HTTP API of the ArangoDB graph database system",
-   "title": "ArangoDB Core API",
--  "version": "3.12.13-devel (API v1)"
-+  "version": "3.12.14-devel (API v1)"
-  },
-  "openapi": "3.1.0",
-  "paths": {
-```
-
-**File**: `OpenAPI/2-openapi.json` (modified, +604/-9)
-```diff
-@@ -14,17 +14,17 @@
-   },
-   "summary": "The HTTP API of the ArangoDB graph database system",
-   "title": "ArangoDB Core API",
--  "version": "3.12.12-devel (API experimental)"
-+  "version": "3.12.14-devel (API experimental)"
-  },
-  "openapi": "3.1.0",
-  "paths": {
-   "/_arango/experimental/_db/{database-name}/_admin/activities": {
-    "get": {
--    "description": "\u003e **WARNING:**\nThe activities API is incomplete and thus an experimental feature.\n\n\nReturns the list of activities currently in progress on the server.\nEach activity has an identifier, a type (e.g. `RestHandler`, `AqlQuery`,\n`TransactionActivity`), a creation time, an optional parent reference,\nand a `data` object. The structure of `data` depends on the activity type\nand may be extended in future versions.\n\nThe permissions required to use the endpoint depend on the\n[`--activities.only-superuser-enabled` startup option](https://docs.arango.ai/arangodb/3.12/components/arangodb-server/options/#--activitiesonly-superuser-enabled).\nBy default, *administrate* access for the `_system` database is\nsufficient. If the startup option is enabled, the endpoint is restricted\nto the superuser and you therefore need to authenticate with a token\ncreated from the JWT secret.\n",
-+    "description": "\u003e **WARNING**\n\u003e\n\u003e The activities API is incomplete and thus an experimental feature.\n\nReturns the list of activities currently in progress on the server.\nEach activity has an identifier, a type (e.g. `RestHandler`, `AqlQuery`,\n`TransactionActivity`), a creation time, an optional parent reference,\nand a `data` object. The structure of `data` depends on the activity type\nand may be extended in future versions.\n\nThe permissions required to use the endpoint depend on the\n[`--activities.only-superuser-enabled` startup option](https://docs.arango.ai/arangodb/3.12/components/arangodb-server/options/#--activitiesonly-superuser-enabled).\nBy default, `rw` access for the `_system` database is\nsufficient. If the startup option is enabled, the endpoint requires a\n[superuser JWT](https://docs.arango.ai/arangodb/3.12/develop/http-api/authentication/#jwt-superuser-tokens).",
-     "operationId": "getActivities",
-     "parameters": [
-      {
--      "description": "The name of a database. Which database you use doesn't matter as long\nas the user account you authenticate with has at least read access\nto this database and write access to the `_system` database.\n",
-+      "description": "The name of a database. Which database you use doesn't matter as long\nas the user account you authenticate with has at least `ro` access\nto this database and `rw` access to the `_system` database.\n",
-       "example": "_system",
-       "in": "path",
-       "name": "database-name",
-@@ -50,7 +50,7 @@
-               "type": "string"
-              },
-              "data": {
--              "description": "Type-specific details for this activity. The shape of\nthis object depends on the activity type and is\nintentionally left flexible so the feature can grow\nwithout breaking the API. Do not rely on a fixed schema.\n",
-+              "description": "Type-specific details for this activity. The shape of\nthis object depends on the activity `type` and is\nintentionally left flexible so the feature can grow\nwithout breaking the API. Do not rely on a fixed schema.\nSee the [Activity types](https://docs.arango.ai/arangodb/3.12/develop/http-api/monitoring/activities/#activity-types) for the details.\n",
-               "type": "object"
-              },
-              "id": {
-@@ -63,8 +63,29 @@
-               "example": 370,
-               "type": "integer"
-              },
-+             "threads": {
-+              "description": "\u003csmall\u003eIntroduced in: v3.12.10\u003c/small\u003e\n\nThe threads that currently execute this activity.\nThe list is empty for activities that no thread\nclaims, like background maintenance activities.\n",
-+              "items": {
-+               "properties": {
-+                "LWPID": {
-+                 "description": "The identifier of the light-weight process\n(thread) as assigned by the operating system.\n",
-+                 "type": "integer"
-+                },
-+                "name": {
-+                 "description": "The name of the thread.\n",
-+                 "type": "string"
-+                }
-+               },
-+               "required": [
-+                "LWPID",
-+                "name"
-+               ],
-+               "type": "object"
-+              },
-+              "type": "array"
-+             },
-              "type": {
--              "description": "The kind of activity (e.g. `RestHandler`, `AQLQuery`).\n",
-+              "description": "The kind of activity (e.g. `RestHandler`, `AQLQuery`).\nSee the [Activity types](https://docs.arango.ai/arangodb/3.12/develop/http-api/monitoring/activities/#activity-types) for the details.\n",
-               "example": "RestHandler",
-               "type": "string"
-   
+   };
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #23556** (2026-10-30): [COR-1200] Delete the old 1.78.0 boost version. (@johann-listunov)
 - **PR #23550** (2026-10-28): [COR-1230] (3.12.13) dont shutdown before upgrade (@goedderz)
 - **PR #23549** (2026-10-28): [COR-1230] dont shutdown before upgrade (@goedderz)
 - **PR #23548** (2026-10-28): [COR-1229] Refactor ApiVersion handling in RestHandlerFactory (@mpoeter)
 - **PR #23547** (2026-10-28): [BTS-2503] smart-join-smart-edge requires one vertex and direction in all OR branches (@maierlars)
 - **PR #23546** (2026-10-27): Bug fix/handle makedata timeoout (@dothebart)
-- **PR #23545** (2026-10-27): [COR-1209] Changelog (@johann-listunov)
 
 ---
 
@@ -1231,67 +1178,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Raise version to 3.12.14
+## X. Empirical Invariant Guard in ClusterIndexFactoryTest.cpp
 
 **RULE**:
-When implementing operations in `CHANGELOG`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/ClusterEngine/ClusterIndexFactoryTest.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `884f38b4`: Raise version to 3.12.14. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d1a1582f`: unit tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/ClusterEngine/ClusterIndexFactoryTest.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-3.12.14 (XXXX-XX-XX)
-
-3.12.13 (2026-10-28)
---------------------
-
-* BTS-2496: AQL `LENGTH()` and `COUNT()` of a subquery that contains a `COLLECT`
-  return the number of rows the subquery produces after the `COLLECT` and any
-  `FILTER` following it. For example,
-  returns `1` for a non-empty collection. The `optimize-count` optimizer rule is
-  not applied to such subqueries. Before, such expressions could return `null`
-  or `0`.
-* BTS-2502: When an AQL `FILTER` with `OR` is answered by several index lookups
-  in one `IndexNode`, for example `FILTER d.a == 1 OR d.b == 2` with an index on
-  each attribute, the query returns the rows of every lookup, no matter how many
-  rows each lookup produces. Affected versions skipped the remaining lookups
-  when the rows found so far added up to an exact multiple of 1000, and the
-  query silently returned too few results.
-* BTS-2497: Fixed AQL wrong result: ALL_SHORTEST_PATHS inside a loop returns no
-  paths for every row after one whose search is empty or starts at the target.
-* COR-1045: Fixed a server crash when SEARCH on a search-alias view referenced a
-  field not covered by the inverted index and the query ran with
-  `failOnWarning: true`.
-
+    EXPECT_EQ(ex.code(), TRI_ERROR_BAD_PARAMETER);
+    EXPECT_EQ(ex.code(), TRI_ERROR_BAD_PARAMETER);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-3.12.13 (XXXX-XX-XX)
-* BTS-2496: AQL `LENGTH()` and `COUNT()` of a subquery that contains a
-  `COLLECT` return the number of rows the subquery produces after the
-  `COLLECT` and any `FILTER` following it. For example,
-  returns `1` for a non-empty collection. The `optimize-count` optimizer rule
-  is not applied to such subqueries. Before, such expressions could return
-  `null` or `0`.
-* BTS-2502: When an AQL `FILTER` with `OR` is answered by several index
-  lookups in one `IndexNode`, for example `FILTER d.a == 1 OR d.b == 2` with
-  an index on each attribute, the query returns the rows of every lookup, no
-  matter how many rows each lookup produces. Affected versions skipped the
-  remaining lookups when the rows found so far added up to an exact multiple
-  of 1000, and the query silently returned too few results.
-* BTS-2497: Fixed AQL wrong result: ALL_SHORTEST_PATHS inside a loop returns no paths
-  for every row after one whose search is empty or starts at the target.
-* COR-1045: Fixed a server crash when SEARCH on a search-alias view referenced a field
-  not covered by the inverted index and the query ran with `failOnWarning: true`.
-  asks the new permission `UpdateQueryProperti
+    EXPECT_EQ(ex.code(), TRI_ERROR_INTERNAL);
+    EXPECT_EQ(ex.code(), TRI_ERROR_INTERNAL);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `884f38b4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d1a1582f` are properly handled with clean fallback behavior.

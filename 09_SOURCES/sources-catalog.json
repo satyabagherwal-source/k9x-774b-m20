@@ -3073,10 +3073,10 @@
     "repository": "unhappychoice/gitlogue",
     "platform": "github",
     "sourceUrl": "https://github.com/unhappychoice/gitlogue",
-    "sourceVersion": "640973f9",
+    "sourceVersion": "0f40807a",
     "license": "ISC",
-    "contentHash": "060e625d675a9e6f41b02c01023ae490ae4dbcb683934656b35c829c3258536e",
-    "lastHarvestedAt": "2026-10-29T12:16:50.145Z",
+    "contentHash": "7179fdba23339e93abac406a757262f6b8f59e42110d8700e473d19f2da7da9b",
+    "lastHarvestedAt": "2026-10-31T01:15:03.383Z",
     "learningId": "learn-github-unhappychoice-gitlogue"
   },
   "faridsafi-react-native-gifted-chat": {
@@ -5013,10 +5013,10 @@
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "884f38b4",
+    "sourceVersion": "a714386f",
     "license": "NOASSERTION",
-    "contentHash": "ce12403ba94b91714818f008d497a2705291090a2c7f0a0f18425c21574409f3",
-    "lastHarvestedAt": "2026-10-30T04:48:15.580Z",
+    "contentHash": "1c1b3c1115086f228367803e67efc2bc079ccd843abd74a91f309b1665542b3c",
+    "lastHarvestedAt": "2026-10-31T01:15:16.008Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {
@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "5916ff02",
+    "sourceVersion": "ddf515c5",
     "license": "Apache-2.0",
-    "contentHash": "6c4e9dfc5144a3c6b112e2bd181ac3a5ae65ea49feaf5d76e06f319297ffb5e2",
-    "lastHarvestedAt": "2026-10-30T05:39:23.562Z",
+    "contentHash": "9db5a8b3161cb731eec313967ea3d3803d707dc55b2d476fb907c57c783773e0",
+    "lastHarvestedAt": "2026-10-31T01:15:10.323Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {
@@ -10375,8 +10375,8 @@
     "sourceUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
     "sourceVersion": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
     "license": "Open-Source",
-    "contentHash": "6d065bcc3a2588f8cd040168a33ace8c4b8a911454f55d3ce1015a05e43316b4",
-    "lastHarvestedAt": "2026-10-27T23:10:18.909Z",
+    "contentHash": "55d8368559cffa270a5866801170a5bb7d42e11b4da7fa82d4693a9afc5ea21d",
+    "lastHarvestedAt": "2026-10-31T01:15:14.704Z",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8"
   },
   "hf-lodestones-moss-image-sft-8-steps-dmd": {

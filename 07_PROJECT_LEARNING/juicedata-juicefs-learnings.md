@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source**: github ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
-> **Source Version**: `5916ff02`  
+> **Source Version**: `ddf515c5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T05:39:22.896Z  
+> **Timestamp**: 2026-10-31T01:15:09.607Z  
 > **Learning ID**: `learn-github-juicedata-juicefs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T05:39:22.325Z  
+> **Harvest Timestamp**: 2026-10-31T01:15:09.261Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14590 stars
+- **Stars / Engagement**: 14592 stars
 
 ---
 
@@ -1178,280 +1178,68 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5916ff02` (2026-10-30)
-**Commit Message**: cmd/sync: support Neon Object Storage and add its setup docs (#7638)
+### Incident Patch 1: `ddf515c5` (2026-10-30)
+**Commit Message**: object/cos: add timeout for cos (#7469)
 
-**File**: `cmd/sync.go` (modified, +2/-1)
-```diff
-@@ -488,7 +488,8 @@ func createSyncStorage(uri string, conf *sync.Config) (object.ObjectStorage, err
- 
- func isS3PathType(endpoint string) bool {
- 	//localhost[:8080] 127.0.0.1[:8080]  s3.ap-southeast-1.amazonaws.com[:8080] s3-ap-southeast-1.amazonaws.com[:8080]
--	pattern := `^((localhost)|(s3[.-].*\.amazonaws\.com)|((1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|[1-9])\.((1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)\.){2}(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)))?(:\d*)?$`
-+	//br-xxx.storage.c-1.us-east-2.aws.neon.tech (Neon Object Storage only supports path-style)
-+	pattern := `^((localhost)|(s3[.-].*\.amazonaws\.com)|([^.]+\.storage\.[^.]+\.[^.]+\.aws\.neon\.tech)|((1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|[1-9])\.((1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)\.){2}(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)))?(:\d*)?$`
- 	return regexp.MustCompile(pattern).MatchString(endpoint)
- }
- 
-```
+Signed-off-by: swj <[REDACTED_EMAIL]>
 
-**File**: `cmd/sync_test.go` (modified, +3/-0)
+**File**: `pkg/object/cos.go` (modified, +1/-0)
 ```diff
-@@ -113,6 +113,9 @@ func Test_isS3PathType(t *testing.T) {
- 		{"s3-ap-southeast-1amazonaws.com:8080", false},
- 		{"s3-ap-southeast-1", false},
- 		{"s3-ap-southeast-1:8080", false},
-+		{"br-cool-darkness-a1b2c3d4.storage.c-1.us-east-2.aws.neon.tech", true},
-+		{"storage.c-1.us-east-2.aws.neon.tech", false},
-+		{"ep-cool-darkness-a1b2c3d4.c-1.us-east-2.aws.neon.tech", false},
- 	}
- 	for _, tt := range tests {
- 		t.Run("Test host", func(t *testing.T) {
-```
-
-**File**: `docs/en/reference/how_to_set_up_object_storage.md` (modified, +32/-0)
-```diff
-@@ -164,6 +164,7 @@ If you wish to use a storage system that is not listed, feel free to submit a re
- | [Vultr Object Storage](#vultr-object-storage)               | `s3`       |
- | [Cloudflare R2](#r2)                                        | `s3`       |
- | [Bunny Storage](#bunny)                                     | `bunny`    |
-+| [Neon Object Storage](#neon)                                | `s3`       |
- | [Alibaba Cloud OSS](#alibaba-cloud-oss)                     | `oss`      |
- | [Tencent Cloud COS](#tencent-cloud-cos)                     | `cos`      |
- | [Huawei Cloud OBS](#huawei-cloud-obs)                       | `obs`      |
-@@ -579,6 +580,37 @@ juicefs format \
-     myjfs
- ```
- 
-+### Neon Object Storage {#neon}
-+
-+[Neon Object Storage](https://neon.com/docs/storage/overview) is S3-compatible object storage that branches together with Neon Postgres, so usage is the same as Amazon S3. Every Neon branch has its own storage endpoint, and a new branch starts with a copy-on-write view of its parent's buckets. Check the [Get started with Object Storage](https://neon.com/docs/storage/get-started) guide to obtain the S3 credentials.
-+
-+Neon Object Storage only supports path-style requests, so the `--bucket` option format is `https://<branch-endpoint>/<bucket>`. `<branch-endpoint>` is the storage endpoint of the branch, which is the value of `AWS_ENDPOINT_URL_S3` shown in the Console (or written by `neon env pull`), for example `br-cool-darkness-a1b2c3d4.storage.c-1.us-east-2.aws.neon.tech`. The bucket is created automatically if it does not exist. For example:
-+
-+```shell
-+juicefs format \
-+    --storage s3 \
-+    --bucket https://<branch-endpoint>/<bucket> \
-+    --access-key <token-id> \
-+    --secret-key <s3-secret-access-key> \
-+    ... \
-+    myjfs
-+```
-+
-+Do not set `JFS_S3_VHOST_STYLE`, because Neon Object Storage does not accept virtual-hosted-style requests.
-+
-+For `juicefs sync`, use the URL format `s3://<access-key>:<secret-key>@<branch-endpoint>/<bucket>/<prefix>/`.
-+
-+:::caution
-+If you also use Neon Postgres as the [metadata engine](how_to_set_up_metadata_engine.md#postgresql), creating a Neon branch forks both the metadata and the data of the volume. The metadata on the new branch still points to the parent branch's storage endpoint, so update it to the new branch's endpoint before writing to the volume on that branch:
-+
-+```shell
-+juicefs config "postgres://<user>:<password>@<branch-db-host>/<database>?sslmode=require" \
-+    --bucket https://<new-branch-endpoint>/<bucket>
-+```
-+
-+Without this step, writes from the new branch go to the parent's bucket and can overwrite blocks written later by the parent volume, because both copies of the metadata allocate the same slice IDs.
-+:::
-+
- ### Alibaba Cloud OSS
- 
- Please follow [this document](https://www.alibabacloud.com/help/doc-detail/125558.htm) to learn how to get access key and secret key. If you have already created [RAM role](https://www.alibabacloud.com/help/doc-detail/110376.htm) and assigned it to a VM instance, you could omit the options `--access-key` and `--secret-key`.
-```
-
-**File**: `docs/zh_cn/reference/how_to_set_up_object_storage.md` (modified, +32/-0)
-```diff
-@@ -162,6 +162,7 @@ juicefs format \
- | [Storj](#storj)                             | `storj`    |
- | [Vultr 对象存储](#vultr-对象存储)           | `s3`       |
- | [Cloudflare R2](#r2)                        | `s3`       |
-+| [Neon Object Storage](#neon)                | `s3`       |
- | [阿里云 OSS](#阿里云-oss)                   | `oss`      |
- | [腾讯云 COS](#腾讯云-cos)                   | `cos`      |
- | [华为云 OBS](#华为云-obs)                   | `obs`      |
-@@ -539,6 +540,37 @@ juicefs format \
- 因为 Cloudflare R2 的 `ListObjects` API 并非完全 S3 兼容（返回结果没有实现排序功能），所以 JuiceFS 的部分功能无法使用，比如 `juicefs gc`、`juicefs fsck`、`juicefs sync`、`juicefs destroy`。另外，使用 `juicefs mount` 时需要关闭[元数据自动备份](../administration/metadata_dump_load.md#backup-automatically)功能，即加上 `--backup-meta 0`。
- :::
- 
-+### Neon Object Storage {#neon}
-+
-+[Neon Object Storage](https://neon.com/docs/storage/overview) 是与 Neon Postgres 一起分支的 S3 兼容对象存储，使用方法与 Amazon S3 相同。每个 Neon 分支都有独立的存储 endpoint，新建的分支会以写时复制（copy-on-write）的方式继承父分支的 bucket。请参考 [Get started with Object Storage](https://neon.com/docs/storage/get-started) 了解如何获取 S3 凭证。
-+
-+Neon Object Storage 仅支持 path-style 请求，因此 `--bucket` 选项的设置格式为 `https://<branch-endpoint>/<bucket>`。其中 `<branch-endpoint>` 是分支的存储 endpoint，即控制台中显示的（或 `neon env pull` 写入的）`AWS_ENDPOINT_URL_S3` 的值，例如 `br-cool-darkness-a1b2c3d4.storage.c-1.us-east-2.aws.neon.tech`。如果 bucket 不存在，会自动创建。例如：
-+
-+```shell
-+juicefs format \
-+    --storage s3 \
-+    --bucket https://<branch-endpoint>/<bucket> \
-+    --access-key <token-id> \
-+    --secret-key <s3-secret-access-key> \
-+    ... \
-+    myjfs
-+```
-+
-+请不要设置 `JFS_S3_VHOST_STYLE`，因为 Neon Object Storage 不接受 virtual-hosted-style 请求。
-+
-+使用 `juicefs sync` 时，URL 格式为 `s3://<access-key>:<secret-key>@<branch-endpoint>/<bucket>/<prefix>/`。
-+
-+:::caution 特别提示
-+如果同时使用 Neon Postgres 作为[元数据引擎](how_to_set_up_metadata_engine.md#postgresql)，创建 Neon 分支会同时复制文件系统的元数据和数据。新分支上的元数据仍然指向父分支的存储 endpoint，因此在新分支上写入文件系统之前，需要将其更新为新分支的 endpoint：
-+
-+```shell
-+juicefs config "postgres://<user>:<password>@<branch-db-host>/<database>?sslmode=require" \
-+    --bucket https://<new-branch-endpoint>/<bucket>
-+```
-+
-+如果跳过这一步，新分支的写入会进入父分支的 bucket。由于两份元数据会分配相同的 slice ID，这些写入可能覆盖父分支之后写入的数据块。
-+:::
-+
- ### 阿里云 OSS
- 
- 使用阿里云 OSS 作为 JuiceFS 数据存储，请先参照 [这篇文档](https://help.aliyun.com/document_detail/38738.html) 了解如何创建 Access Key 和 Secret Key。如果你已经创建了 [RAM 角色](https://help.aliyun.com/document_detail/93689.html) 并指派给了云服务器实例，则在创建文件系统时可以忽略 `--access-key` 和 `--secret-key` 选项。
+@@ -351,6 +351,7 @@ func newCOS(endpoint, accessKey, secretKey, token string) (ObjectStorage, error)
+ 			SessionToken: token,
+ 			Transport:    httpClient.Transport,
+ 		},
++		Timeout: httpClient.Timeout,
+ 	})
+ 	client.UserAgent = UserAgent
+ 	disableChecksum := strings.EqualFold(uri.Query().Get("disable-checksum"), "true")
 ```
 
 ---
 
-### Incident Patch 2: `edb7ae16` (2026-10-30)
-**Commit Message**: meta/redis: do not recreate removed dir quotas when flushing usage (#7785)
+### Incident Patch 2: `f84e1962` (2026-10-30)
+**Commit Message**: fix(object): synchronize delimiter listing stop signal (#7621)
 
-Co-authored-by: Ducheved <[REDACTED_EMAIL]>
-Co-authored-by: jiefenghuang <[REDACTED_EMAIL]>
+Signed-off-by: Xucheng Zhou <[REDACTED_EMAIL]>
+Co-authored-by: Xuhui zhang <[REDACTED_EMAIL]>
 
-**File**: `pkg/meta/base_test.go` (modified, +57/-0)
+**File**: `pkg/object/object_storage.go` (modified, +7/-1)
 ```diff
-@@ -5200,6 +5200,63 @@ func testQuota(t *testing.T, m Meta) {
- 			t.Errorf("Create d/overflow: got %s, want %s", st, syscall.EDQUOT)
- 		}
- 	})
-+
-+	t.Run("FlushAfterRmdir", func(t *testing.T) {
-+		var parent, inode Ino
-+		var attr Attr
-+
-+		_ = m.Remove(ctx, RootInode, "qrmdir", true, 10, nil)
-+		if st := m.Mkdir(ctx, RootInode, "qrmdir", 0755, 0, 0, &parent, &attr); st != 0 {
-+			t.Fatalf("Mkdir qrmdir: %s", st)
-+		}
-+		if st := m.Mkdir(ctx, parent, "d", 0755, 0, 0, &inode, &attr); st != 0 {
-+			t.Fatalf("Mkdir qrmdir/d: %s", st)
-+		}
-+		for _, p := range []string{"/qrmdir", "/qrmdir/d"} {
-+			if err := m.HandleQuota(ctx, QuotaSet, p, DirQuotaType, map[string]*Quota{p: {MaxSpace: 1 << 30, MaxInodes: 100}}, false, false, false); err != nil {
-+				t.Fatalf("HandleQuota set %s: %s", p, err)
-+			}
-+		}
-+		m.getBase().loadQuotas()
-+		for i := 0; i < 3; i++ {
-+			if st := m.Create(ctx, inode, fmt.Sprintf("f%d", i), 0644, 0, 0, nil, &attr); st != 0 {
-+				t.Fatalf("Create qrmdir/d/f%d: %s", i, st)
-+			}
-+		}
-+		m.getBase().doFlushQuotas()
-+
-+		// The unlinks leave negative usage of d pending until the next flush.
-+		var count uint64
-+		if st := m.Remove(ctx, parent, "d", true, 10, &count); st != 0 {
-+			t.Fatalf("Remove qrmdir/d: %s", st)
-+		}
-+		m.getBase().doFlushQuotas()
-+
-+		if q, err := m.getBase().en.doGetQuota(ctx, DirQuotaType, uint64(inode)); err != nil {
-+			t.Fatalf("get quota of removed dir: %s", err)
-+		} else if q != nil {
-+			t.Fatalf("quota of removed dir is recreated by flush: %+v", q)
-+		}
-+		if r, ok := m.(*redisMeta); ok {
-+			for _, key := range []string{r.dirQuotaKey(), r.dirQuotaUsedSpaceKey(), r.dirQuotaUsedInodesKey()} {
-+				if found, err := r.rdb.HExists(ctx, key, inode.String()).Result(); err != nil || found {
-+					t.Fatalf("field %s of removed dir in %s: found %t, err %v", inode, key, found, err)
-+				}
-+			}
-+		}
-+		qs := make(map[string]*Quota)
-+		if err := m.HandleQuota(ctx, QuotaGet, "/qrmdir", DirQuotaType, qs, false, false, false); err != nil {
-+			t.Fatalf("HandleQuota get /qrmdir: %s", err)
-+		} else if q := qs["/qrmdir"]; q.UsedSpace != 0 || q.UsedInodes != 0 {
-+			t.Fatalf("usage of /qrmdir after removing d: %+v", q)
-+		}
-+		if err := m.HandleQuota(ctx, QuotaDel, "/qrmdir", DirQuotaType, nil, false, false, false); err != nil {
-+			t.Fatalf("HandleQuota del /qrmdir: %s", err)
-+		}
-+		if st := m.Rmdir(ctx, RootInode, "qrmdir"); st != 0 {
-+			t.Fatalf("Rmdir qrmdir: %s", st)
-+		}
-+	})
- }
+@@ -29,6 +29,7 @@ import (
+ 	"strconv"
+ 	"strings"
+ 	"sync"
++	"sync/atomic"
+ 	"time"
  
- func testAtime(t *testing.T, m Meta) {
-```
-
-**File**: `pkg/meta/redis.go` (modified, +43/-13)
-```diff
-@@ -4677,21 +4677,51 @@ func (m *redisMeta) doLoadQuotas(ctx Context) (map[uint64]*Quota, map[uint64]*Qu
- }
- 
- func (m *redisMeta) doFlushQuotas(ctx Context, quotas []*iQuota) error {
--	_, err := m.rdb.TxPipelined(ctx, func(pipe redis.Pipeliner) error {
--		for _, q := range quotas {
--			config, err := m.getQuotaKeys(q.qtype)
--			if err != nil {
--				return err
--			}
-+	var dirFields []string
-+	for _, q := range quotas {
-+		if q.qtype == DirQuotaType {
-+			dirFields = append(dirFields, strconv.FormatUint(q.qkey, 10))
-+		}
-+	}
-+	flush := func(rdb redis.Cmdable, exists map[string]bool) error {
-+		_, err := rdb.TxPipelined(ctx, func(pipe redis.Pipeliner) error {
-+			for _, q := range quotas {
-+				config, err := m.getQuotaKeys(q.qtype)
-+				if err != nil {
-+					return err
-+				}
- 
--			key := strconv.FormatUint(q.qkey, 10)
--			pipe.HSetNX(ctx, config.quotaKey, key, m.packQuota(-1, -1))
--			pipe.HIncrBy(ctx, config.usedSpaceKey, key, q.quota.newSpace)
--			pipe.HIncrBy(ctx, config.usedInodesKey, key, q.quota.newInodes)
-+				key := strconv.FormatUint(q.qkey, 10)
-+				if q.qtype == DirQuotaType {
-+					// the directory or its quota was removed, drop the pending usage like SQL and TKV do
-+					if !exists[key] {
-+						continue
+ 	"github.com/juicedata/juicefs/pkg/utils"
+@@ -247,12 +248,17 @@ func ListAllWithDelimiter(ctx context.Context, store ObjectStorage, prefix, star
+ 	walk = func(prefix string, entries []Object) error {
+ 		var concurrent = 10
+ 		var err error
++		var stopped atomic.Bool
++		defer stopped.Store(true)
+ 		threads := make([]listThread, concurrent)
+ 		for c := 0; c < concurrent; c++ {
+ 			t := &threads[c]
+ 			t.cond = utils.NewCond(t)
+ 			go func(c int) {
+ 				for i := c; i < len(entries); i += concurrent {
++					if stopped.Load() {
++						return
 +					}
-+				} else {
-+					pipe.HSetNX(ctx, config.quotaKey, key, m.packQuota(-1, -1))
-+				}
-+				pipe.HIncrBy(ctx, config.usedSpaceKey, key, q.quota.newSpace)
-+				pipe.HIncrBy(ctx, config.usedInodesKey, key, q.quota.newInodes)
-+			}
-+			return nil
-+		})
-+		return err
-+	}
-+	if len(dirFields) == 0 {
-+		return flush(m.rdb, nil)
-+	}
-+	// watch the dir quota hash so that a concurrent rmdir/rename/quota delete restarts the flush
-+	return m.txn(ctx, func(tx *redis.Tx) error {
-+		vals, err := tx.HMGet(ctx, m.dirQuotaKey(), dirFields...).Result()
-+		if err != nil {
-+			return err
- 		}
--		return nil
--	})
--	return err
-+		exists := make(map[string]bool, len(dirFields))
-+		for i, v := range vals {
-+			exists[dirFields[i]] = v != nil
-+		}
-+		return flush(tx, exists)
-+	}, m.dirQuotaKey())
- }
- 
- func (m *redisMeta) cleanUgUsage(ctx Context, qtype uint32) error {
+ 					key := entries[i].Key()
+ 					if end != "" && key >= end {
+ 						break
+@@ -269,7 +275,7 @@ func ListAllWithDelimiter(ctx context.Context, store ObjectStorage, prefix, star
+ 					t.cond.Signal()
+ 					for t.ready {
+ 						t.cond.WaitWithTimeout(time.Second)
+-						if err != nil {
++						if stopped.Load() {
+ 							t.Unlock()
+ 							return
+ 						}
 ```
 
 #### Recent Merged Pull Requests:
@@ -1480,29 +1268,28 @@ Co-authored-by: jiefenghuang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cmd/sync: support Neon Object Storage and add its setup docs (#7638)
+## X. object/cos: add timeout for cos (#7469)
 
 **RULE**:
-When implementing operations in `cmd/sync.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/object/cos.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5916ff02`: cmd/sync: support Neon Object Storage and add its setup docs (#7638). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ddf515c5`: object/cos: add timeout for cos (#7469). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/sync.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/object/cos.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	//br-xxx.storage.c-1.us-east-2.aws.neon.tech (Neon Object Storage only supports path-style)
-	pattern := `^((localhost)|(s3[.-].*\.amazonaws\.com)|([^.]+\.storage\.[^.]+\.[^.]+\.aws\.neon\.tech)|((1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|[1-9])\.((1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)\.){2}(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)))?(:\d*)?$`
+		Timeout: httpClient.Timeout,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	pattern := `^((localhost)|(s3[.-].*\.amazonaws\.com)|((1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|[1-9])\.((1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)\.){2}(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)))?(:\d*)?$`
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5916ff02` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ddf515c5` are properly handled with clean fallback behavior.

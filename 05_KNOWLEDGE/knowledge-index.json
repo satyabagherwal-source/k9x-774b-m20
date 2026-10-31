@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T01:05:00.722Z",
+  "last_updated": "2026-10-31T01:15:15.916Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2914,8 +2914,8 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "884f38b4",
-      "content_hash": "ce12403ba94b91714818f008d497a2705291090a2c7f0a0f18425c21574409f3",
+      "source_version": "a714386f",
+      "content_hash": "1c1b3c1115086f228367803e67efc2bc079ccd843abd74a91f309b1665542b3c",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
@@ -2975,7 +2975,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T04:48:15.516Z",
+      "verified_at": "2026-10-31T01:15:15.889Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33127,8 +33127,8 @@
       "slug": "juicedata-juicefs",
       "platform": "github",
       "source_url": "https://github.com/juicedata/juicefs",
-      "source_version": "5916ff02",
-      "content_hash": "6c4e9dfc5144a3c6b112e2bd181ac3a5ae65ea49feaf5d76e06f319297ffb5e2",
+      "source_version": "ddf515c5",
+      "content_hash": "9db5a8b3161cb731eec313967ea3d3803d707dc55b2d476fb907c57c783773e0",
       "dossier_path": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "promoted_rules": [
@@ -33176,6 +33176,11 @@
           "number": 5613,
           "title": "cmd/sync: support Neon Object Storage and add its setup docs (#7638)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5980,
+          "title": "object/cos: add timeout for cos (#7469)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33183,7 +33188,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T05:39:23.460Z",
+      "verified_at": "2026-10-31T01:15:10.218Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55790,8 +55795,8 @@
       "slug": "unhappychoice-gitlogue",
       "platform": "github",
       "source_url": "https://github.com/unhappychoice/gitlogue",
-      "source_version": "640973f9",
-      "content_hash": "060e625d675a9e6f41b02c01023ae490ae4dbcb683934656b35c829c3258536e",
+      "source_version": "0f40807a",
+      "content_hash": "7179fdba23339e93abac406a757262f6b8f59e42110d8700e473d19f2da7da9b",
       "dossier_path": "07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
       "promoted_rules": [
@@ -55819,6 +55824,11 @@
           "number": 5508,
           "title": "Absolute Separation of Grapheme Cluster Count and Display Column Width in TUI Layouts",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5979,
+          "title": "swift): capture nil via nil_literal node",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55826,7 +55836,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T12:16:50.045Z",
+      "verified_at": "2026-10-31T01:15:03.281Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -113308,7 +113318,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
       "source_version": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
-      "content_hash": "6d065bcc3a2588f8cd040168a33ace8c4b8a911454f55d3ce1015a05e43316b4",
+      "content_hash": "55d8368559cffa270a5866801170a5bb7d42e11b4da7fa82d4693a9afc5ea21d",
       "dossier_path": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md",
       "promoted_rules": [
@@ -113356,6 +113366,21 @@
           "number": 5052,
           "title": "M Context KV Cache Compression Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5981,
+          "title": "Mixed-Precision MoE Dequantization Synchronization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5982,
+          "title": "Non-Uniform KV-Cache Compression Allocation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5983,
+          "title": "Abliteration Weight Integrity Check",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -113363,7 +113388,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T23:10:18.813Z",
+      "verified_at": "2026-10-31T01:15:14.599Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -157747,6 +157772,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T01:05:00.701Z"
+    },
+    "rule-5979": {
+      "learning_id": "rule-5979",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5979,
+      "title": "swift): capture nil via nil_literal node",
+      "source_url": "https://github.com/unhappychoice/gitlogue",
+      "source_version": "0f40807a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T01:15:03.281Z"
+    },
+    "rule-5980": {
+      "learning_id": "rule-5980",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5980,
+      "title": "object/cos: add timeout for cos (#7469)",
+      "source_url": "https://github.com/juicedata/juicefs",
+      "source_version": "ddf515c5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T01:15:10.218Z"
+    },
+    "rule-5981": {
+      "learning_id": "rule-5981",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5981,
+      "title": "Mixed-Precision MoE Dequantization Synchronization",
+      "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "source_version": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T01:15:14.599Z"
+    },
+    "rule-5982": {
+      "learning_id": "rule-5982",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5982,
+      "title": "Non-Uniform KV-Cache Compression Allocation",
+      "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "source_version": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T01:15:14.599Z"
+    },
+    "rule-5983": {
+      "learning_id": "rule-5983",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5983,
+      "title": "Abliteration Weight Integrity Check",
+      "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "source_version": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T01:15:14.599Z"
     }
   },
   "aliases": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T01:05:00.816Z",
+  "last_updated": "2026-10-31T01:15:16.024Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4731,14 +4731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-unhappychoice-gitlogue",
-      "content_hash": "060e625d675a9e6f41b02c01023ae490ae4dbcb683934656b35c829c3258536e",
-      "verified_at": "2026-10-29T12:16:50.154Z",
+      "content_hash": "7179fdba23339e93abac406a757262f6b8f59e42110d8700e473d19f2da7da9b",
+      "verified_at": "2026-10-31T01:15:03.392Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T12:16:50.154Z"
+      "last_updated": "2026-10-31T01:15:03.392Z"
     },
     "FaridSafi/react-native-gifted-chat": {
       "repository": "FaridSafi/react-native-gifted-chat",
@@ -7641,14 +7641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arangodb-arangodb",
-      "content_hash": "ce12403ba94b91714818f008d497a2705291090a2c7f0a0f18425c21574409f3",
-      "verified_at": "2026-10-30T04:48:15.586Z",
+      "content_hash": "1c1b3c1115086f228367803e67efc2bc079ccd843abd74a91f309b1665542b3c",
+      "verified_at": "2026-10-31T01:15:16.023Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T04:48:15.586Z"
+      "last_updated": "2026-10-31T01:15:16.023Z"
     },
     "chakra-ui/ark": {
       "repository": "chakra-ui/ark",
@@ -9141,14 +9141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-juicedata-juicefs",
-      "content_hash": "6c4e9dfc5144a3c6b112e2bd181ac3a5ae65ea49feaf5d76e06f319297ffb5e2",
-      "verified_at": "2026-10-30T05:39:23.571Z",
+      "content_hash": "9db5a8b3161cb731eec313967ea3d3803d707dc55b2d476fb907c57c783773e0",
+      "verified_at": "2026-10-31T01:15:10.332Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T05:39:23.571Z"
+      "last_updated": "2026-10-31T01:15:10.332Z"
     },
     "RediSearch/RediSearch": {
       "repository": "RediSearch/RediSearch",
@@ -15576,14 +15576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
-      "content_hash": "6d065bcc3a2588f8cd040168a33ace8c4b8a911454f55d3ce1015a05e43316b4",
-      "verified_at": "2026-10-27T23:10:18.917Z",
+      "content_hash": "55d8368559cffa270a5866801170a5bb7d42e11b4da7fa82d4693a9afc5ea21d",
+      "verified_at": "2026-10-31T01:15:14.713Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T23:10:18.917Z"
+      "last_updated": "2026-10-31T01:15:14.713Z"
     },
     "lodestones/MOSS-Image-SFT-8-steps-dmd": {
       "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",

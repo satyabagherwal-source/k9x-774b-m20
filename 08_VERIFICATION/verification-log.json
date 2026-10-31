@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-8C7J",
-    "timestamp": "2026-10-28T18:57:37.999Z",
-    "repository": "jhspetersson/fselect",
-    "learningId": "learn-github-jhspetersson-fselect",
-    "contentHash": "3323057916f8a0254a69f213aaf5dcefefb562d4dce7c793383f015070ad16c0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-8J9X",
-    "timestamp": "2026-10-28T18:57:47.157Z",
-    "repository": "k3s-io/k3s",
-    "learningId": "learn-github-k3s-io-k3s",
-    "contentHash": "aa7ec9501d00598efda5dfed3fba8c784d33e7b69dce9dbc5ced367ed67cb5f8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-8LWK",
-    "timestamp": "2026-10-28T18:57:50.564Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "025cd2958a6cc231f3ee708b7a098b572b293e0cf7aa594f03c69045ebd6a510",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-8N2R",
-    "timestamp": "2026-10-28T18:57:52.083Z",
-    "repository": "duckdb/duckdb",
-    "learningId": "learn-github-duckdb-duckdb",
-    "contentHash": "1cbdaa46855fdf478c318b7f41b5798d4ce8b141b1118068c17c49858ecdc719",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-XG4R",
     "timestamp": "2026-10-28T19:17:09.483Z",
     "repository": "autotrust/JEV-27B-VL",
@@ -7492,6 +7432,66 @@
     "contentHash": "98d7428950ded5b7903418c022ff16f06ebffd060c604298e19296d4dc876db8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-LETV",
+    "timestamp": "2026-10-31T01:15:03.379Z",
+    "repository": "unhappychoice/gitlogue",
+    "learningId": "learn-github-unhappychoice-gitlogue",
+    "contentHash": "7179fdba23339e93abac406a757262f6b8f59e42110d8700e473d19f2da7da9b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-LK6N",
+    "timestamp": "2026-10-31T01:15:10.319Z",
+    "repository": "juicedata/juicefs",
+    "learningId": "learn-github-juicedata-juicefs",
+    "contentHash": "9db5a8b3161cb731eec313967ea3d3803d707dc55b2d476fb907c57c783773e0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-LNKC",
+    "timestamp": "2026-10-31T01:15:14.700Z",
+    "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
+    "contentHash": "55d8368559cffa270a5866801170a5bb7d42e11b4da7fa82d4693a9afc5ea21d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-LOKK",
+    "timestamp": "2026-10-31T01:15:16.004Z",
+    "repository": "arangodb/arangodb",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "1c1b3c1115086f228367803e67efc2bc079ccd843abd74a91f309b1665542b3c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

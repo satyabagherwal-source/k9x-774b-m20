@@ -6400,3 +6400,7 @@ Every entry in this ledger must capture:
 | `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `eaee0c72` | Multi-dimensional audit evidence | 2026-10-31T01:04:52.845Z |
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `c42dc08b` | Multi-dimensional audit evidence | 2026-10-31T01:04:56.275Z |
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `bcdefac9` | Multi-dimensional audit evidence | 2026-10-31T01:05:00.805Z |
+| `learn-github-unhappychoice-gitlogue` | `https://github.com/unhappychoice/gitlogue` | `0f40807a` | Multi-dimensional audit evidence | 2026-10-31T01:15:03.383Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `ddf515c5` | Multi-dimensional audit evidence | 2026-10-31T01:15:10.323Z |
+| `learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-10-31T01:15:14.704Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `a714386f` | Multi-dimensional audit evidence | 2026-10-31T01:15:16.008Z |

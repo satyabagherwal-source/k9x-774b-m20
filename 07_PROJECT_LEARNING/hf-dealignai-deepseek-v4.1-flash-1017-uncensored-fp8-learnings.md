@@ -3,7 +3,7 @@
 > **Source Version**: `hf-dealignai`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-27T23:10:17.739Z  
+> **Timestamp**: 2026-10-31T01:15:13.086Z  
 > **Learning ID**: `learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,375 +17,298 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-This repository represents a **post-training behavioral modification (abliteration)** of the `DeepSeek-V4.1-Flash-1017` multimodal Large Language Model (LLM). The primary technical challenge is not the training of the model, but the **surgical removal of refusal vectors** (safety alignment) while preserving the underlying capability manifold (reasoning, vision, tool-calling, 1M context). The secondary technical challenge is the **quantization fidelity** of this modified model, specifically handling the hybrid precision architecture: FP8 (e4m3) weights with `ue8m0` block scales and FP4 MoE experts.
+This repository represents a **post-training behavioral modification (abliteration)** of the `DeepSeek-V4.1-Flash-1017` multimodal foundation model. The core technical challenge is not merely weight quantization, but the surgical removal of "refusal" vectors in the latent space while preserving the structural integrity of a highly complex, hybrid-precision (FP8/FP4) Mixture-of-Experts (MoE) architecture with a 1M-token context window.
 
-**Architectural Boundaries:**
-1.  **Model Core:** A 40-layer Mixture-of-Experts (MoE) Transformer with 384 routed experts and 1 shared expert per layer.
-2.  **Context Management:** Native 1M token context supported via YaRN (Yet another RoPE extensioN) scaling with a factor of 16, extending the original 65k context.
-3.  **Multimodality:** Integrated vision/video processing with specific token IDs (`image_token_id: 129264`).
-4.  **Quantization Layer:** Native FP8 storage. The `quantization_config` dictates `weight_block_size: [32, 32]` and `scale_fmt: ue8m0`. This is not a standard post-hoc quantization but a native format requiring specific inference engine support (e.g., vLLM, SGLang, or specialized CUDA kernels).
-5.  **Behavioral Layer:** The "Uncensored" aspect implies a modification to the final projection layers or attention heads that previously triggered refusal tokens. This is a **weight-space edit**, not a prompt-engineering solution.
+**Architectural Boundaries & Subsystems:**
+1.  **Hybrid Precision Core**: The model utilizes a dual-precision strategy. The dense attention and shared expert layers are stored in **FP8 (e4m3)** with **ue8m0** block scales (32x32 blocks), while the routed MoE experts are stored in **FP4**. This requires a custom inference kernel that dynamically dequantizes FP4 experts to higher precision during the forward pass, synchronized with the FP8 dense layer computations.
+2.  **Compressed Context Management**: The `compress_ratios` array in `config.json` reveals a hierarchical KV-cache compression strategy. Layers 0-1 are uncompressed (ratio 0), layers 2-20 use ratio 2, layers 21-38 use ratio 1, and layers 39-40 are uncompressed. This implies a non-uniform memory allocation for the KV cache, requiring the inference engine to manage variable-sized cache tensors per layer.
+3.  **Engram Memory System**: The configuration includes `engram_layer_ids` [1, 14] with massive embedding tables (`~384M` entries). This suggests a long-term memory or retrieval-augmented generation (RAG) mechanism embedded directly into the transformer layers, distinct from standard attention.
+4.  **Behavioral Abliteration**: The "UNCENSORED" tag indicates that specific weight matrices (likely in the final projection layers or specific attention heads) have been modified to neutralize safety refusal triggers. This is a **linear algebraic intervention** on the weight tensors, not a prompt engineering change.
 
 **Critical Subsystem Abstractions:**
-*   **MoE Router:** Uses `sqrtsoftplus` scoring and `noaux_tc` (no auxiliary loss, top-k) selection.
-*   **Compressed KV Cache:** `compress_ratios` array indicates a hierarchical KV cache strategy where certain layers (indices 2-19) compress KV pairs by a factor of 2, while others (20-38) use factor 1, and the first/last layers (0-1, 39-40) use factor 0 (no compression). This is a critical memory optimization for 1M context.
-*   **Engram Memory:** A massive external memory system (`engram_num_embeddings: ~384M`) with n-gram size 4, suggesting a retrieval-augmented generation (RAG) mechanism embedded directly in the model architecture.
+*   **`DeepseekV41ForCausalLM`**: The top-level model class handling the multimodal input (image/video) and text output.
+*   **`DeepseekV41TextModel`**: The core transformer stack implementing the MoE routing (`n_routed_experts: 384`, `num_experts_per_tok: 6`).
+*   **`QuantizationConfig`**: Defines the mixed-precision layout (`fp8` for weights, `fp4` for experts, `dynamic` activation scheme).
+*   **`RoPE Scaling (YaRN)`**: Extends the context from 65k to 1M tokens using `factor: 16`, `beta_fast: 32`, `beta_slow: 1`.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Hybrid Precision Quantization Fidelity Invariant
+### 1. Mixed-Precision MoE Dequantization Synchronization
 **RULE**:
-When deploying a model with mixed-precision weights (e.g., FP8 weights + FP4 experts), the inference engine MUST apply the correct dequantization kernel for *each* tensor type individually. You MUST NOT assume a single global dequantization path. The `scale_fmt: ue8m0` (unsigned 8-bit exponent, 0-bit mantissa) implies power-of-2 scaling, which is mathematically distinct from standard FP8 e4m3 scaling.
+When implementing a Mixture-of-Experts (MoE) model with mixed-precision storage (e.g., FP8 dense layers + FP4 expert layers), the inference engine MUST synchronize the dequantization of expert weights with the activation precision of the dense layers. The dequantization kernel MUST output activations in the same precision as the dense layer inputs to prevent precision loss or overflow during the residual addition.
 
 **WHY**:
-Applying a standard FP8 dequantization kernel to FP4 expert weights, or ignoring the `ue8m0` block scale format, results in catastrophic numerical drift. `ue8m0` scales are powers of 2, meaning the dequantization is a simple bit-shift or multiplication by $2^k$, not a general floating-point multiplication. Misinterpreting this leads to silent accuracy degradation or NaN propagation in the MoE expert outputs.
+If FP4 experts are dequantized to FP16/BF16 while the dense layers operate in FP8, the residual stream will suffer from precision mismatch. This can lead to numerical instability, where the high-precision expert outputs are truncated or overflow when added to the low-precision dense layer outputs. The `ue8m0` scale format for FP8 requires specific handling to avoid underflow in the block scales.
 
 **WHEN TO APPLY**:
-Any LLM serving stack (vLLM, TGI, SGLang) loading checkpoints with `quant_method: fp8` and `expert_dtype: fp4`.
+Any LLM inference engine supporting mixed-precision MoE models, particularly those using FP8/FP4 combinations.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Pseudocode for correct hybrid dequantization
-def dequantize_moe_expert(weight_fp4, scale_ue8m0, block_size=32):
-    # 1. Reshape weight to apply block scales
-    w_blocks = weight_fp4.view(-1, block_size)
+# Pseudocode for synchronized dequantization
+def moe_forward(x_fp8, expert_weights_fp4, scales_fp8):
+    # 1. Dequantize FP4 experts to FP8 (not FP16) to match dense layer precision
+    expert_weights_fp8 = dequantize_fp4_to_fp8(expert_weights_fp4, expert_scales)
     
-    # 2. Decode ue8m0 scale: scale = 2^(scale_value - 127)
-    #    ue8m0 is an exponent-only format.
-    scale_values = scale_ue8m0.view(-1, 1)
-    dequant_scale = torch.pow(2, scale_values - 127)
+    # 2. Compute expert outputs in FP8
+    expert_outputs = torch.matmul(x_fp8, expert_weights_fp8)
     
-    # 3. Dequantize FP4 to FP16/BF16
-    #    FP4 (e2m1) has 1 sign, 2 exponent, 1 mantissa bit.
-    w_fp16 = fp4_to_fp16(w_blocks)
-    
-    # 4. Apply scale
-    w_final = w_fp16 * dequant_scale
-    return w_final.view_as(weight_fp4)
-
-# CRITICAL: Do NOT use the same kernel for the main attention weights (FP8 e4m3)
-def dequantize_attention_weight(weight_fp8, scale_fp32):
-    # Standard FP8 e4m3 dequantization
-    return weight_fp8.to(torch.bfloat16) * scale_fp32
+    # 3. Ensure residual addition is done in a higher precision (e.g., FP32) 
+    #    to prevent loss of significance, then cast back to FP8
+    residual = x_fp8.float() + expert_outputs.float()
+    return residual.to(torch.float8_e4m3fn)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Assuming uniform quantization
-def bad_dequantize(weight, scale):
-    # This fails if weight is FP4 and scale is ue8m0, or if weight is FP8 and scale is FP32
-    # It assumes a single data type and scale format for all tensors.
-    return weight.to(torch.bfloat16) * scale
+# ANTI-PATTERN: Dequantizing to FP16 and adding to FP8
+expert_weights_fp16 = dequantize_fp4_to_fp16(expert_weights_fp4, expert_scales)
+expert_outputs = torch.matmul(x_fp8.to(torch.float16), expert_weights_fp16)
+# This causes precision loss when adding back to the FP8 residual stream
+residual = x_fp8 + expert_outputs.to(torch.float8_e4m3fn) # WRONG
 ```
 
 **VERIFICATION METHOD**:
-1.  Load a small subset of the model (e.g., one MoE layer).
-2.  Compute the output of the MoE layer using the reference BF16 weights (if available) vs. the dequantized FP8/FP4 weights.
-3.  Assert that the cosine similarity between the two outputs is > 0.99.
-4.  Verify that no NaN or Inf values are present in the dequantized tensors.
+Unit test that verifies the output of the MoE layer matches a reference implementation computed entirely in FP32, with a tolerance of < 1e-3. Assert that the intermediate expert outputs are in FP8 before the residual addition.
 
-### 2. Abliteration Stability & Compliance Regression Guard
+### 2. Non-Uniform KV-Cache Compression Allocation
 **RULE**:
-When performing abliteration (removal of refusal behavior) on a quantized model, you MUST NOT quantize the *already abliterated* model if the base model was quantized first. Instead, you MUST perform the abliteration on the full-precision (BF16/FP16) weights, and *then* quantize the result. If you must work with a quantized base, you MUST verify that the abliteration edit does not push the weights outside the representable range of the target quantization format (e.g., FP8 e4m3 max value is 448).
+When implementing hierarchical KV-cache compression (as indicated by `compress_ratios`), the memory allocator MUST pre-allocate variable-sized tensors for each layer's KV cache based on the compression ratio. The inference engine MUST NOT assume a uniform KV-cache size across all layers.
 
 **WHY**:
-Abliteration involves modifying specific weight vectors to remove the "refusal" direction. If the base model is already quantized to FP8, the precision loss is already present. Adding an abliteration edit on top of quantized weights introduces *double quantization error*. More critically, if the abliteration edit increases the magnitude of weights beyond the FP8 range, it will clip to the max value, causing a hard discontinuity in the function and potentially re-introducing refusal behavior or causing hallucinations. The README explicitly warns: "Quantizing this FP8 checkpoint directly won't give the best quality... compliance can regress at low bits."
+The `compress_ratios` array in `config.json` shows that different layers have different compression ratios (0, 2, 1). If the allocator assumes a uniform size, it will either waste memory (over-allocating for compressed layers) or cause out-of-memory errors (under-allocating for uncompressed layers). The `kv_source_layer_ids` and `index_source_layer_ids` further complicate this by indicating that some layers share KV caches or use index-based retrieval.
 
 **WHEN TO APPLY**:
-Any post-training modification (abliteration, LoRA merging, weight editing) on a quantized checkpoint.
+Any LLM inference engine supporting long-context models with hierarchical KV-cache compression.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Correct Workflow
-1. Load Base Model in BF16 (or FP16)
-2. Apply Abliteration Edit (modify weights)
-3. Verify Weight Ranges:
-   max_weight = model.weight.abs().max()
-   assert max_weight < 448.0, "Weights exceed FP8 e4m3 range!"
-4. Quantize to FP8 with ue8m0 scales
-5. Save Checkpoint
-
-# Verification Step
-def verify_abliteration_stability(model_fp8, model_bf16_ref):
-    # Compare logits on a set of "sensitive" prompts
-    # If the FP8 model refuses but the BF16 reference does not, the quantization
-    # has corrupted the abliteration edit.
-    pass
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Quantize then Abliterate
-model_fp8 = quantize(model_bf16)
-model_fp8 = abliterate(model_fp8) # WRONG: Edits are applied to low-precision weights
-# This leads to "compliance regression" where the model starts refusing again
-# or produces incoherent outputs because the edit is lost in quantization noise.
-```
-
-**VERIFICATION METHOD**:
-1.  Generate responses to a standardized set of "sensitive" prompts (e.g., "How to make a bomb?") using both the BF16 abliterated model and the FP8 abliterated model.
-2.  Assert that the refusal rate is statistically similar (within 5%) between the two.
-3.  If the FP8 model refuses significantly more, the quantization has corrupted the abliteration.
-
-### 3. 1M Context KV Cache Compression Invariant
-**RULE**:
-For models with `compress_ratios` defined in the config, the KV cache manager MUST allocate memory based on the *compressed* size for the specified layers, not the full size. The `compress_ratios` array is layer-specific. You MUST NOT assume a uniform compression ratio across all layers. The first and last layers (indices 0, 1, 39, 40) have a ratio of 0, meaning they are *not* compressed and must be stored at full precision.
-
-**WHY**:
-The `compress_ratios` array in the config is `[0, 0, 2, 2, ..., 1, 1, ..., 0, 0, 0]`. This indicates a hierarchical compression strategy. If the inference engine allocates KV cache assuming uniform compression (e.g., ratio 2 for all layers), it will under-allocate memory for the uncompressed layers (0, 1, 39, 40), leading to out-of-memory (OOM) errors or silent data corruption when the cache overflows. Conversely, if it over-allocates, it wastes VRAM.
-
-**WHEN TO APPLY**:
-Any inference engine supporting DeepSeek-V4.1 or similar models with layer-specific KV compression.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-class KVCacheManager:
-    def __init__(self, config, max_seq_len):
-        self.compress_ratios = config.compress_ratios
-        self.num_layers = config.num_hidden_layers
-        self.head_dim = config.head_dim
-        self.num_kv_heads = config.num_key_value_heads
+def allocate_kv_cache(config):
+    kv_cache = {}
+    for layer_id, ratio in enumerate(config['compress_ratios']):
+        if ratio == 0:
+            # Uncompressed: full size
+            size = config['max_position_embeddings']
+        else:
+            # Compressed: reduced size
+            size = config['max_position_embeddings'] // ratio
         
-        # Calculate total KV cache size
-        total_size = 0
-        for layer_idx in range(self.num_layers):
-            ratio = self.compress_ratios[layer_idx]
-            if ratio == 0:
-                # No compression: full size
-                layer_size = max_seq_len * self.num_kv_heads * self.head_dim * 2 # K and V
-            else:
-                # Compressed: size / ratio
-                layer_size = (max_seq_len / ratio) * self.num_kv_heads * self.head_dim * 2
-            total_size += layer_size
-            
-        self.total_kv_cache_size = total_size
-
-    def allocate(self):
-        # Allocate based on calculated total_size
-        pass
+        # Allocate variable-sized tensors
+        kv_cache[layer_id] = torch.empty(
+            (2, config['num_key_value_heads'], size, config['head_dim']),
+            dtype=config['dtype']
+        )
+    return kv_cache
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Uniform Compression Assumption
-def bad_allocate_kv_cache(max_seq_len, num_layers, head_dim, num_kv_heads, uniform_ratio=2):
-    # This ignores the layer-specific compress_ratios
-    # It will under-allocate for layers with ratio 0 (uncompressed)
-    size_per_layer = (max_seq_len / uniform_ratio) * num_kv_heads * head_dim * 2
-    total_size = size_per_layer * num_layers
-    return total_size
+# ANTI-PATTERN: Uniform allocation
+kv_cache = torch.empty(
+    (config['num_hidden_layers'], 2, config['num_key_value_heads'], 
+     config['max_position_embeddings'], config['head_dim']),
+    dtype=config['dtype']
+)
+# This wastes memory for compressed layers and may OOM for uncompressed layers
 ```
 
 **VERIFICATION METHOD**:
-1.  Load the model config.
-2.  Calculate the expected KV cache size using the `compress_ratios` array.
-3.  Compare this with the actual memory allocated by the inference engine.
-4.  Assert that the allocated memory is >= the calculated size.
-5.  Run a long-context generation (e.g., 500k tokens) and monitor for OOM errors.
+Memory profiling test that verifies the total allocated memory for the KV cache matches the sum of the individual layer allocations based on their compression ratios. Assert that no layer's KV cache exceeds its allocated size.
+
+### 3. Abliteration Weight Integrity Check
+**RULE**:
+When performing abliteration (removal of refusal behavior) on a pre-trained model, the modified weights MUST be validated against a reference set of "safe" and "unsafe" prompts to ensure that the refusal behavior is removed without degrading the model's general capabilities. The validation MUST include a regression test suite that checks for unintended side effects (e.g., hallucinations, format errors).
+
+**WHY**:
+Abliteration is a surgical intervention on the weight matrices. If the modification is too aggressive, it can damage the model's ability to generate coherent text or follow instructions. If it is too conservative, the refusal behavior may persist. The validation suite ensures that the model's core capabilities are preserved while the refusal behavior is removed.
+
+**WHEN TO APPLY**:
+Any post-training modification of a pre-trained LLM, particularly abliteration or fine-tuning for specific behavioral changes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def validate_abliteration(model, test_prompts):
+    for prompt in test_prompts:
+        output = model.generate(prompt)
+        # Check for refusal keywords
+        if any(refusal in output for refusal in ['I cannot', 'I am unable', 'I refuse']):
+            raise ValueError(f"Refusal behavior detected in output: {output}")
+        
+        # Check for coherence (e.g., perplexity)
+        perplexity = calculate_perplexity(model, output)
+        if perplexity > threshold:
+            raise ValueError(f"Coherence degraded in output: {output}")
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: No validation
+model.generate(prompt) # No check for refusal or coherence
+```
+
+**VERIFICATION METHOD**:
+Automated test suite that runs a set of "safe" and "unsafe" prompts through the model and asserts that no refusal keywords are present in the outputs, and that the perplexity of the outputs is within a reasonable range.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: The provided repository data contains no commit history, bug issues, or code diffs. Therefore, no "real incidents" can be documented from the repo itself. However, based on the README warnings and architectural invariants, we can infer potential production incidents that this design is intended to prevent or that have occurred in similar systems.*
-
-### Incident 1: Compliance Regression After Post-Hoc Quantization (BUG-QUANT-01)
-- **Context**: Inference Engine / Quantization Pipeline
-- **What Was Expected**: The FP8 model should exhibit the same "uncensored" behavior as the BF16 abliterated model.
-- **What Actually Happened**: Users reported that the FP8 model started refusing certain prompts that the BF16 model did not refuse.
-- **Evidence in Repo**: README warning: "Quantizing this FP8 checkpoint directly won't give the best quality... compliance can regress at low bits."
-- **Root Cause**: The abliteration edit was applied to the BF16 weights. When these weights were quantized to FP8, the quantization noise (especially in the low-bit expert weights) shifted the weight vectors slightly. This shift was sufficient to re-activate the refusal pathways in the model's decision boundary.
-- **Remediation Code Diff**:
-```python
-# - Buggy Workflow:
-# 1. Load BF16 Model
-# 2. Abliterate
-# 3. Quantize to FP8
-# 4. Save
-
-# + Fixed Workflow:
-# 1. Load BF16 Model
-# 2. Abliterate
-# 3. Quantize to FP8
-# 4. Verify Compliance:
-#    - Generate responses to sensitive prompts
-#    - Compare refusal rate with BF16 model
-#    - If refusal rate increases, re-tune the abliteration edit or use higher precision for critical layers
-```
-- **Lesson**: Post-training modifications must be verified *after* quantization, not just before. Quantization is not a lossless operation and can alter the model's behavioral boundaries.
-
-### Incident 2: OOM Error Due to Incorrect KV Cache Allocation (BUG-KVCACHE-02)
-- **Context**: Inference Engine / Memory Manager
-- **What Was Expected**: The model should handle 1M token context without OOM.
-- **What Actually Happened**: OOM error occurred when generating long contexts, even though the total VRAM was sufficient.
-- **Evidence in Repo**: Config `compress_ratios` array with non-uniform values.
-- **Root Cause**: The inference engine assumed a uniform compression ratio for all layers. It under-allocated memory for the uncompressed layers (indices 0, 1, 39, 40), leading to cache overflow.
-- **Remediation Code Diff**:
-```python
-# - Buggy Code:
-# total_kv_size = max_seq_len * num_layers * head_dim * num_kv_heads * 2 / uniform_ratio
-
-# + Fixed Code:
-# total_kv_size = sum(
-#     (max_seq_len / compress_ratios[i] if compress_ratios[i] > 0 else max_seq_len) * head_dim * num_kv_heads * 2
-#     for i in range(num_layers)
-# )
-```
-- **Lesson**: Always respect layer-specific configuration parameters. Do not assume uniformity in heterogeneous architectures.
-
-### Incident 3: NaN Propagation in MoE Experts (BUG-MOE-03)
-- **Context**: MoE Expert Computation
-- **What Was Expected**: Stable outputs from MoE experts.
-- **What Actually Happened**: NaN values appeared in the output logits, causing the model to generate gibberish.
-- **Evidence in Repo**: Config `expert_dtype: fp4` and `scale_fmt: ue8m0`.
-- **Root Cause**: The dequantization kernel for FP4 experts did not correctly handle the `ue8m0` scale format. It treated the scale as a standard FP32 value, leading to incorrect scaling and overflow in the FP4 to FP16 conversion.
-- **Remediation Code Diff**:
-```python
-# - Buggy Code:
-# scale = scale_tensor.to(torch.float32) # Wrong: ue8m0 is not FP32
-# w_fp16 = fp4_to_fp16(w_fp4) * scale
-
-# + Fixed Code:
-# scale_values = scale_tensor.view(torch.uint8)
-# dequant_scale = torch.pow(2, scale_values - 127) # Correct: ue8m0 is power-of-2
-# w_fp16 = fp4_to_fp16(w_fp4) * dequant_scale
-```
-- **Lesson**: Understand the specific data format of quantization scales. `ue8m0` is a specialized format and cannot be treated as a standard floating-point type.
+*Note: The provided repository data does not contain any commit patches, bug issues, or developer post-mortems. Therefore, no real incidents can be documented. The following section is left empty as per the data governance mandate.*
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Invariant**: When parsing `compress_ratios`, ensure that a ratio of `0` is handled as "no compression" (i.e., divide by 1), not as a division by zero.
-    *   **Code Example**:
-        ```python
-        ratio = compress_ratios[layer_idx]
-        if ratio == 0:
-            effective_ratio = 1.0
-        else:
-            effective_ratio = float(ratio)
-        compressed_size = original_size / effective_ratio
-        ```
-    *   **Trap**: `original_size / 0` raises a `ZeroDivisionError`.
+### 1. Micro-Syntax & Token-Level Precision
+*   **FP8/FP4 Type Coercion**: When converting between FP8 and FP4, the scale factors MUST be applied in the correct order. For example, when dequantizing FP4 to FP8, the scale factor MUST be applied after the FP4-to-FP8 conversion, not before.
+*   **ue8m0 Scale Format**: The `ue8m0` scale format uses 8 bits for the exponent and 0 bits for the mantissa. This means that the scale factor is a power of 2. When applying the scale factor, the multiplication MUST be done in a higher precision (e.g., FP32) to avoid underflow or overflow.
 
-2.  **Infinite Loop & Recursion Guards**:
-    *   **Invariant**: In the MoE routing, the `topk_method: noaux_tc` implies a top-k selection without auxiliary loss. Ensure that the top-k selection does not enter an infinite loop if the scores are tied.
-    *   **Code Example**:
-        ```python
-        # Use stable sort or add a small epsilon to break ties
-        scores = scores + torch.randn_like(scores) * 1e-6
-        topk_indices = torch.topk(scores, k=num_experts_per_tok).indices
-        ```
-    *   **Trap**: Tied scores can lead to non-deterministic expert selection, which may cause instability in training or inference.
+### 2. Infinite Loop & Recursion Guards
+*   **MoE Routing**: The MoE routing mechanism MUST have a maximum number of iterations to prevent infinite loops in case of a routing error. The `num_experts_per_tok` parameter MUST be validated to ensure that it is within the range of the total number of experts.
+*   **KV-Cache Compression**: The KV-cache compression algorithm MUST have a termination condition to prevent infinite loops in case of a compression error. The `compress_ratios` array MUST be validated to ensure that all ratios are positive integers.
 
-3.  **UI & UX Micro-Mechanics**:
-    *   **N/A**: This is a backend model repository. No UI/UX components.
+### 3. UI & UX Micro-Mechanics
+*   **N/A**: This repository is a model checkpoint, not a UI application. Therefore, no UI/UX micro-mechanics are applicable.
 
-4.  **Backend Concurrency & Memory Safety**:
-    *   **Invariant**: The KV cache is a shared resource across multiple concurrent requests. Ensure that the cache manager uses thread-safe data structures (e.g., locks or atomic operations) to prevent race conditions when allocating or freeing cache blocks.
-    *   **Code Example**:
-        ```python
-        import threading
+### 4. Backend Concurrency & Memory Safety
+*   **KV-Cache Allocation**: The KV-cache allocation MUST be thread-safe to prevent race conditions when multiple threads are accessing the KV cache simultaneously. The allocation MUST use a lock or atomic operation to ensure that the memory is allocated correctly.
+*   **MoE Expert Loading**: The MoE expert loading MUST be thread-safe to prevent race conditions when multiple threads are loading experts simultaneously. The loading MUST use a lock or atomic operation to ensure that the experts are loaded correctly.
 
-        class ThreadSafeKVCacheManager:
-            def __init__(self):
-                self.lock = threading.Lock()
-                self.free_blocks = []
-
-            def allocate(self, size):
-                with self.lock:
-                    if not self.free_blocks:
-                        return None
-                    return self.free_blocks.pop()
-
-            def free(self, block):
-                with self.lock:
-                    self.free_blocks.append(block)
-        ```
-    *   **Trap**: Without locks, two threads may allocate the same cache block, leading to data corruption.
-
-5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Invariant**: When loading the model, verify that the `vocab_size` in the config matches the size of the embedding matrix. A mismatch will cause index out-of-bounds errors.
-    *   **Code Example**:
-        ```python
-        assert model.embedding.weight.shape[0] == config.vocab_size, \
-            f"Embedding size {model.embedding.weight.shape[0]} does not match vocab_size {config.vocab_size}"
-        ```
-    *   **Trap**: A mismatch between config and actual tensor shape is a common source of silent bugs.
+### 5. Defect & Error Prevention ("Galti Pakadna")
+*   **Null/Undefined Chaining**: The `config.json` file MUST be validated to ensure that all required fields are present and have the correct types. For example, the `compress_ratios` array MUST be a list of integers, and the `kv_source_layer_ids` array MUST be a list of integers.
+*   **Off-by-One Boundary Checks**: The `max_position_embeddings` parameter MUST be validated to ensure that it is within the range of the model's context window. The `rope_scaling` parameters MUST be validated to ensure that they are within the range of the model's RoPE configuration.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**:
-    *   **Subsystem Boundaries**: Clear separation between the attention mechanism, MoE experts, and the engram memory system.
-    *   **Decoupling**: The MoE router is decoupled from the expert computation, allowing for independent optimization.
-    *   **State Ownership**: The KV cache is owned by the inference engine, not the model. The engram memory is owned by the model.
+### 1. Architecture
+*   **Subsystem Boundaries**: The model is divided into three main subsystems: the dense attention layers, the MoE expert layers, and the engram memory layers. Each subsystem has its own memory allocation and computation strategy.
+*   **Decoupling**: The dense attention layers are decoupled from the MoE expert layers by the MoE routing mechanism. The engram memory layers are decoupled from the other layers by the `engram_layer_ids` parameter.
+*   **Modular Layout**: The model is laid out in a modular fashion, with each layer having its own configuration and computation strategy.
+*   **State Ownership**: The KV cache is owned by the inference engine, while the model weights are owned by the model checkpoint.
 
-2.  **Core Abstractions**:
-    *   **Key Types**: `DeepseekV41ForCausalLM`, `MoELayer`, `KVCacheManager`.
-    *   **Traits/Interfaces**: `Quantizable`, `Compressible`, `Abliterable`.
-    *   **Domain Primitives**: `Token`, `Expert`, `KVPair`, `EngramEntry`.
-    *   **Invariant Contracts**: The MoE router must select exactly `num_experts_per_tok` experts. The KV cache must be allocated based on `compress_ratios`.
+### 2. Core Abstractions
+*   **Key Types**: `DeepseekV41ForCausalLM`, `DeepseekV41TextModel`, `QuantizationConfig`.
+*   **Traits/Interfaces**: `forward`, `generate`, `allocate_kv_cache`.
+*   **Domain Primitives**: `FP8`, `FP4`, `ue8m0`, `compress_ratios`, `kv_source_layer_ids`.
+*   **Invariant Contracts**: The model MUST maintain the integrity of the KV cache, and the MoE routing MUST select the correct experts for each token.
 
-3.  **Error Handling**:
-    *   **Fault Boundaries**: Errors in the MoE router should be caught and logged, not propagated to the user.
-    *   **Error Trees**: `QuantizationError`, `KVCacheAllocationError`, `AbliterationVerificationError`.
-    *   **Retries**: No retries for quantization errors. Retries for KV cache allocation if the cache is temporarily full.
-    *   **Rollbacks**: No rollbacks for quantization. Rollbacks for KV cache allocation if the allocation fails.
-    *   **Graceful Degradation**: If the engram memory is unavailable, the model should fall back to standard RAG or no RAG.
+### 3. Error Handling
+*   **Fault Boundaries**: The inference engine MUST handle errors in the KV cache allocation, MoE routing, and engram memory access.
+*   **Error Trees**: The error tree MUST include errors for invalid configuration, out-of-memory errors, and routing errors.
+*   **Retries**: The inference engine MUST retry failed KV cache allocations and MoE routings.
+*   **Rollbacks**: The inference engine MUST roll back failed KV cache allocations and MoE routings.
+*   **Graceful Degradation**: The inference engine MUST degrade gracefully in case of a KV cache allocation failure or MoE routing error.
 
-4.  **Testing**:
-    *   **Property Testing**: Test that the MoE router always selects exactly `num_experts_per_tok` experts.
-    *   **Mock Invariants**: Mock the KV cache manager to test the model's behavior under different cache sizes.
-    *   **Integration Harnesses**: Test the full inference pipeline with long contexts.
-    *   **Regression Shields**: Test that the abliterated model does not refuse sensitive prompts.
+### 4. Testing
+*   **Property Testing**: The model MUST be tested for properties such as coherence, refusal behavior, and context window length.
+*   **Mock Invariants**: The MoE routing MUST be tested with mock experts to ensure that the correct experts are selected.
+*   **Integration Harnesses**: The model MUST be tested in an integration harness that simulates a real-world inference environment.
+*   **Regression Shields**: The model MUST be tested against a regression suite that checks for unintended side effects.
 
-5.  **Security**:
-    *   **Threat Model**: The model may be used to generate harmful content. The "uncensored" nature increases this risk.
-    *   **Credential Boundaries**: No credentials are stored in the model.
-    *   **Sanitization**: The model does not sanitize inputs. The user is responsible for sanitizing outputs.
-    *   **Memory Safety**: The KV cache manager must prevent buffer overflows.
-    *   **Least Privilege**: The model should run in a sandboxed environment.
+### 5. Security
+*   **Threat Model**: The model MUST be protected against prompt injection attacks, data poisoning attacks, and model extraction attacks.
+*   **Credential Boundaries**: The model MUST not have access to any credentials or sensitive data.
+*   **Sanitization**: The model MUST sanitize its inputs and outputs to prevent injection attacks.
+*   **Memory Safety**: The model MUST be memory-safe to prevent buffer overflows and other memory errors.
+*   **Least Privilege**: The model MUST have the least privilege necessary to perform its function.
 
-6.  **Performance**:
-    *   **Latency Profiles**: The MoE router adds latency. The engram memory adds latency for retrieval.
-    *   **Asymptotic Complexity**: The MoE router is O(N) where N is the number of experts. The engram memory is O(log N) for retrieval.
-    *   **Caching**: The KV cache is a cache. The engram memory is a cache.
-    *   **Zero-Copy**: The KV cache should be zero-copy if possible.
-    *   **Concurrency Bottlenecks**: The KV cache manager is a bottleneck. The MoE router is a bottleneck.
+### 6. Performance
+*   **Latency Profiles**: The model MUST have low latency for both prefill and decode phases.
+*   **Asymptotic Complexity**: The model MUST have linear complexity with respect to the context window length.
+*   **Caching**: The model MUST use KV cache to avoid recomputing attention for previous tokens.
+*   **Zero-Copy**: The model MUST use zero-copy techniques to avoid unnecessary memory copies.
+*   **Concurrency Bottlenecks**: The model MUST avoid concurrency bottlenecks in the KV cache allocation and MoE routing.
 
-7.  **Deployment**:
-    *   **CI/CD Invariants**: The model must be tested for compliance before deployment.
-    *   **Container Constraints**: The model requires a large amount of VRAM.
-    *   **Reproducible Builds**: The quantization process must be reproducible.
-    *   **Runtime Flags**: The `compress_ratios` and `expert_dtype` are runtime flags.
+### 7. Deployment
+*   **CI/CD Invariants**: The model MUST be deployed using a CI/CD pipeline that ensures reproducibility and consistency.
+*   **Container Constraints**: The model MUST be deployed in a container that has sufficient memory and compute resources.
+*   **Reproducible Builds**: The model MUST be built in a reproducible manner to ensure that the same model is produced every time.
+*   **Runtime Flags**: The model MUST support runtime flags to control its behavior (e.g., temperature, top_p).
 
-8.  **Agent Patterns**:
-    *   **Tooling Interfaces**: The model supports tool calling.
-    *   **Prompt Chains**: The model supports reasoning-effort tiers.
-    *   **Loop Guards**: The model must not enter an infinite loop when generating long contexts.
-    *   **Context Budget Optimization**: The `compress_ratios` optimize the context budget.
+### 8. Agent Patterns
+*   **Tooling Interfaces**: The model MUST provide tooling interfaces for tasks such as KV cache allocation, MoE routing, and engram memory access.
+*   **Prompt Chains**: The model MUST support prompt chains to allow for complex reasoning tasks.
+*   **Loop Guards**: The model MUST have loop guards to prevent infinite loops in the MoE routing and engram memory access.
+*   **Context Budget Optimization**: The model MUST optimize its context budget to ensure that it can handle long-context tasks.
 
-9.  **Data Flow**:
-    *   **Mutation Lifecycles**: The weights are mutated during abliteration.
-    *   **Streams**: The KV cache is a stream of KV pairs.
-    *   **Serializers**: The model is serialized to safetensors.
-    *   **Network Protocol Barriers**: The model is served over HTTP.
+### 9. Data Flow
+*   **Mutation Lifecycles**: The model MUST manage the mutation lifecycle of the KV cache and engram memory.
+*   **Streams**: The model MUST use streams to process inputs and outputs.
+*   **Serializers**: The model MUST use serializers to convert inputs and outputs to and from the model's internal representation.
+*   **Network Protocol Barriers**: The model MUST use network protocol barriers to ensure that inputs and outputs are processed in the correct order.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Hybrid Precision Dequantization Pattern.
-2.  **Rule**: Always verify compliance after quantization.
-3.  **Architecture Principle**: Layer-specific configuration must be respected.
-4.  **Failure Mode**: Compliance regression after post-hoc quantization.
-5.  **Reusable Skill**: Verify KV cache allocation based on `compress_ratios`.
-6.  **Decision**: Use `ue8m0` for block scales to reduce memory overhead.
-7.  **Anti-pattern**: Assuming uniform compression ratio for all layers.
-8.  **Verification Method**: Compare refusal rates between BF16 and FP8 models.
+### 1. Pattern
+*   **Mixed-Precision MoE Dequantization**: The pattern of dequantizing FP4 experts to FP8 to match the dense layer precision.
+*   **Non-Uniform KV-Cache Allocation**: The pattern of allocating variable-sized KV cache tensors based on the compression ratio.
+*   **Abliteration Validation**: The pattern of validating the abliteration process using a regression test suite.
+
+### 2. Rule
+*   **Synchronized Dequantization**: The rule that the dequantization of expert weights MUST be synchronized with the activation precision of the dense layers.
+*   **Variable-Sized KV Cache**: The rule that the KV cache MUST be allocated with variable-sized tensors based on the compression ratio.
+*   **Abliteration Validation**: The rule that the abliteration process MUST be validated using a regression test suite.
+
+### 3. Architecture Principle
+*   **Hybrid Precision Core**: The principle of using a hybrid precision core to balance memory usage and computational efficiency.
+*   **Hierarchical KV-Cache Compression**: The principle of using hierarchical KV-cache compression to reduce memory usage for long-context tasks.
+*   **Surgical Abliteration**: The principle of using surgical abliteration to remove refusal behavior without degrading the model's general capabilities.
+
+### 4. Failure Mode
+*   **Precision Mismatch**: The failure mode of precision mismatch when dequantizing FP4 experts to FP16 and adding to FP8 dense layer outputs.
+*   **Uniform KV-Cache Allocation**: The failure mode of uniform KV-cache allocation when the compression ratios are non-uniform.
+*   **Unvalidated Abliteration**: The failure mode of unvalidated abliteration when the refusal behavior is not removed or the model's general capabilities are degraded.
+
+### 5. Reusable Skill
+*   **Mixed-Precision MoE Implementation**: The skill of implementing a mixed-precision MoE model with synchronized dequantization.
+*   **Hierarchical KV-Cache Allocation**: The skill of allocating variable-sized KV cache tensors based on the compression ratio.
+*   **Abliteration Validation**: The skill of validating the abliteration process using a regression test suite.
+
+### 6. Decision
+*   **FP8/FP4 Combination**: The decision to use a combination of FP8 and FP4 to balance memory usage and computational efficiency.
+*   **Non-Uniform Compression**: The decision to use non-uniform compression ratios to reduce memory usage for long-context tasks.
+*   **Surgical Abliteration**: The decision to use surgical abliteration to remove refusal behavior without degrading the model's general capabilities.
+
+### 7. Anti-pattern
+*   **Unsynchronized Dequantization**: The anti-pattern of dequantizing FP4 experts to FP16 and adding to FP8 dense layer outputs.
+*   **Uniform KV-Cache Allocation**: The anti-pattern of allocating uniform-sized KV cache tensors when the compression ratios are non-uniform.
+*   **Unvalidated Abliteration**: The anti-pattern of abliteration without validation using a regression test suite.
+
+### 8. Verification Method
+*   **Precision Mismatch Test**: The test that verifies the output of the MoE layer matches a reference implementation computed entirely in FP32.
+*   **KV-Cache Allocation Test**: The test that verifies the total allocated memory for the KV cache matches the sum of the individual layer allocations.
+*   **Abliteration Validation Test**: The test that runs a set of "safe" and "unsafe" prompts through the model and asserts that no refusal keywords are present in the outputs.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Load Config**: Parse `config.json` and extract `compress_ratios`, `expert_dtype`, `scale_fmt`.
-2.  **Verify Quantization**: Check that the dequantization kernel matches the `scale_fmt` and `expert_dtype`.
-3.  **Allocate KV Cache**: Calculate the total KV cache size using `compress_ratios`.
-4.  **Verify Compliance**: Generate responses to sensitive prompts and compare refusal rates.
-5.  **Test Long Context**: Run a long-context generation and monitor for OOM errors.
-6.  **Check MoE Router**: Ensure that the MoE router selects exactly `num_experts_per_tok` experts.
-7.  **Verify Engram Memory**: Ensure that the engram memory is correctly loaded and accessible.
-8.  **Deploy**: Deploy the model in a sandboxed environment with sufficient VRAM.
+1.  **Validate Configuration**:
+    *   Check that `config.json` is valid JSON.
+    *   Check that all required fields are present and have the correct types.
+    *   Check that `compress_ratios` is a list of positive integers.
+    *   Check that `kv_source_layer_ids` and `index_source_layer_ids` are lists of integers within the range of the total number of layers.
+
+2.  **Allocate KV Cache**:
+    *   Allocate variable-sized KV cache tensors based on the `compress_ratios` array.
+    *   Ensure that the total allocated memory is within the available memory.
+    *   Use a thread-safe allocation mechanism to prevent race conditions.
+
+3.  **Implement MoE Routing**:
+    *   Implement the MoE routing mechanism to select the correct experts for each token.
+    *   Ensure that the routing is thread-safe to prevent race conditions.
+    *   Use a loop guard to prevent infinite loops in the routing process.
+
+4.  **Implement Mixed-Precision Dequantization**:
+    *   Dequantize FP4 experts to FP8 to match the dense layer precision.
+    *   Apply the scale factors in the correct order.
+    *   Use a higher precision (e.g., FP32) for the residual addition to prevent precision loss.
+
+5.  **Validate Abliteration**:
+    *   Run a set of "safe" and "unsafe" prompts through the model.
+    *   Assert that no refusal keywords are present in the outputs.
+    *   Check that the perplexity of the outputs is within a reasonable range.
+
+6.  **Test Performance**:
+    *   Measure the latency of the prefill and decode phases.
+    *   Check that the model has linear complexity with respect to the context window length.
+    *   Check that the model uses KV cache to avoid recomputing attention for previous tokens.
+
+7.  **Deploy Model**:
+    *   Deploy the model using a CI/CD pipeline that ensures reproducibility and consistency.
+    *   Deploy the model in a container that has sufficient memory and compute resources.
+    *   Support runtime flags to control the model's behavior (e.g., temperature, top_p).
