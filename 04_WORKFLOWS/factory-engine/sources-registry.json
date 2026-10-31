@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T00:20:43.392Z",
-    "lastVerified": "2026-10-31T00:20:43.392Z",
+    "lastChecked": "2026-10-31T00:27:42.441Z",
+    "lastVerified": "2026-10-31T00:27:42.441Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -342,9 +342,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-30T23:51:43.888Z",
+    "lastChecked": "2026-10-31T00:27:42.430Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-30T23:51:43.888Z"
+    "lastVerified": "2026-10-31T00:27:42.430Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -926,9 +926,9 @@
   "sudheerj-reactjs-interview-questions": {
     "name": "reactjs-interview-questions",
     "officialUrl": "https://github.com/sudheerj/reactjs-interview-questions",
-    "lastChecked": "2026-10-28T03:56:17.396Z",
+    "lastChecked": "2026-10-31T00:27:32.463Z",
     "revisionIdentifier": "55b7d491",
-    "lastVerified": "2026-10-28T03:56:17.396Z"
+    "lastVerified": "2026-10-31T00:27:32.463Z"
   },
   "devspace-sh-devspace": {
     "name": "devspace",
@@ -1606,9 +1606,9 @@
   "watchexec-watchexec": {
     "name": "watchexec",
     "officialUrl": "https://github.com/watchexec/watchexec",
-    "lastChecked": "2026-10-29T11:43:43.104Z",
+    "lastChecked": "2026-10-31T00:27:27.444Z",
     "revisionIdentifier": "a7170667",
-    "lastVerified": "2026-10-29T11:43:43.104Z"
+    "lastVerified": "2026-10-31T00:27:27.444Z"
   },
   "hf-viggle-qwen-image-2.1-viggle-turbo": {
     "name": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -2152,8 +2152,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-30T20:36:19.729Z",
-    "lastVerified": "2026-10-30T20:36:19.729Z",
+    "lastChecked": "2026-10-31T00:27:37.449Z",
+    "lastVerified": "2026-10-31T00:27:37.449Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -5149,12 +5149,12 @@
     "revisionIdentifier": "3bdc054c"
   },
   "etcd-io-etcd": {
-    "name": "etcd-io/etcd",
+    "name": "etcd",
     "officialUrl": "https://github.com/etcd-io/etcd",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T03:59:41.250Z",
-    "lastVerified": "2026-10-30T03:59:41.250Z",
+    "lastChecked": "2026-10-31T00:27:39.999Z",
+    "lastVerified": "2026-10-31T00:27:39.999Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-etcd-io-etcd",
@@ -5163,7 +5163,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1573d594"
   },
   "cloudwego-volo": {
     "name": "cloudwego/volo",
@@ -5962,12 +5963,12 @@
     "lastVerified": "2026-10-28T17:05:44.084Z"
   },
   "kcl-lang-kcl": {
-    "name": "kcl-lang/kcl",
+    "name": "kcl",
     "officialUrl": "https://github.com/kcl-lang/kcl",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T04:54:31.223Z",
-    "lastVerified": "2026-10-30T04:54:31.223Z",
+    "lastChecked": "2026-10-31T00:27:34.943Z",
+    "lastVerified": "2026-10-31T00:27:34.943Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kcl-lang-kcl",
@@ -5976,7 +5977,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "971eca90"
   },
   "ydb-platform-ydb": {
     "name": "ydb-platform/ydb",
@@ -11600,6 +11602,23 @@
     "learningId": "learn-huggingface-comfy-org-z_image_turbo",
     "contentHash": "cc565d381162b397ceabb1363ea86b3867795eaa747d0c63e41285f88e01c90b",
     "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4": {
+    "name": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+    "officialUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-31T00:27:30.618Z",
+    "lastVerified": "2026-10-31T00:27:30.618Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
+    "contentHash": "e13a29cfccb3f5f2ce825c0244e87be499ad04d9471b25e002d96a8969b783f1",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T00:20:40.869Z",
-  "total_cycles_completed": 6351,
-  "total_learnings_persisted": 6351,
+  "last_updated": "2026-10-31T00:27:32.087Z",
+  "total_cycles_completed": 6352,
+  "total_learnings_persisted": 6352,
   "total_rules_promoted": 5930,
   "history": [
-    {
-      "timestamp": "2026-10-30T10:30:47.829Z",
-      "repository": "duongductrong/Snapzy",
-      "learningId": "learn-github-duongductrong-snapzy",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T10:32:10.265Z",
       "repository": "webrecorder/browsertrix-crawler",
@@ -1403,6 +1396,13 @@
       "repository": "sqlpage/SQLPage",
       "learningId": "learn-github-sqlpage-sqlpage",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T00:27:32.087Z",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

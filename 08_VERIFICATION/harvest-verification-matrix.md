@@ -6374,3 +6374,4 @@
 | `CYCLE-20261031-NF87` | `2026-10-31T00:20:37.975Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5953` | Yes (`a2bf6f90...`) |
 | `CYCLE-20261031-NG5N` | `2026-10-31T00:20:39.179Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5954, Rule 5955, Rule 5956` | Yes (`cc565d38...`) |
 | `CYCLE-20261031-NHGE` | `2026-10-31T00:20:40.862Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5957` | Yes (`9f577e88...`) |
+| `CYCLE-20261031-WAR3` | `2026-10-31T00:27:32.079Z` | `nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md` | Yes (`e13a29cf...`) |
