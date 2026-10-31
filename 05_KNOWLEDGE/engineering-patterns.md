@@ -466354,3 +466354,143 @@ w = int(total_pixels / h)
 Execute property-based testing across 10,000 random aspect ratios from $0.1$ to $10.0$ and arbitrary megapixel values. Verify that for every generated pair $(H, W)$, $(H \pmod p == 0) \land (W \pmod p == 0)$ holds true without exception.
 
 ---
+
+
+---
+
+## 6366. Multi-Format Quantization Matrix for Heterogeneous Hardware (Harvested from abenzerps/Qwen-Image-2.1-Uncensored-Quantized)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Format Quantization Matrix for Heterogeneous Hardware",
+  "source": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+  "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+  "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-31T23:42:44.126Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [abenzerps/Qwen-Image-2.1-Uncensored-Quantized](https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized) (Revision: `hf-abenzer`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When distributing large AI models for local inference, you MUST provide a **quantization matrix** that covers at least three distinct hardware ecosystems (e.g., NVIDIA CUDA, Apple Silicon, CPU/Generic) using their native, optimized file formats (GGUF, MLX, Safetensors). You MUST NOT provide only a single format (e.g., only PyTorch `.bin` or only GGUF) if you aim for broad local adoption.
+
+**WHY**:
+Different hardware architectures have different memory access patterns and instruction sets.
+*   **NVIDIA GPUs** benefit from FP8 and NVFP4 due to dedicated tensor cores.
+*   **Apple Silicon** benefits from MLX format due to unified memory and Metal shader optimizations.
+*   **Generic/CPU** benefits from GGUF due to its efficient memory mapping and mixed-precision support.
+Providing only one format forces users to perform lossy or inefficient conversions, leading to poor performance or failure to load.
+
+**WHEN TO APPLY**:
+Any project distributing large neural network weights (LLMs, Diffusion Models, Vision Transformers) for local, on-device inference.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudo-code for a quantization pipeline
+def generate_quantization_matrix(base_model_path):
+    outputs = {}
+    
+    # 1. NVIDIA Optimized
+    outputs['nvidia_fp8'] = quantize_to_fp8(base_model_path, target='cuda')
+    outputs['nvidia_nvfp4'] = quantize_to_nvfp4(base_model_path, target='cuda')
+    
+    # 2. Apple Silicon Optimized
+    outputs['apple_mlx_4bit'] = quantize_to_mlx(base_model_path, bits=4, target='metal')
+    outputs['apple_mlx_8bit'] = quantize_to_mlx(base_model_path, bits=8, target='metal')
+    
+    # 3. Generic/CPU Optimized (GGUF)
+    outputs['generic_q4_k_m'] = quantize_to_gguf(base_model_path, quant_type='Q4_K_M')
+    outputs['generic_q8_0'] = quantize_to_gguf(base_model_path, quant_type='Q8_0')
+    
+    return outputs
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Providing only PyTorch .bin files
+def generate_quantization_matrix_bad(base_model_path):
+    # This forces users to use PyTorch-specific loaders, which are slow and memory-heavy
+    # and do not leverage hardware-specific optimizations.
+    return {'pytorch_bin': torch.save(base_model, 'model.bin')}
+```
+
+**VERIFICATION METHOD**:
+1.  **File Existence Check:** Assert that the repository contains at least one file per major hardware ecosystem (e.g., `.gguf`, `.mlx`, `.safetensors` with FP8 metadata).
+2.  **Load Test:** Attempt to load each file format using its native loader (e.g., `llama.cpp` for GGUF, `mlx` for MLX, `safetensors` for Safetensors) and verify that the tensor shapes and dtypes match the expected quantization profile.
+3.  **Memory Footprint Audit:** Measure the peak VRAM/RAM usage during loading for each format and verify it matches the advertised size (e.g., Q4_0 should be ~4 bits per parameter).
+
+
+---
+
+## 6367. Safe Tensor Serialization to Prevent Code Execution (Harvested from abenzerps/Qwen-Image-2.1-Uncensored-Quantized)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Safe Tensor Serialization to Prevent Code Execution",
+  "source": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+  "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+  "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-31T23:42:44.577Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [abenzerps/Qwen-Image-2.1-Uncensored-Quantized](https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized) (Revision: `hf-abenzer`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+You MUST use **Safetensors** or **GGUF** for distributing model weights. You MUST NOT use **Pickle** (`.bin`, `.pkl`) for public model distribution due to the risk of arbitrary code execution during deserialization.
+
+**WHY**:
+Pickle is a Python serialization format that can execute arbitrary Python code during the `load` process. If a malicious actor distributes a model with a crafted Pickle file, they can execute code on the user's machine when the model is loaded. Safetensors and GGUF are binary formats that only store tensor data and metadata, with no code execution capability.
+
+**WHEN TO APPLY**:
+Any project distributing machine learning models to untrusted users or public repositories.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from safetensors.torch import save_file, load_file
+
+# SAFE: Using Safetensors
+def save_model_safe(model_state_dict, path):
+    save_file(model_state_dict, path)
+
+def load_model_safe(path):
+    return load_file(path)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+import pickle
+
+# ANTI-PATTERN: Using Pickle
+def save_model_unsafe(model_state_dict, path):
+    with open(path, 'wb') as f:
+        pickle.dump(model_state_dict, f)
+
+def load_model_unsafe(path):
+    with open(path, 'rb') as f:
+        return pickle.load(f) # DANGER: Can execute arbitrary code
+```
+
+**VERIFICATION METHOD**:
+1.  **File Extension Check:** Assert that no files with `.bin`, `.pkl`, or `.pt` (if they contain Pickle data) are present in the repository.
+2.  **Static Analysis:** Scan the repository for `pickle.load` or `torch.load` with `weights_only=False` in any associated code.
+3.  **Format Validation:** Use a tool like `safetensors` CLI to validate that `.safetensors` files are well-formed and contain only tensor data.

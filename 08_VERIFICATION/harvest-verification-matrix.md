@@ -6755,3 +6755,5 @@
 | `CYCLE-20261031-0I25` | `2026-10-31T23:22:29.357Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6360` | Yes (`e180efbe...`) |
 | `CYCLE-20261031-3N8Q` | `2026-10-31T23:24:56.042Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6361, Rule 6362` | Yes (`8b4e7ad7...`) |
 | `CYCLE-20261031-HLOU` | `2026-10-31T23:35:47.214Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6363, Rule 6364, Rule 6365` | Yes (`0bb2c915...`) |
+| `CYCLE-20261031-QK0W` | `2026-10-31T23:42:44.960Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6366, Rule 6367` | Yes (`0c7bb006...`) |
+| `CYCLE-20261031-QPA9` | `2026-10-31T23:42:51.777Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md` | Yes (`01a647e5...`) |

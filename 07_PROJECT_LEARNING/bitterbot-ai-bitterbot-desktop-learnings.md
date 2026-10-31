@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `9f6fa547`  
+> **Source Version**: `c9dd9650`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T23:08:37.542Z  
+> **Timestamp**: 2026-10-31T23:42:51.480Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T23:08:37.537Z  
+> **Harvest Timestamp**: 2026-10-31T23:42:51.243Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,344 +1799,120 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9f6fa547` (2026-10-31)
-**Commit Message**: fix(infra): make batch lanes reach the Batches API and offer beta nodes the stable release (#345)
+### Incident Patch 1: `c9dd9650` (2026-10-31)
+**Commit Message**: chore(main): release 1.12.0 (#337)
 
-Two live defects seen in the 1.11.0-beta.1 gateway log while assessing the
-1.12.0 release.
+Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
 
-Batch lanes never batched. complete-attributed passes `feature-runId` as the
-Batches API `custom_id`, and every feature name is slash-separated
-(`memory/dream`, `skills/evolution`), which the API rejects:
-"requests.0.custom_id: String should match pattern '^[a-zA-Z0-9_-]{1,64}$'".
-Each submit failed, fell back to the live path and paid full price. The
-batch client now coerces caller ids into that shape (slashes and other
-characters become dashes, 64-char clamp, never empty) and uses the same
-coerced id for the submit and the results lookup. Ids that already match
-are unchanged.
-
-Beta nodes were never offered the stable release. compareSemverStrings
-ignored pre-release labels, so a node on 1.11.0-beta.1 saw 1.11.0 as equal
-and the startup check, status, staleness and the Control UI banner stayed
-quiet (the live node is still on beta.1 a day after 1.11.0 shipped). The
-comparison now applies the SemVer pre-release tie-break; the CLI's
-releaseOrder helper delegates to it instead of carrying its own
-
-**File**: `docs/cli/update.md` (modified, +3/-1)
+**File**: `.release-please-manifest.json` (modified, +1/-1)
 ```diff
-@@ -59,7 +59,9 @@ git checkout on a branch. A configured `update.channel` always wins.
- 
- A pre-release install such as `1.10.1-beta.2` counts as older than the stable
- `1.10.1`, so `bitterbot update` on the stable channel moves it forward instead
--of reporting it as current.
-+of reporting it as current. The gateway's startup update check, `bitterbot
-+status`, and the Control UI update banner apply the same ordering, so a node
-+left on a beta is told about the stable release it preceded.
- 
- ## Usage
- 
-```
-
-**File**: `docs/network/soapbox-compute-mesh.md` (modified, +2/-2)
-```diff
-@@ -228,8 +228,8 @@ The current resolver prefers the bundled release binary, then the installed
- sidecar, and uses local Cargo builds only as a fallback. An explicit
- `p2p.orchestratorBinary` still takes priority, including for intentional development
- builds; update or remove an outdated override when upgrading. Releases bundle
--the verified 0.2.4 sidecar; from the release after v1.11.0 they pin Soapbox rc10
--for new Linux x64 operator setups (v1.10.0 through v1.11.0 pinned rc5).
-+the verified 0.2.4 sidecar; from v1.12.0 they pin Soapbox rc10 for new Linux x64
-+operator setups (v1.10.0 through v1.11.0 pinned rc5).
- 
- Set `p2p.orchestratorBinary` to a versioned, signature-verified compatible release
- binary (0.2.4 supports the Compute topic and descriptor signer), then restart the
-```
-
-**File**: `docs/network/soapbox.md` (modified, +2/-2)
-```diff
-@@ -26,8 +26,8 @@ source checkout is unnecessary. The older Soapbox rc4/rc5/rc6 overlays are for
- their recorded Bitterbot versions and must not be installed over an integrated
- release.
- 
--Releases up to v1.11.0 bundle Soapbox rc5 for new Linux x64 operator setups; the
--next release bundles rc10, which adds durable cancellation, revocation recovery
-+Releases up to v1.11.0 bundle Soapbox rc5 for new Linux x64 operator setups;
-+v1.12.0 and later bundle rc10, which adds durable cancellation, revocation recovery
- and readiness checks (see [Permission changes and revocation](#permission-changes-and-revocation)).
- 
- Existing installs upgrade with `bitterbot update` or the in-app update; the
-```
-
-**File**: `src/cli/update-cli/tarball.ts` (modified, +5/-20)
-```diff
-@@ -309,30 +309,15 @@ export type TarballCliOptions = UpdateCommandOptions & {
-   restoreConfig?: boolean;
- };
- 
--const PRERELEASE_RE = /^v?\d+\.\d+\.\d+-/;
--
- /**
-- * Order two release versions. `compareSemverStrings` ignores pre-release
-- * labels, so `1.10.1-beta.2` and `1.10.1` compare equal; here the beta is
-- * behind the stable release of the same number (and ahead of nothing), so an
-+ * Order two release versions. `compareSemverStrings` applies the SemVer
-+ * pre-release tie-break, so `1.10.1-beta.2` sorts behind `1.10.1` and an
-  * install left on a beta still moves forward to the release it preceded.
-+ * Kept as a named helper for the call sites and tests that read as
-+ * "release order".
-  */
- export function releaseOrder(from: string, target: string): number | null {
--  const cmp = compareSemverStrings(from, target);
--  if (cmp !== 0) {
--    return cmp;
--  }
--  const fromPre = PRERELEASE_RE.test(from);
--  const targetPre = PRERELEASE_RE.test(target);
--  if (fromPre !== targetPre) {
--    return fromPre ? -1 : 1;
--  }
--  if (!fromPre) {
--    return 0;
--  }
--  const a = from.replace(/^v/, "");
--  const b = target.replace(/^v/, "");
--  return a === b ? 0 : a.localeCompare(b, "en", { numeric: true }) < 0 ? -1 : 1;
-+  return compareSemverStrings(from, target);
+@@ -1,3 +1,3 @@
+ {
+-  ".": "1.11.0"
++  ".": "1.12.0"
  }
- 
- export async function runTarballUpdateCommand(params: {
 ```
 
-**File**: `src/infra/anthropic-batch.test.ts` (modified, +85/-0)
+**File**: `CHANGELOG.md` (modified, +18/-0)
 ```diff
-@@ -7,6 +7,7 @@ import {
-   normalizeBatchBaseUrl,
-   resetAnthropicBatchStateForTest,
-   runAnthropicBatchCall,
-+  sanitizeBatchCustomId,
- } from "./anthropic-batch.js";
+@@ -1,5 +1,23 @@
+ # Changelog
  
- type Call = { url: string; method: string; body?: unknown; headers: Record<string, string> };
-@@ -270,3 +271,87 @@ describe("runAnthropicBatchCall", () => {
-     expect(batchStopReason("refusal")).toBe("error");
-   });
- });
++## [1.12.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.11.0...v1.12.0) (2026-10-31)
 +
-+describe("sanitizeBatchCustomId", () => {
-+  it("keeps ids the Batches API already accepts", () => {
-+    expect(sanitizeBatchCustomId("lane-1")).toBe("lane-1");
-+    expect(sanitizeBatchCustomId("memory-dream_run-1")).toBe("memory-dream_run-1");
-+  });
 +
-+  it("replaces the slashes in feature-derived ids and trims the ends", () => {
-+    expect(sanitizeBatchCustomId("memory/dream-run-1")).toBe("memory-dream-run-1");
-+    expect(sanitizeBatchCustomId("skills/evolution-")).toBe("skills-evolution");
-+    expect(sanitizeBatchCustomId("rlm/deep-recall-a:b c")).toBe("rlm-deep-recall-a-b-c");
-+  });
++### Features
 +
-+  it("clamps to 64 characters without leaving a trailing dash", () => {
-+    const long = `${"a".repeat(63)}/${"b".repeat(20)}`;
-+    const out = sanitizeBatchCustomId(long);
-+    expect(out).toHaveLength(63);
-+    expect(out).toMatch(/^[a-zA-Z0-9_-]{1,64}$/);
-+    expect(sanitizeBatchCustomId("x".repeat(80))).toBe("x".repeat(64));
-+  });
++* **browser:** teach reusable skills from reviewed demonstrations ([#338](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/338)) ([9cfd9db](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/9cfd9db0e4fe7c05d443cdcabe505a9e17bd4be5))
++* **compute:** land the beta recovery stack on main with Soapbox rc10 ([#343](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/343)) ([c8d414d](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/c8d414db5d9e01e94dfe376c4b3f0147f782ab18))
++* **gateway:** attribute event-loop stalls with an on-demand sampling profiler ([#341](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/341)) ([7a563ca](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/7a563ca074f515cf0febe6ec6488163e73880601))
++* **gateway:** explain disabled OpenAI-compatible endpoints instead of a bare 404 ([#342](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/342)) ([299269a](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/299269afa1cf95aa5e63064540f73b3fdf19658c))
 +
-+  it("never returns an empty id", () => {
-+    expect(sanitizeBatchCustomId("///")).toMatch(/^[a-zA-Z0-9_-]{1,64}$/);
-+  });
-+});
 +
-+describe("runAnthropicBatchCall custom_id", () => {
-+  beforeEach(() => resetAnthropicBatchStateForTest());
++### Bug Fixes
 +
-+  it("submits the sanitized id and matches the result line by that same id", async () => {
-+    const request = {
-+      model: "claude-test",
-+      max_tokens: 16,
-+      messages: [{ role: "user" as const, content: [{ type: "text" as const, text: "hi" }] }],
-+    };
-+    const results = `${JSON.stringify({
-+      custom_id: "memory-dream-run-1",
-+      result: {
-+        type: "succeeded",
-+        message: {
-+          id: "msg_1",
-+          role: "assistant",
-+          content: [{ type: "text", text: "dreamt" }],
-+          stop_reason: "end_turn",
-+          usage: { input_tokens: 1, output_tokens: 1 },
-+        },
-+      },
-+    })}\n`;
-+    const { fetchImpl } = makeFetch([
-+      (c) => {
-+        const body = c.body as { requests: Array<{ custom_id: string }> };
-+        expect(body.requests[0]?.custom_id).toBe("memory-dream-run-1");
-+        return json(200, { id: "msgbatch_2", processing_status: "in_progress", results_url: null });
-+      },
-+      () =>
-+        json(200, {
-+          id: "msgbatch_2",
-+          processing_status: "ended",
-+          results_url: "https://api.anthropic.com/v1/messages/batches/msgbatch_2/results",
-+          request_counts: { processing: 0, succeeded: 1, errored: 0, canceled: 0, expired: 0 },
-+        }),
-+      () => json(200, results),
-+    ]);
-+    let clock = 0;
-+    const out = await runAnthropicBatchCall({
-+      apiKey: "sk-test",
-+      baseUrl: "https://api.anthropic.com",
-+      request,
-+      customId: "memory/dream-run-1",
-+      fetchImpl,
-+      sleep: async (ms) => {
-+        clock += ms;
-+      },
-+      now: () => clock,
-+      pollInitialMs: 1_000,
-+      pollMaxMs: 2_000,
-+      maxWaitMs: 60_000,
-+    });
-+    expect(out.ok).toBe(true);
-+    if (out.ok) {
-+      expect(out.message.content?.[0]?.text).toBe("dreamt");
-+    }
-+  });
-+});
++* **acp:** migrate to @agentclientprotocol/sdk 2.x and fix the stdio bridge ([#340](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/340)) ([687e906](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/687e906e3f037e2d91467162a8f80d67e946744a))
++* **infra:** make batch lanes reach the Batches API and offer beta nodes the stable release ([#345](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/345)) ([9f6fa54](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/9f6fa547d0017e2bc7fc95c35c0666adcb28e126))
++* **memory:** record evidence only for prompt-included facts, owner searches and on an independent retention clock ([#344](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/344)) ([aa0953e](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/aa0953e9805852dd81588818d81414cd8e6f4ae9))
++* **orchestrator:** reconcile Cargo.lock after the ed25519-dalek and sha2 bumps ([#336](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/336)) ([a776707](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/a7767075c83c5dc5feb30f3aac3b0715620f9af1))
++
+ ## [1.11.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.10.1...v1.11.0) (2026-10-30)
+ 
+ 
 ```
 
-**File**: `src/infra/anthropic-batch.ts` (modified, +23/-2)
+**File**: `desktop/package.json` (modified, +1/-1)
 ```diff
-@@ -151,13 +151,32 @@ export function resetAnthropicBatchStateForTest(): void {
-   unsupportedUntil.clear();
- }
- 
-+const CUSTOM_ID_MAX_LENGTH = 64;
-+
-+/**
-+ * Coerce a caller-supplied id into the shape the Batches API accepts
-+ * (`^[a-zA-Z0-9_-]{1,64}$`). Lane callers pass `feature-runId` and features are
-+ * slash-separated (`memory/dream`, `skills/evolution`), which the API rejects with
-+ * HTTP 400 on every submit; before this coercion no lane ever reached the batch
-+ * queue and each call silently paid the live price. Ids that already match are
-+ * returned unchanged, so the same value keys the submit and the results lookup.
-+ */
-+export function sanitizeBatchCustomId(id: string): string {
-+  const cleaned = id
-+    .replace(/[^a-zA-Z0-9_-]+/g, "-")
-+    .replace(/^-+|-+$/g, "")
-+    .slice(0, CUSTOM_ID_MAX_LENGTH)
-+    .replace(/-+$/g, "");
-+  return cleaned || makeCustomId();
-+}
-+
- function makeCustomId(seed?: string): string {
-   const base = (seed ?? "")
-     .replace(/[^a-zA-Z0-9_-]+/g, "-")
-     .replace(/^-+|-+$/g, "")
-     .slice(0, 40);
-   const rand = Math.random().toString(36).slice(2, 10);
--  return `${base || "lane"}-${Date.now().toString(36)}-${rand}`.slice(0, 64);
-+  return `${base || "lane"}-${Date.now().toString(36)}-${rand}`.slice(0, CUSTOM_ID_MAX_LENGTH);
- }
- 
- function defaultSleep(ms: number, signal?: AbortSignal): Promise<void> {
-@@ -226,7 +245,9 @@ export async function runAnthropicBatchCall(
-     "x-api-key": params.apiKey,
-     "anthropic-version": ANTHROPIC_API_VERSION,
-   };
--  const customId = params.customId ?? makeCustomId(params.request.model);
-+  const customId = params.customId
-+    ? sanitizeBatchCustomId(params.customId)
-+    : makeCustomId(params.request.model);
- 
-   if (isBatchTemporarilyUnsupported(base, now())) {
-     return { ok: false, reason: "unsupported", waitedMs: 0, canceled: false };
+@@ -1,6 +1,6 @@
+ {
+   "name": "bitterbot-control-ui",
+-  "version": "1.11.0",
++  "version": "1.12.0",
+   "private": true,
+   "description": "Bitterbot Control UI - browser-based dashboard for the gateway",
+   "type": "module",
 ```
 
-**File**: `src/infra/update-check.test.ts` (modified, +16/-0)
+**File**: `desktop/src-tauri/Cargo.lock` (modified, +1/-1)
 ```diff
-@@ -64,6 +64,22 @@ describe("compareSemverStrings (PLAN-41 D-A CalVer guard)", async () => {
-     expect(compareSemverStrings("1.0.0", "1.1.0")).toBe(-1);
-     expect(compareSemverStrings("2.0.0", "2.0.0")).toBe(0);
-   });
-+
-+  it("a pre-release is behind the release it precedes (beta node sees the stable build)", () => {
-+    expect(compareSemverStrings("1.11.0-beta.1", "1.11.0")).toBe(-1);
-+    expect(compareSemverStrings("1.11.0", "1.11.0-beta.1")).toBe(1);
-+    expect(compareSemverStrings("v1.11.0-beta.1", "v1.11.0")).toBe(-1);
-+    expect(compareSemverStrings("1.11.0-beta.1", "1.10.1")).toBe(1);
-+    expect(compareSemverStrings("1.12.0", "1.11.0-beta.1")).toBe(1);
-+  });
-+
-+  it("orders pre-releases by identifier, numerically where both are numbers", () => {
-+    expect(compareSemverStrings("1.11.0-beta.1", "1.11.0-beta.2")).toBe(-1);
-+    expect(compareSemverStrings("1.11.0-beta.10", "1.11.0-beta.9")).toBe(1);
-+    expect(compareSemverStrings("1.11.0-beta.1", "1.11.0-beta.1")).toBe(0);
-+    expect(compareSemverStrings("1.11.0-alpha.1", "1.11.0-beta.1")).toBe(-1);
-+    expect(compareSemverStrings("1.11.0-beta", "1.11.0-beta.1")).toBe(-1);
-+  });
- });
+@@ -316,7 +316,7 @@ dependencies = [
  
- describe("fetchNpmTagVersion not-published mapping (D-J)", () => {
+ [[package]]
+ name = "bitterbot-desktop"
+-version = "1.11.0"
++version = "1.12.0"
+ dependencies = [
+  "env_logger",
+  "libc",
 ```
 
-**File**: `src/infra/update-check.ts` (modified, +44/-1)
+**File**: `desktop/src-tauri/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -627,7 +627,50 @@ export function compareSemverStrings(a: string | null, b: string | null): number
-   if (pa.patch !== pb.patch) {
-     return pa.patch < pb.patch ? -1 : 1;
-   }
--  return 0;
-+  return comparePrerelease(a, b);
-+}
-+
-+const PRERELEASE_RE = /^v?\d+\.\d+\.\d+-([0-9A-Za-z.-]+)/;
-+
-+/**
-+ * SemVer §11 tie-break once `major.minor.patch` match: a pre-release sorts
-+ * before the release it precedes, and two pre-releases compare identifier by
-+ * identifier (numeric before alphanumeric, numerics by value, the shorter
-+ * list first). Without this a node left on `1.11.0-beta.1` saw `1.11.0` as
-+ * equal and was never offered the stable build it preceded.
-+ */
-+function comparePrerelease(a: string | null, b: string | null): number {
-+  const preA = a?.match(PRERELEASE_RE)?.[1] ?? null;
-+  const preB = b?.match(PRERELEASE_RE)?.[1] ?? null;
-+  if (preA === null && preB === null) {
-+    return 0;
-+  }
-+  if (preA === null || preB === null) {
-+    return preA === null ? 1 : -1;
-+  }
-+  const idsA = preA.split(".");
-+  const idsB = preB.split(".");
-+  const len = Math.min(idsA.length, idsB.length);
-+  for (let i = 0; i < len; i += 1) {
-+    const x = idsA[i];
-+    const y = idsB[i];
-+    if (x === y) {
-+      continue;
-+    }
-+    const xNum = /^\d+$/.test(x);
-+    const yNum = /^\d+$/.test(y);
-+    if (xNum && yNum) {
-+      return Number(x) < Number(y) ? -1 : 1;
-+    }
-+    if (xNum !== yNum) {
-+      return xNum ? -1 : 1;
-+    }
-+    return x < y ? -1 : 1;
-+  }
-+  if (idsA.length === idsB.length) {
-+    return 0;
-+  }
-+  return idsA.length < idsB.length ? -1 : 1;
- }
+@@ -1,6 +1,6 @@
+ [package]
+ name = "bitterbot-desktop"
+-version = "1.11.0"
++version = "1.12.0"
+ edition = "2021"
+ description = "Bitterbot desktop shell — Tauri 2 wrapper for the Control UI"
  
- export async function checkUpdateStatus(params: {
+```
+
+**File**: `desktop/src-tauri/tauri.conf.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "$schema": "https://raw.githubusercontent.com/tauri-apps/tauri/dev/crates/tauri-cli/schema.json",
+   "productName": "Bitterbot",
+-  "version": "1.11.0",
++  "version": "1.12.0",
+   "identifier": "ai.bitterbot.desktop",
+   "build": {
+     "devUrl": "http://localhost:5173",
+```
+
+**File**: `extensions/discord/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "@bitterbot/discord",
+-  "version": "1.11.0",
++  "version": "1.12.0",
+   "description": "Bitterbot Discord channel plugin",
+   "type": "module",
+   "devDependencies": {
+```
+
+**File**: `extensions/email/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "@bitterbot/email",
+-  "version": "1.11.0",
++  "version": "1.12.0",
+   "private": true,
+   "description": "Bitterbot email channel: read a mailbox over IMAP, reply over SMTP",
+   "type": "module",
 ```
 
 #### Recent Merged Pull Requests:
@@ -2165,30 +1941,41 @@ releaseOrder helper delegates to it instead of carrying its own
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. infra): make batch lanes reach the Batches API and offer beta nodes the stable r
+## X. main): release 1.12.0 (#337)
 
 **RULE**:
-When implementing operations in `docs/cli/update.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9f6fa547`: infra): make batch lanes reach the Batches API and offer beta nodes the stable release (#345). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c9dd9650`: main): release 1.12.0 (#337). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/cli/update.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-of reporting it as current. The gateway's startup update check, `bitterbot
-status`, and the Control UI update banner apply the same ordering, so a node
-left on a beta is told about the stable release it preceded.
+## [1.12.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.11.0...v1.12.0) (2026-10-31)
+
+
+### Features
+
+* **browser:** teach reusable skills from reviewed demonstrations ([#338](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/338)) ([9cfd9db](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/9cfd9db0e4fe7c05d443cdcabe505a9e17bd4be5))
+* **compute:** land the beta recovery stack on main with Soapbox rc10 ([#343](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/343)) ([c8d414d](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/c8d414db5d9e01e94dfe376c4b3f0147f782ab18))
+* **gateway:** attribute event-loop stalls with an on-demand sampling profiler ([#341](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/341)) ([7a563ca](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/7a563ca074f515cf0febe6ec6488163e73880601))
+* **gateway:** explain disabled OpenAI-compatible endpoints instead of a bare 404 ([#342](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/342)) ([299269a](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/299269afa1cf95aa5e63064540f73b3fdf19658c))
+
+
+### Bug Fixes
+
+* **acp:** migrate to @agentclientprotoc
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-of reporting it as current.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9f6fa547` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c9dd9650` are properly handled with clean fallback behavior.

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T23:08:22.718Z",
+  "last_updated": "2026-10-31T23:42:51.790Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3566,6 +3566,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-o2sh-onefetch"
+    },
+    {
+      "id": "CD-QPAM",
+      "directive_title": "main): release 1.12.0 (#337)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Bitterbot-AI/bitterbot-desktop",
+      "source_commit": "c9dd9650",
+      "date_staged": "2026-10-31",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop"
     }
   ]
 }

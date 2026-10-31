@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-278G",
-    "timestamp": "2026-10-30T18:00:12.832Z",
-    "repository": "crate/crate",
-    "learningId": "learn-github-crate-crate",
-    "contentHash": "7980539d4b3378ca2d3c2c10ff746b6a438ba6344901dcaabf6d816723daafe9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-B3YD",
-    "timestamp": "2026-10-30T18:07:08.485Z",
-    "repository": "PeerDB-io/peerdb",
-    "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "ac76ae613700dd74e0307b282d8c570aa02ede374e2772c7c5bf66cdb6378f4c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-B7P9",
     "timestamp": "2026-10-30T18:07:13.341Z",
     "repository": "Ontos-AI/knowhere",
@@ -7492,6 +7462,36 @@
     "contentHash": "0bb2c915dbaf22b3db0eac1bbeedeb29a7963682ed3cb31a2c71d3ce0174ec57",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-QK0W",
+    "timestamp": "2026-10-31T23:42:44.960Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
+    "contentHash": "0c7bb00634a15b168e87560b0813cce7394f3cca725ecdafe386509a098491fa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-QPA9",
+    "timestamp": "2026-10-31T23:42:51.777Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "01a647e54d91d9994aa85363722dc3ce94e1970dabb723b57b5cdac71c4e64d2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

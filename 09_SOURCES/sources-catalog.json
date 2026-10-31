@@ -1295,8 +1295,8 @@
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
     "license": "Open-Source",
-    "contentHash": "59902ba69cf49be7f5faf3108f17c11fbba19df99b5174e3737f1cd922093416",
-    "lastHarvestedAt": "2026-10-28T22:07:47.922Z",
+    "contentHash": "0c7bb00634a15b168e87560b0813cce7394f3cca725ecdafe386509a098491fa",
+    "lastHarvestedAt": "2026-10-31T23:42:44.964Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized"
   },
   "iliyami-macsai": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "9f6fa547",
+    "sourceVersion": "c9dd9650",
     "license": "MIT",
-    "contentHash": "4504c447e8b4865cff66353cbba12e7398bc4a217b8d64dcab7bdd5bfc96a569",
-    "lastHarvestedAt": "2026-10-31T23:08:38.016Z",
+    "contentHash": "01a647e54d91d9994aa85363722dc3ce94e1970dabb723b57b5cdac71c4e64d2",
+    "lastHarvestedAt": "2026-10-31T23:42:51.784Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {

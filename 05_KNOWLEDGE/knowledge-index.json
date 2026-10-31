@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T23:35:47.130Z",
+  "last_updated": "2026-10-31T23:42:51.661Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4940,8 +4940,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "9f6fa547",
-      "content_hash": "4504c447e8b4865cff66353cbba12e7398bc4a217b8d64dcab7bdd5bfc96a569",
+      "source_version": "c9dd9650",
+      "content_hash": "01a647e54d91d9994aa85363722dc3ce94e1970dabb723b57b5cdac71c4e64d2",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -5136,7 +5136,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T23:08:37.942Z",
+      "verified_at": "2026-10-31T23:42:51.631Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -69056,7 +69056,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
       "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
-      "content_hash": "59902ba69cf49be7f5faf3108f17c11fbba19df99b5174e3737f1cd922093416",
+      "content_hash": "0c7bb00634a15b168e87560b0813cce7394f3cca725ecdafe386509a098491fa",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
       "promoted_rules": [
@@ -69089,6 +69089,16 @@
           "number": 5423,
           "title": "Hardware-Specific Optimization Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6366,
+          "title": "Multi-Format Quantization Matrix for Heterogeneous Hardware",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6367,
+          "title": "Safe Tensor Serialization to Prevent Code Execution",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -69096,7 +69106,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:07:47.862Z",
+      "verified_at": "2026-10-31T23:42:44.824Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -165273,6 +165283,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T23:35:47.108Z"
+    },
+    "rule-6366": {
+      "learning_id": "rule-6366",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6366,
+      "title": "Multi-Format Quantization Matrix for Heterogeneous Hardware",
+      "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T23:42:44.825Z"
+    },
+    "rule-6367": {
+      "learning_id": "rule-6367",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6367,
+      "title": "Safe Tensor Serialization to Prevent Code Execution",
+      "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T23:42:44.825Z"
     }
   },
   "aliases": {

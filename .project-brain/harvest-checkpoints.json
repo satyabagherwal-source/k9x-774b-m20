@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T23:35:47.228Z",
+  "last_updated": "2026-10-31T23:42:51.796Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2023,15 +2023,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-      "content_hash": "156b645b21865b0253098094c6785becb638684269b7995d077122da7c1b75a9",
-      "verified_at": "2026-10-31T05:07:17.211Z",
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
+      "content_hash": "0c7bb00634a15b168e87560b0813cce7394f3cca725ecdafe386509a098491fa",
+      "verified_at": "2026-10-31T23:42:44.972Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T05:07:17.211Z"
+      "last_updated": "2026-10-31T23:42:44.972Z"
     },
     "iliyami/MacSai": {
       "repository": "iliyami/MacSai",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "4504c447e8b4865cff66353cbba12e7398bc4a217b8d64dcab7bdd5bfc96a569",
-      "verified_at": "2026-10-31T23:08:38.022Z",
+      "content_hash": "01a647e54d91d9994aa85363722dc3ce94e1970dabb723b57b5cdac71c4e64d2",
+      "verified_at": "2026-10-31T23:42:51.795Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T23:08:38.022Z"
+      "last_updated": "2026-10-31T23:42:51.795Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",

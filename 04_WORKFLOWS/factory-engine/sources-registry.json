@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T23:35:49.783Z",
-    "lastVerified": "2026-10-31T23:35:49.783Z",
+    "lastChecked": "2026-10-31T23:42:54.320Z",
+    "lastVerified": "2026-10-31T23:42:54.320Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -145,14 +145,14 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T23:08:37.537Z",
-    "lastVerified": "2026-10-31T23:08:37.537Z",
+    "lastChecked": "2026-10-31T23:42:51.243Z",
+    "lastVerified": "2026-10-31T23:42:51.243Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "4504c447e8b4865cff66353cbba12e7398bc4a217b8d64dcab7bdd5bfc96a569",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "01a647e54d91d9994aa85363722dc3ce94e1970dabb723b57b5cdac71c4e64d2",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1229,12 +1229,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "clockworklabs-spacetimedb": {
-    "name": "clockworklabs/SpacetimeDB",
+    "name": "SpacetimeDB",
     "officialUrl": "https://github.com/clockworklabs/SpacetimeDB",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T07:28:02.929Z",
-    "lastVerified": "2026-10-31T07:28:02.929Z",
+    "lastChecked": "2026-10-31T23:42:44.452Z",
+    "lastVerified": "2026-10-31T23:42:44.452Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clockworklabs-spacetimedb",
@@ -1243,7 +1243,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f7e474f7"
   },
   "sharkdp-fd": {
     "name": "fd",
@@ -1895,8 +1896,8 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T19:49:47.172Z",
-    "lastVerified": "2026-10-31T19:49:47.172Z",
+    "lastChecked": "2026-10-31T23:42:41.989Z",
+    "lastVerified": "2026-10-31T23:42:41.989Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
@@ -3157,9 +3158,9 @@
   "sorintlab-stolon": {
     "name": "stolon",
     "officialUrl": "https://github.com/sorintlab/stolon",
-    "lastChecked": "2026-10-31T09:20:05.513Z",
+    "lastChecked": "2026-10-31T23:42:39.366Z",
     "revisionIdentifier": "bcea7a75",
-    "lastVerified": "2026-10-31T09:20:05.513Z"
+    "lastVerified": "2026-10-31T23:42:39.366Z"
   },
   "milvus-io-bootcamp": {
     "name": "bootcamp",
@@ -3403,9 +3404,9 @@
   "sigoden-aichat": {
     "name": "aichat",
     "officialUrl": "https://github.com/sigoden/aichat",
-    "lastChecked": "2026-10-31T03:52:14.387Z",
+    "lastChecked": "2026-10-31T23:42:31.889Z",
     "revisionIdentifier": "82976d34",
-    "lastVerified": "2026-10-31T03:52:14.387Z"
+    "lastVerified": "2026-10-31T23:42:31.889Z"
   },
   "hf-cloudflare-clef": {
     "name": "Cloudflare/clef",
@@ -8092,13 +8093,13 @@
     "officialUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T22:07:38.556Z",
-    "lastVerified": "2026-10-28T22:07:38.556Z",
+    "lastChecked": "2026-10-31T23:42:34.520Z",
+    "lastVerified": "2026-10-31T23:42:34.520Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
-    "contentHash": "59902ba69cf49be7f5faf3108f17c11fbba19df99b5174e3737f1cd922093416",
-    "promotedRulesCount": 3,
+    "contentHash": "0c7bb00634a15b168e87560b0813cce7394f3cca725ecdafe386509a098491fa",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -9315,9 +9316,9 @@
   "productdevbook-port-killer": {
     "name": "port-killer",
     "officialUrl": "https://github.com/productdevbook/port-killer",
-    "lastChecked": "2026-10-29T22:19:10.834Z",
+    "lastChecked": "2026-10-31T23:42:36.810Z",
     "revisionIdentifier": "2209b0fd",
-    "lastVerified": "2026-10-29T22:19:10.834Z"
+    "lastVerified": "2026-10-31T23:42:36.810Z"
   },
   "lokoe-mehdi-scouter": {
     "name": "scouter",

@@ -6764,3 +6764,5 @@ Every entry in this ledger must capture:
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `04ff7917` | Multi-dimensional audit evidence | 2026-10-31T23:22:29.360Z |
 | `learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf` | `https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-10-31T23:24:56.045Z |
 | `learn-huggingface-speridlabs-iris-3b` | `https://huggingface.co/speridlabs/iris-3b` | `hf-speridl` | Multi-dimensional audit evidence | 2026-10-31T23:35:47.218Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-31T23:42:44.964Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `c9dd9650` | Multi-dimensional audit evidence | 2026-10-31T23:42:51.784Z |
