@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T21:19:49.804Z",
+  "last_updated": "2026-10-31T21:30:49.009Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -170,14 +170,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-d1-3b",
-      "content_hash": "fd76c2d8b01c0cc6150caec90174edc0d0302167b3e0c414b4d209e942296b41",
-      "verified_at": "2026-10-28T20:01:26.257Z",
+      "content_hash": "7e5f39f1dd53e1c38e10599b7df63995393cb2ac0be9cfa52d50585a557cfb28",
+      "verified_at": "2026-10-31T21:30:49.008Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T20:01:26.257Z"
+      "last_updated": "2026-10-31T21:30:49.008Z"
     },
     "Cactus-Compute/whistle": {
       "repository": "Cactus-Compute/whistle",
@@ -2198,14 +2198,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tickernelz-opencode-mem",
-      "content_hash": "95d863686017530cb03d8e05f8e34fa5e6b58ba8e9d32173b4028a8fbfaef980",
-      "verified_at": "2026-10-31T05:00:56.337Z",
+      "content_hash": "4ad591f206116265fde66dc6d82f7cb13518c6a62929bfa512c75a21234c265b",
+      "verified_at": "2026-10-31T21:26:57.495Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T05:00:56.337Z"
+      "last_updated": "2026-10-31T21:26:57.495Z"
     },
     "autotrust/JEV-35B-NVFP4": {
       "repository": "autotrust/JEV-35B-NVFP4",

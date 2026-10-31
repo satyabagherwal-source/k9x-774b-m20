@@ -185,8 +185,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/d1-3B",
     "sourceVersion": "hf-liquidai-d1-3b",
     "license": "Open-Source",
-    "contentHash": "fd76c2d8b01c0cc6150caec90174edc0d0302167b3e0c414b4d209e942296b41",
-    "lastHarvestedAt": "2026-10-28T20:01:26.242Z",
+    "contentHash": "7e5f39f1dd53e1c38e10599b7df63995393cb2ac0be9cfa52d50585a557cfb28",
+    "lastHarvestedAt": "2026-10-31T21:30:48.998Z",
     "learningId": "learn-huggingface-liquidai-d1-3b"
   },
   "hf-cactus-compute-whistle": {
@@ -1413,10 +1413,10 @@
     "repository": "tickernelz/opencode-mem",
     "platform": "github",
     "sourceUrl": "https://github.com/tickernelz/opencode-mem",
-    "sourceVersion": "bd173ed4",
+    "sourceVersion": "9086c659",
     "license": "MIT",
-    "contentHash": "95d863686017530cb03d8e05f8e34fa5e6b58ba8e9d32173b4028a8fbfaef980",
-    "lastHarvestedAt": "2026-10-31T05:00:56.329Z",
+    "contentHash": "4ad591f206116265fde66dc6d82f7cb13518c6a62929bfa512c75a21234c265b",
+    "lastHarvestedAt": "2026-10-31T21:26:57.486Z",
     "learningId": "learn-github-tickernelz-opencode-mem"
   },
   "hf-autotrust-jev-35b-nvfp4": {

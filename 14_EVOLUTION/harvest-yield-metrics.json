@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T21:19:49.800Z",
-  "total_cycles_completed": 6699,
-  "total_learnings_persisted": 6699,
-  "total_rules_promoted": 6330,
+  "last_updated": "2026-10-31T21:30:49.004Z",
+  "total_cycles_completed": 6701,
+  "total_learnings_persisted": 6701,
+  "total_rules_promoted": 6334,
   "history": [
-    {
-      "timestamp": "2026-10-31T09:54:02.649Z",
-      "repository": "skyhook-io/radar",
-      "learningId": "learn-github-skyhook-io-radar",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T09:54:07.316Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T10:00:29.042Z",
       "repository": "ntex-rs/ntex",
@@ -1403,6 +1389,20 @@
       "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
       "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T21:26:57.492Z",
+      "repository": "tickernelz/opencode-mem",
+      "learningId": "learn-github-tickernelz-opencode-mem",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T21:30:49.004Z",
+      "repository": "LiquidAI/d1-3B",
+      "learningId": "learn-huggingface-liquidai-d1-3b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

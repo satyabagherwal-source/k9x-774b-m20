@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T21:19:49.700Z",
+  "last_updated": "2026-10-31T21:30:48.914Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -25250,7 +25250,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/d1-3B",
       "source_version": "hf-liquidai-d1-3b",
-      "content_hash": "fd76c2d8b01c0cc6150caec90174edc0d0302167b3e0c414b4d209e942296b41",
+      "content_hash": "7e5f39f1dd53e1c38e10599b7df63995393cb2ac0be9cfa52d50585a557cfb28",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md",
       "promoted_rules": [
@@ -25267,6 +25267,21 @@
         {
           "number": 4123,
           "title": "Multimodal Tile-Based Image Processing with Dynamic Resizing",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6328,
+          "title": "Single-Pass Zero-Token Decision Extraction Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6329,
+          "title": "State-Cache Boundary Invariant in Hybrid Causal-Conv Backbones",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6330,
+          "title": "Aspect-Preserved Dynamic Tile Grid Clamping Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -25288,7 +25303,7 @@
         "learn-huggingface-hf-liquidai-d1-3b-mv4341q9",
         "learn-huggingface-hf-liquidai-d1-3b-mv4gd5ma"
       ],
-      "verified_at": "2026-10-28T20:01:26.136Z",
+      "verified_at": "2026-10-31T21:30:48.894Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -67371,8 +67386,8 @@
       "slug": "tickernelz-opencode-mem",
       "platform": "github",
       "source_url": "https://github.com/tickernelz/opencode-mem",
-      "source_version": "bd173ed4",
-      "content_hash": "95d863686017530cb03d8e05f8e34fa5e6b58ba8e9d32173b4028a8fbfaef980",
+      "source_version": "9086c659",
+      "content_hash": "4ad591f206116265fde66dc6d82f7cb13518c6a62929bfa512c75a21234c265b",
       "dossier_path": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "promoted_rules": [
@@ -67425,6 +67440,11 @@
           "number": 6075,
           "title": "embedding): release the local ONNX model after an idle timeout (#459)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6327,
+          "title": "embedding): harden transformers resolve for OpenCode nested installs (#467)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -67432,7 +67452,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T05:00:56.212Z",
+      "verified_at": "2026-10-31T21:26:57.381Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -164545,6 +164565,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T21:10:38.396Z"
+    },
+    "rule-6327": {
+      "learning_id": "rule-6327",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6327,
+      "title": "embedding): harden transformers resolve for OpenCode nested installs (#467)",
+      "source_url": "https://github.com/tickernelz/opencode-mem",
+      "source_version": "9086c659",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T21:26:57.381Z"
+    },
+    "rule-6328": {
+      "learning_id": "rule-6328",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6328,
+      "title": "Single-Pass Zero-Token Decision Extraction Invariant",
+      "source_url": "https://huggingface.co/LiquidAI/d1-3B",
+      "source_version": "hf-liquidai-d1-3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T21:30:48.894Z"
+    },
+    "rule-6329": {
+      "learning_id": "rule-6329",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6329,
+      "title": "State-Cache Boundary Invariant in Hybrid Causal-Conv Backbones",
+      "source_url": "https://huggingface.co/LiquidAI/d1-3B",
+      "source_version": "hf-liquidai-d1-3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T21:30:48.894Z"
+    },
+    "rule-6330": {
+      "learning_id": "rule-6330",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6330,
+      "title": "Aspect-Preserved Dynamic Tile Grid Clamping Invariant",
+      "source_url": "https://huggingface.co/LiquidAI/d1-3B",
+      "source_version": "hf-liquidai-d1-3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T21:30:48.894Z"
     }
   },
   "aliases": {

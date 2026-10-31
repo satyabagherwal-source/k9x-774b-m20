@@ -6731,3 +6731,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-unsloth-embeddinggemma-2-gguf` | `https://huggingface.co/unsloth/embeddinggemma-2-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-31T21:09:31.651Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `8193b024` | Multi-dimensional audit evidence | 2026-10-31T21:10:38.499Z |
 | `learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark` | `https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-31T21:19:49.795Z |
+| `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `9086c659` | Multi-dimensional audit evidence | 2026-10-31T21:26:57.486Z |
+| `learn-huggingface-liquidai-d1-3b` | `https://huggingface.co/LiquidAI/d1-3B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-31T21:30:48.998Z |
