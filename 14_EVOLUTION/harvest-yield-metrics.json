@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T11:09:37.682Z",
-  "total_cycles_completed": 6520,
-  "total_learnings_persisted": 6520,
+  "last_updated": "2026-10-31T11:19:12.832Z",
+  "total_cycles_completed": 6521,
+  "total_learnings_persisted": 6521,
   "total_rules_promoted": 6173,
   "history": [
-    {
-      "timestamp": "2026-10-30T22:34:31.582Z",
-      "repository": "speridlabs/idol",
-      "learningId": "learn-huggingface-speridlabs-idol",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T22:34:34.281Z",
       "repository": "meshery/meshery",
@@ -1403,6 +1396,13 @@
       "repository": "Ontos-AI/knowhere",
       "learningId": "learn-github-ontos-ai-knowhere",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T11:19:12.832Z",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

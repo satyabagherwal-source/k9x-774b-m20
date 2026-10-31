@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261029-6FCE",
-    "timestamp": "2026-10-29T16:23:51.086Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "747b8c632f9f7512dd302258e6a96d78b8f9a68147061f53381ee5ccb22e6717",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261029-MU48",
     "timestamp": "2026-10-29T16:36:36.728Z",
     "repository": "liketrek/TREK",
@@ -7492,6 +7477,21 @@
     "contentHash": "cedd9fc7d7f172ff61a64a6a0e329185b84d8e63874335cf859813c317e733f9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-6D2R",
+    "timestamp": "2026-10-31T11:19:12.819Z",
+    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+    "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+    "contentHash": "385c45f8af732383eb73ff89340cbb2859612b572087a158898c5d611cd5cc11",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

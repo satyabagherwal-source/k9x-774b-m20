@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T11:09:40.237Z",
-    "lastVerified": "2026-10-31T11:09:40.237Z",
+    "lastChecked": "2026-10-31T11:19:24.266Z",
+    "lastVerified": "2026-10-31T11:19:24.266Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -346,9 +346,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T10:40:32.466Z",
+    "lastChecked": "2026-10-31T11:19:24.256Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T10:40:32.466Z"
+    "lastVerified": "2026-10-31T11:19:24.256Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1128,8 +1128,8 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T06:18:03.954Z",
-    "lastVerified": "2026-10-31T06:18:03.954Z",
+    "lastChecked": "2026-10-31T11:19:19.265Z",
+    "lastVerified": "2026-10-31T11:19:19.265Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -2814,9 +2814,9 @@
   "giancarloerra-socraticode": {
     "name": "SocratiCode",
     "officialUrl": "https://github.com/giancarloerra/SocratiCode",
-    "lastChecked": "2026-10-30T18:13:39.067Z",
+    "lastChecked": "2026-10-31T11:19:21.735Z",
     "revisionIdentifier": "dae6d3a0",
-    "lastVerified": "2026-10-30T18:13:39.067Z"
+    "lastVerified": "2026-10-31T11:19:21.735Z"
   },
   "orange-opensource-hurl": {
     "name": "Orange-OpenSource/hurl",
@@ -2934,13 +2934,13 @@
     "officialUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T08:44:00.577Z",
-    "lastVerified": "2026-10-28T08:44:00.577Z",
+    "lastChecked": "2026-10-31T11:19:11.751Z",
+    "lastVerified": "2026-10-31T11:19:11.751Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-    "contentHash": "2941bb42fa4a2612f7cb020b555692ca80a83682e90726165f6adc7d41c943b7",
-    "promotedRulesCount": 3,
+    "contentHash": "385c45f8af732383eb73ff89340cbb2859612b572087a158898c5d611cd5cc11",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -3900,9 +3900,9 @@
   "go-chassis-go-chassis": {
     "name": "go-chassis",
     "officialUrl": "https://github.com/go-chassis/go-chassis",
-    "lastChecked": "2026-10-30T19:12:23.625Z",
+    "lastChecked": "2026-10-31T11:19:16.762Z",
     "revisionIdentifier": "6bcf5150",
-    "lastVerified": "2026-10-30T19:12:23.625Z"
+    "lastVerified": "2026-10-31T11:19:16.762Z"
   },
   "dingodb-dingo": {
     "name": "dingo",
@@ -5504,9 +5504,9 @@
   "rcbyr-keen-slider": {
     "name": "keen-slider",
     "officialUrl": "https://github.com/rcbyr/keen-slider",
-    "lastChecked": "2026-10-28T15:50:31.693Z",
+    "lastChecked": "2026-10-31T11:19:14.296Z",
     "revisionIdentifier": "520c757a",
-    "lastVerified": "2026-10-28T15:50:31.693Z"
+    "lastVerified": "2026-10-31T11:19:14.296Z"
   },
   "aquasecurity-tfsec": {
     "name": "tfsec",
@@ -5931,9 +5931,9 @@
   "golutra-golutra": {
     "name": "golutra",
     "officialUrl": "https://github.com/golutra/golutra",
-    "lastChecked": "2026-10-30T13:22:08.623Z",
+    "lastChecked": "2026-10-31T11:19:09.289Z",
     "revisionIdentifier": "8b68a141",
-    "lastVerified": "2026-10-30T13:22:08.623Z"
+    "lastVerified": "2026-10-31T11:19:09.290Z"
   },
   "hf-facebookai-xlm-roberta-base": {
     "name": "FacebookAI/xlm-roberta-base",
