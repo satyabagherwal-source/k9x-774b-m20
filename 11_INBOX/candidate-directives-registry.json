@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T02:14:25.842Z",
+  "last_updated": "2026-10-31T06:59:11.946Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3467,6 +3467,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-comfy-org-z-image-turbo"
+    },
+    {
+      "id": "CD-VZD6",
+      "directive_title": "Merge pull request #963 from telemt/webperf",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "telemt/telemt",
+      "source_commit": "61afd6c7",
+      "date_staged": "2026-10-31",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-telemt-telemt"
     }
   ]
 }

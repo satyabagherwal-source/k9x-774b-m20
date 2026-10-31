@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T06:52:31.161Z",
+  "last_updated": "2026-10-31T06:59:11.842Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -26419,7 +26419,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
       "source_version": "hf-nvidia-nemotron-3-diarization",
-      "content_hash": "fe18e837765a2590c7f555a479ba502224cbbd44d8d2668849ff8085752c9e53",
+      "content_hash": "20e93063f54fe411d9298e75093597ca67a8269132b48ad70d86a476187e895e",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
       "promoted_rules": [
@@ -26452,7 +26452,7 @@
         "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv44qfqt",
         "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv4hzpqi"
       ],
-      "verified_at": "2026-10-28T04:41:52.576Z",
+      "verified_at": "2026-10-31T06:59:10.988Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53831,8 +53831,8 @@
       "slug": "telemt-telemt",
       "platform": "github",
       "source_url": "https://github.com/telemt/telemt",
-      "source_version": "9d5b896b",
-      "content_hash": "ef26eb7b070052c4d4f9a98d8907242fe5fbf6ac24f52471e01268c02467cebb",
+      "source_version": "61afd6c7",
+      "content_hash": "8f86d2ca985d36f6775b6db6404ce16663d415aeed2998f39ee403141c007eff",
       "dossier_path": "07_PROJECT_LEARNING/telemt-telemt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/telemt-telemt-learnings.md",
       "promoted_rules": [
@@ -53847,7 +53847,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:47:24.204Z",
+      "verified_at": "2026-10-31T06:59:11.819Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

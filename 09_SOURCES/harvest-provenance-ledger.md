@@ -6508,3 +6508,5 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `081ff52e` | Multi-dimensional audit evidence | 2026-10-31T06:45:31.864Z |
 | `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `14cf6a68` | Multi-dimensional audit evidence | 2026-10-31T06:52:22.213Z |
 | `learn-huggingface-contrastive-lm-clm-v0-1-8b` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-10-31T06:52:31.243Z |
+| `learn-huggingface-nvidia-nemotron-3-diarization` | `https://huggingface.co/nvidia/Nemotron-3-Diarization` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-31T06:59:11.101Z |
+| `learn-github-telemt-telemt` | `https://github.com/telemt/telemt` | `61afd6c7` | Multi-dimensional audit evidence | 2026-10-31T06:59:11.940Z |

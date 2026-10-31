@@ -6499,3 +6499,5 @@
 | `CYCLE-20261031-EEL1` | `2026-10-31T06:45:31.861Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6110` | Yes (`6bba0088...`) |
 | `CYCLE-20261031-N77M` | `2026-10-31T06:52:22.210Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6111` | Yes (`7b7e3234...`) |
 | `CYCLE-20261031-NE6F` | `2026-10-31T06:52:31.239Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3273, Rule 6112` | Yes (`ab3272b6...`) |
+| `CYCLE-20261031-VYPF` | `2026-10-31T06:59:11.091Z` | `nvidia/Nemotron-3-Diarization` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md` | Yes (`20e93063...`) |
+| `CYCLE-20261031-VZCQ` | `2026-10-31T06:59:11.930Z` | `telemt/telemt` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/telemt-telemt-learnings.md` | Yes (`8f86d2ca...`) |

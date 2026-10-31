@@ -335,8 +335,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
     "sourceVersion": "hf-nvidia-nemotron-3-diarization",
     "license": "Open-Source",
-    "contentHash": "fe18e837765a2590c7f555a479ba502224cbbd44d8d2668849ff8085752c9e53",
-    "lastHarvestedAt": "2026-10-28T04:41:52.669Z",
+    "contentHash": "20e93063f54fe411d9298e75093597ca67a8269132b48ad70d86a476187e895e",
+    "lastHarvestedAt": "2026-10-31T06:59:11.101Z",
     "learningId": "learn-huggingface-nvidia-nemotron-3-diarization"
   },
   "hf-lightricks-ltx-2.5": {
@@ -5443,10 +5443,10 @@
     "repository": "telemt/telemt",
     "platform": "github",
     "sourceUrl": "https://github.com/telemt/telemt",
-    "sourceVersion": "9d5b896b",
+    "sourceVersion": "61afd6c7",
     "license": "NOASSERTION",
-    "contentHash": "ef26eb7b070052c4d4f9a98d8907242fe5fbf6ac24f52471e01268c02467cebb",
-    "lastHarvestedAt": "2026-10-19T03:47:24.258Z",
+    "contentHash": "8f86d2ca985d36f6775b6db6404ce16663d415aeed2998f39ee403141c007eff",
+    "lastHarvestedAt": "2026-10-31T06:59:11.940Z",
     "learningId": "learn-github-telemt-telemt"
   },
   "react-native-modal-react-native-modal": {
