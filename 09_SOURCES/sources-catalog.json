@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "ed2899ed",
+    "sourceVersion": "49ad4202",
     "license": "Apache-2.0",
-    "contentHash": "9aeffd7cb5baa23f6dd22a87e2d9fd955585852a881d37826f39863759ceb23b",
-    "lastHarvestedAt": "2026-10-30T10:26:06.752Z",
+    "contentHash": "b4101cd6e3c9106f5913cb1ac82cd465cfd0770a0f22bf0964e4717e2f6d656c",
+    "lastHarvestedAt": "2026-10-31T04:22:24.073Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {
@@ -11365,8 +11365,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-1.7B",
     "sourceVersion": "hf-liquidai-lfm3-1.7b",
     "license": "Open-Source",
-    "contentHash": "182bd4dd6cb13ad204aeb4a0657ab5e6253694eb671bafda8f5b0edf8c2bdb8b",
-    "lastHarvestedAt": "2026-10-27T23:45:58.583Z",
+    "contentHash": "464605397157ab91f101c84601f66ad0c2a4ad3e4a9d4e9352035c155d7b9adb",
+    "lastHarvestedAt": "2026-10-31T04:26:54.141Z",
     "learningId": "learn-huggingface-liquidai-lfm3-1-7b"
   },
   "michael-denyer-pstack-claude": {

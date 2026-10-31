@@ -6468,3 +6468,5 @@ Every entry in this ledger must capture:
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `71f47d41` | Multi-dimensional audit evidence | 2026-10-31T04:09:42.994Z |
 | `learn-huggingface-ccore-qwen3-5-4b-3d-coder` | `https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder` | `hf-ccore-q` | Multi-dimensional audit evidence | 2026-10-31T04:15:56.346Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `6983f5a1` | Multi-dimensional audit evidence | 2026-10-31T04:16:06.437Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `49ad4202` | Multi-dimensional audit evidence | 2026-10-31T04:22:24.073Z |
+| `learn-huggingface-liquidai-lfm3-1-7b` | `https://huggingface.co/LiquidAI/LFM3-1.7B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-31T04:26:54.141Z |

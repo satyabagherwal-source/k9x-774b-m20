@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T04:16:06.443Z",
+  "last_updated": "2026-10-31T04:26:54.146Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "9aeffd7cb5baa23f6dd22a87e2d9fd955585852a881d37826f39863759ceb23b",
-      "verified_at": "2026-10-30T10:26:06.758Z",
+      "content_hash": "b4101cd6e3c9106f5913cb1ac82cd465cfd0770a0f22bf0964e4717e2f6d656c",
+      "verified_at": "2026-10-31T04:22:24.079Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T10:26:06.758Z"
+      "last_updated": "2026-10-31T04:22:24.079Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",
@@ -17076,14 +17076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-1-7b",
-      "content_hash": "182bd4dd6cb13ad204aeb4a0657ab5e6253694eb671bafda8f5b0edf8c2bdb8b",
-      "verified_at": "2026-10-27T23:45:58.592Z",
+      "content_hash": "464605397157ab91f101c84601f66ad0c2a4ad3e4a9d4e9352035c155d7b9adb",
+      "verified_at": "2026-10-31T04:26:54.146Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T23:45:58.592Z"
+      "last_updated": "2026-10-31T04:26:54.146Z"
     },
     "michael-denyer/pstack-claude": {
       "repository": "michael-denyer/pstack-claude",

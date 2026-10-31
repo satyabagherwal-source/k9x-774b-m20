@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T04:16:06.385Z",
+  "last_updated": "2026-10-31T04:26:54.093Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -45147,8 +45147,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "ed2899ed",
-      "content_hash": "9aeffd7cb5baa23f6dd22a87e2d9fd955585852a881d37826f39863759ceb23b",
+      "source_version": "49ad4202",
+      "content_hash": "b4101cd6e3c9106f5913cb1ac82cd465cfd0770a0f22bf0964e4717e2f6d656c",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -45221,6 +45221,11 @@
           "number": 5721,
           "title": "Monotonic Inversion Nullability Guard for SQL Property Derivation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6067,
+          "title": "planner: estimate missing-stats indexes with exponential backoff and drop prefer",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45228,7 +45233,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T10:26:06.661Z",
+      "verified_at": "2026-10-31T04:22:24.010Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -144386,7 +144391,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B",
       "source_version": "hf-liquidai-lfm3-1.7b",
-      "content_hash": "182bd4dd6cb13ad204aeb4a0657ab5e6253694eb671bafda8f5b0edf8c2bdb8b",
+      "content_hash": "464605397157ab91f101c84601f66ad0c2a4ad3e4a9d4e9352035c155d7b9adb",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md",
       "promoted_rules": [
@@ -144404,6 +144409,21 @@
           "number": 5060,
           "title": "Sliding Window Attention KV Cache Management Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6068,
+          "title": "Heterogeneous Tri-Hybrid Cache Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6069,
+          "title": "Dual-Scale Base-Frequency RoPE Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6070,
+          "title": "ML-Inline Grammatical Parse Anchor Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -144411,7 +144431,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T23:45:58.516Z",
+      "verified_at": "2026-10-31T04:26:54.080Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -159430,6 +159450,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T04:16:06.373Z"
+    },
+    "rule-6067": {
+      "learning_id": "rule-6067",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6067,
+      "title": "planner: estimate missing-stats indexes with exponential backoff and drop prefer",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "49ad4202",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T04:22:24.010Z"
+    },
+    "rule-6068": {
+      "learning_id": "rule-6068",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6068,
+      "title": "Heterogeneous Tri-Hybrid Cache Invariant",
+      "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B",
+      "source_version": "hf-liquidai-lfm3-1.7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T04:26:54.080Z"
+    },
+    "rule-6069": {
+      "learning_id": "rule-6069",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6069,
+      "title": "Dual-Scale Base-Frequency RoPE Invariant",
+      "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B",
+      "source_version": "hf-liquidai-lfm3-1.7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T04:26:54.080Z"
+    },
+    "rule-6070": {
+      "learning_id": "rule-6070",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6070,
+      "title": "ML-Inline Grammatical Parse Anchor Invariant",
+      "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B",
+      "source_version": "hf-liquidai-lfm3-1.7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T04:26:54.080Z"
     }
   },
   "aliases": {

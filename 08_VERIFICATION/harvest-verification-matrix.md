@@ -6459,3 +6459,5 @@
 | `CYCLE-20261031-U0Y6` | `2026-10-31T04:09:42.990Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6062` | Yes (`85da1c52...`) |
 | `CYCLE-20261031-2114` | `2026-10-31T04:15:56.344Z` | `ccore/Qwen3.5-4B-3D-Coder` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6063, Rule 6064, Rule 6065` | Yes (`7e0fb81d...`) |
 | `CYCLE-20261031-28TF` | `2026-10-31T04:16:06.435Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6066` | Yes (`b87c2ec5...`) |
+| `CYCLE-20261031-AC7B` | `2026-10-31T04:22:24.071Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6067` | Yes (`b4101cd6...`) |
+| `CYCLE-20261031-G4L6` | `2026-10-31T04:26:54.138Z` | `LiquidAI/LFM3-1.7B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6068, Rule 6069, Rule 6070` | Yes (`46460539...`) |

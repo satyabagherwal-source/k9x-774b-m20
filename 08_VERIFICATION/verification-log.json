@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-8WA3",
-    "timestamp": "2026-10-28T22:14:01.323Z",
-    "repository": "oven-sh/bun",
-    "learningId": "learn-github-oven-sh-bun",
-    "contentHash": "46b7ae9e84429e1d96881225ee4c2cd79336db5202373a86827d91297bc58956",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-91GY",
-    "timestamp": "2026-10-28T22:14:08.050Z",
-    "repository": "moby/buildkit",
-    "learningId": "learn-github-moby-buildkit",
-    "contentHash": "25e5735fa7fb06d89da4631f090956150566484856c7f025799d88bf7703b0c2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-OZL1",
     "timestamp": "2026-10-28T22:26:32.101Z",
     "repository": "astral-sh/uv",
@@ -7492,6 +7462,36 @@
     "contentHash": "b87c2ec518266e186800f30378f9c7f2801e2cabbae4231681f0321a985eda42",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-AC7B",
+    "timestamp": "2026-10-31T04:22:24.071Z",
+    "repository": "pingcap/tidb",
+    "learningId": "learn-github-pingcap-tidb",
+    "contentHash": "b4101cd6e3c9106f5913cb1ac82cd465cfd0770a0f22bf0964e4717e2f6d656c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-G4L6",
+    "timestamp": "2026-10-31T04:26:54.138Z",
+    "repository": "LiquidAI/LFM3-1.7B",
+    "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
+    "contentHash": "464605397157ab91f101c84601f66ad0c2a4ad3e4a9d4e9352035c155d7b9adb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

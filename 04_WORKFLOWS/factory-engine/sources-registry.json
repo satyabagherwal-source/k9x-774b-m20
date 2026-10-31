@@ -1,11 +1,11 @@
 {
   "rustls-rustls": {
-    "name": "rustls/rustls",
+    "name": "rustls",
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T00:41:21.337Z",
-    "lastVerified": "2026-10-31T00:41:21.337Z",
+    "lastChecked": "2026-10-31T04:22:20.826Z",
+    "lastVerified": "2026-10-31T04:22:20.826Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -14,7 +14,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "139738f7"
   },
   "tanstack-router": {
     "name": "TanStack/router",
@@ -38,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T04:16:08.982Z",
-    "lastVerified": "2026-10-31T04:16:08.982Z",
+    "lastChecked": "2026-10-31T04:26:56.684Z",
+    "lastVerified": "2026-10-31T04:26:56.684Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -426,8 +427,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T03:52:29.416Z",
-    "lastVerified": "2026-10-31T03:52:29.416Z",
+    "lastChecked": "2026-10-31T04:22:25.812Z",
+    "lastVerified": "2026-10-31T04:22:25.812Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1293,14 +1294,14 @@
     "officialUrl": "https://github.com/pingcap/tidb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T10:23:54.703Z",
-    "lastVerified": "2026-10-30T10:23:54.703Z",
+    "lastChecked": "2026-10-31T04:22:22.806Z",
+    "lastVerified": "2026-10-31T04:22:22.806Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "9aeffd7cb5baa23f6dd22a87e2d9fd955585852a881d37826f39863759ceb23b",
-    "promotedRulesCount": 2,
-    "recentFixesCount": 2,
+    "contentHash": "b4101cd6e3c9106f5913cb1ac82cd465cfd0770a0f22bf0964e4717e2f6d656c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3103,9 +3104,9 @@
   "jhen0409-react-native-debugger": {
     "name": "react-native-debugger",
     "officialUrl": "https://github.com/jhen0409/react-native-debugger",
-    "lastChecked": "2026-10-28T10:17:48.553Z",
+    "lastChecked": "2026-10-31T04:22:15.804Z",
     "revisionIdentifier": "bd3435a4",
-    "lastVerified": "2026-10-28T10:17:48.553Z"
+    "lastVerified": "2026-10-31T04:22:15.804Z"
   },
   "sorintlab-stolon": {
     "name": "stolon",
@@ -3607,9 +3608,9 @@
   "vi-websocat": {
     "name": "websocat",
     "officialUrl": "https://github.com/vi/websocat",
-    "lastChecked": "2026-10-30T04:34:38.762Z",
+    "lastChecked": "2026-10-31T04:22:10.779Z",
     "revisionIdentifier": "3a3574cd",
-    "lastVerified": "2026-10-30T04:34:38.762Z"
+    "lastVerified": "2026-10-31T04:22:10.779Z"
   },
   "hf-google-bert-bert-base-uncased": {
     "name": "google-bert/bert-base-uncased",
@@ -7033,9 +7034,9 @@
   "libsql-libsql": {
     "name": "libsql",
     "officialUrl": "https://github.com/libsql/libsql",
-    "lastChecked": "2026-10-30T08:36:29.672Z",
+    "lastChecked": "2026-10-31T04:22:23.366Z",
     "revisionIdentifier": "d8bc862d",
-    "lastVerified": "2026-10-30T08:36:29.672Z"
+    "lastVerified": "2026-10-31T04:22:23.366Z"
   },
   "zvec-ai-zvec-grep": {
     "name": "zvec-ai/zvec-grep",
@@ -12187,6 +12188,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
     "contentHash": "7e0fb81d86c198bd9082b1cfcc63189aa6a09bde7b07191132aacff72f7540c3",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-liquidai-lfm3-1.7b": {
+    "name": "LiquidAI/LFM3-1.7B",
+    "officialUrl": "https://huggingface.co/LiquidAI/LFM3-1.7B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-31T04:22:13.461Z",
+    "lastVerified": "2026-10-31T04:22:13.461Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
+    "contentHash": "464605397157ab91f101c84601f66ad0c2a4ad3e4a9d4e9352035c155d7b9adb",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
