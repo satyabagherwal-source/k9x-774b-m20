@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T11:53:43.335Z",
-  "total_cycles_completed": 6529,
-  "total_learnings_persisted": 6529,
+  "last_updated": "2026-10-31T12:00:25.240Z",
+  "total_cycles_completed": 6530,
+  "total_learnings_persisted": 6530,
   "total_rules_promoted": 6178,
   "history": [
-    {
-      "timestamp": "2026-10-30T23:15:03.252Z",
-      "repository": "max-sixty/worktrunk",
-      "learningId": "learn-github-max-sixty-worktrunk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T23:15:07.659Z",
       "repository": "react/react-native",
@@ -1403,6 +1396,13 @@
       "repository": "xerj-org/xerj",
       "learningId": "learn-github-xerj-org-xerj",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T12:00:25.240Z",
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

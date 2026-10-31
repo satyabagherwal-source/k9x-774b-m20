@@ -6561,3 +6561,4 @@ Every entry in this ledger must capture:
 | `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `c1f1fd02` | Multi-dimensional audit evidence | 2026-10-31T11:46:46.322Z |
 | `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-31T11:53:30.099Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `c7abfced` | Multi-dimensional audit evidence | 2026-10-31T11:53:43.330Z |
+| `learn-huggingface-unsloth-qwen3-8-27b-gguf` | `https://huggingface.co/unsloth/Qwen3.8-27B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-31T12:00:25.234Z |

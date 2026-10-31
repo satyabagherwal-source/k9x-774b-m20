@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261029-LLF0",
-    "timestamp": "2026-10-29T17:03:38.412Z",
-    "repository": "gravitl/netmaker",
-    "learningId": "learn-github-gravitl-netmaker",
-    "contentHash": "e3f9828f89ae79739709ca3391861d2aba7b27c4804637c0c6d3afbc625b867d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261029-MTXK",
     "timestamp": "2026-10-29T17:04:36.104Z",
     "repository": "flox/flox",
@@ -7492,6 +7477,21 @@
     "contentHash": "db230c468ae415d4dbdabbed3be2ff0d44d03f1e3be33bd5df082790ad7f3c98",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-NCSO",
+    "timestamp": "2026-10-31T12:00:25.224Z",
+    "repository": "unsloth/Qwen3.8-27B-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+    "contentHash": "821790092f7b28c79ea35c7a64b81be86ca2d6d33d181a1e893fac2ac9d0ddd7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
