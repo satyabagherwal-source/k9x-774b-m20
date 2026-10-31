@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261029-4FBI",
-    "timestamp": "2026-10-29T22:26:12.750Z",
-    "repository": "HelixDB/helix-db",
-    "learningId": "learn-github-helixdb-helix-db",
-    "contentHash": "d37fee1faf04a78fd51353c2d8749cb5c99d38ac0155354e6a987c4948b36317",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-4HDP",
-    "timestamp": "2026-10-29T22:26:15.421Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "96be491081376668b181a5f9ff8ddf05c4c90dad203f072cfce29d82471f00c3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-72X8",
-    "timestamp": "2026-10-29T22:28:16.652Z",
-    "repository": "buresdv/Cork",
-    "learningId": "learn-github-buresdv-cork",
-    "contentHash": "13f985b45dd5939437606aa330efd6eb03fc01fe887006ece96e69af68a2e59a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261029-XK49",
     "timestamp": "2026-10-29T22:48:51.993Z",
     "repository": "aquasecurity/trivy",
@@ -7490,6 +7445,51 @@
     "repository": "matrixorigin/matrixone",
     "learningId": "learn-github-matrixorigin-matrixone",
     "contentHash": "e3c5f3aec9edf3050592f6b279d62e1d53121fa0e127e4ee961e7b291859afa5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-JVDE",
+    "timestamp": "2026-10-31T12:53:41.906Z",
+    "repository": "domcyrus/rustnet",
+    "learningId": "learn-github-domcyrus-rustnet",
+    "contentHash": "5dc9dfe7ea750b0b8a5bb2064be43046aad9ecc29004a82946a3445f12e43c62",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-JVF1",
+    "timestamp": "2026-10-31T12:53:41.965Z",
+    "repository": "BAAI/bge-m3",
+    "learningId": "learn-huggingface-baai-bge-m3",
+    "contentHash": "93f4f9d43eda4636a1971b66c2257d168f083ae8254a77b43ff7bf231bc52574",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-JZ5Q",
+    "timestamp": "2026-10-31T12:53:46.814Z",
+    "repository": "amir1376/ab-download-manager",
+    "learningId": "learn-github-amir1376-ab-download-manager",
+    "contentHash": "54f3d186f8a036e3587a8e7341726217dae726fe2131ed920880d7d5d60a8458",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

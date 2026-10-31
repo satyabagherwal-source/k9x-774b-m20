@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/amir1376-ab-download-manager-learnings.md`  
 > **Source**: github ([https://github.com/amir1376/ab-download-manager](https://github.com/amir1376/ab-download-manager))  
-> **Source Version**: `e329495b`  
+> **Source Version**: `34cd27af`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T06:11:08.831Z  
+> **Timestamp**: 2026-10-31T12:53:46.128Z  
 > **Learning ID**: `learn-github-amir1376-ab-download-manager`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/amir1376-ab-download-manager-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/amir1376/ab-download-manager](https://github.com/amir1376/ab-download-manager))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T06:11:08.180Z  
+> **Harvest Timestamp**: 2026-10-31T12:53:46.120Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Download Manager that speeds up your downloads
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 18625 stars
+- **Stars / Engagement**: 18864 stars
 
 ---
 
@@ -1332,87 +1332,139 @@ fun RenderSortIndicatorMode(sortIndicatorMode: SortIndicatorMode) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b6d2f20d` (2026-10-14)
-**Commit Message**: fix directory picker crash on linux (#1479)
+### Incident Patch 1: `34cd27af` (2026-10-31)
+**Commit Message**: enforce some routes to always use api key (#1512)
 
-**File**: `gradle/libs.versions.toml` (modified, +1/-1)
+**File**: `desktop/app/src/main/kotlin/com/abdownloadmanager/desktop/repository/AppRepository.kt` (modified, +2/-2)
 ```diff
-@@ -105,7 +105,7 @@ jna-core = { module = "net.java.dev.jna:jna", version.ref = "jna" }
- jna-platform = { module = "net.java.dev.jna:jna-platform", version.ref = "jna" }
- 
- dbusJava-core = { module = "com.github.hypfvieh:dbus-java-core", version.ref = "dbus-java" }
--dbusJava-unixSocket = { module = "com.github.hypfvieh:dbus-java-transport-junixsocket", version.ref = "dbus-java" }
-+dbusJava-unixSocket = { module = "com.github.hypfvieh:dbus-java-transport-native-unixsocket", version.ref = "dbus-java" }
- 
- pluginAndroidGradle = { module = "com.android.tools.build:gradle", version.ref = "agp" }
- pluginComposeMultiplatform = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose" }
+@@ -52,8 +52,8 @@ class AppRepository(
+             IntegrationSettings(
+                 port = apiPort,
+                 apiKey = apiAuthKey
+-                    .takeIf { apiAuthEnabled }
+-                    .takeIf { ApiKeyUtil.isValidKey(apiAuthKey) }
++                    .takeIf { ApiKeyUtil.isValidKey(apiAuthKey) },
++                apiKeyEnforced = apiAuthEnabled,
+             )
+         }
+             .debounce(500.milliseconds)
 ```
 
----
-
-### Incident Patch 2: `dda4e2d0` (2026-10-12)
-**Commit Message**: fix minimum part size describe text
-
-**File**: `shared/app/src/commonMain/kotlin/com/abdownloadmanager/shared/settings/CommonSettings.kt` (modified, +5/-3)
+**File**: `integration/server/src/main/kotlin/com/abdownloadmanager/integration/Endpoints.kt` (modified, +18/-6)
 ```diff
-@@ -23,6 +23,7 @@ import com.abdownloadmanager.shared.ui.theme.ThemeManager
- import com.abdownloadmanager.shared.util.ApiKeyUtil
- import com.abdownloadmanager.shared.util.MaximumDownloadRetriesLimitation
- import com.abdownloadmanager.shared.util.ThreadCountLimitation
-+import com.abdownloadmanager.shared.util.convertPositiveSizeToHumanReadable
- import com.abdownloadmanager.shared.util.convertPositiveSpeedToHumanReadable
- import com.abdownloadmanager.shared.util.dns.DnsModes
- import com.abdownloadmanager.shared.util.notification.INotificationSound
-@@ -128,6 +129,7 @@ object CommonSettings {
-             },
-         )
-     }
+@@ -18,26 +18,36 @@ import kotlinx.serialization.json.Json
+ 
+ private data class AppPrincipal(val key: String)
+ 
++private const val AuthOptional = "auth-optional"
++private const val AuthRequired = "auth-required"
 +
-     fun minPartSize(appRepository: BaseAppRepository): SizeConfigurable {
-         return SizeConfigurable(
-             title = Res.string.settings_min_part_size.asStringSource(),
-@@ -136,10 +138,10 @@ object CommonSettings {
-             range = DownloadSettings.MIN_ALLOWED_MIN_PART_SIZE..DownloadSettings.MAX_ALLOWED_MIN_PART_SIZE,
-             isSpeed = false,
-             describe = {
--                convertPositiveSpeedToHumanReadable(
-+                convertPositiveSizeToHumanReadable(
-                     it,
--                    appRepository.speedUnit.value
--                ).asStringSource()
-+                    appRepository.sizeUnit.value
-+                )
-             },
-         )
+ internal fun Application.setupRouting(
+     json: Json,
+     integrationHandler: IntegrationHandler,
+     settings: IntegrationSettings,
+ ) {
+     val apiKey = settings.apiKey
+     install(Authentication) {
+-        apiKey {
++        apiKey(AuthOptional) {
+             validate { receivedKey ->
+                 if (receivedKey == apiKey) {
+                     AppPrincipal(receivedKey)
+                 } else null
+             }
+             skipWhen {
+-                apiKey == null
++                !settings.apiKeyEnforced
++            }
++        }
++        apiKey(AuthRequired) {
++            validate { receivedKey ->
++                if (receivedKey == apiKey) {
++                    AppPrincipal(receivedKey)
++                } else null
+             }
+         }
      }
+     routing {
+-        authenticate {
++        authenticate(AuthOptional) {
+             post("/add") {
+                 val itemsToAdd = kotlin.runCatching {
+                     val message = call.receiveText()
+@@ -62,6 +72,11 @@ internal fun Application.setupRouting(
+                 val jsonResponse = json.encodeToString(ListSerializer(ApiQueueModel.serializer()), queues)
+                 call.respondText(jsonResponse)
+             }
++            post("/ping") {
++                call.respondText("pong")
++            }
++        }
++        authenticate(AuthRequired) {
+             post("/start-headless-download") {
+                 val itemsToAdd = kotlin.runCatching {
+                     val message = call.receiveText()
+@@ -71,9 +86,6 @@ internal fun Application.setupRouting(
+                 integrationHandler.addDownload(itemsToAdd.getOrThrow())
+                 call.respondText("OK")
+             }
+-            post("/ping") {
+-                call.respondText("pong")
+-            }
+         }
+     }
+ }
+```
+
+**File**: `integration/server/src/main/kotlin/com/abdownloadmanager/integration/IntegrationSettings.kt` (modified, +1/-0)
+```diff
+@@ -3,5 +3,6 @@ package com.abdownloadmanager.integration
+ 
+ data class IntegrationSettings(
+     val port: Int,
++    val apiKeyEnforced: Boolean,
+     val apiKey: String?,
+ )
 ```
 
 ---
 
-### Incident Patch 3: `265abcf1` (2026-10-11)
-**Commit Message**: fix NSIS installer flickering (#1471)
+### Incident Patch 2: `2aeac8db` (2026-10-30)
+**Commit Message**: Document startDownload, startQueue and categoryId of /start-headless-download (#1488)
 
-**File**: `desktop/app/resources/installer/nsis-script-template.nsi` (modified, +2/-1)
+**File**: `REST-API.yml` (modified, +15/-0)
 ```diff
-@@ -118,7 +118,8 @@ FunctionEnd
-     DetailPrint "Stopping Executable ${executableName}"
- 
-     ${If} "$EXEFILE" != "${executableName}"
--        ExecWait 'taskkill /F /IM "${executableName}"' $0
-+        nsExec::ExecToLog 'taskkill /F /IM "${executableName}"'
-+        Pop $0
-     ${Else}
-         DetailPrint "It seems that installer file name is same as executable name"
-         DetailPrint "Please close app manually"
+@@ -92,6 +92,21 @@ paths:
+                 queueId:
+                   type: integer
+                   description: Optional queue ID to associate the task with
++                categoryId:
++                  type: integer
++                  description: Optional category ID to put the task in
++                startDownload:
++                  type: boolean
++                  default: false
++                  description: >-
++                    Start the download right away. Without it the download is only added to
++                    the list (status "Added") and waits to be started.
++                startQueue:
++                  type: boolean
++                  default: false
++                  description: >-
++                    Start the queue given in queueId instead of the download itself (used
++                    only with queueId; takes precedence over startDownload).
+       responses:
+         "200":
+           description: Successfully added the download task
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1483** (2026-10-15): add download location to download list table (@amir1376)
-- **PR #1479** (2026-10-14): fix directory picker crash on linux (@amir1376)
-- **PR #1471** (2026-10-11): fix NSIS installer flickering (@amir1376)
-- **PR #1468** (closed): feat(win-installer): Replace `taskkill` with native `nsProcess` in Windows installer (@eduardomozart)
-- **PR #1467** (2026-10-10): add an option to configure min part size (@amir1376)
-- **PR #1466** (2026-10-10): feat/limit speed while using other apps (@amir1376)
+- **PR #1512** (2026-10-31): enforce some routes to always use api key (@amir1376)
+- **PR #1511** (2026-10-30): share qr code and allow scanning it in android (@amir1376)
+- **PR #1508** (2026-10-28): New option: Block add button when link is loading (@amir1376)
+- **PR #1502** (closed): Torrent support (@hafizhasant)
+- **PR #1496** (closed): [Bug] Trim whitespace before Content-Disposition delimiter (@dajiaohuang)
+- **PR #1494** (closed): Add "Download multiple files" window with live batch progress (@devil-b0y)
 
 ---
 
@@ -1432,28 +1484,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. directory picker crash on linux (#1479)
+## X. enforce some routes to always use api key (#1512)
 
 **RULE**:
-When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in amir1376/ab-download-manager. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `desktop/app/src/main/kotlin/com/abdownloadmanager/desktop/repository/AppRepository.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in amir1376/ab-download-manager. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b6d2f20d`: directory picker crash on linux (#1479). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `34cd27af`: enforce some routes to always use api key (#1512). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `desktop/app/src/main/kotlin/com/abdownloadmanager/desktop/repository/AppRepository.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-dbusJava-unixSocket = { module = "com.github.hypfvieh:dbus-java-transport-native-unixsocket", version.ref = "dbus-java" }
+                    .takeIf { ApiKeyUtil.isValidKey(apiAuthKey) },
+                apiKeyEnforced = apiAuthEnabled,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-dbusJava-unixSocket = { module = "com.github.hypfvieh:dbus-java-transport-junixsocket", version.ref = "dbus-java" }
+                    .takeIf { apiAuthEnabled }
+                    .takeIf { ApiKeyUtil.isValidKey(apiAuthKey) }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b6d2f20d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `34cd27af` are properly handled with clean fallback behavior.

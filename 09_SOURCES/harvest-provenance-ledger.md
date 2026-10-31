@@ -6575,3 +6575,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-bert-bert-base-uncased` | `https://huggingface.co/google-bert/bert-base-uncased` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-31T12:46:45.597Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `6c6dd62b` | Multi-dimensional audit evidence | 2026-10-31T12:46:56.440Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `ae40f12a` | Multi-dimensional audit evidence | 2026-10-31T12:47:00.052Z |
+| `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `c28fe6f3` | Multi-dimensional audit evidence | 2026-10-31T12:53:41.915Z |
+| `learn-huggingface-baai-bge-m3` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-31T12:53:41.975Z |
+| `learn-github-amir1376-ab-download-manager` | `https://github.com/amir1376/ab-download-manager` | `34cd27af` | Multi-dimensional audit evidence | 2026-10-31T12:53:46.818Z |

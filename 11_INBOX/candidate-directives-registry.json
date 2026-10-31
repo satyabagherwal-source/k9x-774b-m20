@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T09:36:52.696Z",
+  "last_updated": "2026-10-31T12:53:41.923Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3489,6 +3489,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-czy0729-bangumi"
+    },
+    {
+      "id": "CD-JVDV",
+      "directive_title": "docs: relax contribution guidelines (#705)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "domcyrus/rustnet",
+      "source_commit": "c28fe6f3",
+      "date_staged": "2026-10-31",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **VERIFICATION METHOD** automated verification protocol",
+      "learning_id": "learn-github-domcyrus-rustnet"
     }
   ]
 }

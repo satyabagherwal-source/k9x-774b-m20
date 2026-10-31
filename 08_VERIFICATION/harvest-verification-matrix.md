@@ -6566,3 +6566,6 @@
 | `CYCLE-20261031-AY50` | `2026-10-31T12:46:45.588Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | Yes (`4056da10...`) |
 | `CYCLE-20261031-B6IC` | `2026-10-31T12:46:56.436Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6196` | Yes (`fae37617...`) |
 | `CYCLE-20261031-B9AP` | `2026-10-31T12:47:00.049Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6197` | Yes (`e3c5f3ae...`) |
+| `CYCLE-20261031-JVDE` | `2026-10-31T12:53:41.906Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md` | Yes (`5dc9dfe7...`) |
+| `CYCLE-20261031-JVF1` | `2026-10-31T12:53:41.965Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`93f4f9d4...`) |
+| `CYCLE-20261031-JZ5Q` | `2026-10-31T12:53:46.814Z` | `amir1376/ab-download-manager` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6198` | Yes (`54f3d186...`) |

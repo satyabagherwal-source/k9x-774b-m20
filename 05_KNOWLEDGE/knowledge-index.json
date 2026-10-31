@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T12:46:59.971Z",
+  "last_updated": "2026-10-31T12:53:46.736Z",
   "total_verified_learnings": 1183,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1788,14 +1788,19 @@
       "slug": "amir1376-ab-download-manager",
       "platform": "github",
       "source_url": "https://github.com/amir1376/ab-download-manager",
-      "source_version": "e329495b",
-      "content_hash": "6be36476f49e04587c6826d6bd70e810d6065792d7c6044e730401bb85c5c64f",
+      "source_version": "34cd27af",
+      "content_hash": "54f3d186f8a036e3587a8e7341726217dae726fe2131ed920880d7d5d60a8458",
       "dossier_path": "07_PROJECT_LEARNING/amir1376-ab-download-manager-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/amir1376-ab-download-manager-learnings.md",
       "promoted_rules": [
         {
           "number": 2221,
           "title": "directory picker crash on linux (#1479)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6198,
+          "title": "enforce some routes to always use api key (#1512)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -1804,7 +1809,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:11:09.013Z",
+      "verified_at": "2026-10-31T12:53:46.717Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18820,7 +18825,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-m3",
       "source_version": "hf-baai-bge-m3",
-      "content_hash": "579902ce831bfa94ba0d9c965889a05453c2694cdb396531e2fa696c6b085e47",
+      "content_hash": "93f4f9d43eda4636a1971b66c2257d168f083ae8254a77b43ff7bf231bc52574",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md",
       "promoted_rules": [
@@ -18868,7 +18873,7 @@
         "learn-huggingface-hf-baai-bge-m3-mv4910r9",
         "learn-huggingface-hf-baai-bge-m3-mv4meu5h"
       ],
-      "verified_at": "2026-10-28T12:15:31.125Z",
+      "verified_at": "2026-10-31T12:53:41.850Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162009,6 +162014,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T12:46:59.951Z"
+    },
+    "rule-6198": {
+      "learning_id": "rule-6198",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6198,
+      "title": "enforce some routes to always use api key (#1512)",
+      "source_url": "https://github.com/amir1376/ab-download-manager",
+      "source_version": "34cd27af",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T12:53:46.717Z"
     }
   },
   "aliases": {
