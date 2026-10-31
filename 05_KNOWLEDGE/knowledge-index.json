@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T18:01:47.291Z",
+  "last_updated": "2026-10-31T18:08:48.520Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -28307,7 +28307,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
       "source_version": "hf-qwen-qwen3-vl-8b-instruct",
-      "content_hash": "4cfb0c09d6f932745bd1215a18cc0022042f4b7a2e8df2c77aaf50b4c8912236",
+      "content_hash": "08fe11cfabf6683201899ca7f312d213934e9f98748cb44ea63b58aca0f075b3",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -28344,7 +28344,7 @@
         "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv3yxxno",
         "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv4dj7y1"
       ],
-      "verified_at": "2026-10-28T16:58:44.001Z",
+      "verified_at": "2026-10-31T18:08:40.319Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54747,8 +54747,8 @@
       "slug": "thaw-app-thaw",
       "platform": "github",
       "source_url": "https://github.com/thaw-app/Thaw",
-      "source_version": "7adbc95f",
-      "content_hash": "c3c7e033aa9fb65b85e223f076458509e8631d9f7b31aa332282b05729e8813c",
+      "source_version": "cbe1b6fa",
+      "content_hash": "b5789af04803849c6a936a31318bd2a639e696e51a808ecc97ef438bf061e261",
       "dossier_path": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "promoted_rules": [
@@ -54781,6 +54781,11 @@
           "number": 5444,
           "title": "ci(release): promote a release candidate to stable without a rebuild (#1218)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6276,
+          "title": "0.0-alpha.11 security hardening, layout fixes and PRK 1.2.10 (#1399)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54788,7 +54793,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:52:18.299Z",
+      "verified_at": "2026-10-31T18:08:48.500Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -163566,6 +163571,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T18:01:47.277Z"
+    },
+    "rule-6276": {
+      "learning_id": "rule-6276",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6276,
+      "title": "0.0-alpha.11 security hardening, layout fixes and PRK 1.2.10 (#1399)",
+      "source_url": "https://github.com/thaw-app/Thaw",
+      "source_version": "cbe1b6fa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T18:08:48.500Z"
     }
   },
   "aliases": {

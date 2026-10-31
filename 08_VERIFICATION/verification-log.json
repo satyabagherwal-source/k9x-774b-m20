@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-U2PC",
-    "timestamp": "2026-10-30T09:30:00.624Z",
-    "repository": "tickernelz/opencode-mem",
-    "learningId": "learn-github-tickernelz-opencode-mem",
-    "contentHash": "69e58d9bf5e4c6d9f15d8e897fb6ed65b5e23018dac0f62f4e06b1d2874aa9df",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-O3LS",
-    "timestamp": "2026-10-30T09:53:21.472Z",
-    "repository": "cloudwego/volo",
-    "learningId": "learn-github-cloudwego-volo",
-    "contentHash": "8686b99aae482629749feb30f1f766c4caa239ab533ae0fca76d1afe201c548c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-8RQV",
     "timestamp": "2026-10-30T10:09:25.879Z",
     "repository": "webrecorder/pywb",
@@ -7490,6 +7460,36 @@
     "repository": "StarRocks/starrocks",
     "learningId": "learn-github-starrocks-starrocks",
     "contentHash": "f1f053395f3afe43b11d345812b40da1146678ada93448cc39dba15ed920f5f9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-SXKB",
+    "timestamp": "2026-10-31T18:08:40.427Z",
+    "repository": "Qwen/Qwen3-VL-8B-Instruct",
+    "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+    "contentHash": "08fe11cfabf6683201899ca7f312d213934e9f98748cb44ea63b58aca0f075b3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-T3VF",
+    "timestamp": "2026-10-31T18:08:48.603Z",
+    "repository": "thaw-app/Thaw",
+    "learningId": "learn-github-thaw-app-thaw",
+    "contentHash": "b5789af04803849c6a936a31318bd2a639e696e51a808ecc97ef438bf061e261",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

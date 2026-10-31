@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T18:01:49.893Z",
-    "lastVerified": "2026-10-31T18:01:49.893Z",
+    "lastChecked": "2026-10-31T18:08:51.538Z",
+    "lastVerified": "2026-10-31T18:08:51.538Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -101,9 +101,9 @@
   "stakater-reloader": {
     "name": "Reloader",
     "officialUrl": "https://github.com/stakater/Reloader",
-    "lastChecked": "2026-10-31T02:34:16.119Z",
+    "lastChecked": "2026-10-31T18:08:44.057Z",
     "revisionIdentifier": "41b3ad27",
-    "lastVerified": "2026-10-31T02:34:16.119Z"
+    "lastVerified": "2026-10-31T18:08:44.057Z"
   },
   "gravitl-netmaker": {
     "name": "netmaker",
@@ -260,12 +260,12 @@
     "revisionIdentifier": "6fee7dae"
   },
   "herdrdev-herdr": {
-    "name": "herdrdev/herdr",
+    "name": "herdr",
     "officialUrl": "https://github.com/herdrdev/herdr",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T22:27:25.882Z",
-    "lastVerified": "2026-10-30T22:27:25.882Z",
+    "lastChecked": "2026-10-31T18:08:36.564Z",
+    "lastVerified": "2026-10-31T18:08:36.564Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-herdrdev-herdr",
@@ -274,7 +274,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ee5bfb50"
   },
   "hf-abenzerps-qwen-image-2.1-uncensored-gguf": {
     "name": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -345,9 +346,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T17:37:09.093Z",
+    "lastChecked": "2026-10-31T18:08:51.527Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T17:37:09.093Z"
+    "lastVerified": "2026-10-31T18:08:51.527Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -950,8 +951,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T14:19:35.382Z",
-    "lastVerified": "2026-10-31T14:19:35.382Z",
+    "lastChecked": "2026-10-31T18:08:46.571Z",
+    "lastVerified": "2026-10-31T18:08:46.571Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -6008,9 +6009,9 @@
   "pingcap-talent-plan": {
     "name": "talent-plan",
     "officialUrl": "https://github.com/pingcap/talent-plan",
-    "lastChecked": "2026-10-31T01:53:51.256Z",
+    "lastChecked": "2026-10-31T18:08:49.105Z",
     "revisionIdentifier": "18d81c90",
-    "lastVerified": "2026-10-31T01:53:51.256Z"
+    "lastVerified": "2026-10-31T18:08:49.105Z"
   },
   "yvgude-lean-ctx": {
     "name": "yvgude/lean-ctx",
@@ -6099,12 +6100,12 @@
     "officialUrl": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T16:58:43.214Z",
-    "lastVerified": "2026-10-28T16:58:43.214Z",
+    "lastChecked": "2026-10-31T18:08:39.319Z",
+    "lastVerified": "2026-10-31T18:08:39.319Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-    "contentHash": "4cfb0c09d6f932745bd1215a18cc0022042f4b7a2e8df2c77aaf50b4c8912236",
+    "contentHash": "08fe11cfabf6683201899ca7f312d213934e9f98748cb44ea63b58aca0f075b3",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -8364,14 +8365,14 @@
     "officialUrl": "https://github.com/thaw-app/Thaw",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-10-28T22:52:17.839Z",
-    "lastVerified": "2026-10-28T22:52:17.839Z",
+    "lastChecked": "2026-10-31T18:08:47.896Z",
+    "lastVerified": "2026-10-31T18:08:47.896Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-thaw-app-thaw",
-    "contentHash": "c3c7e033aa9fb65b85e223f076458509e8631d9f7b31aa332282b05729e8813c",
+    "contentHash": "b5789af04803849c6a936a31318bd2a639e696e51a808ecc97ef438bf061e261",
     "promotedRulesCount": 1,
-    "recentFixesCount": 15,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

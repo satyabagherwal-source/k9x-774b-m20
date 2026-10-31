@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T18:01:47.353Z",
+  "last_updated": "2026-10-31T18:08:48.617Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1535,14 +1535,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-      "content_hash": "4cfb0c09d6f932745bd1215a18cc0022042f4b7a2e8df2c77aaf50b4c8912236",
-      "verified_at": "2026-10-28T16:58:44.077Z",
+      "content_hash": "08fe11cfabf6683201899ca7f312d213934e9f98748cb44ea63b58aca0f075b3",
+      "verified_at": "2026-10-31T18:08:40.447Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T16:58:44.077Z"
+      "last_updated": "2026-10-31T18:08:40.447Z"
     },
     "nomic-ai/nomic-embed-text-v1.5": {
       "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -11781,14 +11781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-thaw-app-thaw",
-      "content_hash": "c3c7e033aa9fb65b85e223f076458509e8631d9f7b31aa332282b05729e8813c",
-      "verified_at": "2026-10-28T22:52:18.409Z",
+      "content_hash": "b5789af04803849c6a936a31318bd2a639e696e51a808ecc97ef438bf061e261",
+      "verified_at": "2026-10-31T18:08:48.616Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T22:52:18.409Z"
+      "last_updated": "2026-10-31T18:08:48.616Z"
     },
     "rtk-ai/rtk": {
       "repository": "rtk-ai/rtk",

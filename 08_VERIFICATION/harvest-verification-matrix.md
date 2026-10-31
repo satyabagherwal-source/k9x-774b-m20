@@ -6666,3 +6666,5 @@
 | `CYCLE-20261031-JWP1` | `2026-10-31T18:01:39.397Z` | `meshtastic/Meshtastic-Android` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6272` | Yes (`a7ffcdc2...`) |
 | `CYCLE-20261031-JZ0M` | `2026-10-31T18:01:42.406Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6273, Rule 6274` | Yes (`fc564f9e...`) |
 | `CYCLE-20261031-K2TR` | `2026-10-31T18:01:47.343Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6275` | Yes (`f1f05339...`) |
+| `CYCLE-20261031-SXKB` | `2026-10-31T18:08:40.427Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`08fe11cf...`) |
+| `CYCLE-20261031-T3VF` | `2026-10-31T18:08:48.603Z` | `thaw-app/Thaw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6276` | Yes (`b5789af0...`) |

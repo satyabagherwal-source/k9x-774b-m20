@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/thaw-app-thaw-learnings.md`  
 > **Source**: github ([https://github.com/thaw-app/Thaw](https://github.com/thaw-app/Thaw))  
-> **Source Version**: `7adbc95f`  
+> **Source Version**: `cbe1b6fa`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T22:52:17.846Z  
+> **Timestamp**: 2026-10-31T18:08:47.905Z  
 > **Learning ID**: `learn-github-thaw-app-thaw`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/thaw-app-thaw-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/thaw-app/Thaw](https://github.com/thaw-app/Thaw))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T22:52:17.839Z  
+> **Harvest Timestamp**: 2026-10-31T18:08:47.896Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open source menu bar manager
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12367 stars
+- **Stars / Engagement**: 12449 stars
 
 ---
 
@@ -412,21 +412,41 @@ nonisolated enum AXHelpers {
         element.value(kAXRoleAttribute) as? String
     }
 
-    /// Unions the frames of application menu titles in a menu bar element.
+    /// Unions the frames of application menu titles in a menu bar element, or nil when the
+    /// foreground app answers too slowly or exposes too many children to read on the caller's actor.
     /// Only menu item roles count: on macOS 27 the children include
     /// status-item hosts, which would make the leading pill swallow them.
     static func applicationMenuChildFrameUnion(for menuBar: AXElement) -> CGRect {
-        children(for: menuBar).reduce(into: CGRect.null) { result, child in
-            guard isEnabled(child), let childFrame = frame(for: child) else {
-                return
-            }
+        boundedMenuFrameUnion(children(for: menuBar), budget: .milliseconds(300)) { child in
+            guard isEnabled(child), let childFrame = frame(for: child) else { return nil }
             switch roleString(for: child) {
-            case kAXMenuBarItemRole, kAXMenuItemRole:
-                result = result.union(childFrame)
-            default:
-                break
+            case kAXMenuBarItemRole, kAXMenuItemRole: return childFrame
+            default: return nil
+            }
+        } ?? .null
+    }
+
+    /// More children than any app's menu bar has; past it the read is not attempted.
+    static let applicationMenuChildLimit = 64
+
+    /// The union of the frames menuTitleFrame finds, or nil when children exceed the limit or the
+    /// reads outlast budget. Each read is a synchronous call into another app.
+    static func boundedMenuFrameUnion<Child>(
+        _ children: [Child],
+        budget: Duration,
+        now: () -> ContinuousClock.Instant = { .now },
+        menuTitleFrame: (Child) -> CGRect?
+    ) -> CGRect? {
+        guard children.count <= applicationMenuChildLimit else { return nil }
+        let deadline = now() + budget
+        var union = CGRect.null
+        for child in children {
+            guard now() < deadline else { return nil }
+            if let frame = menuTitleFrame(child) {
+                union = union.union(frame)
             }
         }
+        return now() < deadline ? union : nil
     }
 
     /// The element's AXTitle, when present. On macOS 27 most menu bar
@@ -471,25 +491,6 @@ nonisolated enum AXHelpers {
     static func press(_ element: AXElement) -> Bool {
         AXPrimitives.press(element.raw)
     }
-
-    /// MenuBarAgent's extras menu bar, which publishes the system status items,
-    /// read with the same messaging timeout.
-    static func menuBarAgentExtrasBar() -> AXElement? {
-        AXPrimitives.menuBarAgentExtrasBar().map(AXElement.init)
-    }
-
-    /// element(at:) as the raw element, with the same timeout and the same
-    /// off-main guard.
-    static func nativeElement(at point: CGPoint) -> AXUIElement? {
-        guard !WindowInfo.isUnsafeAccessibilityHitTest(at: point) else {
-            return nil
-        }
-        return AXPrimitives.hitTestElement(at: point)
-    }
-
-    private static let frameAttribute = "AXFrame"
-}
-
 ```
 
 ### Core Architecture Module: `Thaw/App/AppState+DisplayChanges.swift`
@@ -831,7 +832,13 @@ final class ControlStatePublisher {
     /// not entitled to, which is precisely the case worth surviving: an
     /// unsigned or wrongly-signed build should degrade to "controls show
     /// nothing" rather than trap.
-    private let defaults = UserDefaults(suiteName: ControlStatePublisher.suiteName)
+    private let defaults: UserDefaults?
+
+    /// Asks Control Center to redraw one control kind. Tests record the requests instead.
+    private let reloadControl: (String) -> Void
+
+    /// Where the app's quit is posted. Tests post to a private center.
+    private let terminationCenter: NotificationCenter
 
     /// The last snapshot actually written, so an unchanged recomputation costs
     /// nothing. ControlCenter.reloadControls is a cross-process nudge to
@@ -842,6 +849,16 @@ final class ControlStatePublisher {
     private var observationTask: Task<Void, Never>?
     private var cancellables = Set<AnyCancellable>()
     private var isObserving = false
+
+    init(
+        defaults: UserDefaults? = UserDefaults(suiteName: ControlStatePublisher.suiteName),
+        reloadControl: @escaping (String) -> Void = { ControlCenter.shared.reloadControls(ofKind: $0) },
+        terminationCenter: NotificationCenter = .default
+    ) {
+        self.defaults = defaults
+        self.reloadControl = reloadControl
+        self.terminationCenter = terminationCenter
+    }
 
     func performSetup(with appState: AppState) {
         guard !isObserving else { return }
@@ -886,7 +903,7 @@ final class ControlStatePublisher {
             .store(in: &cancellables)
 
         // A clean quit erases the snapshot: see the note on freshness above.
-        NotificationCenter.default
+        terminationCenter
             .publisher(for: NSApplication.willTerminateNotification)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
@@ -908,7 +925,7 @@ final class ControlStatePublisher {
     /// A missing AppState (setup has not run, or teardown has) is reported
     /// as everything-off, which is the same fallback the appex uses when it
     /// finds no snapshot at all.
-    private static func snapshot(for appState: AppState?) -> Snapshot {
+    static func snapshot(for appState: AppState?) -> Snapshot {
         guard let appState else {
             return Snapshot(isHiddenSectionRevealed: false, isZenModeActive: false)
         }
@@ -949,7 +966,7 @@ final class ControlStatePublisher {
     /// notification it posts has no listener. Removing the key makes the
     /// controls fall back to off, which is both true and what the next launch
     /// will find.
-    private func handleTermination() {
+    func handleTermination() {
         defaults?.removeObject(forKey: Self.stateKey)
         lastPublished = nil
         reloadControls()
@@ -958,17 +975,7 @@ final class ControlStatePublisher {
     /// Asks Control Center to re-render both controls.
     ///
     /// Without this the extension keeps whatever it last drew: the group
-    /// suite is a file the appex reads when asked to render, not something it
-    /// is notified about. The call is advisory, the system decides when the
-    /// controls actually redraw, so nothing here depends on it having
-    /// happened.
-    private func reloadControls() {
-        for kind in Self.controlKinds {
-            ControlCenter.shared.reloadControls(ofKind: kind)
-        }
-    }
-}
-
+    /// suite is a file the app
 ```
 
 ### Core Architecture Module: `Thaw/App/Navigation/AppNavigationState.swift`
@@ -1108,11 +1115,10 @@ final class AppNavigationState {
         // Restore the full window's last pane for returning from Simple Mode; init assignment does not persist via didSet.
         // Ignore panes no longer in the sidebar so selection and detail stay connected.
         if let rawValue = Defaults.string(forKey: .lastSettingsPane),
-           let pane = SettingsNavigationIdentifier(rawValue: rawValue)?.destination
+           let pane = SettingsNavigationIdentifier(rawValue: rawValue)?.destination,
+           SettingsSidebarPanes.all.contains(pane)
         {
-            if SettingsSidebarPanes.all.contains(pane) {
-                settingsNavigationIdentifier = pane
-            }
+            settingsNavigationIdentifier = pane
         }
         // Panes hidden by the old customizable sidebar show again.
         Defaults.removeObject(forKey: .hiddenSidebarPanes)
@@ -1385,1061 +1391,781 @@ nonisolated struct NotificationCenterInputState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6e1730b6` (2026-10-02)
-**Commit Message**: ci(release): promote a release candidate to stable without a rebuild (#1218)
+### Incident Patch 1: `3dc7bade` (2026-10-29)
+**Commit Message**: fix: 3.0.0-alpha.11 security hardening, layout fixes and PRK 1.2.10 (#1399)
 
-* ci(release): promote a release candidate to stable without a rebuild
+* fix(items): don't trap on a status item window number above UInt32.max
 
-A candidate built with its final version (MARKETING_VERSION 2.1.0, tagged
-2.1.0-rc.1) can now ship as 2.1.0 unchanged. promote.yml drops the feed
-item's sparkle:channel, renames it, gives it the stable notes, tags the
-candidate's commit and republishes its DMG, SBOM, Sigstore bundles and
-provenance, which still verify because the bytes are the same. It refuses a
-candidate built with its prerelease version.
+On macOS 27.0.1 a status item with no host window reports a synthetic window number, its index shifted left by 32 bits, which is above UInt32.max. windowServerID and the spacer manager converted it with a checked CGWindowID initializer, so Thaw crashed with EXC_BREAKPOINT, for example in GroupFolders after a menu bar re-layout. Both now use CGWindowID(exactly:) and treat such a number as no window right now; callers skip the item and the next cache pass finds it once it has a host window again. Real window IDs near UInt32.max still convert exactly.
 
-generate_appcast resets shortVersionString from the bundle on every run, so
-appcast preparation now shows a channel item's tag as its version: testers
-see 2.1.0-rc.1, and a promoted item keeps the bundle's 2.1.0. Its channel
-sticks, because --channel only applies to items generate_appcast creates.
+Closes: #1397
+Signed-off-by: René Jiménez <[REDACTED_EMAIL]>
 
-generate_appcast also drops the notes of every earlier archive it re-reads
-for deltas, which is why the live feed has no notes for 2.0.0 through
-2.1.0-beta.6. release.yml now snapshots the feed first and appcast
-preparation restores the missing notes from it.
+* perf(layout): gather overflow group members in one pass
 
-Checked with the Sparkle 2.10.0 tools against throwaway builds: rc.1
-release, 
-
-**File**: `.github/actions/prepare-appcasts/action.yml` (modified, +11/-1)
-```diff
-@@ -1,5 +1,8 @@
- name: Prepare Thaw appcasts
--description: Apply the macOS 26 cap to 2.x entries and prepare the legacy feed for 2.x releases.
-+description: >-
-+  Apply the macOS 26 cap to 2.x entries, show prerelease tags as their version,
-+  restore notes generate_appcast dropped, and prepare the legacy feed for 2.x
-+  releases.
- 
- inputs:
-   appcast-path:
-@@ -8,6 +11,12 @@ inputs:
-   release-tag:
-     description: Release tag; only 2.x releases produce a legacy feed
-     required: true
-+  previous-appcast-path:
-+    description: >-
-+      The feed as it was before this run. Items generate_appcast left without
-+      notes get them back from here. Empty or missing skips the restore.
-+    required: false
-+    default: ""
- 
- outputs:
-   appcast-path:
-@@ -27,4 +36,5 @@ runs:
-         ACTION_PATH: ${{ github.action_path }}
-         APPCAST_PATH: ${{ inputs.appcast-path }}
-         RELEASE_TAG: ${{ inputs.release-tag }}
-+        PREVIOUS_APPCAST_PATH: ${{ inputs.previous-appcast-path }}
-       run: python3 "$ACTION_PATH/prepare_appcasts.py"
-```
-
-**File**: `.github/actions/prepare-appcasts/attach_release_assets.sh` (added, +30/-0)
-```diff
-@@ -0,0 +1,30 @@
-+#!/usr/bin/env bash
-+# Usage: attach_release_assets.sh <owner/repo> <tag> <file>...
-+#
-+# Uploads each file the release is missing. A published asset is never
-+# replaced: one that already matches is kept, and one that differs fails the
-+# run, since someone may already have downloaded it.
-+set -euo pipefail
-+
-+repo="$1" tag="$2"
-+shift 2
-+
-+existing="$(gh release view "$tag" --repo "$repo" --json assets \
-+  --jq '.assets[] | "\(.name)\t\(.digest // "")"')"
-+
-+for file in "$@"; do
-+  name="$(basename "$file")"
-+  digest="sha256:$(shasum -a 256 "$file" | cut -d' ' -f1)"
-+  # "present:<digest>" when the release has an asset with exactly this name.
-+  match="$(awk -F'\t' -v name="$name" '$1 == name { print "present:" $2; exit }' <<< "$existing")"
-+  published="${match#present:}"
-+  if [[ -z "$match" ]]; then
-+    gh release upload "$tag" "$file" --repo "$repo"
-+    echo "uploaded ${name}"
-+  elif [[ "$published" == "$digest" ]]; then
-+    echo "kept ${name}: already published with the same digest"
-+  else
-+    echo "::error::${repo}@${tag} already has a different ${name} (${published:-no digest}, expected ${digest})"
-+    exit 1
-+  fi
-+done
-```
-
-**File**: `.github/actions/prepare-appcasts/prepare_appcasts.py` (modified, +78/-6)
-```diff
-@@ -1,6 +1,7 @@
- from __future__ import annotations
- 
- import os
-+import re
- from pathlib import Path
- from xml.dom import Node, minidom
- 
-@@ -15,18 +16,87 @@ def sparkle_elements(item, name):
-     ]
- 
- 
--def prepare_appcasts(xml: bytes, release_tag: str) -> tuple[bytes, bytes | None]:
-+# The release tag in an enclosure file name: Thaw_2.1.0-rc.1.zip, or a bare 2.1.0-rc.1.zip.
-+ENCLOSURE_TAG = re.compile(r"(?:^|_)(\d+\.\d+\.\d+(?:-[0-9A-Za-z.]+)?)\.zip$")
-+
-+
-+def text(element):
-+    return "".join(
-+        node.data for node in element.childNodes
-+        if node.nodeType in (Node.TEXT_NODE, Node.CDATA_SECTION_NODE)
-+    ).strip()
-+
-+
-+def build_number(item):
-+    builds = sparkle_elements(item, "version")
-+    return text(builds[0]) if len(builds) == 1 else None
-+
-+
-+def has_description(item):
-+    return any(text(node) for node in item.getElementsByTagName("description"))
-+
-+
-+def update_enclosures(item):
-+    # Direct children only: delta enclosures nest inside sparkle:deltas.
-+    return [
-+        child for child in item.childNodes
-+        if child.nodeType == Node.ELEMENT_NODE and child.namespaceURI is None
-+        and child.localName == "enclosure"
-+    ]
-+
-+
-+def enclosure_tag(item):
-+    enclosures = update_enclosures(item)
-+    if len(enclosures) != 1:
-+        return None
-+    match = ENCLOSURE_TAG.search(enclosures[0].getAttribute("url").rsplit("/", 1)[-1])
-+    return match.group(1) if match else None
-+
-+
-+def previous_descriptions(xml: bytes | None):
-+    if not xml:
-+        return {}
-+    with minidom.parseString(xml) as document:
-+        return {
-+            build: item.getElementsByTagName("description")[0].cloneNode(True)
-+            for item in document.getElementsByTagName("item")
-+            if (build := build_number(item)) and has_description(item)
-+        }
-+
-+
-+def prepare_appcasts(
-+    xml: bytes, release_tag: str, previous_xml: bytes | None = None
-+) -> tuple[bytes, bytes | None]:
-+    descriptions = previous_descriptions(previous_xml)
-     # DOM serialization preserves CDATA, namespace prefixes, and enclosure signatures.
-     with minidom.parseString(xml) as document:
-         legacy_exclusions = []
-         for item in document.getElementsByTagName("item"):
-+            # generate_appcast drops the notes of every prior archive it re-reads
-+            # for deltas, so carry them over from the feed it started from.
-+            build = build_number(item)
-+            if build in descriptions and not has_description(item):
-+                for empty in item.getElementsByTagName("description"):
-+                    item.removeChild(empty)
-+                restored = document.importNode(descriptions[build], True)
-+                enclosures = update_enclosures(item)
-+                item.insertBefore(restored, enclosures[0] if enclosures else None)
-+
-             versions = sparkle_elements(item, "shortVersionString")
-             if len(versions) != 1:
-                 raise ValueError("Appcast item must have one sparkle:shortVersionString")
--            version = "".join(
--                node.data for node in versions[0].childNodes
--                if node.nodeType in (Node.TEXT_NODE, Node.CDATA_SECTION_NODE)
--            ).strip()
-+
-+            # Prereleases are built with their final version so they can be
-+            # promoted unchanged. On a channel, show the tag (2.1.0-rc.1);
-+            # once promoted, the channel is gone and the bundle's 2.1.0 stays.
-+            # generate_appcast resets this from the bundle, so reapply every run.
-+            tag = enclosure_tag(item)
-+            if sparkle_elements(item, "channel") and tag and "-" in tag and text(versions[0]) != tag:
-+                for node in list(versions[0].childNodes):
-+                    versions[0].removeChild(node)
-+                versions[0].appendChild(document.createTextNode(tag))
-+
-+            version = text(versions[0])
-             if not version:
-                 raise ValueError("Appcast item has an empty sparkle:shortVersionString")
- 
-@@ -68,8 +138,10 @@ def prepare_appcasts(xml: bytes, release_tag: str) -> tuple[bytes, bytes | None]
- 
- 
- def main():
-+    previous_path = os.environ.get("PREVIOUS_APPCAST_PATH", "")
-+    previous = Path(previous_path).read_bytes() if previous_path and Path(previous_path).is_file() else None
-     canonical, legacy = prepare_appcasts(
--        Path(os.environ["APPCAST_PATH"]).read_bytes(), os.environ["RELEASE_TAG"]
-+        Path(os.environ["APPCAST_PATH"]).read_bytes(), os.environ["RELEASE_TAG"], previous
-     )
-     directory = Path(os.environ["RUNNER_TEMP"]) / "thaw-appcasts"
-     directory.mkdir(parents=True, exist_ok=True)
-```
-
-**File**: `.github/actions/prepare-appcasts/tests/test_prepare_appcasts.py` (modified, +56/-0)
-```diff
-@@ -120,6 +120,62 @@ def test_empty_feed(self):
-         self.assertEqual(versions(canonical), [])
-         self.assertEqual(versions(legacy), [])
- 
-+    def test_channel_items_show_their_tag_and_promoted_items_keep_the_bundle_version(self):
-+        def item(build, short, tag, channel):
-+            channel = f"<sparkle:channel>{channel}</sparkle:channel>" if channel else ""
-+            # Like the live feed: delta enclosures nest inside sparkle:deltas.
-+            return f"""<item>
-+  <sparkle:version>{build}</sparkle:version>
-+  <sparkle:shortVersionString>{short}</sparkle:shortVersionString>
-+  {channel}
-+  <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-+  <enclosure url="https://example.org/download/{tag}/Thaw_{tag}.zip" length="1" type="application/octet-stream"/>
-+  <sparkle:deltas>
-+    <enclosure url="https://example.org/download/{tag}/Thaw{build}-60.delta" sparkle:deltaFrom="60" length="1"/>
-+    <enclosure url="https://example.org/download/{tag}/Thaw{build}-59.delta" sparkle:deltaFrom="59" length="1"/>
-+  </sparkle:deltas>
-+</item>"""
-+
-+        items = "".join([
-+            item(64, "2.1.1", "2.1.1-rc.1", "beta"),  # built with its final version
-+            item(63, "2.1.0", "2.1.0-rc.1", None),  # promoted: channel removed
-+            item(62, "2.1.0-beta.6", "2.1.0-beta.6", "beta"),
-+            item(56, "2.0.1", "2.0.1", None),
-+        ])
-+        xml = f'<rss xmlns:sparkle="{SPARKLE_NS}" version="2.0"><channel>{items}</channel></rss>'.encode()
-+        canonical, legacy = prepare_appcasts(xml, "2.1.1-rc.1")
-+        self.assertEqual(versions(canonical), ["2.1.1-rc.1", "2.1.0", "2.1.0-beta.6", "2.0.1"])
-+        self.assertEqual(versions(legacy), versions(canonical))
-+        self.assertEqual(prepare_appcasts(canonical, "2.1.1-rc.1"), (canonical, legacy))
-+
-+    def test_notes_generate_appcast_dropped_come_back_from_the_previous_feed(self):
-+        def item(build, notes):
-+            description = f"<description><![CDATA[{notes}]]></description>" if notes is not None else ""
-+            return f"""<item>
-+  <sparkle:version>{build}</sparkle:version>
-+  <sparkle:shortVersionString>2.1.{build}</sparkle:shortVersionString>
-+  <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-+  {description}
-+  <enclosure url="https://example.org/Thaw_2.1.{build}.zip" length="1" type="application/octet-stream"/>
-+</item>"""
-+
-+        def wrap(*items):
-+            body = "".join(items)
-+            return f'<rss xmlns:sparkle="{SPARKLE_NS}" version="2.0"><channel>{body}</channel></rss>'.encode()
-+
-+        previous = wrap(item(2, "<p>Two & more</p>"), item(1, "<p>One</p>"))
-+        generated = wrap(item(3, "<p>Three</p>"), item(2, None), item(1, ""))
-+        canonical, _ = prepare_appcasts(generated, "2.1.3", previous)
-+        with minidom.parseString(canonical) as document:
-+            notes = {
-+                item.getElementsByTagNameNS(SPARKLE_NS, "version")[0].firstChild.data:
-+                    [node.firstChild.data for node in item.getElementsByTagName("description")]
-+                for item in document.getElementsByTagName("item")
-+            }
-+        self.assertEqual(notes, {"3": ["<p>Three</p>"], "2": ["<p>Two & more</p>"], "1": ["<p>One</p>"]})
-+        self.assertIn(b"<![CDATA[<p>Two & more</p>]]>", canonical)
-+        self.assertEqual(prepare_appcasts(canonical, "2.1.3", previous)[0], canonical)
-+
-     def test_action_entry_point_outputs_paths_without_modifying_source(self):
-         with tempfile.TemporaryDirectory() as directory:
-             directory = Path(directory)
-```
-
-**File**: `.github/workflows/promote.yml` (added, +374/-0)
-```diff
-@@ -0,0 +1,374 @@
-+name: Promote
-+
-+# Ships a release candidate as the stable release without rebuilding it. The
-+# candidate must have been built with its final version (MARKETING_VERSION
-+# 2.1.0, tagged 2.1.0-rc.1), so the same signed, notarized bytes become 2.1.0.
-+#
-+# Sparkle offers an item with no sparkle:channel to everyone, so promotion
-+# removes the candidate's channel in the feed. generate_appcast keeps an
-+# existing item's channel on later runs, so the promotion sticks.
-+#
-+# Every step checks for its own result first, so a failed run can be rerun
-+# with the same tag and picks up where it stopped.
-+
-+on:
-+  workflow_dispatch:
-+    inputs:
-+      tag:
-+        description: Published release candidate to promote (for example, 2.1.0-rc.1)
-+        required: true
-+        type: string
-+      publish_appcast:
-+        description: Push the promoted appcast to thaw-app/updates gh-pages
-+        required: false
-+        type: boolean
-+        default: true
-+      dry_run:
-+        description: "Dry run: check and report only. Tags, releases and publishes nothing."
-+        required: false
-+        type: boolean
-+        default: false
-+      release_notes:
-+        description: >-
-+          Optional override for the stable release notes (Markdown). If blank,
-+          the CHANGELOG.md section for the stable version on the branch this
-+          runs from is used ("## [2.1.0]").
-+        required: false
-+        type: string
-+        default: ""
-+
-+concurrency:
-+  # Shares the feed with release.yml; never edit it from two runs at once.
-+  group: sparkle-appcast${{ inputs.dry_run && '-dry-run' || '' }}
-+  cancel-in-progress: false
-+
-+permissions:
-+  contents: read
-+
-+jobs:
-+  promote:
-+    if: github.repository == 'thaw-app/Thaw'
-+    runs-on: ubuntu-latest
-+    environment: release
-+    permissions:
-+      contents: write
-+    env:
-+      UPDATES_REPOSITORY: thaw-app/updates
-+      LEGACY_APPCAST_REPOSITORY: stonerl/Thaw
-+    steps:
-+      # Notes and the appcast action come from the branch this runs from, so
-+      # the stable notes can be written after the candidate was tagged.
-+      - name: Checkout notes and actions
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-+        with:
-+          sparse-checkout: |
-+            .github/actions
-+            CHANGELOG.md
-+          sparse-checkout-cone-mode: false
-+
-+      - name: Resolve versions
-+        id: meta
-+        env:
-+          TAG: ${{ inputs.tag }}
-+          GH_TOKEN: ${{ github.token }}
-+        run: |
-+          set -euo pipefail
-+
-+          if [[ ! "$TAG" =~ ^([0-9]+\.[0-9]+\.[0-9]+)-(rc|beta)\.[0-9]+$ ]]; then
-+            echo "::error::Only rc and beta tags can be promoted, for example 2.1.0-rc.1"
-+            exit 1
-+          fi
-+          stable="${BASH_REMATCH[1]}"
-+
-+          is_draft="$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft)"
-+          if [[ "$is_draft" != "false" ]]; then
-+            echo "::error::Release ${TAG} must be published before it can be promoted"
-+            exit 1
-+          fi
-+          commit="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${TAG}" --jq .sha)"
-+
-+          # A rerun finds the stable tag it made last time; anything else is a conflict.
-+          if stable_commit="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${stable}" --jq .sha 2>/dev/null)"; then
-+            if [[ "$stable_commit" != "$commit" ]]; then
-+              echo "::error::${stable} is already tagged at ${stable_commit}, not ${TAG}'s ${commit}"
-+              exit 1
-+            fi
-+            echo "::notice::${stable} already tags ${TAG}'s commit; resuming"
-+          fi
-+
-+          {
-+            echo "tag=$TAG"
-+            echo "stable=$stable"
-+            echo "commit=$commit"
-+          } >> "$GITHUB_OUTPUT"
-+          echo "promote $TAG ($commit) to $stable"
-+
-+      - name: Resolve release notes
-+        id: notes
-+        env:
-+          STABLE: ${{ steps.meta.outputs.stable }}
-+          RELEASE_NOTES_INPUT: ${{ inputs.release_notes }}
-+          GH_TOKEN: ${{ github.token }}
-+        run: |
-+          set -euo pipefail
-+          python3 - <<'PY'
-+          import os
-+          import re
-+
-+          stable = os.environ["STABLE"]
-+          notes = os.environ.get("RELEASE_NOTES_INPUT", "")
-+          if not notes.strip():
-+              text = open("CHANGELOG.md", encoding="utf-8").read()
-+              match = re.search(r"^##\s+\[?" + re.escape(stable) + r"\]?.*$", text, re.MULTILINE)
-+              if not match:
-+                  raise SystemExit(f"::error::Add a '## [{stable}]' section to CHANGELOG.md, or pass release_notes")
-+              rest = text[match.end():]
-+              next_heading = re.search(r"^##\s+", rest, re.MULTILINE)
-+              notes = (rest[: next_heading.start()] if next_heading else rest).strip()
-+          path = os.path.join(os.environ["RUNNER_TEMP"], "notes.md")
-+          with open(path, "w", encoding="utf-8")
-```
-
-**File**: `.github/workflows/release.yml` (modified, +25/-0)
-```diff
-@@ -302,6 +302,30 @@ jobs:
-             echo "dmg-digest=sha256:${dmg_hex}"
-           } >> "$GITHUB_OUTPUT"
- 
-+      # generate_appcast drops the notes of prior archives it re-reads for
-+      # deltas; Prepare appcasts restores them from this copy.
-+      - name: Snapshot current appcast
-+        id: previous-appcast
-+        env:
-+          GH_TOKEN: ${{ secrets.UPDATES_GITHUB_TOKEN }}
-+        run: |
-+          set -euo pipefail
-+          path="$RUNNER_TEMP/appcast-before.xml"
-+          # Raw, because the JSON form leaves content empty above 1 MB.
-+          if gh api -H "Accept: application/vnd.github.raw" \
-+            "repos/${UPDATES_REPOSITORY}/contents/appcast.xml?ref=gh-pages" \
-+            > "$path" 2> "$RUNNER_TEMP/appcast-before.err" && [[ -s "$path" ]]; then
-+            echo "path=$path" >> "$GITHUB_OUTPUT"
-+          elif grep -q 'HTTP 404' "$RUNNER_TEMP/appcast-before.err"; then
-+            echo "No appcast yet; nothing to restore"
-+            echo "path=" >> "$GITHUB_OUTPUT"
-+          else
-+            # Publishing without it would wipe the notes of every prior release.
-+            cat "$RUNNER_TEMP/appcast-before.err"
-+            echo "::error::Could not snapshot the current appcast"
-+            exit 1
-+          fi
-+
-       - name: Sparkle ZIP and appcast
-         id: sparkle
-         uses: thaw-app/org-ci/actions/sparkle-release@d90bbc87aa4dff91d3bc9e30fb6ceef0765bd986
-@@ -327,6 +351,7 @@ jobs:
-         with:
-           appcast-path: ${{ steps.sparkle.outputs.appcast-path }}
-           release-tag: ${{ steps.meta.outputs.tag }}
-+          previous-appcast-path: ${{ steps.previous-appcast.outputs.path }}
- 
-       - name: Collect update assets
-         id: update-assets
-```
-
-**File**: `docs/RELEASES.md` (modified, +28/-3)
-```diff
-@@ -230,6 +230,28 @@ that build and are offered nothing; stable subscribers pick it up. Two items
- sharing a version and differing only by channel is the case to avoid. For 2.x
- releases, promotion also reaches the mirrored legacy appcast.
- 
-+### Promoting a release candidate
-+
-+[`.github/workflows/promote.yml`](../.github/workflows/promote.yml) ships a
-+published candidate as stable without rebuilding it. This only works for a
-+candidate **built with its final version**: `MARKETING_VERSION = "2.1.0"`, a new
-+build number, tagged `2.1.0-rc.1`. The version string is inside the signed app,
-+so a build made as `2.1.0-rc.1` would say so in About forever, and the workflow
-+refuses it. While the build is on the beta channel, appcast preparation shows
-+the tag as its version, so testers still see `2.1.0-rc.1`.
-+
-+1. Add a `## [2.1.0]` section to `CHANGELOG.md` on `development`.
-+2. Run **Promote** from `development` with **tag** `2.1.0-rc.1` (dry run first).
-+
-+It removes the item's channel, renames it `2.1.0` and gives it the stable notes;
-+uploads the same ZIP as `Thaw_2.1.0.zip` to a `2.1.0` release on
-+`thaw-app/updates`, so later stable releases can build deltas from it; tags
-+`2.1.0` on the candidate's commit; and publishes a `2.1.0` release with the
-+candidate's DMG, SBOM, Sigstore bundles and provenance, which still verify
-+because the bytes are the same. `generate_appcast --channel` only applies to
-+items it creates, so later releases leave the promoted item alone. Each step checks for its own
-+result first, so a run that fails partway can be rerun with the same tag.
-+
- Switching *away* from alpha does not roll a user back. The alpha app's version
- line is ahead of the shipping app's, so the stable feed offers nothing newer
- and Sparkle stays put. Returning to the shipping app is a reinstall, which is
-@@ -275,9 +297,12 @@ Only **new** items point at `thaw-app/updates` releases.
- ## Appcast preparation
- 
- The local [`prepare-appcasts`](../.github/actions/prepare-appcasts/action.yml)
--action reapplies missing macOS 26 caps to 2.x entries, keeps the beta 1 recovery
--bridge untagged, and generates a 1.x/2.x-only legacy feed when releasing a 2.x
--tag. It uses Python's
-+action owns the appcast rules: reapply missing macOS 26 caps to 2.x entries,
-+keep the beta 1 recovery bridge untagged, show a channel item's tag as its
-+version (`2.1.0-rc.1` for a build made as `2.1.0`), restore the notes
-+`generate_appcast` drops from every earlier archive it re-reads for deltas
-+(from a snapshot of the feed taken before the run), and generate a 1.x/2.x-only
-+legacy feed when releasing a 2.x tag. It uses Python's
- standard-library XML parser without external dependencies. Its two output paths
- feed publishing, dry-run comparisons, and artifact uploads.
- 
-```
-
----
-
-### Incident Patch 2: `b1540d17` (2026-10-21)
-**Commit Message**: docs(issues): split the bug form by version and require a log from the moment it happens (#1371)
-
-* docs(issues): split the bug form by version and require a log from the moment it happens
-
-Reports often came with a log of Thaw starting up and nothing of the bug, because logging was turned on afterwards. There are now two bug forms, Thaw 3 on macOS 27 and Thaw 2 on macOS 26, each labelled for its macOS and showing only its own log steps. Both say to turn logging on before reproducing, ask for the log in its own required field, and point to the macOS crash report when Thaw crashes first. Screenshots and recordings move to an optional field.
-
-They also say any app with Accessibility access, such as all-in-one utilities, automation tools and other menu bar managers, can click, move or hide menu bar items or press Thaw's icon, and ask reporters to confirm the problem still happens with them quit. The forms add an Area dropdown and a display setup that says whether a display has a notch, the Thaw 3 form takes the version block About copies and asks for the hiding method and item arrangement, and both carry the English-only and follow-up rules the feature form already had. The chooser ge
-
-**File**: `.github/ISSUE_TEMPLATE/1-bug-thaw-3.yml` (added, +143/-0)
-```diff
-@@ -0,0 +1,143 @@
-+name: Bug in Thaw 3 (macOS 27)
-+description: Report something broken or behaving wrong in Thaw 3.
-+title: "[Bug] "
-+type: bug
-+labels: ["macos-27"]
-+projects: ["thaw-app/1"]
-+body:
-+  - type: markdown
-+    attributes:
-+      value: |
-+        **Before you file a bug:**
-+
-+        1. Search [Frequent Issues](https://github.com/thaw-app/Thaw/blob/development/FREQUENT_ISSUES.md) and [existing issues](https://github.com/thaw-app/Thaw/issues?q=is%3Aissue).
-+        2. Quit all-in-one utility apps, automation tools and other menu bar managers, then check the problem still happens. Apps with Accessibility access can click and move menu bar items, and press Thaw's icon.
-+        3. Turn on logging: Settings > Troubleshooting > Diagnostics > **Detailed logging**.
-+        4. Make the problem happen again, then wait 10 seconds.
-+        5. Click **Show Log Files in Finder** and attach the newest `thaw_….log` below.
-+
-+        If Thaw crashed before you could turn on logging, attach the crash report instead: in Console, choose Crash Reports, right-click the newest Thaw entry, choose Reveal in Finder, rename the file from `.ips` to `.txt`, and attach it.
-+
-+        Thaw is made by a small team, so we close reports that have no log, that another app caused, or that get no reply after two follow-ups. You can reopen with the details any time. Write in English; machine translation is fine.
-+
-+  - type: dropdown
-+    id: area
-+    attributes:
-+      label: Area
-+      options:
-+        - Menu bar and hiding
-+        - Layout and moving items
-+        - Thaw Bar
-+        - Appearance
-+        - Settings
-+        - Profiles
-+        - Shortcuts
-+        - Updates
-+        - Onboarding and permissions
-+        - Other
-+    validations:
-+      required: true
-+
-+  - type: textarea
-+    id: description
-+    attributes:
-+      label: What happened?
-+      description: What went wrong, and what you expected instead.
-+    validations:
-+      required: true
-+
-+  - type: textarea
-+    id: steps
-+    attributes:
-+      label: Steps to reproduce
-+      placeholder: |
-+        1.
-+        2.
-+        3.
-+    validations:
-+      required: true
-+
-+  - type: upload
-+    id: log
-+    attributes:
-+      label: Diagnostic log
-+      description: The newest `thaw_….log` from step 5, or the crash report renamed to `.txt`. GitHub doesn't accept `.ips` files.
-+    validations:
-+      required: true
-+
-+  - type: upload
-+    id: evidence
-+    attributes:
-+      label: Screenshots or a screen recording
-+      description: Optional. Helps with anything you can see, like icons in the wrong place.
-+    validations:
-+      required: false
-+
-+  - type: textarea
-+    id: version_info
-+    attributes:
-+      label: Version info
-+      description: In Settings > About, click the copy button next to the version, then paste it here.
-+      placeholder: |
-+        Thaw 3.0.0-beta.3 (116)
-+        Commit: 33605ef8f
-+        macOS: Version 27.2 (Build 26B5112a)
-+      render: text
-+    validations:
-+      required: true
-+
-+  - type: dropdown
-+    id: hiding_method
-+    attributes:
-+      label: Hiding method
-+      description: Settings > Layout > Options.
-+      options:
-+        - Native
-+        - Standard
-+        - Everything
-+    validations:
-+      required: true
-+
-+  - type: dropdown
-+    id: arrangement
-+    attributes:
-+      label: Item arrangement
-+      description: Settings > Layout > Options.
-+      options:
-+        - Automatic
-+        - Manual
-+    validations:
-+      required: true
-+
-+  - type: dropdown
-+    id: monitor_setup
-+    attributes:
-+      label: Display setup
-+      description: Optional. Some layout and notch bugs only happen on one kind of setup.
-+      options:
-+        - One display, no notch
-+        - One display with a notch
-+        - Several displays, none with a notch
-+        - Several displays, one with a notch
-+    validations:
-+      required: false
-+
-+  - type: textarea
-+    id: additional
-+    attributes:
-+      label: When did it start? Anything else?
-+      description: The first version with the problem, other menu bar apps, your setup.
-+    validations:
-+      required: false
-+
-+  - type: checkboxes
-+    id: checks
-+    attributes:
-+      label: Before you submit
-+      options:
-+        - label: I attached a log from the moment the problem happened, or a crash report if Thaw crashed first.
-+          required: true
-+        - label: The problem still happens with utility, automation and other menu bar apps quit.
-+          required: true
-+        - label: I'm on the latest release for my channel and searched existing issues.
-+          required: true
-```
-
-**File**: `.github/ISSUE_TEMPLATE/2-bug-thaw-2.yml` (added, +124/-0)
-```diff
-@@ -0,0 +1,124 @@
-+name: Bug in Thaw 2 (macOS 26)
-+description: Report something broken or behaving wrong in Thaw 2.
-+title: "[Bug] "
-+type: bug
-+labels: ["macos-26"]
-+projects: ["thaw-app/1"]
-+body:
-+  - type: markdown
-+    attributes:
-+      value: |
-+        **Before you file a bug:**
-+
-+        1. Search [Frequent Issues](https://github.com/thaw-app/Thaw/blob/development/FREQUENT_ISSUES.md) and [existing issues](https://github.com/thaw-app/Thaw/issues?q=is%3Aissue).
-+        2. Quit all-in-one utility apps, automation tools and other menu bar managers, then check the problem still happens. Apps with Accessibility access can click and move menu bar items, and press Thaw's icon.
-+        3. Turn on logging: Settings > Tools > Diagnostics > **Enable diagnostic logging**.
-+        4. Make the problem happen again, then wait 10 seconds.
-+        5. Click **Show Log Files in Finder** and attach the newest `thaw_….log` below.
-+
-+        If Thaw crashed before you could turn on logging, attach the crash report instead: in Console, choose Crash Reports, right-click the newest Thaw entry, choose Reveal in Finder, rename the file from `.ips` to `.txt`, and attach it.
-+
-+        Thaw is made by a small team, so we close reports that have no log, that another app caused, or that get no reply after two follow-ups. You can reopen with the details any time. Write in English; machine translation is fine.
-+
-+  - type: dropdown
-+    id: area
-+    attributes:
-+      label: Area
-+      options:
-+        - Menu bar and hiding
-+        - Layout and moving items
-+        - Thaw Bar
-+        - Appearance
-+        - Settings
-+        - Profiles
-+        - Shortcuts
-+        - Updates
-+        - Onboarding and permissions
-+        - Other
-+    validations:
-+      required: true
-+
-+  - type: textarea
-+    id: description
-+    attributes:
-+      label: What happened?
-+      description: What went wrong, and what you expected instead.
-+    validations:
-+      required: true
-+
-+  - type: textarea
-+    id: steps
-+    attributes:
-+      label: Steps to reproduce
-+      placeholder: |
-+        1.
-+        2.
-+        3.
-+    validations:
-+      required: true
-+
-+  - type: upload
-+    id: log
-+    attributes:
-+      label: Diagnostic log
-+      description: The newest `thaw_….log` from step 5, or the crash report renamed to `.txt`. GitHub doesn't accept `.ips` files.
-+    validations:
-+      required: true
-+
-+  - type: upload
-+    id: evidence
-+    attributes:
-+      label: Screenshots or a screen recording
-+      description: Optional. Helps with anything you can see, like icons in the wrong place.
-+    validations:
-+      required: false
-+
-+  - type: input
-+    id: app_version
-+    attributes:
-+      label: Thaw version
-+      description: In Settings > About, click the copy button next to the version, then paste it here.
-+      placeholder: Version 2.1.0 (63)
-+    validations:
-+      required: true
-+
-+  - type: input
-+    id: macos_version
-+    attributes:
-+      label: macOS version
-+      placeholder: e.g. 26.6.2 (Tahoe)
-+    validations:
-+      required: true
-+
-+  - type: dropdown
-+    id: monitor_setup
-+    attributes:
-+      label: Display setup
-+      description: Optional. Some layout and notch bugs only happen on one kind of setup.
-+      options:
-+        - One display, no notch
-+        - One display with a notch
-+        - Several displays, none with a notch
-+        - Several displays, one with a notch
-+    validations:
-+      required: false
-+
-+  - type: textarea
-+    id: additional
-+    attributes:
-+      label: When did it start? Anything else?
-+      description: The first version with the problem, other menu bar apps, your setup.
-+    validations:
-+      required: false
-+
-+  - type: checkboxes
-+    id: checks
-+    attributes:
-+      label: Before you submit
-+      options:
-+        - label: I attached a log from the moment the problem happened, or a crash report if Thaw crashed first.
-+          required: true
-+        - label: The problem still happens with utility, automation and other menu bar apps quit.
-+          required: true
-+        - label: I'm on the latest release for my channel and searched existing issues.
-+          required: true
-```
-
-**File**: `.github/ISSUE_TEMPLATE/bug_report.yml` (removed, +0/-82)
-```diff
-@@ -1,82 +0,0 @@
--name: Bug Report
--description: Report something broken or behaving wrong.
--title: "[Bug] "
--type: bug
--projects: ["thaw-app/1"]
--body:
--  - type: markdown
--    attributes:
--      value: |
--        Check [Frequent Issues](https://github.com/thaw-app/Thaw/blob/development/FREQUENT_ISSUES.md) and search [open and closed issues](https://github.com/thaw-app/Thaw/issues?q=is%3Aissue) first.
--
--        On Thaw 3.0 and macOS 27, read the [known macOS 27 limitations](https://github.com/thaw-app/Thaw/blob/development/FREQUENT_ISSUES.md#known-macos-27-limitations) too. Those don't need a report.
--
--        **Issues are English only.** Machine translation (AI or any other tool) is accepted.
--
--        Thaw is free and run by a small team with limited time, so reports with clear steps and logs are looked at first. Issues that lack the requested details, or get no reply after two follow-ups from us, are closed. Issues with no activity are marked stale after 10 days and closed after about 14. Reopen with the missing details at any time.
--
--  - type: textarea
--    id: description
--    attributes:
--      label: What happened?
--      description: What went wrong, and what you expected instead.
--    validations:
--      required: true
--
--  - type: textarea
--    id: steps
--    attributes:
--      label: Steps to reproduce
--      placeholder: |
--        1.
--        2.
--        3.
--    validations:
--      required: true
--
--  - type: upload
--    id: evidence
--    attributes:
--      label: Logs, screenshots, or a screen recording
--      description: |
--        Attach at least one. We can rarely do anything with a report that gives us nothing to look at.
--
--        A screenshot or a short recording covers most visual bugs. If the app crashes, freezes, or the problem looks timing related, a diagnostic log helps far more: Settings, Advanced, Diagnostics, turn on diagnostic logging, reproduce the bug, then attach the log.
--    validations:
--      required: true
--
--  - type: input
--    id: app_version
--    attributes:
--      label: Thaw version
--      description: 2.x runs on macOS 26, 3.0 on macOS 27.
--      placeholder: e.g. 2.1.0-beta.5 or 3.0.0-alpha.6
--    validations:
--      required: true
--
--  - type: input
--    id: macos_version
--    attributes:
--      label: macOS version
--      placeholder: e.g. 26.6.2 (Tahoe) or 27.0 (Golden Gate)
--    validations:
--      required: true
--
--  - type: dropdown
--    id: monitor_setup
--    attributes:
--      label: Display setup
--      description: Optional. Plenty of layout and notch bugs only happen on one kind of setup.
--      options:
--        - Single display
--        - Multiple displays
--    validations:
--      required: false
--
--  - type: textarea
--    id: additional
--    attributes:
--      label: Anything else?
--      description: Configuration, other menu bar apps, when it started happening.
--    validations:
--      required: false
-```
-
-**File**: `.github/ISSUE_TEMPLATE/config.yml` (modified, +3/-0)
-```diff
-@@ -9,3 +9,6 @@ contact_links:
-   - name: Discord
-     url: https://discord.gg/KDfWjWDnR4
-     about: Questions and help from the community.
-+  - name: Questions and ideas
-+    url: https://github.com/orgs/thaw-app/discussions
-+    about: Ask a question or share an idea in Discussions, not as an issue.
-```
-
-**File**: `.github/ISSUE_TEMPLATE/feature_request.yml` (modified, +14/-14)
-```diff
-@@ -7,50 +7,50 @@ body:
-   - type: markdown
-     attributes:
-       value: |
--        **Before submitting:** Search [open & closed suggestions](https://github.com/thaw-app/Thaw/issues?q=is%3Aissue+-type%3ABug) for duplicates.
-+        **Before you suggest something:**
- 
--        **Issues are English only.** Machine translation (AI or any other tool) is accepted.
-+        1. Search [existing suggestions](https://github.com/thaw-app/Thaw/issues?q=is%3Aissue+-type%3ABug) for duplicates.
-+        2. Describe the problem you want solved, then how you'd like it to work.
- 
--        Thaw is free and run by a small team with limited time, so requests with a clear use case and a proposed solution are looked at first. Issues that lack the requested details, or get no reply after two follow-ups from us, are closed. Issues with no activity are marked stale after 10 days and closed after about 14. Reopen with the missing details at any time.
-+        We look at requests with a clear use case and a proposed solution first. We close requests that lack these details or get no reply after two follow-ups. Inactive requests are marked stale after 10 days and closed after about 14. You can reopen any time. Write in English; machine translation is fine.
- 
-   - type: checkboxes
-     id: checks
-     attributes:
--      label: Pre-submission checklist
-+      label: Before you submit
-       options:
--        - label: I searched existing issues (open & closed) and found no duplicates
-+        - label: I searched existing issues and found no duplicate
-           required: true
- 
-   - type: textarea
-     id: problem
-     attributes:
--      label: Problem / Use Case
--      description: What are you trying to do that isn't possible or convenient right now?
-+      label: The problem
-+      description: What you want to do that Thaw makes hard or impossible today.
-       placeholder: "I'd like to be able to…"
-     validations:
-       required: true
- 
-   - type: textarea
-     id: solution
-     attributes:
--      label: Proposed Solution
--      description: How do you envision this working?
--      placeholder: A clear and concise description of what you'd like to happen.
-+      label: How it could work
-+      placeholder: What you'd like Thaw to do.
-     validations:
-       required: true
- 
-   - type: textarea
-     id: alternatives
-     attributes:
--      label: Alternatives Considered
--      description: Any workarounds you've tried or other ways this could work.
-+      label: Other options you tried
-+      description: Workarounds, or other ways it could work.
-     validations:
-       required: false
- 
-   - type: textarea
-     id: additional
-     attributes:
--      label: Additional Context
--      description: Screenshots, mockups, screen recordings, or anything else helpful.
-+      label: Anything else?
-+      description: Screenshots, mockups or recordings.
-     validations:
-       required: false
-```
-
----
-
-### Incident Patch 3: `3022f550` (2026-10-09)
-**Commit Message**: docs(changelog): sort the older notes under New, Changed and Fixed (#1288)
-
-Sixteen releases listed their changes by area or as one flat list, so
-nothing in them stood under New or Fixed: 1.0.0-beta.1 to beta.4,
-1.1.99-beta.10, 1.2.0-rc.4, 2.0.0-beta.2, 2.0.0-rc.2 to rc.4,
-macos-27-preview.3 and .5, and 3.0.0-alpha.1.
-
-Each item now stands under New, Changed or Fixed, by what its own
-words say it is. A release written by area keeps each area as a ####
-heading under the section its items went to. Where the words do not
-say, the item is under Changed.
-
-No item is reworded, with one exception: the 1.2.0-rc.4 note loses
-the "[cite_start]" and "[cite: 2]" marks a tool left in it.
+The notch overflow planner rebuilt each group's members by filtering the whole visible lane once per group, which is quadratic in the number of items. Members are now gathered by group in a single pass that keeps each group's lane order, so the plan is unchanged and a large lane stays linear.
 
 Signed-off-by: René Jiménez <[REDACTED_EMAIL]>
-(cherry picked from commit f4f255accf0fd7440cc805bfec2f580f7bd3edf7)
 
-**File**: `CHANGELOG.md` (modified, +336/-197)
+* fix(capture): reject frame 
+
+**File**: `.github/workflows/fuzz.yml` (modified, +1/-1)
 ```diff
-@@ -1103,7 +1103,9 @@ Three things from the 2.1 preview line are still on their way to macOS 27. Anoth
+@@ -18,7 +18,7 @@ on:
+       - development
+     paths:
+       - "Fuzzing/**"
+-      - "Thaw/Utilities/SettingsURIParser.swift"
++      - "Thaw/System/SettingsURIParser.swift"
+       - ".github/workflows/fuzz.yml"
  
- ---
+ concurrency:
+```
+
+**File**: `CHANGELOG.md` (modified, +84/-0)
+```diff
+@@ -24,6 +24,90 @@ the items under New and Fixed.
  
--### Menu bar
+ ## [Unreleased]
+ 
++## [3.0.0-alpha.11] - 2026-10-28
++
++**macOS 27 only · Build 118**
++
++Most of the fixes in this release harden security, and they come from findings in a CodeRabbit deep scan.
++
 +### New
 +
-+#### Menu bar
++- You can skip menu bar visibility recovery when a removed app blocks it. Thaw keeps the recovery records as backups and leaves Native hiding off.
++- **Settings can use a pure black background in dark mode.** Turn on "Black background in dark mode" in General if you have an OLED display. Light mode looks the same as before, and the sidebar, toolbar and rows keep their glass.
++
++### Changed
++
++- **thaw://proxy-press needs settings access and an app you allowed,** like thaw://set, since it presses another app's menu bar item.
++- **thaw://toggle-thawbar needs settings access,** like thaw://set and thaw://toggle, since it saves a setting.
++- **thaw://dump-items needs settings access, and reports back only to the app that asked.** It no longer opens web links.
++- **An imported profile arrives with "Ask before restarting" on,** and Thaw refuses a file with more than 100 profiles.
++- **thawctl get says it can't return a value** instead of sending a request whose reply goes nowhere. Read settings from the ThawCtl app or your own app's callback.
++- **One "Hidden items" picker replaces the "Use Thaw Bar" and "Always show hidden items" switches.** Choose On click, Thaw Bar or Always shown for each display and for the global template. Your saved choice carries over, and thaw://set works as before.
++
++### Fixed
++
++- Restored translations for menu bar controls, appearance, overflow and Zen Mode that had fallen back to English after labels or punctuation changed.
++- Items moved to Hidden by automatic overflow remain available in Layout and the Thaw Bar when Native hiding removes them from the menu bar.
++- The recovery warning no longer reports every failed restore as an unreadable Control Center setting.
++- **Thaw no longer quits when a group folder's icon briefly has no window.** On macOS 27 that happens after the menu bar rearranges, and Thaw read the placeholder number macOS gives such an icon as a window ID. Reported by @perlytiara in [#1397](https://github.com/thaw-app/Thaw/issues/1397).
++- **Relaunch Now can't run commands hidden in the name of the folder Thaw is in.**
++- **An app you allowed to use thaw:// links is checked by its own signature,** so another app can't borrow the permission by using the same name. An app allowed without a signing team is asked again when its code changes.
++- **A shortcut with an impossible key code no longer makes Thaw quit,** when a profile with one is applied or at the next launch. Thaw skips that shortcut.
++- **Another app can't switch your profile by pretending a Focus started or ended.** Thaw checks the Focus state itself before it switches.
++- **Applying a profile no longer restarts menu bar apps without asking.** With spacing set to ask first, the Profiles pane asks, and a profile applied from the menu, a shortcut, Shortcuts, a link, a Focus or a Space saves its spacing for when the apps next start.
++- **The profile preview warns that applying will restart menu bar apps** when the profile has its own spacing for the display you're on.
++- **The profile preview shows when a profile only reorders items in a section,** instead of saying nothing would change.
++- **Timed rehide hides the section again even if you don't move the pointer** after showing it with a shortcut or a click.
++- **A system item's stand-in turned off while it was starting no longer keeps running.**
++- **When a Focus ends, Thaw switches to the current Space's profile** if it has one, as it does at launch, rather than the display's.
++- **thawctl set accepts the key=value form its help shows,** such as `thawctl set showOnHover=true`.
++- **An app you add by hand under Automation can use thaw:// links.** It's pinned to its own signature, like an app you allow from the prompt, instead of being listed but always refused.
++- **A Focus profile stays on when Thaw can't read the Focus state.** Only the system reporting that the Focus ended switches back.
++- **Your saved menu bar order holds when icons go missing or overflow.** An icon that briefly disappears keeps its place, icons behind the overflow arrows keep their order while you edit Visible, Always Hidden keeps its items while it's turned off, and items a profile doesn't mention stay where they were.
++- **The Thaw Bar draws an app's icon at menu bar size** when it has no picture of the item yet, instead of nearly twice the height of the icons around it on a notched display. Reported by @eisaias2000 in [#1401](https://github.com/thaw-app/Thaw/issues/1401).
++- **Focus, Sound and other items macOS shows only some of the time go back to their place in your layout when they reappear,** instead of staying where macOS put them. This was one way the Visible order drifted during the day in Automatic arrangement. Report
+```
+
+**File**: `Fuzzing/Corpus/SettingsURI/seed-0` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++thaw://set?key=autoRehide&value=true
+\ No newline at end of file
+```
+
+**File**: `Fuzzing/Corpus/SettingsURI/seed-1` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++thaw://toggle?key=showOnHover
+\ No newline at end of file
+```
+
+**File**: `Fuzzing/Corpus/SettingsURI/seed-10` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++thaw://proxy-press?bundle=com.example.app
+\ No newline at end of file
+```
+
+**File**: `Fuzzing/Corpus/SettingsURI/seed-11` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++thaw://proxy-press?bundle=
+\ No newline at end of file
+```
+
+**File**: `Fuzzing/Corpus/SettingsURI/seed-12` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++thaw://dump-items?callback=droppy://thaw-dump
+\ No newline at end of file
+```
+
+**File**: `Fuzzing/Corpus/SettingsURI/seed-13` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++thaw://activate-item?item-id=com.example.app:Item-0&callback=raycast://thaw&requestId=42
+\ No newline at end of file
+```
+
+---
+
+### Incident Patch 2: `7c2486bd` (2026-10-29)
+**Commit Message**: fix(menubar): show a hidden item before pressing it so the menu bar can hide again (#1409)
+
+* fix(menubar): add a limit for the wait on a shown item
+
+Added a constant for the wait time before a revealed item is pressed in Accessibility.
+
+Signed-off-by: Nico <[REDACTED_EMAIL]>
+
+* fix(menubar): wait until MenuBarAgent draws a shown item
+
+Signed-off-by: Nico <[REDACTED_EMAIL]>
+
+* fix(menubar): show a hidden item before pressing it
+
+Refactor concealed item interaction to improve handling of item presses and reveals.
+
+Signed-off-by: Nico <[REDACTED_EMAIL]>
+
+* docs(menubar): note that a pressed item is shown first
+
+Clarify the comment for the 'pressInPlace' case to explain its behavior with the accessibility press.
+
+Signed-off-by: Nico <[REDACTED_EMAIL]>
+
+* fix(menubar): see open menus under an auto-hidden menu bar
+
+Signed-off-by: Nico <[REDACTED_EMAIL]>
+
+* test(menubar): cover the menu bar strip height
+
+Signed-off-by: Nico <[REDACTED_EMAIL]>
+
+* fix(menubar): size an auto-hidden bar's strip from the bar window's measured height
+
+An auto-hidden bar reserves no room, so the menu-open monitor now takes the
+height measured from the bar window instead of estimating it from the notch or
+the st
+
+**File**: `MenuBarModel/Sources/MenuBarModel/MenuOpenMonitor.swift` (modified, +27/-6)
+```diff
+@@ -42,12 +42,16 @@ public final class MenuOpenMonitor {
+     /// The first probe seeds the baseline rather than treating every existing candidate as new.
+     private var hasBaseline = false
  
- - Manual arrangement: Thaw never moves an item. You arrange the bar yourself with ⌘-drag, Thaw records what it sees and confines itself to hiding. Classic menu bar manager experience.
- - Zen mode seals the whole bar with one hotkey. Reveals and hover tricks stand down until you toggle it back.
-@@ -1114,26 +1116,26 @@ Three things from the 2.1 preview line are still on their way to macOS 27. Anoth
- - Presenter mode: with the camera and microphone watch on, the bar collapses to zen mode while either is in use and restores after. It works alongside zen mode while presenting.
- - Confirmations: a small capsule under the bar confirms the verbs that otherwise succeed invisibly (zen on, hidden items shown, profile applied).
+-    public convenience init(onScreenItems: @escaping @MainActor () -> [MenuBarItem]) {
++    /// measuredBarHeight reads a display's bar window height; it covers a bar that reserves no room.
++    public convenience init(
++        onScreenItems: @escaping @MainActor () -> [MenuBarItem],
++        measuredBarHeight: @escaping @MainActor (CGDirectDisplayID) -> CGFloat?
++    ) {
+         self.init(
+             onScreenItems: onScreenItems,
+             cacheFreshness: .milliseconds(250),
+             windowSnapshot: { await Self.readOnScreenWindows() },
+-            menuBarStrips: { Self.liveMenuBarStrips() }
++            menuBarStrips: { Self.liveMenuBarStrips(measuredBarHeight: measuredBarHeight) }
+         )
+     }
  
--### Thaw Bar and appearance
-+#### Thaw Bar and appearance
+@@ -121,16 +125,22 @@ public final class MenuOpenMonitor {
  
- - A Thaw Bar of its own: shape, tint, and border for the bar, independent of the menu bar it mirrors, and one per-display section instead of repeated blocks.
- - Adaptive Gradient tint builds a gradient from the wallpaper's two dominant colours instead of one average. Wallpaper changes re-tint the bar at once; the poll stays only for dynamic and aerial wallpapers.
- - Per-Space appearance overrides, so the bar can dress differently on each Space.
+     /// NSScreen's full-minus-visible height gives the bar strip; CGDisplayBounds anchors it in top-left window-server coordinates.
+     @MainActor
+-    private static func liveMenuBarStrips() -> [CGRect] {
++    private static func liveMenuBarStrips(measuredBarHeight: (CGDirectDisplayID) -> CGFloat?) -> [CGRect] {
+         NSScreen.screens.compactMap { screen in
+             guard
+                 let number = screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber
+             else {
+                 return nil
+             }
+-            let menuBarHeight = screen.frame.maxY - screen.visibleFrame.maxY
+-            guard menuBarHeight > 0 else { return nil }
+-            let displayFrame = CGDisplayBounds(CGDirectDisplayID(number.uint32Value))
++            // Without separate Spaces only the first screen has a bar.
++            let hasMenuBar = NSScreen.screensHaveSeparateSpaces || screen == NSScreen.screens.first
++            let displayID = CGDirectDisplayID(number.uint32Value)
++            let reserved = screen.frame.maxY - screen.visibleFrame.maxY
++            let measured = reserved > 0 || !hasMenuBar ? nil : measuredBarHeight(displayID)
++            guard let menuBarHeight = menuBarStripHeight(reserved: reserved, measured: measured, hasMenuBar: hasMenuBar) else {
++                return nil
++            }
++            let displayFrame = CGDisplayBounds(displayID)
+             return CGRect(
+                 x: displayFrame.minX,
+                 y: displayFrame.minY,
+@@ -140,6 +150,17 @@ public final class MenuOpenMonitor {
+         }
+     }
  
--### Layout
-+#### Layout
++    /// The height of a screen's menu bar strip, or nil when the screen has no bar. An auto-hiding bar
++    /// reserves no room, yet its menus still hang below it, so it takes the height measured from the
++    /// bar window; with no measurement there is no strip rather than a guess.
++    static nonisolated func menuBarStripHeight(reserved: CGFloat, measured: CGFloat?, hasMenuBar: Bool) -> CGFloat? {
++        if reserved > 0 {
++            return reserved
++        }
++        guard hasMenuBar, let measured, measured > 0 else { return nil }
++        return measured
++    }
++
+     /// Menus hang from the bar's bottom edge within attachment slack; desktop popups such as DockDoor previews do not count.
+     /// Panels reaching through the bar from above need separate exclusions.
+     private static nonisolated func touchesMenuBar(_ bounds: CGRect, strips: [CGRect]) -> Bool {
+```
+
+**File**: `MenuBarModel/Tests/MenuBarModelTests/MenuOpenMonitorStripTests.swift` (added, +37/-0)
+```diff
+@@ -0,0 +1,37 @@
++//
++//  MenuOpenMonitorStripTests.swift
++//  Project: Thaw
++//
++//  Copyright (Thaw) © 2026 Toni Förster
++//  Licensed under the GNU GPLv3
++
++import CoreGraphics
++@testable import MenuBarModel
++import Testing
++
++@Suite("Menu open monitor strip height")
++struct MenuOpenMonitorStripTests {
++    @Test("A bar that reserves room keeps that height", arguments: [24.0, 30.0, 38.0] as [CGFloat])
++    func reservedHeight(reserved: CGFloat) {
++        let height = MenuOpenMonitor.menuBarStripHeight(reserved: reserved, measured: 12, hasMenuBar: true)
++        #expect(height == reserved)
++    }
++
++    @Test("An auto-hidden bar uses the height measured from the bar window")
++    func autoHiddenBar() {
++        let height = MenuOpenMonitor.menuBarStripHeight(reserved: 0, measured: 30, hasMenuBar: true)
++        #expect(height == 30)
++    }
++
++    @Test("An auto-hidden bar with no measured height has no strip")
++    func autoHiddenBarUnmeasured() {
++        #expect(MenuOpenMonitor.menuBarStripHeight(reserved: 0, measured: nil, hasMenuBar: true) == nil)
++        #expect(MenuOpenMonitor.menuBarStripHeight(reserved: 0, measured: 0, hasMenuBar: true) == nil)
++    }
++
++    @Test("A screen without a menu bar has no strip")
++    func screenWithoutBar() {
++        let height = MenuOpenMonitor.menuBarStripHeight(reserved: 0, measured: 30, hasMenuBar: false)
++        #expect(height == nil)
++    }
++}
+```
+
+**File**: `Thaw/Items/Interaction/MenuBarAXQueries.swift` (modified, +33/-0)
+```diff
+@@ -154,4 +154,37 @@ nonisolated enum MenuBarAXQueries {
+         }
+         return MenuBarItemAXProvider.pressHostedItem(sourcePID: sourcePID)
+     }
++
++    // MARK: Revealed items
++
++    /// Waits until MenuBarAgent draws one of pid's items and pid has a status item a press can
++    /// reach, its own or one MenuBarAgent hosts for it, and returns whether both held before
++    /// timeout. A shown item can take a moment to be drawn and to reach Accessibility, and under
++    /// an auto-hidden bar that is out of sight it does not reach it at all.
++    @concurrent
++    static func waitForDrawnStatusItem(pid: pid_t, timeout: Duration) async -> Bool {
++        guard pid > 0 else { return false }
++        let start = ContinuousClock.now
++        while !isDrawn(pid: pid) || !hasPressableStatusItem(pid: pid) {
++            guard !Task.isCancelled, start.duration(to: .now) < timeout else {
++                diagLog.debug("pid \(pid) had no drawn, pressable status item within \(timeout)")
++                return false
++            }
++            try? await Task.sleep(for: .milliseconds(100))
++        }
++        diagLog.debug("pid \(pid) has a drawn, pressable status item after \(start.duration(to: .now))")
++        return true
++    }
++
++    private static func isDrawn(pid: pid_t) -> Bool {
++        AXPrimitives.menuBarAgentDrawnOwners()?.contains(pid) == true
++    }
++
++    private static func hasPressableStatusItem(pid: pid_t) -> Bool {
++        if let bar = AXPrimitives.extrasMenuBar(pid: pid), !AXPrimitives.children(of: bar).isEmpty {
++            return true
++        }
++        guard let host = AXPrimitives.menuBarAgentExtrasBar() else { return false }
++        return AXPrimitives.children(of: host).contains { AXPrimitives.pid(of: $0) == pid }
++    }
+ }
+```
+
+**File**: `Thaw/Items/Manager/MenuBarItemManager+ConcealedClick.swift` (modified, +32/-1)
+```diff
+@@ -77,7 +77,7 @@ extension MenuBarItemManager {
+         for method in ConcealedItemOpenMethod.openMethodOrder(for: mouseButton, learned: learned, showInMenuBar: showInMenuBar) {
+             let opened = switch method {
+             case .pressInPlace, .showMenuInPlace:
+-                await pressConcealedItemInPlace(item, method: method)
++                await revealAndPressConcealedItem(item, method: method, controller: controller)
+             case .revealInPlace:
+                 await revealInPlaceAndClick(item: item, with: mouseButton, on: displayID, controller: controller)
+             }
+@@ -115,6 +115,37 @@ extension MenuBarItemManager {
+         return Set(windows.map(\.windowID))
+     }
  
- - A standalone layout editor opens on its own from a hotkey or a `thaw://` action, with glass chrome and last-pane restore. Items can be activated straight from it.
- - Hover spotlighting: resting on a tile in the layout pane lights the matching item in the real bar. Clicking it opens the inspector.
- - Displays as a spatial picker, arranged the way they sit on your desk, with per-display spacing applied inline.
++    /// Shows a concealed item where it sits, presses it once the bar draws it and returns whether
++    /// the owner reacted. A press on an item the bar does not draw leaves MenuBarAgent holding a
++    /// selection that keeps the bar on screen whenever it should hide, also later in a
++    /// full-screen app, until MenuBarAgent restarts. The reveal is handed back like
++    /// revealInPlaceAndClick's. A right click's menu is still opened where the item is parked.
++    private func revealAndPressConcealedItem(_ item: MenuBarItem, method: ConcealedItemOpenMethod, controller: any MenuBarSectionControlling) async -> Bool {
++        guard method == .pressInPlace else {
++            return await pressConcealedItemInPlace(item, method: method)
++        }
++        let identifier = item.uniqueIdentifier
++        // The menu-open check takes what it sees on its first look as already there; look before the menu opens.
++        _ = await menuOpenMonitor.isAnyMenuOpen()
++        controller.revealItemTemporarily(identifier)
++        // The runtime drops a reveal that undoes a recent conceal as a flap; this one answers a click.
++        controller.refresh(forceRestrictionPulse: false, forceReapply: true)
++        await eventSleep(for: Constants.MenuBarTuning.thawBarRevealSettle)
++        // No press until the bar draws it: an undrawn press is the one that strands the bar. With the
++        // bar slid away there is nothing to press; with it on screen an item still undrawn has no room
++        // on the bar, and the press it always had is the only way to open it.
++        let drawn = await MenuBarAXQueries.waitForDrawnStatusItem(pid: resolvedPID(for: item), timeout: Constants.MenuBarTuning.thawBarRevealAXWait)
++        let barDisplay = Bridging.getActiveMenuBarDisplayID() ?? CGMainDisplayID()
++        guard drawn || MenuBarItemImageCache.isMenuBarOnScreen(displayID: barDisplay), await pressConcealedItemInPlace(item) else {
++            controller.concealTemporarilyRevealedItem(identifier)
++            return false
++        }
++        // Let the menu open before the conceal starts waiting for it to close.
++        await eventSleep(for: Constants.MenuBarTuning.thawBarPostClickSettle)
++        controller.scheduleTemporaryItemConceal(identifier)
++        return true
++    }
++
+     /// Presses the item's AX element without revealing it. Returns whether the
+     /// owner reacted. The extras-bar press is frame-matched, so it goes first;
+     /// the hosted press covers MenuBarAgent's parked, frameless elements.
+```
+
+**File**: `Thaw/Items/Manager/MenuBarItemManager.swift` (modified, +4/-3)
+```diff
+@@ -378,9 +378,10 @@ final class MenuBarItemManager {
+     /// The item inventory is supplied lazily so the monitor can be constructed
+     /// without a self-capture in a stored-property initializer.
+     @ObservationIgnored
+-    lazy var menuOpenMonitor = MenuOpenMonitor { [weak self] in
+-        self?.itemCache.managedItems.filter(\.isOnScreen) ?? []
+-    }
++    lazy var menuOpenMonitor = MenuOpenMonitor(
++        onScreenItems: { [weak self] in self?.itemCache.managedItems.filter(\.isOnScreen) ?? [] },
++        measuredBarHeight: { NSScreen.screen(for: $0)?.getMenuBarHeight() }
++    )
  
--### Search and launchers
-+#### Search and launchers
+     /// Timer for lightweight periodic cache checks.
+     ///
+```
+
+**File**: `Thaw/Items/Support/ConcealedItemOpenMethod.swift` (modified, +2/-1)
+```diff
+@@ -10,7 +10,8 @@ import CoreGraphics
+ /// Apps differ in which concealed-menu methods they answer.
+ /// Moving beside Thaw is unsafe: the agent refuses the concealed move back, stranding the item.
+ nonisolated enum ConcealedItemOpenMethod: String, CaseIterable, Sendable {
+-    /// Accessibility press on the parked item. Nothing appears in the bar.
++    /// Accessibility press on the item, shown where it sits for the press: a press on an
++    /// item the bar does not draw leaves the bar stuck on screen whenever it should hide.
+     case pressInPlace
+     /// Reveal the item where it sits and click it there.
+     case revealInPlace
+```
+
+**File**: `Thaw/Utilities/Constants.swift` (modified, +3/-0)
+```diff
+@@ -103,6 +103,9 @@ nonisolated enum Constants {
+         /// How long to wait after relaxing the visibility assertion for
+         /// MenuBarAgent to recomposite a revealed item before clicking it.
+         static let thawBarRevealSettle: Duration = .milliseconds(400)
++        /// How long a revealed item may take, after the settle, to be drawn and to appear
++        /// to Accessibility before it is pressed. On macOS 27.2 one took up to 0.8 s with the bar on screen.
++        static let thawBarRevealAXWait: Duration = .milliseconds(1500)
+         /// Grace after a click for the item's menu to open before the
+         /// status-item glyph is re-concealed.
+         static let thawBarPostClickSettle: Duration = .milliseconds(150)
+```
+
+---
+
+### Incident Patch 3: `316a1ff4` (2026-10-29)
+**Commit Message**: fix(menubar): leave items alone while the Hidden divider reads right of the Clock (#1407)
+
+* fix(menubar): leave items alone while the Hidden divider reads right of the Clock
+
+After a display connected, both of Thaw's dividers read at the far right
+of the new main bar, after Control Center and the Clock. The boundary
+repair judged every visible item against that frame, read each one as
+stranded on the hidden side and moved them across one by one; none of
+the moves held, and with the structural pass re-laying after each one
+the bar ended scrambled.
+
+macOS keeps Control Center and the Clock last, so a divider right of
+either is a leftover frame. ControlOrderRules.dividerMisplacement joins
+that check to the existing parked-off-the-bar one, and the boundary
+repair skips its pass for either.
+
+Signed-off-by: Camille Guillory <[REDACTED_EMAIL]>
+
+* fix(menubar): hold the order mirror and structural restore on a misplaced divider
+
+The boundary repair now skips while the Hidden divider reads right of
+Control Center or the Clock, but the order mirror and the structural
+restore still checked only for a divider parked off the bar. The mirror
+could then save the order read from that stale frame 
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -76,6 +76,7 @@ Most of the fixes in this release harden security, and they come from findings i
+ - **Moving an item no longer pushes its neighbours into Hidden or Always Hidden,** and no longer moves the item you dropped it next to when two items shared a position.
+ - **Thaw can restore your Visible order after every item in front of the Hidden divider has moved across it.** Before, some items got no place and stayed where they were.
+ - **The screen recording indicator no longer blinks on and off during full-screen video.** Thaw re-read the strip behind the menu bar every 20 seconds, which macOS counts as recording the video. It now skips that while the bar is hidden, and reads again only when a window under the bar moved. Reported by @edhinnig in [#1413](https://github.com/thaw-app/Thaw/issues/1413).
++- **After a display change, Thaw leaves your items alone while it reads the Hidden divider on the wrong side of the Clock.** It used to move them into Hidden, or save that order as yours. Fixed by @camguillory in [#1407](https://github.com/thaw-app/Thaw/pull/1407).
  
- - Search remembers. Recently activated items sit at the top of an empty query, and selecting a result spotlights the item in the real bar.
- - Item palette (Lab): a centred launcher for your menu bar items, hidden ones included. Type part of a name or the owning app and press Return.
- - Assisted item palette (Lab): a large list of every item right where the pointer is, with big rows to read and click.
- - Menu bar magnifier (Lab): rest the pointer on the bar and a blown-up slice appears below it. Each icon gets a large outline you can click, and the one you point at is named. Works without Screen Recording; the pixels need it.
+ ### Known issues
  
--### Settings
-+#### Settings
+```
+
+**File**: `Thaw/Items/Manager/MenuBarItemManager+Cache.swift` (modified, +4/-2)
+```diff
+@@ -378,8 +378,10 @@ extension MenuBarItemManager {
+             MenuBarItemManager.diagLog.debug("Not mirroring section order: item frames span more than one bar")
+             return
+         }
+-        if let controlItems, ControlOrderRules.dividerIsOffTheBar(controlItems, among: cache[.visible], displays: displays) {
+-            MenuBarItemManager.diagLog.debug("Not mirroring section order: the Hidden divider is parked off the bar")
++        if let controlItems,
++           let misplaced = ControlOrderRules.dividerMisplacement(controlItems, among: cache[.visible], displays: displays)
++        {
++            MenuBarItemManager.diagLog.debug("Not mirroring section order: \(misplaced)")
+             return
+         }
  
- - Simple Mode collapses Settings to one page, ordered by what you touch. Everything it hides is still there when you switch it off.
- - Sidebar by topic: Menu Bar, App, Automation, and More. Rows carry a plain glyph, groups fold, arrow keys move through rows and Return selects, and a profile strip pinned to the foot switches profiles without opening the Profiles pane.
-@@ -1144,34 +1146,36 @@ Three things from the 2.1 preview line are still on their way to macOS 27. Anoth
- - Accessibility: Reduce Transparency, Increase Contrast, and Reduce Motion are honoured on every glass surface. Icon-only buttons have names, the sidebar rail is reachable by keyboard, selection is marked without relying on colour, and type sizes follow the Dynamic Type scale.
- - Layout backups can be restored inside Thaw, from the Tools pane.
+```
+
+**File**: `Thaw/Items/Manager/MenuBarItemManager+ControlItemOrder.swift` (modified, +2/-2)
+```diff
+@@ -324,8 +324,8 @@ extension MenuBarItemManager {
+             MenuBarItemManager.diagLog.debug("Skipping \(diagnosticContext): item frames span more than one bar")
+             return false
+         }
+-        guard !ControlOrderRules.dividerIsOffTheBar(controlItems, among: items) else {
+-            MenuBarItemManager.diagLog.debug("Skipping \(diagnosticContext): the Hidden divider is parked off the bar")
++        if let misplaced = ControlOrderRules.dividerMisplacement(controlItems, among: items) {
++            MenuBarItemManager.diagLog.debug("Skipping \(diagnosticContext): \(misplaced)")
+             return false
+         }
+         // A batch weight write cannot fall back per item; when the agent
+```
+
+**File**: `Thaw/Items/Manager/MenuBarItemManager+Moving.swift` (modified, +29/-5)
+```diff
+@@ -1489,7 +1489,7 @@ extension MenuBarItemManager {
+         var pass = BoundaryRepairPass()
  
--### Privacy
-+#### Privacy
+         var itemsForControlDiscovery = liveItems
+-        guard let controlItems = ControlItemPair(
++        guard var controlItems = ControlItemPair(
+             items: &itemsForControlDiscovery,
+             hiddenControlItemWindowID: hiddenControlItemWindowID,
+             alwaysHiddenControlItemWindowID: alwaysHiddenControlItemWindowID
+@@ -1498,9 +1498,10 @@ extension MenuBarItemManager {
+         }
  
- - A Privacy pane: permissions, the capture inspector that shows exactly what the app reads from the screen, and every network call the app makes, each with a switch and one button to turn them all off. A test fails the build if a network client appears anywhere the list does not account for.
- - Camera and microphone watch (Lab): a banner names the app that took the microphone, and another says when a camera turns on. While either is in use, Thaw's menu lists what is using it. Banners can be pinned to a display, or follow the pointer, and placed left, centre, or right.
- - Menu bar history (Lab): when items appeared in and disappeared from the bar, stored in Thaw's own settings and cleared when the experiment is turned off.
+         // Every strand verdict and store write below is judged against the divider.
+-        if ControlOrderRules.dividerIsOffTheBar(controlItems, among: liveItems) {
+-            MenuBarItemManager.diagLog.debug("boundary repair: the Hidden divider is parked off the bar; skipping the pass")
+-            return (liveItems, false, false)
++        // Reported as remaining, so the bounded retry tries again once the divider has settled.
++        if let misplaced = ControlOrderRules.dividerMisplacement(controlItems, among: liveItems) {
++            MenuBarItemManager.diagLog.debug("boundary repair: \(misplaced); skipping the pass")
++            return (liveItems, false, true)
+         }
  
--### Profiles and Spaces
-+#### Profiles and Spaces
+         // When app menus wrap past the notch, evicted items leave stale frames
+@@ -1593,11 +1594,33 @@ extension MenuBarItemManager {
+             }
+         }
  
- - Per-Space profiles: bind a profile to a Space the way it binds to a display. Precedence is Focus Filter, then Space, then display.
- - Per-Space presentation: show or hide the bar per Space, and see which Space each rule belongs to.
- - A profile shows what applying it would change before you apply it.
++        // After an attempt, strands are picked and judged against the divider the refreshed walk read.
++        // False when that walk lost the divider or misreads it, which leaves the strands for the bounded retry.
++        func refreshDividers() -> Bool {
++            guard !pass.attempted.isEmpty else { return true }
++            guard let refreshed = ControlOrderRules.refreshedControlItems(
++                in: liveItems,
++                hiddenControlItemWindowID: hiddenControlItemWindowID,
++                alwaysHiddenControlItemWindowID: alwaysHiddenControlItemWindowID
++            ) else {
++                MenuBarItemManager.diagLog.debug("boundary repair: the refreshed walk lost the Hidden divider; stopping the pass")
++                return false
++            }
++            if let misplaced = ControlOrderRules.dividerMisplacement(refreshed, among: liveItems) {
++                MenuBarItemManager.diagLog.debug("boundary repair: \(misplaced); stopping the pass")
++                return false
++            }
++            controlItems = refreshed
++            return true
++        }
++
+         // Re-read geometry after each attempt. Each strand gets one attempt
+         // per pass, but remains eligible for a later pass until verified or
+         // suppressed by the breaker.
+         var iterations = 0
+-        while let strand = pass.next(in: failingStrands()) {
++        while true {
++            guard refreshDividers() else { return (liveItems, false, true) }
++            guard let strand = pass.next(in: failingStrands()) else { break }
+             guard !arrangementIsManual, !Task.isCancelled else { return (liveItems, true, false) }
+             iterations += 1
+             if iterations > 6 {
+@@ -1845,6 +1868,7 @@ extension MenuBarItemManager {
+             }
+         }
  
--### Automation, Shortcuts, and the command line
-+#### Automation, Shortcuts, and the command line
++        guard refreshDividers() else { return (liveItems, false, true) }
+         recordBoundaryRepairOutcomes(
+             attempted: pass.attempted,
+             liveItems: liveItems,
+```
+
+**File**: `Thaw/Items/Support/ControlOrderRules.swift` (modified, +54/-0)
+```diff
+@@ -79,6 +79,60 @@ enum ControlOrderRules {
+             && controlItems.hidden.isParkedOffMenuBarBand(among: items, screens: displays)
+     }
  
- - Rules: reveal on icon change with a cooldown, global and per-profile hooks that run a script when a profile applies, a script environment with its own variables and timeout, and a whitelist of apps allowed to change settings over `thaw://`.
- - Shortcuts and Spotlight: an action opens a chosen item's menu, revealing it first if hidden, alongside actions to reveal hidden items, toggle
++    /// Why no item can be judged against the Hidden divider's frame, or nil when it can.
++    static func dividerMisplacement(
++        _ controlItems: ControlItemPair,
++        among items: [MenuBarItem],
++        displays: [CGRect] = BarAxis.liveDisplayBounds()
++    ) -> String? {
++        if dividerIsOffTheBar(controlItems, among: items, displays: displays) {
++            return "the Hidden divider is parked off the bar"
++        }
++        if dividerIsRightOfTrailingAnchors(controlItems, among: items, displays: displays) {
++            return "the Hidden divider reads right of Control Center or the Clock"
++        }
++        return nil
++    }
++
++    /// Whether the Hidden divider reads right of, or over, Control Center or the Clock on its own bar.
++    /// macOS keeps those two last, so this is a frame left over from a display change, and
++    /// every item would read as stranded on the hidden side of it.
++    static func dividerIsRightOfTrailingAnchors(
++        _ controlItems: ControlItemPair,
++        among items: [MenuBarItem],
++        displays: [CGRect] = BarAxis.liveDisplayBounds()
++    ) -> Bool {
++        let divider = controlItems.hidden.bounds
++        let center = CGPoint(x: divider.midX, y: divider.midY)
++        guard !CacheDividers.isStandIn(controlItems.hidden), !divider.isEmpty,
++              let bar = displays.first(where: { $0.contains(center) })
++        else {
++            return false
++        }
++        return items.contains { item in
++            let rank = MenuBarItemTag.anchoredSystemItemRank(item.tag)
++            // The rank reads titles only, so a third-party item with one of these titles must not count.
++            return (rank == 1 || rank == 2) && item.tag.isSystemItem && item.isOnScreen
++                && bar.contains(CGPoint(x: item.bounds.midX, y: item.bounds.midY))
++                // Past the anchor's left edge: right of it, or over it, which can't be judged either.
++                && divider.maxX > item.bounds.minX
++        }
++    }
++
++    /// The dividers as a refreshed walk reads them, or nil when the walk lost the Hidden divider.
++    static func refreshedControlItems(
++        in items: [MenuBarItem],
++        hiddenControlItemWindowID: CGWindowID?,
++        alwaysHiddenControlItemWindowID: CGWindowID?
++    ) -> ControlItemPair? {
++        var items = items
++        return ControlItemPair(
++            items: &items,
++            hiddenControlItemWindowID: hiddenControlItemWindowID,
++            alwaysHiddenControlItemWindowID: alwaysHiddenControlItemWindowID
++        )
++    }
++
+     /// Whether item frames are stated against more than one display's bar.
+     ///
+     /// macOS 27 draws the item set on every bar, and an app's AX frame names whichever bar
+```
+
+**File**: `ThawTests/Items/SavedOrderMirrorGateTests.swift` (modified, +47/-0)
+```diff
+@@ -183,6 +183,53 @@ struct SavedOrderMirrorGateTests {
+         #expect(gate.mirrorIsBehind(userDragEndedAt: at(2)))
+     }
+ 
++    @Test("A Hidden divider read right of the Clock holds the mirror, even after a ⌘-drag")
++    func dividerRightOfClockHoldsTheMirror() {
++        let key = "MenuBarItemManager.savedSectionOrder"
++        let previous = UserDefaults.standard.object(forKey: key)
++        defer { UserDefaults.standard.set(previous, forKey: key) }
++
++        let clock = MenuBarItem(
++            tag: MenuBarItemTag(namespace: .menuBarAgent, title: "com.apple.menuextra.clock"),
++            windowID: 20,
++            ownerPID: 400,
++            sourcePID: 400,
++            bounds: CGRect(x: 1840, y: 3.5, width: 56, height: 24),
++            title: "com.apple.menuextra.clock",
++            isOnScreen: true
++        )
++        let visible = [Self.item(x: 1600, windowID: 1), Self.item(x: 1700, windowID: 2), clock]
++        var cache = MenuBarItemCache(displayID: nil)
++        cache[.visible] = visible
++        let manager = MenuBarItemManager()
++        let visibleKey = MenuBarSectionName.visible.rawValue
++        let saved = [visibleKey: [visible[1], visible[0]].map(\.uniqueIdentifier)]
++        manager.savedSectionOrder = saved
++
++        manager.mirrorSavedSectionOrderIfSettled(
++            from: cache, controlItems: Self.hiddenDivider(x: 1900), placedByUser: true, displays: Self.displays
++        )
++        #expect(manager.savedSectionOrder == saved)
++
++        manager.mirrorSavedSectionOrderIfSettled(
++            from: cache, controlItems: Self.hiddenDivider(x: 1500), placedByUser: true, displays: Self.displays
++        )
++        #expect(manager.savedSectionOrder != saved)
++    }
++
++    private static func hiddenDivider(x: CGFloat) -> ControlItemPair {
++        let hidden = MenuBarItem(
++            tag: .hiddenControlItem,
++            windowID: 9,
++            ownerPID: 501,
++            sourcePID: 501,
++            bounds: CGRect(x: x, y: 4.5, width: 2, height: 24),
++            title: ControlItemIdentifier.hidden.rawValue,
++            isOnScreen: true
++        )
++        return ControlItemPair(hidden: hidden, alwaysHidden: nil)
++    }
++
+     @Test("A ⌘-drag becomes the saved order while the hold is still on")
+     func userDragSkipsTheHold() {
+         let key = "MenuBarItemManager.savedSectionOrder"
+```
+
+**File**: `ThawTests/MenuBar/MultiBarFramesTests.swift` (modified, +81/-0)
+```diff
+@@ -181,4 +181,85 @@ struct MultiBarFramesTests {
+         #expect(ControlOrderRules.dividerIsOffTheBar(atMinusOne, among: [stats], displays: Self.displays))
+         #expect(ControlOrderRules.dividerIsOffTheBar(empty, among: [stats], displays: Self.displays))
+     }
++
++    private static func hiddenDivider(x: CGFloat) -> ControlItemPair {
++        let hidden = MenuBarItem(
++            tag: .hiddenControlItem,
++            windowID: 9,
++            ownerPID: 501,
++            sourcePID: 501,
++            bounds: CGRect(x: x, y: 4.5, width: 2, height: 24),
++            title: ControlItemIdentifier.hidden.rawValue,
++            isOnScreen: true
++        )
++        return ControlItemPair(hidden: hidden, alwaysHidden: nil)
++    }
++
++    private static func anchored(_ title: String, x: CGFloat, width: CGFloat) -> MenuBarItem {
++        MenuBarItem(
++            tag: MenuBarItemTag(namespace: .menuBarAgent, title: title),
++            windowID: 20,
++            ownerPID: 400,
++            sourcePID: 400,
++            bounds: CGRect(x: x, y: 3.5, width: width, height: 24),
++            title: title,
++            isOnScreen: true
++        )
++    }
++
++    @Test("A Hidden divider read after the Clock, as after a display change, is caught")
++    func dividerAfterClock() {
++        let items = [Self.item(x: 1398, windowID: 1), Self.anchored("com.apple.menuextra.controlcenter", x: 1929, width: 26),
++                     Self.anchored("com.apple.menuextra.clock", x: 1971, width: 56)]
++        #expect(ControlOrderRules.dividerIsRightOfTrailingAnchors(Self.hiddenDivider(x: 2046.5), among: items, displays: Self.displays))
++        #expect(ControlOrderRules.dividerMisplacement(Self.hiddenDivider(x: 2046.5), among: items, displays: Self.displays) != nil)
++        #expect(ControlOrderRules.dividerMisplacement(Self.hiddenDivider(x: 1350), among: items, displays: Self.displays) == nil)
++    }
++
++    @Test("A Hidden divider left of the visible items is not")
++    func dividerInPlace() {
++        let items = [Self.item(x: 1398, windowID: 1), Self.anchored("com.apple.menuextra.clock", x: 1840, width: 56)]
++        #expect(!ControlOrderRules.dividerIsRightOfTrailingAnchors(Self.hiddenDivider(x: 1350), among: items, displays: Self.displays))
++    }
++
++    @Test("A Hidden divider read over the Clock's frame can't be judged either")
++    func dividerOverlappingClock() {
++        let items = [Self.item(x: 1398, windowID: 1), Self.anchored("com.apple.menuextra.clock", x: 1840, width: 56)]
++        #expect(ControlOrderRules.dividerIsRightOfTrailingAnchors(Self.hiddenDivider(x: 1860), among: items, displays: Self.displays))
++        #expect(!ControlOrderRules.dividerIsRightOfTrailingAnchors(Self.hiddenDivider(x: 1830), among: items, displays: Self.displays))
++    }
++
++    @Test("A refreshed walk reads the divider where it now stands, and reads none once it lost it")
++    func refreshedDividers() {
++        let moved = Self.hiddenDivider(x: 1350).hidden
++        let refreshed = ControlOrderRules.refreshedControlItems(
++            in: [Self.item(x: 1398, windowID: 1), moved], hiddenControlItemWindowID: nil, alwaysHiddenControlItemWindowID: nil
++        )
++        #expect(refreshed?.hidden.bounds.minX == 1350)
++        let lost = ControlOrderRules.refreshedControlItems(
++            in: [Self.item(x: 1398, windowID: 1)], hiddenControlItemWindowID: nil, alwaysHiddenControlItemWindowID: nil
++        )
++        #expect(lost == nil)
++    }
++
++    @Test("A third-party item titled like the Clock says nothing about this divider")
++    func clockTitleFromAnotherApp() {
++        let impostor = MenuBarItem(
++            tag: MenuBarItemTag(namespace: .string("com.example.clock"), title: "com.apple.menuextra.clock"),
++            windowID: 30,
++            ownerPID: 600,
++            sourcePID: 600,
++            bounds: CGRect(x: 1700, y: 3.5, width: 56, height: 24),
++            title: "com.apple.menuextra.clock",
++            isOnScreen: true
++        )
++        let items = [Self.item(x: 1398, windowID: 1), impostor]
++        #expect(!ControlOrderRules.dividerIsRightOfTrailingAnchors(Self.hiddenDivider(x: 1800), among: items, displays: Self.displays))
++    }
++
++    @Test("A Clock on another display's bar says nothing about this divider")
++    func clockOnOtherBar() {
++        let items = [Self.anchored("com.apple.menuextra.clock", x: 1500, width: 56)]
++        #expect(!ControlOrderRules.dividerIsRightOfTrailingAnchors(Self.hiddenDivider(x: 3800), among: items, displays: Self.displays))
++    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1398** (2026-10-27): feat: bring Thaw 2 back to macOS 15 for 2.2.0 (@diazdesandi)
-- **PR #1396** (2026-10-27): ci(website): rebuild getthaw.app when the synced docs change (@diazdesandi)
-- **PR #1395** (closed): build(deps): bump the swift group with 3 updates (@dependabot[bot])
-- **PR #1394** (2026-10-27): ci(ops): run legacy/thaw-2 checks on its own pushes (@diazdesandi)
-- **PR #1393** (2026-10-27): docs(ops): name development and legacy/thaw-2 after the branch rename (@diazdesandi)
-- **PR #1391** (2026-10-26): build(deps): bump the github-actions group with 3 updates (@dependabot[bot])
+- **PR #1430** (2026-10-31): chore(release): ship 3.0.0-alpha.12.1 (120), pinned Control Center controls hotfix (@diazdesandi)
+- **PR #1427** (2026-10-30): ci: update org-ci pins to the merged release workflows (@diazdesandi)
+- **PR #1426** (2026-10-30): chore(release): ship 3.0.0-alpha.12 (119) (@diazdesandi)
+- **PR #1425** (2026-10-30): fix(appearance): observe committed Mission Control activity (@Belligerently)
+- **PR #1423** (2026-10-29): fix(profiles): preserve script hooks when updating all (@Belligerently)
+- **PR #1420** (2026-10-29): fix(profiles): allow deleting profiles with missing files (@Belligerently)
 
 ---
 
@@ -2459,38 +2185,28 @@ Signed-off-by: René Jiménez <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci(release): promote a release candidate to stable without a rebuild (#1218)
+## X. 3.0.0-alpha.11 security hardening, layout fixes and PRK 1.2.10 (#1399)
 
 **RULE**:
-When implementing operations in `.github/actions/prepare-appcasts/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in thaw-app/Thaw. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/fuzz.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in thaw-app/Thaw. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6e1730b6`: ci(release): promote a release candidate to stable without a rebuild (#1218). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3dc7bade`: 3.0.0-alpha.11 security hardening, layout fixes and PRK 1.2.10 (#1399). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/prepare-appcasts/action.yml`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/fuzz.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-description: >-
-  Apply the macOS 26 cap to 2.x entries, show prerelease tags as their version,
-  restore notes generate_appcast dropped, and prepare the legacy feed for 2.x
-  releases.
-  previous-appcast-path:
-    description: >-
-      The feed as it was before this run. Items generate_appcast left without
-      notes get them back from here. Empty or missing skips the restore.
-    required: false
-    default: ""
-        PREVIOUS_APPCAST_PATH: ${{ inputs.previous-appcast-path }}
+      - "Thaw/System/SettingsURIParser.swift"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-description: Apply the macOS 26 cap to 2.x entries and prepare the legacy feed for 2.x releases.
+      - "Thaw/Utilities/SettingsURIParser.swift"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6e1730b6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3dc7bade` are properly handled with clean fallback behavior.

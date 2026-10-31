@@ -6675,3 +6675,5 @@ Every entry in this ledger must capture:
 | `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `1709a9ce` | Multi-dimensional audit evidence | 2026-10-31T18:01:39.400Z |
 | `learn-huggingface-openai-community-gpt2` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-31T18:01:42.409Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `90b24cce` | Multi-dimensional audit evidence | 2026-10-31T18:01:47.346Z |
+| `learn-huggingface-qwen-qwen3-vl-8b-instruct` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-31T18:08:40.437Z |
+| `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `cbe1b6fa` | Multi-dimensional audit evidence | 2026-10-31T18:08:48.607Z |
