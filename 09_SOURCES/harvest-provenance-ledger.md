@@ -6567,3 +6567,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-cloudflare-clef` | `https://huggingface.co/Cloudflare/clef` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-10-31T12:15:45.836Z |
 | `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `8ca97e5d` | Multi-dimensional audit evidence | 2026-10-31T12:15:46.941Z |
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `8ae29a1f` | Multi-dimensional audit evidence | 2026-10-31T12:15:50.055Z |
+| `learn-huggingface-cloudflare-clef-flash` | `https://huggingface.co/Cloudflare/clef-flash` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-10-31T12:22:45.653Z |

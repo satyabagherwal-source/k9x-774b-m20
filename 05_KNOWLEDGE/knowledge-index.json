@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T12:15:49.976Z",
+  "last_updated": "2026-10-31T12:22:45.573Z",
   "total_verified_learnings": 1183,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20198,7 +20198,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef-flash",
       "source_version": "hf-cloudflare-clef-flash",
-      "content_hash": "a5548a20aab4e8e5fda457c57fe986ca502e982ecf3407fc8354e58ae98aec70",
+      "content_hash": "b775a2fb711cd2750201d2feb5090161d430ca0e79f3bb039eb68fe7f49d6556",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "promoted_rules": [
@@ -20403,6 +20403,21 @@
           "number": 5269,
           "title": "**Enforce Max Position Embedding Consistency**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6192,
+          "title": "Model‑Processor Dtype Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6193,
+          "title": "Tokenization Special Token Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6194,
+          "title": "Joint Head Loading Order",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -20423,7 +20438,7 @@
         "learn-huggingface-hf-cloudflare-clef-flash-mv48lefr",
         "learn-huggingface-hf-cloudflare-clef-flash-mv4lz6vs"
       ],
-      "verified_at": "2026-10-28T11:46:22.468Z",
+      "verified_at": "2026-10-31T12:22:45.544Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -161899,6 +161914,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T12:15:49.956Z"
+    },
+    "rule-6192": {
+      "learning_id": "rule-6192",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6192,
+      "title": "Model‑Processor Dtype Consistency",
+      "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+      "source_version": "hf-cloudflare-clef-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T12:22:45.544Z"
+    },
+    "rule-6193": {
+      "learning_id": "rule-6193",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6193,
+      "title": "Tokenization Special Token Alignment",
+      "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+      "source_version": "hf-cloudflare-clef-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T12:22:45.544Z"
+    },
+    "rule-6194": {
+      "learning_id": "rule-6194",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6194,
+      "title": "Joint Head Loading Order",
+      "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+      "source_version": "hf-cloudflare-clef-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T12:22:45.544Z"
     }
   },
   "aliases": {

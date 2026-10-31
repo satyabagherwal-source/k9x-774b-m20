@@ -453373,3 +453373,202 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `8ae29a1f` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6192. Model‑Processor Dtype Consistency (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Model‑Processor Dtype Consistency",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-31T12:22:44.346Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-cloudflare-clef-flash",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+The model, joint head, and processor must all operate on the same numeric dtype (`bfloat16` or `float32`) during inference.
+
+**WHY**:  
+Mismatched dtypes cause silent precision loss or runtime errors (e.g., `RuntimeError: Expected dtype bfloat16 but got float32`). Consistent dtype guarantees that the joint head receives hidden states in the expected format and that the processor’s image tensors match the model’s expectations.
+
+**WHEN TO APPLY**:  
+During model construction (`load_release_model`) and when creating the processor (`processor = AutoProcessor.from_pretrained(...)`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# load_release_model.py
+from transformers import AutoModelForCausalLM, AutoProcessor
+
+def load_release_model(path: str, device: str = "cuda"):
+    # Load backbone
+    model = AutoModelForCausalLM.from_pretrained(
+        path,
+        torch_dtype="bfloat16",
+        device_map=device,
+        low_cpu_mem_usage=True,
+    )
+    # Load joint head
+    joint_head = JointHead.from_pretrained(
+        f"{path}/joint_head",
+        torch_dtype="bfloat16",
+        device_map=device,
+    )
+    # Load processor
+    processor = AutoProcessor.from_pretrained(
+        path,
+        torch_dtype="bfloat16",
+    )
+    # Verify dtype consistency
+    assert model.dtype == joint_head.dtype == processor.image_processor.dtype
+    return model, processor
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Mixing dtypes
+model = AutoModelForCausalLM.from_pretrained(path, torch_dtype="float32")
+processor = AutoProcessor.from_pretrained(path, torch_dtype="bfloat16")  # Mismatch
+```
+
+**VERIFICATION METHOD**:  
+Unit test that loads the model and processor and asserts equality of `dtype` attributes.
+
+---
+
+
+---
+
+## 6193. Tokenization Special Token Alignment (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Tokenization Special Token Alignment",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-31T12:22:44.805Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-cloudflare-clef-flash",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+All special token IDs defined in `config.json` must match the IDs returned by the tokenizer’s `add_special_tokens` method.
+
+**WHY**:  
+If the tokenizer assigns a different ID to a special token (e.g., `<|image_pad|>`), the model will misinterpret the token during inference, leading to incorrect logits or runtime errors.
+
+**WHEN TO APPLY**:  
+During tokenizer initialization and when loading a new model checkpoint.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# tokenizer_setup.py
+from transformers import AutoTokenizer
+
+def init_tokenizer(path: str):
+    tokenizer = AutoTokenizer.from_pretrained(path)
+    # Load config for expected IDs
+    with open(f"{path}/config.json", "r") as f:
+        cfg = json.load(f)
+    # Verify alignment
+    assert tokenizer.convert_tokens_to_ids("<|image_pad|>") == cfg["image_token_id"]
+    assert tokenizer.convert_tokens_to_ids("<|video_pad|>") == cfg["video_token_id"]
+    return tokenizer
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Overriding special tokens without checking IDs
+tokenizer.add_special_tokens({"pad_token": "<|pad|>"})  # New ID may differ
+```
+
+**VERIFICATION METHOD**:  
+Automated test that compares `tokenizer.convert_tokens_to_ids` against the IDs in `config.json`.
+
+---
+
+
+---
+
+## 6194. Joint Head Loading Order (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Joint Head Loading Order",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-31T12:22:45.302Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-cloudflare-clef-flash",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+The joint schema head must be loaded *after* the backbone and must be placed on the same device as the backbone.
+
+**WHY**:  
+Loading the head first can lead to a mismatch in device placement or missing weight files, causing `RuntimeError: Expected all tensors to be on the same device`. Additionally, the head expects the backbone’s hidden state shape; loading it before the backbone may result in shape mismatches.
+
+**WHEN TO APPLY**:  
+During the `load_release_model` routine.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# joint_head_loader.py
+def load_joint_head(model, path: str):
+    head = JointHead.from_pretrained(
+        f"{path}/joint_head",
+        torch_dtype=model.dtype,
+        device_map=model.device,
+    )
+    # Ensure same device
+    assert head.device == model.device
+    return head
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Loading head before backbone
+head = JointHead.from_pretrained(f"{path}/joint_head")
+model = AutoModelForCausalLM.from_pretrained(path)
+```
+
+**VERIFICATION METHOD**:  
+Integration test that loads the full model and asserts that `joint_head.device == model.device`.
+
+---

@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T12:15:52.615Z",
-    "lastVerified": "2026-10-31T12:15:52.615Z",
+    "lastChecked": "2026-10-31T12:22:49.545Z",
+    "lastVerified": "2026-10-31T12:22:49.545Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -429,8 +429,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T11:53:40.994Z",
-    "lastVerified": "2026-10-31T11:53:40.994Z",
+    "lastChecked": "2026-10-31T12:22:49.535Z",
+    "lastVerified": "2026-10-31T12:22:49.535Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1886,8 +1886,8 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T08:03:12.004Z",
-    "lastVerified": "2026-10-31T08:03:12.004Z",
+    "lastChecked": "2026-10-31T12:22:44.740Z",
+    "lastVerified": "2026-10-31T12:22:44.740Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
@@ -3334,9 +3334,9 @@
   "vasu-devs-justhireme": {
     "name": "JustHireMe",
     "officialUrl": "https://github.com/vasu-devs/JustHireMe",
-    "lastChecked": "2026-10-30T19:35:54.264Z",
+    "lastChecked": "2026-10-31T12:22:47.104Z",
     "revisionIdentifier": "accdcdb5",
-    "lastVerified": "2026-10-30T19:35:54.264Z"
+    "lastVerified": "2026-10-31T12:22:47.104Z"
   },
   "ekzhang-bore": {
     "name": "bore",
@@ -3481,12 +3481,12 @@
     "officialUrl": "https://huggingface.co/Cloudflare/clef-flash",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T11:46:16.081Z",
-    "lastVerified": "2026-10-28T11:46:16.081Z",
+    "lastChecked": "2026-10-31T12:22:37.194Z",
+    "lastVerified": "2026-10-31T12:22:37.194Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-cloudflare-clef-flash",
-    "contentHash": "a5548a20aab4e8e5fda457c57fe986ca502e982ecf3407fc8354e58ae98aec70",
+    "contentHash": "b775a2fb711cd2750201d2feb5090161d430ca0e79f3bb039eb68fe7f49d6556",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -4450,9 +4450,9 @@
   "gocrane-crane": {
     "name": "crane",
     "officialUrl": "https://github.com/gocrane/crane",
-    "lastChecked": "2026-10-30T20:36:17.253Z",
+    "lastChecked": "2026-10-31T12:22:42.080Z",
     "revisionIdentifier": "2b0ddae8",
-    "lastVerified": "2026-10-30T20:36:17.253Z"
+    "lastVerified": "2026-10-31T12:22:42.080Z"
   },
   "malisper-pgrust": {
     "name": "pgrust",
@@ -6088,9 +6088,9 @@
   "komi-store-komi-store": {
     "name": "komi-store",
     "officialUrl": "https://github.com/komi-store/komi-store",
-    "lastChecked": "2026-10-28T16:58:45.803Z",
+    "lastChecked": "2026-10-31T12:22:39.523Z",
     "revisionIdentifier": "19eb7447",
-    "lastVerified": "2026-10-28T16:58:45.803Z"
+    "lastVerified": "2026-10-31T12:22:39.523Z"
   },
   "pytest-dev-pytest-testinfra": {
     "name": "pytest-testinfra",
@@ -6462,9 +6462,9 @@
   "dalance-procs": {
     "name": "procs",
     "officialUrl": "https://github.com/dalance/procs",
-    "lastChecked": "2026-10-30T15:08:07.673Z",
+    "lastChecked": "2026-10-31T12:22:34.621Z",
     "revisionIdentifier": "c41ae259",
-    "lastVerified": "2026-10-30T15:08:07.673Z"
+    "lastVerified": "2026-10-31T12:22:34.621Z"
   },
   "hf-baai-bge-base-en-v1.5": {
     "name": "BAAI/bge-base-en-v1.5",

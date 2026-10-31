@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T12:15:50.061Z",
-  "total_cycles_completed": 6535,
-  "total_learnings_persisted": 6535,
-  "total_rules_promoted": 6184,
+  "last_updated": "2026-10-31T12:22:45.658Z",
+  "total_cycles_completed": 6536,
+  "total_learnings_persisted": 6536,
+  "total_rules_promoted": 6187,
   "history": [
-    {
-      "timestamp": "2026-10-30T23:35:08.492Z",
-      "repository": "sharkdp/bat",
-      "learningId": "learn-github-sharkdp-bat",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T23:44:47.313Z",
       "repository": "sharkdp/fd",
@@ -1403,6 +1396,13 @@
       "repository": "zarf-dev/zarf",
       "learningId": "learn-github-zarf-dev-zarf",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T12:22:45.658Z",
+      "repository": "Cloudflare/clef-flash",
+      "learningId": "learn-huggingface-cloudflare-clef-flash",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
