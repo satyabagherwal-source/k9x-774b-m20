@@ -6529,3 +6529,4 @@ Every entry in this ledger must capture:
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `99e571f4` | Multi-dimensional audit evidence | 2026-10-31T09:36:49.467Z |
 | `learn-github-czy0729-bangumi` | `https://github.com/czy0729/Bangumi` | `5a981aee` | Multi-dimensional audit evidence | 2026-10-31T09:36:52.689Z |
 | `learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-31T09:40:12.530Z |
+| `learn-huggingface-orcarouter-orcasaq-2-27b` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-31T09:47:08.303Z |

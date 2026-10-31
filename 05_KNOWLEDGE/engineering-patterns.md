@@ -450471,3 +450471,75 @@ print('PASS: Byte-0 frontmatter verified.')
 ```
 
 ---
+
+
+---
+
+## 6154. SSM State Precision Isolation Rule (Harvested from orcarouter/OrcaSAQ-2-27B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "SSM State Precision Isolation Rule",
+  "source": "orcarouter/OrcaSAQ-2-27B",
+  "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
+  "source_version": "hf-orcarouter-orcasaq-2-27b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-31T09:47:07.814Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-orcarouter-orcasaq-2-27b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [orcarouter/OrcaSAQ-2-27B](https://huggingface.co/orcarouter/OrcaSAQ-2-27B) (Revision: `hf-orcarou`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In hybrid Transformer-SSM models, the internal state of the State Space Model (Mamba) layers MUST be maintained in `float32` (or higher precision), regardless of the weight precision (e.g., 3-bit, INT8). The `mamba_ssm_dtype` configuration field MUST be respected and enforced in the kernel implementation.
+
+**WHY**:
+SSM layers perform recursive state updates: $h_t = A h_{t-1} + B x_t$. Over long contexts (e.g., 262K tokens), small numerical errors in lower precision (FP16/BF16) accumulate exponentially, leading to "state drift" where the model's internal representation of the context becomes garbage. This causes hallucinations and loss of coherence in long-horizon tasks. Weights can be quantized because they are static, but the state is dynamic and accumulative.
+
+**WHEN TO APPLY**:
+Any implementation of Mamba, S4, or similar SSM layers in LLMs. Specifically when quantizing models that include SSM components.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for SSM Kernel
+def mamba_ssm_step(state, input_x, weights, config):
+    # CRITICAL: Cast state to FP32 before update
+    state_fp32 = state.to(torch.float32)
+    
+    # Weights may be quantized (e.g., INT8), but must be dequantized to FP32 for computation
+    A_fp32 = dequantize(weights['A'], dtype=torch.float32)
+    B_fp32 = dequantize(weights['B'], dtype=torch.float32)
+    
+    # Perform update in FP32
+    new_state = A_fp32 @ state_fp32 + B_fp32 @ input_x
+    
+    # Cast back to storage dtype if necessary, but keep computation in FP32
+    # If the engine supports mixed precision, keep state in FP32 in memory
+    return new_state.to(config['mamba_ssm_dtype']) # Usually float32
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using weight precision for state
+def mamba_ssm_step_buggy(state, input_x, weights, config):
+    # BUG: If weights are INT8, and we cast state to INT8 or BF16,
+    # the recursive multiplication will lose precision rapidly.
+    state_low = state.to(torch.bfloat16)
+    A_low = weights['A'].to(torch.bfloat16)
+    new_state = A_low @ state_low + ...
+    return new_state
+```
+
+**VERIFICATION METHOD**:
+1.  **Long Context Test:** Generate a sequence of 100K tokens.
+2.  **State Inspection:** At step 50K and 100K, inspect the variance of the SSM state tensor.
+3.  **Compare:** Compare the state variance against a reference FP32 implementation. If the variance diverges significantly (e.g., >1% difference), the precision isolation rule is violated.
+4.  **Config Check:** Assert that `config['mamba_ssm_dtype']` is `float32` and that the kernel explicitly casts to this dtype.

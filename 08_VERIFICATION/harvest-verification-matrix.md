@@ -6520,3 +6520,4 @@
 | `CYCLE-20261031-IOU0` | `2026-10-31T09:36:49.464Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6151` | Yes (`f529436a...`) |
 | `CYCLE-20261031-IRBC` | `2026-10-31T09:36:52.680Z` | `czy0729/Bangumi` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/czy0729-bangumi-learnings.md` | Yes (`dfd09f3d...`) |
 | `CYCLE-20261031-N1IN` | `2026-10-31T09:40:12.527Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6152, Rule 6153` | Yes (`1776ed55...`) |
+| `CYCLE-20261031-VYBW` | `2026-10-31T09:47:08.300Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5153, Rule 6154, Rule 5202` | Yes (`88e684c1...`) |

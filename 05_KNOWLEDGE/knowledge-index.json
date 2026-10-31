@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T09:40:12.449Z",
+  "last_updated": "2026-10-31T09:47:08.218Z",
   "total_verified_learnings": 1181,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -26839,7 +26839,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
       "source_version": "hf-orcarouter-orcasaq-2-27b",
-      "content_hash": "f60ba0cbc39c60c643e2599b7b14a3a33eeea6eba2d1095eadde74bd92913dd3",
+      "content_hash": "88e684c181d4464be8ca9e5fa13330adf090b997965edd763bb50f4f40438db3",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
       "promoted_rules": [
@@ -26864,6 +26864,11 @@
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
+          "number": 5153,
+          "title": "Hybrid Attention Layer Periodicity Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 5201,
           "title": "SSM State Dtype Precision Guard",
           "status": "PROMOTED_AND_VERIFIED"
@@ -26871,6 +26876,11 @@
         {
           "number": 5202,
           "title": "Quantization Sensitivity Mapping Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 6154,
+          "title": "SSM State Precision Isolation Rule",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -26892,7 +26902,7 @@
         "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv45w2u2",
         "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv4j68vm"
       ],
-      "verified_at": "2026-10-28T06:11:52.852Z",
+      "verified_at": "2026-10-31T09:47:08.198Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -146184,14 +146194,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 5153,
       "title": "Hybrid Attention Layer Periodicity Invariant",
-      "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
-      "source_version": "hf-qwen-qwen3.8-27b",
+      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
+      "source_version": "hf-orcarouter-orcasaq-2-27b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T03:31:32.103Z"
+      "verified_at": "2026-10-31T09:47:08.198Z"
     },
     "rule-5154": {
       "learning_id": "rule-5154",
@@ -146935,7 +146945,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T06:11:52.852Z"
+      "verified_at": "2026-10-31T09:47:08.198Z"
     },
     "rule-5203": {
       "learning_id": "rule-5203",
@@ -161116,6 +161126,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T09:40:12.430Z"
+    },
+    "rule-6154": {
+      "learning_id": "rule-6154",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6154,
+      "title": "SSM State Precision Isolation Rule",
+      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
+      "source_version": "hf-orcarouter-orcasaq-2-27b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T09:47:08.198Z"
     }
   },
   "aliases": {

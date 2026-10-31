@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T09:40:15.075Z",
-    "lastVerified": "2026-10-31T09:40:15.075Z",
+    "lastChecked": "2026-10-31T09:47:10.848Z",
+    "lastVerified": "2026-10-31T09:47:10.848Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -110,8 +110,8 @@
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T04:38:40.042Z",
-    "lastVerified": "2026-10-31T04:38:40.042Z",
+    "lastChecked": "2026-10-31T09:47:02.420Z",
+    "lastVerified": "2026-10-31T09:47:02.420Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -429,8 +429,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T08:45:18.882Z",
-    "lastVerified": "2026-10-31T08:45:18.882Z",
+    "lastChecked": "2026-10-31T09:47:07.344Z",
+    "lastVerified": "2026-10-31T09:47:07.344Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -2007,9 +2007,9 @@
   "zilliztech-claude-context": {
     "name": "claude-context",
     "officialUrl": "https://github.com/zilliztech/claude-context",
-    "lastChecked": "2026-10-30T16:12:42.252Z",
+    "lastChecked": "2026-10-31T09:47:04.846Z",
     "revisionIdentifier": "6fc318b4",
-    "lastVerified": "2026-10-30T16:12:42.252Z"
+    "lastVerified": "2026-10-31T09:47:04.846Z"
   },
   "unhappychoice-gitlogue": {
     "name": "unhappychoice/gitlogue",
@@ -2284,12 +2284,12 @@
     "officialUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T06:11:38.719Z",
-    "lastVerified": "2026-10-28T06:11:38.719Z",
+    "lastChecked": "2026-10-31T09:46:55.402Z",
+    "lastVerified": "2026-10-31T09:46:55.402Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
-    "contentHash": "f60ba0cbc39c60c643e2599b7b14a3a33eeea6eba2d1095eadde74bd92913dd3",
+    "contentHash": "88e684c181d4464be8ca9e5fa13330adf090b997965edd763bb50f4f40438db3",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -3311,12 +3311,12 @@
     "lastVerified": "2026-10-31T05:00:42.751Z"
   },
   "kumahq-kuma": {
-    "name": "kumahq/kuma",
+    "name": "kuma",
     "officialUrl": "https://github.com/kumahq/kuma",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T17:21:01.056Z",
-    "lastVerified": "2026-10-30T17:21:01.056Z",
+    "lastChecked": "2026-10-31T09:46:59.957Z",
+    "lastVerified": "2026-10-31T09:46:59.957Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kumahq-kuma",
@@ -3325,7 +3325,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a4447108"
   },
   "vasu-devs-justhireme": {
     "name": "JustHireMe",
@@ -4809,9 +4810,9 @@
   "jpush-aurora-imui": {
     "name": "aurora-imui",
     "officialUrl": "https://github.com/jpush/aurora-imui",
-    "lastChecked": "2026-10-28T14:35:55.808Z",
+    "lastChecked": "2026-10-31T09:46:57.373Z",
     "revisionIdentifier": "fb74b792",
-    "lastVerified": "2026-10-28T14:35:55.808Z"
+    "lastVerified": "2026-10-31T09:46:57.373Z"
   },
   "aquasecurity-trivy": {
     "name": "aquasecurity/trivy",
@@ -5266,9 +5267,9 @@
   "mlua-rs-mlua": {
     "name": "mlua",
     "officialUrl": "https://github.com/mlua-rs/mlua",
-    "lastChecked": "2026-10-30T09:27:02.585Z",
+    "lastChecked": "2026-10-31T09:46:52.357Z",
     "revisionIdentifier": "ff96ed78",
-    "lastVerified": "2026-10-30T09:27:02.585Z"
+    "lastVerified": "2026-10-31T09:46:52.357Z"
   },
   "hf-aleph-alpha-kolibri-1": {
     "name": "Aleph-Alpha/Kolibri-1",
