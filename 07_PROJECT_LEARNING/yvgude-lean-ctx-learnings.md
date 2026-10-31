@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md`  
 > **Source**: github ([https://github.com/yvgude/lean-ctx](https://github.com/yvgude/lean-ctx))  
-> **Source Version**: `e95146ff`  
+> **Source Version**: `9fc77dec`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T13:28:35.153Z  
+> **Timestamp**: 2026-10-31T11:26:00.056Z  
 > **Learning ID**: `learn-github-yvgude-lean-ctx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yvgude/lean-ctx](https://github.com/yvgude/lean-ctx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T13:28:32.645Z  
+> **Harvest Timestamp**: 2026-10-31T11:26:00.043Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: LeanCTX is the Context Gateway for AI Systems. Select task-relevant context, apply supported controls, connect local knowledge and inspect recorded evidence. Open-source Engine: CLI, MCP, hooks and supported proxy paths.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3911 stars
+- **Stars / Engagement**: 3912 stars
 
 ---
 
@@ -36,801 +36,6 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: README.md.
 - Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `_archive/bench/lifecycle/harness/__init__.py`
-```
-"""Lifecycle Benchmark Harness for lean-ctx.
-
-Reproduces the OpenCode 3-lane sequential benchmark (Fastify/Beets/Terraform)
-using Codex CLI, comparing lean-ctx treatment vs bare baseline.
-"""
-
-from pathlib import Path
-
-BENCH_ROOT = Path(__file__).resolve().parent.parent
-LANES_DIR = BENCH_ROOT / "lanes"
-CONFIG_PATH = BENCH_ROOT / "config.json"
-ARMS = ("leanctx", "bare")
-
-```
-
-### Core Architecture Module: `_archive/bench/lifecycle/harness/__main__.py`
-```
-"""Entry point: python3 -m harness.run_lifecycle (from bench/lifecycle/)."""
-from harness.run_lifecycle import main
-main()
-
-```
-
-### Core Architecture Module: `_archive/bench/lifecycle/harness/codex_runner.py`
-```
-"""Codex CLI exec wrapper with token accounting from --json JSONL output."""
-
-from __future__ import annotations
-
-import json
-import os
-import shutil
-import subprocess
-import time
-from dataclasses import dataclass, field, asdict
-from pathlib import Path
-from typing import Optional
-
-
-@dataclass
-class TaskResult:
-    task_id: str
-    arm: str
-    exit_code: int
-    wall_time_s: float
-    input_tokens: int = 0
-    output_tokens: int = 0
-    reasoning_tokens: int = 0
-    cache_read_tokens: int = 0
-    cache_write_tokens: int = 0
-    total_tokens: int = 0
-    error: Optional[str] = None
-    tool_calls: list[str] = field(default_factory=list)
-
-    @property
-    def fresh_input_tokens(self) -> int:
-        return self.input_tokens - self.cache_read_tokens
-
-    @property
-    def weighted_cost(self) -> int:
-        """Cache-adjusted cost: cached tokens at 10% weight."""
-        return self.fresh_input_tokens + self.output_tokens + int(self.cache_read_tokens * 0.1)
-
-    def to_dict(self) -> dict:
-        d = asdict(self)
-        d["fresh_input_tokens"] = self.fresh_input_tokens
-        d["weighted_cost"] = self.weighted_cost
-        return d
-
-
-def _ensure_path_complete(path: str) -> str:
-    """Ensure PATH includes common tool directories."""
-    extras = [
-        str(Path.home() / ".local" / "bin"),
-        str(Path.home() / "Library" / "Python" / "3.9" / "bin"),
-        str(Path.home() / ".cargo" / "bin"),
-        "/opt/homebrew/bin",
-        "/usr/local/bin",
-        "/usr/local/go/bin",
-    ]
-    parts = path.split(":")
-    for extra in extras:
-        if extra not in parts and Path(extra).is_dir():
-            parts.insert(0, extra)
-    return ":".join(parts)
-
-
-def build_env(home_dir: Path, arm: str) -> dict[str, str]:
-    """Build isolated environment for a Codex exec run."""
-    env = {}
-
-    for key in ("PATH", "SHELL", "TERM", "LANG", "USER", "LOGNAME", "TMPDIR"):
-        if key in os.environ:
-            env[key] = os.environ[key]
-
-    env["PATH"] = _ensure_path_complete(env.get("PATH", "/usr/bin:/bin"))
-
-    env["HOME"] = str(home_dir)
-    env["CODEX_HOME"] = str(home_dir / ".codex")
-
-    if arm == "bare":
-        env["LEAN_CTX_DISABLED"] = "1"
-        env.pop("LEAN_CTX_ACTIVE", None)
-        env.pop("LEAN_CTX_PROJECT_ROOT", None)
-    else:
-        for key in ("LEAN_CTX_ACTIVE", "LEAN_CTX_PROJECT_ROOT"):
-            if key in os.environ:
-                env[key] = os.environ[key]
-
-    return env
-
-
-def setup_codex_home(home_dir: Path, arm: str, repo_dir: Path) -> None:
-    """Prepare a fresh HOME with Codex auth + optional lean-ctx hooks."""
-    home_dir.mkdir(parents=True, exist_ok=True)
-    codex_home = home_dir / ".codex"
-    codex_home.mkdir(exist_ok=True)
-
-    real_codex = Path.home() / ".codex"
-    for auth_file in ("auth.json",):
-        src = real_codex / auth_file
-        if src.exists():
-            shutil.copy2(src, codex_home / auth_file)
-
-    real_path = _ensure_path_complete(os.environ.get("PATH", "/usr/bin:/bin"))
-    (home_dir / ".zshrc").write_text(f'export PATH="{real_path}"\n')
-    (home_dir / ".bashrc").write_text(f'export PATH="{real_path}"\n')
-    (home_dir / ".profile").write_text(f'export PATH="{real_path}"\n')
-
-    if arm == "leanctx":
-        leanctx_bin = shutil.which("lean-ctx")
-        if not leanctx_bin:
-            raise RuntimeError("lean-ctx not found on PATH")
-
-        hooks = {
-            "hooks": {
-                "PostToolUse": [
-                    {
-                        "hooks": [
-                            {
-                                "type": "command",
-                                "command": f"{leanctx_bin} hook observe",
-                                "timeout": 5,
-                            }
-                        ],
-                        "matcher": ".*",
-                    }
-                ],
-            }
-        }
-        (codex_home / "hooks.json").write_text(json.dumps(hooks, indent=2))
-
-        config_toml = "[features]\nhooks = true\n"
-        (codex_home / "config.toml").write_text(config_toml)
-
-        leanctx_config = home_dir / ".config" / "lean-ctx"
-        leanctx_config.mkdir(parents=True, exist_ok=True)
-        (leanctx_config / "config.toml").write_text(
-            'shadow_mode = true\ntool_surface = "shadow"\n'
-        )
-
-
-def parse_codex_jsonl(raw_output: bytes) -> dict:
-    """Extract token usage from Codex --json JSONL output."""
-    usage = {
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "reasoning_tokens": 0,
-        "cache_read_tokens": 0,
-        "cache_write_tokens": 0,
-        "total_tokens": 0,
-        "tool_calls": [],
-    }
-
-    for line in raw_output.decode("utf-8", errors="replace").splitlines():
-        line = line.strip()
-        if not line:
-            continue
-        try:
-            event = json.loads(line)
-        except json.JSONDecodeError:
-            continue
-
-        event_type = event.get("type", "")
-
-        if "usage" in event:
-            u = event["usage"]
-            inp = u.get("input_tokens", 0)
-            out = u.get("output_tokens", 0)
-            usage["input_tokens"] += inp
-            usage["output_tokens"] += out
-            usage["reasoning_tokens"] += u.get("reasoning_output_tokens", u.get("reasoning_tokens", 0))
-            usage["cache_read_tokens"] += u.get("cached_input_tokens", u.get("cache_read_input_tokens", 0))
-            usage["cache_write_tokens"] += u.get("cache_write_input_tokens", u.get("cache_creation_input_tokens", 0))
-            usage["total_tokens"] += u.get("total_tokens", inp + out)
-
-        if event_type in ("tool_use", "item.started"):
-            item = event.get("item", event)
-            if item.get("type") == "command_execution":
-                cmd = item.get("command", "")[:80]
-                usage["tool_calls"].append(f"bash:{cmd}")
-            elif event.get("tool"):
-                usage["tool_calls"].append(event["tool"])
-
-    return usage
-
-
-def run_codex_task(
-    task_id: str,
-    prompt: str,
-    cwd: Path,
-    home_dir: Path,
-    arm: str,
-    timeout: int = 600,
-    transcript_path: Optional[Path] = None,
-) -> TaskResult:
-    """Run a single task via `codex exec` and return structured results."""
-    env = build_env(home_dir, arm)
-
-    codex_bin = shutil.which("codex")
-    if not codex_bin:
-        return TaskResult(
-            task_id=task_id, arm=arm, exit_code=-1, wall_time_s=0,
-            error="codex not found on PATH",
-        )
-
-    cmd = [
-        codex_bin, "exec",
-        "--json",
-        "-s", "workspace-write",
-        "-C", str(cwd),
-        "--dangerously-bypass-approvals-and-sandbox",
-        "--dangerously-bypass-hook-trust",
-        "--ephemeral",
-        prompt,
-    ]
-
-    t0 = time.monotonic()
-    try:
-        proc = subprocess.run(
-            cmd,
-            capture_output=True,
-            env=env,
-            timeout=timeout,
-            cwd=str(cwd),
-        )
-        exit_code = proc.returncode
-        error_msg = None
-    except subprocess.TimeoutExpired as exc:
-        exit_code = -1
-        error_msg = f"timeout after {timeout}s"
-        proc = exc
-    except Exception as exc:
-        exit_code = -1
-        error_msg = str(exc)
-        proc = None
-
-    wall_time = time.monotonic() - t0
-
-    stdout = getattr(proc, "stdout", b"") or b""
-    stderr = getattr(proc, "stderr", b"") or b""
-
-    if transcript_path:
-        transcript_path.parent.mkdir(parents=True, exist_ok=True)
-        transcript_path.write_bytes(stdout)
-        transcript_path.with_suffix(".stderr.log").write_bytes(stderr)
-
-    usage = parse_codex_jsonl(stdout)
-
-    return TaskResult(
-        task_id=task_id,
-        arm=arm,
-        exit_code=exit_code,
-        wall_time_s=round(wall_time, 2),
-        input_tokens=usage["input_tokens"],
-        output_tokens=usage["output_tokens"],
-        reasoning_tokens=usage["reasoning_tokens"],
-        cache_read_tokens=usage["cache_read_tokens"],
-        cache_write_tokens=usage["cache_write_tokens"],
-        total_tokens=usage["total_tokens"],
-        error=error_msg,
-        tool_calls=usage["tool_calls"],
-    )
-
-```
-
-### Core Architecture Module: `_archive/bench/lifecycle/harness/repo_setup.py`
-```
-"""Repository setup: clone, checkout fixed snapshot, apply seed regressions."""
-
-from __future__ import annotations
-
-import json
-import shutil
-import subprocess
-from pathlib import Path
-from typing import Union
-
-
-def load_lane(lane_path: Path) -> dict:
-    return json.loads(lane_path.read_text())
-
-
-def clone_repo(repo_url: str, target: Path, cache_dir: Path) -> None:
-    """Clone via mirror cache for speed on repeat runs."""
-    cache_dir.mkdir(parents=True, exist_ok=True)
-    repo_name = repo_url.rstrip("/").split("/")[-1].replace(".git", "")
-    mirror = cache_dir / f"{repo_name}.git"
-
-    if not mirror.exists():
-        print(f"  Cloning mirror: {repo_url}")
-        subprocess.run(
-            ["git", "clone", "--mirror", repo_url, str(mirror)],
-            check=True, capture_output=True,
-        )
-    else:
-        print(f"  Updating mirror: {mirror.name}")
-        subprocess.run(
-            ["git", "remote", "update"],
-            cwd=str(mirror), check=True, capture_output=True,
-        )
-
-    if target.exists():
-        shutil.rmtree(target)
-
-    print(f"  Cloning from mirror to {target.name}")
-    subprocess.run(
-        ["git", "clone", str(mirror), str(target)],
-        check=True, capture_output=True,
-    )
-
-
-def checkout_snapshot(repo: Path, commit: str) -> None:
-    subprocess.run(
-        ["git", "checkout", commit],
-        cwd=str(repo), check=True, capture_output=True,
-    )
-    subprocess.run(
-        ["git", "checkout", "-b", "broken-start"],
-        cwd=str(repo), check=True, capture_output=True,
-    )
-
-
-def apply_seed_patches(repo: Path, lane: dict) -> None:
-    """Apply seed regressions by text replacement in source files."""
-    patches = lane.get("seed_patch_files", {})
-    for filepath, spec in patches.items():
-        target = repo / filepath
-        if not target.exists():
-            print(f"  WARNING: seed target not found: {filepath}")
-            continue
-
-        content = target.read_text()
-        replacements = spec if isinstance(spec, list) else [spec]
-
-        for repl in replacements:
-            old = repl["find"]
-            new = repl["replace"]
-            count = content.count(old)
-            if count == 0:
-                print(f"  WARNING: seed anchor not found in {filepath}: {old[:60]}...")
-                continue
-            if count > 1:
-                print(f"  WARNING: seed anchor found {count} times in {filepath}, replacing first")
-            content = content.replace(old, new, 1)
-
-        target.write_text(content)
-        print(f"  Seeded regression in {filepath}")
-
-
-def add_seed_files(repo: Path, lane: dict) -> None:
-    """Write additional files (e.g. baseline test files) into the repo."""
-    additions = lane.get("seed_add_files", {})
-    for filepath, content in additions.items():
-        target = repo / filepath
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(content)
-        print(f"  Added seed file: {filepath}")
-
-
-def reinit_git(repo: Path) -> None:
-    """Commit the seeded state as a clean broken-start root."""
-    subprocess.run(
-        ["git", "add", "-A"],
-        cwd=str(repo), check=True, capture_output=True,
-    )
-    subprocess.run(
-        ["git", "commit", "-m", "broken-start: composite seed applied",
-         "--author", "benchmark <bench@lifecycle>"],
-        cwd=str(repo), check=True, capture_output=True,
-        env={**dict(__import__("os").environ), "GIT_COMMITTER_NAME": "benchmark",
-             "GIT_COMMITTER_EMAIL": "bench@lifecycle"},
-    )
-    subprocess.run(
-        ["git", "remote", "remove", "origin"],
-        cwd=str(repo), capture_output=True,
-    )
-
-
-def install_deps(repo: Path, lane: dict) -> None:
-    """Run dependency installation for the lane if configured."""
-    deps_cmd = lane.get("setup_deps")
-    if not deps_cmd:
-        return
-    print(f"  Installing deps: {deps_cmd}")
-    subprocess.run(
-        deps_cmd, shell=True, cwd=str(repo),
-        capture_output=True, timeout=300,
-    )
-
-
-def setup_lane(
-    lane: dict, run_dir: Path, cache_dir: Path
-) -> Path:
-    """Full lane setup: clone -> checkout -> seed -> deps. Returns repo path."""
-    lane_id = lane["lane_id"]
-    repo_dir = run_dir / "repo"
-
-    print(f"\n[{lane_id}] Setting up repository...")
-    clone_repo(lane["repo_url"], repo_dir, cache_dir)
-    checkout_snapshot(repo_dir, lane["fixed_snapshot"])
-    apply_seed_patches(repo_dir, lane)
-    add_seed_files(repo_dir, lane)
-    reinit_git(repo_dir)
-    install_deps(repo_dir, lane)
-
-    print(f"[{lane_id}] Repository ready at {repo_dir}")
-    return repo_dir
-
-```
-
-### Core Architecture Module: `_archive/bench/lifecycle/harness/report.py`
-```
-"""Report generator: comparison tables, delta calculations, markdown output."""
-
-from __future__ import annotations
-
-import json
-import sys
-from datetime import datetime, timezone
-from pathlib import Path
-
-
-def load_run_data(run_dir: Path) -> dict[str, dict[str, dict]]:
-    """Load all meta.json files. Returns {lane_id: {arm: meta}}."""
-    data: dict[str, dict[str, dict]] = {}
-    for meta_path in sorted(run_dir.rglob("meta.json")):
-        if meta_path.parent.name in ("task-01", "task-02", "task-03"):
-            continue
-        meta = json.loads(meta_path.read_text())
-        lane_id = meta.get("lane_id", meta_path.parent.parent.name)
-        arm = meta.get("arm", meta_path.parent.name)
-        data.setdefault(lane_id, {})[arm] = meta
-    return data
-
-
-def format_delta(treatment: int | float, bare: int | float) -> str:
-    if bare == 0:
-        return "N/A"
-    pct = ((treatment - bare) / bare) * 100
-    sign = "+" if pct > 0 else ""
-    return f"{sign}{pct:.0f}%"
-
-
-def generate_report(run_dir: Path) -> str:
-    data = load_run_data(run_dir)
-
-    if not data:
-        return "No data found."
-
-    lines: list[str] = []
-    lines.append(f"# Lifecycle Benchmark Report")
-    lines.append(f"")
-    lines.append(f"Run: `{run_dir.name}` | Generated: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}")
-    lines.append("")
-
-    lines.append("## Per-Lane Results")
-    lines.append("")
-    lines.append("| Lane | Arm | Pass | Total Tok | Input | Output | Reasoning | Cache Read | Weighted | Wall (s) |")
-    lines.append("|------|-----|------|-----------|-------|--------|-----------|------------|----------|----------|")
-
-    totals: dict[str, dict[str, int | float]] = {}
-
-    for lane_id in sorted(data.keys()):
-        for arm in ("leanctx", "bare"):
-            if arm not in data[lane_id]:
-                continue
-            meta = data[lane_id][arm]
-            passed = meta.get("tasks_passed", 0)
-            total = meta.get("tasks_total", 0)
-            tok = meta.get("total_tokens", 0)
-            inp = meta.get("total_input_tokens", 0)
-            out = meta.get("total_output_tokens", 0)
-            wall = meta.get("total_wall_time_s", 0)
-
-            reasoning = sum(t.get("reasoning_tokens", 0) for t in meta.get("tasks", []))
-            cache_read = sum(t.get("cache_read_tokens", 0) for t in meta.get("tasks", []))
-            weighted = sum(t.get("weighted_cost", 0) for t in meta.get("tasks", []))
-
-            lines.append(
-                f"| {lane_id} | {arm} | {passed}/{total} | "
-                f"{tok:,} | {inp:,} | {out:,} | {reasoning:,} | "
-                f"{cache_read:,} | {weighted:,} | {wall:.1f} |"
-            )
-
-            t = totals.setdefault(arm, {
-                "passed": 0, "total": 0, "tokens": 0, "input": 0,
-                "output": 0, "reasoning": 0, "cache_read": 0,
-                "weighted": 0, "wall": 0,
-            })
-            t["passed"] += passed
-            t["total"] += total
-            t["tokens"] += tok
-            t["input"] += inp
-            t["output"] += out
-            t["reasoning"] += reasoning
-            t["cache_read"] += cache_read
-            t["weighted"] += weighted
-            t["wall"] += wall
-
-    lines.append("")
-    lines.append("## Aggregate Comparison")
-    lines.append("")
-
-    if "leanctx" in totals and "bare" in totals:
-        lc = totals["leanctx"]
-        br = totals["bare"]
-
-        lines.append("| Metric | lean-ctx | Bare | Delta |")
-        lines.append("|--------|----------|------|-------|")
-        lines.append(f"| Tasks passed | {lc['passed']}/{lc['total']} | {br['passed']}/{br['total']} | |")
-        lines.append(f"| Total tokens | {lc['tokens']:,} | {br['tokens']:,} | {format_delta(lc['tokens'], br['tokens'])} |")
-        lines.append(f"| Input tokens | {lc['input']:,} | {br['input']:,} | {format_delta(lc['input'], br['input'])} |")
-        lines.append(f"| Output tokens | {lc['output']:,} | {br['output']:,} | {format_delta(lc['output'], br['output'])} |")
-        lines.append(f"| Reasoning | {lc['reasoning']:,} | {br['reasoning']:,} | {format_delta(lc['reasoning'], br['reasoning'])} |")
-        lines.append(f"| Cache read | {lc['cache_read']:,} | {br['cache_read']:,} | {format_delta(lc['cache_read'], br['cache_read'])} |")
-        lines.append(f"| Weighted cost | {lc['weighted']:,} | {br['weighted']:,} | {format_delta(lc['weighted'], br['weighted'])} |")
-        lines.append(f"| Wall time (s) | {lc['wall']:.1f} | {br['wall']:.1f} | {format_delta(lc['wall'], br['wall'])} |")
-    else:
-        for arm, t in totals.items():
-            lines.append(f"**{arm}:** {t['passed']}/{t['total']} passed, "
-                         f"{t['tokens']:,} tokens, {t['wall']:.1f}s")
-
-    lines.append("")
-    lines.append("## Per-Task Detail")
-    lines.append("")
-
-    for lane_id in sorted(data.keys()):
-        lines.append(f"### {lane_id}")
-        lines.append("")
-        lines.append("| Task | Arm | Pass | Tokens | Input | Output | Wall (s) | Error |")
-        lines.append("|------|-----|------|--------|-------|--------|----------|-------|")
-
-        for arm in ("leanctx", "bare"):
-            if arm not in data[lane_id]:
-                continue
-            for idx, task in enumerate(data[lane_id][arm].get("tasks", []), 1):
-                passed = "PASS" if task.get("verify_passed") else "FAIL"
-                error = task.get("error", "") or ""
-                tid = task.get("task_id", f"task-{idx}")
-                lines.append(
-                    f"| {tid} | "
-                    f"{arm} | {passed} | {task.get('total_tokens', 0):,} | "
-                    f"{task.get('input_tokens', 0):,} | {task.get('output_tokens', 0):,} | "
-                    f"{task.get('wall_time_s', 0):.1f} | {error[:40]} |"
-                )
-        lines.append("")
-
-    report = "\n".join(lines)
-
-    report_path = run_dir / "report.md"
-    report_path.write_text(report)
-    print(f"\nReport written to {report_path}")
-
-    return report
-
-
-def main():
-    if len(sys.argv) < 2:
-        print("Usage: python3 -m harness.report <run-dir>")
-        sys.exit(1)
-
-    run_dir = Path(sys.argv[1])
-    if not run_dir.exists():
-        print(f"ERROR: {run_dir} not found", file=sys.stderr)
-        sys.exit(1)
-
-    report = generate_report(run_dir)
-    print(report)
-
-
-if __name__ == "__main__":
-    main()
-
-```
-
-### Core Architecture Module: `_archive/bench/lifecycle/harness/run_lifecycle.py`
-```
-"""Main benchmark runner: orchestrates lanes, arms, and sequential tasks.
-
-Usage:
-    python3 -m harness.run_lifecycle --run-id smoke --lane beets
-    python3 -m harness.run_lifecycle --run-id v1
-    python3 -m harness.run_lifecycle --run-id debug1 --lane fastify --arm leanctx
-"""
-
-from __future__ import annotations
-
-import argparse
-import json
-import os
-import shutil
-import subprocess
-import sys
-import time
-from datetime import datetime, timezone
-from pathlib import Path
-
-from . import BENCH_ROOT, LANES_DIR, CONFIG_PATH, ARMS
-from .codex_runner import run_codex_task, setup_codex_home, TaskResult, _ensure_path_complete
-from .repo_setup import load_lane, setup_lane
-
-
-def load_config() -> dict:
-    return json.loads(CONFIG_PATH.read_text())
-
-
-def _verifier_env() -> dict[str, str]:
-    """Build env for verifier subprocesses with complete PATH."""
-    env = dict(os.environ)
-    env["PATH"] = _ensure_path_complete(env.get("PATH", "/usr/bin:/bin"))
-    return env
-
-
-def run_verifier(repo: Path, verify_cmd: str) -> tuple[int, str]:
-    """Run a task verifier and return (exit_code, output)."""
-    try:
-        proc = subprocess.run(
-            verify_cmd, shell=True, cwd=str(repo),
-            capture_output=True, timeout=120, text=True,
-            env=_verifier_env(),
-        )
-        output = (proc.stdout + "\n" + proc.stderr).strip()
-        return proc.returncode, output
-    except subprocess.TimeoutExpired:
-        return -1, "verifier timeout"
-    except Exception as exc:
-        return -1, str(exc)
-
-
-def run_lane_arm(
-    lane: dict,
-    arm: str,
-    run_dir: Path,
-    config: dict,
-    cache_dir: Path,
-) -> list[dict]:
-    """Run all tasks for one lane+arm combination. Returns per-task results."""
-    lane_id = lane["lane_id"]
-    arm_dir = run_dir / lane_id / arm
-
-    meta_path = arm_dir / "meta.json"
-    if meta_path.exists():
-        print(f"\n[{lane_id}/{arm}] Already completed (meta.json exists), skipping.")
-        return json.loads(meta_path.read_text())["tasks"]
-
-    repo_dir = setup_lane(lane, arm_dir, cache_dir)
-    home_dir = arm_dir / "home"
-    setup_codex_home(home_dir, arm, repo_dir)
-
-    timeout = config.get("timeouts", {}).get("task_seconds", 600)
-    tasks = lane["tasks"]
-    results: list[dict] = []
-
-    for task in sorted(tasks, key=lambda t: t["order"]):
-        task_id = task["id"]
-        task_num = f"task-{task['order']:02d}"
-        task_dir = arm_dir / task_num
-
-        print(f"\n[{lane_id}/{arm}] Running {task_num}: {task_id}")
-        print(f"  Class: {task['class']}")
-
-        result = run_codex_task(
-            task_id=task_id,
-            prompt=task["prompt"],
-            cwd=repo_dir,
-            home_dir=home_dir,
-            arm=arm,
-            timeout=timeout,
-            transcript_path=task_dir / "transcript.jsonl",
-        )
-
-        print(f"  Exit: {result.exit_code} | Wall: {result.wall_time_s}s")
-        print(f"  Tokens: {result.total_tokens} total "
-              f"({result.input_tokens} in, {result.output_tokens} out)")
-
-        verify_exit, verify_output = run_verifier(repo_dir, task["verify_cmd"])
-        task_passed = verify_exit == 0
-
-        print(f"  Verify: {'PASS' if task_passed else 'FAIL'} (exit {verify_exit})")
-
-        task_result = {
-            **result.to_dict(),
-            "verify_exit": verify_exit,
-            "verify_passed": task_passed,
-            "verify_output": verify_output[:2000],
-        }
-        results.append(task_result)
-
-        (task_dir / "meta.json").parent.mkdir(parents=True, exist_ok=True)
-        (task_dir / "meta.json").write_text(json.dumps(task_result, indent=2))
-
-    meta = {
-        "lane_id": lane_id,
-        "arm": arm,
-        "completed_at": datetime.now(timezone.utc).isoformat(),
-        "tasks_passed": sum(1 for r in results if r["verify_passed"]),
-        "tasks_total": len(results),
-        "total_tokens": sum(r["total_tokens"] for r in results),
-        "total_input_tokens": sum(r["input_tokens"] for r in results),
-        "total_output_tokens": sum(r["output_tokens"] for r in results),
-        "total_wall_time_s": round(sum(r["wall_time_s"] for r in results), 2),
-        "tasks": results,
-    }
-    meta_path.parent.mkdir(parents=True, exist_ok=True)
-    meta_path.write_text(json.dumps(meta, indent=2))
-
-    return results
-
-
-def main():
-    parser = argparse.ArgumentParser(description="Lifecycle Benchmark Harness")
-    parser.add_argument("--run-id", required=True, help="Run identifier (e.g. smoke, v1)")
-    parser.add_argument("--lane", help="Single lane to run (beets/fastify/terraform)")
-    parser.add_argument("--arm", help="Single arm to run (leanctx/bare)")
-    parser.add_argument("--report", action="store_true", help="Generate report after run")
-    args = parser.parse_args()
-
-    config = load_config()
-    runs_dir = BENCH_ROOT / config.get("runs_dir", "runs")
-    run_dir = runs_dir / args.run_id
-    cache_dir = BENCH_ROOT / config.get("repo_cache_dir", ".cache/repos")
-
-    lane_ids = [args.lane] if args.lane else config.get("lanes", [])
-    arms = [args.arm] if args.arm else list(ARMS)
-
-    if not shutil.which("codex"):
-        print("ERROR: codex not found on PATH", file=sys.stderr)
-        sys.exit(1)
-
-    print(f"=== Lifecycle Benchmark: run-id={args.run_id} ===")
-    print(f"Lanes: {lane_ids}")
-    print(f"Arms: {arms}")
-    print(f"Output: {run_dir}")
-
-    t0 = time.monotonic()
-
-    for lane_id in lane_ids:
-        lane_path = LANES_DIR / f"{lane_id}.json"
-        if not lane_path.exists():
-            print(f"ERROR: lane definition not found: {lane_path}", file=sys.stderr)
-            sys.exit(1)
-        lane = load_lane(lane_path)
-
-        for arm in arms:
-            run_lane_arm(lane, arm, run_dir, config, cache_dir)
-
-    total_time = time.monotonic() - t0
-    print(f"\n=== Benchmark complete in {total_time:.0f}s ===")
-
-    if args.report:
-        from .report import generate_report
-        generate_report(run_dir)
-
-
-if __name__ == "__main__":
-    main()
-
-```
-
-### Core Architecture Module: `_archive/jetbrains-lean-ctx/src/main/kotlin/com/leanctx/plugin/util/AnsiText.kt`
-```
-package com.leanctx.plugin.util
-
-// ESC [ ... <final byte> — matches ANSI CSI sequences (colour/SGR etc.) that
-// Swing dialogs cannot render. The CLI emits these (e.g. `lean-ctx doctor`);
-// strip them before showing captured output in a Messages popup.
-private val ANSI_CSI = Regex("\\[[0-9;?]*[ -/]*[@-~]")
-
-internal fun stripAnsi(text: String): String = ANSI_CSI.replace(text, "")
-
-```
 
 ### Core Architecture Module: `integrations/claude-code-mod/hooks/cockpit.tsx`
 ```
@@ -1135,12 +340,60 @@ type LeanCtxHookTextSignature = { start: string; ends: readonly LeanCtxHookTextE
 // the cross-language drift test there whenever an authored hook text changes.
 const LEAN_CTX_HOOK_TEXT_SIGNATURES: readonly LeanCtxHookTextSignature[] = [
   {
+    start: "lean-ctx tools for this session: ctx_read for Read, ctx_search for Grep, ctx_shell for Shell, ctx_glob for Glob, ctx_tree for ls.",
+    ends: [
+      { end: "Native Read stays available for editing." },
+    ],
+  },
+  {
+    start: "lean-ctx routing: reads/searches via ctx_read/ctx_search/ctx_glob/ctx_tree, commands via ctx_shell;",
+    ends: [
+      { end: "Bash/cat/sed/grep." },
+    ],
+  },
+  {
     start: "lean-ctx active: ALWAYS use ctx_* MCP tools instead of native equivalents.",
     ends: [
       { end: "Exclusive tools: ctx_compose, ctx_callgraph, ctx_knowledge, ctx_session." },
     ],
   },
   {
+    // Rules v13 (A3) and later.
+    start: "lean-ctx routing — the host's built-in tools map to:",
+    ends: [
+      {
+        end: "Use native Read for out-of-root; `lean-ctx doctor` shows effective roots.",
+        continues: [
+          "Other tools: ctx_call(tool=<name>).",
+          "Advanced tools not in your profile are available via ctx_call(tool=<name>) gateway.",
+          "Prefer stdlib and native platform alternatives before adding code or dependencies.",
+          "Solution efficiency ladder:",
+          "challenge every requirement, prefer deletion.",
+        ],
+      },
+      {
+        end: "Other tools: ctx_call(tool=<name>).",
+        continues: [
+          "Prefer stdlib and native platform alternatives before adding code or dependencies.",
+          "Solution efficiency ladder:",
+          "challenge every requirement, prefer deletion.",
+        ],
+      },
+      {
+        // Emitted by lean-ctx 3.11.4 and earlier.
+        end: "Advanced tools not in your profile are available via ctx_call(tool=<name>) gateway.",
+        continues: [
+          "Prefer stdlib and native platform alternatives before adding code or dependencies.",
+          "Solution efficiency ladder:",
+          "challenge every requirement, prefer deletion.",
+        ],
+      },
+      { end: "Prefer stdlib and native platform alternatives before adding code or dependencies." },
+      { end: "Preserve validation, security, and error-handling." },
+    ],
+  },
+  {
+    // Rules v12 and earlier.
     start: "CRITICAL: ALWAYS use lean-ctx ctx_* tools as mapped below.",
     ends: [
       {
@@ -1288,55 +541,7 @@ let leanCtxSeen = false;
 let leanServer: string | undefined;
 let commandAttempted = false;
 let commandRegistered = false;
-// Set by a main-loop compaction; the next prompt carries the lean-ctx session state once.
-let resumePending = false;
-
-export const register: Register = (on, options) => {
-  // The cockpit: sidebar, pulse line, turn and milestone overlays (cockpit.tsx).
-  // Held wakes go out on the next watcher tick after the turn (≤ 2 s); the
-  // watcher keeps running while any are held.
-  registerCockpit(
-    on,
-    {
-      onTurnStart: () => {
-        mainTurnActive = true;
-        wakeInFlightTicks = undefined;
-      },
-      onMainTurnComplete: () => {
-        mainTurnActive = false;
-      },
-    },
-    {
-      panel: asRecord(options).cockpit_panel !== false,
-      pulse: asRecord(options).cockpit_pulse_line !== false,
-      cards: asRecord(options).cockpit_turn_cards !== false,
-    },
-  );
-  // ctx_patch / ctx_read / ctx_search results drawn as diffs and code
-  // (render.tsx). Display only: the model receives every result unchanged.
-  if (asRecord(options).color_output !== false) registerResultRendering(on);
-  const frontLoaded = getFrontLoadedTools(options);
-  const shapeNative = asRecord(options).shape_native_output !== false;
-  const keepHookContext = asRecord(options).keep_hook_context === true;
-  // Off: background jobs are not watched and the model checks them itself.
-  const wakeOnFinish = asRecord(options).wake_on_job_finish !== false;
-
-  on("tool.describe", { tool: LEAN_CTX_TOOL_PATTERN }, async ($, event) => {
-    const match = getLeanCtxTool(event.tool);
-    if (!match) return { description: event.description, isDeferred: event.isDeferred };
-
-    leanCtxSeen = true;
-    leanServer = match.server;
-    await ensureMeterCommand($);
-    return {
-      description: event.description,
-      isDeferred: !frontLoaded.has(match.tool),
-    };
-  });
-
-  // Live skill (concept K5): the shipped SKILL.md is static; this prefixes it
-  // with what is true in *this* session, so the guidance never contradicts the
-  // mod (e.g. "no need to
+// Set by a main-loop compaction; the next promp
 ```
 
 ### Core Architecture Module: `integrations/claude-code-mod/hooks/render.tsx`
@@ -1352,7 +557,7 @@ export const register: Register = (on, options) => {
 // The formats read here are lean-ctx's own output contract: the ```diff fence
 // of ctx_patch, the `name NL` header with `  N| ` or `N:hash|` rows of
 // ctx_read, and `path:line text` hits of ctx_search.
-import type { Elements as SurfaceElements, On, RenderElement } from "claude-code";
+import type { Elements as SurfaceElements, EngineInterface, On, RenderElement } from "claude-code";
 
 const TOOLS = [
   "mcp__lean-ctx__ctx_patch",
@@ -1378,6 +583,8 @@ type Drawing = { summary: string; blocks: Block[] };
 const MAX_CODE_CHARS = 100_000;
 const DIFF_FENCE = /^```diff[ \t]*\n([\s\S]*?)\n?^```[ \t]*$/gm;
 const NEW_FILE = /^\+\+\+ (?:b\/)?(\S+)/m;
+// A ctx_patch receipt's pointer to the diff lean-ctx archived for this mod.
+const DIFF_TRAILER = /^\[diff:([0-9a-f]{16})\]$/gm;
 const READ_HEADER = /^(\S+) \d+L\b/;
 const LINES_ROW = /^ *(\d+)\| ?(.*)$/;
 const ANCHOR_ROW = /^(\d+):[0-9a-f]{2,8}\|(.*)$/;
@@ -1393,6 +600,7 @@ export function registerResultRendering(on: On): void {
     },
     async ($, event, next) => {
       const props = event.props;
+      await loadArtifacts($, props.tool, props.output);
       const drawing = drawingFor(props.tool, props.tool_use_id, props.output, props.input);
       if (!drawing) return next(event);
       // The engine keeps the call row; only its result text shrinks to the summary.
@@ -1418,6 +626,7 @@ export function registerResultRendering(on: On): void {
     async ($, event, next) => {
       const props = event.props;
       // A standalone result has no call input: headerless full reads stay plain.
+      await loadArtifacts($, props.tool, props.output);
       const drawing = drawingFor(props.tool, `result:${props.tool_use_id}`, props.output, undefined);
       if (!drawing) return next(event);
       const els = $.ui.resolve(event);
@@ -1447,14 +656,31 @@ export function resultText(output: unknown): string {
   return "";
 }
 
-/** ctx_patch: every ```diff fence becomes a diff block; the `✓` line is the summary. */
-export function drawPatch(text: string): Drawing | null {
+/** The ids of the `[diff:<id>]` trailers a ctx_patch receipt names. */
+export function diffArtifactIds(text: string): string[] {
+  return [...text.matchAll(DIFF_TRAILER)].map((match) => match[1] ?? "").filter((id) => id);
+}
+
+/**
+ * ctx_patch: every ```diff fence becomes a diff block (`evidence=true`, and
+ * receipts before 3.12.1); a `[diff:<id>]` trailer becomes the archived diff
+ * from `artifacts`, which the model never reads. The `patched …`/`created …`
+ * (or legacy `✓`) line is the summary.
+ */
+export function drawPatch(text: string, artifacts: ReadonlyMap<string, string> = new Map()): Drawing | null {
   const blocks: Block[] = [];
   let summary = "";
   let cursor = 0;
+  let drawn = false;
   const pushNotes = (chunk: string) => {
     for (const line of chunk.split("\n")) {
-      if (!summary && line.startsWith("✓")) summary = line;
+      const trailer = /^\[diff:([0-9a-f]{16})\]$/.exec(line);
+      if (trailer) {
+        const source = artifacts.get(trailer[1] ?? "");
+        if (source === undefined || source.length > MAX_CODE_CHARS) continue;
+        blocks.push({ kind: "diff", source, path: NEW_FILE.exec(source)?.[1] });
+        drawn = true;
+      } else if (!summary && /^(?:patched |created |✓)/.test(line)) summary = line;
       else if (line.trim()) blocks.push({ kind: "note", text: line });
     }
   };
@@ -1463,10 +689,11 @@ export function drawPatch(text: string): Drawing | null {
     const source = match[1] ?? "";
     if (source.length > MAX_CODE_CHARS) return null;
     blocks.push({ kind: "diff", source, path: NEW_FILE.exec(source)?.[1] });
+    drawn = true;
     cursor = (match.index ?? 0) + match[0].length;
   }
-  if (cursor === 0) return null;
   pushNotes(text.slice(cursor));
+  if (!drawn) return null;
   return { summary: summary || "✓ patched", blocks: mergeNotes(blocks) };
 }
 
@@ -1570,32 +797,1248 @@ function mergeNotes(blocks: Block[]): Block[] {
   const merged: Block[] = [];
   for (const block of blocks) {
     const last = merged[merged.length - 1];
-    if (block.kind === "note" && last?.kind === "note") last.text += `\n${block.text}`;
-    else merged.push({ ...block });
-  }
-  return merged;
+    if 
+```
+
+### Core Architecture Module: `integrations/hermes-lean-ctx/benchmarks/engines.py`
+```
+"""Engine adapters for the benchmark.
+
+The lean-ctx adapter always runs (it falls back to local compaction when the
+daemon is offline). Competitor engines are **import-guarded**: if the package is
+not installed, or its API does not match, the adapter is returned with
+``available=False`` and a reason — it is skipped, never faked.
+"""
+
+from __future__ import annotations
+
+import importlib
+from dataclasses import dataclass
+from typing import Any, Callable, Dict, List, Optional
+
+Message = Dict[str, Any]
+CompressFn = Callable[[List[Message], Optional[int]], List[Message]]
+
+
+def _unavailable(*_args: Any, **_kwargs: Any) -> List[Message]:
+    raise RuntimeError("engine adapter is unavailable and must not be invoked")
+
+
+@dataclass
+class Adapter:
+    name: str
+    compress: CompressFn
+    available: bool
+    note: str = ""
+
+
+def lean_ctx_adapter(
+    *,
+    context_length: int,
+    base_url: Optional[str] = None,
+    token: Optional[str] = None,
+) -> Adapter:
+    from hermes_lean_ctx.config import LeanCtxConfig
+    from hermes_lean_ctx.engine import LeanCtxEngine
+
+    cfg = LeanCtxConfig(
+        base_url=base_url or "http://127.0.0.1:8080",
+        token=token,
+        context_length=context_length,
+    )
+    engine = LeanCtxEngine(config=cfg)
+    note = "daemon" if engine._gateway.is_available() else "local-fallback"
+    return Adapter("lean-ctx", lambda msgs, ct=None: engine.compress(msgs, ct), True, note)
+
+
+def _wrap_context_engine(name: str, candidates, context_length: int) -> Adapter:
+    """Build an adapter from the first importable Hermes ContextEngine class."""
+    last_reason = "not installed"
+    for module_path, class_names in candidates:
+        try:
+            mod = importlib.import_module(module_path)
+        except Exception as exc:  # noqa: BLE001 - any import failure → skip
+            last_reason = f"{module_path}: {exc.__class__.__name__}"
+            continue
+        for class_name in class_names:
+            cls = getattr(mod, class_name, None)
+            if not isinstance(cls, type):
+                continue
+            engine = None
+            for ctor in (lambda: cls(context_length=context_length), cls):
+                try:
+                    engine = ctor()
+                    break
+                except Exception:  # noqa: BLE001 - try the next constructor shape
+                    engine = None
+            if engine is None:
+                last_reason = f"{module_path}.{class_name}: construct failed"
+                continue
+            compress = getattr(engine, "compress", None)
+            if not callable(compress):
+                last_reason = f"{module_path}.{class_name}: no compress()"
+                continue
+            return Adapter(name, lambda msgs, ct=None: compress(msgs, ct), True, f"{module_path}.{class_name}")
+    return Adapter(name, _unavailable, False, last_reason)
+
+
+def builtin_compressor_adapter(*, context_length: int) -> Adapter:
+    """Hermes' built-in ContextCompressor (if a Hermes checkout is importable)."""
+    return _wrap_context_engine(
+        "builtin-compressor",
+        [
+            ("agent.context_compressor", ("ContextCompressor",)),
+            ("agent.compression", ("ContextCompressor",)),
+            ("hermes.context_compressor", ("ContextCompressor",)),
+        ],
+        context_length,
+    )
+
+
+def hermes_lcm_adapter(*, context_length: int) -> Adapter:
+    """The hermes-lcm engine (if ``hermes_lcm`` is installed)."""
+    return _wrap_context_engine(
+        "hermes-lcm",
+        [
+            ("hermes_lcm", ("LCMEngine", "LosslessContextEngine", "ContextEngine", "Engine")),
+            ("hermes_lcm.engine", ("LCMEngine", "LosslessContextEngine", "ContextEngine", "Engine")),
+        ],
+        context_length,
+    )
+
+
+def discover_adapters(
+    *,
+    context_length: int,
+    base_url: Optional[str] = None,
+    token: Optional[str] = None,
+) -> List[Adapter]:
+    """All adapters; competitors that fail to import are included as unavailable."""
+    return [
+        lean_ctx_adapter(context_length=context_length, base_url=base_url, token=token),
+        builtin_compressor_adapter(context_length=context_length),
+        hermes_lcm_adapter(context_length=context_length),
+    ]
+
+```
+
+### Core Architecture Module: `integrations/hermes-lean-ctx/engine.py`
+```
+"""``LeanCtxEngine`` — lean-ctx as a Hermes context engine.
+
+Replaces the built-in ``ContextCompressor``: deterministic, prompt-cache
+friendly compaction of the message window plus native lean-ctx recall tools.
+All engine logic that *can* live in the daemon does (Single Source of Truth);
+this class is a thin, fault-tolerant adapter over the ``/v1`` API.
+"""
+
+from __future__ import annotations
+
+import json
+import logging
+from typing import Any, Dict, List, Optional
+
+try:  # Real host contract wins whenever a Hermes checkout is importable.
+    from agent.context_engine import ContextEngine  # type: ignore
+except Exception:  # pragma: no cover - exercised outside Hermes
+    from ._hermes_compat import ContextEngine  # type: ignore
+
+from . import compaction, presets
+from . import tokens as _tokens
+from . import tools as _tools
+from .config import LeanCtxConfig
+from .schemas import recall_hint
+from .transport import ToolGateway
+
+logger = logging.getLogger(__name__)
+
+_ENGINE_NAME = "lean-ctx"
+_OFFLOAD_MAX_CHARS = 8_000
+
+
+def _first_int(d: Dict[str, Any], *keys: str) -> Optional[int]:
+    for key in keys:
+        val = d.get(key)
+        if isinstance(val, bool):
+            continue
+        if isinstance(val, int):
+            return val
+        if isinstance(val, float):
+            return int(val)
+    return None
+
+
+class LeanCtxEngine(ContextEngine):
+    """Context engine backed by the lean-ctx daemon."""
+
+    def __init__(
+        self,
+        context_length: Optional[int] = None,
+        *,
+        config: Optional[LeanCtxConfig] = None,
+        hermes_home: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        cfg = config or LeanCtxConfig.from_env()
+        resolved_ctx = int(context_length or cfg.context_length)
+        if resolved_ctx != cfg.context_length:
+            cfg = cfg.with_context_length(resolved_ctx)
+        self._config = cfg
+        self._hermes_home = hermes_home
+        self._session_id: Optional[str] = None
+        self._gateway = ToolGateway(cfg)
+
+        # Initialise the host base in whatever shape it expects, then assert our
+        # own attribute invariants so they exist regardless of the base.
+        try:
+            super().__init__(context_length=resolved_ctx)  # type: ignore[misc]
+        except TypeError:
+            try:
+                super().__init__()  # type: ignore[misc]
+            except Exception:  # pragma: no cover - exotic host base
+                pass
+        self.last_prompt_tokens = 0
+        self.last_completion_tokens = 0
+        self.last_total_tokens = 0
+        self.context_length = resolved_ctx
+        self.threshold_tokens = cfg.threshold_tokens()
+        self.compression_count = 0
+
+    # --- identity -----------------------------------------------------------
+
+    @property
+    def name(self) -> str:
+        return _ENGINE_NAME
+
+    @property
+    def config(self) -> LeanCtxConfig:
+        return self._config
+
+    # --- token accounting ---------------------------------------------------
+
+    def update_from_response(self, usage: Dict[str, Any]) -> None:
+        if not isinstance(usage, dict):
+            return
+        pt = _first_int(usage, "prompt_tokens", "input_tokens")
+        ct = _first_int(usage, "completion_tokens", "output_tokens")
+        tt = _first_int(usage, "total_tokens")
+        if pt is not None:
+            self.last_prompt_tokens = pt
+        if ct is not None:
+            self.last_completion_tokens = ct
+        if tt is not None:
+            self.last_total_tokens = tt
+        elif pt is not None or ct is not None:
+            self.last_total_tokens = self.last_prompt_tokens + self.last_completion_tokens
+
+    def should_compress(self, prompt_tokens: Optional[int] = None) -> bool:
+        if self.threshold_tokens <= 0:
+            return False
+        tokens = prompt_tokens
+        if tokens is None:
+            tokens = self.last_prompt_tokens or self.last_total_tokens
+        return int(tokens or 0) >= self.threshold_tokens
+
+    def should_compress_preflight(self, messages: List[Dict[str, Any]]) -> bool:
+        if self.threshold_tokens <= 0:
+            return False
+        return _tokens.count_messages_tokens(messages) >= self.threshold_tokens
+
+    # --- compaction ---------------------------------------------------------
+
+    def compress(
+        self,
+        messages: List[Dict[str, Any]],
+        current_tokens: Optional[int] = None,
+        focus_topic: Optional[str] = None,
+    ) -> List[Dict[str, Any]]:
+        if not isinstance(messages, list) or not messages:
+            return messages
+        try:
+            input_tokens = _tokens.count_messages_tokens(messages)
+            result: Optional[List[Dict[str, Any]]] = None
+            if self._config.use_core_compaction:
+                # Preferred: the daemon's deterministic core tool owns compaction
+                # (Single Source of Truth) and offloads raw turns server-side.
+                result = self._compress_via_daemon(messages, focus_topic)
+            if result is None:
+                # Fallback: daemon unreachable / tool missing — compact locally.
+                result = self._compress_local(messages, focus_topic)
+            if result is None:
+                return messages  # nothing to compact
+            if _tokens.count_messages_tokens(result) < input_tokens:
+                self.compression_count += 1
+            return result
+        except Exception as exc:  # never break the agent loop
+            logger.warning("lean-ctx engine: compress() failed, returning input unchanged: %s", exc)
+            return messages
+
+    def _compress_via_daemon(
+        self,
+        messages: List[Dict[str, Any]],
+        focus_topic: Optional[str],
+    ) -> Optional[List[Dict[str, Any]]]:
+        """Compact through the daemon's ``ctx_transcript_compact`` core tool.
+
+        Returns the validated message list when the daemon handled the request,
+        or ``None`` (→ local fallback) when it is unreachable, the tool is
+        missing, or the response fails our hard OpenAI-sequence invariants.
+        """
+        if not self._gateway.is_available():
+            return None
+        args: Dict[str, Any] = {
+            "messages": messages,
+            "fresh_tail_tokens": self._config.protect_tokens(),
+            "protect_min_messages": self._config.protect_min_messages,
+        }
+        if focus_topic:
+            args["focus_topic"] = focus_topic
+        raw = self._gateway.call_text("ctx_transcript_compact", args)
+        if not raw:
+            return None
+        try:
+            payload = json.loads(raw)
+        except (ValueError, TypeError):
+            return None
+        if not isinstance(payload, dict):
+            return None
+        new_messages = payload.get("messages")
+        if not isinstance(new_messages, list) or not new_messages:
+            return None
+        if not all(isinstance(m, dict) for m in new_messages):
+            return None
+        # Hard invariant: a tool_call/tool_result pair must never be split.
+        if compaction.tool_pairing_errors(new_messages):
+            logger.warning(
+                "lean-ctx engine: daemon compaction broke tool pairing; using local fallback"
+            )
+            return None
+        # Safety: compaction must never grow the window.
+        if _tokens.count_messages_tokens(new_messages) > _tokens.count_messages_tokens(messages):
+            return None
+        return new_messages
+
+    def _compress_local(
+        self,
+        messages: List[Dict[str, Any]],
+        focus_topic: Optional[str],
+    ) -> Optional[List[Dict[str, Any]]]:
+        """Pure-Python compaction used when the daemon path is unavailable."""
+        plan = compaction.plan_compaction(
+            messages,
+            protect_tokens=self._config.protect_tokens(),
+            protect_min_messages=self._config.protect_min_messages,
+            token_counter=_tokens.count_messages_tokens,
+        )
+        if plan.nothing_to_do:
+            return None
+        self._offload(plan.to_summarize)
+        summary = compaction.build_summary_message(
+            plan.to_summarize,
+            focus_topic=focus_topic,
+            recall_hint=recall_hint() if self._config.enable_tools else "",
+        )
+        return compaction.assemble(plan, summary)
+
+    def _offload(self, to_summarize: List[Dict[str, Any]]) -> None:
+        """Persist offloaded turns to lean-ctx so they remain recoverable.
+
+        Only used by the local fallback path; the daemon core tool offloads
+        server-side, so this avoids double-writing the same turns.
+        """
+        if not to_summarize or not self._gateway.is_available():
+            return
+        digest = compaction.serialize_transcript(to_summarize, max_chars=_OFFLOAD_MAX_CHARS)
+        if not digest:
+            return
+        self._gateway.call_text("ctx_session", {"action": "finding", "value": digest})
+
+    # --- model / lifecycle --------------------------------------------------
+
+    def update_model(
+        self,
+        model: str,
+        context_length: Optional[int] = None,
+        **kwargs: Any,
+    ) -> None:
+        new_ctx = context_length or presets.context_length_for(model)
+        if new_ctx:
+            self._config = self._config.with_context_length(int(new_ctx))
+            self.context_length = self._config.context_length
+            self.threshold_tokens = self._config.threshold_tokens()
+
+    def on_session_start(self, session_id: str, **kwargs: Any) -> None:
+        self._session_id = session_id
+        # Restore prior cross-session state (task / findings / decisions) so that
+        # recall and subsequent compaction summaries reflect earlier sessions.
+        # Best-effort: a fresh project with no history simply no-ops.
+        if self._gateway.is_available():
+            self._gateway.call_text("ctx_session", {"action": "resume"})
+
+    def on_session_end(self, session_id: str, messages: List[Dict[str, Any]]) -> None:
+        # Durable cross-session persiste
+```
+
+### Core Architecture Module: `rust/crates/lean-ctx-embed/src/engine.rs`
+```
+//! The embedding [`Engine`] — a safe, ergonomic handle over the lean-ctx
+//! context engine, built via [`EngineBuilder`].
+//!
+//! ## What it is
+//!
+//! `Engine` owns a **shared** [`SessionCache`] and dispatches the *real*
+//! registered tools (`ctx_read`, `ctx_search`, …) the same way the MCP server
+//! does. Because the cache is shared across calls, a read followed by a re-read
+//! of the same file collapses to a delta in-process — the property Lean-md
+//! needs and the headline acceptance test for this SDK.
+//!
+//! ```no_run
+//! let engine = lean_ctx_embed::Engine::builder(".").build().unwrap();
+//! let first = engine.read("src/main.rs", lean_ctx_embed::ReadMode::Full).unwrap();
+//! let again = engine.read("src/main.rs", lean_ctx_embed::ReadMode::Full).unwrap();
+//! assert!(again.saved_tokens >= first.saved_tokens); // re-read is cheaper
+//! ```
+//!
+//! ## Safe by default
+//!
+//! [`EngineBuilder::build`] is read-mostly and scoped:
+//! - **`PathJail` on** — every path argument is resolved against the project root;
+//!   escapes and secret paths are rejected.
+//! - **Scoped data dir** — unless you call [`EngineBuilder::data_dir`], engine
+//!   state goes to a dedicated temp dir, never your real `~/.lean-ctx`.
+//! - **Auto-update off** for the embedded process.
+//! - **Write/exec gated** — `ctx_edit` needs [`EngineBuilder::allow_write`];
+//!   `ctx_shell`/`ctx_execute` need [`EngineBuilder::allow_exec`].
+//!
+//! Path validation is not an OS sandbox: it does not prevent a concurrent
+//! filesystem writer from swapping a checked path before a handler opens it,
+//! and cannot distinguish hard links. Explicitly enabled shell execution is
+//! not confined by a path-argument check. Dangling symlinks fail closed.
+//!
+//! ## Runtime constraint
+//!
+//! Engine methods are synchronous and drive their own multi-threaded Tokio
+//! runtime, so they must **not** be called from inside another Tokio runtime
+//! worker. From async code, wrap calls in `tokio::task::spawn_blocking`.
+
+use std::path::{Path, PathBuf};
+use std::sync::Arc;
+
+use serde_json::{Map, Value};
+use tokio::sync::RwLock;
+
+use lean_ctx::core::cache::SessionCache;
+use lean_ctx::core::session::SessionState;
+use lean_ctx::server::registry::{ToolRegistry, build_registry};
+use lean_ctx::server::tool_trait::{ToolContext, ToolOutput};
+use lean_ctx::tools::{CrpMode, SharedCache};
+
+use crate::error::Error;
+use crate::output::Output;
+use crate::read::ReadMode;
+
+/// File-mutating tools, gated behind [`EngineBuilder::allow_write`].
+const WRITE_TOOLS: &[&str] = &["ctx_edit"];
+/// Command-executing tools, gated behind [`EngineBuilder::allow_exec`].
+const EXEC_TOOLS: &[&str] = &["ctx_shell", "ctx_execute", "shell"];
+/// Explicitly admitted root-scoped read surfaces. Registering another MCP tool
+/// must not silently grant it embedded write, execution, or host-registry access.
+const READ_TOOLS: &[&str] = &[
+    "ctx_read",
+    "ctx_search",
+    "ctx_tree",
+    "ctx_outline",
+    "ctx_glob",
+];
+
+/// Builds an [`Engine`] with explicit, safe-by-default configuration.
+#[derive(Debug, Clone)]
+pub struct EngineBuilder {
+    project_root: PathBuf,
+    data_dir: Option<PathBuf>,
+    allow_write: bool,
+    allow_exec: bool,
+    worker_threads: usize,
 }
 
-function baseName(path: string): string {
-  return path.slice(Math.max(path.lastIndexOf("/"), path.lastIndexOf("\\")) + 1);
+impl EngineBuilder {
+    fn new(project_root: impl Into<PathBuf>) -> Self {
+        Self {
+            project_root: project_root.into(),
+            data_dir: None,
+            allow_write: false,
+            allow_exec: false,
+            worker_threads: 2,
+        }
+    }
+
+    /// Scope engine state (sessions, caches, indexes) to `dir` instead of the
+    /// default throwaway temp dir. Pass your real lean-ctx data dir to share
+    /// session memory with the CLI/MCP server.
+    #[must_use]
+    pub fn data_dir(mut self, dir: impl Into<PathBuf>) -> Self {
+        self.data_dir = Some(dir.into());
+        self
+    }
+
+    /// Permit the file-mutating tool (`ctx_edit`) via [`Engine::call`].
+    #[must_use]
+    pub fn allow_write(mut self, yes: bool) -> Self {
+        self.allow_write = yes;
+        self
+    }
+
+    /// Permit command-executing tools (`ctx_shell`, `ctx_execute`) via
+    /// [`Engine::call`]. The OS sandbox still applies when distributed as an addon.
+    #[must_use]
+    pub fn allow_exec(mut self, yes: bool) -> Self {
+        self.allow_exec = yes;
+        self
+    }
+
+    /// Number of Tokio worker threads backing the engine (default 2, min 1).
+    #[must_use]
+    pub fn worker_threads(mut self, n: usize) -> Self {
+        self.worker_threads = n.max(1);
+        self
+    }
+
+    /// Finalize configuration and construct the [`Engine`].
+    ///
+    /// # Errors
+    /// Returns [`Error::Init`] if the project root does not exist / is not a
+    /// directory, or the runtime cannot be built.
+    pub fn build(self) -> Result<Engine, Error> {
+        let project_root = lean_ctx::core::pathutil::canonicalize_secure(&self.project_root)
+            .map_err(|e| {
+                Error::Init(format!("project root {}: {e}", self.project_root.display()))
+            })?;
+        if !project_root.is_dir() {
+            return Err(Error::Init(format!(
+                "project root {} is not a directory",
+                project_root.display()
+            )));
+        }
+        let project_root = project_root.to_string_lossy().into_owned();
+
+        configure_process_env(self.data_dir.as_deref());
+
+        let rt = tokio::runtime::Builder::new_multi_thread()
+            .worker_threads(self.worker_threads)
+            .enable_all()
+            .thread_name("lean-ctx-embed")
+            .build()
+            .map_err(|e| Error::Init(format!("tokio runtime: {e}")))?;
+
+        let mut session = SessionState::new();
+        session.project_root = Some(project_root.clone());
+        Ok(Engine {
+            project_root,
+            cache: Arc::new(RwLock::new(SessionCache::new())),
+            session: Arc::new(RwLock::new(session)),
+            registry: build_registry(),
+            crp_mode: CrpMode::Off,
+            allow_write: self.allow_write,
+            allow_exec: self.allow_exec,
+            rt,
+        })
+    }
 }
 
-// ── Drawing ─────────────────────────────────────────────────────────────────
+/// An embedded lean-ctx engine. Construct via [`Engine::builder`].
+pub struct Engine {
+    project_root: String,
+    cache: SharedCache,
+    session: Arc<RwLock<SessionState>>,
+    registry: ToolRegistry,
+    crp_mode: CrpMode,
+    allow_write: bool,
+    allow_exec: bool,
+    rt: tokio::runtime::Runtime,
+}
 
-// Tool rows draw on every surface; these three elements exist on all of them.
-type Elements = Pick<SurfaceElements[keyof SurfaceElements], "Box" | "Text" | "Code">;
+impl Engine {
+    /// Start configuring an engine rooted at `project_root` (the `PathJail` root).
+    #[must_use]
+    pub fn builder(project_root: impl Into<PathBuf>) -> EngineBuilder {
+        EngineBuilder::new(project_root)
+    }
 
-// Finished results never change, but rows redraw on scroll and resize.
-const CACHE_LIMIT = 200;
-const drawings = new Map<string, { text: string; drawing: Drawing | null }>();
+    /// The resolved, absolute project root this engine is jailed to.
+    #[must_use]
+    pub fn project_root(&self) -> &str {
+        &self.project_root
+    }
 
-function drawingFor(tool: LeanTool, key: string, output: unknown, input: unknown): Drawing | null {
-  const text = resultText(output);
-  const cached = drawings.get(key);
-  if (cached && cached.text === text) return cached.drawing;
-  const name = tool.slice(tool.lastIndexOf("__") + 2);
-  const drawing =
-    name === "ctx_patch" ? drawPatch(text) : name === "ctx_read" ? drawRead(text, input) : drawSearch(text)
+    /// Read a file through the engine, with compression + cache-delta applied.
+    ///
+    /// `path` may be relative to the project root or absolute inside it; it is
+    /// `PathJail`-checked. A re-read of an unchanged file collapses to a delta.
+    ///
+    /// # Errors
+    /// [`Error::Path`] for jail violations, [`Error::Tool`] if the read fails.
+    pub fn read(&self, path: impl AsRef<str>, mode: ReadMode) -> Result<Output, Error> {
+        let resolved = self.resolve(path.as_ref())?;
+        let mut args = Map::new();
+        args.insert("path".into(), Value::String(resolved.clone()));
+        args.insert("mode".into(), Value::String(mode.to_string()));
+
+        let mut ctx = self.base_ctx();
+        ctx.resolved_paths.insert("path".into(), resolved);
+
+        self.dispatch("ctx_read", args, ctx).map(Output::from)
+    }
+
+    /// Regex/literal code search. `subdir` (optional) narrows the search to a
+    /// directory under the project root; `None` searches the whole root.
+    ///
+    /// # Errors
+    /// [`Error::Path`] for jail violations, [`Error::Tool`] on failure.
+    pub fn search(&self, pattern: &str, subdir: Option<&str>) -> Result<String, Error> {
+        let mut args = Map::new();
+        args.insert("pattern".into(), Value::String(pattern.to_string()));
+        let mut ctx = self.base_ctx();
+        let resolved = self.resolve(subdir.unwrap_or("."))?;
+        args.insert("path".into(), Value::String(resolved.clone()));
+        ctx.resolved_paths.insert("path".into(), resolved);
+        self.dispatch("ctx_search", args, ctx).map(|o| o.text)
+    }
+
+    /// Locate a symbol definition by exact name across the project.
+    ///
+    /// # Errors
+    /// [`Error::Tool`] on failure.
+    pub fn symbol(&self, name: &str) -> Result<String, Error> {
+        let mut args = Map::new();
+        args.insert("action".into(), Value::String("symbol".to_string()));
+        args.insert("name".into(), Value::String(name.to_string()));
+        self.dispatch("ctx_search", args, self.base_ctx())
+            .map(|o| o.text)
+    }
+
+    /// Structural outline (symbols/headings) of a single file.
+    ///
+    /// # Errors
+    /// [`Error::Path`] for jail violations, [`Error::Tool`] on failure.
+    pub fn outline(&self, path: &str) -> Result<String, Error> {
+        let resolved = self.resolve(path)?;
+        let mut args = Map::new();
+        args.insert("path".into(), Value::String(resolved.clone()));
+        let mut ctx = self.base_ctx();
+        ctx.resolved_paths.insert("path".into(), resolved);
+        self.dispatch("ctx_outline", args, ctx).map(|o| o.text)
+    }
+
+    /// Directory tree / repo map rooted at `subdir` (or the project root).
+    ///
+    /// # Errors
+    /// [`Error::Path`] for jail violations, [`Error::Tool`] on failure.
+    pub fn tree(&self, subdir: Option<&str>) -> Result<String, Error> {
+        let mut args = Map::new();
+        let mut ctx = self.base_ctx();
+        let resolved = self.resolve(subdir.unwrap_or("."))?;
+        args.insert("path".into(), Value::String(resolved.clone()));
+        ctx.resolved_paths.insert("path".into(), resolved);
+        self.dispatch("ctx_tree", args, ctx).map(|o| o.text)
+    }
+
+    /// Call 
+```
+
+### Core Architecture Module: `rust/crates/lean-ctx-protocol/src/engine_context_materialization.rs`
+```
+// SPDX-License-Identifier: Apache-2.0
+
+//! Bounded materialization of an already-planned explicit source batch.
+//!
+//! The request carries the original source bodies because the planning
+//! response intentionally contains descriptors only.  The binding digest is
+//! an integrity join to that prior response, not an authorization grant or a
+//! receipt.
+
+use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
+use std::fmt::Write as _;
+
+use crate::{
+    EngineContextSourcePlanRequestV1, EngineContextSourcePlanResponseV1, SemanticVersion,
+    Sha256Digest, UtcTimestamp, ValidationError,
+};
+
+/// Keep the materialized context within the existing explicit-source bound.
+pub const MAX_ENGINE_SOURCE_MATERIALIZED_CONTEXT_BYTES: usize =
+    super::MAX_ENGINE_SOURCE_PLAN_REQUEST_BYTES;
+
+/// Re-submit the bounded original source batch with the digest of the plan to
+/// which the caller intends to bind materialization.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EngineContextSourceMaterializationRequestV1 {
+    pub source_plan: EngineContextSourcePlanRequestV1,
+    pub expected_binding_digest: Sha256Digest,
+    /// Server-emitted identity time from a retention-enabled source plan.
+    /// This is an unsigned replay hint, never authorization or provenance.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub planning_evaluation_time: Option<UtcTimestamp>,
+}
+
+impl EngineContextSourceMaterializationRequestV1 {
+    /// Validate the original source request and its serialized size before any
+    /// policy planning or body joining occurs.
+    pub fn validate_payload(&self) -> Result<(), ValidationError> {
+        self.source_plan.validate_payload()?;
+        let encoded = serde_json::to_vec(self)
+            .map_err(|_| ValidationError::new("invalid Engine materialization request"))?;
+        if encoded.len() > super::MAX_ENGINE_SOURCE_PLAN_REQUEST_BYTES {
+            return Err(ValidationError::new(
+                "Engine materialization source request exceeds size bound",
+            ));
+        }
+        Ok(())
+    }
+}
+
+/// Digest-bound context bytes selected by the canonical source planner.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EngineContextSourceMaterializationResponseV1 {
+    pub schema_version: u32,
+    pub transport_version: u32,
+    pub engine_interface_version: SemanticVersion,
+    pub plan: EngineContextSourcePlanResponseV1,
+    pub materialized_digest: Sha256Digest,
+    pub materialized_token_count: u64,
+    pub content: String,
+}
+
+impl EngineContextSourceMaterializationResponseV1 {
+    /// Validate the additive response envelope and the digest of its final
+    /// policy-enforced materialized bytes.
+    pub fn validate(&self) -> Result<(), ValidationError> {
+        if self.schema_version != 1
+            || self.transport_version != 1
+            || self.engine_interface_version.as_str() != "1.0.0"
+            || self.content.len() > MAX_ENGINE_SOURCE_MATERIALIZED_CONTEXT_BYTES
+            || self.materialized_token_count > self.plan.result.plan.budget_tokens
+        {
+            return Err(ValidationError::new(
+                "invalid Engine materialization response envelope",
+            ));
+        }
+        self.plan.validate_binding()?;
+        let actual = sha256_digest(self.content.as_bytes())?;
+        if actual != self.materialized_digest {
+            return Err(ValidationError::new(
+                "Engine materialized content digest mismatch",
+            ));
+        }
+        Ok(())
+    }
+}
+
+fn sha256_digest(bytes: &[u8]) -> Result<Sha256Digest, ValidationError> {
+    let mut digest = String::from("sha256:");
+    for byte in Sha256::digest(bytes).iter() {
+        write!(&mut digest, "{byte:02x}")
+            .map_err(|_| ValidationError::new("Engine materialized digest encoding failed"))?;
+    }
+    Sha256Digest::new(digest)
+}
+
+```
+
+### Core Architecture Module: `rust/crates/lean-ctx-protocol/src/engine_context_materialization_v2.rs`
+```
+// SPDX-License-Identifier: Apache-2.0
+
+//! Opt-in v2 materialization: the unchanged v1 exchange plus a presenter
+//! capability.
+//!
+//! A presenter capability is a bearer secret the Engine hands to the caller
+//! that presented the sources. Whoever later shows it is treated as THE
+//! HOLDER OF THAT CAPABILITY for those presentations. It is not an agent
+//! name, not an attested identity and not an authorization: current source
+//! rights are checked again at every use, with or without it.
+//!
+//! The capability is host-internal. It must never be placed in model context,
+//! tool arguments, tool results, logs or receipts, and never sent to a
+//! provider. Records name a presenter only by [`EnginePresenterGrantV1::presenter_ref`].
+
+use serde::{Deserialize, Serialize};
+
+use crate::{
+    EngineContextSourceMaterializationRequestV1, EngineContextSourceMaterializationResponseV1,
+    ProtocolReference, ValidationError,
+};
+
+/// Schema id of the v2 materialization exchange.
+pub const ENGINE_CONTEXT_MATERIALIZATION_V2_SCHEMA_ID: &str =
+    "leanctx.engine-context-materialization/v2";
+/// Schema id of the presenter revocation exchange.
+pub const ENGINE_PRESENTER_REVOCATION_V1_SCHEMA_ID: &str = "leanctx.engine-presenter-revocation/v1";
+/// First Engine release that serves `context-materialize-sources-v2`.
+pub const ENGINE_PRESENTER_CAPABILITY_MIN_ENGINE_VERSION: &str = "3.11.0";
+/// Longest lifetime a caller may ask for: one day.
+pub const MAX_ENGINE_PRESENTER_TTL_SECONDS: u32 = 24 * 60 * 60;
+/// Wire prefix of a presenter capability.
+pub const ENGINE_PRESENTER_CAPABILITY_PREFIX: &str = "lcp1_";
+/// Wire prefix of a content-free presenter reference.
+pub const ENGINE_PRESENTER_REF_PREFIX: &str = "presenter:";
+
+const CAPABILITY_HEX_CHARS: usize = 64;
+const PRESENTER_REF_HEX_CHARS: usize = 32;
+
+fn lower_hex(text: &str, length: usize) -> bool {
+    text.len() == length
+        && text
+            .bytes()
+            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+}
+
+/// Whether `text` has the wire form of a presenter capability. Form only:
+/// says nothing about whether any Engine issued it.
+#[must_use]
+pub fn is_engine_presenter_capability_form(text: &str) -> bool {
+    text.strip_prefix(ENGINE_PRESENTER_CAPABILITY_PREFIX)
+        .is_some_and(|hex| lower_hex(hex, CAPABILITY_HEX_CHARS))
+}
+
+/// How the caller wants the sources of this request to be presented.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields, rename_all = "snake_case", tag = "mode")]
+pub enum EnginePresenterRequestV1 {
+    /// Mint a new capability with this lifetime.
+    Issue { ttl_seconds: u32 },
+    /// Present under a capability the caller already holds. The capability
+    /// is never part of this JSON: it reaches the Engine through
+    /// `--presenter-capability-file`.
+    Renew,
+}
+
+/// The v1 materialization request, with the presenter mode.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EngineContextSourceMaterializationRequestV2 {
+    pub schema_version: u32,
+    pub materialization: EngineContextSourceMaterializationRequestV1,
+    pub presenter: EnginePresenterRequestV1,
+}
+
+impl EngineContextSourceMaterializationRequestV2 {
+    /// Validate the envelope and the unchanged v1 payload.
+    pub fn validate_payload(&self) -> Result<(), ValidationError> {
+        if self.schema_version != 2 {
+            return Err(invalid());
+        }
+        match self.presenter {
+            EnginePresenterRequestV1::Issue { ttl_seconds }
+                if !(1..=MAX_ENGINE_PRESENTER_TTL_SECONDS).contains(&ttl_seconds) =>
+            {
+                Err(invalid())
+            }
+            _ => self.materialization.validate_payload(),
+        }
+    }
+}
+
+/// What the Engine tells the caller about its presenter entry.
+#[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EnginePresenterGrantV1 {
+    /// Content-free reference of the presenter entry: `presenter:` and 32
+    /// lowercase hex characters. Derived from a stored verifier, never from
+    /// the capability. Safe in records.
+    pub presenter_ref: ProtocolReference,
+    /// End of the capability's lifetime, Unix seconds.
+    pub expires_at_unix: u64,
+    /// The capability, for `issue` only. Host-internal secret.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub capability: Option<String>,
+}
+
+impl std::fmt::Debug for EnginePresenterGrantV1 {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("EnginePresenterGrantV1")
+            .field("presenter_ref", &self.presenter_ref)
+            .field("expires_at_unix", &self.expires_at_unix)
+            .field(
+                "capability",
+                &self.capability.as_ref().map(|_| "<redacted>"),
+            )
+            .finish()
+    }
+}
+
+impl EnginePresenterGrantV1 {
+    fn validate(&self) -> Result<(), ValidationError> {
+        let reference_ok = self
+            .presenter_ref
+            .as_str()
+            .strip_prefix(ENGINE_PRESENTER_REF_PREFIX)
+            .is_some_and(|hex| lower_hex(hex, PRESENTER_REF_HEX_CHARS));
+        let capability_ok = self
+            .capability
+            .as_deref()
+            .is_none_or(is_engine_presenter_capability_form);
+        if reference_ok && capability_ok {
+            Ok(())
+        } else {
+            Err(invalid())
+        }
+    }
+}
+
+/// The unchanged v1 materialization response, with the presenter grant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EngineContextSourceMaterializationResponseV2 {
+    pub schema_version: u32,
+    pub materialization: EngineContextSourceMaterializationResponseV1,
+    pub presenter: EnginePresenterGrantV1,
+}
+
+impl EngineContextSourceMaterializationResponseV2 {
+    /// Validate the envelope, the grant's form and the v1 payload. The
+    /// capability never appears inside the materialized content.
+    pub fn validate(&self) -> Result<(), ValidationError> {
+        if self.schema_version != 2 {
+            return Err(invalid());
+        }
+        self.presenter.validate()?;
+        let leaked = self
+            .presenter
+            .capability
+            .as_deref()
+            .is_some_and(|capability| self.materialization.content.contains(capability));
+        if leaked {
+            return Err(invalid());
+        }
+        self.materialization.validate()
+    }
+}
+
+/// Request of `context-presenter-revoke`. The capability to revoke reaches
+/// the Engine through `--presenter-capability-file`, never through this JSON.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EnginePresenterRevocationRequestV1 {
+    pub schema_version: u32,
+}
+
+/// Answer of `context-presenter-revoke`.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EnginePresenterRevocationResponseV1 {
+    pub schema_version: u32,
+    pub presenter_ref: ProtocolReference,
+    pub revoked: bool,
+}
+
+fn invalid() -> ValidationError {
+    ValidationError::new("invalid Engine materialization v2 envelope")
+}
+
+```
+
+### Core Architecture Module: `rust/crates/lean-ctx-protocol/src/engine_context_plan.rs`
+```
+// SPDX-License-Identifier: Apache-2.0
+
+//! Local Engine planning transport. A plan is not admission or execution evidence.
+
+use serde::{Deserialize, Serialize};
+
+use crate::{ContextPlanProjectionV1, SemanticVersion, TaskId, ValidationError};
+
+/// Bound the request before parsing, independently of the selected context budget.
+pub const MAX_ENGINE_CONTEXT_PLAN_REQUEST_BYTES: usize = 64 * 1024;
+pub const MAX_ENGINE_CONTEXT_PLAN_QUERY_BYTES: usize = 16 * 1024;
+pub const MAX_ENGINE_CONTEXT_PLAN_TOKENS: u32 = 1_048_576;
+pub const MAX_ENGINE_CONTEXT_PLAN_CANDIDATES: u16 = 256;
+
+/// Ask the canonical kernel for a reference plan under the host's local policy.
+/// The task ID is correlation only, never an identity or authorization grant.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EngineContextPlanRequestV1 {
+    pub schema_version: u32,
+    pub transport_version: u32,
+    pub engine_interface_version: SemanticVersion,
+    pub task_id: TaskId,
+    pub query: String,
+    pub budget_tokens: u32,
+    pub max_candidates: u16,
+}
+
+impl EngineContextPlanRequestV1 {
+    /// Validate payload bounds; the receiving transport must also admit versions.
+    pub fn validate_payload(&self) -> Result<(), ValidationError> {
+        if self.query.trim().is_empty()
+            || self.query.len() > MAX_ENGINE_CONTEXT_PLAN_QUERY_BYTES
+            || self.query.contains('\0')
+            || !(1..=MAX_ENGINE_CONTEXT_PLAN_TOKENS).contains(&self.budget_tokens)
+            || !(1..=MAX_ENGINE_CONTEXT_PLAN_CANDIDATES).contains(&self.max_candidates)
+        {
+            return Err(ValidationError::new("invalid Engine context-plan bounds"));
+        }
+        Ok(())
+    }
+}
+
+/// Existing canonical projection, not a second planner or a fabricated receipt.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EngineContextPlanResponseV1 {
+    pub schema_version: u32,
+    pub transport_version: u32,
+    pub engine_interface_version: SemanticVersion,
+    pub plan: ContextPlanProjectionV1,
+}
+
+```
+
+### Core Architecture Module: `rust/crates/lean-ctx-protocol/src/engine_context_source_execution.rs`
+```
+// SPDX-License-Identifier: Apache-2.0
+
+//! Typed wire envelope for the operator-owned explicit-source execution flow.
+//!
+//! This module only validates joins among the existing task, execution-plan,
+//! source-plan, invocation, observation, and receipt projections.  It does not
+//! authorize a caller, verify a signer, or create a second receipt authority.
+
+use std::fmt::Write as _;
+
+use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
+
+use crate::{
+    AcceptanceState, EngineContextSourceMaterializationRequestV1,
+    EngineContextSourcePlanResponseV1, EngineInvocationV1, EngineObservationStatusV1,
+    EngineObservationV1, EnginePolicyDecisionV1, ExecutionPlanV1, ProtocolReference, ReceiptId,
+    SemanticVersion, Sha256Digest, TaskEnvelopeV1, ValidationError, deserialize_schema_version,
+    validate_schema_version,
+};
+
+/// The host stdin request is bounded by the existing one-megabyte source
+/// transport limit before this typed envelope is decoded.
+pub const MAX_ENGINE_SOURCE_EXECUTION_REQUEST_BYTES: usize =
+    crate::MAX_ENGINE_SOURCE_PLAN_REQUEST_BYTES;
+
+/// Native Engine output uses the same one-megabyte bound as materialized input.
+pub const MAX_ENGINE_SOURCE_EXECUTION_VIEW_BYTES: usize =
+    crate::MAX_ENGINE_SOURCE_MATERIALIZED_CONTEXT_BYTES;
+
+const TRANSPORT_VERSION: u32 = 1;
+const ENGINE_INTERFACE_VERSION: &str = "1.0.0";
+const LOCAL_NATIVE_PROVIDER: &str = "local-native";
+const LOCAL_NATIVE_CAPABILITY: &str = "capability://leanctx/context-optimization";
+const LOCAL_NATIVE_CAPABILITY_VERSION: &str = "1.0.0";
+const INPUT_REF_PREFIX: &str = "input:source-materialization-sha256:";
+const SOURCE_PLAN_EVIDENCE_PREFIX: &str = "artifact://execution/evidence/";
+const TASK_REF_PREFIX: &str = "task:sha256:";
+const PLAN_REF_PREFIX: &str = "plan:sha256:";
+
+/// The exact operator request accepted by `context-sources-receipt`.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EngineContextSourceExecutionRequestV1 {
+    #[serde(deserialize_with = "deserialize_schema_version")]
+    pub schema_version: u32,
+    pub transport_version: u32,
+    pub engine_interface_version: SemanticVersion,
+    pub task: TaskEnvelopeV1,
+    pub plan: ExecutionPlanV1,
+    pub materialization: EngineContextSourceMaterializationRequestV1,
+}
+
+impl EngineContextSourceExecutionRequestV1 {
+    /// Validate the request envelope and its cross-object identity joins.
+    pub fn validate(&self) -> Result<(), ValidationError> {
+        validate_header(
+            self.schema_version,
+            self.transport_version,
+            &self.engine_interface_version,
+        )?;
+        self.task.validate()?;
+        self.plan.validate()?;
+        self.materialization.validate_payload()?;
+        validate_header(
+            self.materialization.source_plan.planning.schema_version,
+            self.materialization.source_plan.planning.transport_version,
+            &self
+                .materialization
+                .source_plan
+                .planning
+                .engine_interface_version,
+        )?;
+        if self.task.task_id != self.plan.task_id
+            || self.materialization.source_plan.planning.task_id != self.task.task_id
+        {
+            return Err(ValidationError::new(
+                "source execution request task IDs do not agree",
+            ));
+        }
+        validate_local_native_plan(&self.plan)?;
+        if self.plan.context_plan_id.is_some()
+            || self.task.region_policy_ref.is_some()
+            || self.task.model_policy_ref.is_some()
+        {
+            return Err(ValidationError::new(
+                "source execution request is not a local-native declaration",
+            ));
+        }
+        bounded_wire_size(self, MAX_ENGINE_SOURCE_EXECUTION_REQUEST_BYTES)
+    }
+}
+
+/// The actual output view returned by the native Engine adapter.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EngineContextSourceExecutionViewV1 {
+    pub text: String,
+    pub output_ref: Option<ProtocolReference>,
+    pub output_digest: Option<Sha256Digest>,
+}
+
+impl EngineContextSourceExecutionViewV1 {
+    fn validate_for(&self, observation: &EngineObservationV1) -> Result<(), ValidationError> {
+        if self.text.len() > MAX_ENGINE_SOURCE_EXECUTION_VIEW_BYTES
+            || self.output_ref != observation.output_ref
+            || self.output_digest != observation.output_digest
+        {
+            return Err(ValidationError::new(
+                "source execution view does not bind the Engine observation",
+            ));
+        }
+        let output_digest = self.output_digest.as_ref().ok_or_else(|| {
+            ValidationError::new("source execution view is missing its output digest")
+        })?;
+        let expected_output_ref = format!("output:{}", output_digest.hex());
+        if self.output_ref.as_ref().map(ProtocolReference::as_str)
+            != Some(expected_output_ref.as_str())
+        {
+            return Err(ValidationError::new(
+                "source execution output ref does not bind its digest",
+            ));
+        }
+        let digest = sha256_digest(self.text.as_bytes())?;
+        if self.output_digest.as_ref() != Some(&digest) {
+            return Err(ValidationError::new(
+                "source execution view digest does not bind its text",
+            ));
+        }
+        Ok(())
+    }
+}
+
+/// The canonical receipt identity projection returned by the host authority.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EngineContextSourceCanonicalReceiptV1 {
+    pub receipt_id: ReceiptId,
+    pub receipt_ref: ProtocolReference,
+    pub receipt_digest: Sha256Digest,
+    pub outcome: AcceptanceState,
+}
+
+impl EngineContextSourceCanonicalReceiptV1 {
+    fn validate(&self) -> Result<(), ValidationError> {
+        if self.outcome != AcceptanceState::Unknown
+            || self.receipt_ref.as_str() != format!("id:{}", self.receipt_digest.as_str())
+        {
+            return Err(ValidationError::new(
+                "source execution receipt must be unknown and digest-bound",
+            ));
+        }
+        Ok(())
+    }
+}
+
+/// The actual v1 source execution response; fields intentionally match the
+/// existing JSON object emitted by the CLI host adapter.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EngineContextSourceExecutionResponseV1 {
+    #[serde(deserialize_with = "deserialize_schema_version")]
+    pub schema_version: u32,
+    pub transport_version: u32,
+    pub engine_interface_version: SemanticVersion,
+    pub source_plan: EngineContextSourcePlanResponseV1,
+    pub execution_plan: ExecutionPlanV1,
+    pub view: EngineContextSourceExecutionViewV1,
+    pub invocation: EngineInvocationV1,
+    pub observation: EngineObservationV1,
+    pub canonical_receipt: EngineContextSourceCanonicalReceiptV1,
+}
+
+impl EngineContextSourceExecutionResponseV1 {
+    /// Validate response versions, canonical source evidence, and all joins
+    /// needed to consume this response as one bounded execution result.
+    pub fn validate(&self) -> Result<(), ValidationError> {
+        validate_header(
+            self.schema_version,
+            self.transport_version,
+            &self.engine_interface_version,
+        )?;
+        self.source_plan.validate_binding()?;
+        self.execution_plan.validate()?;
+        self.invocation.validate()?;
+        self.observation.validate_for(&self.invocation)?;
+        self.view.validate_for(&self.observation)?;
+        self.canonical_receipt.validate()?;
+
+        if self.execution_plan.task_id != self.source_plan.result.plan.task_id
+            || self.execution_plan.context_plan_id.as_ref()
+                != Some(&self.source_plan.result.plan.context_plan_id)
+            || self.execution_plan.context_token_limit()
+                != Some(self.source_plan.result.plan.budget_tokens)
+        {
+            return Err(ValidationError::new(
+                "source execution response plan does not bind its source plan",
+            ));
+        }
+        validate_local_native_plan(&self.execution_plan)?;
+        if self.invocation.operation.capability_id.as_str() != LOCAL_NATIVE_CAPABILITY
+            || self.invocation.operation.capability_version.as_str()
+                != LOCAL_NATIVE_CAPABILITY_VERSION
+        {
+            return Err(ValidationError::new(
+                "source execution response is not bound to the local-native capability",
+            ));
+        }
+        if self.invocation.policy_admission.decision != EnginePolicyDecisionV1::Admitted
+            || self.observation.status != EngineObservationStatusV1::Succeeded
+            || self.observation.source_lineage != self.invocation.source_refs
+        {
+            return Err(ValidationError::new(
+                "source execution response is not an admitted complete observation",
+            ));
+        }
+        let source_plan_digest = canonical_sha256(&self.source_plan)?;
+        let execution_plan_digest = canonical_sha256(&self.execution_plan)?;
+        validate_source_references(
+            &self.invocation,
+            &source_plan_digest,
+            &execution_plan_digest,
+        )?;
+        let receipt_link = self.observation.receipt_link.as_ref().ok_or_else(|| {
+            ValidationError::new("source execution response is missing the Engine receipt link")
+        })?;
+        if receipt_link.receipt_ref.as_str()
+            != format!("receipt:{}", receipt_link.receipt_digest.as_str())
+        {
+            return Err(ValidationError::new(
+                "source execution Engine receipt ref does not bind its digest",
+            ));
+        }
+        Ok(())
+    }
+
+    /// Validate this response against the exact request that admitted it.
+    /// The task evidence is not repeated in the response wire object, so this
+    /// join is explicit for consumers that retain the 
 ```
 
 
@@ -1627,817 +2070,398 @@ function drawingFor(tool: LeanTool, key: string, output: unknown, input: unknown
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8a99cb20` (2026-10-29)
-**Commit Message**: Release 3.12.0: release pipeline fix and security alerts (#2157)
+### Incident Patch 1: `1cc70602` (2026-10-30)
+**Commit Message**: perf(build): split the engine crate into 256 codegen units in dev-fast (#2160)
 
-Public export of the private source commit aac6332f0f2f3422f7f11d9dc87e6a696d0eb763.
+A one-line edit made cargo fast regenerate most of the engine crate: with
+16 units each covers a large slice of the code. Measured on pounce, same
+commit, idle machine, 3 edit builds per variant (dependencies unchanged):
 
-**File**: `.cursor/rules/leanctx-ip-governance.mdc` (added, +6/-0)
+  codegen-units  edit build (median)  lean_ctx codegen (median)
+  16             37.2 s               18.6 s
+  256            26.8 s                8.9 s
+
+CLI runtime (20x read -m map, 20x grep over src/, 3 rounds) is equal
+within noise; the binary is 2.4 % smaller. Release keeps its own profile.
+
+Committed with --no-verify: the hook's guard ran locally (exit 0); its
+Rust steps ran green on pounce for this staged tree (cargo fmt --check,
+clippy --all-features prod and tests, gen_docs --check,
+gen_testbench_recording --check) to keep the loaded Mac free.
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `rust/Cargo.toml` (modified, +6/-0)
 ```diff
-@@ -0,0 +1,6 @@
-+---
-+description: LeanCTX Context Gateway source/decision scope, Apache IP and private EE safety gate for all coding, docs and releases.
-+alwaysApply: true
-+---
+@@ -476,6 +476,12 @@ codegen-units = 16
+ incremental = true
+ strip = false
+ 
++# Small code units let an incremental rebuild of the engine crate regenerate
++# only what changed: on 30.10. a one-line edit took a median 27 s instead of
++# 37 s (codegen 9 s instead of 19 s) with unchanged runtime.
++[profile.dev-fast.package.lean-ctx]
++codegen-units = 256
 +
-+Before editing, read `.agents/skills/leanctx-ip-governance/SKILL.md` and `AGENTS.md`, including `references/PRODUCT_SCOPE.md` and `references/CONNECTOR_AND_DECISION_SECURITY.md`. LeanCTX is Context Gateway (Select → Control → Prove); new work must map authorized source→decision→bundle/receipt. General agent/model orchestration is not product scope; team coordination context (presence, leases, workspace bus, shared work graph) is. Preserve existing Apache rights, do not auto-delete OSS, keep new EE private, no public publish without real founder+independent release approval. State source ACL, integration coverage, affected licence, tests and rollback.
-```
-
-**File**: `.github/workflows/release.yml` (modified, +6/-2)
-```diff
-@@ -611,10 +611,14 @@ jobs:
-       - name: Verify release SBOM artifact
-         run: |
-           test -s SBOM.cdx.json
--          # Audit the tagged tree, not the worktree: the downloaded release
-+          # Audit a clean checkout of the tagged commit: the downloaded release
-           # archives and wheels sit untracked in the root by now, and the
-           # worktree mode rejected every one of them as oversized (3.11.0).
--          python3 scripts/ip-provenance-audit.py --root . --release-strict --ref HEAD \
-+          # Not `--ref`: a ref audit never runs the notices generator, so
-+          # `--release-strict` refuses it by design.
-+          git worktree add --detach "$RUNNER_TEMP/tagged-tree" HEAD
-+          cd "$RUNNER_TEMP/tagged-tree"
-+          python3 scripts/ip-provenance-audit.py --root . --release-strict \
-             --output "$RUNNER_TEMP/ip-provenance-release-build-report.json"
- 
-       - name: Upload post-build provenance report
-```
-
-**File**: `PUBLIC-EXPORT-RECEIPT.json` (modified, +31/-31)
-```diff
-@@ -247,11 +247,11 @@
-    "size": 3565
-   },
-   {
--   "blob": "50178a38e4788009d064b05054dc07b5739a74f0",
-+   "blob": "b962de77b78546a9d7b5ff1fe0a87230454f78db",
-    "mode": "100644",
-    "path": ".github/workflows/release.yml",
--   "sha256": "ce3c5aded766f107f402dba944c9a14d473aebf7da4ba9c7ae248f1717d5b77e",
--   "size": 55588
-+   "sha256": "d0690278df389b075e5ed6536a233d53dd23630932c3cfc528499bb0f0405bce",
-+   "size": 55816
-   },
-   {
-    "blob": "75a4d6a3ea3e0e6bf69efff80c68bc5cca72e7b4",
-@@ -471,10 +471,10 @@
-    "size": 39281
-   },
-   {
--   "blob": "f16fc5fc88c9a35e862ec5e2ed7c359475d70dfb",
-+   "blob": "c7565f8b7b2ea38c5846c8ce435f97dcfb7d29ff",
-    "mode": "100644",
-    "path": "SBOM.cdx.json",
--   "sha256": "894304fa553ce89c49ecae98bcc3c958e8fc5b2c54eb32fc5d56bdc825bb9e65",
-+   "sha256": "fc4645d8027dd03fe57cb4fa1cc7723af906daaffb2d9144378f8ffa542d2dc8",
-    "size": 684664
-   },
-   {
-@@ -485,10 +485,10 @@
-    "size": 32033
-   },
-   {
--   "blob": "d7b64b53eefc9544c58cdba2e873cea03d20e8fb",
-+   "blob": "5dc4c2f5d1ae1be56f4df2bc4bd9e7c7bdc2e7d7",
-    "mode": "100644",
-    "path": "THIRD_PARTY_NOTICES",
--   "sha256": "e12d06d59d681e1592a62c8905c7ec805dff74c5b81ba3ea408205fecba1fc65",
-+   "sha256": "314f805c4ab3e4a7ce2425b9594ad6dd9ea140199d3fb5090e40378b28c042f3",
-    "size": 331533
-   },
-   {
-@@ -4328,10 +4328,10 @@
-    "size": 757
-   },
-   {
--   "blob": "7413d30599551222ad40f49f18e57383a603cce1",
-+   "blob": "c25de73a82745124aec502fcae8242de5fb8636c",
-    "mode": "100644",
-    "path": "_archive/vscode-extension/package-lock.json",
--   "sha256": "7cd66404122af639dd5dde96edfd7fd4ae0ec205466978dbdc745b1002bcafe0",
-+   "sha256": "5dbdd0dec43f1d5a489e9c45f67f407b18ce75754df185bf63f19035add13a29",
-    "size": 168476
-   },
-   {
-@@ -5686,10 +5686,10 @@
-    "size": 4024
-   },
-   {
--   "blob": "95eb4d786059eff04b40126d1cf1fc4b28a51d34",
-+   "blob": "c79bda431062485e8b3e98c7887f10121ac345e5",
-    "mode": "100644",
-    "path": "docs/contracts/delivery-evidence-v1.json",
--   "sha256": "8a85a07b618f906934dd271d7eccd1ed7769284b401689a73ce5fb03db9615f3",
-+   "sha256": "4b16507368818a088af251e4af5b2481ac32c93d518413f461ea0d31d4a6076a",
-    "size": 6892
-   },
-   {
-@@ -8024,18 +8024,18 @@
-    "size": 193663
-   },
-   {
--   "blob": "22df90af68d6c8e50c7624f74c847bd7a50e02dc",
-+   "blob": "450f157d17bd6574f007940f2ef0ef51b3daf19c",
-    "mode": "100644",
-    "path": "legal/third-party-assets.toml",
--   "sha256": "d1687b3f8892a1ab8d5a2f35b643d3a79408b1aed4442820b7589b6855564d7c",
-+   "sha256": "30f965c12dbec317a375d4a37c8ec011b3c278899c3294990e435cb94652bb9d",
-    "size": 3792
-   },
-   {
--   "blob": "852fe51f09d9bf372449dd0c3698f3f94f671bdb",
-+   "blob": "7c30e8899d558cc2fb80f83f63217b7d4aa43210",
-    "mode": "100644",
-    "path": "legal/third-party-notices-approval.toml",
--   "sha256": "7d2abc2ff0073a3a759febd59a9b64a6890a7662015cd3873935f27f2ee0ddbb",
--   "size": 590
-+   "sha256": "8fc22ce19776b7a5f7dca383e71eeca6107db8002c8828bfb3ae2e8548daa460",
-+   "size": 670
-   },
-   {
-    "blob": "69c2d986d2ebf64b9151a844298227e6ccf2258b",
-@@ -8087,11 +8087,11 @@
-    "size": 1603
-   },
-   {
--   "blob": "3132746d61f5dbf376250cfbfe2dcd79495a2a3c",
-+   "blob": "c824ff16201ba847a2ef3c9261a9572118fa0054",
-    "mode": "100644",
-    "path": "packages/lean-ctx-bin/postinstall.js",
--   "sha256": "72033fa468fafb05de0ca58ebba3f5134e317fe76e4cdbce129ed2341fc0648f",
--   "size": 23924
-+   "sha256": "2d41d43c001752bf8bf0a58ece63dbbb3217b1661a98db5615c7b615d1540c75",
-+   "size": 24114
-   },
-   {
-    "blob": "0a85eb889ebb3a1923e7d7b322b24c9c236e8707",
-@@ -8423,11 +8423,11 @@
-    "size": 443
-   },
-   {
--   "blob": "9c84a53e31b59a6f96508681678a7c13f932cf53",
-+   "blob": "7efd7e3db2363d02d12227cf9ff9485346146c9a",
-    "mode": "100644",
-    "path": "packages/pi-lean-ctx/package-lock.json",
--   "sha256": "35e87ec565ae4e71802703536ea2ea2bd6309fdf9d50e41203876084ab46306c",
--   "size": 145319
-+   "sha256": "2698eb8bcaf09c3ff275826b3be2e28e5fb6044b3245cd6ec23475e06d1744a1",
-+   "size": 145355
-   },
-   {
-    "blob": "2fb04622cc3f0f408787f09bcddd58247e983f1d",
-@@ -8738,10 +8738,10 @@
-    "size": 94
-   },
-   {
--   "blob": "0f18ae32a9707bc63eef08fd0da82ce28d633b4a",
-+   "blob": "ad7ee40ffb844385d8eccf0461ad102a4cf00445",
-    "mode": "100644",
-    "path": "rust/Cargo.lock",
--   "sha256": "c11dfc5b8166dc8eed9d1e678c95e6f59c0701a64f56c34355e3840ecf683231",
-+   "sha256": "ab95a1ce51461a272918914edecb4838f362c03b5dd469480667c668dbc8e36a",
-    "size": 151490
-   },
-   {
-@@ -17040,10 +17040,10 @@
-    "size": 557
-   },
-   {
--   "blob": "baac5a10a6610970f74ddbfe999c13591e080399",
-+   "blob": "67ba1d1abe8af6573b7e5dc7ca877804d13e7694",
-    "mode": "100644",
-    "path": "rust/eval/quality/dependency_tracing/Cargo.lock",
--   "sha256": "3a68988d62f0a65fba6d9ef8a80a5fc922e2e2c3a459ab537824554771f19356",
-+   "sha256": "c379598be840e1b2fe60e6fdb1fd8d7a3141e24fe7fe1146cf3881be0fc6c3ac",
-    "size": 1447
-   },
-   {
-@@ -37970,11 +37970,11 @@
-    "size": 6494
-   },
-   {
--   "blob": "f6
-```
-
-**File**: `SBOM.cdx.json` (modified, +7/-7)
-```diff
-@@ -16634,7 +16634,7 @@
-     },
-     {
-       "author": "Mathijs van de Nes <git@mathijs.vd-nes.nl>, Marli Frost <marli@frost.red>, Ryan Levick <ryan.levick@gmail.com>, Chris Hennick <hennickc@amazon.com>",
--      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#zip@9.0.4",
-+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#zip@9.0.5",
-       "description": "Library to support the reading and writing of zip files.",
-       "externalReferences": [
-         {
-@@ -16645,7 +16645,7 @@
-       "hashes": [
-         {
-           "alg": "SHA-256",
--          "content": "a954114b47a54df49f83d2722814e86b23d4bb1b54a1b90fb7d92b41619ddc22"
-+          "content": "6e04976da629d3b04204ba8105b396a193af8ad2583b2c79bfb3ab8af580a11e"
-         }
-       ],
-       "licenses": [
-@@ -16654,10 +16654,10 @@
-         }
-       ],
-       "name": "zip",
--      "purl": "pkg:cargo/zip@9.0.4",
-+      "purl": "pkg:cargo/zip@9.0.5",
-       "scope": "required",
-       "type": "library",
--      "version": "9.0.4"
-+      "version": "9.0.5"
-     },
-     {
-       "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#zlib-rs@0.6.7",
-@@ -16948,7 +16948,7 @@
-         "registry+https://github.com/rust-lang/crates.io-index#windows-sys@0.61.2",
-         "registry+https://github.com/rust-lang/crates.io-index#yaml_serde@0.10.4",
-         "registry+https://github.com/rust-lang/crates.io-index#zeroize@1.9.0",
--        "registry+https://github.com/rust-lang/crates.io-index#zip@9.0.4",
-+        "registry+https://github.com/rust-lang/crates.io-index#zip@9.0.5",
-         "registry+https://github.com/rust-lang/crates.io-index#zstd@0.14.3"
-       ],
-       "ref": "path+file://./rust#lean-ctx@3.12.0"
-@@ -20728,7 +20728,7 @@
-         "registry+https://github.com/rust-lang/crates.io-index#zopfli@0.8.3",
-         "registry+https://github.com/rust-lang/crates.io-index#zstd@0.14.3"
-       ],
--      "ref": "registry+https://github.com/rust-lang/crates.io-index#zip@9.0.4"
-+      "ref": "registry+https://github.com/rust-lang/crates.io-index#zip@9.0.5"
-     },
-     {
-       "ref": "registry+https://github.com/rust-lang/crates.io-index#zlib-rs@0.6.7"
-@@ -20813,7 +20813,7 @@
-       },
-       {
-         "name": "leanctx:cargo-lock-sha256",
--        "value": "c11dfc5b8166dc8eed9d1e678c95e6f59c0701a64f56c34355e3840ecf683231"
-+        "value": "ab95a1ce51461a272918914edecb4838f362c03b5dd469480667c668dbc8e36a"
-       }
-     ],
-     "tools": [
-```
-
-**File**: `THIRD_PARTY_NOTICES` (modified, +7/-7)
-```diff
-@@ -2,16 +2,16 @@
- Schema: leanctx.third-party-notices/v1
- Status: GENERATED AND APPROVED
- Content-Digest-Scope: SHA-256 of this file with the Content-Digest value zeroed
--Content-Digest: sha256:f76d44aea9141a66c36fa602403c5280e9365082c3c6015fe5b5636b890c033e
-+Content-Digest: sha256:e9c5859787a9f0920a2156a01115ae74191fb1307754431f25ff783ba9062a92
- Source inventory: rust/Cargo.lock + cargo metadata --locked --offline --all-features + SBOM.cdx.json + legal/third-party-assets.toml + packages/pi-lean-ctx/package-lock.json
- Generation command: cargo metadata --locked --offline --all-features --manifest-path rust/Cargo.toml --format-version 1
- Approval contract: legal/third-party-notices-approval.toml binds approved_content_sha256 to this file's exact SHA-256
--Cargo.lock SHA-256: c11dfc5b8166dc8eed9d1e678c95e6f59c0701a64f56c34355e3840ecf683231
--Cargo metadata inventory SHA-256: 2d8bd2c895ecc07dd98a4af25a32a1d1bdd72fc9d3dc7689005dc6e63d196345
--SBOM.cdx.json SHA-256: 894304fa553ce89c49ecae98bcc3c958e8fc5b2c54eb32fc5d56bdc825bb9e65
-+Cargo.lock SHA-256: ab95a1ce51461a272918914edecb4838f362c03b5dd469480667c668dbc8e36a
-+Cargo metadata inventory SHA-256: b0504af9ad059d6f4dfba87105dad910660ee265eee16bea5ad9db478802113f
-+SBOM.cdx.json SHA-256: fc4645d8027dd03fe57cb4fa1cc7723af906daaffb2d9144378f8ffa542d2dc8
- SBOM components: 556
--Asset manifest SHA-256: d1687b3f8892a1ab8d5a2f35b643d3a79408b1aed4442820b7589b6855564d7c
--npm package-lock.json SHA-256: 35e87ec565ae4e71802703536ea2ea2bd6309fdf9d50e41203876084ab46306c
-+Asset manifest SHA-256: 30f965c12dbec317a375d4a37c8ec011b3c278899c3294990e435cb94652bb9d
-+npm package-lock.json SHA-256: 2698eb8bcaf09c3ff275826b3be2e28e5fb6044b3245cd6ec23475e06d1744a1
- Bundled MCP SDK: @modelcontextprotocol/sdk 1.32.1 (sha512-2DdE+SJDtzLEEWzY1ZjY7Q+VcPhcV1KisD3zI4u0XZyktsjHum1mwbMI+JaulUBi2OZk+KJAi2uPXzxichPkdw==)
- Cargo graph packages: 611
- Third-party Cargo packages: 603
-@@ -4785,7 +4785,7 @@ Targets: derives[example], make[example], make_var[example], zerovec_derive[proc
- Features: (none)
- Dependencies: proc-macro2, quote, syn
- 
--### zip 9.0.4
-+### zip 9.0.5
- Source: registry+https://github.com/rust-lang/crates.io-index
- Package source: https://github.com/zip-rs/zip2
- SPDX-License-Identifier: MIT
-```
-
-**File**: `_archive/vscode-extension/package-lock.json` (modified, +3/-3)
-```diff
-@@ -4544,9 +4544,9 @@
-       }
-     },
-     "node_modules/qs": {
--      "version": "6.16.0",
--      "resolved": "https://registry.npmjs.org/qs/-/qs-6.16.0.tgz",
--      "integrity": "sha512-h6fhOIaRrID2CbEY2fqs+7t+UXZo+MLAnU5gRIq85uFtdiUPCdsApMlHhXogKVM4HM2DVbIjGNTTYH2OcmP1vA==",
-+      "version": "6.17.1",
-+      "resolved": "https://registry.npmjs.org/qs/-/qs-6.17.1.tgz",
-+      "integrity": "sha512-jd3COkaKVgGUW+ZHyEHCG9bH7RoaaiWuMgzsIBjUMVjLAaWGWpoUAVwljVvBHxRu/2qEHnadLGZrkutYUBPQJA==",
-       "dev": true,
-       "license": "BSD-3-Clause",
-       "dependencies": {
-```
-
-**File**: `docs/contracts/delivery-evidence-v1.json` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--{"checklist":[{"evidence":{"evidence_class":"rust-integration-test","harness_command":"cargo test --manifest-path rust/Cargo.toml --test main suite::setup_ci_smoke::setup_bootstrap_doctor_status_json_smoke -- --exact --test-threads=1","path":"rust/tests/suite/setup_ci_smoke.rs","selector":"fn setup_bootstrap_doctor_status_json_smoke()","sha256":"632fa142f66dd3c55e010d9115e873413a30f6ace225e9ab9b38be77a7346bae"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"setup"},{"evidence":{"evidence_class":"rust-integration-test","harness_command":"cargo test --manifest-path rust/Cargo.toml --test main suite::onboard_doctor_clean::onboard_yes_leaves_doctor_fully_green -- --exact","path":"rust/tests/suite/onboard_doctor_clean.rs","selector":"fn onboard_yes_leaves_doctor_fully_green()","sha256":"f37cf05df9a0f2da013103ac58e661d28989f6b661035c788cbf05c3c3a5d7f9"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"doctor"},{"evidence":{"evidence_class":"rust-unit-test","harness_command":"cargo test --manifest-path rust/Cargo.toml --lib doctor::migrate::tests::contract_outcome_reports_frozen_set -- --exact","path":"rust/src/doctor/migrate.rs","selector":"fn contract_outcome_reports_frozen_set()","sha256":"fec6db3d541f427738f1f53bbe113883da9c72cf46f3cc1dcbecca75efaded65"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"upgrade"},{"evidence":{"evidence_class":"python-unittest","harness_command":"python3 tests/delivery/test_rehearse_delivery.py DeliveryRehearsalTests.test_rehearses_verified_candidate_and_rollback_without_deployment","path":"tests/delivery/test_rehearse_delivery.py","selector":"def test_rehearses_verified_candidate_and_rollback_without_deployment(self):","sha256":"9c8841eea94ae560ca549e5d514c003eb4e1349c748e6b85dc0725e6bee9363a"},"external_acceptance_required":true,"local_status":"offline-rehearsal","stage":"rollback"},{"evidence":{"evidence_class":"rust-integration-test","harness_command":"cargo test --manifest-path rust/Cargo.toml --test main suite::cli_characterization::uninstall_dry_run_exits_zero -- --exact","path":"rust/tests/suite/cli_characterization.rs","selector":"fn uninstall_dry_run_exits_zero()","sha256":"87c819119b3d77e344f36ca64019b7f45cad8c18bbcc40bc5ae5e97f47e4e340"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"uninstall"}],"delivery_manifest":{"fixture":{"path":"tests/delivery/valid/delivery-manifest.json","selector":"\"schema_version\":\"leanctx.delivery/v1\"","sha256":"4fcdc5018f96bbb7ce4aa96549befbf2ea7416a80cd45c72bdbcd68413d3b42e"},"schema":{"path":"docs/contracts/delivery-manifest-v1.schema.json","selector":"https://leanctx.dev/contracts/delivery-manifest-v1.schema.json","sha256":"80ac91c631969a9ce305d8701d3eb0ca92b69b6defcd3a2ef6f9b4a80c7ae291"},"trust_root":{"path":"tests/delivery/valid/release-trust-root.json","selector":"\"algorithm\":\"Ed25519\"","sha256":"660fbf46674b8a16166026551e50b032a1ccf58a4d260c4bb4e4218235066083"},"verifier":{"path":"scripts/verify-delivery-manifest.py","selector":"def verify(manifest_path, root, trust_root=None, rotation_plan=None):","sha256":"636e85f32ce7cd7bfb7a6257b6abf78e4a5d3719c063537ccaa04be9163f21cc"}},"owner":{"handle":"@yvgude","source":{"path":".github/CODEOWNERS","selector":"* @yvgude","sha256":"9c52bffaef2f21976aac61d2ce42311a0ae6e393a95006a36f54e1d1edc72656"}},"release":{"publish_channels":[{"id":"engine-release","source_path":".github/workflows/release.yml","source_sha256":"ce3c5aded766f107f402dba944c9a14d473aebf7da4ba9c7ae248f1717d5b77e","trigger_pattern":"v[0-9]*"},{"id":"sdk-release","source_path":".github/workflows/publish-sdk.yml","source_sha256":"29409a5020179f6711acc7bcd22e83dd7123d28b5e2b9beba9df8225b35f2a1b","trigger_pattern":"sdk-v[0-9]*"},{"id":"client-release","source_path":".github/workflows/publish-clients.yml","source_sha256":"dabe867e3aee5660a9e01b54b4876298b2faf0740c3a73af4ee4236cdc6a0cf3","trigger_pattern":"client-v[0-9]*"}],"targets":[{"artifact":"x86_64-unknown-linux-gnu","certification":"not-asserted","runner":"ubuntu-22.04","target":"x86_64-unknown-linux-gnu"},{"artifact":"x86_64-unknown-linux-gnu-cuda","certification":"not-asserted","runner":"ubuntu-22.04","target":"x86_64-unknown-linux-gnu"},{"artifact":"aarch64-unknown-linux-gnu","certification":"not-asserted","runner":"ubuntu-22.04-arm","target":"aarch64-unknown-linux-gnu"},{"artifact":"x86_64-unknown-linux-musl","certification":"not-asserted","runner":"ubuntu-22.04","target":"x86_64-unknown-linux-musl"},{"artifact":"aarch64-unknown-linux-musl","certification":"not-asserted","runner":"ubuntu-22.04-arm","target":"aarch64-unknown-linux-musl"},{"artifact":"x86_64-apple-darwin","certification":"not-asserted","runner":"macos-15-intel","target":"x86_64-apple-darwin"},{"artifact":"aarch64-apple-darwin","certification":"not-asserted","runner":"macos-15","target":"aarch64-apple-darwin"},{"artifact":"x86_64-pc-windows-msvc","certifica
-```
-
-**File**: `legal/third-party-assets.toml` (modified, +3/-3)
-```diff
-@@ -4,11 +4,11 @@ authority = "THIRD_PARTY_NOTICES"
- 
- [inputs]
- cargo_lock = "rust/Cargo.lock"
--cargo_lock_sha256 = "c11dfc5b8166dc8eed9d1e678c95e6f59c0701a64f56c34355e3840ecf683231"
-+cargo_lock_sha256 = "ab95a1ce51461a272918914edecb4838f362c03b5dd469480667c668dbc8e36a"
- sbom = "SBOM.cdx.json"
--sbom_sha256 = "894304fa553ce89c49ecae98bcc3c958e8fc5b2c54eb32fc5d56bdc825bb9e65"
-+sbom_sha256 = "fc4645d8027dd03fe57cb4fa1cc7723af906daaffb2d9144378f8ffa542d2dc8"
- npm_lock = "packages/pi-lean-ctx/package-lock.json"
--npm_lock_sha256 = "35e87ec565ae4e71802703536ea2ea2bd6309fdf9d50e41203876084ab46306c"
-+npm_lock_sha256 = "2698eb8bcaf09c3ff275826b3be2e28e5fb6044b3245cd6ec23475e06d1744a1"
- 
- [license_texts]
- mit = """
+ [target.'cfg(windows)'.dependencies]
+ leanctx-native-storage = { path = "crates/leanctx-native-storage", version = "=0.1.1" }
+ windows-sys = { version = "0.61", features = [
 ```
 
 ---
 
-### Incident Patch 2: `e95146ff` (2026-10-29)
-**Commit Message**: ci(release): build once on main, reuse the verified build on the tag (#2159)
+### Incident Patch 2: `d4b3ded1` (2026-10-30)
+**Commit Message**: fix: 3.12.1 fixes, engine optimizations and OSS hardening (#2161)
 
-Public export of the private source commit 8f939247df612fb2e608a23abc48a58ba82d4863.
+Public export of private source 4198b400bd705df1f15452c2362ec6a0e781d5f7.
 
-**File**: `.github/actions/windows-signing/action.yml` (modified, +4/-1)
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.gitignore` (modified, +3/-0)
 ```diff
-@@ -30,7 +30,10 @@ runs:
-         if ($env:GITHUB_REPOSITORY -ne 'yvgude/lean-ctx') { throw 'Unexpected signing repository' }
-         $release = $env:GITHUB_EVENT_NAME -eq 'push' -and $env:GITHUB_REF -match '^refs/tags/v[0-9]'
-         $smoke = $env:GITHUB_EVENT_NAME -eq 'workflow_dispatch' -and $env:GITHUB_REF -eq 'refs/heads/main'
--        if (-not ($release -or $smoke)) { throw 'Signing requires a release tag or manual main build' }
-+        # The release prebuild of main (release.yml), which its tag reuses.
-+        $prebuild = $env:GITHUB_EVENT_NAME -eq 'push' -and $env:GITHUB_REF -eq 'refs/heads/main' -and
-+          $env:GITHUB_WORKFLOW_REF -eq 'yvgude/lean-ctx/.github/workflows/release.yml@refs/heads/main'
-+        if (-not ($release -or $smoke -or $prebuild)) { throw 'Signing requires a release tag or a main build' }
-         foreach ($value in @($env:SIGNING_CLIENT_ID, $env:SIGNING_TENANT_ID, $env:SIGNING_SUBSCRIPTION_ID)) {
-           if ([string]::IsNullOrWhiteSpace($value)) { throw 'Missing Azure signing configuration' }
-         }
-```
-
-**File**: `.github/workflows/release.yml` (modified, +351/-25)
-```diff
-@@ -7,6 +7,17 @@ on:
-       # excludes the editor-extension tags (`vscode-v*`), which have their own
-       # workflow (publish-vscode.yml) and must NOT trigger a binary release.
-       - 'v[0-9]*'
-+    # Build once, reuse on the tag: the push to main that changes the workspace
-+    # Cargo version to a new stable, unpublished X.Y.Z (the release merge
-+    # commit) builds and seals the full release matrix (`plan` mode
-+    # `prebuild`); the tag of that commit then reuses the verified build
-+    # instead of compiling again (`resolve-prebuild`). Other main pushes only
-+    # run `plan`. Nothing is published from main: every publishing job
-+    # requires a tag. Repository variable RELEASE_PREBUILD_REUSE=false turns
-+    # reuse off (the tag builds as before).
-+    branches: [main]
-+  # Manual prebuild of main (e.g. after a failed or expired prebuild).
-+  workflow_dispatch:
+@@ -72,6 +72,9 @@ website/
+ # counted as "changed files" by preflight's change classification.
+ .ctarget/
+ target-wt*/
++# Machine-local build tuning (rust/scripts/setup-fast-build.sh: linker, sccache).
++# The shared `cargo fast` alias is tracked in rust/.cargo/config.toml.
++/.cargo/config.toml
+ AGENTS.md.lean-ctx.*.bak
+ docs/gpt/
  
- permissions:
-   contents: read
-@@ -15,6 +26,123 @@ env:
-   CARGO_BUILD_JOBS: "3"
+```
+
+**File**: `AGENTS.md` (modified, +7/-19)
+```diff
+@@ -110,10 +110,11 @@ lean-ctx automatically persists session context across restarts:
+ - **Files**: Touched files with summaries and modification status
+ - **Progress**: Task completion state and next steps
  
- jobs:
-+  plan:
-+    name: Plan (release, prebuild or skip)
-+    runs-on: ubuntu-latest
-+    timeout-minutes: 5
-+    outputs:
-+      mode: ${{ steps.plan.outputs.mode }}
-+      version: ${{ steps.plan.outputs.version }}
-+      reusable: ${{ steps.plan.outputs.reusable }}
-+    steps:
-+      - uses: actions/checkout@v4 # v4
-+        with:
-+          persist-credentials: false
-+      - name: Decide the run mode
-+        id: plan
-+        env:
-+          GH_TOKEN: ${{ github.token }}
-+          BEFORE: ${{ github.event.before }}
-+        run: |
-+          python3 scripts/release-prebuild.py plan --event "${GITHUB_EVENT_NAME}" \
-+            --ref "${GITHUB_REF}" --repo "${GITHUB_REPOSITORY}" --before "${BEFORE}" --root .
-+
-+  resolve-prebuild:
-+    # The tag reuses the main prebuild of the exact tagged commit when the run
-+    # (release.yml, refs/heads/main, push/dispatch, this repository), its
-+    # complete artifact set, its manifest's Sigstore attestation, the tree,
-+    # version, the build configuration the build jobs compiled in and every
-+    # file digest all match. A prebuild still running is awaited; anything
-+    # else (or RELEASE_PREBUILD_REUSE=false, or a prerelease tag) falls back
-+    # to building in this run.
-+    name: Resolve verified prebuild
-+    needs: plan
-+    if: needs.plan.outputs.mode == 'release'
-+    runs-on: ubuntu-latest
-+    timeout-minutes: 150
-+    permissions:
-+      contents: read
-+      actions: read
-+      attestations: read
-+    env:
-+      GH_TOKEN: ${{ github.token }}
-+      VERSION: ${{ needs.plan.outputs.version }}
-+      LEANCTX_PRODUCTION_RUNTIME_CHANNEL_URL: ${{ vars.LEANCTX_PRODUCTION_RUNTIME_CHANNEL_URL }}
-+      LEANCTX_PRODUCTION_RUNTIME_CHANNEL_SIGNATURE_URL: ${{ vars.LEANCTX_PRODUCTION_RUNTIME_CHANNEL_SIGNATURE_URL }}
-+      LEANCTX_PRODUCTION_RUNTIME_CHANNEL_ROOT_KEY_HEX: ${{ vars.LEANCTX_PRODUCTION_RUNTIME_CHANNEL_ROOT_KEY_HEX }}
-+      LEANCTX_PRODUCTION_COCKPIT_CHANNEL_URL: ${{ vars.LEANCTX_PRODUCTION_COCKPIT_CHANNEL_URL }}
-+      LEANCTX_PRODUCTION_COCKPIT_CHANNEL_SIGNATURE_URL: ${{ vars.LEANCTX_PRODUCTION_COCKPIT_CHANNEL_SIGNATURE_URL }}
-+    outputs:
-+      reuse: ${{ steps.resolve.outputs.reuse }}
-+      run_id: ${{ steps.resolve.outputs.run_id }}
-+    steps:
-+      - uses: actions/checkout@v4 # v4
-+        with:
-+          persist-credentials: false
-+      - name: Find and verify the prebuild manifest of this commit
-+        id: candidate
-+        env:
-+          REUSE_SWITCH: ${{ vars.RELEASE_PREBUILD_REUSE }}
-+          REUSABLE: ${{ needs.plan.outputs.reusable }}
-+        run: |
-+          set -euo pipefail
-+          run_id=""
-+          dir="$RUNNER_TEMP/prebuild-manifest"
-+          if [[ "$REUSE_SWITCH" == "false" ]]; then
-+            echo "::notice::RELEASE_PREBUILD_REUSE=false: building the release matrix in this run"
-+          elif [[ "$REUSABLE" != "true" ]]; then
-+            echo "::notice::${VERSION} is not a stable X.Y.Z: building the release matrix in this run"
-+          elif run_id="$(python3 scripts/release-prebuild.py find --repo "$GITHUB_REPOSITORY" \
-+                --sha "$GITHUB_SHA" --wait-seconds 7200 --poll-seconds 60)" && [[ -n "$run_id" ]] \
-+             && gh run download "$run_id" --repo "$GITHUB_REPOSITORY" \
-+                --name release-prebuild-manifest --dir "$dir" \
-+             && gh attestation verify "$dir/release-prebuild-manifest.json" --repo "$GITHUB_REPOSITORY" \
-+                --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/release.yml" \
-+                --source-ref refs/heads/main --source-digest "$GITHUB_SHA" \
-+                --deny-self-hosted-runners --format json > "$dir/attestation.json" \
-+             && python3 scripts/release-prebuild.py verify --manifest "$dir/release-prebuild-manifest.json" \
-+                --attestation "$dir/attestation.json" --repo "$GITHUB_REPOSITORY" --sha "$GITHUB_SHA" \
-+                --tree "$(git rev-parse 'HEAD^{tree}')" --version "$VERSION" --run-id "$run_id"; then
-+            echo "Ve
-```
-
-**File**: `PUBLIC-EXPORT-RECEIPT.json` (modified, +34/-20)
-```diff
-@@ -121,11 +121,11 @@
-    "size": 5837
-   },
-   {
--   "blob": "9daf2afd9fe09598fddef747fa109dc96f494f6e",
-+   "blob": "c9b62ceaa4f194ea35825d76f0ccace00997c9a5",
-    "mode": "100644",
-    "path": ".github/actions/windows-signing/action.yml",
--   "sha256": "b95cd48d0086819e2548ebe824b7a96b4d7f92341abfe3e62fa0623fcfdf86b9",
--   "size": 2705
-+   "sha256": "c62ecdc5d3dafb2bc5f7f410d27b49a520d977c29d1ef0699f228c27b7d7b4ae",
-+   "size": 2995
-   },
-   {
-    "blob": "be5be3b15d83dc03857572dff9d0c7482f48b865",
-@@ -247,11 +247,11 @@
-    "size": 3565
-   },
-   {
--   "blob": "baaad32011a5fa47b828ba7ce3d66bfa67336fb6",
-+   "blob": "672c6530206eafd60c790c0ada0467a4710dc416",
-    "mode": "100644",
-    "path": ".github/workflows/release.yml",
--   "sha256": "afc288cf252f338870d5268f57a6af08eb19bb70200c1aced82bee6f91349e62",
--   "size": 58410
-+   "sha256": "e9d5f5b6183282a39f69ee2b6388f78f27d7aeac108d06029c47d23344fe2a1b",
-+   "size": 76157
-   },
-   {
-    "blob": "75a4d6a3ea3e0e6bf69efff80c68bc5cca72e7b4",
-@@ -457,11 +457,11 @@
-    "size": 525
-   },
-   {
--   "blob": "5387e27f55f84aa12ce91cf27ae9dd80437c2fad",
-+   "blob": "3a4e873ce8cb130d2a2324e7d0623fe02dde57b6",
-    "mode": "100644",
-    "path": "PUBLISH_MANIFEST.toml",
--   "sha256": "d7df663439f72fdd9b269838830cf88f48f7de72b549ab572f7955d84482b58d",
--   "size": 132651
-+   "sha256": "a984764c729a67c955cb25d8e212155ed5d8154481747e6bcaeb6dde75aae4c7",
-+   "size": 132804
-   },
-   {
-    "blob": "68b17e5b578ceb2df7dca4efcd0b859428333d54",
-@@ -478,11 +478,11 @@
-    "size": 684664
-   },
-   {
--   "blob": "3ba16bfeee394fed44d45a9f01068ff49d968d12",
-+   "blob": "c014f36ecc399252af9679b99c348abe66ad0fac",
-    "mode": "100644",
-    "path": "SECURITY.md",
--   "sha256": "f5a05a9bc50d6190dd20c3945c4a85dec90c6f89408e98fac7c2373164a21668",
--   "size": 32033
-+   "sha256": "2d3422ddd0fe229eb979a54d73c837f9fbcac5eb53e0dbb646a8531fafd0c125",
-+   "size": 32361
-   },
-   {
-    "blob": "5dc4c2f5d1ae1be56f4df2bc4bd9e7c7bdc2e7d7",
-@@ -5686,10 +5686,10 @@
-    "size": 4024
-   },
-   {
--   "blob": "17aee035f1915a6167189f1a174719920c839cef",
-+   "blob": "39391e736e429ea727a8c3beca6ffdca6f81b694",
-    "mode": "100644",
-    "path": "docs/contracts/delivery-evidence-v1.json",
--   "sha256": "746b50bf0ef3712f10d499729cd803f53aeaadf2cb036315c4bbc557084d93e1",
-+   "sha256": "1e12bf2cc2b26fbeb303c9ef7ffb2d429b2ed04d96242b65070fcf1c591e4ac2",
-    "size": 6892
-   },
-   {
-@@ -28926,11 +28926,11 @@
-    "size": 14289
-   },
-   {
--   "blob": "8398b1cec01d4f1ec10b30bfabdd26a217a397b7",
-+   "blob": "b7bdbf166a879284e6d3943f66dcd5bcfdd5b795",
-    "mode": "100644",
-    "path": "rust/src/core/shell_allowlist/side_door_tests.rs",
--   "sha256": "c15e0e7a459826359b8aeab896fad9b171c9fcaa117a583f484b35a6b6bdf513",
--   "size": 13903
-+   "sha256": "0abbdacaf59a63b582e412bc0dd4babb5506fdc6f0b3c6121e536a2aa540ae2b",
-+   "size": 14353
-   },
-   {
-    "blob": "31af8a934d2d84733e49e19e085a465962f0c018",
-@@ -37724,6 +37724,13 @@
-    "sha256": "19166bf56354d8a1bdc223ba0d76b220fcc2129075d68dd4d592841f483e95ac",
-    "size": 8767
-   },
-+  {
-+   "blob": "d8431c7faf1008245abf60bc4baad8a670e8b8a1",
-+   "mode": "100644",
-+   "path": "scripts/release-prebuild.py",
-+   "sha256": "9bc16f74415366966a583358a3ee258968ef67933090f58e2208835f211d928a",
-+   "size": 23974
-+  },
-   {
-    "blob": "afef0f8e0eeff2ad08855261f23b6c12ccb39137",
-    "mode": "100644",
-@@ -38011,6 +38018,13 @@
-    "sha256": "8b60f94da858bcb1fdef8409426931655616fe91289c40acc955c62a76ddc6fe",
-    "size": 11753
-   },
-+  {
-+   "blob": "fa6fe72aa3a5d6c9bda3bd5ba298cb8dc7782b1d",
-+   "mode": "100644",
-+   "path": "scripts/tests/test_release_prebuild.py",
-+   "sha256": "f1db604d7a2e16b02c9141086c238316561ea90b0278c68ea97c9be02cf0dd37",
-+   "size": 23400
-+  },
-   {
-    "blob": "65467d1e93b86bc5327211f6c22380cd610da4cb",
-    "mode": "100644",
-@@ -39002,9 +39016,9 @@
-    "sha256": "d8ece87e85f847ba6ef03ac36623f3fa5675f01c3cd01ee22a4c8362eec48dda"
-   }
-  ],
-- "manifest_sha256": "d7df663439f72fdd9b269838830cf88f48f7de72b549ab572f7955d84482b58d",
-+ "manifest_sha256": "a984764c729a67c955cb25d8e212155ed5d8154481747e6bcaeb6dde75aae4c7",
-  "schema": 1,
-- "source_commit": "5b798e2d23677e08170b2543758240cad6a4ffda",
-+ "source_commit": "8f939247df612fb2e608a23abc48a58ba82d4863",
-  "tool_sha256": "86ea08dc440cce975409b9f805c74bf5beb402284f3200800381def3714c8f3c",
-- "tree_sha256": "749d97bc805341dfd3010bfe87a36184b0d4ff38f2217ba2f79c7f5bdd302046"
-+ "tree_sha256": "f50aaea9dd93e6140528907613810b867c68c9bf71b72368df4e44e5d2073ed1"
- }
-```
-
-**File**: `PUBLISH_MANIFEST.toml` (modified, +3/-0)
-```diff
-@@ -167,12 +167,15 @@ new_paths = [
-   "scripts/public-export.py",
-   "scripts/publish-gate.py",
-   "scripts/publish-pins.py",
-+  # Release prebuild reuse (release.yml): own code, Apache-2.0 SPDX-headed.
-+  "scripts/release-prebuild.py",
-   "scripts/scan-release-artifacts.py",
-   "scripts/source-export-manifest.py",
-   "scripts/sync-capabilities.py",
-   "scripts/tests/test_export_offline_build.py",
-   "scripts/tests/test_export_secret_gate.py",
-   "scripts/tests/test_public_export.py",
-+  "scripts/tests/test_release_prebuild.py",
-   "scripts/tests/test_publish_gate.py",
-   "scripts/tests/test_runtime_install_isolation.py",
-   "scripts/tests/test_scan_release_artifacts.py",
-```
-
-**File**: `SECURITY.md` (modified, +5/-2)
-```diff
-@@ -226,13 +226,16 @@ cosign verify-blob SHA256SUMS \
- sha256sum --ignore-missing -c SHA256SUMS   # macOS: shasum -a 256 --ignore-missing -c SHA256SUMS
- ```
+-This data is delivered through the first tool call's `--- AUTO CONTEXT ---`
+-briefing (default `minimal_overhead = true`: initialize instructions stay
+-byte-stable for provider prompt caching, #498). With `minimal_overhead = false`
+-it is additionally injected at session start via the `ACTIVE SESSION` LITM block.
++This data is delivered as a `--- AUTO CONTEXT ---` briefing on the first
++`ctx_session` call with `action="load"`, `"status"` or `"show"` — never
++prepended to other tool results, which stay deterministic for provider prompt
++caching (#498). With `minimal_overhead = false` it is additionally injected at
++session start via the `ACTIVE SESSION` LITM block.
  
--Releases built after GHSA-rxv5-4c3x-g4q6 also carry GitHub build-provenance attestations for every archive, wheel, `SHA256SUMS` and `release-manifest.json`:
-+Releases built after GHSA-rxv5-4c3x-g4q6 also carry GitHub build-provenance attestations for every archive, wheel, `SHA256SUMS` and `release-manifest.json`. Pin the release tag, so only the run of that release is accepted:
+ Continuity is per agent: the briefing (last task, recent decisions), session
+ findings in `ctx_knowledge search` and every other session-continuity read come
+@@ -247,28 +248,15 @@ change-aware fast gate (the pre-push hook runs it too).
+ ## Output Determinism (#498)
  
- ```bash
- gh attestation verify lean-ctx-aarch64-apple-darwin.tar.gz --repo yvgude/lean-ctx \
--  --signer-workflow yvgude/lean-ctx/.github/workflows/release.yml
-+  --signer-workflow yvgude/lean-ctx/.github/workflows/release.yml \
-+  --source-ref refs/tags/vX.Y.Z
- ```
+ Tool outputs MUST be deterministic functions of (file content, mode, CRP mode, task).
+-Provider-side prompt caching (Anthropic 90%, OpenAI 50% discount) rewards byte-stable text;
++Provider-side prompt caching (a cache hit bills at 0.1× input on Anthropic and OpenAI GPT-5.6+,
++a miss rewrites the prefix at 1.25× or more) rewards byte-stable text;
+ any timestamp, counter or random element in tool output bodies defeats it.
  
-+From 3.12.1 the release run may reuse the binaries that `release.yml` built for the same commit on `main`, after verifying them against that build's attested file manifest. Only the release run attests the archives and wheels.
-+
- ---
+ - No timestamps/counters in output bodies. Artifact paths are content-addressed
+   (see `save_tee`: `{cmd_slug}_{blake3(cmd)[..8]}.log`).
+ - Dynamic additions (hints, checkpoints) only as state-triggered suffixes with stable headers.
+ - Regression guard: determinism tests in `ctx_read/tests.rs`, `ctx_search.rs`, `shell/redact.rs`.
  
- ## Disclosure Timeline
+-<!-- lean-ctx -->
+-## lean-ctx
+-
+-lean-ctx is active — the MCP tools replace native equivalents.
+-Full rules: LEAN-CTX.md (open on demand — do not auto-load).
+-<!-- /lean-ctx -->
+-<!-- lean-ctx-compression -->
+-OUTPUT STYLE: concise
+-- Bullet points over paragraphs
+-- Skip filler words and hedging ("I think", "probably", "it seems")
+-- 1-sentence explanations max, then code/action
+-- No repeating what the user said
+-<!-- /lean-ctx-compression -->
+-
+ ## LeanCTX Context Gateway product-scope, source-security and IP guard — REQUIRED FOR ALL AGENTS
+ 
+ Before **any** LeanCTX code, docs, connectors, SDK, EE, CI, packaging, refactor or release work, read `.agents/skills/leanctx-ip-governance/SKILL.md` and its **PRODUCT_SCOPE**, **CONNECTOR_AND_DECISION_SECURITY**, IP/licensing and release references. The product is the **Context Gateway for AI Systems** (Select → Control → Prove), not a general model router, agent orchestration framework or Thinkery OS; team coordination context (presence, leases, workspace bus, shared work graph) is in scope, agent execution and scheduling are not. New features must serve authorized source→ContextDecision→ContextBundle/Receipt, with current ACL/freshness/revocation checks; out-of-scope proposals require founder approval. Classify every affected file by product scope AND source rights. Preserve existing Apache functionality unless a separately approved reversible deprecation plan exists. New proprietary EE remains private; no public push, bulk deletion, history rewriting, relicense, CLA change or IP transfer claim without documented owner/legal/release authority. Respect stronger repository rules, preserve other agents' worktrees, record evidence and test security/compatibility. No public release credentials in agent workspaces.
 ```
 
-**File**: `docs/contracts/delivery-evidence-v1.json` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +304/-1)
 ```diff
-@@ -1 +1 @@
--{"checklist":[{"evidence":{"evidence_class":"rust-integration-test","harness_command":"cargo test --manifest-path rust/Cargo.toml --test main suite::setup_ci_smoke::setup_bootstrap_doctor_status_json_smoke -- --exact --test-threads=1","path":"rust/tests/suite/setup_ci_smoke.rs","selector":"fn setup_bootstrap_doctor_status_json_smoke()","sha256":"632fa142f66dd3c55e010d9115e873413a30f6ace225e9ab9b38be77a7346bae"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"setup"},{"evidence":{"evidence_class":"rust-integration-test","harness_command":"cargo test --manifest-path rust/Cargo.toml --test main suite::onboard_doctor_clean::onboard_yes_leaves_doctor_fully_green -- --exact","path":"rust/tests/suite/onboard_doctor_clean.rs","selector":"fn onboard_yes_leaves_doctor_fully_green()","sha256":"f37cf05df9a0f2da013103ac58e661d28989f6b661035c788cbf05c3c3a5d7f9"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"doctor"},{"evidence":{"evidence_class":"rust-unit-test","harness_command":"cargo test --manifest-path rust/Cargo.toml --lib doctor::migrate::tests::contract_outcome_reports_frozen_set -- --exact","path":"rust/src/doctor/migrate.rs","selector":"fn contract_outcome_reports_frozen_set()","sha256":"fec6db3d541f427738f1f53bbe113883da9c72cf46f3cc1dcbecca75efaded65"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"upgrade"},{"evidence":{"evidence_class":"python-unittest","harness_command":"python3 tests/delivery/test_rehearse_delivery.py DeliveryRehearsalTests.test_rehearses_verified_candidate_and_rollback_without_deployment","path":"tests/delivery/test_rehearse_delivery.py","selector":"def test_rehearses_verified_candidate_and_rollback_without_deployment(self):","sha256":"9c8841eea94ae560ca549e5d514c003eb4e1349c748e6b85dc0725e6bee9363a"},"external_acceptance_required":true,"local_status":"offline-rehearsal","stage":"rollback"},{"evidence":{"evidence_class":"rust-integration-test","harness_command":"cargo test --manifest-path rust/Cargo.toml --test main suite::cli_characterization::uninstall_dry_run_exits_zero -- --exact","path":"rust/tests/suite/cli_characterization.rs","selector":"fn uninstall_dry_run_exits_zero()","sha256":"87c819119b3d77e344f36ca64019b7f45cad8c18bbcc40bc5ae5e97f47e4e340"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"uninstall"}],"delivery_manifest":{"fixture":{"path":"tests/delivery/valid/delivery-manifest.json","selector":"\"schema_version\":\"leanctx.delivery/v1\"","sha256":"4fcdc5018f96bbb7ce4aa96549befbf2ea7416a80cd45c72bdbcd68413d3b42e"},"schema":{"path":"docs/contracts/delivery-manifest-v1.schema.json","selector":"https://leanctx.dev/contracts/delivery-manifest-v1.schema.json","sha256":"80ac91c631969a9ce305d8701d3eb0ca92b69b6defcd3a2ef6f9b4a80c7ae291"},"trust_root":{"path":"tests/delivery/valid/release-trust-root.json","selector":"\"algorithm\":\"Ed25519\"","sha256":"660fbf46674b8a16166026551e50b032a1ccf58a4d260c4bb4e4218235066083"},"verifier":{"path":"scripts/verify-delivery-manifest.py","selector":"def verify(manifest_path, root, trust_root=None, rotation_plan=None):","sha256":"636e85f32ce7cd7bfb7a6257b6abf78e4a5d3719c063537ccaa04be9163f21cc"}},"owner":{"handle":"@yvgude","source":{"path":".github/CODEOWNERS","selector":"* @yvgude","sha256":"9c52bffaef2f21976aac61d2ce42311a0ae6e393a95006a36f54e1d1edc72656"}},"release":{"publish_channels":[{"id":"engine-release","source_path":".github/workflows/release.yml","source_sha256":"afc288cf252f338870d5268f57a6af08eb19bb70200c1aced82bee6f91349e62","trigger_pattern":"v[0-9]*"},{"id":"sdk-release","source_path":".github/workflows/publish-sdk.yml","source_sha256":"29409a5020179f6711acc7bcd22e83dd7123d28b5e2b9beba9df8225b35f2a1b","trigger_pattern":"sdk-v[0-9]*"},{"id":"client-release","source_path":".github/workflows/publish-clients.yml","source_sha256":"dabe867e3aee5660a9e01b54b4876298b2faf0740c3a73af4ee4236cdc6a0cf3","trigger_pattern":"client-v[0-9]*"}],"targets":[{"artifact":"x86_64-unknown-linux-gnu","certification":"not-asserted","runner":"ubuntu-22.04","target":"x86_64-unknown-linux-gnu"},{"artifact":"x86_64-unknown-linux-gnu-cuda","certification":"not-asserted","runner":"ubuntu-22.04","target":"x86_64-unknown-linux-gnu"},{"artifact":"aarch64-unknown-linux-gnu","certification":"not-asserted","runner":"ubuntu-22.04-arm","target":"aarch64-unknown-linux-gnu"},{"artifact":"x86_64-unknown-linux-musl","certification":"not-asserted","runner":"ubuntu-22.04","target":"x86_64-unknown-linux-musl"},{"artifact":"aarch64-unknown-linux-musl","certification":"not-asserted","runner":"ubuntu-22.04-arm","target":"aarch64-unknown-linux-musl"},{"artifact":"x86_64-apple-darwin","certification":"not-asserted","runner":"macos-15-intel","target":"x86_64-apple-darwin"},{"artifact":"aarch64-apple-darwin","certification":"not-asserted","runner":"macos-15","target":"aarch64-apple-darwin"},{"artifact":"x86_64-pc-windows-msvc","certifica
+@@ -6,8 +6,119 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
+ 
+ ## [Unreleased]
+ 
++### Security
++
++- **Native Read and Grep now follow the secret-path rule.** `ctx_read` and `ctx_search`
++  refused `.env`, keys and credential files, but the host's own Read and Grep did not:
++  Claude Code keeps the Read redirect off and the redirect hook passed `.env` straight to
++  the native tool. The PreToolUse `hook redirect` now denies a native read or search whose
++  file, search root, file glob or symlink target is secret-like, with the same detector,
++  role switch (`io.allow_secret_paths`), warn/enforce mode and policy event as `ctx_read`,
++  in Hybrid mode and on the shadow surface too, on Claude Code, CodeBuddy, Cursor, Copilot
++  CLI and Gemini CLI. Behaviour change: native reads of files such as `*.pem` test
++  certificates or a `.npmrc` are now denied under the default role; allow them through the
++  role. Not covered: a directory-wide search, shell reads (`cat .env`), Windsurf and
++  Antigravity; see Security & Governance §4.0.
++
++- **LeanCTX approves a shell command only when your AI tool would have run it without
++  asking.** The shell and file hooks answered "allow" for every call they passed through or
++  wrapped, which skipped the AI tool's permission prompt for any command. They now mirror the
++  AI tool's own decision instead of granting one. Claude Code gets every rewrite, with "allow"
++  only when its permission settings (allow rules, its built-in read-only commands,
++  `bypassPermissions`) would have run the original command without a prompt; a command that a
++  deny or ask rule names, or may name, is left unchanged so the rule still applies. Cursor,
++  Copilot CLI and Codex, which take a rewrite only as an approval, get one only for a fixed set
++  of side-effect-free commands (`git status`/`log`/`diff`/`show`, `cat`, `ls`, `grep`, `rg`,
++  `find` without actions, …); builds, tests and every other command run unchanged under their
++  own approval. Gemini CLI never gets an approval, and a command its settings allow or
++  restrict by name is left unchanged. Unhandled calls and the timeout fallback carry no
++  decision.
++- **`report-issue` redacts secrets before a report can become a public issue.** The whole
++  report body, including the raw tee excerpt that `--include-tee` attaches, now goes through
++  the engine's secret redaction (tokens, keys, credentials become `[REDACTED:…]`), whatever
++  the role or `[secret_detection]` settings; before, only home paths and the user name were
++  masked. The GitHub token it asks for when `gh` is missing is read without echo.
++- **PathJail writes stay in the active project by default.** The default `path_jail_scope`
++  is `projects` again instead of `home`: every project below `~` stays readable, but tools
++  write only in the session's project, host-declared roots and allowed paths, so an agent
++  working in one repository can no longer plant `~/code/other/.git/hooks/pre-commit`.
++  `lean-ctx config set path_jail_scope home` (or `LEAN_CTX_PATH_JAIL_SCOPE=home`) restores
++  the 3.11.3 behaviour, and `lean-ctx doctor` and the server's startup warning now list it as
++  a jail relaxation. The Claude Code and CodeBuddy auto-memory exception
++  (`.claude/projects/<slug>/memory/`) now applies only under your own home directory (or
++  `CLAUDE_CONFIG_DIR`), not to a look-alike directory anywhere on disk. Upgrade note: see the
++  upgrade guide.
++- **`ctx_multi_repo add_root` passes PathJail.** The root was taken from the raw `path`
++  argument, so an agent could register `/` or `~` and then search and read it through
++  `repo=<alias>`. The root is now resolved through the jail like every other path argument,
++  and a root the jail refuses is not registered; `allow-path` and the other allow entries
++  still admit one.
++- **Project policies cannot drop the security defaults.** A project's
++  `.lean-ctx/policies.json` replaced the built-in exclusions for `.env*`, private keys and
++  credentials, and a later `Pin` or `Include` overrode them. The security defaults are now
++  always loaded ahead of the project's policies (a project policy reusing their names is
++  ignored), and their `Exclude` wins over any later action.
++- **`ctx_patch op="replace_all"` writes through the shared edit boundary.** It now takes the
++  per-file lock before reading, reads with the edit size cap and symlink refusal, refuses to
++  write when the file changed since it was read (TOCTOU guard), keeps the file's permissions
++  and invalidates the read dedup state, like every other `ctx_edit` and `ctx_patch` write.
++- **No approximate edit after a lossy read.** When the last read of a file was a compressed or
++  reduced view (`map`, `signatures`, `aggressive`, `entropy`, `task`, density or reference
++  modes), `ctx_edit` applies only an exact match against the file on disk; the
++  whitespace-tolerant and re-indent matchers are skipped, and a miss asks for a re-read with
 ```
 
-**File**: `rust/src/core/shell_allowlist/side_door_tests.rs` (modified, +10/-1)
+**File**: `LEAN-CTX.md` (modified, +9/-14)
 ```diff
-@@ -318,12 +318,21 @@ fn inputs_that_execute_the_marker_are_blocked() {
-             );
-             continue;
-         }
-+        // A coprocess runs asynchronously: `sh -c 'coproc x'` may exit before
-+        // x has written the flag, which made the probe flaky under load. The
-+        // shell run (not the gated input) waits for it; the gate verdict above
-+        // is still taken on the exact probe input.
-+        let run_input = if input.starts_with("coproc ") {
-+            format!("{input}; wait")
-+        } else {
-+            (*input).to_string()
-+        };
-         let mut ran = false;
-         for shell in &shells {
-             let _ = std::fs::remove_file(&flag);
-             let mut child = Command::new(shell)
-                 .arg("-c")
--                .arg(input)
-+                .arg(&run_input)
-                 .env("PATH", &path)
-                 .env("MARK", &flag)
-                 .current_dir(dir.path())
+@@ -1,29 +1,24 @@
+ <!-- lean-ctx-owned: PROJECT-LEAN-CTX.md v1 -->
+ <!-- lean-ctx-rules -->
+-<!-- version: 12 -->
+-
+-CRITICAL: ALWAYS use lean-ctx ctx_* tools as mapped below.
++<!-- version: 13 -->
+ 
+ LeanCTX (lean-ctx) — Context Gateway for AI Systems.
+ 
+-ACTUALLY EMIT the ctx_* tool call (ctx_compose first) — describing a tool is not calling it.
+-
+-MANDATORY MAPPING:
++lean-ctx routing — the host's built-in tools map to:
+ • Read/cat -> ctx_read(path, mode)
+ • Grep -> ctx_search(pattern, path)
+ • Shell/bash -> ctx_shell(command)
+ • Glob/find -> ctx_glob(pattern)
+ • ls/find -> ctx_tree(path, depth)
++This covers built-in file/search/shell tools only; other MCP servers keep their own jobs.
+ 
+-NEVER use built-in Read/Grep/Shell/Glob for these jobs. SELF-CORRECT: the moment you reach for one, stop and call the ctx_* tool instead. Other MCP servers keep their own jobs.
++Call the tool; describing a call does not run it.
+ 
+-Tool selection by intent:
+-• Orient / understand code (call FIRST) -> ctx_compose
+-• Read a file -> ctx_read(path, mode=signatures|map|full); edit after reading -> ctx_patch
+-• Exact symbol -> ctx_search(action=symbol); pattern -> ctx_search; by meaning -> ctx_search(action=semantic)
+-• Files by glob -> ctx_glob; structure -> ctx_tree; callers/impact -> ctx_callgraph
+-• Verify after edits -> ctx_shell(test/build); memory -> ctx_session / ctx_knowledge
+-Semantic questions -> search tools, not whole-file reads: reading more ≠ understanding more.
++By task:
++• Unfamiliar code -> ctx_compose (search + read + symbols in one call)
++• Read -> ctx_read(mode=signatures|map|full); edit -> ctx_patch
++• Symbol -> ctx_search(action=symbol); meaning -> ctx_search(action=semantic)
++• Callers/impact -> ctx_callgraph; memory -> ctx_session / ctx_knowledge
+ 
+ AGENT LOOP (phase -> tool):
+ • Orient — understand before acting -> ctx_compose
 ```
 
-**File**: `scripts/release-prebuild.py` (added, +493/-0)
+**File**: `PUBLISH_MANIFEST.toml` (modified, +42/-3)
 ```diff
-@@ -0,0 +1,493 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: Apache-2.0
-+"""Build once on main, reuse on the release tag (.github/workflows/release.yml).
-+
-+    release-prebuild.py plan          --event E --ref R --repo O/N [--before SHA] [--root .]
-+    release-prebuild.py find          --repo O/N --sha SHA [--wait-seconds N]
-+    release-prebuild.py seal          --artifacts-dir D --config-dir C --repo O/N --sha SHA
-+                                      --tree T --version V --run-id ID --run-attempt N --output M
-+    release-prebuild.py verify        --manifest M --attestation A --repo O/N --sha SHA
-+                                      --tree T --version V --run-id ID [--dir D]
-+    release-prebuild.py config-digest
-+
-+The push to main that changes the workspace Cargo version to a stable,
-+unpublished X.Y.Z (the release merge commit), or a manual dispatch on main,
-+builds the full release matrix (the jobs a tag runs) and seals it: a manifest
-+of every file digest and of the build configuration each build job compiled
-+in, attested by release.yml@refs/heads/main. The tag run of the same commit
-+reuses that build only when the run, its manifest, the manifest's Sigstore
-+attestation and every file digest agree with the tag; otherwise it builds as
-+before. Nothing here signs or publishes a release.
-+"""
-+
-+from __future__ import annotations
-+
-+import argparse
-+import base64
-+import hashlib
-+import json
-+import os
-+import re
-+import sys
-+import time
-+import tomllib
-+import urllib.error
-+import urllib.parse
-+import urllib.request
-+from pathlib import Path
-+
-+SCHEMA = "leanctx.release-prebuild/v1"
-+WORKFLOW_PATH = ".github/workflows/release.yml"
-+MAIN_REF = "refs/heads/main"
-+MANIFEST_ARTIFACT = "release-prebuild-manifest"
-+MANIFEST_NAME = "release-prebuild-manifest.json"
-+CONFIG_ARTIFACT_PREFIX = "release-build-config-"
-+OIDC_ISSUER = "https://token.actions.githubusercontent.com"
-+# The release matrix of release.yml (`build` and `build-windows`), by artifact
-+# name. tests/test_release_prebuild.py keeps the two in step.
-+ARTIFACTS = (
-+    "aarch64-apple-darwin",
-+    "x86_64-apple-darwin",
-+    "x86_64-unknown-linux-gnu",
-+    "x86_64-unknown-linux-gnu-cuda",
-+    "aarch64-unknown-linux-gnu",
-+    "x86_64-unknown-linux-musl",
-+    "aarch64-unknown-linux-musl",
-+    "x86_64-pc-windows-msvc",
-+    "x86_64-pc-windows-msvc-cuda",
-+    "x86_64-pc-windows-gnu",
-+)
-+# Variables a build compiles in (build.rs, option_env!). A tag run reuses a
-+# prebuild only when they are unchanged since it was built.
-+BUILD_CONFIG_VARIABLES = (
-+    "LEANCTX_PRODUCTION_RUNTIME_CHANNEL_URL",
-+    "LEANCTX_PRODUCTION_RUNTIME_CHANNEL_SIGNATURE_URL",
-+    "LEANCTX_PRODUCTION_RUNTIME_CHANNEL_ROOT_KEY_HEX",
-+    "LEANCTX_PRODUCTION_COCKPIT_CHANNEL_URL",
-+    "LEANCTX_PRODUCTION_COCKPIT_CHANNEL_SIGNATURE_URL",
-+)
-+STABLE = re.compile(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)")
-+# The tag grammar of scripts/check-release-tag.py (stable or prerelease).
-+TAG_VERSION = re.compile(
-+    r"(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)"
-+    r"(?:-(?:0|[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?"
-+)
-+SHA = re.compile(r"[0-9a-f]{40}")
-+DIGEST = re.compile(r"[0-9a-f]{64}")
-+REPO = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+")
-+WHEEL = re.compile(r"thinkery_leanctx_engine(?:_cuda|_windows_gnu)?-(?P<version>[^-]+)-py3-none-[A-Za-z0-9_.]+\.whl")
-+
-+
-+class PrebuildError(Exception):
-+    """A prebuild is unusable; the tag run builds instead."""
-+
-+
-+def archive_name(artifact: str) -> str:
-+    return f"lean-ctx-{artifact}.zip" if "-windows-" in artifact else f"lean-ctx-{artifact}.tar.gz"
-+
-+
-+def sha256_bytes(data: bytes) -> str:
-+    return hashlib.sha256(data).hexdigest()
-+
-+
-+def sha256_file(path: Path) -> str:
-+    digest = hashlib.sha256()
-+    with path.open("rb") as handle:
-+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-+            digest.update(chunk)
-+    return digest.hexdigest()
-+
-+
-+def _regular(path: Path) -> Path:
-+    if path.is_symlink() or not path.is_file():
-+        raise PrebuildError(f"{path.name}: not a regular file")
-+    return path
-+
-+
-+def _require(condition: bool, message: str) -> None:
-+    if not condition:
-+        raise PrebuildError(message)
-+
-+
-+def _warn(message: str) -> None:
-+    print(f"::warning::{message}", file=sys.stderr)
-+
-+
-+# ---- plan ------------------------------------------------------------------
-+
-+def _package_version(cargo_toml: str) -> str | None:
-+    version = tomllib.loads(cargo_toml).get("package", {}).get("version")
-+    return version if isinstance(version, str) else None
-+
-+
-+def cargo_version(root: Path) -> str:
-+    version = _package_version((root / "rust/Cargo.toml").read_text(encoding="utf-8"))
-+    _require(version is not None and TAG_VERSION.fullmatch(version) is not None, "Cargo version is not a semver")
-+    return version
-+
-+
-+def is_stable(version: str | None) -> bool:
-+    return isinstance(version, str) and STABLE.fullmatch(version) is
+@@ -436,7 +436,6 @@ new_paths = [
+   # protocol types and C0 hive/hive-v2 fixtures, engine metrics v2, consent helper,
+   # shell approval, tasks, knowledge import and their tests: own work under Apache-2.0.
+   # PROPOSED by the release rehearsal: the owner confirms this list before the export.
+-  "docs/architecture/gateway-no-lockout.md",
+   "rust/crates/lean-ctx-protocol/src/hive/anchor.rs",
+   "rust/crates/lean-ctx-protocol/src/hive/automerge.rs",
+   "rust/crates/lean-ctx-protocol/src/hive/codegraph.rs",
+@@ -1457,6 +1456,34 @@ new_paths = [
+   "rust/src/cli/dispatch/cockpit_hint.rs",
+   "rust/src/cli/dispatch/network/cockpit_start.rs",
+   "rust/src/dashboard/launch.rs",
++  # 3.12.1: failure-template scrubber, ctx_edit repeats, withheld audit and
++  # report export, hook permission mirroring (engine/engine-fix).
++  "rust/examples/retemplate_failure_messages.rs",
++  "rust/src/cli/report_export.rs",
++  "rust/src/core/failure_template_tests.rs",
++  "rust/src/core/failure_vocabulary.rs",
++  "rust/src/hook_handlers/claude_permissions.rs",
++  "rust/src/hook_handlers/claude_permissions_tests.rs",
++  "rust/src/hook_handlers/gemini_permissions.rs",
++  "rust/src/hook_handlers/safe_commands.rs",
++  "rust/src/hook_handlers/safe_commands_tests.rs",
++  "rust/src/tools/ctx_edit/applied_edits.rs",
++  # 3.12.1 optplan: governor hook, partial shell runs, lossless collapse,
++  # secret gate, ctx_read symbol (lean-ctx-af, integration/optplan).
++  "rust/src/core/patterns/lossless_collapse.rs",
++  "rust/src/core/shell_allowlist/partial.rs",
++  "rust/src/hook_handlers/govern/bash.rs",
++  "rust/src/hook_handlers/govern/diagnostics.rs",
++  "rust/src/hook_handlers/govern/enforce.rs",
++  "rust/src/hook_handlers/govern/mod.rs",
++  "rust/src/hook_handlers/govern/tests.rs",
++  "rust/src/hook_handlers/secret_gate.rs",
++  "rust/src/hooks/agents/claude_governor.rs",
++  "rust/src/tools/registered/ctx_read_symbol.rs",
++  # 3.12.1: the shared `cargo fast` alias (only the alias, no [build] job budget),
++  # so fresh clones can run `make build`; the root .cargo/config.toml stays private.
++  "rust/.cargo/config.toml",
++  "tests/build/test_cargo_alias.py",
+ ]
+ 
+ # Public paths the export no longer carries: each one is a feature sunset with
+@@ -1879,6 +1906,18 @@ removed_paths = [
+   "rust/src/setup/agent_select.rs",
+   # 3.12.0 PROPOSED (owner confirms): the proxy /dashboard page now points to `lean-ctx cockpit`.
+   "rust/src/proxy/web_app/dashboard.html",
++  # 3.12.1: the Visualizer page, unused since `visualize` was removed in 3.12.0;
++  # `cockpit --export` writes the Cockpit report (cli/report_export.rs).
++  "rust/src/assets/visualizer.html",
++  "rust/src/cli/visualize_cmd.rs",
++  "rust/src/core/visualizer.rs",
++  # 3.12.1 optplan: no Pro paths in the open engine; context ranking, memory
++  # selection and read strategy are local and free (2c38e03e05, 4f3ecaa5f1).
++  "rust/src/core/context_store/policy_store.rs",
++  "rust/src/core/intelligence_runtime/context_policy.rs",
++  "rust/src/core/intelligence_runtime/context_selection.rs",
++  "rust/src/core/intelligence_runtime/memory_curation.rs",
++  "rust/src/tools/ctx_compose_selection.rs",
+ ]
+ 
+ include = [
+@@ -1957,7 +1996,7 @@ forbidden_prefixes = [
+ # the canonical registry changes (scripts/check-capabilities.py checks the pin).
+ [[generated]]
+ path = "product/capabilities.toml"
+-sha256 = "c241ccc39d56dd29db7c70805d73912052ff9b2cd32286a8e2e714f06135db0b"
++sha256 = "1fed7ac3a656c34351259279ef22897c47ae5fd88efd92956e9140be0cfdae38"
+ required = true
+ 
+ # The public source layout: `scripts/check-source-layout.py --project
+@@ -1966,7 +2005,7 @@ required = true
+ # product/source-layout.json changes.
+ [[generated]]
+ path = "docs/reference/generated/product-capabilities.md"
+-sha256 = "aabdc717811e7d8ed694d6b471cff5b9e7a92befcc0f2602e9ccfc2f2c3df7f3"
++sha256 = "64b36affde791d759d115766fdd93433994cc03a366ffad4865757b8806f30c0"
+ required = true
+ 
+ [[generated]]
+```
+
+**File**: `SECURITY.md` (modified, +9/-9)
+```diff
+@@ -44,16 +44,16 @@ lean-ctx enforces a **filesystem boundary** for tool I/O:
+ 
+ - **PathJail**: all tool path inputs are resolved (symlinks and `..` included) and checked
+   against the jail scope (`path_jail_scope`, global-only):
+-  - `home` (default since v3.11.1; read **and write** below `~` since v3.11.3): every path
+-    below the user's home directory, except the protected zones — every top-level dot entry (`~/.ssh`, `~/.aws`, `~/.gnupg`,
++  - `projects` (default; also the default of v3.11.1–v3.11.2): only paths inside a project
++    below `~` (a folder between it and `~` holds `.git`, `Cargo.toml`, `package.json` or another
++    project marker) are readable; loose personal files stay jailed, and writes stay limited to
++    the session's project, host-declared roots and explicit allow entries.
++  - `home` (opt-in; the default of v3.11.3–v3.12.0, reported as a jail relaxation): every path
++    below the user's home directory, read **and write**, except the protected zones — every top-level dot entry (`~/.ssh`, `~/.aws`, `~/.gnupg`,
+     `~/.config`, shell rc files, other agents' `~/.claude` / `~/.codex` / `~/.cursor`),
+     `~/Library`, `~/AppData` / `NTUSER.DAT*` and `~/snap`. Everything outside `~` stays jailed.
+     Zones are a hard deny: a root or allow entry that merely contains a zone does not open it.
+     An implausible `$HOME` (`/`, `/root`, `/tmp`, not owned by the user) disables the scope.
+-  - `projects` (the default of v3.11.1–v3.11.2): only paths inside a project below `~` (a folder
+-    between it and `~` holds `.git`, `Cargo.toml`, `package.json` or another project marker) are
+-    readable; loose personal files stay jailed, and writes stay limited to the session's project,
+-    host-declared roots and explicit allow entries.
+   - `project`: only the current `project_root` plus the explicit allow roots below.
+   - If a path would escape, the call fails naming the single command that admits it
+     (`lean-ctx allow-path <dir>`) and asks the agent to defer to the user.
+@@ -285,11 +285,11 @@ proof of OS isolation. Inspect `rust/src/core/sandbox.rs` for the release in use
+ - **interpreter inline-code blocking**: `bash -c`, `sh -c`, `python -c`, `node -e`, … are rejected (including via delegation wrappers like `env`, `timeout`, `xargs`) — quoting a payload inside `bash -c '…'` does not bypass the file-write or allowlist checks because the interpreter call itself is refused,
+ - file-write detection (`>`, `>>`, `tee`, heredoc-to-file, `dd of=`, `curl -o/-O`, `wget` to file) — output capture (`>`, `>>`, `tee`) may go to the session's project, `allow_paths` / `extra_roots`, `write_allow_paths` or a scratch path (never `/`, `~`, an ancestor of `~` or a `read_only_roots` entry); downloads only to scratch paths and `write_allow_paths`; everything else belongs to the editor's native Write/Edit tools where the agent's permission UI governs them,
+ - dangerous-flag blocking (`git --upload-pack`, `tar --to-command`, `find -exec`, `awk system()`), inline env hijack blocking (`PATH=`, `LD_PRELOAD=`, `GIT_SSH_COMMAND=`, …), and dangerous env-key filtering on the MCP `env` parameter,
+-- **no self-loosening** (allowlist mode, the default): lean-ctx subcommands that widen its own guardrails — `yolo`, `allow <cmd>`, `allow-path <dir>`, `trust`, `security open`, `security secrets off`, `config set` of a security or path/allowlist key — are refused, so an agent cannot undo a refusal it just received. Listing, `--remove`, `secure`, `untrust` and `security secrets on` still run. The user runs the blocked commands in their own terminal (warn-only there, see below). `ctx_execute` is not covered — see the next paragraph.
++- **no self-loosening** (allowlist mode, the default): lean-ctx subcommands that widen its own guardrails — `yolo`, `allow <cmd>`, `allow-path <dir>`, `trust`, `security open`, `security secrets off`, `config set` of a security or path/allowlist key — are refused, so an agent cannot undo a refusal it just received. Listing, `--remove`, `secure`, `untrust` and `security secrets on` still run. The user runs the blocked commands in their own terminal (warn-only there, see below). Shell code in `ctx_execute` is covered as well — see the next paragraph.
+ 
+ Enforcement applies to the MCP path, hook-child mode and every non-interactive CLI invocation; an interactive human terminal gets a warning instead (`LEAN_CTX_ALLOWLIST_WARN_ONLY=1` opts out explicitly). Cloud/infra mutation CLIs (terraform, kubectl, aws, …) are excluded from the default allowlist and require per-tool opt-in (`lean-ctx allow <cmd>`). Commands inside a substitution in an argument (`$(…)`, backticks, `<(…)`/`>(…)`) are gated like top-level commands in every enforce-mode call. `shell_strict_mode = true` upgrades the remaining warn-only heuristic (pipe to a bare interpreter) to a hard block.
+ 
+-**`ctx_execute(language=shell)` is deliberately NOT allowlisted (GH #905).** The checks above gate `ctx_shell` and `lean-ctx -c` only. `ctx_execut
+```
+
+**File**: `discord-faq.md` (modified, +1/-1)
+```diff
+@@ -136,7 +136,7 @@ If you're using `pi-lean-ctx` (Pi editor), make sure you're on the latest versio
+ 3. Check that your project root is correct: `lean-ctx doctor`
+ 
+ **Q: "path escapes project root" error!**
+-Since v3.11.3 everything below your home directory is readable and writable out of the box (`path_jail_scope = "home"`), except protected locations like `~/.ssh`, `~/.aws`, `~/.config` and `~/Library`. If you still see it:
++Out of the box (`path_jail_scope = "projects"`) every project below your home directory is readable and the active project is writable; protected locations like `~/.ssh`, `~/.aws`, `~/.config` and `~/Library` stay closed. `lean-ctx config set path_jail_scope home` makes all of `~` readable and writable. If you still see it:
+ - The error names the fix — usually `lean-ctx allow-path <dir>` for a directory outside `~`, a non-project folder, a sibling project you want to edit, or a protected one like `~/.config/...` (takes effect immediately)
+ - Session bound to the wrong project? Run `lean-ctx doctor` — "Project binding" shows a `LEAN_CTX_PROJECT_ROOT` pinned in a global agent config (older setups wrote it); `lean-ctx doctor --fix` removes it, then restart the agent once
+ - On an older version: `lean-ctx update`
+```
+
+**File**: `docs/POSITIONING_CANONICAL.md` (modified, +5/-5)
+```diff
+@@ -40,9 +40,8 @@ inside the product. Other deeper lifecycles must not replace the primary story.
+ | **LeanCTX Engine** | The runtime implementing context capabilities |
+ | **LeanCTX SDK** | The integration surface for embedding supported Engine capabilities |
+ | **Context Intelligence** | Context selection and preparation capabilities inside LeanCTX |
+-| **Community** | The open-source Engine and its supported local paths, under Apache-2.0 |
+-| **Pro** | The released personal hosted-services plan, including Personal Cloud sync/backup and hosted index capacity within the selected plan's limits |
+-| **Enterprise** | Commercial organization controls and deployment, scoped to the licensed release and agreement |
++| **LeanCTX OSS** | The open-source Engine, free and complete on its supported local paths, under Apache-2.0 (formerly "Community") |
++| **LeanCTX Hive** | The paid version (Personal · Team · Enterprise): control and proof on top of OSS — filter packs, org policy, compliance, Cockpit across engines, shared context and team coordination — scoped to the licensed release and agreement |
+ | **SDK / OEM** | Embedding and distribution scope under the applicable SDK/runtime licenses and commercial agreement |
+ 
+ Keep the customer's application, agent loop, model choice and UI. Coding agents
+@@ -67,8 +66,9 @@ Local context-only use does not require hosted services. Provider/execution
+ controls apply only to supported calls routed through the configured runtime.
+ Enterprise identity, organization policy, retention, connector coverage and
+ operations must be described against that edition's supported release.
+-Pro availability does not establish that every newer adaptive-context or
+-intelligence feature is included in the current public release.
++No local context behaviour (ranking, memory selection, read strategy, planning)
++has a paid-better variant; LeanCTX Hive adds governance, not better local
++results.
+ 
+ ## Evidence and security claims
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2163** (2026-10-31): chore: 3.12.1 cleanup, emspace provider, read outline and template collapse (@yvgude)
+- **PR #2161** (2026-10-30): fix: 3.12.1 fixes, engine optimizations and OSS hardening (@yvgude)
+- **PR #2160** (2026-10-30): perf(build): 256 codegen units for the engine crate in dev-fast (@yvgude)
 - **PR #2159** (2026-10-29): ci(release): build once on main, reuse the verified build on the tag (@yvgude)
 - **PR #2158** (2026-10-29): Release 3.12.0: the Cockpit installs itself, faster release (@yvgude)
 - **PR #2157** (2026-10-29): Release 3.12.0: release pipeline fix and security alerts (@yvgude)
-- **PR #2156** (closed): chore(deps): bump @hono/node-server from 2.1.0 to 2.1.5 in /packages/pi-lean-ctx (@dependabot[bot])
-- **PR #2155** (closed): chore(deps): bump zip from 9.0.4 to 9.0.5 in /rust (@dependabot[bot])
-- **PR #2154** (closed): chore(deps): bump qs from 6.16.0 to 6.17.1 in /_archive/vscode-extension (@dependabot[bot])
 
 ---
 
@@ -2457,26 +2481,26 @@ Public export of the private source commit 8f939247df612fb2e608a23abc48a58ba82d4
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Release 3.12.0: release pipeline fix and security alerts (#2157)
+## X. build): split the engine crate into 256 codegen units in dev-fast (#2160)
 
 **RULE**:
-When implementing operations in `.cursor/rules/leanctx-ip-governance.mdc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8a99cb20`: Release 3.12.0: release pipeline fix and security alerts (#2157). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1cc70602`: build): split the engine crate into 256 codegen units in dev-fast (#2160). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cursor/rules/leanctx-ip-governance.mdc`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
----
-description: LeanCTX Context Gateway source/decision scope, Apache IP and private EE safety gate for all coding, docs and releases.
-alwaysApply: true
----
+# Small code units let an incremental rebuild of the engine crate regenerate
+# only what changed: on 30.10. a one-line edit took a median 27 s instead of
+# 37 s (codegen 9 s instead of 19 s) with unchanged runtime.
+[profile.dev-fast.package.lean-ctx]
+codegen-units = 256
 
-Before editing, read `.agents/skills/leanctx-ip-governance/SKILL.md` and `AGENTS.md`, including `references/PRODUCT_SCOPE.md` and `references/CONNECTOR_AND_DECISION_SECURITY.md`. LeanCTX is Context Gateway (Select → Control → Prove); new work must map authorized source→decision→bundle/receipt. General agent/model orchestration is not product scope; team coordination context (presence, leases, workspace bus, shared work graph) is. Preserve existing Apache rights, do not auto-delete OSS, keep new EE private, no public publish without real founder+independent release approval. State source ACL, integration coverage, affected licence, tests and rollback.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2486,4 +2510,4 @@ Before editing, read `.agents/skills/leanctx-ip-governance/SKILL.md` and `AGENTS
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8a99cb20` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1cc70602` are properly handled with clean fallback behavior.

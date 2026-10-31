@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T11:19:12.727Z",
+  "last_updated": "2026-10-31T11:26:00.668Z",
   "total_verified_learnings": 1183,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17452,7 +17452,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
       "source_version": "hf-alissonerdx-bfs-best-face-swap",
-      "content_hash": "798c3315bb5cc109077cc88fea7151f30bd1429729f83859cbb508853ace5f1c",
+      "content_hash": "d61be63f840f9bb4a673ae6fab30637c946f0b76725ae289d906a0a88ee65f8d",
       "dossier_path": "07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
       "promoted_rules": [
@@ -17497,7 +17497,7 @@
         "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv476k43",
         "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv4kgwuz"
       ],
-      "verified_at": "2026-10-28T09:40:44.331Z",
+      "verified_at": "2026-10-31T11:26:00.048Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59215,8 +59215,8 @@
       "slug": "yvgude-lean-ctx",
       "platform": "github",
       "source_url": "https://github.com/yvgude/lean-ctx",
-      "source_version": "e95146ff",
-      "content_hash": "4553b8663ead54737ecff38c4309251932d26657ac9615b8a70747f976ea9638",
+      "source_version": "9fc77dec",
+      "content_hash": "5e6328f438e084bc8a9bfc99cbf4748ad31d1977dd207f2fd6002b705eab3e77",
       "dossier_path": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "promoted_rules": [
@@ -59239,6 +59239,11 @@
           "number": 5762,
           "title": "Release 3.12.0: release pipeline fix and security alerts (#2157)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6181,
+          "title": "build): split the engine crate into 256 codegen units in dev-fast (#2160)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59246,7 +59251,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T13:28:35.552Z",
+      "verified_at": "2026-10-31T11:26:00.649Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -161690,6 +161695,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T11:09:37.576Z"
+    },
+    "rule-6181": {
+      "learning_id": "rule-6181",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6181,
+      "title": "build): split the engine crate into 256 codegen units in dev-fast (#2160)",
+      "source_url": "https://github.com/yvgude/lean-ctx",
+      "source_version": "9fc77dec",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T11:26:00.649Z"
     }
   },
   "aliases": {

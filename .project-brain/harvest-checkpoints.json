@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T11:19:12.835Z",
+  "last_updated": "2026-10-31T11:26:00.760Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -710,14 +710,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-      "content_hash": "798c3315bb5cc109077cc88fea7151f30bd1429729f83859cbb508853ace5f1c",
-      "verified_at": "2026-10-28T09:40:44.424Z",
+      "content_hash": "d61be63f840f9bb4a673ae6fab30637c946f0b76725ae289d906a0a88ee65f8d",
+      "verified_at": "2026-10-31T11:26:00.189Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T09:40:44.424Z"
+      "last_updated": "2026-10-31T11:26:00.189Z"
     },
     "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF": {
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -9471,14 +9471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yvgude-lean-ctx",
-      "content_hash": "4553b8663ead54737ecff38c4309251932d26657ac9615b8a70747f976ea9638",
-      "verified_at": "2026-10-30T13:28:35.619Z",
+      "content_hash": "5e6328f438e084bc8a9bfc99cbf4748ad31d1977dd207f2fd6002b705eab3e77",
+      "verified_at": "2026-10-31T11:26:00.759Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T13:28:35.619Z"
+      "last_updated": "2026-10-31T11:26:00.759Z"
     },
     "gkd-kit/gkd": {
       "repository": "gkd-kit/gkd",

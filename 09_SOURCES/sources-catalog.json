@@ -565,8 +565,8 @@
     "sourceUrl": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
     "sourceVersion": "hf-alissonerdx-bfs-best-face-swap",
     "license": "Open-Source",
-    "contentHash": "798c3315bb5cc109077cc88fea7151f30bd1429729f83859cbb508853ace5f1c",
-    "lastHarvestedAt": "2026-10-28T09:40:44.413Z",
+    "contentHash": "d61be63f840f9bb4a673ae6fab30637c946f0b76725ae289d906a0a88ee65f8d",
+    "lastHarvestedAt": "2026-10-31T11:26:00.176Z",
     "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap"
   },
   "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf": {
@@ -6233,10 +6233,10 @@
     "repository": "yvgude/lean-ctx",
     "platform": "github",
     "sourceUrl": "https://github.com/yvgude/lean-ctx",
-    "sourceVersion": "e95146ff",
+    "sourceVersion": "9fc77dec",
     "license": "Apache-2.0",
-    "contentHash": "4553b8663ead54737ecff38c4309251932d26657ac9615b8a70747f976ea9638",
-    "lastHarvestedAt": "2026-10-30T13:28:35.613Z",
+    "contentHash": "5e6328f438e084bc8a9bfc99cbf4748ad31d1977dd207f2fd6002b705eab3e77",
+    "lastHarvestedAt": "2026-10-31T11:26:00.750Z",
     "learningId": "learn-github-yvgude-lean-ctx"
   },
   "gkd-kit-gkd": {

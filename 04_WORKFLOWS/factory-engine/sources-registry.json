@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T11:19:24.266Z",
-    "lastVerified": "2026-10-31T11:19:24.266Z",
+    "lastChecked": "2026-10-31T11:26:11.465Z",
+    "lastVerified": "2026-10-31T11:26:11.465Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -429,8 +429,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T10:47:23.412Z",
-    "lastVerified": "2026-10-31T10:47:23.412Z",
+    "lastChecked": "2026-10-31T11:26:11.453Z",
+    "lastVerified": "2026-10-31T11:26:11.453Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1212,8 +1212,8 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T06:24:50.301Z",
-    "lastVerified": "2026-10-31T06:24:50.301Z",
+    "lastChecked": "2026-10-31T11:26:06.463Z",
+    "lastVerified": "2026-10-31T11:26:06.463Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
@@ -2880,9 +2880,9 @@
   "zilliztech-attu": {
     "name": "attu",
     "officialUrl": "https://github.com/zilliztech/attu",
-    "lastChecked": "2026-10-30T18:25:34.508Z",
+    "lastChecked": "2026-10-31T11:26:08.940Z",
     "revisionIdentifier": "d51e1c78",
-    "lastVerified": "2026-10-30T18:25:34.508Z"
+    "lastVerified": "2026-10-31T11:26:08.940Z"
   },
   "asciinema-asciinema": {
     "name": "asciinema",
@@ -3006,13 +3006,13 @@
     "officialUrl": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T09:25:10.466Z",
-    "lastVerified": "2026-10-28T09:25:10.466Z",
+    "lastChecked": "2026-10-31T11:25:59.045Z",
+    "lastVerified": "2026-10-31T11:25:59.045Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-    "contentHash": "798c3315bb5cc109077cc88fea7151f30bd1429729f83859cbb508853ace5f1c",
-    "promotedRulesCount": 1,
+    "contentHash": "d61be63f840f9bb4a673ae6fab30637c946f0b76725ae289d906a0a88ee65f8d",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -3955,9 +3955,9 @@
   "argoproj-argo-events": {
     "name": "argo-events",
     "officialUrl": "https://github.com/argoproj/argo-events",
-    "lastChecked": "2026-10-30T19:19:14.548Z",
+    "lastChecked": "2026-10-31T11:26:03.943Z",
     "revisionIdentifier": "d00d3409",
-    "lastVerified": "2026-10-30T19:19:14.548Z"
+    "lastVerified": "2026-10-31T11:26:03.943Z"
   },
   "neural-maze-ava-whatsapp-agent-course": {
     "name": "ava-whatsapp-agent-course",
@@ -5571,9 +5571,9 @@
   "react-native-webrtc-react-native-webrtc": {
     "name": "react-native-webrtc",
     "officialUrl": "https://github.com/react-native-webrtc/react-native-webrtc",
-    "lastChecked": "2026-10-28T15:58:17.542Z",
+    "lastChecked": "2026-10-31T11:26:01.520Z",
     "revisionIdentifier": "fb662c9d",
-    "lastVerified": "2026-10-28T15:58:17.542Z"
+    "lastVerified": "2026-10-31T11:26:01.520Z"
   },
   "goss-org-goss": {
     "name": "goss",
@@ -5978,12 +5978,12 @@
     "officialUrl": "https://github.com/yvgude/lean-ctx",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T13:28:32.645Z",
-    "lastVerified": "2026-10-30T13:28:32.645Z",
+    "lastChecked": "2026-10-31T11:26:00.043Z",
+    "lastVerified": "2026-10-31T11:26:00.043Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yvgude-lean-ctx",
-    "contentHash": "4553b8663ead54737ecff38c4309251932d26657ac9615b8a70747f976ea9638",
+    "contentHash": "5e6328f438e084bc8a9bfc99cbf4748ad31d1977dd207f2fd6002b705eab3e77",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,

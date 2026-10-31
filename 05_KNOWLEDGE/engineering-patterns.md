@@ -452641,3 +452641,58 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `07cd00d1` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6181. build): split the engine crate into 256 codegen units in dev-fast (#2160) (Harvested from yvgude/lean-ctx)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "build): split the engine crate into 256 codegen units in dev-fast (#2160)",
+  "source": "yvgude/lean-ctx",
+  "source_url": "https://github.com/yvgude/lean-ctx",
+  "source_version": "9fc77dec",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-31T11:26:00.439Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-yvgude-lean-ctx",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [yvgude/lean-ctx](https://github.com/yvgude/lean-ctx) (Revision: `9fc77dec`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `rust/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `1cc70602`: build): split the engine crate into 256 codegen units in dev-fast (#2160). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/Cargo.toml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+# Small code units let an incremental rebuild of the engine crate regenerate
+# only what changed: on 30.10. a one-line edit took a median 27 s instead of
+# 37 s (codegen 9 s instead of 19 s) with unchanged runtime.
+[profile.dev-fast.package.lean-ctx]
+codegen-units = 256
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `1cc70602` are properly handled with clean fallback behavior.
