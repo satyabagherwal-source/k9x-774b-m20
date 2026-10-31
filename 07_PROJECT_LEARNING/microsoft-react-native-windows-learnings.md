@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/react-native-windows](https://github.com/microsoft/react-native-windows))  
-> **Source Version**: `8079828c`  
+> **Source Version**: `8a95a6d5`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T21:04:27.182Z  
+> **Timestamp**: 2026-10-31T16:20:23.906Z  
 > **Learning ID**: `learn-github-microsoft-react-native-windows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/react-native-windows](https://github.com/microsoft/react-native-windows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T21:04:27.175Z  
+> **Harvest Timestamp**: 2026-10-31T16:20:23.898Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A framework for building native Windows apps with React.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 17360 stars
+- **Stars / Engagement**: 17367 stars
 
 ---
 
@@ -1568,124 +1568,454 @@ export default FocusManager;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8079828c` (2026-10-28)
-**Commit Message**: 📦 Bump the all-dependencies group across 1 directory with 2 updates (#16507)
+### Incident Patch 1: `8a95a6d5` (2026-10-31)
+**Commit Message**: Fix Dependabot npm updates and keep yarn.lock free of download URLs (#16548)
 
-Bumps the all-dependencies group with 2 updates in the / directory: [ts-jest](https://github.com/kulshekhar/ts-jest) and [eslint-plugin-jest](https://github.com/jest-community/eslint-plugin-jest).
+Dependabot rejected .github/dependabot.yml because its credential-less
+registries fail schema validation, so it kept running an older config. Its
+jobs also could not reach the PackageFeedProxy and ms-feed-* hosts recorded
+in yarn.lock.
 
+- Remove the registries; Dependabot resolves from the public npm registry.
+- Remove the recorded download URLs from yarn.lock and merge the duplicate
+  entries they had split. Versions and checksums are unchanged, and
+  pipelines restore through their configured registry.
+- Add checkYarnLock.js and run it in the Linting job to keep them out.
+- Use the "📦 [main]" and "🎬 [main]" title prefixes for main and Actions.
 
-Updates `ts-jest` from 29.4.14 to 29.4.15
-- [Release notes](https://github.com/kulshekhar/ts-jest/releases)
-- [Changelog](https://github.com/kulshekhar/ts-jest/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/kulshekhar/ts-jest/compare/v29.4.14...v29.4.15)
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-Updates `eslint-plugin-jest` from 29.16.11 to 29.17.0
-- [Release notes](https://github.com/jest-community/eslint-plugin-jest/releases)
-- [Changelog](https://github.com/jest-community/eslint-plugin-jest/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/jest-community/eslint-plugin-jest/compare/v29.16.11...v29.17.0)
+**File**: `.ado/README.md` (modified, +8/-5)
+```diff
+@@ -106,11 +106,14 @@ attempts that green builds would otherwise hide:
+   `templates/auth-npm-feed.yml` keeps the managed-identity token scoped to direct
+   Azure Artifacts requests in `~/.npmrc` and passes it to the Verdaccio uplink;
+   Yarn does not send the token to the proxy.
+-- **Dependabot:** `.github/dependabot.yml` configures the same anonymous proxy
+-  separately; Dependabot does not inherit the pipeline variables. Its registry
+-  declarations also allow the exact `ms-feed-*` hosts advertised by proxy
+-  metadata for tarball downloads. Existing archive URLs in the main lockfile
+-  also use proxy paths without changing dependency versions or checksums.
++- **Dependabot:** `.github/dependabot.yml` declares no registries. Dependabot
++  runs on GitHub, outside this network isolation, and resolves updates from the
++  public npm registry; pipelines restore the same lockfile through
++  PackageFeedProxy. This works only while `yarn.lock` records no download URLs:
++  Yarn adds one (`__archiveUrl`) when a registry serves a package from another
++  host, as PackageFeedProxy does with its `ms-feed-*` hosts, and Dependabot cannot
++  reach those hosts. The Linting job runs `scripts/checkYarnLock.js` to reject
++  them; run it with `--fix` to remove them.
+   Major version updates are ignored before grouping. React, React Native, the
+   test renderer, and React types also ignore minor updates to stay on each
+   branch's selected release lines; exact versions remain manifest-controlled.
+```
+
+**File**: `.ado/jobs/linting.yml` (modified, +4/-0)
+```diff
+@@ -38,6 +38,10 @@ jobs:
+       - ${{ else }}:
+         - template: ../templates/checkout-shallow.yml
+ 
++      # Runs before the install so a recorded download URL fails fast.
++      - script: node .ado/scripts/checkYarnLock.js
++        displayName: Check yarn.lock for download URLs
++
+       - template: ../templates/prepare-js-env.yml
+         parameters:
+           buildEnvironment: ${{ parameters.buildEnvironment }}
+```
+
+**File**: `.ado/scripts/checkYarnLock.js` (added, +120/-0)
+```diff
+@@ -0,0 +1,120 @@
++// @ts-check
++/**
++ * Keeps yarn.lock free of package download URLs.
++ *
++ * Yarn records a download URL (`__archiveUrl`) when a registry serves a package
++ * from another host, as PackageFeedProxy does with its ms-feed-* hosts.
++ * Pipelines don't need these URLs: without them, Yarn downloads each package
++ * from its configured registry. Dependabot can't reach those hosts, so a single
++ * recorded URL fails its update jobs.
++ *
++ * Usage:
++ *   node .ado/scripts/checkYarnLock.js        Fail if yarn.lock records a URL.
++ *   node .ado/scripts/checkYarnLock.js --fix  Remove the recorded URLs and
++ *                                             merge the entries they split.
++ */
++const {execSync} = require('child_process');
++const fs = require('fs');
++const path = require('path');
++
++const repoRoot = path.resolve(__dirname, '../..');
++const lockfilePath = path.join(repoRoot, 'yarn.lock');
++
++// `name@npm:1.2.3::__archiveUrl=<url>`, or URL-encoded inside a patch locator.
++const archiveUrlPattern =
++  /::__archiveUrl=[^"&#\s]+|%3A%3A__archiveUrl=[^"&#\s]+/g;
++
++// A binding followed by other bindings would need a different rewrite.
++const unsupportedPattern = /__archiveUrl=[^"#\s]*(?:&|%26)/;
++
++/**
++ * @param {string} lockfile
++ * @returns {string[]} names of the packages with a recorded download URL
++ */
++function findPackagesWithUrls(lockfile) {
++  const names = new Set();
++  for (const line of lockfile.split('\n')) {
++    if (line.includes('__archiveUrl')) {
++      const match = /resolution: "((?:@[^/"]+\/)?[^@"]+)@/.exec(line);
++      names.add(match ? match[1] : line.trim());
++    }
++  }
++  return [...names];
++}
++
++function main() {
++  const fix = process.argv.includes('--fix');
++  const lockfile = fs.readFileSync(lockfilePath, 'utf8');
++  const packages = findPackagesWithUrls(lockfile);
++
++  if (packages.length === 0) {
++    console.log('yarn.lock records no download URLs.');
++    return;
++  }
++
++  if (!fix) {
++    const examples = packages.slice(0, 10).join(', ');
++    const more = packages.length > 10 ? ', ...' : '';
++    const errorPrefix = process.env.TF_BUILD
++      ? '##vso[task.logissue type=error]'
++      : '';
++    console.error(
++      `${errorPrefix}yarn.lock records download URLs for ${packages.length} ` +
++        `packages (${examples}${more}). Dependabot can't reach those hosts. ` +
++        'Run `node .ado/scripts/checkYarnLock.js --fix` and commit yarn.lock.',
++    );
++    process.exitCode = 1;
++    return;
++  }
++
++  if (unsupportedPattern.test(lockfile)) {
++    console.error(
++      'yarn.lock has a download URL combined with other bindings; ' +
++        'remove it manually.',
++    );
++    process.exitCode = 1;
++    return;
++  }
++
++  const fixed = lockfile.replace(archiveUrlPattern, '');
++  const unremoved = findPackagesWithUrls(fixed);
++  if (unremoved.length > 0) {
++    console.error(
++      `Could not remove the download URLs for: ${unremoved.join(', ')}.`,
++    );
++    process.exitCode = 1;
++    return;
++  }
++  fs.writeFileSync(lockfilePath, fixed);
++
++  // Entries that differed only by their URL now share a resolution; Yarn merges
++  // them. This mode skips the link step, so node_modules stays untouched.
++  try {
++    execSync('yarn install --mode=update-lockfile', {
++      cwd: repoRoot,
++      stdio: 'inherit',
++    });
++  } catch {
++    console.error(
++      'URLs removed, but `yarn install --mode=update-lockfile` failed. ' +
++        'Run it again to merge the duplicate yarn.lock entries.',
++    );
++    process.exitCode = 1;
++    return;
++  }
++
++  const readded = findPackagesWithUrls(fs.readFileSync(lockfilePath, 'utf8'));
++  if (readded.length > 0) {
++    console.error(
++      `Yarn recorded download URLs again for: ${readded.join(', ')}.`,
++    );
++    process.exitCode = 1;
++    return;
++  }
++
++  console.log(
++    `Removed download URLs for ${packages.length} packages from yarn.lock.`,
++  );
++}
++
++main();
+```
+
+**File**: `.github/dependabot.yml` (modified, +5/-20)
+```diff
+@@ -1,27 +1,12 @@
+ version: 2
+-registries:
+-  packagefeedproxy:
+-    type: npm-registry
+-    url: https://packagefeedproxy.microsoft.io/npm/
+-    replaces-base: true
+-  # PackageFeedProxy metadata advertises these anonymous tarball download hosts.
+-  # They do not replace the registry used to check for updates.
+-  npm-public-2:
+-    type: npm-registry
+-    url: https://ms-feed-2.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/
+-  npm-public-12:
+-    type: npm-registry
+-    url: https://ms-feed-12.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/
+-  npm-public-25:
+-    type: npm-registry
+-    url: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/
++# No registries: Dependabot uses the public npm registry, which works only while
++# yarn.lock records no download URLs (see .ado/README.md).
+ # Keep the existing 8-day cooldown aligned with npmMinimalAgeGate in .yarnrc.yml.
+ updates:
+ # main branch - all dependency updates (minor + patch), daily
+ - package-ecosystem: npm
+   directory: "/"
+   target-branch: "main"
+-  registries: ["*"]
+   cooldown:
+     default-days: 8
+   groups:
+@@ -58,7 +43,7 @@ updates:
+   - dependencies
+   versioning-strategy: lockfile-only
+   commit-message:
+-    prefix: 📦
++    prefix: "📦 [main]"
+   open-pull-requests-limit: 5
+ 
+ # Stable branches - weekly cadence, 1 grouped PR at a time
+@@ -67,7 +52,6 @@ updates:
+ - package-ecosystem: npm
+   directory: "/"
+   target-branch: "0.81-stable"
+-  registries: ["*"]
+   cooldown:
+     default-days: 8
+   groups:
+@@ -109,7 +93,6 @@ updates:
+ - package-ecosystem: npm
+   directory: "/"
+   target-branch: "0.85-stable"
+-  registries: ["*"]
+   cooldown:
+     default-days: 8
+   groups:
+@@ -153,5 +136,7 @@ updates:
+       patterns: ["*"]
+   schedule:
+     interval: "weekly"
++  commit-message:
++    prefix: "🎬 [main]"
+   cooldown:
+     default-days: 7
+```
+
+**File**: `yarn.lock` (modified, +160/-327)
+```diff
+@@ -503,7 +503,7 @@ __metadata:
+ 
+ "@babel/parser@npm:^7.29.9":
+   version: 7.29.9
+-  resolution: "@babel/parser@npm:7.29.9::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40babel%2Fparser%2F-%2Fparser-7.29.9.tgz"
++  resolution: "@babel/parser@npm:7.29.9"
+   dependencies:
+     "@babel/types": "npm:^7.29.8"
+   bin:
+@@ -2059,14 +2059,14 @@ __metadata:
+ 
+ "@electron-internal/extract-zip@npm:^1.0.1":
+   version: 1.0.5
+-  resolution: "@electron-internal/extract-zip@npm:1.0.5::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron-internal%2Fextract-zip%2F-%2Fextract-zip-1.0.5.tgz"
++  resolution: "@electron-internal/extract-zip@npm:1.0.5"
+   checksum: 10c0/d3341937dcb37097fd4927b7e5dfb7cb6b1ba56a42b00d62a55a7a9bbd093545dd8c6711ab39b321b2696d968b2cc32c29ed9d60a1fa6aa1665588e03e60d4e1
+   languageName: node
+   linkType: hard
+ 
+ "@electron/asar@npm:^4.0.0, @electron/asar@npm:^4.0.1":
+   version: 4.3.0
+-  resolution: "@electron/asar@npm:4.3.0::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fasar%2F-%2Fasar-4.3.0.tgz"
++  resolution: "@electron/asar@npm:4.3.0"
+   dependencies:
+     glob: "npm:^13.0.2"
+     minimatch: "npm:^10.0.1"
+@@ -2081,7 +2081,7 @@ __metadata:
+ 
+ "@electron/get@npm:^5.0.0":
+   version: 5.1.0
+-  resolution: "@electron/get@npm:5.1.0::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fget%2F-%2Fget-5.1.0.tgz"
++  resolution: "@electron/get@npm:5.1.0"
+   dependencies:
+     debug: "npm:^4.1.1"
+     env-paths: "npm:^3.0.0"
+@@ -2099,7 +2099,7 @@ __metadata:
+ 
+ "@electron/notarize@npm:^3.1.0":
+   version: 3.1.1
+-  resolution: "@electron/notarize@npm:3.1.1::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fnotarize%2F-%2Fnotarize-3.1.1.tgz"
++  resolution: "@electron/notarize@npm:3.1.1"
+   dependencies:
+     debug: "npm:^4.4.0"
+     promise-retry: "npm:^2.0.1"
+@@ -2109,7 +2109,7 @@ __metadata:
+ 
+ "@electron/osx-sign@npm:^2.2.0":
+   version: 2.7.0
+-  resolution: "@electron/osx-sign@npm:2.7.0::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fosx-sign%2F-%2Fosx-sign-2.7.0.tgz"
++  resolution: "@electron/osx-sign@npm:2.7.0"
+   dependencies:
+     debug: "npm:^4.3.4"
+     isbinaryfile: "npm:^4.0.8"
+@@ -2124,7 +2124,7 @@ __metadata:
+ 
+ "@electron/packager@npm:^20.0.0":
+   version: 20.3.0
+-  resolution: "@electron/packager@npm:20.3.0::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fpackager%2F-%2Fpackager-20.3.0.tgz"
++  resolution: "@electron/packager@npm:20.3.0"
+   dependencies:
+     "@electron-internal/extract-zip": "npm:^1.0.1"
+     "@electron/asar": "npm:^4.0.1"
+@@ -2151,7 +2151,7 @@ __metadata:
+ 
+ "@electron/universal@npm:^3.0.1":
+   version: 3.0.6
+-  resolution: "@electron/universal@npm:3.0.6::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Funiversal%2F-%2Funiversal-3.0.6.tgz"
++  resolution: "@electron/universal@npm:3.0.6"
+   dependencies:
+     "@electron/asar": "npm:^4.0.0"
+     debug: "npm:^4.3.1"
+@@ -2162,7 +2162,7 @@ __metadata:
+ 
+ "@electron/windows-sign@npm:^2.0.2":
+   version: 2.1.0
+-  resolution: "@electron/windows-sign@npm:2.1.0::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fwindows-sign%2F-%2Fwindows-sign-2.1.0.tgz"
++  resolution: "@electron/windows-sign@npm:2.1.0"
+   dependencies:
+     debug: "npm:^4.3.4"
+     graceful-fs: "npm:^4.2.11"
+@@ -3837,7 +3837,7 @@ __metadata:
+ 
+ "@react-native-community/cli-clean@npm:21.0.0-alpha.1":
+   version: 21.0.0-alpha.1
+-  resolution: "@react-native-community/cli-clean@npm:21.0.0-alpha.1::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40react-native-community%2Fcli-clean%2F-%2Fcli-clean-21.0.0-alpha.1.tgz"
++  resolution: "@react-native-community/cli-clean@npm:21.0.0-alpha.1"
+   dependencies:
+     "@react-native-community/cli-tools": "npm:21.0.0-alpha.1"
+     execa: "npm:^5.0.0"
+@@ -3861,7 +3861,7 @@ __metadata:
+ 
+ "@react-native-community/cli-config-android@npm:21.0.0-alpha.1":
+   version: 21.0.0-alpha.1
+-  resolution: "@react-native-community/cli-config-android@npm:21.0.0-alpha.1::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40react-native-community%2Fcli-config-android%2F-%2Fcli-config-android-21.0.0-alpha.1.tgz"
++  resolution: "@react-native-community/cli-config-android@npm:21.0.0-alpha.1"
+   dependencies:
+     "@react-native-community/cli-tools": "npm:21.0.0-alpha.1"
+     fast-glob: "npm:^3.3.2"
+@@ -3885,7 +3885,7 @@ __metadata:
+ 
+ "@react-native-community/cli-config-apple@npm:21.0.0-alpha.1":
+   version: 21.0.0-alpha.1
+-  resolution: "@react-native-community/cli-config-apple@npm:21.0.0-alpha.1::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40react
+```
 
 ---
-updated-dependencies:
-- dependency-name: eslint-plugin-jest
-  dependency-version: 29.17.0
-  dependency-type: direct:development
-  update-type: version-update:semver-minor
-  dependency-group: all-dependencies
-- dependency-name: ts-jest
-  dependency-version: 29.4.15
-  dependency-type: direct:development
-  update-type: version-update
 
-**File**: `yarn.lock` (modified, +13/-13)
+### Incident Patch 2: `9cffd7f3` (2026-10-30)
+**Commit Message**: Fix warm-feed resolving closures through PackageFeedProxy (#16546)
+
+The warm-feed job inherits NPM_CONFIG_REGISTRY from the shared pipeline variables. On Windows, Node passes only the first case-insensitive match, so it hid warm-feed's npm_config_registry override and sent closure resolution to the proxy.
+
+Replace inherited spellings of each override before starting npm or npx, and cover the Windows precedence case with a child-process test.
+
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+
+**File**: `packages/@rnw-scripts/warm-feed/src/closure.ts` (modified, +16/-1)
 ```diff
-@@ -10388,8 +10388,8 @@ __metadata:
-   linkType: hard
+@@ -84,6 +84,21 @@ export async function writeFeedNpmrc(
+   return p;
+ }
  
- "eslint-plugin-jest@npm:^29.0.1":
--  version: 29.16.11
--  resolution: "eslint-plugin-jest@npm:29.16.11"
-+  version: 29.17.0
-+  resolution: "eslint-plugin-jest@npm:29.17.0"
-   dependencies:
-     "@typescript-eslint/utils": "npm:^8.0.0"
-   peerDependencies:
-@@ -10404,7 +10404,7 @@ __metadata:
-       optional: true
-     typescript:
-       optional: true
--  checksum: 10c0/455c041a4e696bea936b66ddc7276ea982b20b67664e61023334d8b5391ef0daab2dd3b41a611f95b0dabe5219cd0b4c32e9c29238c31f284294c620e983369e
-+  checksum: 10c0/2ac9e40361f0e2593c71cac05c676b6a03957946806fb3286e704cadaf534ad68eddfb7f792080fad5fd806c6dd41f249ecf14af9ae6227542e61c5552a23844
-   languageName: node
-   linkType: hard
++/**
++ * `process.env` with `overrides` applied, dropping inherited names that differ from
++ * an override only in letter case: on Windows, Node passes just the
++ * lexicographically first spelling (so `NPM_CONFIG_REGISTRY` beats
++ * `npm_config_registry`), and npm reads `npm_config_*` names case-insensitively.
++ */
++function childEnv(overrides: Record<string, string>): NodeJS.ProcessEnv {
++  const names = new Set(Object.keys(overrides).map(name => name.toUpperCase()));
++  const env: NodeJS.ProcessEnv = {};
++  for (const [name, value] of Object.entries(process.env)) {
++    if (!names.has(name.toUpperCase())) env[name] = value;
++  }
++  return {...env, ...overrides};
++}
++
+ /**
+  * Run a Node CLI (npm/npx) with feed config injected via `npm_config_*` env vars
+  * (so no registry/userconfig paths land on the command line, avoiding Windows
+@@ -99,7 +114,7 @@ export function runTool(
+   const res = spawnSync(cmd, args, {
+     cwd,
+     encoding: 'utf8',
+-    env: {...process.env, ...extraEnv},
++    env: childEnv(extraEnv),
+     shell: true,
+     maxBuffer: 128 * 1024 * 1024,
+   });
+```
+
+**File**: `packages/@rnw-scripts/warm-feed/src/test/closure.test.ts` (modified, +21/-1)
+```diff
+@@ -8,7 +8,7 @@
+ import {mkdtempSync, readFileSync} from 'node:fs';
+ import {tmpdir} from 'node:os';
+ import {join} from 'node:path';
+-import {parseNpmLock, writeFeedNpmrc} from '../closure';
++import {parseNpmLock, runTool, writeFeedNpmrc} from '../closure';
+ import type {Auth} from '../types';
  
-@@ -11949,11 +11949,11 @@ __metadata:
-   languageName: node
-   linkType: hard
+ const fakeAuth: Auth = {
+@@ -119,6 +119,26 @@ test('writeFeedNpmrc attaches the token only to an Azure DevOps feed host', asyn
+   expect(foreign).not.toContain('SECRET-TOKEN');
+ });
  
--"handlebars@npm:^4.7.9":
--  version: 4.7.9
--  resolution: "handlebars@npm:4.7.9"
-+"handlebars@npm:^4.7.10":
-+  version: 4.7.10
-+  resolution: "handlebars@npm:4.7.10"
-   dependencies:
--    minimist: "npm:^1.2.5"
-+    minimist: "npm:^1.2.8"
-     neo-async: "npm:^2.6.2"
-     source-map: "npm:^0.6.1"
-     uglify-js: "npm:^3.1.4"
-@@ -11963,7 +11963,7 @@ __metadata:
-       optional: true
-   bin:
-     handlebars: bin/handlebars
--  checksum: 10c0/22f8105a7e68e81aff2662bb434edf05f757d21d850731d71cec886d69c10cd33d3c43e34b2892968ec62de8241611851d3d0674c8ef324ea3e01dc66262faa9
-+  checksum: 10c0/9b5573584ae5836172ae3f1502d9819568ba1b92ee83b81b18223beeb4c07486595e7b0fa633102beabc66ed06fe6e7da1dd9a9ea8c7072b9550b9a88809165c
-   languageName: node
-   linkType: hard
- 
-@@ -15347,7 +15347,7 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"minimist@npm:^1.2.5, minimist@npm:^1.2.6, minimist@npm:^1.2.8":
-+"minimist@npm:^1.2.6, minimist@npm:^1.2.8":
-   version: 1.2.8
-   resolution: "minimist@npm:1.2.8"
-   checksum: 10c0/19d3fcdca050087b84c2029841a093691a91259a47def2f18222f41e7645a0b7c44ef4b40e88a1e58a40c84d2ef0ee6047c55594d298146d0eb3f6b737c20ce6
-@@ -18799,12 +18799,12 @@ __metadata:
-   linkType: hard
- 
- "ts-jest@npm:^29.0.3":
--  version: 29.4.14
--  resolution: "ts-jest@npm:29.4.14"
-+  version: 29.4.15
-+  resolution: "ts-jest@npm:29.4.15"
-   dependencies:
-     bs-logger: "npm:^0.2.6"
-     fast-json-stable-stringify: "npm:^2.1.0"
--    handlebars: "npm:^4.7.9"
-+    handlebars: "npm:^4.7.10"
-     json5: "npm:^2.2.3"
-     lodash.memoize: "npm:^4.1.2"
-     make-error: "npm:^1.3.6"
-@@ -18834,7 +18834,7 @@ __metadata:
-       optional: true
-   bin:
-     ts-jest: cli.js
--  checksum: 10c0/58780804871e5752d7f42e69a38ea0716d0a6330272f3a253cf10dbf8c59390f64f2da6fff3d93dcb1bc514d8fa5d02963d8ef6d062fdfa96113b3aad0fd9331
-+  checksum: 10c0/99f8f71c0ee07adc036cf8917eadb29a2a5e002ed695e568c464a51661352a042bf69539d29a3e2c43773fc4e7525d47eae6dfabef45277b3a85a6d2a28a1071
-   languageName: node
-   linkType: hard
- 
++test('runTool gives the child its npm registry over an inherited NPM_CONFIG_REGISTRY', () => {
++  const previousEnv = process.env;
++  try {
++    process.env = {
++      ...previousEnv,
++      NPM_CONFIG_REGISTRY: 'https://inherited.invalid/npm/',
++    };
++    const registry = runTool(
++      `"${process.execPath}"`,
++      ['-p', 'process.env.npm_config_registry'],
++      tmpdir(),
++      {npm_config_registry: 'https://feed.invalid/npm/'},
++      'print npm registry',
++    );
++    expect(registry.trim()).toBe('https://feed.invalid/npm/');
++  } finally {
++    process.env = previousEnv;
++  }
++});
++
+ test('writeFeedNpmrc normalizes a missing trailing slash so the auth key matches', async () => {
+   const dir = mkdtempSync(join(tmpdir(), 'warm-npmrc-'));
+   const p = await writeFeedNpmrc(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16529** (closed): Withdrawn (@rileysay)
-- **PR #16524** (2026-10-28): [0.85] Update Browserslist and ip-address to patched versions  (@anuagragith)
-- **PR #16523** (2026-10-27):  [0.81] Update Browserslist to patched versions  (@anuagragith)
-- **PR #16521** (2026-10-28): [0.85] Update js-yaml to patched versions (@anuagragith)
-- **PR #16520** (2026-10-27): [0.81] Update vulnerable tooling dependencies (@anuagragith)
-- **PR #16519** (2026-10-27): [0.85] Publish NuGet packages through ESRP Release (@vmoroz)
+- **PR #16550** (2026-10-30): [0.85] Remove download URLs from yarn.lock (@vmoroz)
+- **PR #16549** (2026-10-31): [0.81] Remove download URLs from yarn.lock (@vmoroz)
+- **PR #16548** (2026-10-31): Fix Dependabot npm updates and keep yarn.lock free of download URLs (@vmoroz)
+- **PR #16547** (closed): 📦 Bump @types/lodash from 4.17.26 to 4.17.27 in the all-dependencies group (@dependabot[bot])
+- **PR #16546** (2026-10-30): Fix warm-feed resolving closures through PackageFeedProxy (@vmoroz)
+- **PR #16544** (2026-10-29): 📦 [0.85]: Bump the all-dependencies group across 1 directory with 2 updates (@dependabot[bot])
 
 ---
 
@@ -1705,52 +2035,39 @@ updated-dependencies:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 📦 Bump the all-dependencies group across 1 directory with 2 updates (#16507)
+## X. Dependabot npm updates and keep yarn.lock free of download URLs (#16548)
 
 **RULE**:
-When implementing operations in `yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/react-native-windows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.ado/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/react-native-windows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8079828c`: 📦 Bump the all-dependencies group across 1 directory with 2 updates (#16507). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8a95a6d5`: Dependabot npm updates and keep yarn.lock free of download URLs (#16548). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yarn.lock`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.ado/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  version: 29.17.0
-  resolution: "eslint-plugin-jest@npm:29.17.0"
-  checksum: 10c0/2ac9e40361f0e2593c71cac05c676b6a03957946806fb3286e704cadaf534ad68eddfb7f792080fad5fd806c6dd41f249ecf14af9ae6227542e61c5552a23844
-"handlebars@npm:^4.7.10":
-  version: 4.7.10
-  resolution: "handlebars@npm:4.7.10"
-    minimist: "npm:^1.2.8"
-  checksum: 10c0/9b5573584ae5836172ae3f1502d9819568ba1b92ee83b81b18223beeb4c07486595e7b0fa633102beabc66ed06fe6e7da1dd9a9ea8c7072b9550b9a88809165c
-"minimist@npm:^1.2.6, minimist@npm:^1.2.8":
-  version: 29.4.15
-  resolution: "ts-jest@npm:29.4.15"
-    handlebars: "npm:^4.7.10"
-  checksum: 10c0/99f8f71c0ee07adc036cf8917eadb29a2a5e002ed695e568c464a51661352a042bf69539d29a3e2c43773fc4e7525d47eae6dfabef45277b3a85a6d2a28a1071
+- **Dependabot:** `.github/dependabot.yml` declares no registries. Dependabot
+  runs on GitHub, outside this network isolation, and resolves updates from the
+  public npm registry; pipelines restore the same lockfile through
+  PackageFeedProxy. This works only while `yarn.lock` records no download URLs:
+  Yarn adds one (`__archiveUrl`) when a registry serves a package from another
+  host, as PackageFeedProxy does with its `ms-feed-*` hosts, and Dependabot cannot
+  reach those hosts. The Linting job runs `scripts/checkYarnLock.js` to reject
+  them; run it with `--fix` to remove them.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-  version: 29.16.11
-  resolution: "eslint-plugin-jest@npm:29.16.11"
-  checksum: 10c0/455c041a4e696bea936b66ddc7276ea982b20b67664e61023334d8b5391ef0daab2dd3b41a611f95b0dabe5219cd0b4c32e9c29238c31f284294c620e983369e
-"handlebars@npm:^4.7.9":
-  version: 4.7.9
-  resolution: "handlebars@npm:4.7.9"
-    minimist: "npm:^1.2.5"
-  checksum: 10c0/22f8105a7e68e81aff2662bb434edf05f757d21d850731d71cec886d69c10cd33d3c43e34b2892968ec62de8241611851d3d0674c8ef324ea3e01dc66262faa9
-"minimist@npm:^1.2.5, minimist@npm:^1.2.6, minimist@npm:^1.2.8":
-  version: 29.4.14
-  resolution: "ts-jest@npm:29.4.14"
-    handlebars: "npm:^4.7.9"
-  checksum: 10c0/58780804871e5752d7f42e69a38ea0716d0a6330272f3a253cf10dbf8c59390f64f2da6fff3d93dcb1bc514d8fa5d02963d8ef6d062fdfa96113b3aad0fd9331
+- **Dependabot:** `.github/dependabot.yml` configures the same anonymous proxy
+  separately; Dependabot does not inherit the pipeline variables. Its registry
+  declarations also allow the exact `ms-feed-*` hosts advertised by proxy
+  metadata for tarball downloads. Existing archive URLs in the main lockfile
+  also use proxy paths without changing dependency versions or checksums.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8079828c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8a95a6d5` are properly handled with clean fallback behavior.

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-5YKX",
-    "timestamp": "2026-10-30T06:23:17.841Z",
-    "repository": "actix/actix-web",
-    "learningId": "learn-github-actix-actix-web",
-    "contentHash": "61d059842e91ed8cf88445978cf05c32293e69c1d85f02698a835d22d8fffc87",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-63YF",
-    "timestamp": "2026-10-30T06:23:24.807Z",
-    "repository": "opentofu/opentofu",
-    "learningId": "learn-github-opentofu-opentofu",
-    "contentHash": "bc670c8b8eefe32e4b10f3603619d1f5774146e2b706e73993fb21fba43c4599",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-675M",
-    "timestamp": "2026-10-30T06:23:28.954Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "7a58c5023db894bb4c5eed2b11f509ca37e9647d1470d4fc4a2272b643ff6368",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-69WB",
     "timestamp": "2026-10-30T06:23:32.507Z",
     "repository": "ytsaurus/ytsaurus",
@@ -7492,6 +7447,51 @@
     "contentHash": "6b781a5ce917580059699d28808cc7c38a043ad98ac090b08c538fddf2dca82b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-XLZZ",
+    "timestamp": "2026-10-31T16:20:20.256Z",
+    "repository": "Aleph-Alpha/Kolibri-1",
+    "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+    "contentHash": "137775d699e12cdc451d4b04159c60227c9645a5b5cc15d09fb3bf9267424a09",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-XMEJ",
+    "timestamp": "2026-10-31T16:20:20.779Z",
+    "repository": "astral-sh/ruff",
+    "learningId": "learn-github-astral-sh-ruff",
+    "contentHash": "8e22c7017f5b3e07d69342942033605a3001df85e0a50e1ecb4e56f3529f19cb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-XPCD",
+    "timestamp": "2026-10-31T16:20:24.589Z",
+    "repository": "microsoft/react-native-windows",
+    "learningId": "learn-github-microsoft-react-native-windows",
+    "contentHash": "d479ba4d8bdd48aaac380ecb75c209744bc6a32b55fa640ab2d7ca0fad8599f7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

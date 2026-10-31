@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T16:08:35.139Z",
-  "total_cycles_completed": 6606,
-  "total_learnings_persisted": 6606,
-  "total_rules_promoted": 6239,
+  "last_updated": "2026-10-31T16:20:24.598Z",
+  "total_cycles_completed": 6609,
+  "total_learnings_persisted": 6609,
+  "total_rules_promoted": 6241,
   "history": [
-    {
-      "timestamp": "2026-10-31T02:35:22.682Z",
-      "repository": "Orange-OpenSource/hurl",
-      "learningId": "learn-github-orange-opensource-hurl",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T02:35:25.491Z",
-      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T02:44:11.471Z",
-      "repository": "bitnami/sealed-secrets",
-      "learningId": "learn-github-bitnami-sealed-secrets",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T02:44:15.008Z",
       "repository": "Comfy-Org/Fibo-2.0",
@@ -1403,6 +1382,27 @@
       "repository": "Edge0/Audio8-TTS-Realistic-0.6b",
       "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:20:20.272Z",
+      "repository": "Aleph-Alpha/Kolibri-1",
+      "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:20:20.789Z",
+      "repository": "astral-sh/ruff",
+      "learningId": "learn-github-astral-sh-ruff",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:20:24.598Z",
+      "repository": "microsoft/react-native-windows",
+      "learningId": "learn-github-microsoft-react-native-windows",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

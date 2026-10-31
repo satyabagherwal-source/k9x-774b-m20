@@ -6629,3 +6629,6 @@
 | `CYCLE-20261031-37QX` | `2026-10-31T15:56:42.105Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6240` | Yes (`4c7ce402...`) |
 | `CYCLE-20261031-C3Y4` | `2026-10-31T16:03:37.084Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`d1a56c95...`) |
 | `CYCLE-20261031-IHX0` | `2026-10-31T16:08:35.124Z` | `Edge0/Audio8-TTS-Realistic-0.6b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md` | Yes (`6b781a5c...`) |
+| `CYCLE-20261031-XLZZ` | `2026-10-31T16:20:20.256Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md` | Yes (`137775d6...`) |
+| `CYCLE-20261031-XMEJ` | `2026-10-31T16:20:20.779Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6241` | Yes (`8e22c701...`) |
+| `CYCLE-20261031-XPCD` | `2026-10-31T16:20:24.589Z` | `microsoft/react-native-windows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6242` | Yes (`d479ba4d...`) |

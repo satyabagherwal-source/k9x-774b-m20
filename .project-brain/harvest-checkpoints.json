@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T16:08:35.144Z",
+  "last_updated": "2026-10-31T16:20:24.602Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1340,14 +1340,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-aleph-alpha-kolibri-1",
-      "content_hash": "f99e620b40220844d8f98adbabbfb2d593884cc0b73a39f6517bcbd7cdcf2162",
-      "verified_at": "2026-10-28T15:29:46.752Z",
+      "content_hash": "137775d699e12cdc451d4b04159c60227c9645a5b5cc15d09fb3bf9267424a09",
+      "verified_at": "2026-10-31T16:20:20.276Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T15:29:46.752Z"
+      "last_updated": "2026-10-31T16:20:20.276Z"
     },
     "Qwen/Qwen3-4B": {
       "repository": "Qwen/Qwen3-4B",
@@ -11346,14 +11346,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-react-native-windows",
-      "content_hash": "86ade1673287617f4afd29eabab659108df98d945573714ac10abfeaada99a4a",
-      "verified_at": "2026-10-28T21:04:27.672Z",
+      "content_hash": "d479ba4d8bdd48aaac380ecb75c209744bc6a32b55fa640ab2d7ca0fad8599f7",
+      "verified_at": "2026-10-31T16:20:24.602Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T21:04:27.672Z"
+      "last_updated": "2026-10-31T16:20:24.602Z"
     },
     "paradedb/paradedb": {
       "repository": "paradedb/paradedb",
@@ -11481,14 +11481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-ruff",
-      "content_hash": "39335972b2b964ed14d21ce3f1fe1b9288fcf13826855fe2a48f701f3f36ebe5",
-      "verified_at": "2026-10-30T20:21:58.460Z",
+      "content_hash": "8e22c7017f5b3e07d69342942033605a3001df85e0a50e1ecb4e56f3529f19cb",
+      "verified_at": "2026-10-31T16:20:20.792Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T20:21:58.460Z"
+      "last_updated": "2026-10-31T16:20:20.792Z"
     },
     "touchlab/KaMPKit": {
       "repository": "touchlab/KaMPKit",

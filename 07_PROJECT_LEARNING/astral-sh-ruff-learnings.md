@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
-> **Source Version**: `86b7fd1e`  
+> **Source Version**: `23a16fa0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T20:21:58.156Z  
+> **Timestamp**: 2026-10-31T16:20:20.024Z  
 > **Learning ID**: `learn-github-astral-sh-ruff`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T20:21:57.180Z  
+> **Harvest Timestamp**: 2026-10-31T16:20:18.853Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 50337 stars
+- **Stars / Engagement**: 50361 stars
 
 ---
 
@@ -2124,196 +2124,426 @@ impl<'a> Diff<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7cb935d9` (2026-10-29)
-**Commit Message**: [ty] Fix recursive protocol materialization self-comparison (#29809)
+### Incident Patch 1: `23a16fa0` (2026-10-31)
+**Commit Message**: [ty] Avoid invalid keyword arguments when accepting inlay hints (#29806)
 
-Fix a stack overflow when return-type inference compares a materialized
-recursive protocol with itself. Recognize identical top and bottom
-materializations as subtypes of themselves without recursively expanding
-their members.
+## Summary
 
-Fixes https://github.com/astral-sh/ty/issues/4863.
+ty now keeps an argument-name hint visible but omits its edit when the
+call already has that keyword argument or when the displayed name cannot
+be used as a Python identifier.
+
+- Given `def f(x): ...`, the call `f(1, x=2)` compiles but raises
+`TypeError` at runtime. Accepting the `x=` hint used to produce `f(x=1,
+x=2)`, which prevents the whole module from compiling.
+- Python accepts the fullwidth parameter name in `def f(ｉｆ): ...`. ty
+displays its normalized spelling, `if=`, but inserting that spelling
+would produce the syntax error `f(if=1)`.
+
+Stacked on [#29801](https://github.com/astral-sh/ruff/pull/29801).
 
 ## Test plan
 
-Manually reproduced the stack overflow with the original factory call
-and with direct `Top[P]` and `Bottom[P]` self-comparisons on the
-recursive protocol. With the fix, all complete successfully and the
-original call infers `Hutia[Capybara[int]]`.
+An existing snapshot explicitly expected the edit `foo(y='hello', 1)` →
+`foo(y='hello', y=1)`. The old helper only required the edited source to
+parse if the original parsed. It skipped that check here because the
+original call already had a positional argument after a keyword
+argument. The edited call parses, but Python rejects the repeated
+keyword at compile time. [Previous
+snapshot](https://github.com/astral-sh/ruff/blob/efbefae896f7c9ced52be4696ffcb0ac4598b29c/crates/ty_i
 
-**File**: `crates/ty_python_semantic/resources/mdtest/generics/legacy/functions.md` (modified, +27/-0)
+**File**: `crates/ty_ide/src/inlay_hints.rs` (modified, +131/-28)
 ```diff
-@@ -4846,6 +4846,33 @@ def optional_callback(value: O) -> Callable[[O | None], O | None]:
-     return reveal_type(identity_callback(value))
- ```
+@@ -9,6 +9,7 @@ use ruff_python_ast::{
+     AnyNodeRef, ArgOrKeyword, Arguments, Expr, ExprAttribute, ExprName, ExprUnaryOp, Parameters,
+     Stmt, StmtAssign, UnaryOp,
+ };
++use ruff_python_stdlib::identifiers::is_identifier;
+ use ruff_text_size::{Ranged, TextRange, TextSize};
+ use ty_module_resolver::file_to_module;
+ use ty_python_core::ProgramFile;
+@@ -604,7 +605,14 @@ impl<'a> SourceOrderVisitor<'a> for InlayHintVisitor<'a, '_> {
+                             // pass `x` twice.
+                             let is_last_positional =
+                                 positional_index + 1 == call.arguments.args.len();
+-                            let mode = if is_last_positional && !argument.is_starred_expr() {
++                            // For `def f(ｉｆ): ...`, `name` is already normalized to the
++                            // reserved word `if`. Inserting `if=` would be a syntax error.
++                            // Repeating an existing keyword, as in `f(x=1, x=2)`, would be too.
++                            let mode = if is_last_positional
++                                && !argument.is_starred_expr()
++                                && is_identifier(name)
++                                && call.arguments.find_keyword(name).is_none()
++                            {
+                                 ArgumentHintMode::Insertable
+                             } else {
+                                 ArgumentHintMode::DisplayOnly
+@@ -880,6 +888,7 @@ mod tests {
+     use insta::{assert_snapshot, internals::SettingsBindDropGuard};
+     use itertools::Itertools;
+     use ruff_db::{
++        Db as _,
+         diagnostic::{
+             Annotation, Diagnostic, DiagnosticId, DisplayDiagnosticConfig, LintName, Severity,
+             Span, SubDiagnostic, SubDiagnosticSeverity,
+@@ -888,14 +897,15 @@ mod tests {
+         source::source_text,
+     };
+     use ruff_diagnostics::{Edit, Fix};
+-    use ruff_python_ast::PySourceType;
+-    use ruff_python_parser::{parse_module, parse_unchecked_source};
+     use ruff_python_trivia::textwrap::dedent;
+     use ruff_text_size::TextSize;
  
-+## Inferring a recursive protocol from a factory's return context
-+
-+The annotated assignment supplies `Stream[int]` as the type argument to `make_result`. Comparing the
-+return types of `first_or` reaches `Stream`, whose `window` method adds the layer of nesting that
-+`flatten` removes.
-+
-+```py
-+from typing import Protocol, TypeVar
-+
-+T_co = TypeVar("T_co", covariant=True)
-+T = TypeVar("T")
-+U = TypeVar("U")
-+
-+class Result(Protocol[T_co]):
-+    def first_or(self, default: U) -> T_co | U: ...
-+
-+class Stream(Protocol[T_co]):
-+    def flatten(self: "Stream[Stream[U]]") -> "Stream[U]": ...
-+    def window(self) -> "Stream[Stream[T_co]]": ...
-+
-+def make_result() -> Result[T]:
-+    raise NotImplementedError
-+
-+result: Result[Stream[int]] = make_result()
-+reveal_type(result)  # revealed: Result[Stream[int]]
-+```
-+
- ## Generic property setter overrides
+-    use ruff_db::system::{DbWithWritableSystem, SystemPathBuf};
+-    use ty_project::ProjectMetadata;
++    use ruff_db::system::{
++        DbWithTestSystem, DbWithWritableSystem, SystemPathBuf, SystemVirtualPath,
++    };
+     use ty_project::metadata::options::{AnalysisOptions, Options};
++    use ty_project::{ProjectMetadata, SemanticDb as _};
++    use ty_python_core::semantic_index;
+     use ty_python_semantic::ReturnTypeInference;
  
- A method-scoped type variable is inferred for each write, so an unconstrained setter preserves an
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/generics/pep695/functions.md` (modified, +23/-0)
-```diff
-@@ -5290,6 +5290,29 @@ def optional_callback[O](value: O) -> Callable[[O | None], O | None]:
-     return reveal_type(identity_callback(value))
- ```
+     /// For a given Python function definition and a call to that function,
+@@ -905,13 +915,13 @@ mod tests {
+     #[track_caller]
+     fn apply_inlay_hints(definition: &str, call: &str) -> String {
+         let mut source = format!("{definition}{call}");
+-        let test = inlay_hint_test(&format!("{definition}<START>{call}<END>"));
++        let mut test = inlay_hint_test(&format!("{definition}<START>{call}<END>"));
+         let hints = test.collect_hints(&InlayHintSettings::default());
  
-+## Inferring a recursive protocol from a factory's return context
-+
-+The annotated assignment supplies `Stream[int]` as the type argument to `make_result`. Comparing the
-+return types of `first_or` reaches `Stream`, whose `window` method adds the layer of nesting that
-+`flatten` removes.
-+
-+```py
-+from typing import Protocol
-+
-+class Result[T](Protocol):
-+    def first_or[U](self, default: U) -> T | U: ...
-+
-+class Stream[T](Protocol):
-+    def flatten[U](self: "Stream[Stream[U]]") -> "Stream[U]": ...
-+    def window(self) -> "Stream[Stream[T]]": ...
-+
-+def make_result[T]() -> Result[T]:
-+    raise NotImplementedError
-+
-+result: Result[Stream[int]] = make_result()
-+reveal_type(result)  # revealed: Result[Stream[int]]
-+```
-+
- ## Generic property setter overrides
+         let edits = hints.iter().flat_map(|hint| &hint.text_edits);
+         apply_edits(&mut source, edits);
  
- A method-scoped type variable is inferred for each write, so an unconstrained setter preserves an
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/type_properties/materialization.md` (modified, +20/-0)
-```diff
-@@ -3522,6 +3522,26 @@ static_assert(is_subtype_of(LegacyWrappedReceiver[str], LegacyWrappedReceiver[in
- static_assert(is_subtype_of(Top[LegacyWrappedReceiver[int]], LegacyWrappedReceiver[int]))
- ```
+-        parse_module(&source).unwrap();
++        test.assert_syntax_error_counts_do_not_increase(&source);
+         source.strip_prefix(definition).unwrap().to_owned()
+     }
  
-+### Reflexivity of materialized recursive protocols
-+
-+Each materialization of `Stream[Any]` is a subtype of itself, even though checking its methods
-+structurally can produce an ever more deeply nested receiver type.
-+
-+```py
-+from __future__ import annotations
-+
-+from typing import Any, Protocol
-+from ty_extensions import Bottom, Top, static_assert
-+from ty_extensions._internal import is_subtype_of
-+
-+class Stream[T](Protocol):
-+    def flatten[U](self: Stream[Stream[U]]) -> Stream[U]: ...
-+    def window(self) -> Stream[Stream[T]]: ...
-+
-+static_assert(is_subtype_of(Top[Stream[Any]], Top[Stream[Any]]))
-+static_assert(is_subtype_of(Bottom[Stream[Any]], Bottom[Stream[Any]]))
-+```
-+
- ### Recursive protocol receivers with gradual members
+@@ -1347,14 +1357,61 @@ mod tests {
+             )
+         }
  
- A gradual member changes the materializations even when the receiver is recursively specialized.
-```
-
-**File**: `crates/ty_python_semantic/src/types/instance.rs` (modified, +5/-4)
-```diff
-@@ -834,8 +834,8 @@ impl<'c, 'db> TypeRelationChecker<'_, 'c, 'db> {
-         let source_protocol = ty.as_protocol_instance();
- 
-         // Every gradual type lies between its bottom and top materializations, and is assignable
--        // to and from either one. Comparing the exact same class specialization can therefore
--        // settle these directions without expanding a recursive protocol's members.
-+        // to and from either one. Each materialization is a subtype of itself. For the same class
-+        // specialization, we can check these relations without expanding recursive members.
-         if let Some(source) = source_protocol
-             && let (Some(source_origin), Some(target_origin)) =
-                 (source.class_origin(db), protocol.class_origin(db))
-@@ -844,8 +844,9 @@ impl<'c, 'db> TypeRelationChecker<'_, 'c, 'db> {
-                 source.materialization_kind(db),
-                 protocol.materialization_kind(db),
-             ) {
--                (None | Some(MaterializationKind::Bottom), Some(MaterializationKind::Top))
--                | (Some(MaterializationKind::Bottom), None) => true,
-+                (_, Some(MaterializationKind::Top)) | (Some(MaterializationKind::Bottom), _) => {
-+                    true
-+                }
-                 (Some(MaterializationKind::Top), None)
-                 | (None, Some(MaterializationKind::Bottom))
-                     if self.relation.is_assignability() =>
++        /// Assert that `source`, with the hint edits applied, has no more parse errors and no
++        /// more semantic syntax errors than the original file. Existing errors in incomplete
++        /// code may remain.
++        #[track_caller]
++        fn assert_syntax_error_counts_do_not_increase(&mut self, source: &str) {
++            #[track_caller]
++            fn assert_error_count_did_not_increase<T: fmt::Display>(
++                kind: &str,
++                original: &[T],
++                edited: &[T],
++                source: &str,
++            ) {
++                assert!(
++                    edited.len() <= original.len(),
++                    "Inlay hint edits increased the number of {kind} from {} to {}.
++{}
++Source with applied edits:
++{source}",
++                    original.len(),
++                    edited.len(),
++                    edited.iter().join("\n"),
++                );
++            }
++
++            let db = &mut self.db;
++            let path = SystemVirtualPath::new("assert-syntax://edited.py");
++            db.write_virtual_file(path, source);
++            let virtual_file = db.files().virtual_file(db, path);
++
++            let original = db.program_file(self.file);
++            let edited = db.program_file(virtual_file.file());
++            let parsed = |file: ProgramFile<'_>| parsed_module(db, file.python_file(db)).load(db);
++            assert_error_count_did_not_increase(
++                "parse errors",
++                parsed(original).errors(),
++                parsed(edited).errors(),
++                source,
++            );
++       
 ```
 
 ---
 
-### Incident Patch 2: `a7902dce` (2026-10-28)
-**Commit Message**: Revise Python comment guidelines in mdtests (#29807)
+### Incident Patch 2: `017c77fc` (2026-10-31)
+**Commit Message**: [ty] Use # ok comments in mdtests (#29856)
 
-**File**: `AGENTS.md` (modified, +14/-1)
+Use `# ok` as the marker for mdtest statements whose expectation is that
+no diagnostic is emitted. Update the guidance in `AGENTS.md` and replace
+existing `# no diagnostic` comments in Ruff and ty mdtests.
+
+**File**: `AGENTS.md` (modified, +2/-2)
 ```diff
-@@ -120,16 +120,29 @@ Never edit snapshot files or inline snapshot bodies manually. Regenerate them by
- ## Writing mdtests
+@@ -123,9 +123,9 @@ Never edit snapshot files or inline snapshot bodies manually. Regenerate them by
  
- - Write mdtests as readable, literate specifications, and minimize the context a reader must hold in mind. Prefer short, focused code blocks, and define types, fixtures, and helpers close to the assertions that use them. Sections and subsections can be long when they develop a coherent topic through many short examples interspersed with prose. Do not split a subsection, or flag it in review, solely because of its length. Give independent scenarios separate sibling Markdown test headings at the same level; only introduce child headings if any existing code beneath their parent is first moved into child sections. When scenarios need shared setup, interleave short prose-and-code blocks under the same heading.
-+
  - Code blocks for the same file within a section are concatenated into one file. For inline snapshots, keep each example's code block close to its `# snapshot` block. Ideally, any given code block only has one snapshot in it, but one codeblock containing several snapshots is also acceptable. Repeating a short, independent function definition, including one with the same name, is fine if it keeps the code triggering a snapshot close to the snapshot demonstrating the expected diagnostic on that code. Reuse shared setup when clearer, and check that repeated names do not affect other examples.
--- When a Python statement in an mdtest is included only or primarily to check that ty does not emit a diagnostic for it, normally add a `# no diagnostic` comment on or above the statement. Statements used as setup for later assertions do not need such comments.
-+
-+- When a Python statement in an mdtest is included only or primarily to check that ty does not emit a diagnostic for it, it is often useful to add a `# no diagnostic` comment on or above the statement to clarify why the statement is there. These can be especially useful if the statement expected to produce 0 diagnostics follows, or is immediately followed by, one or more other statements that are all accompanied by `# error` assertions.
-+
-+    Statements used as setup for later assertions do not need `# no diagnostic` comments. It is also not necessary to add such comments in cases where it would anyway be extremely obvious why the statement is included.
-+
+ 
+-- When a Python statement in an mdtest is included only or primarily to check that ty does not emit a diagnostic for it, it is often useful to add a `# no diagnostic` comment on or above the statement to clarify why the statement is there. These can be especially useful if the statement expected to produce 0 diagnostics follows, or is immediately followed by, one or more other statements that are all accompanied by `# error` assertions.
++- When a Python statement in an mdtest is included only or primarily to check that ty does not emit a diagnostic for it, it is often useful to add a `# ok` comment on or above the statement to clarify why the statement is there. These can be especially useful if the statement expected to produce 0 diagnostics follows, or is immediately followed by, one or more other statements that are all accompanied by `# error` assertions.
+ 
+-    Statements used as setup for later assertions do not need `# no diagnostic` comments. It is also not necessary to add such comments in cases where it would anyway be extremely obvious why the statement is included.
++    Statements used as setup for later assertions do not need `# ok` comments. It is also not necessary to add such comments in cases where it would anyway be extremely obvious why the statement is included.
+ 
  - Prioritize document structure and readability over avoiding duplicated setup. Add a test to an existing section when its heading accurately describes the new scenario, adding or improving introductory prose as needed; otherwise, create a separate sibling section, even if that requires repeating a small fixture.
-+
- - Order mdtests from basic, common behavior to more specialized cases. Place narrow regression tests alongside closely related examples when they fit naturally; otherwise, put them near the end of the relevant section or file. Do not put an obscure special case at the beginning simply because it is the newest regression.
-+
- - Aim for readable documents that serve as both documentation and tests. Use prose to explain the key type checker behavior and its rationale where helpful. A sentence or fragment may suffice; avoid repeating what the heading, surrounding explanation, or assertions already make clear. Use clear, precise terminology. Avoid using jargon where it's unnecessary, and avoid inventing new jargon if there's an existing term of art used in that file. Avoid long paragraphs covering multiple scenarios followed by a single long code block.
-+
- - Prefer examples whose purpose is understandable without following issue links. For narrow regressions, a brief issue reference can be enough when additional explanation would merely restate the code or obscure the relevant behavior.
-+
- - Prefer direct, present-tense descriptions of behavior over abstract requirements: write "We reject this assignment" rather than "We must reject this assignment."
-+
- - Keep each code example as simple as possible while still demonstrating the key behavior. When adapting real-world code or an issue reproducer, remove incidental types, methods, type parameters, imports, and domain-specific details. Preserve complexity only when necessary to reproduce the regression or distinguish the intended behavior, and reuse nearby fixtures or simple built-in types when doing so keeps the test easy to understand.
-+
- - Prefer a minimal, purpose-built custom type over a standard-library type when a regression depends on particular attributes, methods, bounds, or constraints. Define the relevant behavior in the test so readers do not need to look up the standard-library type to understand the scenario. For commonly used standard-library types, consider adding a separate regression using the real type to protect against changes in typeshed.
-+
- - Place each mdtest in a file for the behavior it actually tests, and assert that behavior directly. Prefer an existing file when one already covers that behavior; c
+ 
+```
+
+**File**: `crates/ruff_linter/resources/mdtest/flake8-type-checking/typing-only-runtime-import.md` (modified, +2/-2)
+```diff
+@@ -74,9 +74,9 @@ Explicit lazy imports and imports made lazy by `__lazy_modules__` already defer
+ not need to move into a type-checking block.
+ 
+ ```py
+-lazy from pathlib import Path  # no diagnostic
++lazy from pathlib import Path  # ok
+ __lazy_modules__ = ["vendor"]
+-from vendor import Model  # no diagnostic
++from vendor import Model  # ok
+ 
+ def load(value: Path) -> Model: ...
+ ```
+```
+
+**File**: `crates/ruff_linter/resources/mdtest/pyflakes/unused-import.md` (modified, +2/-2)
+```diff
+@@ -13,8 +13,8 @@ For standard-library generic types such as `slice` and `frozendict`, Ruff visits
+ type expressions. Names in quoted annotations therefore mark their imports as used.
+ 
+ ```py
+-from decimal import Decimal  # no diagnostic
+-from fractions import Fraction  # no diagnostic
++from decimal import Decimal  # ok
++from fractions import Fraction  # ok
+ 
+ DecimalSlice = slice["Decimal"]
+ FractionMap = frozendict[str, "Fraction"]
+```
+
+**File**: `crates/ruff_linter/resources/mdtest/pylint/magic-value-comparison.md` (modified, +6/-6)
+```diff
+@@ -77,20 +77,20 @@ extend-allow-magic-values = [3.5]
+ 
+ ```py
+ x = 0
+-x == "allowed"  # no diagnostic
++x == "allowed"  # ok
+ x == "other"  # error: [magic-value-comparison]
+-x == -2.5  # no diagnostic
++x == -2.5  # ok
+ x == +2.5  # error: [magic-value-comparison]
+-x == +3.5  # no diagnostic
++x == +3.5  # ok
+ x == 1  # error: [magic-value-comparison]
+ ```
+ 
+ Large integers work too. Allowing `2147483648` doesn't also allow `2147483648.0`.
+ 
+ ```py
+-x == 2147483648  # no diagnostic
+-x == -2147483648  # no diagnostic
+-x == +2147483648  # no diagnostic
++x == 2147483648  # ok
++x == -2147483648  # ok
++x == +2147483648  # ok
+ x == ~2147483648  # error: [magic-value-comparison]
+ x == 2147483649  # error: [magic-value-comparison]
+ x == -2147483649  # error: [magic-value-comparison]
+```
+
+**File**: `crates/ruff_linter/resources/mdtest/pyupgrade/deprecated-import.md` (modified, +1/-1)
+```diff
+@@ -82,5 +82,5 @@ select = ["UP035"]
+ ```
+ 
+ ```py
+-from typing_extensions import TypeForm  # no diagnostic
++from typing_extensions import TypeForm  # ok
+ ```
+```
+
+**File**: `crates/ruff_linter/resources/mdtest/pyupgrade/pep-695.md` (modified, +8/-8)
+```diff
+@@ -183,12 +183,12 @@ from typing import Generic, TypeAlias, TypeAliasType, TypeVarTuple
+ 
+ Ts = TypeVarTuple("Ts", bound=int)
+ 
+-BoundedAlias: TypeAlias = tuple[*Ts]  # no diagnostic
+-BoundedAliasType = TypeAliasType("BoundedAliasType", tuple[*Ts], type_params=(Ts,))  # no diagnostic
++BoundedAlias: TypeAlias = tuple[*Ts]  # ok
++BoundedAliasType = TypeAliasType("BoundedAliasType", tuple[*Ts], type_params=(Ts,))  # ok
+ 
+-class Bounded(Generic[*Ts]): ...  # no diagnostic
++class Bounded(Generic[*Ts]): ...  # ok
+ 
+-def bounded(ts: tuple[*Ts]): ...  # no diagnostic
++def bounded(ts: tuple[*Ts]): ...  # ok
+ ```
+ 
+ ## Bounded `ParamSpec`
+@@ -209,12 +209,12 @@ from typing import Generic, ParamSpec, TypeAlias, TypeAliasType
+ 
+ P = ParamSpec("P", bound=int)
+ 
+-BoundedAlias: TypeAlias = Callable[P, int]  # no diagnostic
+-BoundedAliasType = TypeAliasType("BoundedAliasType", Callable[P, int], type_params=(P,))  # no diagnostic
++BoundedAlias: TypeAlias = Callable[P, int]  # ok
++BoundedAliasType = TypeAliasType("BoundedAliasType", Callable[P, int], type_params=(P,))  # ok
+ 
+-class Bounded(Generic[P]): ...  # no diagnostic
++class Bounded(Generic[P]): ...  # ok
+ 
+-def bounded(callback: Callable[P, int]): ...  # no diagnostic
++def bounded(callback: Callable[P, int]): ...  # ok
+ ```
+ 
+ ## Imported type variables
+```
+
+**File**: `crates/ruff_linter/resources/mdtest/ruff/legacy-form-pytest-raises.md` (modified, +3/-3)
+```diff
+@@ -20,7 +20,7 @@ def func(a, b):
+ 
+ 
+ def test_error_nested_in_with():
+-    with pytest.raises(ValueError, "oops"):  # no diagnostic
++    with pytest.raises(ValueError, "oops"):  # ok
+         pytest.raises(ZeroDivisionError, func, 1, b=0)  # error: [legacy-form-pytest-raises]
+ ```
+ 
+@@ -31,7 +31,7 @@ import pytest
+ 
+ 
+ def test_ok_positional_args():
+-    with pytest.warns(UserWarning, "oops"):  # no diagnostic
++    with pytest.warns(UserWarning, "oops"):  # ok
+         pass
+ ```
+ 
+@@ -42,6 +42,6 @@ import pytest
+ 
+ 
+ def test_ok_positional_args():
+-    with pytest.deprecated_call("oops"):  # no diagnostic
++    with pytest.deprecated_call("oops"):  # ok
+         pass
+ ```
+```
+
+**File**: `crates/ruff_linter/resources/mdtest/typing.md` (modified, +15/-15)
+```diff
+@@ -16,8 +16,8 @@ Both `TypeForm[...]` and `TypeForm(...)` accept type expressions, so quoted type
+ their imports as used even outside an annotation.
+ 
+ ```py
+-from decimal import Decimal  # no diagnostic
+-from fractions import Fraction  # no diagnostic
++from decimal import Decimal  # ok
++from fractions import Fraction  # ok
+ from typing import TypeForm
+ 
+ DecimalForm = TypeForm["Decimal"]
+@@ -29,8 +29,8 @@ form = TypeForm("Fraction")
+ Both forms also work with the backport, including when imported under an alias.
+ 
+ ```py
+-from decimal import Decimal  # no diagnostic
+-from pathlib import Path  # no diagnostic
++from decimal import Decimal  # ok
++from pathlib import Path  # ok
+ from typing_extensions import TypeForm as TF
+ 
+ DecimalForm = TF["Decimal"]
+@@ -43,9 +43,9 @@ Quoted types in `TypeIs` and `TypeGuard` subscriptions also mark their imports a
+ annotations. This includes the backports in `typing_extensions`.
+ 
+ ```py
+-from decimal import Decimal  # no diagnostic
+-from fractions import Fraction  # no diagnostic
+-from pathlib import Path  # no diagnostic
++from decimal import Decimal  # ok
++from fractions import Fraction  # ok
++from pathlib import Path  # ok
+ from typing import TypeIs
+ import typing_extensions
+ 
+@@ -60,7 +60,7 @@ The `extra_items` argument to a `TypedDict` class is a type expression. Imports
+ this quoted argument are used.
+ 
+ ```py
+-from decimal import Decimal  # no diagnostic
++from decimal import Decimal  # ok
+ from typing import TypedDict
+ 
+ class Record(TypedDict, extra_items="Decimal"):
+@@ -73,7 +73,7 @@ The backported `TypedDict` also accepts quoted types in `extra_items`, including
+ an alias.
+ 
+ ```py
+-from decimal import Decimal  # no diagnostic
++from decimal import Decimal  # ok
+ from typing_extensions import TypedDict as TD
+ 
+ class Record(TD, extra_items="Decimal"):
+@@ -85,7 +85,7 @@ class Record(TD, extra_items="Decimal"):
+ Subclasses can specify the type of extra items, including when their base is a generic `TypedDict`.
+ 
+ ```py
+-from decimal import Decimal  # no diagnostic
++from decimal import Decimal  # ok
+ from typing import TypedDict
+ 
+ class Base[T](TypedDict):
+@@ -101,7 +101,7 @@ A class can also inherit from a `TypedDict` defined with the functional syntax.
+ argument is still a type expression.
+ 
+ ```py
+-from decimal import Decimal  # no diagnostic
++from decimal import Decimal  # ok
+ from typing import TypedDict
+ 
+ Base = TypedDict("Base", {})
+@@ -116,7 +116,7 @@ Stub files allow a base class to be defined later. Quoted extra item types still
+ when the base is a `TypedDict`.
+ 
+ ```pyi
+-from decimal import Decimal  # no diagnostic
++from decimal import Decimal  # ok
+ from typing import TypedDict
+ 
+ class Record(Base, extra_items="Decimal"): ...
+@@ -145,7 +145,7 @@ mark its import as used.
+ ```py
+ from decimal import Decimal  # error: [unused-import] "`decimal.Decimal` imported but unused"
+ from fractions import Fraction  # error: [unused-import] "`fractions.Fraction` imported but unused"
+-from pathlib import Path  # no diagnostic
++from pathlib import Path  # ok
+ from typing import TypedDict
+ 
+ Closed = TypedDict("Closed", {}, total="Decimal", closed="Fraction")
+@@ -164,8 +164,8 @@ lint.select = ["F401"]
+ ```
+ 
+ ```py
+-from decimal import Decimal  # no diagnostic
+-from fractions import Fraction  # no diagnostic
++from decimal import Decimal  # ok
++from fractions import Fraction  # ok
+ from pathlib import Path  # error: [unused-import] "`pathlib.Path` imported but unused"
+ from typing import TypedDict
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29847** (2026-10-30): [ty] Rename specialized definitions method (@lerebear)
-- **PR #29839** (closed): Prune superseded Rust caches and caches from closed PRs (@charliermarsh)
-- **PR #29838** (closed): [ty] Skip class members that cannot participate in lookup (@charliermarsh)
-- **PR #29837** (2026-10-30): Upgrade Hawk to 0.1.17 and cache workspace artifacts (@charliermarsh)
-- **PR #29835** (2026-10-29): [ty] Ignore declared parameter type of `typing.cast` when inferring its argument (@ibraheemdev)
-- **PR #29834** (2026-10-29): Update msgpack to 1.2.3 in the release environment (@AlexWaygood)
+- **PR #29858** (closed): [ty] Show dataclass field docstrings for keyword argument hover (@DSCmatter)
+- **PR #29856** (2026-10-31): [ty] Use # ok comments in mdtests (@carljm)
+- **PR #29855** (2026-10-30): Reduce formatter source-slice overhead (@MichaReiser)
+- **PR #29853** (2026-10-30): Format node fields directly when comment handling is unnecessary (@MichaReiser)
+- **PR #29852** (2026-10-30): Use a Bloom filter for formatter comment lookups (@MichaReiser)
+- **PR #29850** (closed): [ty] Reuse reachability paths across unreachable ranges (@charliermarsh)
 
 ---
 
@@ -2333,54 +2563,53 @@ original call infers `Hutia[Capybara[int]]`.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ty] Fix recursive protocol materialization self-comparison (#29809)
+## X. [ty] Avoid invalid keyword arguments when accepting inlay hints (#29806)
 
 **RULE**:
-When implementing operations in `crates/ty_python_semantic/resources/mdtest/generics/legacy/functions.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ty_ide/src/inlay_hints.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7cb935d9`: [ty] Fix recursive protocol materialization self-comparison (#29809). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `23a16fa0`: [ty] Avoid invalid keyword arguments when accepting inlay hints (#29806). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty_python_semantic/resources/mdtest/generics/legacy/functions.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty_ide/src/inlay_hints.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## Inferring a recursive protocol from a factory's return context
-
-The annotated assignment supplies `Stream[int]` as the type argument to `make_result`. Comparing the
-return types of `first_or` reaches `Stream`, whose `window` method adds the layer of nesting that
-`flatten` removes.
-
-```py
-from typing import Protocol, TypeVar
-
-T_co = TypeVar("T_co", covariant=True)
-T = TypeVar("T")
-U = TypeVar("U")
-
-class Result(Protocol[T_co]):
-    def first_or(self, default: U) -> T_co | U: ...
-
-class Stream(Protocol[T_co]):
-    def flatten(self: "Stream[Stream[U]]") -> "Stream[U]": ...
-    def window(self) -> "Stream[Stream[T_co]]": ...
-
-def make_result() -> Result[T]:
-    raise NotImplementedError
-
-result: Result[Stream[int]] = make_result()
-reveal_type(result)  # revealed: Result[Stream[int]]
-```
-
+use ruff_python_stdlib::identifiers::is_identifier;
+                            // For `def f(ｉｆ): ...`, `name` is already normalized to the
+                            // reserved word `if`. Inserting `if=` would be a syntax error.
+                            // Repeating an existing keyword, as in `f(x=1, x=2)`, would be too.
+                            let mode = if is_last_positional
+                                && !argument.is_starred_expr()
+                                && is_identifier(name)
+                                && call.arguments.find_keyword(name).is_none()
+                            {
+        Db as _,
+    use ruff_db::system::{
+        DbWithTestSystem, DbWithWritableSystem, SystemPathBuf, SystemVirtualPath,
+    };
+    use ty_project::{ProjectMetadata, SemanticDb as _};
+    use ty_python_core::semantic_index;
+        let mut test = inlay_hint_test(&format!("{definition}<START>{call}<END>"));
+        test.assert_syntax_error_counts_do_not_increase(&source);
+        /// Assert that `source`, with the hint edits applied, has no more parse errors and no
+        /// more semantic syntax errors than the original file. Existing errors in incomplete
+        /// co
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                            let mode = if is_last_positional && !argument.is_starred_expr() {
+    use ruff_python_ast::PySourceType;
+    use ruff_python_parser::{parse_module, parse_unchecked_source};
+    use ruff_db::system::{DbWithWritableSystem, SystemPathBuf};
+    use ty_project::ProjectMetadata;
+        let test = inlay_hint_test(&format!("{definition}<START>{call}<END>"));
+        parse_module(&source).unwrap();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7cb935d9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `23a16fa0` are properly handled with clean fallback behavior.

@@ -6638,3 +6638,6 @@ Every entry in this ledger must capture:
 | `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `ba63a022` | Multi-dimensional audit evidence | 2026-10-31T15:56:42.109Z |
 | `learn-huggingface-baidu-unlimited-ocr` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-10-31T16:03:37.095Z |
 | `learn-huggingface-edge0-audio8-tts-realistic-0-6b` | `https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-10-31T16:08:35.133Z |
+| `learn-huggingface-aleph-alpha-kolibri-1` | `https://huggingface.co/Aleph-Alpha/Kolibri-1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-10-31T16:20:20.266Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `23a16fa0` | Multi-dimensional audit evidence | 2026-10-31T16:20:20.783Z |
+| `learn-github-microsoft-react-native-windows` | `https://github.com/microsoft/react-native-windows` | `8a95a6d5` | Multi-dimensional audit evidence | 2026-10-31T16:20:24.593Z |

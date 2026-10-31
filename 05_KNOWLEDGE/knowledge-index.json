@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T16:08:35.028Z",
+  "last_updated": "2026-10-31T16:20:24.510Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3624,8 +3624,8 @@
       "slug": "astral-sh-ruff",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/ruff",
-      "source_version": "86b7fd1e",
-      "content_hash": "39335972b2b964ed14d21ce3f1fe1b9288fcf13826855fe2a48f701f3f36ebe5",
+      "source_version": "23a16fa0",
+      "content_hash": "8e22c7017f5b3e07d69342942033605a3001df85e0a50e1ecb4e56f3529f19cb",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "promoted_rules": [
@@ -3663,6 +3663,11 @@
           "number": 4943,
           "title": "[ty] Fix a panic when checking truthiness in a loop (#29759)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6241,
+          "title": "[ty] Avoid invalid keyword arguments when accepting inlay hints (#29806)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3670,7 +3675,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T20:21:58.309Z",
+      "verified_at": "2026-10-31T16:20:20.662Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -17412,7 +17417,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
       "source_version": "hf-aleph-alpha-kolibri-1",
-      "content_hash": "f99e620b40220844d8f98adbabbfb2d593884cc0b73a39f6517bcbd7cdcf2162",
+      "content_hash": "137775d699e12cdc451d4b04159c60227c9645a5b5cc15d09fb3bf9267424a09",
       "dossier_path": "07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md",
       "promoted_rules": [
@@ -17494,7 +17499,7 @@
         "learn-huggingface-hf-aleph-alpha-kolibri-1-mv3xbaa0",
         "learn-huggingface-hf-aleph-alpha-kolibri-1-mv4c0zvx"
       ],
-      "verified_at": "2026-10-28T15:29:46.642Z",
+      "verified_at": "2026-10-31T16:20:20.141Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39466,8 +39471,8 @@
       "slug": "microsoft-react-native-windows",
       "platform": "github",
       "source_url": "https://github.com/microsoft/react-native-windows",
-      "source_version": "8079828c",
-      "content_hash": "86ade1673287617f4afd29eabab659108df98d945573714ac10abfeaada99a4a",
+      "source_version": "8a95a6d5",
+      "content_hash": "d479ba4d8bdd48aaac380ecb75c209744bc6a32b55fa640ab2d7ca0fad8599f7",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
       "promoted_rules": [
@@ -39490,6 +39495,11 @@
           "number": 5404,
           "title": "📦 Bump the all-dependencies group across 1 directory with 2 updates (#16507)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6242,
+          "title": "Dependabot npm updates and keep yarn.lock free of download URLs (#16548)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39497,7 +39507,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T21:04:27.579Z",
+      "verified_at": "2026-10-31T16:20:24.490Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162891,6 +162901,34 @@
         "rules_verified": true,
         "index_read_back_verified": true
       }
+    },
+    "rule-6241": {
+      "learning_id": "rule-6241",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6241,
+      "title": "[ty] Avoid invalid keyword arguments when accepting inlay hints (#29806)",
+      "source_url": "https://github.com/astral-sh/ruff",
+      "source_version": "23a16fa0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T16:20:20.662Z"
+    },
+    "rule-6242": {
+      "learning_id": "rule-6242",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6242,
+      "title": "Dependabot npm updates and keep yarn.lock free of download URLs (#16548)",
+      "source_url": "https://github.com/microsoft/react-native-windows",
+      "source_version": "8a95a6d5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T16:20:24.490Z"
     }
   },
   "aliases": {

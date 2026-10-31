@@ -1015,8 +1015,8 @@
     "sourceUrl": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
     "sourceVersion": "hf-aleph-alpha-kolibri-1",
     "license": "Open-Source",
-    "contentHash": "f99e620b40220844d8f98adbabbfb2d593884cc0b73a39f6517bcbd7cdcf2162",
-    "lastHarvestedAt": "2026-10-28T15:29:46.738Z",
+    "contentHash": "137775d699e12cdc451d4b04159c60227c9645a5b5cc15d09fb3bf9267424a09",
+    "lastHarvestedAt": "2026-10-31T16:20:20.266Z",
     "learningId": "learn-huggingface-aleph-alpha-kolibri-1"
   },
   "hf-speridlabs-iris-3b": {
@@ -7533,10 +7533,10 @@
     "repository": "microsoft/react-native-windows",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/react-native-windows",
-    "sourceVersion": "8079828c",
+    "sourceVersion": "8a95a6d5",
     "license": "NOASSERTION",
-    "contentHash": "86ade1673287617f4afd29eabab659108df98d945573714ac10abfeaada99a4a",
-    "lastHarvestedAt": "2026-10-28T21:04:27.666Z",
+    "contentHash": "d479ba4d8bdd48aaac380ecb75c209744bc6a32b55fa640ab2d7ca0fad8599f7",
+    "lastHarvestedAt": "2026-10-31T16:20:24.593Z",
     "learningId": "learn-github-microsoft-react-native-windows"
   },
   "paradedb-paradedb": {
@@ -7623,10 +7623,10 @@
     "repository": "astral-sh/ruff",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/ruff",
-    "sourceVersion": "86b7fd1e",
+    "sourceVersion": "23a16fa0",
     "license": "MIT",
-    "contentHash": "39335972b2b964ed14d21ce3f1fe1b9288fcf13826855fe2a48f701f3f36ebe5",
-    "lastHarvestedAt": "2026-10-30T20:21:58.448Z",
+    "contentHash": "8e22c7017f5b3e07d69342942033605a3001df85e0a50e1ecb4e56f3529f19cb",
+    "lastHarvestedAt": "2026-10-31T16:20:20.783Z",
     "learningId": "learn-github-astral-sh-ruff"
   },
   "touchlab-kampkit": {
