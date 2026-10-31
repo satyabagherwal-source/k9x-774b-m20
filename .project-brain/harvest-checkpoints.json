@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T10:33:57.410Z",
+  "last_updated": "2026-10-31T10:40:29.331Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -650,14 +650,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "a9b43c557df740d48677326e3cae3c8c1a6e265e6d33949ed3fd755e43b4c89f",
-      "verified_at": "2026-10-28T07:44:47.917Z",
+      "content_hash": "26d814f41282865f751e9b21358e2d61f71e597940fefc4e7a3fd2d05ddb58cc",
+      "verified_at": "2026-10-31T10:40:20.312Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T07:44:47.917Z"
+      "last_updated": "2026-10-31T10:40:20.312Z"
     },
     "unsloth/Qwen-Image-2.1-GGUF": {
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -5661,14 +5661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dosco-graphjin",
-      "content_hash": "fd7e17c514aaa5a336791674b2e66748872502fcd1a3effcffebfc373ab5035c",
-      "verified_at": "2026-10-30T18:32:35.185Z",
+      "content_hash": "123aeb3fb45c06ad43e73b6c9d97d2d9eb41b26304e35f6813837856376a5f70",
+      "verified_at": "2026-10-31T10:40:29.330Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T18:32:35.185Z"
+      "last_updated": "2026-10-31T10:40:29.330Z"
     },
     "gravitl/netmaker": {
       "repository": "gravitl/netmaker",
@@ -17519,6 +17519,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-31T10:18:22.083Z"
+    },
+    "Efficient-Large-Model/Open-H3-Regenerate-2K": {
+      "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
+      "content_hash": "1e11819b7551b7f8667248084a0d0ff692f06bd2b8bd53020ad353712b1919da",
+      "verified_at": "2026-10-31T10:40:28.611Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-31T10:40:28.611Z"
     }
   },
   "repos": {

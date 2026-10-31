@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T10:33:57.333Z",
-  "total_verified_learnings": 1182,
+  "last_updated": "2026-10-31T10:40:29.256Z",
+  "total_verified_learnings": 1183,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -10418,8 +10418,8 @@
       "slug": "dosco-graphjin",
       "platform": "github",
       "source_url": "https://github.com/dosco/graphjin",
-      "source_version": "3958f0cb",
-      "content_hash": "fd7e17c514aaa5a336791674b2e66748872502fcd1a3effcffebfc373ab5035c",
+      "source_version": "6f14910d",
+      "content_hash": "123aeb3fb45c06ad43e73b6c9d97d2d9eb41b26304e35f6813837856376a5f70",
       "dossier_path": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
       "promoted_rules": [
@@ -10432,6 +10432,11 @@
           "number": 5829,
           "title": "bump version to v3.21.17 [skip-release] [skip ci]",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6172,
+          "title": "discovery): aggregate SQLite index statistics per table (#692)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10439,7 +10444,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T18:32:35.076Z",
+      "verified_at": "2026-10-31T10:40:29.239Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -17151,7 +17156,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "a9b43c557df740d48677326e3cae3c8c1a6e265e6d33949ed3fd755e43b4c89f",
+      "content_hash": "26d814f41282865f751e9b21358e2d61f71e597940fefc4e7a3fd2d05ddb58cc",
       "dossier_path": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "promoted_rules": [
@@ -17229,7 +17234,7 @@
         "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv46r4cy",
         "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv4k1h95"
       ],
-      "verified_at": "2026-10-28T07:44:47.805Z",
+      "verified_at": "2026-10-31T10:40:20.210Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -161434,6 +161439,105 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T10:33:57.315Z"
+    },
+    "learn-huggingface-efficient-large-model-open-h3-regenerate-2k": {
+      "learning_id": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Efficient-Large-Model/Open-H3-Regenerate-2K",
+      "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
+      "slug": "hf-efficient-large-model-open-h3-regenerate-2k",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K",
+      "source_version": "hf-efficient-large-model-open-h3-regenerate-2k",
+      "content_hash": "1e11819b7551b7f8667248084a0d0ff692f06bd2b8bd53020ad353712b1919da",
+      "dossier_path": "07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 6169,
+          "title": "Exact Linear Algebraic Merge of Additive Adapters",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6170,
+          "title": "CUDA Graph Capture for Static-Shape Inference Loops",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6171,
+          "title": "Non-Causal Distillation for Temporal Decoders",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-31T10:40:28.520Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-6169": {
+      "learning_id": "rule-6169",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6169,
+      "title": "Exact Linear Algebraic Merge of Additive Adapters",
+      "source_url": "https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K",
+      "source_version": "hf-efficient-large-model-open-h3-regenerate-2k",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T10:40:28.520Z"
+    },
+    "rule-6170": {
+      "learning_id": "rule-6170",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6170,
+      "title": "CUDA Graph Capture for Static-Shape Inference Loops",
+      "source_url": "https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K",
+      "source_version": "hf-efficient-large-model-open-h3-regenerate-2k",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T10:40:28.520Z"
+    },
+    "rule-6171": {
+      "learning_id": "rule-6171",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6171,
+      "title": "Non-Causal Distillation for Temporal Decoders",
+      "source_url": "https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K",
+      "source_version": "hf-efficient-large-model-open-h3-regenerate-2k",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T10:40:28.520Z"
+    },
+    "rule-6172": {
+      "learning_id": "rule-6172",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6172,
+      "title": "discovery): aggregate SQLite index statistics per table (#692)",
+      "source_url": "https://github.com/dosco/graphjin",
+      "source_version": "6f14910d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T10:40:29.239Z"
     }
   },
   "aliases": {

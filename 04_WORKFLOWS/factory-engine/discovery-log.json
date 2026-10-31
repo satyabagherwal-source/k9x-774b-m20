@@ -19954,5 +19954,17 @@
     "qualityScore": 1870,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-31T10:15:55.619Z"
+  },
+  {
+    "name": "Efficient-Large-Model/Open-H3-Regenerate-2K",
+    "fullName": "Efficient-Large-Model/Open-H3-Regenerate-2K",
+    "url": "https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Efficient-Large-Model/Open-H3-Regenerate-2K (140 likes, 0 downloads)",
+    "likes": 140,
+    "downloads": 0,
+    "qualityScore": 1400,
+    "discoveredAt": "2026-10-31T10:38:03.935Z"
   }
 ]

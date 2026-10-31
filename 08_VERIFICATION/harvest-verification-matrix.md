@@ -6534,3 +6534,6 @@
 | `CYCLE-20261031-BKTX` | `2026-10-31T10:27:16.917Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6167` | Yes (`0d17b7f7...`) |
 | `CYCLE-20261031-JZ5U` | `2026-10-31T10:33:48.738Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md` | Yes (`a29ccc11...`) |
 | `CYCLE-20261031-K5UF` | `2026-10-31T10:33:57.399Z` | `fabio-rovai/open-ontologies` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6168` | Yes (`8a56c9cc...`) |
+| `CYCLE-20261031-SDAG` | `2026-10-31T10:40:20.296Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`26d814f4...`) |
+| `CYCLE-20261031-SJP5` | `2026-10-31T10:40:28.601Z` | `Efficient-Large-Model/Open-H3-Regenerate-2K` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6169, Rule 6170, Rule 6171` | Yes (`1e11819b...`) |
+| `CYCLE-20261031-SK94` | `2026-10-31T10:40:29.320Z` | `dosco/graphjin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6172` | Yes (`123aeb3f...`) |

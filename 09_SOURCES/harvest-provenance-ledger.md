@@ -6543,3 +6543,6 @@ Every entry in this ledger must capture:
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `6e3efd5a` | Multi-dimensional audit evidence | 2026-10-31T10:27:16.921Z |
 | `learn-huggingface-deepseek-ai-deepseek-v4-1-flash` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-31T10:33:48.747Z |
 | `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `cefe5997` | Multi-dimensional audit evidence | 2026-10-31T10:33:57.402Z |
+| `learn-huggingface-akatz-ai-minimax-h3-character-swap-lora` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-10-31T10:40:20.305Z |
+| `learn-huggingface-efficient-large-model-open-h3-regenerate-2k` | `https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K` | `hf-efficie` | Multi-dimensional audit evidence | 2026-10-31T10:40:28.604Z |
+| `learn-github-dosco-graphjin` | `https://github.com/dosco/graphjin` | `6f14910d` | Multi-dimensional audit evidence | 2026-10-31T10:40:29.323Z |

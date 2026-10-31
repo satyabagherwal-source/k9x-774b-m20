@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T10:33:57.407Z",
-  "total_cycles_completed": 6511,
-  "total_learnings_persisted": 6511,
-  "total_rules_promoted": 6161,
+  "last_updated": "2026-10-31T10:40:29.327Z",
+  "total_cycles_completed": 6514,
+  "total_learnings_persisted": 6514,
+  "total_rules_promoted": 6165,
   "history": [
-    {
-      "timestamp": "2026-10-30T22:10:24.961Z",
-      "repository": "iliyami/MacSai",
-      "learningId": "learn-github-iliyami-macsai",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T22:10:33.387Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T22:13:47.413Z",
-      "repository": "rtk-ai/rtk",
-      "learningId": "learn-github-rtk-ai-rtk",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T22:20:21.352Z",
       "repository": "Saffsanity/sill",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-31T10:33:57.407Z",
       "repository": "fabio-rovai/open-ontologies",
       "learningId": "learn-github-fabio-rovai-open-ontologies",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T10:40:20.309Z",
+      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T10:40:28.609Z",
+      "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
+      "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T10:40:29.327Z",
+      "repository": "dosco/graphjin",
+      "learningId": "learn-github-dosco-graphjin",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

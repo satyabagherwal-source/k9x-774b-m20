@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261029-2KE6",
-    "timestamp": "2026-10-29T12:08:54.462Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "c17c3265685a5588e113cb2bc9389af6c0b2598d3f99ff2f4808d92024d7b9d6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-2LRF",
-    "timestamp": "2026-10-29T12:08:56.235Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "4b554aa73d9ace51ae6474332af790fbb1a9b3a404a2dba7a98e8a2d32152bfe",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-8HSV",
-    "timestamp": "2026-10-29T12:13:31.039Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "acba38cb9feda86f8dc1148d8e60774358bc56eab53cd0f17d646ef448753e3c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261029-8K2K",
     "timestamp": "2026-10-29T12:13:33.980Z",
     "repository": "doobidoo/mcp-memory-service",
@@ -7490,6 +7445,51 @@
     "repository": "fabio-rovai/open-ontologies",
     "learningId": "learn-github-fabio-rovai-open-ontologies",
     "contentHash": "8a56c9ccf347ddbe1c596729f2f97e67cbb4752f424a644357f421b4b67f6864",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-SDAG",
+    "timestamp": "2026-10-31T10:40:20.296Z",
+    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+    "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+    "contentHash": "26d814f41282865f751e9b21358e2d61f71e597940fefc4e7a3fd2d05ddb58cc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-SJP5",
+    "timestamp": "2026-10-31T10:40:28.601Z",
+    "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
+    "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
+    "contentHash": "1e11819b7551b7f8667248084a0d0ff692f06bd2b8bd53020ad353712b1919da",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-SK94",
+    "timestamp": "2026-10-31T10:40:29.320Z",
+    "repository": "dosco/graphjin",
+    "learningId": "learn-github-dosco-graphjin",
+    "contentHash": "123aeb3fb45c06ad43e73b6c9d97d2d9eb41b26304e35f6813837856376a5f70",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

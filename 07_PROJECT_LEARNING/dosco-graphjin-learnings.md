@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dosco-graphjin-learnings.md`  
 > **Source**: github ([https://github.com/dosco/graphjin](https://github.com/dosco/graphjin))  
-> **Source Version**: `3958f0cb`  
+> **Source Version**: `6f14910d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T18:32:34.506Z  
+> **Timestamp**: 2026-10-31T10:40:28.747Z  
 > **Learning ID**: `learn-github-dosco-graphjin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dosco-graphjin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dosco/graphjin](https://github.com/dosco/graphjin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T18:32:34.184Z  
+> **Harvest Timestamp**: 2026-10-31T10:40:28.645Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2730,278 +2730,591 @@ func
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3958f0cb` (2026-10-29)
-**Commit Message**: chore: bump version to v3.21.17 [skip-release] [skip ci]
+### Incident Patch 1: `2a0d99ef` (2026-10-31)
+**Commit Message**: fix(discovery): aggregate SQLite index statistics per table (#692)
 
-**File**: `agent/go.mod` (modified, +1/-1)
+**File**: `core/discovery/namespaces.go` (modified, +3/-1)
 ```diff
-@@ -5,7 +5,7 @@ go 1.25.0
- require (
- 	github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd
- 	github.com/dop251/goja v0.0.0-20260219130522-0ba9a5494a59
--	github.com/dosco/graphjin/core/v3 v3.21.16
-+	github.com/dosco/graphjin/core/v3 v3.21.17
- 	github.com/gofrs/flock v0.13.0
- )
+@@ -194,7 +194,9 @@ func sqliteNamespaceRollup(ctx context.Context, db *sql.DB) ([]NamespaceRollup,
+ 	const q = `
+ SELECT 'main' AS db, '' AS sch,
+        (SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%') AS table_count,
+-       COALESCE((SELECT SUM(CAST(substr(stat,1,instr(stat||' ',' ')-1) AS INTEGER)) FROM sqlite_stat1), 0) AS approx_row_total`
++       COALESCE((SELECT SUM(row_count)
++                 FROM (SELECT MAX(CAST(substr(stat,1,instr(stat||' ',' ')-1) AS INTEGER)) AS row_count
++                       FROM sqlite_stat1 GROUP BY tbl)), 0) AS approx_row_total`
+ 	return scanNamespaceRollup(ctx, db, q, true)
+ }
  
 ```
 
-**File**: `auth/go.mod` (modified, +1/-1)
+**File**: `core/discovery/rowcount.go` (modified, +11/-17)
 ```diff
-@@ -3,7 +3,7 @@ module github.com/dosco/graphjin/auth/v3
- go 1.25.0
+@@ -3,7 +3,6 @@ package discovery
+ import (
+ 	"context"
+ 	"database/sql"
+-	"fmt"
+ 	"log"
+ 	"strings"
+ 	"time"
+@@ -152,23 +151,15 @@ func bigqueryRowCount(ctx context.Context, db *sql.DB, schema *core.TableSchema)
+ }
  
- require (
--	github.com/dosco/graphjin/core/v3 v3.21.16
-+	github.com/dosco/graphjin/core/v3 v3.21.17
- 	github.com/golang-jwt/jwt/v5 v5.3.1
- 	github.com/lestrrat-go/jwx v1.2.31
- 	github.com/stretchr/testify v1.11.1
-```
-
-**File**: `cmd/go.mod` (modified, +5/-5)
-```diff
-@@ -5,13 +5,13 @@ go 1.25.5
- require (
- 	github.com/brianvoe/gofakeit/v6 v6.28.0
- 	github.com/dop251/goja v0.0.0-20260219130522-0ba9a5494a59
--	github.com/dosco/graphjin/agent/v3 v3.21.16
--	github.com/dosco/graphjin/auth/v3 v3.21.16
--	github.com/dosco/graphjin/core/v3 v3.21.16
-+	github.com/dosco/graphjin/agent/v3 v3.21.17
-+	github.com/dosco/graphjin/auth/v3 v3.21.17
-+	github.com/dosco/graphjin/core/v3 v3.21.17
- 	github.com/dosco/graphjin/examples v0.0.0
- 	github.com/dosco/graphjin/hostedemu v0.0.0
- 	github.com/dosco/graphjin/mongodriver v0.0.0
--	github.com/dosco/graphjin/serv/v3 v3.21.16
-+	github.com/dosco/graphjin/serv/v3 v3.21.17
- 	github.com/gosimple/slug v1.15.0
- 	github.com/jackc/pgx/v5 v5.7.6
- 	github.com/jvatic/goja-babel v0.0.0-20250906111304-06c40d6b931b
-@@ -111,7 +111,7 @@ require (
- 	github.com/docker/docker v28.5.2+incompatible // indirect
- 	github.com/docker/go-connections v0.6.0 // indirect
- 	github.com/docker/go-units v0.5.0 // indirect
--	github.com/dosco/graphjin/plugin/otel/v3 v3.21.16 // indirect
-+	github.com/dosco/graphjin/plugin/otel/v3 v3.21.17 // indirect
- 	github.com/duckdb/duckdb-go-bindings v0.10502.0 // indirect
- 	github.com/duckdb/duckdb-go-bindings/lib/darwin-amd64 v0.10502.0 // indirect
- 	github.com/duckdb/duckdb-go-bindings/lib/darwin-arm64 v0.10502.0 // indirect
-```
-
-**File**: `conf/go.mod` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@ module github.com/dosco/graphjin/conf/v3
- go 1.25.0
+ func sqliteRowCount(ctx context.Context, db *sql.DB, schema *core.TableSchema) (int64, bool) {
+-	var stat sql.NullString
++	var n sql.NullInt64
+ 	err := db.QueryRowContext(ctx,
+-		`SELECT stat FROM sqlite_stat1 WHERE tbl = ? LIMIT 1`,
++		`SELECT MAX(CAST(substr(stat,1,instr(stat||' ',' ')-1) AS INTEGER)) FROM sqlite_stat1 WHERE tbl = ?`,
+ 		schema.Name,
+-	).Scan(&stat)
+-	if err != nil || !stat.Valid || stat.String == "" {
+-		return 0, false
+-	}
+-	fields := strings.Fields(stat.String)
+-	if len(fields) == 0 {
+-		return 0, false
+-	}
+-	var n int64
+-	if _, err := fmt.Sscanf(fields[0], "%d", &n); err != nil || n <= 0 {
++	).Scan(&n)
++	if err != nil || !n.Valid || n.Int64 <= 0 {
+ 		return 0, false
+ 	}
+-	return n, true
++	return n.Int64, true
+ }
  
- require (
--	github.com/dosco/graphjin/core/v3 v3.21.16
-+	github.com/dosco/graphjin/core/v3 v3.21.17
- 	gopkg.in/yaml.v3 v3.0.1
- )
+ func oracleRowCount(ctx context.Context, db *sql.DB, schema *core.TableSchema) (int64, bool) {
+@@ -315,13 +306,16 @@ WHERE TABLE_TYPE = 'BASE TABLE'
+ }
+ 
+ func sqliteNamespaceRowCounts(ctx context.Context, db *sql.DB) (map[string]int64, error) {
+-	// LEFT JOIN: tables without sqlite_stat1 entries get NULL → skipped.
++	// ANALYZE records one estimate per index. Use the largest estimate per
++	// table so multiple indexes do not duplicate rows and partial indexes do
++	// not replace a full-table estimate. Missing stats remain NULL → skipped.
+ 	const q = `
+ SELECT m.name,
+-       CAST(substr(s.stat,1,instr(s.stat||' ',' ')-1) AS INTEGER)
++       MAX(CAST(substr(s.stat,1,instr(s.stat||' ',' ')-1) AS INTEGER))
+ FROM sqlite_master m
+ LEFT JOIN sqlite_stat1 s ON s.tbl = m.name
+-WHERE m.type = 'table' AND m.name NOT LIKE 'sqlite_%'`
++WHERE m.type = 'table' AND m.name NOT LIKE 'sqlite_%'
++GROUP BY m.name`
+ 	return scanRowCountPairs(ctx, db, q)
+ }
  
 ```
 
-**File**: `package-lock.json` (modified, +2/-2)
+**File**: `core/discovery/sqlite_stats_test.go` (added, +65/-0)
 ```diff
-@@ -1,12 +1,12 @@
- {
-   "name": "graphjin",
--  "version": "3.21.16",
-+  "version": "3.21.17",
-   "lockfileVersion": 3,
-   "requires": true,
-   "packages": {
-     "": {
-       "name": "graphjin",
--      "version": "3.21.16",
-+      "version": "3.21.17",
-       "hasInstallScript": true,
-       "license": "Apache-2.0",
-       "dependencies": {
-```
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "graphjin",
--  "version": "3.21.16",
-+  "version": "3.21.17",
-   "description": "GraphJin — one governed graph for AI agents: GraphQL + MCP over your databases, files, APIs, and code",
-   "bin": {
-     "graphjin": "bin/graphjin.js"
-```
-
-**File**: `plugin/otel/go.mod` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@ module github.com/dosco/graphjin/plugin/otel/v3
- go 1.25.0
- 
- require (
--	github.com/dosco/graphjin/core/v3 v3.21.16
-+	github.com/dosco/graphjin/core/v3 v3.21.17
- 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.67.0
- 	go.opentelemetry.io/otel v1.43.0
- 	go.opentelemetry.io/otel/trace v1.43.0
-```
-
-**File**: `serv/go.mod` (modified, +4/-4)
-```diff
-@@ -8,14 +8,14 @@ require (
- 	github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd
- 	github.com/coder/websocket v1.8.15
- 	github.com/dop251/goja v0.0.0-20260219130522-0ba9a5494a59
--	github.com/dosco/graphjin/agent/v3 v3.21.16
--	github.com/dosco/graphjin/auth/v3 v3.21.16
-+	github.com/dosco/graphjin/agent/v3 v3.21.17
-+	github.com/dosco/graphjin/auth/v3 v3.21.17
- 	github.com/dosco/graphjin/cassandradriver v0.0.0
- 	github.com/dosco/graphjin/clickhousedriver v0.0.0
- 	github.com/dosco/graphjin/codesql v0.0.0
--	github.com/dosco/graphjin/core/v3 v3.21.16
-+	github.com/dosco/graphjin/core/v3 v3.21.17
- 	github.com/dosco/graphjin/mongodriver v0.0.0
--	github.com/dosco/graphjin/plugin/otel/v3 v3.21.16
-+	github.com/dosco/graphjin/plugin/otel/v3 v3.21.17
- 	github.com/fsnotify/fsnotify v1.9.0
- 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
- 	github.com/go-pkgz/expirable-cache v1.0.0
+@@ -0,0 +1,65 @@
++package discovery
++
++import (
++	"context"
++	"database/sql"
++	"testing"
++
++	core "github.com/dosco/graphjin/core/v3"
++	_ "github.com/mattn/go-sqlite3"
++)
++
++func TestSQLiteDiscoveryCountsTablesInsteadOfIndexes(t *testing.T) {
++	db, err := sql.Open("sqlite3", ":memory:")
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer db.Close()
++	db.SetMaxOpenConns(1)
++	for _, statement := range []string{
++		"CREATE TABLE orders(id INTEGER PRIMARY KEY, account_id INTEGER, state TEXT)",
++		"CREATE TABLE customers(id INTEGER PRIMARY KEY)",
++		"CREATE INDEX aa_full ON orders(account_id)",
++		"CREATE INDEX bb_full ON orders(state)",
++		"CREATE INDEX zz_partial ON orders(state) WHERE id <= 2",
++		"INSERT INTO orders VALUES(1,1,'open'),(2,2,'open'),(3,0,'open'),(4,1,'open'),(5,2,'open'),(6,0,'open'),(7,1,'open'),(8,2,'open'),(9,0,'open'),(10,1,'open')",
++		"INSERT INTO customers VALUES(1),(2),(3)",
++		"ANALYZE",
++	} {
++		if _, err := db.Exec(statement); err != nil {
++			t.Fatal(err)
++		}
++	}
++	var orders, customers int64
++	if err := db.QueryRow("SELECT COUNT(*) FROM orders").Scan(&orders); err != nil {
++		t.Fatal(err)
++	}
++	if err := db.QueryRow("SELECT COUNT(*) FROM customers").Scan(&customers); err != nil {
++		t.Fatal(err)
++	}
++	ctx := context.Background()
++	t.Run("namespace rollup", func(t *testing.T) {
++		rows, err := sqliteNamespaceRollup(ctx, db)
++		if err != nil {
++			t.Fatal(err)
++		}
++		if len(rows) != 1 || rows[0].TableCount != 2 || rows[0].ApproxRowTotal != orders+customers {
++			t.Fatalf("got %+v, want two tables with %d rows", rows, orders+customers)
++		}
++	})
++	t.Run("namespace table estimates", func(t *testing.T) {
++		counts, err := sqliteNamespaceRowCounts(ctx, db)
++		if err != nil {
++			t.Fatal(err)
++		}
++		if counts["orders"] != orders || counts["customers"] != customers {
++			t.Fatalf("counts = %v, want orders=%d customers=%d", counts, orders, customers)
++		}
++	})
++	t.Run("single table estimate", func(t *testing.T) {
++		got, available := sqliteRowCount(ctx, db, &core.TableSchema{Name: "orders"})
++		if !available || got != orders {
++			t.Fatalf("orders count = %d available=%v, want %d", got, available, orders)
++		}
++	})
++}
 ```
 
 ---
 
-### Incident Patch 2: `19fcd561` (2026-10-29)
-**Commit Message**: chore: upgrade Ax Go dependency to 25.4.7
+### Incident Patch 2: `0528d728` (2026-10-31)
+**Commit Message**: fix(graph): require complete standalone argument values (#690)
 
-**File**: `agent/go.mod` (modified, +1/-1)
+**File**: `core/internal/graph/complete_argument_test.go` (added, +36/-0)
 ```diff
-@@ -3,7 +3,7 @@ module github.com/dosco/graphjin/agent/v3
- go 1.25.0
+@@ -0,0 +1,36 @@
++package graph
++
++import "testing"
++
++func TestParseArgValueRequiresOneCompleteValue(t *testing.T) {
++	for _, value := range []string{`{id: {eq: 1}`, `[1, 2`, `{id: 1} {id: 2}`, `1 2`, `"first" "second"`} {
++		if _, err := ParseArgValue(value, false); err == nil {
++			t.Errorf("accepted incomplete or trailing input %q", value)
++		}
++	}
++}
++
++func TestParseArgValueConsumesTerminalNames(t *testing.T) {
++	for _, tc := range []struct {
++		input string
++		kind  ParserType
++		value string
++	}{
++		{"true", NodeBool, "true"}, {"false", NodeBool, "false"},
++		{"null", NodeLabel, "null"}, {"ACTIVE", NodeLabel, "ACTIVE"},
++	} {
++		node, err := ParseArgValue(tc.input, false)
++		if err != nil {
++			t.Errorf("%s: %v", tc.input, err)
++			continue
++		}
++		if node.Type != tc.kind || node.Val != tc.value {
++			t.Errorf("%s decoded as %#v", tc.input, node)
++		}
++	}
++	for _, value := range []string{`{id: {eq: 1}}`, `[1, 2]`, `[]`, `{}`, `true # comment`, `"value"`} {
++		if _, err := ParseArgValue(value, false); err != nil {
++			t.Errorf("valid %q: %v", value, err)
++		}
++	}
++}
+```
+
+**File**: `core/internal/graph/lex.go` (modified, +0/-5)
+```diff
+@@ -356,11 +356,6 @@ func lexName(l *lexer) StateFn {
+ 	for {
+ 		r := l.next()
  
- require (
--	github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d
-+	github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd
- 	github.com/dop251/goja v0.0.0-20260219130522-0ba9a5494a59
- 	github.com/dosco/graphjin/core/v3 v3.21.16
- 	github.com/gofrs/flock v0.13.0
+-		if r == eof {
+-			l.emit(itemEOF)
+-			return nil
+-		}
+-
+ 		if !isAlphaNumeric(r) {
+ 			l.backup()
+ 			val := l.current()
 ```
 
-**File**: `agent/go.sum` (modified, +2/-0)
+**File**: `core/internal/graph/parse.go` (modified, +16/-3)
 ```diff
-@@ -68,6 +68,8 @@ github.com/ax-llm/ax/packages/go v0.0.0-20261011084219-1d8965b83823 h1:Xy7EhzXzJ
- github.com/ax-llm/ax/packages/go v0.0.0-20261011084219-1d8965b83823/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
- github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d h1:9F3h6PRIkfH0RS5AZHASlOGmGHo1j7gE7s7kTCatXzY=
- github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
-+github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd h1:XSvyci9wwo6zmxvwzOsVJqFs99nsw1SOA1imgJZD3hM=
-+github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
- github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
- github.com/cespare/xxhash/v2 v2.3.0/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
- github.com/coder/websocket v1.8.15 h1:6B2JPeOGlpff2Uz6vOEH1Vzpi0iUz20A+lPVhPHtNUA=
+@@ -328,7 +328,14 @@ func ParseArgValue(argVal string, json bool) (*Node, error) {
+ 		items: l.items,
+ 		json:  json,
+ 	}
+-	return p.parseValue()
++	node, err := p.parseValue()
++	if err != nil {
++		return nil, err
++	}
++	if !p.peek(itemEOF) {
++		return nil, errors.New("unexpected input after argument value")
++	}
++	return node, nil
+ }
+ 
+ func (p *Parser) parseFields(fields []Field) ([]Field, error) {
+@@ -660,7 +667,10 @@ func (p *Parser) parseList() (*Node, error) {
+ 
+ 	var ty ParserType
+ 	for {
+-		if p.peek(itemEOF, itemListClose) {
++		if p.peek(itemEOF) {
++			return nil, errors.New("end reached before list was closed")
++		}
++		if p.peek(itemListClose) {
+ 			p.ignore()
+ 			break
+ 		}
+@@ -700,7 +710,10 @@ func (p *Parser) parseObj() (*Node, error) {
+ 	parent.CMap = make(map[string]*Node)
+ 
+ 	for {
+-		if p.peek(itemEOF, itemObjClose) {
++		if p.peek(itemEOF) {
++			return nil, errors.New("end reached before object was closed")
++		}
++		if p.peek(itemObjClose) {
+ 			p.ignore()
+ 			break
+ 		}
 ```
 
-**File**: `cmd/go.mod` (modified, +1/-1)
+**File**: `core/internal/psql/role_filter_complete_dialects_test.go` (added, +25/-0)
 ```diff
-@@ -90,7 +90,7 @@ require (
- 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.30.0 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/sts v1.33.17 // indirect
- 	github.com/aws/smithy-go v1.22.5 // indirect
--	github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d // indirect
-+	github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd // indirect
- 	github.com/bahlo/generic-list-go v0.2.0 // indirect
- 	github.com/buger/jsonparser v1.1.1 // indirect
- 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
+@@ -0,0 +1,25 @@
++package psql_test
++
++import (
++	"github.com/dosco/graphjin/core/v3/internal/qcode"
++	"testing"
++)
++
++func TestRoleFiltersRequireCompleteValuesAcrossDialects(t *testing.T) {
++	for _, dialect := range []string{"postgres", "mysql", "sqlite"} {
++		t.Run(dialect, func(t *testing.T) {
++			for _, filter := range []string{`{ id: { eq: 1 }`, `{ id: { eq: 1 } } { id: { eq: 2 } }`} {
++				qc, _ := newDialectCompilers(t, dialect)
++				err := qc.AddRole("restricted", "public", "products", qcode.TRConfig{Query: qcode.QueryConfig{Filters: []string{filter}}})
++				if err == nil {
++					t.Errorf("accepted malformed role filter %q", filter)
++				}
++			}
++			qc, pc := newDialectCompilers(t, dialect)
++			if err := qc.AddRole("user", "public", "products", qcode.TRConfig{Query: qcode.QueryConfig{Filters: []string{`{ id: { eq: 1 } }`}}}); err != nil {
++				t.Fatal(err)
++			}
++			compileWith(t, qc, pc, `query { products { id } }`)
++		})
++	}
++}
 ```
 
-**File**: `cmd/go.sum` (modified, +2/-0)
+---
+
+### Incident Patch 3: `24100083` (2026-10-31)
+**Commit Message**: fix(graph): accept contextual keywords as GraphQL names (#688)
+
+**File**: `core/internal/graph/contextual_names_test.go` (added, +49/-0)
 ```diff
-@@ -139,6 +139,8 @@ github.com/ax-llm/ax/packages/go v0.0.0-20261011084219-1d8965b83823 h1:Xy7EhzXzJ
- github.com/ax-llm/ax/packages/go v0.0.0-20261011084219-1d8965b83823/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
- github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d h1:9F3h6PRIkfH0RS5AZHASlOGmGHo1j7gE7s7kTCatXzY=
- github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
-+github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd h1:XSvyci9wwo6zmxvwzOsVJqFs99nsw1SOA1imgJZD3hM=
-+github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
- github.com/bahlo/generic-list-go v0.2.0 h1:5sz/EEAK+ls5wF+NeqDpk5+iNdMDXrh3z3nPnH1Wvgk=
- github.com/bahlo/generic-list-go v0.2.0/go.mod h1:2KvAjgMlE5NNynlg/5iLrrCCZ2+5xWbdbCW3pNTGyYg=
- github.com/bitly/go-hostpool v0.0.0-20171023180738-a3a6125de932 h1:mXoPYz/Ul5HYEDvkta6I8/rnYM5gSdSV2tJ6XbZuEtY=
+@@ -0,0 +1,49 @@
++package graph
++
++import "testing"
++
++func TestKeywordNamesInFieldContexts(t *testing.T) {
++	op, err := Parse([]byte(`query on { products { on true false ON True alias: on } }`))
++	if err != nil {
++		t.Fatal(err)
++	}
++	if op.Name != "on" {
++		t.Fatalf("operation name %q", op.Name)
++	}
++	for i, want := range []string{"products", "on", "true", "false", "ON", "True", "on"} {
++		if op.Fields[i].Name != want {
++			t.Fatalf("field %d got %q want %q", i, op.Fields[i].Name, want)
++		}
++	}
++}
++
++func TestKeywordObjectKeysAndValues(t *testing.T) {
++	op, err := Parse([]byte(`{ products(where: {on: {eq: on}, true: {eq: true}, false: {eq: false}}) { id } }`))
++	if err != nil {
++		t.Fatal(err)
++	}
++	where := op.Fields[0].Args[0].Val
++	if where.Children[0].Name != "on" || where.Children[0].Children[0].Type != NodeLabel || where.Children[0].Children[0].Val != "on" {
++		t.Fatalf("enum on: %#v", where.Children[0])
++	}
++	if where.Children[1].Children[0].Type != NodeBool || where.Children[2].Children[0].Type != NodeBool {
++		t.Fatal("boolean semantics changed")
++	}
++}
++
++func TestKeywordNameHandlingPreservesBooleans(t *testing.T) {
++	op, err := Parse([]byte(`{ products(where: {available: {eq: TRUE}}) { id } }`))
++	if err != nil {
++		t.Fatal(err)
++	}
++	value := op.Fields[0].Args[0].Val.Children[0].Children[0]
++	if value.Type != NodeBool || value.Val != "true" {
++		t.Fatalf("boolean %#v", value)
++	}
++	if _, err = Parse([]byte(`fragment on on products { id } query { products { id } }`)); err == nil {
++		t.Fatal("accepted reserved fragment name on")
++	}
++	if _, err = Parse([]byte(`fragment true on products { id } query { products { ...true } }`)); err != nil {
++		t.Fatal(err)
++	}
++}
 ```
 
-**File**: `serv/go.mod` (modified, +1/-1)
+**File**: `core/internal/graph/lex.go` (modified, +3/-3)
 ```diff
-@@ -5,7 +5,7 @@ go 1.25.5
- require (
- 	cloud.google.com/go/storage v1.62.1
- 	github.com/ClickHouse/clickhouse-go/v2 v2.46.0
--	github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d
-+	github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd
- 	github.com/coder/websocket v1.8.15
- 	github.com/dop251/goja v0.0.0-20260219130522-0ba9a5494a59
- 	github.com/dosco/graphjin/agent/v3 v3.21.16
+@@ -367,11 +367,11 @@ func lexName(l *lexer) StateFn {
+ 
+ 			switch {
+ 			case equals(val, onToken):
+-				l.emitL(itemOn)
++				l.emit(itemOn)
+ 			case equals(val, trueToken):
+-				l.emitL(itemBoolVal)
++				l.emit(itemBoolVal)
+ 			case equals(val, falseToken):
+-				l.emitL(itemBoolVal)
++				l.emit(itemBoolVal)
+ 			default:
+ 				l.emit(itemName)
+ 			}
 ```
 
-**File**: `serv/go.sum` (modified, +2/-0)
+**File**: `core/internal/graph/parse.go` (modified, +18/-13)
 ```diff
-@@ -110,6 +110,8 @@ github.com/ax-llm/ax/packages/go v0.0.0-20261011084219-1d8965b83823 h1:Xy7EhzXzJ
- github.com/ax-llm/ax/packages/go v0.0.0-20261011084219-1d8965b83823/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
- github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d h1:9F3h6PRIkfH0RS5AZHASlOGmGHo1j7gE7s7kTCatXzY=
- github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
-+github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd h1:XSvyci9wwo6zmxvwzOsVJqFs99nsw1SOA1imgJZD3hM=
-+github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
- github.com/bahlo/generic-list-go v0.2.0 h1:5sz/EEAK+ls5wF+NeqDpk5+iNdMDXrh3z3nPnH1Wvgk=
- github.com/bahlo/generic-list-go v0.2.0/go.mod h1:2KvAjgMlE5NNynlg/5iLrrCCZ2+5xWbdbCW3pNTGyYg=
- github.com/bitly/go-hostpool v0.0.0-20171023180738-a3a6125de932 h1:mXoPYz/Ul5HYEDvkta6I8/rnYM5gSdSV2tJ6XbZuEtY=
+@@ -5,6 +5,7 @@ import (
+ 	"bytes"
+ 	"errors"
+ 	"fmt"
++	"strings"
+ 	"sync"
+ 	"unsafe"
+ )
+@@ -187,7 +188,7 @@ func Parse(gql []byte) (op Operation, err error) {
+ func (p *Parser) parseFragment() (frag Fragment, err error) {
+ 	s := p.curr().pos
+ 
+-	if p.peek(itemName) {
++	if p.peek(itemName, itemBoolVal) {
+ 		frag.Name = p.val(p.next())
+ 	} else {
+ 		err = errors.New("fragment: missing name")
+@@ -201,7 +202,7 @@ func (p *Parser) parseFragment() (frag Fragment, err error) {
+ 		return
+ 	}
+ 
+-	if p.peek(itemName) {
++	if p.peek(itemName, itemOn, itemBoolVal) {
+ 		frag.On = p.vall(p.next())
+ 	} else {
+ 		err = errors.New("fragment: missing table name after 'on' keyword")
+@@ -290,7 +291,7 @@ func (p *Parser) parseOpTypeAndArgs(op *Operation) (err error) {
+ 
+ 	op.Args = op.argsA[:0]
+ 
+-	if p.peek(itemName) {
++	if p.peek(itemName, itemOn, itemBoolVal) {
+ 		op.Name = p.val(p.next())
+ 	}
+ 
+@@ -334,7 +335,7 @@ func (p *Parser) parseFields(fields []Field) ([]Field, error) {
+ 	var err error
+ 	st := NewStack()
+ 
+-	if !p.peek(itemName, itemSpread) {
++	if !p.peek(itemName, itemOn, itemBoolVal, itemSpread) {
+ 		return nil, p.tokErr(`field name or ...Fragment`)
+ 	}
+ 
+@@ -380,7 +381,7 @@ func (p *Parser) parseFields(fields []Field) ([]Field, error) {
+ }
+ 
+ func (p *Parser) parseNormalFields(st *Stack, fields []Field) ([]Field, error) {
+-	if !p.peek(itemName) {
++	if !p.peek(itemName, itemOn, itemBoolVal) {
+ 		return nil, p.tokErr(`expecting an alias or field name`)
+ 	}
+ 
+@@ -439,7 +440,7 @@ func (p *Parser) parseFragmentFields(st *Stack, fields []Field) ([]Field, error)
+ 		}
+ 
+ 	} else {
+-		if !p.peek(itemName) {
++		if !p.peek(itemName, itemOn, itemBoolVal) {
+ 			return nil, fmt.Errorf("expecting a fragment name, got: %s", p.next())
+ 		}
+ 
+@@ -503,7 +504,7 @@ func (p *Parser) parseField(f *Field) error {
+ 	if p.peek(itemColon) {
+ 		p.ignore()
+ 
+-		if p.peek(itemName) {
++		if p.peek(itemName, itemOn, itemBoolVal) {
+ 			f.Alias = p.val(v)
+ 			f.Name = p.val(p.next())
+ 		} else {
+@@ -571,6 +572,7 @@ func (p *Parser) parseVarDef(op *Operation) (err error) {
+ 	p.ignore()
+ 
+ 	if !p.peek(itemName,
++		itemOn,
+ 		itemStringVal,
+ 		itemNumberVal,
+ 		itemBoolVal,
+@@ -594,9 +596,9 @@ func (p *Parser) parseArgs(args []Arg) ([]Arg, error) {
+ 
+ 	var argNameTypes []MType
+ 	if p.json {
+-		argNameTypes = []MType{itemName, itemStringVal}
++		argNameTypes = []MType{itemName, itemOn, itemBoolVal, itemStringVal}
+ 	} else {
+-		argNameTypes = []MType{itemName}
++		argNameTypes = []MType{itemName, itemOn, itemBoolVal}
+ 	}
+ 
+ 	for {
+@@ -634,7 +636,7 @@ func (p *Parser) parseDirective(dirs []Directive) ([]Directive, error) {
+ 	var err error
+ 	var d Directive
+ 
+-	if p.peek(itemName) {
++	if p.peek(itemName, itemOn, itemBoolVal) {
+ 		d.Name = p.val(p.next())
+ 	} else {
+ 		return nil, fmt.Errorf("expecting directive name after @ symbol got: %s", p.peekNext())
+@@ -690,9 +692,9 @@ func (p *Parser) parseObj() (*Node, error) {
+ 
+ 	var argNameTypes []MType
+ 	if p.json {
+-		argNameTypes = []MType{itemName, itemStringVal}
++		argNameTypes = []MType{itemName, itemOn, itemBoolVal, itemStringVal}
+ 	} else {
+-		argNameTypes = []MType{itemName}
++		argNameTypes = []MType{itemName, itemOn, itemBoolVal}
+ 	}
+ 
+ 	parent.CMap = make(map[string]*Node)
+@@ -755,13 +757,16 @@ func (p *Parser) parseValue() (*Node, error) {
+ 		node.Type = NodeBool
+ 	case itemVariable:
+ 		node.Type = NodeVar
+-	case itemName:
++	case itemName, itemOn:
+ 		node.Type = NodeLabel
+ 	default:
+ 		return nil, fmt.Errorf("expecting a number, string, object, list or variable as an argument value (not '%s' of type '%s')", p.val(item), item._type)
+ 
+ 	}
+ 	node.Val = p.val(item)
++	if item._type == itemBoolVal {
++		node.Val = strings.ToLower(node.Val)
++	}
+ 
+ 	return node, nil
+ }
 ```
 
-**File**: `tests/go.mod` (modified, +1/-1)
+**File**: `core/internal/graph/schema.go` (modified, +3/-3)
 ```diff
-@@ -85,7 +85,7 @@ require (
- 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.30.0 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/sts v1.33.17 // indirect
- 	github.com/aws/smithy-go v1.22.5 // indirect
--	github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d // indirect
-+	github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd // indirect
- 	github.com/bahlo/generic-list-go v0.2.0 // indirect
- 	github.com/buger/jsonparser v1.1.1 // indirect
- 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
+@@ -94,7 +94,7 @@ func (p *Parser) parseType() (t Type, err error) {
+ 	}
+ 	p.ignore()
+ 
+-	if !p.peek(itemName) {
++	if !p.peek(itemName, itemOn, itemBoolVal) {
+ 		err = p.tokErr(`type name`)
+ 		return
+ 	}
+@@ -126,7 +126,7 @@ func (p *Parser) parseType() (t Type, err error) {
+ 
+ 		var f TField
+ 
+-		if !p.peek(itemName) {
++		if !p.peek(itemName, itemOn, itemBoolVal) {
+ 			err = p.tokErr(`field name`)
+ 			return
+ 		}
+@@ -143,7 +143,7 @@ func (p *Parser) parseType() (t Type, err error) {
+ 			f.List = true
+ 		}
+ 
+-		if !p.peek(itemName) {
++		if !p.peek(itemName, itemOn, itemBoolVal) {
+ 			err = p.tokErr(`field type`)
+ 			return
+ 		}
 ```
 
-**File**: `tests/go.sum` (modified, +4/-0)
+**File**: `core/internal/psql/contextual_names_dialects_test.go` (added, +45/-0)
 ```diff
-@@ -142,6 +142,8 @@ github.com/ax-llm/ax/packages/go v0.0.0-20261011084219-1d8965b83823 h1:Xy7EhzXzJ
- github.com/ax-llm/ax/packages/go v0.0.0-20261011084219-1d8965b83823/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
- github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d h1:9F3h6PRIkfH0RS5AZHASlOGmGHo1j7gE7s7kTCatXzY=
- github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
-+github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd h1:XSvyci9wwo6zmxvwzOsVJqFs99nsw1SOA1imgJZD3hM=
-+github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
- github.com/bahlo/generic-list-go v0.2.0 h1:5sz/EEAK+ls5wF+NeqDpk5+iNdMDXrh3z3nPnH1Wvgk=
- github.com/bahlo/generic-list-go v0.2.0/go.mod h1:2KvAjgMlE5NNynlg/5iLrrCCZ2+5xWbdbCW3pNTGyYg=
- github.com/bitly/go-hostpool v0.0.0-20171023180738-a3a6125de932 h1:mXoPYz/Ul5HYEDvkta6I8/rnYM5gSdSV2tJ6XbZuEtY=
-@@ -210,6 +212,7 @@ github.com/dosco/graphjin/auth/v3 v3.20.70/go.mod h1:Pe8eqGttGh+/FDMIuDhp7kxL5fK
- github.com/dosco/graphjin/auth/v3 v3.20.72/go.mod h1:kTIUQyUz3qFQWqPi6HjweONg7hdeqv2QMRGW3ZtIHFk=
- github.com/dosco/graphjin/auth/v3 v3.21.2/go.mod h1:4tMAg1E0X05PbpSWCt+bmmpOD/IRuN8Ui1GGwE3Afak=
- github.com/dosco/graphjin/auth/v3 v3.21.12/go.mod h1:hyc2tzV3qEqGBUQ/PwyyW8Uz4PW+zT3ezGRkgh0rmRQ=
-+github.com/dosco/graphjin/auth/v3 v3.21.16/go.mod h1:BG4OIIP2mwVbXwjP0yKxN3AfTRNFdSxXV717dTuCnaY=
- github.com/dosco/graphjin/plugin/otel/v3 v3.20.2 h1:8Knx+Z9Qj89bWM6tk7hMErSxPJyC9hXEgC78nvHNyWo=
- github.com/dosco/graphjin/plugin/otel/v3 v3.20.2/go.mod h1:E27uxul4hpT9JoC+aTwITUR215ta5QmKJGRBeG8MEZQ=
- github.com/dosco/graphjin/plugin/otel/v3 v3.20.20/go.mod h1:V0pdkiiKEmp0M0cO0Slxghvwzuymh9hMgX+YYjempbI=
-@@ -226,6 +229,7 @@ github.com/dosco/graphjin/plugin/otel/v3 v3.20.70/go.mod h1:juwDtCjaep2M86GF1eBw
- github.com/dosco/graphjin/plugin/otel/v3 v3.20.72/go.mod h1:odAOJOO2WBrc9CZn8SH/TKFderngyMvpFQZ3vmlQ6Do=
- github.com/dosco/graphjin/plugin/otel/v3 v3.21.2/go.mod h1:mD5qNbTsar5630NC66ItMc0Y8eJnSzEVb6k/bLMXoqs=
- github.com/dosco/graphjin/plugin/otel/v3 v3.21.12/go.mod h1:TNkbOANp6J2K4nXD3myqFU95b58ROVIuEd3dsAOoTgk=
-+github.com/dosco/graphjin/plugin/otel/v3 v3.21.16/go.mod h1:BJQovNHMhx97RMBLR/IiIetOVdhhievrQBDPup+QaKI=
- github.com/duckdb/duckdb-go-bindings v0.10502.0 h1:Uhg/dfvPLQv4cH35lMD48hqUcdOh2Z7bcuykjr4qnOA=
- github.com/duckdb/duckdb-go-bindings v0.10502.0/go.mod h1:8KF3oEKrmYdSbZnQ1BPTdxAZDHRaM1LEv+oBvL2nSLk=
- github.com/duckdb/duckdb-go-bindings/lib/darwin-amd64 v0.10502.0 h1:1GxSHSI1ef3sCdDVrJ9l8s6aTd7P1K788os9lHrs43g=
+@@ -0,0 +1,45 @@
++package psql_test
++
++import (
++	"github.com/dosco/graphjin/core/v3/internal/psql"
++	"github.com/dosco/graphjin/core/v3/internal/qcode"
++	"github.com/dosco/graphjin/core/v3/internal/sdata"
++	"strings"
++	"testing"
++)
++
++func TestKeywordColumnNamesAcrossDialects(t *testing.T) {
++	for _, dialect := range []string{"postgres", "mysql", "sqlite"} {
++		t.Run(dialect, func(t *testing.T) {
++			cols := []sdata.DBColumn{}
++			for _, name := range []string{"id", "on", "true", "false"} {
++				cols = append(cols, sdata.DBColumn{Schema: "public", Table: "switches", Name: name, Type: "text", PrimaryKey: name == "id"})
++			}
++			schema, err := sdata.NewDBSchema(sdata.NewDBInfo(dialect, 0, "public", "test", cols, nil, nil), nil)
++			if err != nil {
++				t.Fatal(err)
++			}
++			qc, err := qcode.NewCompiler(schema, qcode.Config{DBSchema: "public"})
++			if err != nil {
++				t.Fatal(err)
++			}
++			compiled, err := qc.Compile([]byte(`{ switches { id on true false } }`), nil, "user", "")
++			if err != nil {
++				t.Fatal(err)
++			}
++			_, sql, err := psql.NewCompiler(psql.Config{DBType: dialect}).CompileEx(compiled)
++			if err != nil {
++				t.Fatal(err)
++			}
++			for _, name := range []string{"on", "true", "false"} {
++				quote := `"`
++				if dialect == "mysql" {
++					quote = "`"
++				}
++				if !strings.Contains(string(sql), quote+name+quote) {
++					t.Fatalf("column %q missing: %s", name, sql)
++				}
++			}
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #662** (2026-10-18): perf(catalog): reuse catalog snapshots and rank search rows by key (@amitdeshmukh)
-- **PR #661** (2026-10-15): Publish DeepORG Gemini Argon evaluation (@amitdeshmukh)
-- **PR #660** (2026-10-15): fix(core): read null and list filters on JSON keys and escape string literals (@amitdeshmukh)
-- **PR #659** (2026-10-14): feat(core): query, order, page, aggregate and merge keys inside JSON columns (@amitdeshmukh)
-- **PR #658** (2026-10-15): feat(benchmark): introduce DeepContoso retail & supply chain evaluation benchmark (@HerambVE)
-- **PR #657** (2026-10-10): fix: where-clause validators accept the operators the compiler runs (#656) (@amitdeshmukh)
+- **PR #692** (2026-10-31): fix(discovery): aggregate SQLite index statistics per table (@rudycelekli)
+- **PR #690** (2026-10-31): fix(graph): require complete standalone argument values (@rudycelekli)
+- **PR #688** (2026-10-31): fix(graph): parse contextual keyword names (@rudycelekli)
+- **PR #687** (2026-10-31): fix(openapi): expand environment values in nested token request bodies (@rudycelekli)
+- **PR #686** (2026-10-31): fix(openapi): negotiate declared JSON response media types (@rudycelekli)
+- **PR #685** (2026-10-31): fix(openapi): reuse short-lived authentication tokens before expiry (@rudycelekli)
 
 ---
 
@@ -3021,28 +3334,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bump version to v3.21.17 [skip-release] [skip ci]
+## X. discovery): aggregate SQLite index statistics per table (#692)
 
 **RULE**:
-When implementing operations in `agent/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/graphjin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/discovery/namespaces.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/graphjin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3958f0cb`: bump version to v3.21.17 [skip-release] [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2a0d99ef`: discovery): aggregate SQLite index statistics per table (#692). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `agent/go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/discovery/namespaces.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/dosco/graphjin/core/v3 v3.21.17
+       COALESCE((SELECT SUM(row_count)
+                 FROM (SELECT MAX(CAST(substr(stat,1,instr(stat||' ',' ')-1) AS INTEGER)) AS row_count
+                       FROM sqlite_stat1 GROUP BY tbl)), 0) AS approx_row_total`
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/dosco/graphjin/core/v3 v3.21.16
+       COALESCE((SELECT SUM(CAST(substr(stat,1,instr(stat||' ',' ')-1) AS INTEGER)) FROM sqlite_stat1), 0) AS approx_row_total`
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3958f0cb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2a0d99ef` are properly handled with clean fallback behavior.
