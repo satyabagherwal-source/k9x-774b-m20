@@ -3,7 +3,7 @@
 > **Source Version**: `hf-comfy-org`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T12:56:57.711Z  
+> **Timestamp**: 2026-10-31T13:20:51.378Z  
 > **Learning ID**: `learn-huggingface-comfy-org-minimax-h3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Comfy-Org/MiniMax-H3](https://huggingface.co/Comfy-Org/MiniMax-H3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T12:56:56.747Z  
+> **Harvest Timestamp**: 2026-10-31T13:20:49.240Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 28187864 downloads | 2428 likes
+- **Stars / Engagement**: 29589269 downloads | 2460 likes
 
 ---
 

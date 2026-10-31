@@ -6589,3 +6589,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-10-31T13:13:54.994Z |
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `c30b4bce` | Multi-dimensional audit evidence | 2026-10-31T13:13:57.773Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `dd74aad1` | Multi-dimensional audit evidence | 2026-10-31T13:14:06.213Z |
+| `learn-huggingface-comfy-org-minimax-h3` | `https://huggingface.co/Comfy-Org/MiniMax-H3` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-31T13:20:51.654Z |
+| `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `0fa7bec6` | Multi-dimensional audit evidence | 2026-10-31T13:20:59.398Z |

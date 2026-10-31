@@ -765,8 +765,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/MiniMax-H3",
     "sourceVersion": "hf-comfy-org-minimax-h3",
     "license": "Open-Source",
-    "contentHash": "e9a669964fdd6ad9a27bc684dc9de246f6b4d0e282bce65ad3e0769551335df3",
-    "lastHarvestedAt": "2026-10-28T12:56:57.974Z",
+    "contentHash": "0670f865bf2f00ccaf0f0aa95b0144ef9ecc311843e60e622fdc67a6cadb4f01",
+    "lastHarvestedAt": "2026-10-31T13:20:51.654Z",
     "learningId": "learn-huggingface-comfy-org-minimax-h3"
   },
   "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf": {
@@ -4763,10 +4763,10 @@
     "repository": "saltstack/salt",
     "platform": "github",
     "sourceUrl": "https://github.com/saltstack/salt",
-    "sourceVersion": "b78fd91b",
+    "sourceVersion": "0fa7bec6",
     "license": "Apache-2.0",
-    "contentHash": "ddb16c5671bfc910e3eaf25cdb2e7bd258c6ec111a444b80c6baaf22a578b225",
-    "lastHarvestedAt": "2026-10-30T21:53:04.514Z",
+    "contentHash": "2fced27f956a1ae7e7685d29c6107d21720720c35dd370b103b9f7348eab202b",
+    "lastHarvestedAt": "2026-10-31T13:20:59.398Z",
     "learningId": "learn-github-saltstack-salt"
   },
   "etcd-io-etcd": {

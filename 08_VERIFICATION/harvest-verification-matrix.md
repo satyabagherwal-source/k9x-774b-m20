@@ -6580,3 +6580,5 @@
 | `CYCLE-20261031-9VE1` | `2026-10-31T13:13:54.985Z` | `amazon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md` | Yes (`c7f46e4e...`) |
 | `CYCLE-20261031-9XJD` | `2026-10-31T13:13:57.769Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6206` | Yes (`ba8064de...`) |
 | `CYCLE-20261031-A41T` | `2026-10-31T13:14:06.209Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6207` | Yes (`f06564f9...`) |
+| `CYCLE-20261031-ISVX` | `2026-10-31T13:20:51.645Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | Yes (`0670f865...`) |
+| `CYCLE-20261031-IYV7` | `2026-10-31T13:20:59.395Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6208` | Yes (`2fced27f...`) |

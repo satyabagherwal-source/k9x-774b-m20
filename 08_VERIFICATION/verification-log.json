@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-IM66",
-    "timestamp": "2026-10-30T00:01:13.662Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "66237bc5972e3435e3b88e0f0a2d257b6331933e119b41785343dd43773b6983",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-IMHL",
-    "timestamp": "2026-10-30T00:01:14.073Z",
-    "repository": "encoredev/encore",
-    "learningId": "learn-github-encoredev-encore",
-    "contentHash": "5590c56e2859508c564a1a0a7e6106c54ff1cd739db8d45db728afa0175b9144",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-R7OR",
     "timestamp": "2026-10-30T00:07:54.795Z",
     "repository": "ClementTsang/bottom",
@@ -7490,6 +7460,36 @@
     "repository": "pulumi/pulumi",
     "learningId": "learn-github-pulumi-pulumi",
     "contentHash": "f06564f99c72b462b404f0419c29dde247da90c45c4a014cbee87b493e678651",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-ISVX",
+    "timestamp": "2026-10-31T13:20:51.645Z",
+    "repository": "Comfy-Org/MiniMax-H3",
+    "learningId": "learn-huggingface-comfy-org-minimax-h3",
+    "contentHash": "0670f865bf2f00ccaf0f0aa95b0144ef9ecc311843e60e622fdc67a6cadb4f01",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-IYV7",
+    "timestamp": "2026-10-31T13:20:59.395Z",
+    "repository": "saltstack/salt",
+    "learningId": "learn-github-saltstack-salt",
+    "contentHash": "2fced27f956a1ae7e7685d29c6107d21720720c35dd370b103b9f7348eab202b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

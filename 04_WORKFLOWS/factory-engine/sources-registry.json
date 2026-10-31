@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T13:14:08.764Z",
-    "lastVerified": "2026-10-31T13:14:08.764Z",
+    "lastChecked": "2026-10-31T13:21:01.960Z",
+    "lastVerified": "2026-10-31T13:21:01.960Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -219,9 +219,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-10-31T09:53:59.846Z",
+    "lastChecked": "2026-10-31T13:20:56.471Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-10-31T09:53:59.846Z"
+    "lastVerified": "2026-10-31T13:20:56.471Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -428,8 +428,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T12:53:52.693Z",
-    "lastVerified": "2026-10-31T12:53:52.693Z",
+    "lastChecked": "2026-10-31T13:21:01.536Z",
+    "lastVerified": "2026-10-31T13:21:01.536Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -3827,9 +3827,9 @@
   "parthsarthi03-raptor": {
     "name": "raptor",
     "officialUrl": "https://github.com/parthsarthi03/raptor",
-    "lastChecked": "2026-10-30T20:59:26.373Z",
+    "lastChecked": "2026-10-31T13:20:58.993Z",
     "revisionIdentifier": "7da1d48a",
-    "lastVerified": "2026-10-30T20:59:26.373Z"
+    "lastVerified": "2026-10-31T13:20:58.993Z"
   },
   "svenstaro-miniserve": {
     "name": "miniserve",
@@ -3933,12 +3933,12 @@
     "officialUrl": "https://huggingface.co/Comfy-Org/MiniMax-H3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T12:56:56.747Z",
-    "lastVerified": "2026-10-28T12:56:56.747Z",
+    "lastChecked": "2026-10-31T13:20:49.240Z",
+    "lastVerified": "2026-10-31T13:20:49.240Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-comfy-org-minimax-h3",
-    "contentHash": "e9a669964fdd6ad9a27bc684dc9de246f6b4d0e282bce65ad3e0769551335df3",
+    "contentHash": "0670f865bf2f00ccaf0f0aa95b0144ef9ecc311843e60e622fdc67a6cadb4f01",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -4957,14 +4957,14 @@
     "officialUrl": "https://github.com/saltstack/salt",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-30T21:53:02.984Z",
-    "lastVerified": "2026-10-30T21:53:02.984Z",
+    "lastChecked": "2026-10-31T13:20:58.685Z",
+    "lastVerified": "2026-10-31T13:20:58.685Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-saltstack-salt",
-    "contentHash": "ddb16c5671bfc910e3eaf25cdb2e7bd258c6ec111a444b80c6baaf22a578b225",
+    "contentHash": "2fced27f956a1ae7e7685d29c6107d21720720c35dd370b103b9f7348eab202b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6592,9 +6592,9 @@
   "kizitonwose-calendar": {
     "name": "Calendar",
     "officialUrl": "https://github.com/kizitonwose/Calendar",
-    "lastChecked": "2026-10-28T17:56:34.985Z",
+    "lastChecked": "2026-10-31T13:20:51.508Z",
     "revisionIdentifier": "c2711b3c",
-    "lastVerified": "2026-10-28T17:56:34.985Z"
+    "lastVerified": "2026-10-31T13:20:51.508Z"
   },
   "databricks-click": {
     "name": "click",
@@ -7022,12 +7022,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "jhspetersson-fselect": {
-    "name": "jhspetersson/fselect",
+    "name": "fselect",
     "officialUrl": "https://github.com/jhspetersson/fselect",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T16:51:21.620Z",
-    "lastVerified": "2026-10-30T16:51:21.620Z",
+    "lastChecked": "2026-10-31T13:20:46.487Z",
+    "lastVerified": "2026-10-31T13:20:46.487Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-jhspetersson-fselect",
@@ -7036,7 +7036,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2b101ea5"
   },
   "hf-jialinyyzz-humanizer": {
     "name": "jialinyyzz/humanizer",
