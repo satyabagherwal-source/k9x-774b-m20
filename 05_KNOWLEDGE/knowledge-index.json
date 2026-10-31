@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T03:45:34.833Z",
+  "last_updated": "2026-10-31T03:52:31.895Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -47482,8 +47482,8 @@
       "slug": "redisearch-redisearch",
       "platform": "github",
       "source_url": "https://github.com/RediSearch/RediSearch",
-      "source_version": "0bf17e14",
-      "content_hash": "5dab5eed9d11b400335d88d00ad3462d55aee19246e61ed8e89bedc142a253cf",
+      "source_version": "4c77833a",
+      "content_hash": "3290601ef025037b0993174ffb3cd604a1e1aa78c074ef7393c87511d552a179",
       "dossier_path": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "promoted_rules": [
@@ -47548,7 +47548,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T07:33:29.192Z",
+      "verified_at": "2026-10-31T03:52:31.866Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -136993,7 +136993,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
       "source_version": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
-      "content_hash": "48da1837bef0e5b1b38df6e7150814b86dcfe7b59cf5c2886f8d80dcad727eb9",
+      "content_hash": "85c574bbbcfca2c5e7803b33b326b824c0c3cd7bc3ac309f05a6879bff19b919",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md",
       "promoted_rules": [
@@ -137011,6 +137011,21 @@
           "number": 4666,
           "title": "Strict Boundary Validation for 64K Edge Context Allocations",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6052,
+          "title": "Quantization Precision vs. Memory Footprint Trade-off Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6053,
+          "title": "Context Window Memory Management Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6054,
+          "title": "Tokenizer Chat-Template Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -137018,7 +137033,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T08:13:24.268Z",
+      "verified_at": "2026-10-31T03:52:28.546Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -159145,6 +159160,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T03:45:34.813Z"
+    },
+    "rule-6052": {
+      "learning_id": "rule-6052",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6052,
+      "title": "Quantization Precision vs. Memory Footprint Trade-off Invariant",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T03:52:28.546Z"
+    },
+    "rule-6053": {
+      "learning_id": "rule-6053",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6053,
+      "title": "Context Window Memory Management Invariant",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T03:52:28.546Z"
+    },
+    "rule-6054": {
+      "learning_id": "rule-6054",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6054,
+      "title": "Tokenizer Chat-Template Consistency Invariant",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T03:52:28.546Z"
     }
   },
   "aliases": {

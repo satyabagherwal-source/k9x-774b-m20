@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T03:45:37.468Z",
-    "lastVerified": "2026-10-31T03:45:37.468Z",
+    "lastChecked": "2026-10-31T03:52:34.547Z",
+    "lastVerified": "2026-10-31T03:52:34.547Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -426,8 +426,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T03:19:27.052Z",
-    "lastVerified": "2026-10-31T03:19:27.052Z",
+    "lastChecked": "2026-10-31T03:52:29.416Z",
+    "lastVerified": "2026-10-31T03:52:29.416Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -937,9 +937,9 @@
   "devspace-sh-devspace": {
     "name": "devspace",
     "officialUrl": "https://github.com/devspace-sh/devspace",
-    "lastChecked": "2026-10-30T09:12:34.096Z",
+    "lastChecked": "2026-10-31T03:52:21.952Z",
     "revisionIdentifier": "8ff62607",
-    "lastVerified": "2026-10-30T09:12:34.096Z"
+    "lastVerified": "2026-10-31T03:52:21.952Z"
   },
   "bee-san-ciphey": {
     "name": "Ciphey",
@@ -2053,8 +2053,8 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T00:05:36.581Z",
-    "lastVerified": "2026-10-31T00:05:36.581Z",
+    "lastChecked": "2026-10-31T03:52:24.481Z",
+    "lastVerified": "2026-10-31T03:52:24.481Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -2871,9 +2871,9 @@
   "gregberge-svgr": {
     "name": "svgr",
     "officialUrl": "https://github.com/gregberge/svgr",
-    "lastChecked": "2026-10-28T08:25:23.439Z",
+    "lastChecked": "2026-10-31T03:52:19.414Z",
     "revisionIdentifier": "975215ef",
-    "lastVerified": "2026-10-28T08:25:23.439Z"
+    "lastVerified": "2026-10-31T03:52:19.414Z"
   },
   "litmuschaos-litmus": {
     "name": "litmus",
@@ -3343,9 +3343,9 @@
   "sigoden-aichat": {
     "name": "aichat",
     "officialUrl": "https://github.com/sigoden/aichat",
-    "lastChecked": "2026-10-30T03:46:41.737Z",
+    "lastChecked": "2026-10-31T03:52:14.387Z",
     "revisionIdentifier": "82976d34",
-    "lastVerified": "2026-10-30T03:46:41.737Z"
+    "lastVerified": "2026-10-31T03:52:14.387Z"
   },
   "hf-cloudflare-clef": {
     "name": "Cloudflare/clef",
@@ -6759,14 +6759,14 @@
     "officialUrl": "https://github.com/RediSearch/RediSearch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T07:30:04.720Z",
-    "lastVerified": "2026-10-30T07:30:04.720Z",
+    "lastChecked": "2026-10-31T03:52:31.132Z",
+    "lastVerified": "2026-10-31T03:52:31.132Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-redisearch-redisearch",
-    "contentHash": "5dab5eed9d11b400335d88d00ad3462d55aee19246e61ed8e89bedc142a253cf",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 3,
+    "contentHash": "3290601ef025037b0993174ffb3cd604a1e1aa78c074ef7393c87511d552a179",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12107,6 +12107,23 @@
     "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
     "contentHash": "b325c14b5e3b4a04e23da4ad3e162e59d2a85b104dfe8f64cff277e95b82c059",
     "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb": {
+    "name": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+    "officialUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-31T03:52:17.258Z",
+    "lastVerified": "2026-10-31T03:52:17.258Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
+    "contentHash": "85c574bbbcfca2c5e7803b33b326b824c0c3cd7bc3ac309f05a6879bff19b919",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

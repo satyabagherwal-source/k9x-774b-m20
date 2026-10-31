@@ -6459,3 +6459,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-xhtoken-spark-x2-6-4b-gguf` | `https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-10-31T03:45:21.563Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `df9dc86a` | Multi-dimensional audit evidence | 2026-10-31T03:45:30.234Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `7f44e2c3` | Multi-dimensional audit evidence | 2026-10-31T03:45:34.914Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-31T03:52:28.650Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `4c77833a` | Multi-dimensional audit evidence | 2026-10-31T03:52:32.007Z |

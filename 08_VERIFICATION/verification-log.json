@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-MKY9",
-    "timestamp": "2026-10-28T21:56:40.209Z",
-    "repository": "loft-sh/vcluster",
-    "learningId": "learn-github-loft-sh-vcluster",
-    "contentHash": "c845654da018150dd41f26d6746d25b315be9f9134acc0a9d4cc1020e0dfd91d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-MOME",
-    "timestamp": "2026-10-28T21:56:44.966Z",
-    "repository": "clockworklabs/SpacetimeDB",
-    "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "6e3aff28460fecb2f860688a5733a5d6b4afea23bcb9e7e85061b6e8dc632128",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-O8TD",
     "timestamp": "2026-10-28T21:57:57.793Z",
     "repository": "speridlabs/iris-3b",
@@ -7492,6 +7462,36 @@
     "contentHash": "38edc13efc9e41da1d61fd821048c0450775aed5bc5add98d51e9241db9d7406",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-7UUE",
+    "timestamp": "2026-10-31T03:52:28.646Z",
+    "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
+    "contentHash": "85c574bbbcfca2c5e7803b33b326b824c0c3cd7bc3ac309f05a6879bff19b919",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-7XFO",
+    "timestamp": "2026-10-31T03:52:32.004Z",
+    "repository": "RediSearch/RediSearch",
+    "learningId": "learn-github-redisearch-redisearch",
+    "contentHash": "3290601ef025037b0993174ffb3cd604a1e1aa78c074ef7393c87511d552a179",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

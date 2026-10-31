@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T03:45:34.924Z",
+  "last_updated": "2026-10-31T03:52:32.017Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9156,14 +9156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-redisearch-redisearch",
-      "content_hash": "5dab5eed9d11b400335d88d00ad3462d55aee19246e61ed8e89bedc142a253cf",
-      "verified_at": "2026-10-30T07:33:29.305Z",
+      "content_hash": "3290601ef025037b0993174ffb3cd604a1e1aa78c074ef7393c87511d552a179",
+      "verified_at": "2026-10-31T03:52:32.017Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T07:33:29.305Z"
+      "last_updated": "2026-10-31T03:52:32.017Z"
     },
     "taiga-family/taiga-ui": {
       "repository": "taiga-family/taiga-ui",
@@ -16266,14 +16266,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
-      "content_hash": "48da1837bef0e5b1b38df6e7150814b86dcfe7b59cf5c2886f8d80dcad727eb9",
-      "verified_at": "2026-10-27T08:13:24.329Z",
+      "content_hash": "85c574bbbcfca2c5e7803b33b326b824c0c3cd7bc3ac309f05a6879bff19b919",
+      "verified_at": "2026-10-31T03:52:28.659Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T08:13:24.329Z"
+      "last_updated": "2026-10-31T03:52:28.659Z"
     },
     "Gaurav-Gosain/tuios": {
       "repository": "Gaurav-Gosain/tuios",
