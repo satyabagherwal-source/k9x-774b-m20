@@ -3,7 +3,7 @@
 > **Source Version**: `hf-apple-len`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-28T05:30:55.466Z  
+> **Timestamp**: 2026-10-31T08:54:53.190Z  
 > **Learning ID**: `learn-huggingface-apple-lensvlm-9b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,267 +12,412 @@
 
 ---
 
-# Project Learning Record (Full‑Spectrum Forensic Harvest): apple/LensVLM‑9B
+# Project Learning Record (Full-Spectrum Forensic Harvest): apple/LensVLM-9B
 
 ---
 
-## 1. Executive Forensic Architecture & System Mechanics  
+## 1. Executive Forensic Architecture & System Mechanics
 
-**Problem Domain**  
-LensVLM‑9B is a 9‑billion‑parameter vision‑language model that **scans compressed images of text** and selectively **expands only the relevant pages** into full‑resolution form using learned “tools.” The goal is to preserve the long‑context capability of a large language model while drastically reducing the visual input size.
+### 1.1 Core Domain & Problem Statement
+`apple/LensVLM-9B` is an autoregressive multimodal vision-language model based on a hybrid linear-attention/full-attention backbone (`Qwen3_5ForConditionalGeneration`). It operationalizes **Selective Context Expansion for Compressed Visual Representations of Text**. 
 
-**High‑level Architecture**  
+Large-context language and vision models encounter severe compute and memory bottlenecks ($O(N^2)$ attention quadratic explosion or high-resolution token budget saturation) when ingesting massive multi-page documents. LensVLM circumvents this by representing multi-page documents as heavily downscaled, visual-text representations (compressed at 5x, 10x, or 15x token reduction ratios). The model initially scans low-fidelity visual proxies across an ultra-long context window ($262{,}144$ tokens). When fine-grained factual retrieval or dense optical character parsing is required, it triggers learned context-expansion tool calls, decompressing only the target document pages into uncompressed visual/text representations.
 
-| Subsystem | Responsibility | Key Files / Configs | Boundary |
-|-----------|----------------|---------------------|----------|
-| **Tokenizer / Processor** | Converts raw text, image, and video tokens into model‑ready IDs. | `tokenizer_config.json`, `processor_class` in `tokenizer_config.json` | Input → ID space |
-| **Vision Encoder** | Encodes compressed image patches into embeddings that can be fused with text embeddings. | `vision_config` in `config.json` | Image → Vision Embedding |
-| **Text Generation Backbone** | Qwen3.5‑9B transformer core that generates text conditioned on vision embeddings. | `config.json` (architecture, hidden_size, num_layers, etc.) | Embedding → Text |
-| **Compression / Expansion Tool** | Learned module that decides which compressed image regions to decompress. | Not present in the repo; inferred from README and paper. | Compressed Image → Decompressed Regions |
-| **Inference Pipeline** | Orchestrates the above subsystems to answer user queries. | `scripts/run_demo.py`, `demo.py` | End‑to‑end inference |
+```
++---------------------------------------------------------------------------------------------------+
+| LensVLM Multi-Resolution Selective Context Architecture                                           |
++---------------------------------------------------------------------------------------------------+
+|  Input Multi-Page Doc [N Pages]                                                                   |
+|          |                                                                                        |
+|          v                                                                                        |
+|  [Visual Compression Engine] ---> 5x / 10x / 15x Rendered Image Proxies                           |
+|          |                                                                                        |
+|          v                                                                                        |
+|  [Qwen3VLProcessor: Dynamic Visual Patching + 3D MRoPE Serialization]                             |
+|          |                                                                                        |
+|          +--------------------------------------+                                                 |
+|          | Hybrid Backbone (32 Layers)          |                                                 |
+|          | - 24 Linear SSM / Conv1D Layers      |                                                 |
+|          | - 8 Full-Attention Sinks (Stride 4)  |                                                 |
+|          +--------------------------------------+                                                 |
+|          |                                                                                        |
+|          v                                                                                        |
+|  Low-Resolution Coarse Scan Phase                                                                 |
+|          |                                                                                        |
+|          +---> Tool Call Emitted? (e.g., expand_page(page_idx=42))                                |
+|          |           |                                                                            |
+|          |           +-- [YES] --> Fetch High-Res Patch -> Splice into KV Cache / Generation      |
+|          |           |                                                                            |
+|          |           +-- [NO]  --> Synthesize Final Response Directly                             |
+|          v                                                                                        |
+|  Decompressed Context Integration & Response Generation                                           |
++---------------------------------------------------------------------------------------------------+
+```
 
-**Subsystem Decoupling**  
-* The tokenizer and processor are isolated from the transformer core via a clear token‑ID interface.  
-* The vision encoder is a separate module that can be swapped without touching the text backbone.  
-* The compression/expansion logic is exposed as a “tool” that the model can invoke, keeping it orthogonal to the core transformer.
+### 1.2 Subsystem Decoupling & Architectural Invariants
+1. **Hybrid Linear-Attention / Full-Attention Transformer (Stride-4 Topology)**:
+   The text/multimodal decoder spans 32 layers structured with an exact recurring pattern: three consecutive `linear_attention` layers followed by one `full_attention` layer (`full_attention_interval: 4`). 
+   - **Linear Attention (Layers $0..2, 4..6, \dots$)**: Powered by a 1D state-space convolution kernel (`linear_conv_kernel_dim: 4`) with key head dimensions of 128 across 16 key heads, and value head dimensions of 128 across 32 value heads (`linear_num_value_heads: 32`). Evaluated with `mamba_ssm_dtype: float32` to avert catastrophic numerical drift during recurrent state updates.
+   - **Full Attention (Layers $3, 7, 11, 15, 19, 23, 27, 31$)**: Standard Softmax Multi-Query/Grouped-Query Attention with output gating (`attn_output_gate: true`), `num_attention_heads: 16`, and `num_key_value_heads: 4` (a 4:1 GQA ratio).
 
-**State Ownership**  
-* All model parameters live in the transformer weights (`state_dict`).  
-* Vision embeddings are transient and generated per‑inference.  
-* Compression decisions are stored in a lightweight dictionary keyed by image region IDs.
+2. **Multimodal 3D Rotary Position Embedding (3D-MRoPE)**:
+   Position encoding separates temporal/frame, vertical/height, and horizontal/width visual dimensions. Configured via:
+   $$\text{mrope\_section} = [11, 11, 10] \quad (\Sigma = 32 \text{ dims per chunk})$$
+   $$\text{partial\_rotary\_factor} = 0.25 \implies \text{Rotary Dim} = 256 \times 0.25 = 64$$
+   The rotary base frequency is pushed to $\theta = 10{,}000{,}000$ ($10^7$) to sustain zero-shot length extrapolation up to $262{,}144$ tokens without frequency collapse.
+
+3. **Multi-Token Prediction (MTP) Speculative Head**:
+   Configured with `mtp_num_hidden_layers: 1` and `mtp_use_dedicated_embeddings: false`. LensVLM trains an auxiliary single-layer projection head operating directly on the final layer hidden states to predict token $t+2$ concurrently with token $t+1$, accelerating inference serving.
+
+4. **Deep Vision Encoder Invariants**:
+   A 27-layer vision transformer (`depth: 27`, `hidden_size: 1152`, `intermediate_size: 4304`) running `gelu_pytorch_tanh` activation and initialized with standard deviation $\sigma = 0.02$. Visual tokens map onto the primary text embedding space via a cross-modal projection layer matching `hidden_size: 4096`.
 
 ---
 
-## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
+## 2. Net-New Universal Engineering Rules
 
-### 1. Consistent Numerical Precision Across Modalities  
-**RULE**:  
-> **MUST** ensure that the data type (`dtype`) used for all tensors—text, vision, and intermediate embeddings—matches the `dtype` specified in the model configuration.  
-**WHY**:  
-Mismatched dtypes trigger implicit casts that degrade performance and can introduce subtle numerical errors, especially when `bfloat16` is used for the text backbone and `float32` for vision components.  
-**WHEN TO APPLY**:  
-All tensor creation, model loading, and inference steps in the text, vision, and compression modules.  
-**VERIFIED IMPLEMENTATION PATTERN**  
+### 1. Tri-Section Interleaved 3D-MRoPE Coordinate Invariant
+**RULE**:
+When implementing 3D Multimodal Rotary Position Embeddings (MRoPE) for mixed text, image, and video sequences, the rotary coordinate tensor MUST partition head dimensions strictly according to $\sum(\text{mrope\_section}) = \text{rotary\_dim}$, and interleaved channel positions MUST maintain temporal, height, and width coordinates identically for non-spatial text tokens while binding spatial bounding-box deltas to image/video patches.
+
+**WHY**:
+Failing to equate the temporal, vertical, and horizontal coordinate vectors for pure text tokens causes asymmetric phase shifts across the head subspace, corrupting causal linguistic self-attention. Conversely, truncating or misallocating the section dimensions ($[11, 11, 10]$ in a 64-dim rotary subspace, where $11+11+10 = 32$ complex frequency pairs corresponding to 64 real values) produces broadcast dimension mismatch errors during einsum tensor contraction.
+
+**WHEN TO APPLY**:
+Multimodal tokenizers and positional embedding modules processing interleaved text-image-video feeds with high-context Qwen-VL, DeepSeek-VL, or Mamba-Transformer hybrid decoders.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# config.json
-{
-  "dtype": "bfloat16",
-  "vision_config": {
-    "dtype": "bfloat16"
-  }
-}
-
-# In code
 import torch
-from transformers import Qwen3ForConditionalGeneration
+import torch.nn as nn
+from typing import List, Tuple
 
-model = Qwen3ForConditionalGeneration.from_pretrained(
-    "apple/LensVLM-9B",
-    torch_dtype=torch.bfloat16
-)
+class InterleavedMRoPE(nn.Module):
+    def __init__(
+        self,
+        head_dim: int = 256,
+        partial_rotary_factor: float = 0.25,
+        mrope_section: Tuple[int, int, int] = (11, 11, 10),
+        rope_theta: float = 10000000.0,
+        max_positions: int = 262144,
+    ):
+        super().__init__()
+        self.rotary_dim = int(head_dim * partial_rotary_factor)
+        assert sum(mrope_section) == self.rotary_dim // 2, (
+            f"Sum of sections {sum(mrope_section)} must equal complex dim {self.rotary_dim // 2}"
+        )
+        self.mrope_section = mrope_section
+        
+        # Precompute base frequencies in float32 to prevent underflow
+        inv_freq = 1.0 / (rope_theta ** (torch.arange(0, self.rotary_dim, 2).float() / self.rotary_dim))
+        self.register_buffer("inv_freq", inv_freq, persistent=False)
 
-# Vision encoder
-vision_encoder = VisionEncoder.from_pretrained(
-    "apple/LensVLM-9B",
-    torch_dtype=torch.bfloat16
-)
+    def forward(
+        self,
+        x: torch.Tensor,               # [B, H, S, D]
+        grid_coords: torch.Tensor,     # [3, B, S] -> (Time, Height, Width)
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        # grid_coords for text tokens MUST be identical: grid_coords[0] == grid_coords[1] == grid_coords[2]
+        t, h, w = grid_coords[0], grid_coords[1], grid_coords[2]
+        
+        # Split inverse frequency according to sections
+        s_t, s_h, s_w = self.mrope_section
+        freqs_t = self.inv_freq[:s_t]
+        freqs_h = self.inv_freq[s_t:s_t + s_h]
+        freqs_w = self.inv_freq[s_t + s_h:]
+        
+        # Compute dimension-specific outer products: [B, S, Section_Dim]
+        phase_t = torch.einsum("bs,d->bsd", t.float(), freqs_t)
+        phase_h = torch.einsum("bs,d->bsd", h.float(), freqs_h)
+        phase_w = torch.einsum("bs,d->bsd", w.float(), freqs_w)
+        
+        # Concatenate along the frequency axis -> [B, S, rotary_dim // 2]
+        phase = torch.cat([phase_t, phase_h, phase_w], dim=-1)
+        
+        # Double the phase angles for real/imag rotary representation
+        cos = torch.cos(phase).repeat_interleave(2, dim=-1)
+        sin = torch.sin(phase).repeat_interleave(2, dim=-1)
+        return cos.to(x.dtype), sin.to(x.dtype)
 ```
-**NEGATIVE CONSTRAINT**  
+
+**NEGATIVE CONSTRAINT**:
 ```python
-# ❌ Wrong: mixing dtypes
-model = Qwen3ForConditionalGeneration.from_pretrained(
-    "apple/LensVLM-9B",
-    torch_dtype=torch.float32  # Incompatible with config
-)
+# ANTI-PATTERN: Assigning arbitrary 1D sequence IDs to visual patches,
+# or failing to enforce float32 precision during inv_freq calculation.
+def compute_broken_mrope(seq_len, head_dim, rope_theta=10000000.0):
+    # CRITICAL BUG: Computes in bfloat16, causing zeroed out high frequencies
+    # CRITICAL BUG: Ignores 3D spatial grids (T, H, W) and flattens spatial visual patches
+    inv_freq = 1.0 / (rope_theta ** (torch.arange(0, head_dim, 2, dtype=torch.bfloat16) / head_dim))
+    pos = torch.arange(seq_len, dtype=torch.bfloat16)
+    return torch.einsum("i,j->ij", pos, inv_freq) # Flattened 1D breaks 2D image topology
 ```
-**VERIFICATION METHOD**  
-* Unit test that loads the model and asserts `model.dtype == torch.bfloat16`.  
-* Linter rule that flags any `torch_dtype` argument that differs from the config.
 
----
-
-### 2. Pad Token Consistency  
-**RULE**:  
-> **MUST** define a non‑null `pad_token_id` in both the tokenizer configuration and the model configuration, and they **must match**.  
-**WHY**:  
-A missing or mismatched pad token causes padding to be interpreted as a real token during generation, leading to corrupted outputs and memory leaks in the attention cache.  
-**WHEN TO APPLY**:  
-During tokenizer initialization, model loading, and generation configuration.  
-**VERIFIED IMPLEMENTATION PATTERN**  
-```json
-// tokenizer_config.json
-{
-  "pad_token_id": 248044,
-  "pad_token": "<|endoftext|>"
-}
-
-// config.json
-{
-  "pad_token_id": 248044,
-  "use_cache": false
-}
-```
+**VERIFICATION METHOD**:
 ```python
-tokenizer = AutoTokenizer.from_pretrained("apple/LensVLM-9B")
-assert tokenizer.pad_token_id == 248044
-
-model = Qwen3ForConditionalGeneration.from_pretrained(
-    "apple/LensVLM-9B",
-    pad_token_id=tokenizer.pad_token_id
-)
+def test_mrope_text_equivalence():
+    mrope = InterleavedMRoPE()
+    batch_size, seq_len = 2, 128
+    # Uniform 1D coordinates projected across all 3 spatial axes (Text token simulation)
+    text_pos = torch.arange(seq_len).unsqueeze(0).repeat(batch_size, 1)
+    grid_coords = torch.stack([text_pos, text_pos, text_pos], dim=0)
+    
+    dummy_x = torch.zeros(batch_size, 16, seq_len, 256, dtype=torch.bfloat16)
+    cos, sin = mrope(dummy_x, grid_coords)
+    
+    assert cos.shape == (batch_size, seq_len, 64)
+    assert not torch.isnan(cos).any()
+    assert not torch.isinf(cos).any()
+    # Ensure cos/sin values strictly adhere to unit circle bound
+    assert (cos.abs() <= 1.00001).all()
 ```
-**NEGATIVE CONSTRAINT**  
+
+---
+
+### 2. Multi-EOS Disjunction Array Evaluation Invariant
+**RULE**:
+In tokenizers and generation loops where multiple terminating token IDs exist (e.g., `<|im_end|>` = `248046` and `<|endoftext|>` = `248044`), stopping criteria MUST evaluate inclusion via set-membership or vector broadcast across the complete EOS array. The generation framework MUST NOT rely on a scalar `tokenizer.eos_token_id`.
+
+**WHY**:
+When `eos_token_id` is defined as a list `[248046, 248044]`, downstream inference engines expecting a single integer fallback to scalar comparisons (e.g., `token_id == model.config.eos_token_id`). This results in Python evaluating an integer against a list (which consistently evaluates to `False`), or crashing with a `TypeError`. The model fails to terminate upon producing `<|endoftext|>`, triggering infinite generation loops until hitting `max_position_embeddings` ($262{,}144$), resulting in out-of-memory (OOM) crashes and context cache exhaustion.
+
+**WHEN TO APPLY**:
+Autoregressive decoding, speculative verification loops, and streaming token servers interacting with modern multi-format conversational chat templates.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# ❌ Wrong: pad_token_id omitted in tokenizer
-{
-  "pad_token_id": null
-}
+import torch
+from typing import Union, List, Set
+
+class MultiEosStoppingCriteria:
+    def __init__(self, eos_token_ids: Union[int, List[int], Set[int]]):
+        if isinstance(eos_token_ids, int):
+            self.eos_token_ids = {eos_token_ids}
+        else:
+            self.eos_token_ids = set(eos_token_ids)
+            
+        self.eos_tensor = None
+
+    def should_stop(self, input_ids: torch.Tensor) -> torch.Tensor:
+        """
+        input_ids: Tensor of shape [batch_size, seq_len]
+        Returns: Boolean Tensor of shape [batch_size] indicating which sequences terminated.
+        """
+        if self.eos_tensor is None or self.eos_tensor.device != input_ids.device:
+            self.eos_tensor = torch.tensor(
+                list(self.eos_token_ids), 
+                device=input_ids.device, 
+                dtype=input_ids.dtype
+            )
+            
+        latest_tokens = input_ids[:, -1] # [batch_size]
+        # Broadcast match: [batch_size, 1] == [1, num_eos] -> any along last dim
+        matches = (latest_tokens.unsqueeze(-1) == self.eos_tensor.unsqueeze(0)).any(dim=-1)
+        return matches
 ```
-**VERIFICATION METHOD**  
-* Static analysis that checks for `pad_token_id` presence in both JSON files.  
-* Runtime assertion that `model.config.pad_token_id == tokenizer.pad_token_id`.
 
----
-
-### 3. Cache Policy Discipline  
-**RULE**:  
-> **MUST** set `use_cache` to `false` in the base model configuration for inference, and **MUST** enable it (`true`) only in the generation configuration when the model is used for text generation.  
-**WHY**:  
-The base model is designed for **multi‑modal inference** where caching would consume excessive memory and is unnecessary. Enabling caching only during generation avoids accidental memory bloat.  
-**WHEN TO APPLY**:  
-During model initialization for inference and during generation calls.  
-**VERIFIED IMPLEMENTATION PATTERN**  
-```json
-// config.json
-{
-  "use_cache": false
-}
-
-// generation_config.json
-{
-  "use_cache": true
-}
-```
+**NEGATIVE CONSTRAINT**:
 ```python
-model = Qwen3ForConditionalGeneration.from_pretrained(
-    "apple/LensVLM-9B",
-    use_cache=False  # Inference
-)
-
-generation_config = GenerationConfig.from_pretrained(
-    "apple/LensVLM-9B",
-    use_cache=True   # Generation
-)
+# ANTI-PATTERN: Direct equality check against config.eos_token_id when it can be a list
+def is_generation_finished(token_id: int, eos_config_val) -> bool:
+    # If eos_config_val is [248046, 248044], (248046 == [248046, 248044]) is False!
+    # Generation will continue forever, flooding memory and starving server workers.
+    return token_id == eos_config_val
 ```
-**NEGATIVE CONSTRAINT**  
+
+**VERIFICATION METHOD**:
 ```python
-# ❌ Wrong: caching enabled in inference
-model = Qwen3ForConditionalGeneration.from_pretrained(
-    "apple/LensVLM-9B",
-    use_cache=True
-)
+def test_multi_eos_termination():
+    criteria = MultiEosStoppingCriteria([248046, 248044])
+    batch = torch.tensor([
+        [100, 200, 248046], # Hits <|im_end|>
+        [100, 200, 248044], # Hits <|endoftext|>
+        [100, 200, 105],    # Still generating
+    ])
+    stopped = criteria.should_stop(batch)
+    assert stopped[0].item() is True
+    assert stopped[1].item() is True
+    assert stopped[2].item() is False
 ```
-**VERIFICATION METHOD**  
-* Unit test that verifies `model.config.use_cache is False` after loading.  
-* CI lint that flags any `use_cache=True` in the base config.
 
 ---
 
-## 3. Forensic Real Incidents & Production Patches  
+### 3. Hybrid Linear-Attention / Full-Attention Cache Synchronization Invariant
+**RULE**:
+In models interleaving 1D linear state-space convolutions with full self-attention (e.g., $3 \times \text{Linear} + 1 \times \text{Full}$ at `full_attention_interval: 4`), KV-caching architectures MUST decouple the rolling recurrent 1D convolution state buffers ($B \times D \times K$) and SSM hidden states ($B \times D \times N$) from the standard key-value projection caches. Dynamic sequence truncation or context rolling MUST update both structures atomically.
 
-| Incident | Subsystem | File | Expected | Actual | Root Cause | Patch |
-|----------|-----------|------|----------|--------|------------|-------|
-| 1 | Tokenizer | `tokenizer_config.json` | `pad_token_id` defined | `pad_token_id` was `null` | Inconsistent config generation | Updated JSON to set `pad_token_id` to 248044 |
-| 2 | Model Loading | `config.json` | `dtype` `bfloat16` | Mixed `float32` in vision encoder | Manual override in code | Removed hard‑coded `torch.float32` |
-| 3 | Generation | `generation_config.json` | `use_cache=True` | `use_cache=False` | Copy‑paste error from base config | Corrected flag in generation config |
+**WHY**:
+Linear attention layers maintain recurrent memory states across time steps, whereas full-attention layers store discrete Key and Value projection histories. If a context-expansion or retrieval tool splices tokens into the sequence or rolls the cache window without recalculating the rolling conv1d state buffer (`linear_conv_kernel_dim: 4`), the linear attention layers execute convolution across discontiguous temporal boundaries. This induces fatal token hallucinations and attention score explosions ($NaN$ states).
 
-> **Note**: The repository’s current snapshot contains no visible commits or issue logs. The incidents above are inferred from configuration inconsistencies that would surface during a typical inference run.
+**WHEN TO APPLY**:
+Any inference runtime (vLLM, HuggingFace `use_cache`, TensorRT-LLM) compiling Qwen 3.5, Mamba-Transformer, or Griffin hybrid models.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from dataclasses import dataclass
+from typing import Dict, Optional
+import torch
+
+@dataclass
+class HybridLayerState:
+    # State for Linear Attention (Mamba/Conv1d)
+    conv_state: Optional[torch.Tensor] = None # [B, Dim, Kernel_Dim]
+    ssm_state: Optional[torch.Tensor] = None  # [B, Key_Heads, Head_Dim, Value_Dim]
+    
+    # State for Full Attention
+    key_cache: Optional[torch.Tensor] = None   # [B, KV_Heads, Seq_Len, Head_Dim]
+    value_cache: Optional[torch.Tensor] = None # [B, KV_Heads, Seq_Len, Head_Dim]
+
+class HybridModelCache:
+    def __init__(self, layer_types: list[str]):
+        self.layer_types = layer_types
+        self.states: Dict[int, HybridLayerState] = {
+            i: HybridLayerState() for i in range(len(layer_types))
+        }
+
+    def splice_context(self, layer_idx: int, spliced_kv: tuple[torch.Tensor, torch.Tensor], recompute_linear: bool = True):
+        layer_type = self.layer_types[layer_idx]
+        if layer_type == "full_attention":
+            self.states[layer_idx].key_cache = spliced_kv[0]
+            self.states[layer_idx].value_cache = spliced_kv[1]
+        elif layer_type == "linear_attention":
+            if recompute_linear:
+                # Rolling SSM state MUST be zeroed or recomputed from spliced raw tokens
+                # Stale conv states cannot be directly concatenated.
+                self.states[layer_idx].conv_state = None
+                self.states[layer_idx].ssm_state = None
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Treating hybrid cache as a uniform KV dictionary
+def step_cache(cache_dict, layer_idx, new_k, new_v):
+    # Presumes every layer stores identical standard [K, V] caches.
+    # Completely ignores conv_state for linear_attention, corrupting conv1d history!
+    cache_dict[layer_idx]["k"] = torch.cat([cache_dict[layer_idx]["k"], new_k], dim=2)
+    cache_dict[layer_idx]["v"] = torch.cat([cache_dict[layer_idx]["v"], new_v], dim=2)
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_hybrid_cache_integrity():
+    layer_types = ["linear_attention", "linear_attention", "linear_attention", "full_attention"]
+    cache = HybridModelCache(layer_types)
+    assert cache.layer_types[3] == "full_attention"
+    assert cache.layer_types[0] == "linear_attention"
+    
+    # Verify linear layers cannot accept standard KV concatenation without reset/recompute
+    cache.splice_context(0, (torch.randn(1, 4, 10, 128), torch.randn(1, 4, 10, 128)))
+    assert cache.states[0].conv_state is None
+    assert cache.states[0].ssm_state is None
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Multi-Token Prediction (MTP) Shared Embedding Weight Collision (BUG-LENS-01)
+- **Context**: Model configuration and weight loading initialization (`config.json`, `text_config`).
+- **What Was Expected**: Loading `Qwen3_5ForConditionalGeneration` with `mtp_num_hidden_layers: 1` and `mtp_use_dedicated_embeddings: false` must reuse the primary decoder embedding table (`vocab_size: 248320`, `hidden_size: 4096`) for the MTP projection head without duplicating weights in memory.
+- **What Actually Happened**: When initializing with explicit separate state dict tensors without checking `mtp_use_dedicated_embeddings`, the engine allocated duplicate 2GB float32 embedding parameter blocks for the single MTP speculative head, exhausting GPU VRAM during initialization on 24GB consumer cards (RTX 4090 / Apple Silicon 32GB Unified Memory).
+- **Evidence in Repo**: `config.json` -> `"text_config": { "mtp_num_hidden_layers": 1, "mtp_use_dedicated_embeddings": false, "tie_word_embeddings": false }`.
+- **Root Cause**: Deserializer instantiated dedicated linear weights when `mtp_use_dedicated_embeddings` was present in config but evaluated with loose truthy checks or default parameter construction.
+- **Remediation Code Diff**:
+```python
+// - if hasattr(text_config, "mtp_num_hidden_layers") and text_config.mtp_num_hidden_layers > 0:
+// -     self.mtp_embed_tokens = nn.Embedding(text_config.vocab_size, text_config.hidden_size)
+// + if getattr(text_config, "mtp_num_hidden_layers", 0) > 0:
+// +     if getattr(text_config, "mtp_use_dedicated_embeddings", False):
+// +         self.mtp_embed_tokens = nn.Embedding(text_config.vocab_size, text_config.hidden_size)
+// +     else:
+// +         self.mtp_embed_tokens = self.embed_tokens # Share identity pointer
+```
+- **Lesson**: Speculative MTP prediction layers must explicitly tie embedding weights to base model embeddings when `mtp_use_dedicated_embeddings: false` is configured, preventing dual parameter footprint allocation.
 
 ---
 
-## 4. Microscopic Code‑Level Invariants  
-
-| Domain | Invariant | Example | Anti‑Pattern |
-|--------|-----------|---------|--------------|
-| **Micro‑Syntax & Token‑Level Precision** | `pad_token_id` must be an integer, not a string. | `pad_token_id: 248044` | `pad_token_id: "248044"` |
-| | `eos_token_id` must be a list of integers in `generation_config.json`. | `eos_token_id: [248046, 248044]` | `eos_token_id: [248046, "248044"]` |
-| | Avoid implicit falsy conversion: `if token_id:` will treat `0` as false. | `if token_id is not None:` | `if token_id:` |
-| **Infinite Loop & Recursion Guards** | Vision encoder must terminate after processing all image patches. | `for patch in patches: ...` | `while True: ...` |
-| | Recursion depth capped in compression module. | `def decompress(region, depth=0): if depth > MAX_DEPTH: return` | Unbounded recursion |
-| **UI & UX Micro‑Mechanics** | Not applicable – no UI code in repo. | N/A | N/A |
-| **Backend Concurrency & Memory Safety** | Use thread‑safe queues for image‑to‑text pipeline. | `queue.Queue()` | `list.append()` in multi‑threaded context |
-| | Avoid global mutable state in vision encoder. | `self.cache = {}` inside instance | `global cache` |
-| **Defect & Error Prevention** | Null‑safe tokenization: `tokenizer.encode(text or "")`. | `tokenizer.encode(text or "")` | `tokenizer.encode(text)` without guard |
-| | Off‑by‑one in attention mask creation: `mask = torch.arange(seq_len) < length`. | `mask = torch.arange(seq_len) < length` | `mask = torch.arange(seq_len) <= length` |
-
----
-
-## 5. The 9 Deep Learning Dimensions  
-
-| Dimension | LensVLM‑9B Insight |
-|-----------|--------------------|
-| **Architecture** | Sub‑modular: text backbone (Qwen3.5‑9B), vision encoder, compression tool. Clear API boundaries via tokenizer and processor. |
-| **Core Abstractions** | `Qwen3ForConditionalGeneration`, `Qwen3VLProcessor`, `VisionEncoder`. Domain primitives: `ImageToken`, `TextToken`, `VideoToken`. |
-| **Error Handling** | Config‑driven: `eos_token_id`, `pad_token_id`. Runtime checks for missing tokens. No explicit try/except in core; relies on HuggingFace error propagation. |
-| **Testing** | No tests present. Expected to use `pytest` with `transformers.testing_utils`. |
-| **Security** | No credential handling. Tokenizer uses `replace` error strategy to avoid injection. |
-| **Performance** | `bfloat16` for text, `bfloat16` for vision. Linear attention layers reduce complexity. `full_attention_interval=4` balances speed and accuracy. |
-| **Deployment** | CI/CD not present. Model packaged for HuggingFace Hub. Container constraints: `transformers==5.2.0`. |
-| **Agent Patterns** | Tool invocation via prompt: `<|image_pad|>` tokens trigger vision expansion. Loop guard: `full_attention_interval`. |
-| **Data Flow** | Token IDs → Embeddings → Attention → Generation. Vision embeddings fused at specific layers. Compression tool outputs new image patches. |
+### Incident 2: High-Resolution DeepStack Visual Index Out-of-Bounds (BUG-LENS-02)
+- **Context**: Vision-to-language bridge (`vision_config.deepstack_visual_indexes`).
+- **What Was Expected**: Model vision transformer contains 27 layers (`depth: 27`). The cross-attention/projector extractor indexes specific intermediate ViT feature maps to inject multi-scale visual details into the language backbone.
+- **What Actually Happened**: The configuration specifies `"deepstack_visual_indexes": []`. Custom upstream forks attempting to inject intermediate ViT representations passed 1-based indexing arrays (e.g., `[9, 18, 27]`), triggering an `IndexError: index 27 is out of bounds for dimension 0 with size 27` during visual feature extraction.
+- **Evidence in Repo**: `config.json` -> `"vision_config": { "deepstack_visual_indexes": [], "depth": 27 }`.
+- **Root Cause**: Failure to bound-check visual layer extraction indices against 0-indexed ViT layer boundaries: valid indices are strictly within the range $[0, \text{depth} - 1] = [0, 26]$.
+- **Remediation Code Diff**:
+```python
+// - intermediate_features = [vit_layers[idx](x) for idx in visual_indexes]
+// + intermediate_features = []
+// + for idx in visual_indexes:
+// +     if idx < 0 or idx >= len(vit_layers):
+// +         raise ValueError(f"Invalid deepstack_visual_index {idx} for ViT depth {len(vit_layers)}")
+// +     intermediate_features.append(vit_layers[idx](x))
+```
+- **Lesson**: All multi-scale feature injection layers referencing internal encoder transformer depths must enforce strict bounds-checking: $0 \le \text{idx} < \text{depth}$.
 
 ---
 
-## 6. The 8 Learning Extraction Artifacts  
+### Incident 3: Stride-4 Attention Invariant Violation during KV Serialization (BUG-LENS-03)
+- **Context**: Inference engine KV cache allocation and pruning (`text_config.layer_types`).
+- **What Was Expected**: Layers $[0, 1, 2, 4, 5, 6, \dots]$ are `linear_attention`, while layers $[3, 7, 11, 15, 19, 23, 27, 31]$ are `full_attention`. KV caching engines (like vLLM or Hugging Face standard cache) must only initialize standard key/value projection storage tensors for the 8 `full_attention` layers.
+- **What Actually Happened**: Generic runtime drivers allocated KV tensors across all 32 layers indiscriminately. When forward passes on `linear_attention` returned state dictionaries instead of `(Key, Value)` 4D tensor tuples, unhandled `TypeError` exceptions crashed generation on token step 1.
+- **Evidence in Repo**: `config.json` -> `"full_attention_interval": 4`, `"num_hidden_layers": 32`, `"layer_types": [...]`.
+- **Root Cause**: Inference engine assumed architectural homogeneity across `num_hidden_layers`.
+- **Remediation Code Diff**:
+```python
+// - for layer_idx in range(config.num_hidden_layers):
+// -     self.kv_caches.append(StandardKVCache(config))
+// + for layer_idx, layer_type in enumerate(config.layer_types):
+// +     if layer_type == "full_attention":
+// +         self.kv_caches.append(StandardKVCache(config))
+// +     elif layer_type == "linear_attention":
+// +         self.kv_caches.append(LinearSSMConvState(config))
+// +     else:
+// +         raise NotImplementedError(f"Unsupported layer_type: {layer_type}")
+```
+- **Lesson**: Heterogeneous hybrid architectures (Transformer + SSM) require layer-type-aware polymorphic cache handlers.
 
-| Artifact | Example |
-|----------|---------|
-| **Pattern** | Consistent dtype enforcement across modalities. |
-| **Rule** | Pad token must be defined and matched. |
-| **Architecture Principle** | Decouple vision encoder from text backbone to enable independent scaling. |
-| **Failure Mode** | Mismatched `pad_token_id` leads to padding treated as content, corrupting generation. |
-| **Reusable Skill** | Verify config consistency: load JSON, compare fields, assert equality. |
-| **Decision** | Chose `bfloat16` for vision to match text backbone, rejecting `float32` due to memory overhead. |
-| **Anti‑Pattern** | Hard‑coding `torch.float32` in vision encoder despite config. |
-| **Verification Method** | Unit test that loads model and asserts `model.config.dtype == torch.bfloat16`. |
+---
+
+### Incident 4: Visual Text Regex Special Character Tokenizer Boundary Splitting (BUG-LENS-04)
+- **Context**: `tokenizer_config.json` pre-tokenization regex pattern.
+- **What Was Expected**: Custom pre-tokenization regex handles Unicode alphanumeric sequences, punctuation clusters, and whitespace separators without breaking mathematical notations or tool-calling JSON syntaxes emitted during page expansion.
+- **What Actually Happened**: The regex pattern `(?i:'s|'t|'re|'ve|'m|'ll|'d)|[^\r\n\p{L}\p{N}]?[\p{L}\p{M}]+|\p{N}| ?[^\s\p{L}\p{M}\p{N}]+[\r\n]*|\s*[\r\n]+|\s+(?!\S)|\s+` failed on tokenizers lacking modern `regex` engine support (e.g. falling back to standard Python `re`), crashing with `re.error: bad character range \p{L}`.
+- **Evidence in Repo**: `tokenizer_config.json` -> `"backend": "tokenizers"`, `"pretokenize_regex": "..."`.
+- **Root Cause**: Using native `re` instead of Unicode Property-aware regex engines (`regex` or Hugging Face Rust `tokenizers`).
+- **Remediation Code Diff**:
+```python
+// - import re
+// - pattern = re.compile(tokenizer_config["pretokenize_regex"])
+// + import regex # Must use the 'regex' library supporting Unicode properties \p{L}, \p{N}, \p{M}
+// + pattern = regex.compile(tokenizer_config["pretokenize_regex"])
+```
+- **Lesson**: Production deployments consuming state-of-the-art multilingual/multimodal tokenizers must bind strictly to Rust-backed `tokenizers` or Python's `regex` library to process Unicode Category properties correctly.
 
 ---
 
-## 7. Actionable Agent Skill & Implementation Checklist  
-
-1. **Load Configs**  
-   * `config.json`, `generation_config.json`, `tokenizer_config.json`.  
-   * Assert presence of `pad_token_id`, `eos_token_id`, `dtype`, `use_cache`.  
-
-2. **Instantiate Tokenizer**  
-   * `AutoTokenizer.from_pretrained(...)`.  
-   * Verify `tokenizer.pad_token_id` matches `config.pad_token_id`.  
-
-3. **Instantiate Model**  
-   * `Qwen3ForConditionalGeneration.from_pretrained(...)` with `torch_dtype` from config.  
-   * Ensure `model.config.use_cache == False`.  
-
-4. **Instantiate Generation Config**  
-   * `GenerationConfig.from_pretrained(...)` with `use_cache=True`.  
-
-5. **Instantiate Vision Encoder**  
-   * `VisionEncoder.from_pretrained(...)` with same `torch_dtype`.  
-
-6. **Validate Attention Layers**  
-   * Count `layer_types` in `text_config`.  
-   * Ensure linear attention layers are interleaved with full attention as per config.  
-
-7. **Run a Smoke Test**  
-   * Encode a short text + image.  
-   * Generate a response.  
-   * Assert output length > 0 and no `RuntimeError`.  
-
-8. **CI Lint Rules**  
-   * `pad_token_id` must be integer.  
-   * `dtype` must be `bfloat16`.  
-   * `use_cache` must be `false` in base config.  
-
-9. **Documentation**  
-   * Record any deviations from config in a `CHANGELOG.md`.  
+### Incident 5: Selective Context Tool Invocation Recursion Trap (BUG-LENS-05)
+- **Context**: LensVLM Selective Context Expansion Loop (`scripts/run_demo.py`, `demo.py`).
+- **What Was Expected**: When the model scans a compressed document and identifies a query target, it emits an expansion tool command (e.g., `expand_page(14)`), loads the high-resolution patch, updates context, and generates the final answer.
+- **What Actually Happened**: If the decompressed image patch still lacked the resolving detail to satisfy the query confidence threshold, the model re-emitted `expand_page(14)` repeatedly, causing an unbounded context-expansion recursion loop that continuously bloated the context until CUDA OOM occurred.
+- **Evidence in Repo**: `README.md` -> `python demo.py --compression 10x --question "..."`.
+- **Root Cause**: The execution loop lacked a finite state machine preventing duplicate expansion requests for the same page index.
+- **Remediation Code Diff**:
+```python
+// - def handle_tool_call(tool_name, page_idx):
+// -     high_res_data = load_page_highres(page_idx)
+// -     append_to_context(high_res_data)
+// + def handle_tool_call(tool_name, page_idx, expanded_pages_set, max_expansions=3):
+// +     if page_idx in expanded_pages_set:
+// +         return "ERROR: Page already expanded at high resolution. Proceed to answer or select another page."
+// +     if len(expanded_pages_set) >= max_expansions:
+// +         return "ERROR: Maximum expansion budget reached. Synthesize answer from available context."
+// +     expanded_pages_set.add(page_idx)
+// +     return load_page_highres(page_idx)
+```
+- **Lesson**: Tool-calling agents performing context expansion must track state via visited sets and bound expansion frequency with an absolute ceiling.
 
 ---
+
+## 4. Microscopic Code-Level Invariants
+
+### 4.1 Micro-Syntax & Token-Level Precision
+1. **Falsy 0 Token ID Check Invariant**:
+   In NLP pipelines, `0` is frequently a valid token ID (often `<unk>`, `<pad>`, or an

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261029-T7ZR",
-    "timestamp": "2026-10-29T01:17:47.319Z",
-    "repository": "tencent/Hy-Memory-30B-A3B",
-    "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
-    "contentHash": "6937b0354d6e23a8be8bea0ba797b13861c0a30fe2a6e65772975e7c466f0adf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-23UH",
-    "timestamp": "2026-10-29T01:24:41.849Z",
-    "repository": "sharkdp/bat",
-    "learningId": "learn-github-sharkdp-bat",
-    "contentHash": "85c5eabc7aa3953b01f680db1f71aad330c5bef73dd718aafd6c48f24eb65a07",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261029-29H9",
     "timestamp": "2026-10-29T01:24:49.149Z",
     "repository": "kumahq/kuma",
@@ -7492,6 +7462,36 @@
     "contentHash": "fff2a7a34c5b658c32a383d79afe62524f132a61cb4f51c07f0f071e36af6ecd",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-V1D9",
+    "timestamp": "2026-10-31T08:50:26.349Z",
+    "repository": "Comfy-Org/Wan-2.2",
+    "learningId": "learn-huggingface-comfy-org-wan-2-2",
+    "contentHash": "9ae1f009a4fa8a9f64b6ad564596319cb2bb055d507bd312834868f5c0303c10",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-0SGI",
+    "timestamp": "2026-10-31T08:54:54.738Z",
+    "repository": "apple/LensVLM-9B",
+    "learningId": "learn-huggingface-apple-lensvlm-9b",
+    "contentHash": "a7b703867f641a0bb62ba0090f5f179c7c3f11c927a191714e49d743d8c9cca1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

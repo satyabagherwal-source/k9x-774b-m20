@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T08:31:10.597Z",
-    "lastVerified": "2026-10-31T08:31:10.597Z",
+    "lastChecked": "2026-10-31T08:54:57.304Z",
+    "lastVerified": "2026-10-31T08:54:57.304Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -429,8 +429,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T07:53:48.675Z",
-    "lastVerified": "2026-10-31T07:53:48.675Z",
+    "lastChecked": "2026-10-31T08:45:18.882Z",
+    "lastVerified": "2026-10-31T08:45:18.882Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1639,12 +1639,12 @@
     "lastVerified": "2026-10-31T06:59:17.142Z"
   },
   "seaql-sea-orm": {
-    "name": "SeaQL/sea-orm",
+    "name": "sea-orm",
     "officialUrl": "https://github.com/SeaQL/sea-orm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T15:22:08.561Z",
-    "lastVerified": "2026-10-30T15:22:08.561Z",
+    "lastChecked": "2026-10-31T08:45:16.398Z",
+    "lastVerified": "2026-10-31T08:45:16.398Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-seaql-sea-orm",
@@ -1653,7 +1653,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c5dffaa1"
   },
   "watchexec-watchexec": {
     "name": "watchexec",
@@ -1936,12 +1937,12 @@
     "officialUrl": "https://huggingface.co/apple/LensVLM-9B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T05:30:47.711Z",
-    "lastVerified": "2026-10-28T05:30:47.711Z",
+    "lastChecked": "2026-10-31T08:45:06.435Z",
+    "lastVerified": "2026-10-31T08:45:06.435Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-apple-lensvlm-9b",
-    "contentHash": "83ebd5ce62ae3d185d70145187ad5405c248147277c49ddc0c76e242340aa8a2",
+    "contentHash": "a7b703867f641a0bb62ba0090f5f179c7c3f11c927a191714e49d743d8c9cca1",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -2165,8 +2166,8 @@
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T03:59:01.239Z",
-    "lastVerified": "2026-10-31T03:59:01.239Z",
+    "lastChecked": "2026-10-31T08:45:13.882Z",
+    "lastVerified": "2026-10-31T08:45:13.882Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
@@ -3089,9 +3090,9 @@
   "taubyte-tau": {
     "name": "tau",
     "officialUrl": "https://github.com/taubyte/tau",
-    "lastChecked": "2026-10-30T16:39:34.785Z",
+    "lastChecked": "2026-10-31T08:45:11.371Z",
     "revisionIdentifier": "d9841668",
-    "lastVerified": "2026-10-30T16:39:34.785Z"
+    "lastVerified": "2026-10-31T08:45:11.371Z"
   },
   "xerj-org-xerj": {
     "name": "xerj-org/xerj",
@@ -4565,9 +4566,9 @@
   "react-native-device-info-react-native-device-info": {
     "name": "react-native-device-info",
     "officialUrl": "https://github.com/react-native-device-info/react-native-device-info",
-    "lastChecked": "2026-10-28T14:08:36.863Z",
+    "lastChecked": "2026-10-31T08:45:08.890Z",
     "revisionIdentifier": "06a9ed6d",
-    "lastVerified": "2026-10-28T14:08:36.863Z"
+    "lastVerified": "2026-10-31T08:45:08.890Z"
   },
   "nitrictech-nitric": {
     "name": "nitric",
@@ -12282,6 +12283,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
     "contentHash": "464605397157ab91f101c84601f66ad0c2a4ad3e4a9d4e9352035c155d7b9adb",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-comfy-org-wan-2.2": {
+    "name": "Comfy-Org/Wan-2.2",
+    "officialUrl": "https://huggingface.co/Comfy-Org/Wan-2.2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-31T08:45:03.946Z",
+    "lastVerified": "2026-10-31T08:45:03.946Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-comfy-org-wan-2-2",
+    "contentHash": "9ae1f009a4fa8a9f64b6ad564596319cb2bb055d507bd312834868f5c0303c10",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

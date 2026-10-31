@@ -405,8 +405,8 @@
     "sourceUrl": "https://huggingface.co/apple/LensVLM-9B",
     "sourceVersion": "hf-apple-lensvlm-9b",
     "license": "Open-Source",
-    "contentHash": "83ebd5ce62ae3d185d70145187ad5405c248147277c49ddc0c76e242340aa8a2",
-    "lastHarvestedAt": "2026-10-28T05:30:56.058Z",
+    "contentHash": "a7b703867f641a0bb62ba0090f5f179c7c3f11c927a191714e49d743d8c9cca1",
+    "lastHarvestedAt": "2026-10-31T08:54:54.742Z",
     "learningId": "learn-huggingface-apple-lensvlm-9b"
   },
   "hf-altworld-hemmingway-1": {
@@ -11618,5 +11618,15 @@
     "contentHash": "9d34de9e4b8805a38f1a3aae73b52f21a70ca7dfde7f001ac91608eee0a18d26",
     "lastHarvestedAt": "2026-10-31T00:52:52.257Z",
     "learningId": "learn-github-krishhgg-insomnia"
+  },
+  "hf-comfy-org-wan-2.2": {
+    "repository": "Comfy-Org/Wan-2.2",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Comfy-Org/Wan-2.2",
+    "sourceVersion": "hf-comfy-org-wan-2.2",
+    "license": "Open-Source",
+    "contentHash": "9ae1f009a4fa8a9f64b6ad564596319cb2bb055d507bd312834868f5c0303c10",
+    "lastHarvestedAt": "2026-10-31T08:50:26.352Z",
+    "learningId": "learn-huggingface-comfy-org-wan-2-2"
   }
 }

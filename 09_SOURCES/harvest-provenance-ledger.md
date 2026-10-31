@@ -6521,3 +6521,5 @@ Every entry in this ledger must capture:
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `3cdf8de9` | Multi-dimensional audit evidence | 2026-10-31T08:14:03.687Z |
 | `learn-github-valeriansaliou-sonic` | `https://github.com/valeriansaliou/sonic` | `f16560b6` | Multi-dimensional audit evidence | 2026-10-31T08:28:11.687Z |
 | `learn-huggingface-supersoniclabs-julia-1` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-10-31T08:31:08.058Z |
+| `learn-huggingface-comfy-org-wan-2-2` | `https://huggingface.co/Comfy-Org/Wan-2.2` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-31T08:50:26.352Z |
+| `learn-huggingface-apple-lensvlm-9b` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-10-31T08:54:54.742Z |

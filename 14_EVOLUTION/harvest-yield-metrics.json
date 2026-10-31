@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T08:31:08.062Z",
-  "total_cycles_completed": 6489,
-  "total_learnings_persisted": 6489,
-  "total_rules_promoted": 6128,
+  "last_updated": "2026-10-31T08:54:54.747Z",
+  "total_cycles_completed": 6491,
+  "total_learnings_persisted": 6491,
+  "total_rules_promoted": 6134,
   "history": [
-    {
-      "timestamp": "2026-10-30T21:19:25.368Z",
-      "repository": "meta/folly",
-      "learningId": "learn-github-meta-folly",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T21:19:26.689Z",
-      "repository": "avajs/ava",
-      "learningId": "learn-github-avajs-ava",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T21:19:29.586Z",
       "repository": "hashicorp/terraform",
@@ -1403,6 +1389,20 @@
       "repository": "SupersonicLabs/Julia-1",
       "learningId": "learn-huggingface-supersoniclabs-julia-1",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T08:50:26.358Z",
+      "repository": "Comfy-Org/Wan-2.2",
+      "learningId": "learn-huggingface-comfy-org-wan-2-2",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T08:54:54.747Z",
+      "repository": "apple/LensVLM-9B",
+      "learningId": "learn-huggingface-apple-lensvlm-9b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

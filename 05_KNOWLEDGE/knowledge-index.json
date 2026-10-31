@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T08:31:07.990Z",
-  "total_verified_learnings": 1180,
+  "last_updated": "2026-10-31T08:54:54.659Z",
+  "total_verified_learnings": 1181,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -17813,7 +17813,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/apple/LensVLM-9B",
       "source_version": "hf-apple-lensvlm-9b",
-      "content_hash": "83ebd5ce62ae3d185d70145187ad5405c248147277c49ddc0c76e242340aa8a2",
+      "content_hash": "a7b703867f641a0bb62ba0090f5f179c7c3f11c927a191714e49d743d8c9cca1",
       "dossier_path": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "promoted_rules": [
@@ -18022,6 +18022,21 @@
           "number": 5188,
           "title": "Cache Policy Discipline",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6141,
+          "title": "Tri-Section Interleaved 3D-MRoPE Coordinate Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6142,
+          "title": "Multi-EOS Disjunction Array Evaluation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6143,
+          "title": "Hybrid Linear-Attention / Full-Attention Cache Synchronization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -18042,7 +18057,7 @@
         "learn-huggingface-hf-apple-lensvlm-9b-mv45grmj",
         "learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex"
       ],
-      "verified_at": "2026-10-28T05:30:55.994Z",
+      "verified_at": "2026-10-31T08:54:54.639Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -160784,6 +160799,133 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T08:31:07.973Z"
+    },
+    "learn-huggingface-comfy-org-wan-2-2": {
+      "learning_id": "learn-huggingface-comfy-org-wan-2-2",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Comfy-Org/Wan-2.2",
+      "repository": "Comfy-Org/Wan-2.2",
+      "slug": "hf-comfy-org-wan-2.2",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Comfy-Org/Wan-2.2",
+      "source_version": "hf-comfy-org-wan-2.2",
+      "content_hash": "9ae1f009a4fa8a9f64b6ad564596319cb2bb055d507bd312834868f5c0303c10",
+      "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 6138,
+          "title": "Heterogeneous Model Artifact Canonicalization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6139,
+          "title": "Dual-Model Noise Schedule Separation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6140,
+          "title": "Precision-Specific Artifact Naming Convention",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-31T08:50:26.248Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-6138": {
+      "learning_id": "rule-6138",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6138,
+      "title": "Heterogeneous Model Artifact Canonicalization",
+      "source_url": "https://huggingface.co/Comfy-Org/Wan-2.2",
+      "source_version": "hf-comfy-org-wan-2.2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T08:50:26.249Z"
+    },
+    "rule-6139": {
+      "learning_id": "rule-6139",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6139,
+      "title": "Dual-Model Noise Schedule Separation",
+      "source_url": "https://huggingface.co/Comfy-Org/Wan-2.2",
+      "source_version": "hf-comfy-org-wan-2.2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T08:50:26.249Z"
+    },
+    "rule-6140": {
+      "learning_id": "rule-6140",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6140,
+      "title": "Precision-Specific Artifact Naming Convention",
+      "source_url": "https://huggingface.co/Comfy-Org/Wan-2.2",
+      "source_version": "hf-comfy-org-wan-2.2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T08:50:26.249Z"
+    },
+    "rule-6141": {
+      "learning_id": "rule-6141",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6141,
+      "title": "Tri-Section Interleaved 3D-MRoPE Coordinate Invariant",
+      "source_url": "https://huggingface.co/apple/LensVLM-9B",
+      "source_version": "hf-apple-lensvlm-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T08:54:54.639Z"
+    },
+    "rule-6142": {
+      "learning_id": "rule-6142",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6142,
+      "title": "Multi-EOS Disjunction Array Evaluation Invariant",
+      "source_url": "https://huggingface.co/apple/LensVLM-9B",
+      "source_version": "hf-apple-lensvlm-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T08:54:54.639Z"
+    },
+    "rule-6143": {
+      "learning_id": "rule-6143",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6143,
+      "title": "Hybrid Linear-Attention / Full-Attention Cache Synchronization Invariant",
+      "source_url": "https://huggingface.co/apple/LensVLM-9B",
+      "source_version": "hf-apple-lensvlm-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T08:54:54.639Z"
     }
   },
   "aliases": {

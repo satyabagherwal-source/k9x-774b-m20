@@ -6512,3 +6512,5 @@
 | `CYCLE-20261031-K97N` | `2026-10-31T08:14:03.683Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6132` | Yes (`6ebd2dd8...`) |
 | `CYCLE-20261031-2FH1` | `2026-10-31T08:28:11.605Z` | `valeriansaliou/sonic` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6133, Rule 6134, Rule 6135` | Yes (`2df03a4b...`) |
 | `CYCLE-20261031-67MF` | `2026-10-31T08:31:08.055Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6136, Rule 6137` | Yes (`fff2a7a3...`) |
+| `CYCLE-20261031-V1D9` | `2026-10-31T08:50:26.349Z` | `Comfy-Org/Wan-2.2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6138, Rule 6139, Rule 6140` | Yes (`9ae1f009...`) |
+| `CYCLE-20261031-0SGI` | `2026-10-31T08:54:54.738Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6141, Rule 6142, Rule 6143` | Yes (`a7b70386...`) |

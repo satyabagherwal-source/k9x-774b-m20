@@ -19927,5 +19927,17 @@
     "qualityScore": 1359,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-31T00:50:56.065Z"
+  },
+  {
+    "name": "Comfy-Org/Wan-2.2",
+    "fullName": "Comfy-Org/Wan-2.2",
+    "url": "https://huggingface.co/Comfy-Org/Wan-2.2",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Comfy-Org/Wan-2.2 (982 likes, 9084568 downloads)",
+    "likes": 982,
+    "downloads": 9084568,
+    "qualityScore": 11820,
+    "discoveredAt": "2026-10-31T08:42:50.717Z"
   }
 ]
