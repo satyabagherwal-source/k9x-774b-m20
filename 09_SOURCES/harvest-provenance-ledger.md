@@ -6707,3 +6707,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-lilylilith-qi_2-1_anyangle` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-10-31T19:51:59.856Z |
 | `learn-huggingface-baai-bge-large-en-v1-5` | `https://huggingface.co/BAAI/bge-large-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-31T20:04:07.215Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `44bcb956` | Multi-dimensional audit evidence | 2026-10-31T20:05:00.955Z |
+| `learn-huggingface-zai-org-glm-5-3` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-31T20:11:46.071Z |
+| `learn-github-momenbasel-puremac` | `https://github.com/momenbasel/PureMac` | `8872099c` | Multi-dimensional audit evidence | 2026-10-31T20:11:52.110Z |

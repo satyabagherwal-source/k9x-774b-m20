@@ -6698,3 +6698,5 @@
 | `CYCLE-20261031-HT2K` | `2026-10-31T19:51:59.852Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6301, Rule 6302` | Yes (`d6d05c4b...`) |
 | `CYCLE-20261031-XEAZ` | `2026-10-31T20:04:07.212Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6303, Rule 6304, Rule 6305` | Yes (`33b5fb22...`) |
 | `CYCLE-20261031-YJRS` | `2026-10-31T20:05:00.952Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6306, Rule 6307` | Yes (`383ac24c...`) |
+| `CYCLE-20261031-78CT` | `2026-10-31T20:11:46.061Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`19238a39...`) |
+| `CYCLE-20261031-7D0J` | `2026-10-31T20:11:52.099Z` | `momenbasel/PureMac` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | Yes (`a35d3862...`) |

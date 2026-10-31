@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T20:05:00.773Z",
+  "last_updated": "2026-10-31T20:11:52.005Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -31381,7 +31381,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/zai-org/GLM-5.3",
       "source_version": "hf-zai-org-glm-5.3",
-      "content_hash": "1ab9643a7ce9c491afd84fc2e75df7c81fc396f0bed2f015a9bc30d4009f036c",
+      "content_hash": "19238a3929cb7f90337a90961ea0ce003598f83651363f19b006ece21c416200",
       "dossier_path": "07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md",
       "promoted_rules": [
@@ -31468,7 +31468,7 @@
         "learn-huggingface-hf-zai-org-glm-5-3-mv413j49",
         "learn-huggingface-hf-zai-org-glm-5-3-mv4f1uxu"
       ],
-      "verified_at": "2026-10-28T18:42:06.969Z",
+      "verified_at": "2026-10-31T20:11:45.953Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41000,8 +41000,8 @@
       "slug": "momenbasel-puremac",
       "platform": "github",
       "source_url": "https://github.com/momenbasel/PureMac",
-      "source_version": "046e5c5b",
-      "content_hash": "6c791711449d949592f27959aa806fcb88fe760988e8c86dd1d2893da33094cc",
+      "source_version": "8872099c",
+      "content_hash": "a35d38628bfaab2455114ee88a874a08dd78b31fd8504313d0c56cf7c252addf",
       "dossier_path": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "promoted_rules": [
@@ -41026,7 +41026,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T01:08:58.308Z",
+      "verified_at": "2026-10-31T20:11:51.981Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

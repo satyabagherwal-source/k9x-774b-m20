@@ -65,8 +65,8 @@
     "sourceUrl": "https://huggingface.co/zai-org/GLM-5.3",
     "sourceVersion": "hf-zai-org-glm-5.3",
     "license": "Open-Source",
-    "contentHash": "1ab9643a7ce9c491afd84fc2e75df7c81fc396f0bed2f015a9bc30d4009f036c",
-    "lastHarvestedAt": "2026-10-28T18:42:07.087Z",
+    "contentHash": "19238a3929cb7f90337a90961ea0ce003598f83651363f19b006ece21c416200",
+    "lastHarvestedAt": "2026-10-31T20:11:46.071Z",
     "learningId": "learn-huggingface-zai-org-glm-5-3"
   },
   "hf-mudler-locate-anything.cpp-gguf": {
@@ -8003,10 +8003,10 @@
     "repository": "momenbasel/PureMac",
     "platform": "github",
     "sourceUrl": "https://github.com/momenbasel/PureMac",
-    "sourceVersion": "046e5c5b",
+    "sourceVersion": "8872099c",
     "license": "MIT",
-    "contentHash": "6c791711449d949592f27959aa806fcb88fe760988e8c86dd1d2893da33094cc",
-    "lastHarvestedAt": "2026-10-29T01:08:58.443Z",
+    "contentHash": "a35d38628bfaab2455114ee88a874a08dd78b31fd8504313d0c56cf7c252addf",
+    "lastHarvestedAt": "2026-10-31T20:11:52.110Z",
     "learningId": "learn-github-momenbasel-puremac"
   },
   "nalexn-clean-architecture-swiftui": {

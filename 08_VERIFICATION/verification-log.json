@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-D0ZK",
-    "timestamp": "2026-10-30T13:28:41.792Z",
-    "repository": "moby/buildkit",
-    "learningId": "learn-github-moby-buildkit",
-    "contentHash": "5cea9df30d7bc15fa3d055711251a2742b01e680094c2ce3a0a691eb60e15140",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-D4SJ",
-    "timestamp": "2026-10-30T13:28:46.723Z",
-    "repository": "topoteretes/cognee",
-    "learningId": "learn-github-topoteretes-cognee",
-    "contentHash": "a1bac883b2c9de177c0583f2ea8b6860ff9fd3f600aa1eab4c803ea39f9a0ca3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-OHAK",
     "timestamp": "2026-10-30T13:37:36.140Z",
     "repository": "higress-group/higress",
@@ -7492,6 +7462,36 @@
     "contentHash": "383ac24c0c004a836e1227bf48264c8a63961f9a79714cff45f9eecc234dda69",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-78CT",
+    "timestamp": "2026-10-31T20:11:46.061Z",
+    "repository": "zai-org/GLM-5.3",
+    "learningId": "learn-huggingface-zai-org-glm-5-3",
+    "contentHash": "19238a3929cb7f90337a90961ea0ce003598f83651363f19b006ece21c416200",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-7D0J",
+    "timestamp": "2026-10-31T20:11:52.099Z",
+    "repository": "momenbasel/PureMac",
+    "learningId": "learn-github-momenbasel-puremac",
+    "contentHash": "a35d38628bfaab2455114ee88a874a08dd78b31fd8504313d0c56cf7c252addf",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
