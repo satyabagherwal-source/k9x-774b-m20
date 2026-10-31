@@ -6482,3 +6482,5 @@
 | `CYCLE-20261031-9BAG` | `2026-10-31T05:45:35.080Z` | `tencent/Hy-SimulMT-30B-A3B-FP8` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6088, Rule 6089, Rule 6090` | Yes (`afe003ca...`) |
 | `CYCLE-20261031-IABU` | `2026-10-31T05:52:33.738Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6091, Rule 6092, Rule 6093` | Yes (`0528ba3f...`) |
 | `CYCLE-20261031-IEU2` | `2026-10-31T05:52:39.578Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6094` | Yes (`efac298a...`) |
+| `CYCLE-20261031-YW7F` | `2026-10-31T06:05:28.587Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6095, Rule 6096, Rule 6097` | Yes (`4284288e...`) |
+| `CYCLE-20261031-1USA` | `2026-10-31T06:07:46.714Z` | `BuilderIO/builder` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6098, Rule 6099` | Yes (`5e2d33c0...`) |

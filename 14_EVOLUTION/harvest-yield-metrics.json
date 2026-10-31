@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T05:52:39.587Z",
-  "total_cycles_completed": 6459,
-  "total_learnings_persisted": 6459,
-  "total_rules_promoted": 6080,
+  "last_updated": "2026-10-31T06:07:46.723Z",
+  "total_cycles_completed": 6461,
+  "total_learnings_persisted": 6461,
+  "total_rules_promoted": 6085,
   "history": [
-    {
-      "timestamp": "2026-10-30T19:47:42.261Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T19:54:09.176Z",
-      "repository": "QwikDev/qwik",
-      "learningId": "learn-github-qwikdev-qwik",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T19:54:17.053Z",
       "repository": "cilium/cilium",
@@ -1403,6 +1389,20 @@
       "repository": "milvus-io/milvus",
       "learningId": "learn-github-milvus-io-milvus",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T06:05:28.596Z",
+      "repository": "deepseek-ai/DeepSeek-R1",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T06:07:46.723Z",
+      "repository": "BuilderIO/builder",
+      "learningId": "learn-github-builderio-builder",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

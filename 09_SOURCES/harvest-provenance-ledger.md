@@ -6491,3 +6491,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8` | `https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8` | `hf-tencent` | Multi-dimensional audit evidence | 2026-10-31T05:45:35.083Z |
 | `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-31T05:52:33.742Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `32e53bb3` | Multi-dimensional audit evidence | 2026-10-31T05:52:39.581Z |
+| `learn-huggingface-deepseek-ai-deepseek-r1` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-31T06:05:28.591Z |
+| `learn-github-builderio-builder` | `https://github.com/BuilderIO/builder` | `46dd7bae` | Multi-dimensional audit evidence | 2026-10-31T06:07:46.717Z |

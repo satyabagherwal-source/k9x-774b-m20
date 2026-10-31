@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T05:52:42.134Z",
-    "lastVerified": "2026-10-31T05:52:42.134Z",
+    "lastChecked": "2026-10-31T06:07:49.266Z",
+    "lastVerified": "2026-10-31T06:07:49.266Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -346,9 +346,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T05:29:35.907Z",
+    "lastChecked": "2026-10-31T06:04:12.713Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T05:29:35.907Z"
+    "lastVerified": "2026-10-31T06:04:12.713Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -539,9 +539,9 @@
   "surrealdb-surrealdb": {
     "name": "surrealdb",
     "officialUrl": "https://github.com/surrealdb/surrealdb",
-    "lastChecked": "2026-10-30T12:58:32.640Z",
+    "lastChecked": "2026-10-31T06:04:10.283Z",
     "revisionIdentifier": "18971ffb",
-    "lastVerified": "2026-10-30T12:58:32.640Z"
+    "lastVerified": "2026-10-31T06:04:10.283Z"
   },
   "hf-baai-bge-small-en-v1.5": {
     "name": "BAAI/bge-small-en-v1.5",
@@ -826,13 +826,13 @@
     "officialUrl": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T03:49:33.822Z",
-    "lastVerified": "2026-10-28T03:49:33.822Z",
+    "lastChecked": "2026-10-31T06:04:00.321Z",
+    "lastVerified": "2026-10-31T06:04:00.321Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
-    "contentHash": "f30344fe649b370c76be3a7aa0b28d25c26b7dc76fa6444625f37c5eff3c2bad",
-    "promotedRulesCount": 0,
+    "contentHash": "4284288e27c0801b6b6ac66a92367ff11b06e95deff27f6ee0f65c11ce898a76",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -1051,9 +1051,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-10-31T02:14:23.596Z",
+    "lastChecked": "2026-10-31T06:04:07.726Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-10-31T02:14:23.596Z"
+    "lastVerified": "2026-10-31T06:04:07.727Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -2205,12 +2205,12 @@
     "lastVerified": "2026-10-31T02:27:52.019Z"
   },
   "chaos-mesh-chaos-mesh": {
-    "name": "chaos-mesh/chaos-mesh",
+    "name": "chaos-mesh",
     "officialUrl": "https://github.com/chaos-mesh/chaos-mesh",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T13:53:23.645Z",
-    "lastVerified": "2026-10-30T13:53:23.645Z",
+    "lastChecked": "2026-10-31T06:04:05.230Z",
+    "lastVerified": "2026-10-31T06:04:05.230Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-chaos-mesh-chaos-mesh",
@@ -2219,7 +2219,8 @@
     "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "146f7699"
   },
   "mitmproxy-mitmproxy": {
     "name": "mitmproxy",
@@ -3765,11 +3766,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "builderio-builder": {
-    "name": "builder",
+    "name": "BuilderIO/builder",
     "officialUrl": "https://github.com/BuilderIO/builder",
-    "lastChecked": "2026-10-28T12:22:12.594Z",
-    "revisionIdentifier": "c4497e96",
-    "lastVerified": "2026-10-28T12:22:12.594Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-31T06:04:06.602Z",
+    "lastVerified": "2026-10-31T06:04:06.602Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-builderio-builder",
+    "contentHash": "5e2d33c0223c5f458eb1b9dc70bf000b9a07db39ad57d6c47106b1f14e1dc83f",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "go-dev-frame-sponge": {
     "name": "sponge",
@@ -4239,9 +4250,9 @@
   "mtkennerly-ludusavi": {
     "name": "ludusavi",
     "officialUrl": "https://github.com/mtkennerly/ludusavi",
-    "lastChecked": "2026-10-30T06:10:11.013Z",
+    "lastChecked": "2026-10-31T06:03:57.679Z",
     "revisionIdentifier": "95b651aa",
-    "lastVerified": "2026-10-30T06:10:11.013Z"
+    "lastVerified": "2026-10-31T06:03:57.679Z"
   },
   "hf-black-forest-labs-flux.1-schnell": {
     "name": "black-forest-labs/FLUX.1-schnell",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T05:52:39.500Z",
+  "last_updated": "2026-10-31T06:07:46.633Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5446,8 +5446,8 @@
       "slug": "builderio-builder",
       "platform": "github",
       "source_url": "https://github.com/BuilderIO/builder",
-      "source_version": "c4497e96",
-      "content_hash": "e1f3bb49ca167359b89300b53cb0c7b38a30ebde16a1109e620b6ac22b7c3ee5",
+      "source_version": "46dd7bae",
+      "content_hash": "5e2d33c0223c5f458eb1b9dc70bf000b9a07db39ad57d6c47106b1f14e1dc83f",
       "dossier_path": "07_PROJECT_LEARNING/builderio-builder-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/builderio-builder-learnings.md",
       "promoted_rules": [
@@ -5460,6 +5460,16 @@
           "number": 3199,
           "title": "fix[sdks][abTests]: ENG-14225 persist A/B test assignment cookie for 30 days ins",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6098,
+          "title": "Structural Identity Opaque Pointer Invariant in Recursive AST Transforms",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6099,
+          "title": "Side-Effect Declaration Module Co-location Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5467,7 +5477,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T13:40:40.468Z",
+      "verified_at": "2026-10-31T06:07:46.612Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22118,7 +22128,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
       "source_version": "hf-deepseek-ai-deepseek-r1",
-      "content_hash": "f30344fe649b370c76be3a7aa0b28d25c26b7dc76fa6444625f37c5eff3c2bad",
+      "content_hash": "4284288e27c0801b6b6ac66a92367ff11b06e95deff27f6ee0f65c11ce898a76",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md",
       "promoted_rules": [
@@ -22158,6 +22168,21 @@
           "number": 4205,
           "title": "Tiled Block FP8 Dynamic Dequantization Scale Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6095,
+          "title": "KV-Cache Compression via Low-Rank Projection (MLA Invariant)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6096,
+          "title": "MoE Routing Stability via Sigmoid Scoring & Top-K Grouping",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6097,
+          "title": "FP8 Quantization with Block-Wise Scaling",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -22178,7 +22203,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv43zicx",
         "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv4h8dyv"
       ],
-      "verified_at": "2026-10-28T03:49:34.874Z",
+      "verified_at": "2026-10-31T06:05:28.485Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -159967,6 +159992,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T05:52:39.480Z"
+    },
+    "rule-6095": {
+      "learning_id": "rule-6095",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6095,
+      "title": "KV-Cache Compression via Low-Rank Projection (MLA Invariant)",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
+      "source_version": "hf-deepseek-ai-deepseek-r1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T06:05:28.485Z"
+    },
+    "rule-6096": {
+      "learning_id": "rule-6096",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6096,
+      "title": "MoE Routing Stability via Sigmoid Scoring & Top-K Grouping",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
+      "source_version": "hf-deepseek-ai-deepseek-r1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T06:05:28.485Z"
+    },
+    "rule-6097": {
+      "learning_id": "rule-6097",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6097,
+      "title": "FP8 Quantization with Block-Wise Scaling",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
+      "source_version": "hf-deepseek-ai-deepseek-r1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T06:05:28.485Z"
+    },
+    "rule-6098": {
+      "learning_id": "rule-6098",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6098,
+      "title": "Structural Identity Opaque Pointer Invariant in Recursive AST Transforms",
+      "source_url": "https://github.com/BuilderIO/builder",
+      "source_version": "46dd7bae",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T06:07:46.612Z"
+    },
+    "rule-6099": {
+      "learning_id": "rule-6099",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6099,
+      "title": "Side-Effect Declaration Module Co-location Invariant",
+      "source_url": "https://github.com/BuilderIO/builder",
+      "source_version": "46dd7bae",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T06:07:46.612Z"
     }
   },
   "aliases": {

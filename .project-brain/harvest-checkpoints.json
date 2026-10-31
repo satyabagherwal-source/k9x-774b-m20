@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T05:52:39.591Z",
+  "last_updated": "2026-10-31T06:07:46.728Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -290,14 +290,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-r1",
-      "content_hash": "f30344fe649b370c76be3a7aa0b28d25c26b7dc76fa6444625f37c5eff3c2bad",
-      "verified_at": "2026-10-28T03:49:34.982Z",
+      "content_hash": "4284288e27c0801b6b6ac66a92367ff11b06e95deff27f6ee0f65c11ce898a76",
+      "verified_at": "2026-10-31T06:05:28.600Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T03:49:34.982Z"
+      "last_updated": "2026-10-31T06:05:28.600Z"
     },
     "moonshotai/Kimi-K3": {
       "repository": "moonshotai/Kimi-K3",
@@ -6876,14 +6876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-builderio-builder",
-      "content_hash": "e1f3bb49ca167359b89300b53cb0c7b38a30ebde16a1109e620b6ac22b7c3ee5",
-      "verified_at": "2026-10-20T13:40:40.551Z",
+      "content_hash": "5e2d33c0223c5f458eb1b9dc70bf000b9a07db39ad57d6c47106b1f14e1dc83f",
+      "verified_at": "2026-10-31T06:07:46.727Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T13:40:40.551Z"
+      "last_updated": "2026-10-31T06:07:46.727Z"
     },
     "gocrane/crane": {
       "repository": "gocrane/crane",
