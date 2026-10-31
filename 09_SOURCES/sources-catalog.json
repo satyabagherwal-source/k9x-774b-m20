@@ -435,8 +435,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "ef93c3ccb0d430abe773a38f0638338e680b181675d6adf9ef337a8e9b7516c5",
-    "lastHarvestedAt": "2026-10-28T05:59:55.304Z",
+    "contentHash": "1776ed5537b76acb16f466cebb2db182bdf65e8fb5fc3e79f0153380caed39e2",
+    "lastHarvestedAt": "2026-10-31T09:40:12.530Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf"
   },
   "hf-orcarouter-orcasaq-2-27b": {
@@ -5303,10 +5303,10 @@
     "repository": "czy0729/Bangumi",
     "platform": "github",
     "sourceUrl": "https://github.com/czy0729/Bangumi",
-    "sourceVersion": "f58a6465",
+    "sourceVersion": "5a981aee",
     "license": "MIT",
-    "contentHash": "c08c894466bfa404309b1a4c072268fca4d63d3e122b34cc7dba534dc0403b0b",
-    "lastHarvestedAt": "2026-10-27T18:59:43.134Z",
+    "contentHash": "dfd09f3d0deba4bcdb8f044a9b512e1c52133573fecd493556fb775812a92f27",
+    "lastHarvestedAt": "2026-10-31T09:36:52.689Z",
     "learningId": "learn-github-czy0729-bangumi"
   },
   "aquasecurity-tfsec": {
@@ -5773,10 +5773,10 @@
     "repository": "NVIDIA/cuda-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/NVIDIA/cuda-rust",
-    "sourceVersion": "76ac1021",
+    "sourceVersion": "99e571f4",
     "license": "Apache-2.0",
-    "contentHash": "7aa2cd9b892cdd1b8dccdac2b362172f7a1ae5c1ef698e8f1faf1b3626edac37",
-    "lastHarvestedAt": "2026-10-30T09:15:15.899Z",
+    "contentHash": "f529436a7cf808d7e8fb7a1c03d6fc8355fcb2142c554bbda1d468f5c7ed321b",
+    "lastHarvestedAt": "2026-10-31T09:36:49.467Z",
     "learningId": "learn-github-nvidia-cuda-rust"
   },
   "typestack-routing-controllers": {

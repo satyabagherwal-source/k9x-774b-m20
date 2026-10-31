@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T09:29:56.959Z",
+  "last_updated": "2026-10-31T09:40:12.540Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -530,14 +530,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-      "content_hash": "ef93c3ccb0d430abe773a38f0638338e680b181675d6adf9ef337a8e9b7516c5",
-      "verified_at": "2026-10-28T05:59:55.312Z",
+      "content_hash": "1776ed5537b76acb16f466cebb2db182bdf65e8fb5fc3e79f0153380caed39e2",
+      "verified_at": "2026-10-31T09:40:12.539Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T05:59:55.312Z"
+      "last_updated": "2026-10-31T09:40:12.539Z"
     },
     "orcarouter/OrcaSAQ-2-27B": {
       "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -8076,14 +8076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-czy0729-bangumi",
-      "content_hash": "c08c894466bfa404309b1a4c072268fca4d63d3e122b34cc7dba534dc0403b0b",
-      "verified_at": "2026-10-27T18:59:43.142Z",
+      "content_hash": "dfd09f3d0deba4bcdb8f044a9b512e1c52133573fecd493556fb775812a92f27",
+      "verified_at": "2026-10-31T09:36:52.701Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T18:59:43.142Z"
+      "last_updated": "2026-10-31T09:36:52.701Z"
     },
     "aquasecurity/tfsec": {
       "repository": "aquasecurity/tfsec",
@@ -8781,14 +8781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nvidia-cuda-rust",
-      "content_hash": "7aa2cd9b892cdd1b8dccdac2b362172f7a1ae5c1ef698e8f1faf1b3626edac37",
-      "verified_at": "2026-10-30T09:15:15.906Z",
+      "content_hash": "f529436a7cf808d7e8fb7a1c03d6fc8355fcb2142c554bbda1d468f5c7ed321b",
+      "verified_at": "2026-10-31T09:36:49.476Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T09:15:15.906Z"
+      "last_updated": "2026-10-31T09:36:49.476Z"
     },
     "typestack/routing-controllers": {
       "repository": "typestack/routing-controllers",

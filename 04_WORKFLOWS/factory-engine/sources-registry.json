@@ -4,8 +4,8 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T04:22:20.826Z",
-    "lastVerified": "2026-10-31T04:22:20.826Z",
+    "lastChecked": "2026-10-31T09:36:51.823Z",
+    "lastVerified": "2026-10-31T09:36:51.823Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T09:29:59.511Z",
-    "lastVerified": "2026-10-31T09:29:59.511Z",
+    "lastChecked": "2026-10-31T09:40:15.075Z",
+    "lastVerified": "2026-10-31T09:40:15.075Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -346,9 +346,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T08:26:23.869Z",
+    "lastChecked": "2026-10-31T09:36:56.745Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T08:26:23.869Z"
+    "lastVerified": "2026-10-31T09:36:56.745Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1900,12 +1900,12 @@
     "revisionIdentifier": "ef31e883"
   },
   "langchain4j-langchain4j": {
-    "name": "langchain4j/langchain4j",
+    "name": "langchain4j",
     "officialUrl": "https://github.com/langchain4j/langchain4j",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-10-30T16:00:42.150Z",
-    "lastVerified": "2026-10-30T16:00:42.150Z",
+    "lastChecked": "2026-10-31T09:36:54.317Z",
+    "lastVerified": "2026-10-31T09:36:54.317Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-langchain4j-langchain4j",
@@ -1914,7 +1914,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "0be3cd1c"
   },
   "metalbear-co-mirrord": {
     "name": "metalbear-co/mirrord",
@@ -2199,13 +2200,13 @@
     "officialUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T05:55:01.731Z",
-    "lastVerified": "2026-10-28T05:55:01.731Z",
+    "lastChecked": "2026-10-31T09:36:44.493Z",
+    "lastVerified": "2026-10-31T09:36:44.493Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "ef93c3ccb0d430abe773a38f0638338e680b181675d6adf9ef337a8e9b7516c5",
-    "promotedRulesCount": 3,
+    "contentHash": "1776ed5537b76acb16f466cebb2db182bdf65e8fb5fc3e79f0153380caed39e2",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -3267,9 +3268,9 @@
   "aliyuncontainerservice-pouch": {
     "name": "pouch",
     "officialUrl": "https://github.com/AliyunContainerService/pouch",
-    "lastChecked": "2026-10-30T17:14:29.738Z",
+    "lastChecked": "2026-10-31T09:36:49.286Z",
     "revisionIdentifier": "ba854f2d",
-    "lastVerified": "2026-10-30T17:14:29.738Z"
+    "lastVerified": "2026-10-31T09:36:49.286Z"
   },
   "vearch-vearch": {
     "name": "vearch",
@@ -4741,11 +4742,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "czy0729-bangumi": {
-    "name": "Bangumi",
+    "name": "czy0729/Bangumi",
     "officialUrl": "https://github.com/czy0729/Bangumi",
-    "lastChecked": "2026-10-28T14:29:07.061Z",
-    "revisionIdentifier": "f58a6465",
-    "lastVerified": "2026-10-28T14:29:07.061Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-31T09:36:52.413Z",
+    "lastVerified": "2026-10-31T09:36:52.413Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-czy0729-bangumi",
+    "contentHash": "dfd09f3d0deba4bcdb8f044a9b512e1c52133573fecd493556fb775812a92f27",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hashicorp-terraform": {
     "name": "hashicorp/terraform",
@@ -5182,14 +5193,14 @@
     "officialUrl": "https://github.com/NVIDIA/cuda-rust",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T09:12:31.867Z",
-    "lastVerified": "2026-10-30T09:12:31.867Z",
+    "lastChecked": "2026-10-31T09:36:47.382Z",
+    "lastVerified": "2026-10-31T09:36:47.382Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "7aa2cd9b892cdd1b8dccdac2b362172f7a1ae5c1ef698e8f1faf1b3626edac37",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 11,
+    "contentHash": "f529436a7cf808d7e8fb7a1c03d6fc8355fcb2142c554bbda1d468f5c7ed321b",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

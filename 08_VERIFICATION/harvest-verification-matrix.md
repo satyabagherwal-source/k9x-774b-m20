@@ -6517,3 +6517,6 @@
 | `CYCLE-20261031-0LHB` | `2026-10-31T09:22:45.311Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6144, Rule 6145, Rule 6146` | Yes (`447f8362...`) |
 | `CYCLE-20261031-9EQ8` | `2026-10-31T09:29:36.464Z` | `ZSeven-W/openpencil` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6147` | Yes (`6323c3e3...`) |
 | `CYCLE-20261031-9UJ6` | `2026-10-31T09:29:56.946Z` | `HemmingwayAI/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6148, Rule 6149, Rule 6150` | Yes (`635df265...`) |
+| `CYCLE-20261031-IOU0` | `2026-10-31T09:36:49.464Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6151` | Yes (`f529436a...`) |
+| `CYCLE-20261031-IRBC` | `2026-10-31T09:36:52.680Z` | `czy0729/Bangumi` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/czy0729-bangumi-learnings.md` | Yes (`dfd09f3d...`) |
+| `CYCLE-20261031-N1IN` | `2026-10-31T09:40:12.527Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6152, Rule 6153` | Yes (`1776ed55...`) |

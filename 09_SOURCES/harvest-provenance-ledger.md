@@ -6526,3 +6526,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-fastino-gliner2-5-decide` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-10-31T09:22:45.314Z |
 | `learn-github-zseven-w-openpencil` | `https://github.com/ZSeven-W/openpencil` | `68d01235` | Multi-dimensional audit evidence | 2026-10-31T09:29:36.468Z |
 | `learn-huggingface-altworld-hemmingway-1` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-10-31T09:29:56.949Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `99e571f4` | Multi-dimensional audit evidence | 2026-10-31T09:36:49.467Z |
+| `learn-github-czy0729-bangumi` | `https://github.com/czy0729/Bangumi` | `5a981aee` | Multi-dimensional audit evidence | 2026-10-31T09:36:52.689Z |
+| `learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-31T09:40:12.530Z |

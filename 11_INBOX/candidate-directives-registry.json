@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T06:59:11.946Z",
+  "last_updated": "2026-10-31T09:36:52.696Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3478,6 +3478,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-telemt-telemt"
+    },
+    {
+      "id": "CD-IRBS",
+      "directive_title": "- [超展开] 整理页面结构，清理无用图标与冗余类型标注",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "czy0729/Bangumi",
+      "source_commit": "5a981aee",
+      "date_staged": "2026-10-31",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-czy0729-bangumi"
     }
   ]
 }

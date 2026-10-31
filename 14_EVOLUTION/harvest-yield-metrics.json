@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T09:29:56.955Z",
-  "total_cycles_completed": 6494,
-  "total_learnings_persisted": 6494,
-  "total_rules_promoted": 6141,
+  "last_updated": "2026-10-31T09:40:12.536Z",
+  "total_cycles_completed": 6497,
+  "total_learnings_persisted": 6497,
+  "total_rules_promoted": 6144,
   "history": [
-    {
-      "timestamp": "2026-10-30T21:30:01.181Z",
-      "repository": "aquasecurity/trivy",
-      "learningId": "learn-github-aquasecurity-trivy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T21:30:06.843Z",
-      "repository": "pixeltable/pixeltable",
-      "learningId": "learn-github-pixeltable-pixeltable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T21:30:07.291Z",
-      "repository": "openziti/zrok",
-      "learningId": "learn-github-openziti-zrok",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T21:32:49.763Z",
       "repository": "mochajs/mocha",
@@ -1403,6 +1382,27 @@
       "repository": "HemmingwayAI/Hemmingway-1",
       "learningId": "learn-huggingface-altworld-hemmingway-1",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T09:36:49.473Z",
+      "repository": "NVIDIA/cuda-rust",
+      "learningId": "learn-github-nvidia-cuda-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T09:36:52.698Z",
+      "repository": "czy0729/Bangumi",
+      "learningId": "learn-github-czy0729-bangumi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T09:40:12.536Z",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

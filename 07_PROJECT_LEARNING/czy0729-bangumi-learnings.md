@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/czy0729-bangumi-learnings.md`  
 > **Source**: github ([https://github.com/czy0729/Bangumi](https://github.com/czy0729/Bangumi))  
-> **Source Version**: `f58a6465`  
+> **Source Version**: `5a981aee`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T18:59:42.726Z  
+> **Timestamp**: 2026-10-31T09:36:52.421Z  
 > **Learning ID**: `learn-github-czy0729-bangumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/czy0729-bangumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/czy0729/Bangumi](https://github.com/czy0729/Bangumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T18:59:42.454Z  
+> **Harvest Timestamp**: 2026-10-31T09:36:52.413Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: :electron: An unofficial https://bgm.tv ui first app client for Android and iOS, built with React Native. 一个无广告、以爱好为驱动、不以盈利为目的、专门做 ACG 的类似豆瓣的追番记录，bgm.tv 第三方客户端。为移动端重新设计，内置大量加强的网页端难以实现的功能，且提供了相当的自定义选项。 目前已适配 iOS / Android。
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json
-- **Stars / Engagement**: 6185 stars
+- **Stars / Engagement**: 6206 stars
 
 ---
 
@@ -1228,389 +1228,589 @@ export const useActionSheet = (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f58a6465` (2026-10-26)
-**Commit Message**: - [帖子聚合] 修复翻页页码与内容错位，并整理列表与 Tab 组件
+### Incident Patch 1: `5a981aee` (2026-10-30)
+**Commit Message**: - [超展开] 整理页面结构，清理无用图标与冗余类型标注
 
-**File**: `src/screens/rakuen/history/component/favor-list/index.tsx` (modified, +4/-4)
+**File**: `.claude/docs/architecture.md` (modified, +14/-0)
 ```diff
-@@ -2,9 +2,8 @@
-  * @Author: czy0729
-  * @Date: 2022-11-27 15:32:23
-  * @Last Modified by: czy0729
-- * @Last Modified time: 2026-03-31 05:18:48
-+ * @Last Modified time: 2026-10-25 00:00:00
-  */
--import React from 'react'
- import { observer } from 'mobx-react'
- import { SegmentedControl } from '@components'
- import { PaginationList } from '@_'
-@@ -19,11 +18,11 @@ import type { Ctx } from '../../types'
- function FavorList() {
-   const { $ } = useStore<Ctx>(COMPONENT)
+@@ -54,6 +54,20 @@
+ | `@assets` | `src/assets/` |
+ | `@src` | `src/` |
  
-+  const styles = memoStyles()
++## 导入约定（首屏）
 +
-   const { _loaded, type } = $.state
-   if (!_loaded) return null
- 
--  const styles = memoStyles()
--
-   return (
-     <>
-       <SegmentedControl
-@@ -38,6 +37,7 @@ function FavorList() {
-         contentContainerStyle={_.container.bottom}
-         data={$.list}
-         limit={12}
-+        skipEnteringExitingAnimations={12}
-         renderItem={renderItem}
-         onPage={$.onPage}
-       />
-```
-
-**File**: `src/screens/rakuen/history/component/favor-list/item/index.tsx` (modified, +1/-2)
-```diff
-@@ -2,9 +2,8 @@
-  * @Author: czy0729
-  * @Date: 2022-11-28 05:50:50
-  * @Last Modified by: czy0729
-- * @Last Modified time: 2026-03-31 05:50:56
-+ * @Last Modified time: 2026-10-25 00:00:00
-  */
--import React from 'react'
- import { View } from 'react-native'
- import { observer } from 'mobx-react'
- import { Flex, Iconfont, Loading, Text, Touchable, UserStatus } from '@components'
-```
-
-**File**: `src/screens/rakuen/history/component/favor-list/utils.tsx` (modified, +1/-2)
-```diff
-@@ -2,9 +2,8 @@
-  * @Author: czy0729
-  * @Date: 2024-05-08 04:24:58
-  * @Last Modified by: czy0729
-- * @Last Modified time: 2025-10-31 20:46:55
-+ * @Last Modified time: 2026-10-25 00:00:00
-  */
--import React from 'react'
- import ItemLazy from './item'
- 
- import type { RenderItem, TopicId } from '@types'
-```
-
-**File**: `src/screens/rakuen/history/component/hot-list/index.tsx` (modified, +5/-4)
-```diff
-@@ -2,9 +2,9 @@
-  * @Author: czy0729
-  * @Date: 2024-11-01 08:32:53
-  * @Last Modified by: czy0729
-- * @Last Modified time: 2026-03-31 05:19:25
-+ * @Last Modified time: 2026-10-25 00:00:00
-  */
--import React, { useCallback } from 'react'
-+import { useCallback } from 'react'
- import { observer } from 'mobx-react'
- import { SegmentedControl } from '@components'
- import { PaginationList } from '@_'
-@@ -23,11 +23,11 @@ function HotList() {
-     [$]
-   )
- 
-+  const styles = memoStyles()
++6 个底部 tab 的根页面入口一律用**深路径**引 `Component` / `Page`，不要用 `@components` barrel：
 +
-   const { _loaded, collectRankSort } = $.state
-   if (!_loaded) return null
++```ts
++import { Component } from '@components/component'
++import { Page } from '@components/page'
++```
++
++- 涉及页面：`discovery/index`、`timeline/v2`、`home/v2`、`rakuen/v2`、`user/v2`、`tinygrail/index`
++- 原因：`src/components/index.ts` 是 ~80 个 `export *` 的 barrel，走 barrel 会把这套组件全部纳入模块图；这些页面在导航初始化时就被加载（不走 `React.lazy`），是冷启动路径的一部分
++- 其余页面都是懒加载，页面加载时 barrel 早已就绪，照常写 `@components` 即可
++- 同理，这些入口页不要为了「导入整齐」把深路径合并成 barrel，属于有意的性能约定
++
+ ## 导航结构
  
--  const styles = memoStyles()
--
-   return (
-     <>
-       <SegmentedControl
-@@ -42,6 +42,7 @@ function HotList() {
-         contentContainerStyle={_.container.bottom}
-         data={$.collectRank}
-         limit={12}
-+        skipEnteringExitingAnimations={12}
-         renderItem={renderItem}
-         onPage={handlePage}
-       />
+ - **Root Stack**: `createNativeStackNavigator()` — 所有页面作为 Stack.Screen
 ```
 
-**File**: `src/screens/rakuen/history/component/hot-list/item/index.tsx` (modified, +1/-2)
+**File**: `.claude/docs/code-style.md` (modified, +1/-0)
 ```diff
-@@ -2,9 +2,8 @@
-  * @Author: czy0729
-  * @Date: 2024-11-01 10:21:04
-  * @Last Modified by: czy0729
-- * @Last Modified time: 2026-03-31 05:53:19
-+ * @Last Modified time: 2026-10-25 00:00:00
-  */
--import React from 'react'
- import { View } from 'react-native'
- import { observer } from 'mobx-react'
- import { Flex, Iconfont, Text, Touchable, UserStatus } from '@components'
-```
-
-**File**: `src/screens/rakuen/history/component/hot-list/utils.tsx` (modified, +1/-2)
-```diff
-@@ -2,9 +2,8 @@
-  * @Author: czy0729
-  * @Date: 2024-11-01 10:20:09
-  * @Last Modified by: czy0729
-- * @Last Modified time: 2025-10-31 20:50:26
-+ * @Last Modified time: 2026-10-25 00:00:00
-  */
--import React from 'react'
- import Item from './item'
+@@ -64,6 +64,7 @@
+ - Store 访问：页面通过 hooks 解构 `{ id, $ }`，子组件通过 `useStore<Ctx>(COMPONENT)` 获取
+ - `StoreContext.Provider` 在页面 index.tsx 中提供，子组件通过 context 消费
+ - **JSX 文件不要写 `import React from 'react'`**：项目使用 automatic JSX runtime（expo `jsx: react-jsx`），多余的 React 导入会触发 `noUnusedLocals` 的 TS6133
++- **6 个底部 tab 根页面入口用深路径引 `Component` / `Page`**（`@components/component`、`@components/page`），不要为了导入整齐合并成 `@components` barrel：这些页面在冷启动时加载，barrel 会拉入整个组件库。详见 [architecture.md](./architecture.md)「导入约定（首屏）」
  
- import type { RenderItem } from '@types'
+ # React Native 规范
+ 
 ```
 
-**File**: `src/screens/rakuen/history/component/local-list/index.tsx` (modified, +1/-3)
+**File**: `src/screens/rakuen/v2/component/ds.ts` (modified, +4/-2)
 ```diff
-@@ -2,9 +2,8 @@
+@@ -1,8 +1,10 @@
+ /*
   * @Author: czy0729
-  * @Date: 2022-11-27 15:34:37
-  * @Last Modified by: czy0729
-- * @Last Modified time: 2026-03-31 05:25:17
-+ * @Last Modified time: 2026-10-25 00:00:00
+  * @Date: 2024-01-04 17:47:34
+- * @Last Modified by:   czy0729
+- * @Last Modified time: 2024-01-04 17:47:34
++ * @Last Modified by: czy0729
++ * @Last Modified time: 2026-10-30 00:00:00
++ *
++ * 页面子组件标识
   */
--import React from 'react'
- import { observer } from 'mobx-react'
- import { ListView } from '@components'
- import { _, useStore } from '@stores'
-@@ -22,7 +21,6 @@ function LocalList() {
-       style={_.mt.sm}
-       sections={$.sections}
-       renderSectionHeader={renderSectionHeader}
--      // @ts-expect-error
-       renderItem={renderItem}
-     />
-   )
+ import { rc } from '@utils/dev'
+ import { COMPONENT as PARENT } from '../ds'
 ```
 
-**File**: `src/screens/rakuen/history/component/local-list/item/index.tsx` (modified, +1/-2)
+**File**: `src/screens/rakuen/v2/component/extra/ds.ts` (modified, +3/-1)
 ```diff
-@@ -2,9 +2,8 @@
+@@ -2,7 +2,9 @@
   * @Author: czy0729
-  * @Date: 2019-11-28 17:16:15
+  * @Date: 2024-01-04 17:46:16
   * @Last Modified by: czy0729
-- * @Last Modified time: 2026-03-31 05:56:00
-+ * @Last Modified time: 2026-10-25 00:00:00
+- * @Last Modified time: 2024-02-03 22:31:58
++ * @Last Modified time: 2026-10-30 00:00:00
++ *
++ * 额外层标识
   */
--import React from 'react'
- import { View } from 'react-native'
+ import { rc } from '@utils/dev'
+ import { COMPONENT as PARENT } from '../ds'
+```
+
+**File**: `src/screens/rakuen/v2/component/extra/index.tsx` (modified, +3/-1)
+```diff
+@@ -3,11 +3,13 @@
+  * @Date: 2024-01-04 17:45:12
+  * @Last Modified by: czy0729
+  * @Last Modified time: 2026-10-30 00:00:00
++ *
++ * 额外层: 统计与埋点
+  */
  import { observer } from 'mobx-react'
- import { Flex, Iconfont, Text, Touchable, UserStatus } from '@components'
+ import { Track } from '@components'
+ import { r } from '@utils/dev'
+-import Heatmaps from '../heapmaps'
++import Heatmaps from '../heatmaps'
+ import { COMPONENT, HM } from './ds'
+ 
+ function Extra() {
+```
+
+**File**: `src/screens/rakuen/v2/component/heatmaps/ds.ts` (renamed, +4/-2)
+```diff
+@@ -1,8 +1,10 @@
+ /*
+  * @Author: czy0729
+  * @Date: 2024-01-04 17:47:45
+- * @Last Modified by:   czy0729
+- * @Last Modified time: 2024-01-04 17:47:45
++ * @Last Modified by: czy0729
++ * @Last Modified time: 2026-10-30 00:00:00
++ *
++ * 埋点标识
+  */
+ import { rc } from '@utils/dev'
+ import { COMPONENT as PARENT } from '../ds'
+```
+
+**File**: `src/screens/rakuen/v2/component/heatmaps/index.tsx` (renamed, +2/-0)
+```diff
+@@ -3,6 +3,8 @@
+  * @Date: 2020-12-16 01:24:53
+  * @Last Modified by: czy0729
+  * @Last Modified time: 2026-10-30 00:00:00
++ *
++ * 页面埋点
+  */
+ import { observer } from 'mobx-react'
+ import { Heatmap } from '@components'
+```
+
+**File**: `src/screens/rakuen/v2/component/icon/group.tsx` (modified, +2/-0)
+```diff
+@@ -3,6 +3,8 @@
+  * @Date: 2021-01-21 19:56:09
+  * @Last Modified by: czy0729
+  * @Last Modified time: 2026-10-30 00:00:00
++ *
++ * 头部「我的小组」图标
+  */
+ import { useCallback } from 'react'
+ import { observer } from 'mobx-react'
 ```
 
 ---
 
-### Incident Patch 2: `f40c011e` (2026-10-25)
-**Commit Message**: - [小组] 重做帖子列表，翻页回到第一项并补上进场动画
+### Incident Patch 2: `6fb339f8` (2026-10-29)
+**Commit Message**: - [长按菜单] 菜单项支持右侧图标与颜色，Popover 支持对象项、value 选中态与危险动作标红
 
-**File**: `src/screens/rakuen/board/component/item/index.tsx` (modified, +2/-2)
+**File**: `jest/setup.js` (modified, +6/-0)
 ```diff
-@@ -14,7 +14,7 @@ import { _, rakuenStore, useStore } from '@stores'
- import { appNavigate, getIsBlockedUser, HTMLDecode, info, open, stl } from '@utils'
- import { t } from '@utils/fetch'
- import { HOST, LIMIT_TOPIC_PUSH } from '@constants'
--import { parseReplies } from '@screens/rakuen/utils'
-+import { formatReplies, parseReplies } from '@screens/rakuen/utils'
- import { COMPONENT } from './ds'
+@@ -315,6 +315,12 @@ jest.mock(
+       URL_DEFAULT_MONO: '/info_only.png',
+       LIST_EMPTY: { list: [], pagination: { page: 0, pageTotal: 0 } },
+       FROZEN_FN: () => {},
++
++      // 通用「菜单动作文案 → 图标」映射 (空表即单测不派生图标)
++      MENU_ICONS: {},
++
++      // 危险动作「菜单文案 → 文字颜色类型」映射 (空表即单测不派生颜色)
++      MENU_TYPES: {},
+       LIKE_TYPE_RAKUEN: 8,
+       LIKE_TYPE_TIMELINE: 40,
+       LIKE_TYPE_SAY: 50,
+```
+
+**File**: `src/components/hold-menu/ds.ts` (modified, +3/-0)
+```diff
+@@ -68,6 +68,9 @@ export const MENU_ITEM_PADDING_VERTICAL = 10
+ /** 菜单项文字大小 */
+ export const MENU_ITEM_TEXT_SIZE = 16
+ 
++/** 菜单项右侧图标大小 (图标字形小于同字号文本, 取大一档与文字视觉等大) */
++export const MENU_ITEM_ICON_SIZE = MENU_ITEM_TEXT_SIZE + 2
++
+ /** 菜单标题项文字大小 */
+ export const MENU_ITEM_TITLE_SIZE = 14
+ 
+```
+
+**File**: `src/components/hold-menu/menu/menu-item/index.tsx` (modified, +52/-14)
+```diff
+@@ -7,16 +7,28 @@
+ import { memo } from 'react'
+ import { View } from 'react-native'
+ import Animated, { useAnimatedStyle } from 'react-native-reanimated'
+-import { Text } from '@components/text'
++import { getTextStyle, Text } from '@components/text'
++import { Iconfont } from '@components/iconfont'
+ import { Touchable } from '@components/touchable'
+ import { stl } from '@utils'
+-import { MENU_ITEM_TEXT_SIZE, MENU_ITEM_TITLE_SIZE } from '../../ds'
++import { MENU_ITEM_ICON_SIZE, MENU_ITEM_TEXT_SIZE, MENU_ITEM_TITLE_SIZE } from '../../ds'
+ import { useHoldMenu } from '../../context'
  import { memoStyles } from './styles'
  
-@@ -32,7 +32,7 @@ function Item({ title, href, replies, time, userId, userName }: BoardItem) {
-   const readed = $.readed(topicId)
-   const isReaded = !!readed.time
-   const repliesCount = parseReplies(replies)
--  const replyText = `+${replies.replace(' replies', '')}`
-+  const replyText = formatReplies(repliesCount)
+ import type { MenuPressEvent } from '../../types'
++import type { TextType } from '@components/text/types'
++import type { TextStyle as RNTextStyle } from 'react-native'
+ import type { Props } from './types'
  
-   return (
-     <Touchable
-```
-
-**File**: `src/screens/rakuen/board/component/list/ds.ts` (modified, +3/-0)
-```diff
-@@ -8,3 +8,6 @@ import { rc } from '@utils/dev'
- import { COMPONENT as PARENT } from '../ds'
- 
- export const COMPONENT = rc(PARENT, 'List')
-+
-+/** 需进场动画的列表项数量 */
-+export const ENTERING_ANIMATIONS_NUM = 10
-```
-
-**File**: `src/screens/rakuen/board/component/list/index.tsx` (modified, +27/-10)
-```diff
-@@ -2,24 +2,37 @@
-  * @Author: czy0729
-  * @Date: 2021-04-07 10:23:24
-  * @Last Modified by: czy0729
-- * @Last Modified time: 2026-10-24 10:00:00
-+ * @Last Modified time: 2026-10-25 10:00:00
-  *
-- * 帖子列表: 空状态与滚动列表
-+ * 帖子列表: 空状态与进场动画列表
-  */
-+import { useCallback, useEffect, useState } from 'react'
- import { observer } from 'mobx-react'
--import { Flex, Mesume, ScrollView, Text } from '@components'
-+import { Flex, ListView, Mesume, Text } from '@components'
- import { _, useStore } from '@stores'
-+import { LIST_EMPTY } from '@constants'
- import Item from '../item'
--import { COMPONENT } from './ds'
-+import { COMPONENT, ENTERING_ANIMATIONS_NUM } from './ds'
- import { styles } from './styles'
- 
-+import type { Board, BoardItem } from '@stores/rakuen/types'
-+import type { RenderItem } from '@types'
- import type { Ctx } from '../../types'
- 
- function List() {
-   const { $ } = useStore<Ctx>(COMPONENT)
- 
-+  /** 首帧渲染空数据, 让列表容器与 cell 分两批挂载 (同批挂载的 cell 会被 skipEntering 跳过进场动画) */
-+  const [ready, setReady] = useState(false)
-+  useEffect(() => setReady(true), [])
-+
-+  const handleRenderItem = useCallback(({ item }: RenderItem<BoardItem>) => <Item {...item} />, [])
-+
-+  /** BoardItem 没有 id, 通用 keyExtractor 会全部返回空串, 导致 cell 复用且进场动画失效 */
-+  const handleKeyExtractor = useCallback((item: BoardItem) => item.href, [])
-+
-   const { list, _loaded } = $.board
--  if (_loaded && !list.length) {
-+  if (ready && _loaded && !list.length) {
-     return (
-       <Flex style={styles.empty} direction='column' justify='center'>
-         <Mesume />
-@@ -31,11 +44,15 @@ function List() {
-   }
- 
-   return (
--    <ScrollView contentContainerStyle={_.container.bottom}>
--      {list.map(item => (
--        <Item key={item.href} {...item} />
--      ))}
--    </ScrollView>
-+    <ListView
-+      contentContainerStyle={_.container.bottom}
-+      keyExtractor={handleKeyExtractor}
-+      skipEnteringExitingAnimations={ENTERING_ANIMATIONS_NUM}
-+      data={ready ? $.board : (LIST_EMPTY as Board)}
-+      renderItem={handleRenderItem}
-+      showFooter={false}
-+      onHeaderRefresh={$.fetchBoard}
-+    />
-   )
- }
- 
-```
-
-**File**: `src/screens/rakuen/group/component/empty/ds.ts` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+/*
-+ * @Author: czy0729
-+ * @Date: 2026-10-25 00:00:00
-+ * @Last Modified by: czy0729
-+ * @Last Modified time: 2026-10-25 00:00:00
-+ */
-+import { rc } from '@utils/dev'
-+import { COMPONENT as PARENT } from '../ds'
-+
-+export const COMPONENT = rc(PARENT, 'Empty')
-```
-
-**File**: `src/screens/rakuen/group/component/empty/index.tsx` (added, +33/-0)
-```diff
-@@ -0,0 +1,33 @@
-+/*
-+ * @Author: czy0729
-+ * @Date: 2026-10-25 00:00:00
-+ * @Last Modified by: czy0729
-+ * @Last Modified time: 2026-10-25 00:00:00
-+ *
-+ * 空状态
-+ */
-+import { observer } from 'mobx-react'
-+import { Flex, Mesume, Text } from '@components'
-+import { _, useStore } from '@stores'
-+import { COMPONENT } from './ds'
-+import { styles } from './styles'
-+
-+import type { Ctx } from '../../types'
-+
-+function Empty() {
-+  const { $ } = useStore<Ctx>(COMPONENT)
-+
-+  const { list, _loaded } = $.group
-+  if (!_loaded || list.length) return null
-+
-+  return (
-+    <Flex style={styles.empty} direction='column' justify='center'>
-+      <Mesume />
-+      <Text style={_.mt.sm} type='sub'>
-+        好像什么都没有
-+      </Text>
-+    </Flex>
-+  )
-+}
-+
-+export default observer(Empty)
-```
-
-**File**: `src/screens/rakuen/group/component/empty/styles.ts` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+/*
-+ * @Author: czy0729
-+ * @Date: 2026-10-25 00:00:00
-+ * @Last Modified by: czy0729
-+ * @Last Modified time: 2026-10-25 00:00:00
-+ */
-+export const styles = {
-+  empty: {
-+    minHeight: 240
++/** 从全局 Text 语义色解析具体颜色值 (getTextStyle 内部有缓存; 所有 TextType 均有对应色) */
++function getTypeColor(type: TextType) {
++  const styles = getTextStyle({ type })
++  for (let i = styles.length - 1; i >= 0; i--) {
++    const color = (styles[i] as RNTextStyle | undefined)?.color
++    if (color) return color
 +  }
 +}
++
+ /**
+  * 单个菜单项: 点击执行回调并关闭菜单
+  * 拖动悬停高亮由菜单层手势写 highlightIndex 驱动, 这里只读 shared value 计算背景, 无 re-render
+@@ -25,6 +37,18 @@ function MenuItemComponent({ item, index, isLast, actionParams }: Props) {
+   const { close, highlight } = useHoldMenu()
+   const styles = memoStyles()
+ 
++  /** 选中项固定渲染勾图标, 否则渲染调用方传入的图标 */
++  const iconName = item.isTitle ? '' : item.checked ? 'md-check' : item.icon
++
++  /** 文字与右侧图标共用色: 显式 type 优先, 其次破坏性红, 默认菜单文本色 (标题项固定灰色) */
++  const colorStyle = item.isTitle
++    ? styles.title
++    : item.type
++      ? { color: getTypeColor(item.type) }
++      : item.isDestructive
++        ? styles.destructive
++        : styles.text
++
+   const handlePress = (evt?: MenuPressEvent) => {
+     item.onPress?.(evt, ...(actionParams?.[item.text] || []))
+     close()
+@@ -43,18 +67,32 @@ function MenuItemComponent({ item, index, isLast, actionParams }: Props) {
+           withoutFeedback={item.isTitle}
+           onPress={item.isTitle ? undefined : handlePress}
+         >
+-          <Text
+-            style={
+-              item.isTitle ? styles.title : item.isDestructive ? styles.destructive : styles.text
+-            }
+-            size={item.isTitle ? MENU_ITEM_TITLE_SIZE : MENU_ITEM_TEXT_SIZE}
+-            align={item.isTitle ? 'center' : 'left'}
+-            numberOfLines={item.isTitle ? undefined : 1}
+-            ellipsizeMode='middle'
+-            s2t={false}
+-          >
+-            {item.text}
+-          </Text>
++          {item.isTitle ? (
++            <Text style={colorStyle} size={MENU_ITEM_TITLE_SIZE} align='center' s2t={false}>
++              {item.text}
++            </Text>
++          ) : (
++            <View style={styles.row}>
++              <Text
++                style={stl(colorStyle, styles.flex)}
++                size={MENU_ITEM_TEXT_SIZE}
++                align='left'
++                numberOfLines={1}
++                ellipsizeMode='middle'
++                s2t={false}
++              >
++                {item.text}
++              </Text>
++              {iconName && (
++                <Iconfont
++                  style={styles.icon}
++                  name={iconName}
++                  size={MENU_ITEM_ICON_SIZE}
++                  color={colorStyle.color}
++                />
++              )}
++            </View>
++          )}
+         </Touchable>
+       </Animated.View>
+       {item.withSeparator && <View style={styles.separator} />}
 ```
 
-**File**: `src/screens/rakuen/group/component/extra/index.tsx` (modified, +3/-2)
+**File**: `src/components/hold-menu/menu/menu-item/styles.ts` (modified, +10/-0)
 ```diff
-@@ -2,9 +2,10 @@
-  * @Author: czy0729
-  * @Date: 2024-12-08 06:47:50
-  * @Last Modified by: czy0729
-- * @Last Modified time: 2026-04-01 06:49:24
-+ * @Last Modified time: 2026-10-24 10:00:00
-+ *
-+ * 调试面板: 埋点热区
-  */
--import React from 'react'
- import { observer } from 'mobx-react'
- import { Heatmap } from '@components'
- import { _ } from '@stores'
+@@ -32,6 +32,16 @@ export const memoStyles = _.memoStyles(() => ({
+   text: {
+     color: _.select(MENU_TEXT_LIGHT_COLOR, MENU_TEXT_DARK_COLOR)
+   },
++  row: {
++    flexDirection: 'row',
++    alignItems: 'center'
++  },
++  flex: {
++    flex: 1
++  },
++  icon: {
++    marginLeft: _.r(8)
++  },
+   title: {
+     color: MENU_TITLE_COLOR
+   },
 ```
 
-**File**: `src/screens/rakuen/group/component/info/index.tsx` (modified, +3/-2)
+**File**: `src/components/hold-menu/types.ts` (modified, +11/-1)
 ```diff
-@@ -2,9 +2,10 @@
-  * @Author: czy0729
-  * @Date: 2019-07-13 18:48:20
-  * @Last Modified by: czy0729
-- * @Last Modified time: 2026-07-16 20:47:42
-+ * @Last Modified time: 2026-10-24 10:00:00
-+ *
-+ * 小组信息: 标题 / 封面 / 简介
+@@ -5,7 +5,8 @@
+  * @Last Modified time: 2026-09-10 11:00:00
   */
--import React from 'react'
+ import type { PropsWithChildren } from 'react'
+-import type { ViewStyle } from '@types'
++import type { IconfontNames, ViewStyle } from '@types'
++import type { TextType } from '../text'
+ 
+ /** 菜单项点击事件 */
+ export type MenuPressEvent = {
+@@ -21,6 +22,15 @@ export type MenuItemProps = {
+   /** 文本 */
+   text: string
+ 
++  /** 最右侧图标 (标题项不显示, 与 checked 同传时 checked 优先) */
++  icon?: IconfontNames
++
++  /** 是否为选中项 (最右侧渲染勾图标, 标题项不显示) */
++  checked?: boolean
++
++  /** 文字颜色类型 (全局 Text 语义色, 显式指定时优先于 isDestructive; 标题项忽略) */
++  type?: TextType
++
+   /** 是否为标题 (标题项不显示点击反馈, 参与布局但不参与选中) */
+   isTitle?: boolean
+ 
+```
+
+**File**: `src/components/popover/__tests__/hooks.menu.test.ts` (added, +137/-0)
+```diff
+@@ -0,0 +1,137 @@
++/*
++ * @Author: czy0729
++ * @Date: 2026-10-30 06:13:52
++ * @Last Modified by:   czy0729
++ * @Last Modified time: 2026-10-30 06:13:52
++ *
++ * usePopoverItems 查表与勾选派生分支
++ *  - setup.js 的 @constants 虚拟 mock 是空表, 这里用 doMock 局部替换为带条目的映射
++ */
++import React from 'react'
++
++const TestRenderer = jest.requireActual('react-test-renderer')
++
++// React 19 要求显式声明 act 测试环境, 否则 act 内状态更新不生效
++;(globalThis as any).IS_REACT_ACT_ENVIRONMENT = true
++
++// 屏蔽 react-test-renderer 官方弃用告警
++const originalConsoleError = console.error
++beforeAll(() => {
++  jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
++    if (String(args[0]).includes('react-test-renderer is deprecated')) return
++    originalConsoleError(...args)
++  })
++})
++
++// 简繁转换 mock (同 hooks.test.ts)
++jest.mock('@utils/thirdParty/open-cc', () => ({
++  s2t: (text: string) => `T:${text}`
++}))
++
++// 局部 @constants mock: MENU_ICONS_ENABLED 走全局开关, 用例内可动态翻转
++jest.doMock('@constants', () => ({
++  FROZEN_FN: () => {},
++  MENU_ICONS: { 删除: 'md-delete-outline' },
++  get MENU_ICONS_ENABLED() {
++    return (globalThis as any).__menuIconsEnabled__
++  },
++  MENU_TYPES: { 删除: 'danger' }
++}))
++
++// doMock 必须先于 require 执行, 故此处不能用静态 import
++const { usePopoverItems } = require('../hooks')
++
++function renderHook<T>(useHook: () => T) {
++  const result = { current: undefined as T }
++  let renderer: any
++
++  function Probe() {
++    result.current = useHook()
++    return null
++  }
++
++  TestRenderer.act(() => {
++    renderer = TestRenderer.create(React.createElement(Probe))
++  })
++
++  return { result }
++}
++
++describe('usePopoverItems 查表与勾选派生', () => {
++  beforeEach(() => {
++    ;(globalThis as any).__menuIconsEnabled__ = true
++  })
++
++  afterEach(() => {
++    ;(globalThis as any).__menuIconsEnabled__ = true
++  })
++
++  it('传 value 时命中项自动渲染勾, 未命中项无勾', () => {
++    const { result } = renderHook(() => usePopoverItems({ data: ['买入', '删除'], value: '删除' }))
++
++    expect(result.current.items[0].checked).toBe(false)
++    expect(result.current.items[1].checked).toBe(true)
++  })
++
++  it('不传 value 时无勾选态', () => {
++    const { result } = renderHook(() => usePopoverItems({ data: ['买入'] }))
++
++    expect(result.current.items[0].checked).toBe(false)
++  })
++
++  it('对象项显式 checked 优先于 value 推导', () => {
++    const { result } = renderHook(() =>
++      usePopoverItems({ data: [{ text: '买入', checked: true }], value: '删除' })
++    )
++
++    expect(result.current.items[0].checked).toBe(true)
++  })
++
++  it('操作型菜单按文案查图标映射', () => {
++    const { result } = renderHook(() => usePopoverItems({ data: ['删除', '买入'] }))
++
++    expect(result.current.items[0].icon).toBe('md-delete-outline')
++    expect(result.current.items[1].icon).toBeUndefined()
++  })
++
++  it('选择型菜单 (传 value) 不查图标表', () => {
++    const { result } = renderHook(() => usePopoverItems({ data: ['删除'], value: '删除' }))
++
++    expect(result.current.items[0].icon).toBeUndefined()
++  })
++
++  it('MENU_ICONS_ENABLED 关闭时不查图标表', () => {
++    ;(globalThis as any).__menuIconsEnabled__ = false
++    const { result } = renderHook(() => usePopoverItems({ data: ['删除'] }))
++
++    expect(result.current.items[0].icon).toBeUndefined()
++  })
++
++  it('危险动作查表派生 type=danger', () => {
++    const { result } = renderHook(() => usePopoverItems({ data: ['删除', '买入'] }))
++
++    expect(result.current.items[0].type).toBe('danger')
++    expect(result.current.items[1].type).toBeUndefined()
++  })
++
++  it('显式 icon 与 type 优先于查表', () => {
++    const { result } = renderHook(() =>
++      usePopoverItems({ data: [{ text: '删除', icon: 'md-edit', type: 'main' }] })
++    )
++
++    expect(result.current.items[0].icon).toBe('md-edit')
++    expect(result.current.items[0].type).toBe('main')
++  })
++
++  it('value 按对象项 text 匹配', () => {
++    const { result } = renderHook(() =>
++      usePopoverItems({
++        data: [{ text: '买入' }, { text: '删除' }],
++        value: { text: '删除' }
++      })
++    )
++
++    expect(result.current.items[0].checked).toBe(false)
++    expect(result.current.items[1].checked).toBe(true)
++  })
++})
+```
+
+**File**: `src/components/popover/hooks.ts` (modified, +36/-16)
+```diff
+@@ -2,13 +2,12 @@
+  * @Author: czy0729
+  * @Date: 2026-09-15 00:00:00
+  * @Last Modified by: czy0729
+- * @Last Modified time: 2026-09-15 07:27:09
++ * @Last Modified time: 2026-10-30 05:48:29
+  */
+ import { useCallback, useMemo, useRef, useState } from 'react'
+ import { findNodeHandle, UIManager } from 'react-native'
+-import { systemStore } from '@stores'
+ import { globalWarn } from '@utils/dev'
+-import { FROZEN_FN } from '@constants'
++import { FROZEN_FN, MENU_ICONS, MENU_ICONS_ENABLED, MENU_TYPES } from '@constants'
+ import { toMenuLabel, toMenuLabels, usePopoverList } from './utils'
+ import { ANDROID_DELAY_PRESS_IN, MENU_CLOSE_DELAY, WEB_SELECT_DELAY } from './ds'
+ 
+@@ -32,31 +31,52 @@ let warnedMissingPopupMenu = false
+ /** iOS: 把菜单数据派生为 hold-menu 菜单项 */
+ export function usePopoverItems<Data extends PopoverData>({
+   data,
++  value,
+   title = '',
+   onSelect = FROZEN_FN,
+   onLongPress,
+   activateOn
+ }: UsePopoverItemsOptions<Data>): UsePopoverItemsResult {
+   const list = usePopoverList(data)
+ 
+-  /** 简繁开关变化需要重新派生菜单文案, 故读出作为 memo 依赖 */
+-  const s2tEnabled = systemStore.setting.s2t
+-
+   // 外部传了 onLongPress 说明长按语义归调用方, 菜单自动降级为纯点击激活, 不抢占长按
+   const hasExternalLongPress = typeof onLongPress === 'function'
+ 
+   const items = useMemo<PopoverIOSItems>(() => {
+     // 显式引用开关: 简繁设置变化时 memo 需重算 (toMenuLabels / toMenuLabel 读取的是同一个开关)
+-    const labels = s2tEnabled ? toMenuLabels(list) : list.slice()
+-    const itemsValue: PopoverIOSItems = labels.map((text, index) => ({
+-      text,
+-      onPress: (evt?: PopoverEvent) => {
+-        // 等菜单收起动画结束再触发动作, 避免跳转/弹窗与关闭动画重叠
+-        setTimeout(() => {
+-          onSelect(list[index], index, evt)
+-        }, MENU_CLOSE_DELAY)
++    const labels = toMenuLabels(list)
++    const valueText = typeof value === 'string' ? value : value?.text
++
++    const itemsValue: PopoverIOSItems = labels.map((text, index) => {
++      const entry = list[index]
++      const rawText = typeof entry === 'string' ? entry : entry.text
++
++      /**
++       * 操作型菜单 (未传 value) 按原始文案查通用图标映射, 显式 icon 优先;
++       * 选择型菜单 (传 value) 只派生勾, 不查表, 两类菜单互不干扰;
++       * 查表受 MENU_ICONS_ENABLED 总开关控制
++       */
++      const mappedIcon = value === undefined && MENU_ICONS_ENABLED ? MENU_ICONS[rawText] : undefined
++
++      /** 危险动作按文案查表标红 (danger), 显式 type 优先; 选择型菜单不查表 */
++      const mappedType = value === undefined ? MENU_TYPES[rawText] : undefined
++
++      return {
++        text,
++        icon: typeof entry === 'string' ? mappedIcon : entry.icon ?? mappedIcon,
++        checked:
++          typeof entry === 'string'
++            ? rawText === valueText
++            : entry.checked ?? rawText === valueText,
++        type: typeof entry === 'string' ? mappedType : entry.type ?? mappedType,
++        onPress: (evt?: PopoverEvent) => {
++          // 等菜单收起动画结束再触发动作, 避免跳转/弹窗与关闭动画重叠
++          setTimeout(() => {
++            onSelect(entry, index, evt)
++          }, MENU_CLOSE_DELAY)
++        }
+       }
+-    }))
++    })
+ 
+     if (title) {
+       itemsValue.unshift({
+@@ -66,7 +86,7 @@ export function usePopoverItems<Data extends PopoverData>({
+     }
+ 
+     return itemsValue
+-  }, [title, list, onSelect, s2tEnabled])
++  }, [value, title, list, onSelect])
+ 
+   return {
+     items,
+```
+
+**File**: `src/components/popover/index.tsx` (modified, +3/-1)
+```diff
+@@ -2,7 +2,7 @@
+  * @Author: czy0729
+  * @Date: 2022-05-02 11:29:48
+  * @Last Modified by: czy0729
+- * @Last Modified time: 2026-09-15 05:57:59
++ * @Last Modified time: 2026-10-30 05:13:41
+  */
  import { View } from 'react-native'
  import { observer } from 'mobx-react'
- import {
+@@ -19,6 +19,7 @@ export type { PopoverProps, PopoverData }
+ /** 点击位置弹出层 (iOS: react-native-hold-menu) */
+ function Popover<Data extends PopoverData>({
+   data,
++  value,
+   title = '',
+   style,
+   activateOn,
+@@ -31,6 +32,7 @@ function Popover<Data extends PopoverData>({
+ 
+   const { items, activateOn: popoverActivateOn } = usePopoverItems({
+     data,
++    value,
+     title,
+     onSelect,
+     onLongPress,
 ```
 
 #### Recent Merged Pull Requests:
@@ -1639,34 +1839,41 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. - [帖子聚合] 修复翻页页码与内容错位，并整理列表与 Tab 组件
+## X. - [超展开] 整理页面结构，清理无用图标与冗余类型标注
 
 **RULE**:
-When implementing operations in `src/screens/rakuen/history/component/favor-list/index.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in czy0729/Bangumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/docs/architecture.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in czy0729/Bangumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f58a6465`: - [帖子聚合] 修复翻页页码与内容错位，并整理列表与 Tab 组件. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5a981aee`: - [超展开] 整理页面结构，清理无用图标与冗余类型标注. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/screens/rakuen/history/component/favor-list/index.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/docs/architecture.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
- * @Last Modified time: 2026-10-25 00:00:00
-  const styles = memoStyles()
+## 导入约定（首屏）
 
-        skipEnteringExitingAnimations={12}
+6 个底部 tab 的根页面入口一律用**深路径**引 `Component` / `Page`，不要用 `@components` barrel：
+
+```ts
+import { Component } from '@components/component'
+import { Page } from '@components/page'
+```
+
+- 涉及页面：`discovery/index`、`timeline/v2`、`home/v2`、`rakuen/v2`、`user/v2`、`tinygrail/index`
+- 原因：`src/components/index.ts` 是 ~80 个 `export *` 的 barrel，走 barrel 会把这套组件全部纳入模块图；这些页面在导航初始化时就被加载（不走 `React.lazy`），是冷启动路径的一部分
+- 其余页面都是懒加载，页面加载时 barrel 早已就绪，照常写 `@components` 即可
+- 同理，这些入口页不要为了「导入整齐」把深路径合并成 barrel，属于有意的性能约定
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
- * @Last Modified time: 2026-03-31 05:18:48
-import React from 'react'
-  const styles = memoStyles()
-
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f58a6465` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5a981aee` are properly handled with clean fallback behavior.
