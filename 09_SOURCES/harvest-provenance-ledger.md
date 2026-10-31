@@ -6376,3 +6376,6 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `ef31e883` | Multi-dimensional audit evidence | 2026-10-30T23:51:45.576Z |
 | `learn-github-expo-expo` | `https://github.com/expo/expo` | `48362988` | Multi-dimensional audit evidence | 2026-10-30T23:58:42.162Z |
 | `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-10-30T23:58:47.394Z |
+| `learn-github-googleworkspace-cli` | `https://github.com/googleworkspace/cli` | `cd3697e0` | Multi-dimensional audit evidence | 2026-10-31T00:05:32.383Z |
+| `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `4ce2a715` | Multi-dimensional audit evidence | 2026-10-31T00:05:34.883Z |
+| `learn-huggingface-comfy-org-moss-image` | `https://huggingface.co/Comfy-Org/MOSS-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-31T00:05:39.733Z |

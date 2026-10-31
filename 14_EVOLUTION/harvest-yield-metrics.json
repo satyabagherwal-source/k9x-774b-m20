@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T23:58:47.399Z",
-  "total_cycles_completed": 6344,
-  "total_learnings_persisted": 6344,
-  "total_rules_promoted": 5920,
+  "last_updated": "2026-10-31T00:05:39.738Z",
+  "total_cycles_completed": 6347,
+  "total_learnings_persisted": 6347,
+  "total_rules_promoted": 5924,
   "history": [
-    {
-      "timestamp": "2026-10-30T10:09:25.888Z",
-      "repository": "webrecorder/pywb",
-      "learningId": "learn-github-webrecorder-pywb",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T10:09:26.018Z",
-      "repository": "emberstack/kubernetes-reflector",
-      "learningId": "learn-github-emberstack-kubernetes-reflector",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T10:10:00.290Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T10:11:43.145Z",
       "repository": "ntex-rs/ntex",
@@ -1403,6 +1382,27 @@
       "repository": "autogluon/chronos-2",
       "learningId": "learn-huggingface-autogluon-chronos-2",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T00:05:32.389Z",
+      "repository": "googleworkspace/cli",
+      "learningId": "learn-github-googleworkspace-cli",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T00:05:34.889Z",
+      "repository": "dkhamsing/open-source-ios-apps",
+      "learningId": "learn-github-dkhamsing-open-source-ios-apps",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T00:05:39.738Z",
+      "repository": "Comfy-Org/MOSS-Image",
+      "learningId": "learn-huggingface-comfy-org-moss-image",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

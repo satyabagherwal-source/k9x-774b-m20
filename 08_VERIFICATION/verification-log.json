@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-T4S3",
-    "timestamp": "2026-10-28T17:49:49.299Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "a29309b3e886ad2fda7e771419f6abcfbc290888e49d5d61f951c52cc2f0cb59",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-1SMA",
-    "timestamp": "2026-10-28T17:56:33.442Z",
-    "repository": "google/gemma-4-31B-it",
-    "learningId": "learn-huggingface-google-gemma-4-31b-it",
-    "contentHash": "204302ceb403baf987288409b1e31924f68341d859c2103650999e122d7938e5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-CAUG",
-    "timestamp": "2026-10-28T18:04:43.624Z",
-    "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-    "contentHash": "e216f53ee73f432b58ea906a1c800b31c9111d3190db21d822945abd3a4cc9a7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-CBOS",
     "timestamp": "2026-10-28T18:04:44.716Z",
     "repository": "open-policy-agent/opa",
@@ -7492,6 +7447,51 @@
     "contentHash": "debcaee89572850bbc5506261280e443ecc9d7c3616fad4266e2fb980675913f",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-40GR",
+    "timestamp": "2026-10-31T00:05:32.379Z",
+    "repository": "googleworkspace/cli",
+    "learningId": "learn-github-googleworkspace-cli",
+    "contentHash": "b03b5863ff7ce2f3a6d1f4a541d4b5e45ef5876e0873ed1c0229d487bd6321c9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-42E8",
+    "timestamp": "2026-10-31T00:05:34.880Z",
+    "repository": "dkhamsing/open-source-ios-apps",
+    "learningId": "learn-github-dkhamsing-open-source-ios-apps",
+    "contentHash": "23040da8a8ccfaec771bb5025d5c10dc1a8774932b452eb902892d7b14f49524",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-464X",
+    "timestamp": "2026-10-31T00:05:39.729Z",
+    "repository": "Comfy-Org/MOSS-Image",
+    "learningId": "learn-huggingface-comfy-org-moss-image",
+    "contentHash": "51369f0b21c25348b2dd79fcf488fa22f512e764e2a143b188f5a275edf344a9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

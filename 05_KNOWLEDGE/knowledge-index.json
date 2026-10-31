@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T23:58:47.293Z",
+  "last_updated": "2026-10-31T00:05:39.654Z",
   "total_verified_learnings": 1179,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9875,8 +9875,8 @@
       "slug": "dkhamsing-open-source-ios-apps",
       "platform": "github",
       "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
-      "source_version": "28722ee0",
-      "content_hash": "e38c342f78b579ec9f24ec093c9afe03a6fb74ec7a66752f7d2d752554059be5",
+      "source_version": "4ce2a715",
+      "content_hash": "23040da8a8ccfaec771bb5025d5c10dc1a8774932b452eb902892d7b14f49524",
       "dossier_path": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "promoted_rules": [
@@ -9888,7 +9888,7 @@
         {
           "number": 3068,
           "title": "[auto] [ci skip] Generate content",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 3806,
@@ -9936,7 +9936,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T03:38:09.212Z",
+      "verified_at": "2026-10-31T00:05:34.778Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15211,14 +15211,19 @@
       "slug": "googleworkspace-cli",
       "platform": "github",
       "source_url": "https://github.com/googleworkspace/cli",
-      "source_version": "a3768d0e",
-      "content_hash": "951cf9aebe41e1ce939679c347b1a90ef2dc5c3e8c27b9681125bac94ce2d591",
+      "source_version": "cd3697e0",
+      "content_hash": "b03b5863ff7ce2f3a6d1f4a541d4b5e45ef5876e0873ed1c0229d487bd6321c9",
       "dossier_path": "07_PROJECT_LEARNING/googleworkspace-cli-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/googleworkspace-cli-learnings.md",
       "promoted_rules": [
         {
           "number": 1758,
           "title": "remove cargo-dist, use native fetch for npm installer (#646)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5949,
+          "title": "ci: switch automation workflow from pull_request_target to pull_request (#969)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -15227,7 +15232,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:04:13.175Z",
+      "verified_at": "2026-10-31T00:05:32.283Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -92112,7 +92117,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/MOSS-Image",
       "source_version": "hf-comfy-org-moss-image",
-      "content_hash": "7dcd89662ec7369c901f0a36205e8de0cbb3dd59220da13c39366063f1732ea4",
+      "content_hash": "51369f0b21c25348b2dd79fcf488fa22f512e764e2a143b188f5a275edf344a9",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md",
       "promoted_rules": [
@@ -92135,6 +92140,16 @@
           "number": 5027,
           "title": "Quantization Variant Naming Convention",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5950,
+          "title": "The Model Artifact Naming & Placement Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5951,
+          "title": "The Quantization Variant Decoupling Principle",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -92142,7 +92157,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T21:36:40.076Z",
+      "verified_at": "2026-10-31T00:05:39.635Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -112257,13 +112272,13 @@
       "rule_number": 3068,
       "title": "[auto] [ci skip] Generate content",
       "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
-      "source_version": "eb582ad9",
+      "source_version": "4ce2a715",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-20T05:19:10.023Z"
+      "verified_at": "2026-10-31T00:05:34.778Z"
     },
     "rule-3069": {
       "learning_id": "rule-3069",
@@ -157144,6 +157159,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T23:58:47.269Z"
+    },
+    "rule-5949": {
+      "learning_id": "rule-5949",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5949,
+      "title": "ci: switch automation workflow from pull_request_target to pull_request (#969)",
+      "source_url": "https://github.com/googleworkspace/cli",
+      "source_version": "cd3697e0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:05:32.283Z"
+    },
+    "rule-5950": {
+      "learning_id": "rule-5950",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5950,
+      "title": "The Model Artifact Naming & Placement Invariant",
+      "source_url": "https://huggingface.co/Comfy-Org/MOSS-Image",
+      "source_version": "hf-comfy-org-moss-image",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:05:39.635Z"
+    },
+    "rule-5951": {
+      "learning_id": "rule-5951",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5951,
+      "title": "The Quantization Variant Decoupling Principle",
+      "source_url": "https://huggingface.co/Comfy-Org/MOSS-Image",
+      "source_version": "hf-comfy-org-moss-image",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:05:39.635Z"
     }
   },
   "aliases": {

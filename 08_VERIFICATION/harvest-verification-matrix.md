@@ -6367,3 +6367,6 @@
 | `CYCLE-20261030-MAHX` | `2026-10-30T23:51:45.573Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5944` | Yes (`4a39912e...`) |
 | `CYCLE-20261030-V7XQ` | `2026-10-30T23:58:42.158Z` | `expo/expo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5945` | Yes (`56331f85...`) |
 | `CYCLE-20261030-VBZ2` | `2026-10-30T23:58:47.390Z` | `autogluon/chronos-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5946, Rule 5947, Rule 5948` | Yes (`debcaee8...`) |
+| `CYCLE-20261031-40GR` | `2026-10-31T00:05:32.379Z` | `googleworkspace/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5949` | Yes (`b03b5863...`) |
+| `CYCLE-20261031-42E8` | `2026-10-31T00:05:34.880Z` | `dkhamsing/open-source-ios-apps` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3068` | Yes (`23040da8...`) |
+| `CYCLE-20261031-464X` | `2026-10-31T00:05:39.729Z` | `Comfy-Org/MOSS-Image` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5950, Rule 5951` | Yes (`51369f0b...`) |

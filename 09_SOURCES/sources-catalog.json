@@ -2085,8 +2085,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/MOSS-Image",
     "sourceVersion": "hf-comfy-org-moss-image",
     "license": "Open-Source",
-    "contentHash": "7dcd89662ec7369c901f0a36205e8de0cbb3dd59220da13c39366063f1732ea4",
-    "lastHarvestedAt": "2026-10-27T21:36:40.176Z",
+    "contentHash": "51369f0b21c25348b2dd79fcf488fa22f512e764e2a143b188f5a275edf344a9",
+    "lastHarvestedAt": "2026-10-31T00:05:39.733Z",
     "learningId": "learn-huggingface-comfy-org-moss-image"
   },
   "bvaughn-react-virtualized": {
@@ -2103,10 +2103,10 @@
     "repository": "dkhamsing/open-source-ios-apps",
     "platform": "github",
     "sourceUrl": "https://github.com/dkhamsing/open-source-ios-apps",
-    "sourceVersion": "28722ee0",
+    "sourceVersion": "4ce2a715",
     "license": "CC0-1.0",
-    "contentHash": "e38c342f78b579ec9f24ec093c9afe03a6fb74ec7a66752f7d2d752554059be5",
-    "lastHarvestedAt": "2026-10-28T03:38:09.293Z",
+    "contentHash": "23040da8a8ccfaec771bb5025d5c10dc1a8774932b452eb902892d7b14f49524",
+    "lastHarvestedAt": "2026-10-31T00:05:34.883Z",
     "learningId": "learn-github-dkhamsing-open-source-ios-apps"
   },
   "moby-buildkit": {
@@ -2723,10 +2723,10 @@
     "repository": "googleworkspace/cli",
     "platform": "github",
     "sourceUrl": "https://github.com/googleworkspace/cli",
-    "sourceVersion": "a3768d0e",
+    "sourceVersion": "cd3697e0",
     "license": "Apache-2.0",
-    "contentHash": "951cf9aebe41e1ce939679c347b1a90ef2dc5c3e8c27b9681125bac94ce2d591",
-    "lastHarvestedAt": "2026-10-18T22:04:13.212Z",
+    "contentHash": "b03b5863ff7ce2f3a6d1f4a541d4b5e45ef5876e0873ed1c0229d487bd6321c9",
+    "lastHarvestedAt": "2026-10-31T00:05:32.383Z",
     "learningId": "learn-github-googleworkspace-cli"
   },
   "react-navigation-react-navigation": {
