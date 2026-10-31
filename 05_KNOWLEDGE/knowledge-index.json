@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T12:29:47.464Z",
+  "last_updated": "2026-10-31T12:39:42.081Z",
   "total_verified_learnings": 1183,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8977,8 +8977,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "8e1490fa",
-      "content_hash": "42dad306398d544dc60be5d926dc714fbc50a1451ef0aafc93f59f2211712a5e",
+      "source_version": "6fee7dae",
+      "content_hash": "5050336d32555b2924ddf7648432a6be16a52a400bfc40df2211e1c4d77fea43",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -9059,8 +9059,8 @@
         },
         {
           "number": 3143,
-          "title": "deps: update lock file - notably tokio from 1.53.3 to 1.54.0",
-          "status": "PROMOTED_AND_VERIFIED"
+          "title": "deps: update lock file",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 3193,
@@ -9293,7 +9293,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T18:25:42.187Z",
+      "verified_at": "2026-10-31T12:39:42.061Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23520,7 +23520,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/electra-base-discriminator",
       "source_version": "hf-google-electra-base-discriminator",
-      "content_hash": "a452015b220b088fa5ab0949c7612857a0318da03e79d05125e9e51b0fec6ec6",
+      "content_hash": "d40b2089dd223b9db777cf83155ca4781fbd246357fe44e8e37a392ff5cc56f2",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "promoted_rules": [
@@ -23582,7 +23582,7 @@
         "learn-huggingface-hf-google-electra-base-discriminator-mv48xaja",
         "learn-huggingface-hf-google-electra-base-discriminator-mv4maybt"
       ],
-      "verified_at": "2026-10-28T12:02:07.174Z",
+      "verified_at": "2026-10-31T12:39:27.462Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -114478,15 +114478,15 @@
       "learning_id": "rule-3143",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 3143,
-      "title": "deps: update lock file - notably tokio from 1.53.3 to 1.54.0",
+      "title": "deps: update lock file",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "95901ef6",
+      "source_version": "6fee7dae",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-20T11:09:14.239Z"
+      "verified_at": "2026-10-31T12:39:42.061Z"
     },
     "rule-3144": {
       "learning_id": "rule-3144",

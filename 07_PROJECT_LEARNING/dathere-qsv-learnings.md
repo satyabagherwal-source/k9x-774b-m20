@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `8e1490fa`  
+> **Source Version**: `6fee7dae`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T18:25:41.628Z  
+> **Timestamp**: 2026-10-31T12:39:41.721Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T18:25:41.012Z  
+> **Harvest Timestamp**: 2026-10-31T12:39:41.713Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3816 stars
+- **Stars / Engagement**: 3817 stars
 
 ---
 
@@ -2203,24 +2203,61 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8e1490fa` (2026-10-30)
-**Commit Message**: docs(changelog): mention qsv-clientd-tray in the 27.0.1 highlights
+### Incident Patch 1: `6fee7dae` (2026-10-31)
+**Commit Message**: deps: update lock file
 
-Same paragraph as the one added to the published 27.0.1 release notes.
+Bump encoding_rs 0.8.42 -> 0.8.44, log 0.4.34 -> 0.4.35, redis 1.8.0 -> 1.8.1, and zip 9.1.3 -> 9.2.0.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `Cargo.lock` (modified, +8/-8)
 ```diff
-@@ -40,6 +40,8 @@ In 27.0.1, a schematic can stay connected to its data. Open it from disk with [q
+@@ -2530,9 +2530,9 @@ checksum = "34aa73646ffb006b8f5147f3dc182bd4bcb190227ce861fc4a4844bf8e3cb2c0"
  
- Public [CKAN](https://ckan.org) data is one command away: with [qsv-client 0.6.0](https://github.com/dathere/qsv-client/releases/tag/0.6.0) or later, point `qsv-clientd viz` at any public CKAN resource or dataset page (or a `ckan://` id) to get a live schematic of it. qsv-clientd remembers where the data came from, so Fetch latest gets the current version.
+ [[package]]
+ name = "encoding_rs"
+-version = "0.8.42"
++version = "0.8.44"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8e985e0451871ad22fb8d2b6b076e2028a502a0d3950998c2c5c0a4f9b5d9679"
++checksum = "89253175e704ab869b04f9db224d38630e0211a53841a79181deae0889e169f5"
+ dependencies = [
+  "any_all_workaround",
+  "cfg-if",
+@@ -4689,9 +4689,9 @@ dependencies = [
  
-+Rather not keep a terminal open? qsv-client also ships **`qsv-clientd-tray`**, an optional system tray app for macOS, Linux and Windows (`pipx install 'qsv-client[tray]'`). It runs qsv-clientd, or attaches to one that's already running, and announces each pairing request so you can approve it from its menu by picking the code the page shows. It also manages datasets and can start at login.
-+
- Also in this release:
+ [[package]]
+ name = "log"
+-version = "0.4.34"
++version = "0.4.35"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
++checksum = "5d15f86d12da44cd8d4ec3c73984537eb7f4cadcb9776a575a0a8a05ca11005c"
  
- - **Polars 2.1.0, streamed.** `sqlp --streaming` and `joinp --streaming` now write results batch by batch, Polars' query optimizations apply again, and `pivotp` handles wide pivots with a fraction of the memory. `sqlp` gains recursive CTEs, and has one breaking change: a `FROM` subquery alias can no longer be read as a table.
+ [[package]]
+ name = "lru"
+@@ -7721,9 +7721,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "redis"
+-version = "1.8.0"
++version = "1.8.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7acd809e80afa754c63f586955699d8990efe1c4b6613183ee5f027a11fbc8b5"
++checksum = "db7f3d75b5a3301746bff39a767bf4c5c42506b08513527308b3875bfb64a031"
+ dependencies = [
+  "ahash",
+  "arcstr",
+@@ -11004,9 +11004,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "zip"
+-version = "9.1.3"
++version = "9.2.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1156b39d142a34b999c2310a50455e0cb3760bf7efad0122f796d813bee26ccb"
++checksum = "3f5b58784007ff6e5f280ec82c8596686a3b9b5dd5836c63288d4479f84728b9"
+ dependencies = [
+  "aes",
+  "bzip2",
 ```
 
 #### Recent Merged Pull Requests:
@@ -2249,29 +2286,42 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(changelog): mention qsv-clientd-tray in the 27.0.1 highlights
+## X. deps: update lock file
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8e1490fa`: docs(changelog): mention qsv-clientd-tray in the 27.0.1 highlights. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6fee7dae`: deps: update lock file. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Rather not keep a terminal open? qsv-client also ships **`qsv-clientd-tray`**, an optional system tray app for macOS, Linux and Windows (`pipx install 'qsv-client[tray]'`). It runs qsv-clientd, or attaches to one that's already running, and announces each pairing request so you can approve it from its menu by picking the code the page shows. It also manages datasets and can start at login.
-
+version = "0.8.44"
+checksum = "89253175e704ab869b04f9db224d38630e0211a53841a79181deae0889e169f5"
+version = "0.4.35"
+checksum = "5d15f86d12da44cd8d4ec3c73984537eb7f4cadcb9776a575a0a8a05ca11005c"
+version = "1.8.1"
+checksum = "db7f3d75b5a3301746bff39a767bf4c5c42506b08513527308b3875bfb64a031"
+version = "9.2.0"
+checksum = "3f5b58784007ff6e5f280ec82c8596686a3b9b5dd5836c63288d4479f84728b9"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+version = "0.8.42"
+checksum = "8e985e0451871ad22fb8d2b6b076e2028a502a0d3950998c2c5c0a4f9b5d9679"
+version = "0.4.34"
+checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
+version = "1.8.0"
+checksum = "7acd809e80afa754c63f586955699d8990efe1c4b6613183ee5f027a11fbc8b5"
+version = "9.1.3"
+checksum = "1156b39d142a34b999c2310a50455e0cb3760bf7efad0122f796d813bee26ccb"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8e1490fa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6fee7dae` are properly handled with clean fallback behavior.

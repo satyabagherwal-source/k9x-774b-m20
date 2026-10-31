@@ -6570,3 +6570,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-cloudflare-clef-flash` | `https://huggingface.co/Cloudflare/clef-flash` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-10-31T12:22:45.653Z |
 | `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `31fed7a6` | Multi-dimensional audit evidence | 2026-10-31T12:29:46.496Z |
 | `learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-31T12:29:47.550Z |
+| `learn-huggingface-google-electra-base-discriminator` | `https://huggingface.co/google/electra-base-discriminator` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-31T12:39:27.577Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `6fee7dae` | Multi-dimensional audit evidence | 2026-10-31T12:39:42.169Z |

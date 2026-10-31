@@ -725,8 +725,8 @@
     "sourceUrl": "https://huggingface.co/google/electra-base-discriminator",
     "sourceVersion": "hf-google-electra-base-discriminator",
     "license": "Open-Source",
-    "contentHash": "a452015b220b088fa5ab0949c7612857a0318da03e79d05125e9e51b0fec6ec6",
-    "lastHarvestedAt": "2026-10-28T12:02:07.296Z",
+    "contentHash": "d40b2089dd223b9db777cf83155ca4781fbd246357fe44e8e37a392ff5cc56f2",
+    "lastHarvestedAt": "2026-10-31T12:39:27.577Z",
     "learningId": "learn-huggingface-google-electra-base-discriminator"
   },
   "hf-baai-bge-m3": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "8e1490fa",
+    "sourceVersion": "6fee7dae",
     "license": "NOASSERTION",
-    "contentHash": "42dad306398d544dc60be5d926dc714fbc50a1451ef0aafc93f59f2211712a5e",
-    "lastHarvestedAt": "2026-10-30T18:25:42.285Z",
+    "contentHash": "5050336d32555b2924ddf7648432a6be16a52a400bfc40df2211e1c4d77fea43",
+    "lastHarvestedAt": "2026-10-31T12:39:42.169Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {

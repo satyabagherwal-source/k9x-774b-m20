@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T12:29:47.560Z",
+  "last_updated": "2026-10-31T12:39:42.179Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -920,14 +920,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-electra-base-discriminator",
-      "content_hash": "a452015b220b088fa5ab0949c7612857a0318da03e79d05125e9e51b0fec6ec6",
-      "verified_at": "2026-10-28T12:02:07.306Z",
+      "content_hash": "d40b2089dd223b9db777cf83155ca4781fbd246357fe44e8e37a392ff5cc56f2",
+      "verified_at": "2026-10-31T12:39:27.586Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T12:02:07.306Z"
+      "last_updated": "2026-10-31T12:39:27.586Z"
     },
     "BAAI/bge-m3": {
       "repository": "BAAI/bge-m3",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "42dad306398d544dc60be5d926dc714fbc50a1451ef0aafc93f59f2211712a5e",
-      "verified_at": "2026-10-30T18:25:42.294Z",
+      "content_hash": "5050336d32555b2924ddf7648432a6be16a52a400bfc40df2211e1c4d77fea43",
+      "verified_at": "2026-10-31T12:39:42.178Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T18:25:42.294Z"
+      "last_updated": "2026-10-31T12:39:42.178Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
