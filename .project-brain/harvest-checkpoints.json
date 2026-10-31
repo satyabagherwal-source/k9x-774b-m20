@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T05:21:18.648Z",
+  "last_updated": "2026-10-31T05:29:37.963Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -126,14 +126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-small-en-v1-5",
-      "content_hash": "8dafd97d4261e051a77f90e0b98dadfedd08b2cea9bff1ff2c36fcd8b4caa308",
-      "verified_at": "2026-10-28T03:24:45.362Z",
+      "content_hash": "a916287b8109489bf58cd733203be0e4613462b9b12fd09cec82021227d1f42e",
+      "verified_at": "2026-10-31T05:29:37.962Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T03:24:45.362Z"
+      "last_updated": "2026-10-31T05:29:37.962Z"
     },
     "hasaneyldrm/exercises-dataset": {
       "repository": "hasaneyldrm/exercises-dataset",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "601d5241c518d7c20b10d892f0d9c6e28b59b1ea08352abc15699940619c3830",
-      "verified_at": "2026-10-30T13:22:21.535Z",
+      "content_hash": "27dd85d7bd9a7d2cd25a1fbdf51de82b6c412b63e38820d13e608960cc783246",
+      "verified_at": "2026-10-31T05:29:33.003Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T13:22:21.535Z"
+      "last_updated": "2026-10-31T05:29:33.003Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",

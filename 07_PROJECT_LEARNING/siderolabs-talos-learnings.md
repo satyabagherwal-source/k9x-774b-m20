@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `cb0936a4`  
+> **Source Version**: `a1920121`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T13:22:20.842Z  
+> **Timestamp**: 2026-10-31T05:29:32.317Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T13:22:20.238Z  
+> **Harvest Timestamp**: 2026-10-31T05:29:31.896Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11435 stars
+- **Stars / Engagement**: 11440 stars
 
 ---
 
@@ -1920,13 +1920,11 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14797** (2026-10-30): **fix: open the files of pkg/xfs roots with O_CLOEXEC**
-  *Symptoms*: `UnixRoot.OpenFile` (`unix.Openat`) and `AsOSFile` (`dup`) create descriptors without close-on-exec, unlike the rest of `pkg/xfs`. machined writes and labels `/etc` through these roots, so a service it starts at that moment inherits the descriptor. In enforcing mode SELinux denies it at the exec, which `TestNoHostDenials` caught in #14610:  ``` avc:  denied  { write } for  pid=116 comm="sandboxd" path="/cri/conf.d/base-spec.json" dev="overlay" scontext=system_u:system_r:sandboxd_t:s0 tcontext=system_u:object_r:etc_t:s0 tclass=file permissive=0 ```  In permissive mode, or without SELinux, the descriptor stays open in the service.  Both calls now set close-on-exec, and the xfs tests check the flag (they fail without the fix). Same class as #9412: a few more instances remain on main (kexec memfds, the makefs protofile, `gopacket` packet capture), I will follow up with those and a lint check. 
+- **Issue #14800** (2026-10-30): **fix: skip EFI variable updates when efivarfs is read-only**
+  *Symptoms*: ## What? (description)  When efivarfs can not be made writable (the kernel refuses the read-write remount with `EINVAL`), the sd-boot installer now logs a warning and skips the EFI variable and boot entry update instead of failing the install/upgrade.  - `efivarfs.NewFilesystemReaderWriter(true)` returns a typed `efivarfs.ErrWriteNotSupported` when the remount fails with `EINVAL`. - `Config.setup()` moves the EFI variable work into `updateEFIVariables()`. If it returns `ErrWriteNotSupported`, `setup()` warns and still runs `ExtraInstallStep` (the overlay install step) and returns the install result. - The "repoint the default entry to the booted one" write during upgrade is skipped the same way.  ## Why? (reasoning)  Fixes #14799. On an ODROID-M1 with U-Boot built without `CONFIG_EFI_RT_VOLATILE_STORE`, `talosctl upgrade` copies the UKI and `systemd-boot` and then fails with `failed to create efivarfs reader/writer: invalid argument`. The board boots fine without the variables (U-Boot finds `\EFI\BOOT\BOOTAA64.EFI`, and systemd-boot picks the newest UKI by version when no default is set).  Not covered, and worth a maintainer decision: without variables there is no one-shot boot and no rollback to the previous entry on a failed boot.  ## Testing  - Compiled, `gofmt` clean, `go vet` and `go test` pass for `./internal/pkg/efivarfs/` and `./internal/app/machined/pkg/runtime/v1alpha1/bootloader/sdboot/` (golang:1.27 container). - Not run: `make conformance`, `make lint`, `make doc
 
-- **Issue #14794** (2026-10-29): **fix: ctr `entrypoint`,`arg` replace instead of merge on patch**
-  *Symptoms*: Resolves https://github.com/siderolabs/talos/issues/14773  Fixes the patching strategy for `args`, `entrypoint` when patching the ContainerConfig through a machineconfig patch. 
-  **Post-Mortem & Fix Analysis**:
-  > /m
+- **Issue #14799** (2026-10-30): **Upgrade fails on U-Boot board when efivarfs is read-only: failed to create efivarfs reader/writer: invalid argument (ODROID-M1)**
+  *Symptoms*: ## Bug Report  ### What happened? What did you expect?  `talosctl upgrade` on an ODROID-M1 (U-Boot, sd-boot UKI) copies the new UKI and `systemd-boot` to the EFI partition and then fails at the last step, `updating EFI variables`, with `failed to create efivarfs reader/writer: invalid argument` (exit code 7). The node keeps booting the old UKI.  I expected the upgrade to either complete or skip the EFI variable step with a warning, since the board boots fine without those variables (it uses the `\EFI\BOOT\BOOTAA64.EFI` fallback path).  ### Steps to reproduce  1. ODROID-M1 (RK3568), mainline U-Boot 2026.07 (Armbian build) in SPI flash, Talos v1.14.5 installed on NVMe from an imager `metal` image with the `odroid-m1` overlay (`ghcr.io/siderolabs/sbc-rockchip:v0.2.1`). Single-node control plane. 2. Build an installer with the same overlay:    `imager metal --arch arm64 --output-kind installer --overlay-name=odroid-m1 --overlay-image=ghcr.io/siderolabs/sbc-rockchip:v0.2.1` 3. Serve it from a local registry reachable from the node and run:    `talosctl -n <node> upgrade --image 127.0.0.1:5000/m1/installer:v1.14.5-m1 --wait`  I ran this once with that U-Boot and got the failure below. I did not repeat it on other hardware.  ### Logs and diagnostics  Output of the upgrade command (the whole failure; the node stayed up and rebooted normally afterwards):  ``` 192.168.1.104: 2026/10/30 12:34:00 copying /usr/install/arm64/vmlinuz.efi to /boot/EFI/EFI/Linux/Talos-v1.14.5~1.efi 192.168.1.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1943,391 +1941,698 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dfb38dce` (2026-10-26)
-**Commit Message**: chore: fix a few flaky tests
+### Incident Patch 1: `a1920121` (2026-10-29)
+**Commit Message**: feat: support BGP MD5 authentication password
 
-* add a slightly longer timeout to the dns check as sometimes the requests took longer than the default 1s
-* fix a flaky hypervisor test where the controller was sometimes slow to release a mutation claim
-* add a retry to the Exec test helper as some tests restart the kubelet and then try to Exec but the API server still holds it's old connection to the kublet
+Add an `authPassword` field to `BGPInstanceConfig` neighbors and pass it to GoBGP as the peer `AuthPassword`, enabling TCP MD5 signature authentication (RFC 2385) of the BGP session.
 
-For example: CommonSuite/TestBaseOCISpec test changes the base OCI spec, which restarts CRI on which the kubelet depends so it restarts as well.
+GoBGP applies the key to both the outgoing connection and the listening sockets; for VRF-bound instances the peer transport is already bound to the VRF device, so the key is installed with the VRF ifindex and authentication works there as well. The kernel matches keys by peer address (scoped to the VRF, if any, but not to the link), so unnumbered neighbors sharing a link-local address on different links can only have a single key: validation warns when unnumbered neighbors use different passwords (or only some of them have one), and the neighbor resolver logs the exact conflict once the link-local addresses are known.
 
-Signed-off-by: Orzelius <[REDACTED_EMAIL]>
+The password is limited to 80 bytes (TCP_MD5SIG_MAXKEYLEN), redacted from the machine configuration, and only a digest of it is part of the peer key, so changing it replaces the peer without keeping the plaintext around. As the resolved `BGPInstanceConfigs` resource now carries the password, it is marked as sensitive and registered as redac
 
-**File**: `internal/app/machined/pkg/controllers/hypervisor/cloud_init_iso_test.go` (modified, +19/-1)
+**File**: `api/resource/definitions/network/network.proto` (modified, +1/-0)
 ```diff
-@@ -5,6 +5,7 @@
- package hypervisor_test
+@@ -75,6 +75,7 @@ message BGPNeighborConfigSpec {
+   BGPBFDConfigSpec bfd = 5;
+   uint32 local_asn = 6;
+   bool passive = 7;
++  string auth_password = 8;
+ }
  
- import (
-+	"errors"
- 	"os"
- 	"path/filepath"
- 	"testing"
-@@ -247,7 +248,24 @@ func (s *CloudInitISOSuite) TestRetirementWaitsForMutationClaimEnteredBeforeLibr
- 
- 	asset := filepath.Join(dir, status.TypedSpec().Name)
- 	marker := hypervisor.ContentLibraryMutationFinalizer(status.TypedSpec().Name)
--	s.Require().NoError(s.State().AddFinalizer(s.Ctx(), library.Metadata(), marker))
-+
-+	// The controller publishes Ready while still holding this same marker for
-+	// the build, so claim it atomically once released.
-+	// A plain AddFinalizer would no-op and the controller would then drop it.
-+	s.Require().Eventually(func() bool {
-+		_, claimErr := s.State().UpdateWithConflicts(s.Ctx(), library.Metadata(), func(r resource.Resource) error {
-+			if r.Metadata().Finalizers().Has(marker) {
-+				return errors.New("already claimed")
-+			}
-+
-+			r.Metadata().Finalizers().Add(marker)
-+
-+			return nil
-+		}, state.WithExpectedPhase(resource.PhaseRunning))
-+
-+		return claimErr == nil
-+	}, 3*time.Second, 10*time.Millisecond, "mutation claim was never released by the controller")
-+
- 	_, err = s.State().Teardown(s.Ctx(), library.Metadata())
- 	s.Require().NoError(err)
- 
+ // BGPPeerStatusSpec describes the status of a BGP peering session.
 ```
 
-**File**: `internal/integration/base/k8s.go` (modified, +18/-3)
+**File**: `hack/release.toml` (modified, +20/-0)
 ```diff
-@@ -337,10 +337,25 @@ func (p *pod) Exec(ctx context.Context, command string) (string, string, error)
- 
- 	var stdout, stderr strings.Builder
- 
--	err = websocketExec.StreamWithContext(ctx, remotecommand.StreamOptions{
--		Stdout: &stdout,
--		Stderr: &stderr,
-+	// the context go-retry passes to the callback expires after the retry window
-+	// and would cut off long-running commands so use Retry, not RetryWithContext
-+	err = retry.Constant(10*time.Second, retry.WithUnits(time.Second)).Retry(func() error {
-+		stdout.Reset()
-+		stderr.Reset()
+@@ -925,6 +925,26 @@ Kubeconfigs are redacted from the machine configuration the same way as other se
+ As kube-apiserver can't read files from the host, a `KubeAuthorizerConfig` with `webhook.connectionInfo.type: KubeConfigFile` is now rejected,
+ as well as `authentication-token-webhook-*` flags in `KubeAPIServerConfig` `extraArgs`.
+ The authorizer name should be a valid DNS-1123 subdomain, as required by kube-apiserver.
++"""
 +
-+		streamErr := websocketExec.StreamWithContext(ctx, remotecommand.StreamOptions{
-+			Stdout: &stdout,
-+			Stderr: &stderr,
-+		})
-+		if streamErr != nil && strings.Contains(streamErr.Error(), "error dialing backend") {
-+			p.suite.T().Logf("retrying exec in pod %s/%s: %v", p.namespace, p.name, streamErr)
++    [notes.bgp_md5_auth]
++        title = "BGP MD5 Authentication"
++        description = """\
++`BGPInstanceConfig` neighbors now accept an `authPassword` to enable TCP MD5 signature authentication (RFC 2385) of the BGP session,
++including for VRF-bound BGP instances:
 +
-+			return retry.ExpectedError(streamErr)
++```yaml
++apiVersion: v1alpha1
++kind: BGPInstanceConfig
++name: fabric
++localASN: 65001
++neighbors:
++  - address: 192.0.2.1
++    peerASN: 65000
++    authPassword: s3cr3t
++```
++
++The password is redacted from the machine configuration output. The `BGPInstanceConfigs` resource is now sensitive: the `os:admin` role reads it in full, while the other roles get it with the password replaced by `REDACTED`.
+ """
+ 
+ [make_deps]
+```
+
+**File**: `internal/app/machined/pkg/controllers/network/bgp_instance_config.go` (modified, +7/-6)
+```diff
+@@ -278,12 +278,13 @@ func buildBGPInstanceConfigSpec(cfg talosconfig.NetworkBGPInstanceConfig) networ
+ 
+ 	for _, neighbor := range cfg.Neighbors() {
+ 		neighborSpec := network.BGPNeighborConfigSpec{
+-			Address:  neighbor.Address(),
+-			Link:     neighbor.Link(),
+-			PeerASN:  neighbor.PeerASN(),
+-			LocalASN: neighbor.LocalASN(),
+-			Passive:  neighbor.Passive(),
+-			HoldTime: neighbor.HoldTime(),
++			Address:      neighbor.Address(),
++			Link:         neighbor.Link(),
++			PeerASN:      neighbor.PeerASN(),
++			LocalASN:     neighbor.LocalASN(),
++			Passive:      neighbor.Passive(),
++			HoldTime:     neighbor.HoldTime(),
++			AuthPassword: neighbor.AuthPassword(),
+ 		}
+ 
+ 		if bfd := neighbor.BFD(); bfd != nil {
+```
+
+**File**: `internal/app/machined/pkg/controllers/network/bgp_instance_config_test.go` (modified, +3/-0)
+```diff
+@@ -54,6 +54,7 @@ func newFabricConfig(holdTime time.Duration) *networkcfg.BGPInstanceConfigV1Alph
+ 			NeighborLocalASN:      65004,
+ 			NeighborPassive:       true,
+ 			NeighborHoldTime:      15 * time.Second,
++			NeighborAuthPassword:  "secret",
+ 		},
+ 	}
+ 
+@@ -87,6 +88,8 @@ func (suite *BGPInstanceConfigSuite) TestRenderInlineBehaviorAndPreserveConfigur
+ 		assertions.True(spec.Neighbors[1].Passive)
+ 		assertions.Equal(15*time.Second, spec.Neighbors[1].HoldTime)
+ 		assertions.Nil(spec.Neighbors[1].BFD)
++		assertions.Empty(spec.Neighbors[0].AuthPassword)
++		assertions.Equal("secret", spec.Neighbors[1].AuthPassword)
+ 	}, rtestutils.WithNamespace(network.NamespaceName))
+ 
+ 	updatedInstance := newFabricConfig(12 * time.Second)
+```
+
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/bgp.go` (modified, +6/-0)
+```diff
+@@ -36,6 +36,7 @@ func BuildPeer(peer Peer, multipath bool) *gobgpapi.Peer {
+ 		Conf: &gobgpapi.PeerConf{
+ 			PeerAsn:         peer.Config.PeerASN,
+ 			NeighborAddress: peer.Address,
++			AuthPassword:    peer.Config.AuthPassword,
+ 		},
+ 		AfiSafis: []*gobgpapi.AfiSafi{
+ 			afiSafi(gobgpapi.Family_AFI_IP, multipath),
+@@ -385,6 +386,11 @@ func PeerKey(peer Peer) string {
+ 		peer.Config.HoldTime,
+ 	)
+ 
++	if peer.Config.AuthPassword != "" {
++		// Track password changes without keeping the plaintext in the key.
++		fmt.Fprintf(&builder, "auth[%x]", sha256.Sum256([]byte(peer.Config.AuthPassword)))
++	}
++
+ 	if peer.Config.BFD != nil {
+ 		fmt.Fprintf(
+ 			&builder,
+```
+
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/bgp_test.go` (modified, +17/-4)
+```diff
+@@ -30,10 +30,11 @@ func TestBuildPeer(t *testing.T) {
+ 		Address:       "fe80::1%eth0",
+ 		BindInterface: "vrf-blue",
+ 		Config: network.BGPNeighborConfigSpec{
+-			PeerASN:  65002,
+-			LocalASN: 65003,
+-			Passive:  true,
+-			HoldTime: 90 * time.Second,
++			PeerASN:      65002,
++			LocalASN:     65003,
++			Passive:      true,
++			HoldTime:     90 * time.Second,
++			AuthPassword: "secret",
+ 			BFD: &network.BGPBFDConfigSpec{
+ 				TransmitInterval: 300 * time.Millisecond,
+ 				ReceiveInterval:  400 * time.Millisecond,
+@@ -46,6 +47,7 @@ func TestBuildPeer(t *testing.T) {
+ 	assert.Equal(t, uint32(65002), peer.GetConf().GetPeerAsn())
+ 	assert.Equal(t, uint32(65003), peer.GetConf().GetLocalAsn())
+ 	assert.True(t, peer.GetConf().GetReplacePeerAsn())
++	assert.Equal(t, "secret", peer.GetConf().GetAuthPassword())
+ 	assert.True(t, peer.GetTransport().GetPassiveMode())
+ 	assert.Equal(t, "vrf-blue", peer.GetTransport().GetBindInterface())
+ 	assert.Equal(t, uint64(90), peer.GetTimers().GetConfig().GetHoldTime())
+@@ -278,4 +280,15 @@ func TestKeys(t *testing.T) {
+ 			BFD:      &network.BGPBFDConfigSpec{DetectMultiplier: 3},
+ 		},
+ 	}))
++
++	// A changed password has to replace the peer, but the key must not carry the plaintext.
++	authenticated := peer
++	authenticated.Config.AuthPassword = "secret"
++
++	rotated := peer
++	rotated.Config.AuthPassword = "rotated"
++
++	assert.NotEqual(t, internalbgp.PeerKey(peer), internalbgp.PeerKey(authenticated))
++	assert.NotEqual(t, internalbgp.PeerKey(authenticated), internalbgp.PeerKey(rotated))
++	assert.NotContains(t, internalbgp.PeerKey(authenticated), "secret")
+ }
+```
+
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/export_test.go` (modified, +6/-0)
+```diff
+@@ -8,6 +8,7 @@ import (
+ 	"maps"
+ 	"net/netip"
+ 
++	"github.com/jsimonetti/rtnetlink/v2"
+ 	"github.com/osrg/gobgp/v4/pkg/apiutil"
+ 	bgppacket "github.com/osrg/gobgp/v4/pkg/packet/bgp"
+ 	gobgpsrv "github.com/osrg/gobgp/v4/pkg/server"
+@@ -66,3 +67,8 @@ func ListImportCandidatesForTest(instance *Instance, selectors []netip.Prefix) (
+ func SetInstancePeerIfacesForTest(instance *Instance, peerIfaces map[netip.Addr]string) {
+ 	instance.peerIfaces = peerIfaces
+ }
++
++// NewNeighborResolverForTest creates a neighbor resolver backed by a static neighbor snapshot.
++func NewNeighborResolverForTest(neighbors []rtnetlink.NeighMessage) *NeighborResolver {
++	return &NeighborResolver{load: func() []rtnetlink.NeighMessage { return neighbors }}
++}
+```
+
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/instance_test.go` (modified, +132/-0)
+```diff
+@@ -5,14 +5,18 @@
+ package bgp_test
+ 
+ import (
++	"net"
+ 	"net/netip"
++	"strconv"
++	"syscall"
+ 	"testing"
+ 	"time"
+ 
+ 	gobgpapi "github.com/osrg/gobgp/v4/api"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+ 	"go.uber.org/zap"
++	"golang.org/x/sys/unix"
+ 
+ 	internalbgp "github.com/siderolabs/talos/internal/app/machined/pkg/controllers/network/internal/bgp"
+ 	"github.com/siderolabs/talos/pkg/machinery/resources/network"
+@@ -70,6 +74,134 @@ func TestNewInstance(t *testing.T) {
+ 	assert.True(t, internalbgp.InstanceMapsInitializedForTest(instance))
+ }
+ 
++func TestInstanceAuthPasswordListenerKey(t *testing.T) {
++	t.Parallel()
++
++	skipWithoutTCPMD5(t)
++
++	instance := internalbgp.NewInstance()
++	t.Cleanup(instance.Stop)
++
++	port := freeBGPImportTestPort(t)
++	config := network.BGPInstanceConfigSpec{LocalASN: 65001}
++	peer := internalbgp.Peer{
++		Address: "127.0.0.2",
++		Config: network.BGPNeighborConfigSpec{
++			Address:      netip.MustParseAddr("127.0.0.2"),
++			PeerASN:      65002,
++			Passive:      true,
++			AuthPassword: "secret",
++		},
++	}
++
++	ensure := func() {
++		require.NoError(t, instance.EnsureServer(
++			t.Context(),
++			zap.NewNop(),
++			config,
++			netip.MustParseAddr("10.0.0.1"),
++			0,
++			[]internalbgp.Peer{peer},
++			nil,
++			port,
++			func() {},
++		))
++	}
++
++	// connect dials the listener from the peer address, signing the connection with the password if set.
++	connect := func(password string) error {
++		dialer := net.Dialer{
++			LocalAddr: &net.TCPAddr{IP: net.ParseIP(peer.Address)},
++			Timeout:   time.Second,
 +		}
 +
-+		return streamErr
- 	})
++		if password != "" {
++			dialer.Control = func(_, _ string, conn syscall.RawConn) error {
++				var sockoptErr error
 +
- 	if err != nil && !p.quiet {
- 		p.suite.T().Logf(
- 			"error executing command in pod %s/%s: %v\n\ncommand %q stdout:\n%s\n\ncommand %q stderr:\n%s",
-```
-
-**File**: `internal/pkg/dns/dns_test.go` (modified, +9/-1)
-```diff
-@@ -5,6 +5,7 @@
- package dns_test
- 
- import (
-+	"cmp"
- 	"context"
- 	"errors"
- 	"iter"
-@@ -52,6 +53,9 @@ func TestDNS(t *testing.T) {
- 		nameservers  []string
- 		expectedCode int
- 		errCheck     check.Check
-+		// timeout overrides the client timeout,
-+		// default is 5s.
-+		timeout time.Duration
- 	}{
- 		{
- 			name:         "success",
-@@ -65,6 +69,8 @@ func TestDNS(t *testing.T) {
- 			hostname:    "google-fail.com",
- 			nameservers: []string{"242.242.242.242"},
- 			errCheck:    check.ErrorContains("i/o timeout"),
-+			// Must give up before the server's own upstream request timeout answers SERVFAIL.
-+			timeout: time.Second,
- 		},
- 		{
- 			name:         "empty destinations",
-@@ -112,8 +118,10 @@ func TestDNS(t *testing.T) {
- 
- 				time.Sleep(10 * time.Millisecond)
- 
-+				timeout := cmp.Or(test.timeout, 5*time.Second)
++				if err := conn.Control(func(fd uintptr) {
++					sockoptErr = unix.SetsockoptTCPMD5Sig(int(fd), unix.IPPROTO_TCP, unix.TCP_MD5SIG, tcpMD5Sig(net.IPv4(127, 0, 0, 1), password))
++				}); err != nil {
++					return err
++				}
 +
- 				c := dnssrv.Client{
--					Timeout: time.Second,
-+					Timeout: timeout,
- 				}
++				return sockoptErr
++			}
++		}
++
++		conn, err := dialer.DialContext(t.Context(), "tcp4", net.JoinHostPort("127.0.0.1", strconv.Itoa(int(port))))
++		if err != nil {
++			return err
++		}
++
++		return conn.Close()
++	}
++
++	// The kernel silently drops a SYN with a missing or mismatched MD5 signature for a peer with a key, so the
++	// dial has to time out rather than fail for any other reason (connection refused, bind error).
++	requireDropped := func(password string) {
++		var netErr net.Error
++
++		err := connect(password)
++		require.ErrorAs(t, err, &netErr)
++		require.True(t, netErr.Timeout(), "SYN with password %q must be dropped, got %v", password, err)
++	}
++
++	ensure()
++
++	server := internalbgp.InstanceServerForTest(instance)
++
++	requireDropped("")
++	require.NoError(t, connect("secret"))
++
++	// Rotating the password must replace the listener key in place.
++	peer.Config.AuthPassword = "rotated"
++
++	ensure()
++	require.Same(t, server, internalbgp.InstanceServerForTest(instance), "rotating the password must not restart GoBGP")
++	require.Eventually(t, func() bool {
++		return connect("rotated") == nil
++	}, 5*time.Second, 100*time.Millisecond, "the listener key must be replaced together with the password")
++	requireDropped("secret")
++	requireDropped("")
++
++	peer.Config.AuthPassword = ""
++
++	ensure()
++	require.Same(t, server, internalbgp.InstanceServerForTest(instance), "removing the password must not restart GoBGP")
++	require.Eventually(t, func() bool {
++		return connect("") == nil
++	}, 5*time.Second, 100*time.Millisecond, "the listener key must be removed together with the password")
++}
++
++// tcpMD5Sig builds the TCP_MD5SIG option for an IPv4 peer.
++func tcpMD5Sig(addr net.IP, password string) *unix.TCPMD5Sig {
++	sig := &unix.TCPMD5Sig{Keylen: uint16(len(password))}
++	sig.Addr.Family = unix.AF_INET
++	copy(sig.Addr.Data[2:6], addr.To4())
++	copy(sig.Key[:], password)
++
++	return sig
++}
++
++// skipWithoutTCPMD5 skips the test when the kernel is built without CONFIG_TCP_MD5SIG.
++func skipWithoutTCPMD5(t *testing.T) {
++	t.Helper()
++
++	fd, err := unix.Socket(unix.AF_INET, unix.SOCK_STREAM|unix.SOCK_CLOEXEC, 0)
++	require.NoError(t, err)
++
++	defer unix.Close(fd) //nolint:errcheck
++
++	sig := unix.TCPMD5Sig{Keylen: 1}
++	sig.Addr.Family = unix.AF_INET
++	sig.Key[0] = 'x'
++
++	if err = unix.SetsockoptTCPMD5Sig(fd, unix.IPPROTO_TCP, unix.TCP_MD5SIG, &sig); err != nil {
++		t.Skipf("kernel does not support TCP MD5 signatures: %v", err)
++	}
++}
++
+ func TestInstanceServerLifecycleAndReconciliation(t *testing.T) {
+ 	t.Parallel()
  
- 				r, _, err := c.Exchange(createQuery(test.hostname), dnsAddr)
 ```
 
 ---
 
-### Incident Patch 2: `cb0936a4` (2026-10-29)
-**Commit Message**: fix: open the files of pkg/xfs roots with O_CLOEXEC
+### Incident Patch 2: `42e6ca03` (2026-10-14)
+**Commit Message**: feat: add configFiles property into KubeCredentialProviderConfig
 
-UnixRoot.OpenFile (unix.Openat) and AsOSFile (dup) create descriptors
-without close-on-exec, so a service machined starts while it writes or
-labels a file of /etc inherits the descriptor. In enforcing mode
-SELinux denies it at the exec (seen with sandboxd on etc_t), otherwise
-it stays open in the service.
+Adding the `configFiles` property for the `KubeCredentialProviderConfig` resource as suggested in https://github.com/siderolabs/extensions/pull/1286.
 
-Signed-off-by: Raphaël DUCOM <[REDACTED_EMAIL]>
+Signed-off-by: Jiri Tyr <[REDACTED_EMAIL]>
 Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
 
-**File**: `internal/app/machined/pkg/runtime/v1alpha1/bootloader/sdboot/sdboot.go` (modified, +2/-2)
+**File**: `api/resource/definitions/k8s/k8s.proto` (modified, +4/-0)
 ```diff
-@@ -250,7 +250,7 @@ func (c *Config) KexecLoad(r runtime.Runtime, disk string) error {
- 			}
- 		}()
+@@ -212,6 +212,8 @@ message KubeletConfigSpec {
+   map<string, string> register_with_taints = 16;
+   // KubepodsMemoryLimit is the desired kubepods memory.max in bytes; zero means unset.
+   uint64 kubepods_memory_limit = 17;
++  // CredentialProviderFiles maps file names to the contents of the credential provider plugin configuration files.
++  map<string, string> credential_provider_files = 18;
+ }
  
--		kernelFd, err = unix.MemfdCreate("vmlinux", 0)
-+		kernelFd, err = unix.MemfdCreate("vmlinux", unix.MFD_CLOEXEC)
- 		if err != nil {
- 			return fmt.Errorf("memfdCreate: %v", err)
- 		}
-@@ -267,7 +267,7 @@ func (c *Config) KexecLoad(r runtime.Runtime, disk string) error {
- 			return fmt.Errorf("failed to seek kernel: %w", err)
- 		}
+ // KubeletKubeconfigSpec describes the current kubelet client credentials.
+@@ -231,6 +233,8 @@ message KubeletSpecSpec {
+   string expected_nodename = 4;
+   google.protobuf.Struct config = 5;
+   google.protobuf.Struct credential_provider_config = 6;
++  // CredentialProviderFiles maps file names to the contents of the credential provider plugin configuration files.
++  map<string, string> credential_provider_files = 7;
+ }
  
--		initrdFd, err := unix.MemfdCreate("initrd", 0)
-+		initrdFd, err := unix.MemfdCreate("initrd", unix.MFD_CLOEXEC)
- 		if err != nil {
- 			return fmt.Errorf("memfdCreate: %v", err)
- 		}
+ // KubeletStatusSpec describes the current kubelet state.
 ```
 
-**File**: `internal/pkg/zboot/zboot.go` (modified, +1/-1)
+**File**: `hack/release.toml` (modified, +31/-0)
 ```diff
-@@ -51,7 +51,7 @@ func Extract(kernel *os.File) (int, io.Closer, error) {
- 
- 	defer z.Close()
- 
--	fd, err := unix.MemfdCreate("vmlinux", 0)
-+	fd, err := unix.MemfdCreate("vmlinux", unix.MFD_CLOEXEC)
- 	if err != nil {
- 		return 0, nil, fmt.Errorf("memfdCreate: %v", err)
- 	}
-```
-
-**File**: `pkg/xfs/helpers_linux.go` (modified, +3/-2)
-```diff
-@@ -11,7 +11,8 @@ import (
- 	"fmt"
- 	"io/fs"
- 	"os"
--	"syscall"
+@@ -38,6 +38,37 @@ Enable `console.vnc.enabled` in its `VirtualMachineConfig`; access requires the
+ The listener accepts one viewer at a time and supports reconnecting without restarting the command.
+ Use a viewer that supports unauthenticated RFB.
+ Talos authenticates the tunnel, and no VNC TCP port is opened on the node.
++"""
 +
-+	"golang.org/x/sys/unix"
- )
++    [notes.credential_provider_config_files]
++        title = "Kubelet Credential Provider Config Files"
++        description = """\
++The `KubeCredentialProviderConfig` document supports a new `configFiles` field to provide configuration files for the credential provider plugins.
++Each file is written to the `/etc/kubernetes/credentialproviders` directory, so it can be referenced in the `args` of a credential provider:
++
++```yaml
++apiVersion: v1alpha1
++kind: KubeCredentialProviderConfig
++configuration:
++  apiVersion: kubelet.config.k8s.io/v1
++  kind: CredentialProviderConfig
++  providers:
++    - name: acr-credential-provider
++      apiVersion: credentialprovider.kubelet.k8s.io/v1
++      matchImages:
++        - "*.azurecr.io"
++      defaultCacheDuration: 10m
++      args:
++        - /etc/kubernetes/credentialproviders/azure.json
++configFiles:
++  - name: azure.json
++    content: |
++      {
++        "cloud": "AzurePublicCloud",
++        "tenantId": "<tenant-id>",
++        "useManagedIdentityExtension": true
++      }
++```
+ """
  
- // AsOSFile attempts to convert fs.File to *os.File.
-@@ -21,7 +22,7 @@ func AsOSFile(f fs.File, name string) (*os.File, error) {
- 		return nil, errors.ErrUnsupported
- 	}
- 
--	newFd, err := syscall.Dup(int(ff.Fd()))
-+	newFd, err := unix.FcntlInt(ff.Fd(), unix.F_DUPFD_CLOEXEC, 0)
- 	if err != nil {
- 		return nil, fmt.Errorf("failed to duplicate file descriptor: %w", err)
- 	}
+     [notes.workload_memory_limits]
 ```
 
-**File**: `pkg/xfs/helpers_linux_test.go` (added, +44/-0)
+**File**: `internal/app/machined/pkg/controllers/k8s/export_test.go` (modified, +4/-3)
 ```diff
-@@ -0,0 +1,44 @@
+@@ -6,7 +6,8 @@ package k8s
+ 
+ // Exported for testing.
+ var (
+-	AuthorizationConfig         = authorizationConfig
+-	APIServerWebhookKubeconfigs = apiServerWebhookKubeconfigs
+-	RemoveStaleKubeconfigs      = removeStaleKubeconfigs
++	AuthorizationConfig                 = authorizationConfig
++	APIServerWebhookKubeconfigs         = apiServerWebhookKubeconfigs
++	RemoveStaleKubeconfigs              = removeStaleKubeconfigs
++	WriteKubeletCredentialProviderFiles = writeKubeletCredentialProviderFiles
+ )
+```
+
+**File**: `internal/app/machined/pkg/controllers/k8s/kubelet_config.go` (modified, +2/-0)
+```diff
+@@ -102,8 +102,10 @@ func NewKubeletConfigController() *KubeletConfigController {
+ 
+ 				if k8sCredentialProviderConfig := cfgProvider.K8sCredentialProviderConfig(); k8sCredentialProviderConfig != nil {
+ 					kubeletConfig.CredentialProviderConfig = k8sCredentialProviderConfig.Configuration()
++					kubeletConfig.CredentialProviderFiles = k8sCredentialProviderConfig.ConfigFiles()
+ 				} else {
+ 					kubeletConfig.CredentialProviderConfig = nil
++					kubeletConfig.CredentialProviderFiles = nil
+ 				}
+ 
+ 				return nil
+```
+
+**File**: `internal/app/machined/pkg/controllers/k8s/kubelet_config_test.go` (modified, +53/-0)
+```diff
+@@ -16,6 +16,7 @@ import (
+ 	"github.com/siderolabs/talos/internal/app/machined/pkg/controllers/ctest"
+ 	k8sctrl "github.com/siderolabs/talos/internal/app/machined/pkg/controllers/k8s"
+ 	"github.com/siderolabs/talos/pkg/machinery/config/container"
++	k8scfg "github.com/siderolabs/talos/pkg/machinery/config/types/k8s"
+ 	"github.com/siderolabs/talos/pkg/machinery/config/types/meta"
+ 	"github.com/siderolabs/talos/pkg/machinery/config/types/runtime"
+ 	"github.com/siderolabs/talos/pkg/machinery/config/types/v1alpha1"
+@@ -222,6 +223,58 @@ func (suite *KubeletConfigSuite) TestReconcileKubepodsMemoryLimit() {
+ 	})
+ }
+ 
++func (suite *KubeletConfigSuite) TestReconcileCredentialProvider() {
++	u, err := url.Parse("https://foo:6443")
++	suite.Require().NoError(err)
++
++	suite.createStaticPodServerStatus()
++
++	v1alpha1Cfg := &v1alpha1.Config{
++		ConfigVersion: "v1alpha1",
++		MachineConfig: &v1alpha1.MachineConfig{},
++		ClusterConfig: &v1alpha1.ClusterConfig{
++			ControlPlane: &v1alpha1.ControlPlaneConfig{ //nolint:staticcheck // testing deprecated field
++				Endpoint: &v1alpha1.Endpoint{
++					URL: u,
++				},
++			},
++			ClusterNetwork: &v1alpha1.ClusterNetworkConfig{ //nolint:staticcheck // testing deprecated field
++				ServiceSubnet: []string{constants.DefaultIPv4ServiceCIDR},
++			},
++		},
++	}
++
++	credentialProviderCfg := k8scfg.NewKubeCredentialProviderConfigV1Alpha1()
++	credentialProviderCfg.CredentialProviderConfig.Object = map[string]any{
++		"apiVersion": "kubelet.config.k8s.io/v1",
++		"kind":       "CredentialProviderConfig",
++	}
++	credentialProviderCfg.CredentialProviderConfigFiles = []k8scfg.KubeCredentialProviderConfigFileV1Alpha1{
++		{
++			FileName:    "azure.json",
++			FileContent: "{}",
++		},
++	}
++
++	ctr, err := container.New(v1alpha1Cfg, credentialProviderCfg)
++	suite.Require().NoError(err)
++
++	suite.Create(config.NewMachineConfig(ctr))
++
++	ctest.AssertResource(suite, k8s.KubeletID, func(r *k8s.KubeletConfig, asrt *assert.Assertions) {
++		spec := r.TypedSpec()
++
++		asrt.Equal(
++			map[string]any{
++				"apiVersion": "kubelet.config.k8s.io/v1",
++				"kind":       "CredentialProviderConfig",
++			},
++			spec.CredentialProviderConfig,
++		)
++		asrt.Equal(map[string]string{"azure.json": "{}"}, spec.CredentialProviderFiles)
++	})
++}
++
+ func TestKubeletConfigSuite(t *testing.T) {
+ 	t.Parallel()
+ 
+```
+
+**File**: `internal/app/machined/pkg/controllers/k8s/kubelet_service.go` (modified, +66/-0)
+```diff
+@@ -212,6 +212,10 @@ func (ctrl *KubeletServiceController) Run(ctx context.Context, r controller.Runt
+ 			return fmt.Errorf("error writing kubelet credential provider configuration: %w", err)
+ 		}
+ 
++		if err = writeKubeletCredentialProviderFiles(constants.KubeletCredentialProviderConfigFilesDir, cfgSpec.CredentialProviderFiles); err != nil {
++			return fmt.Errorf("error writing kubelet credential provider files: %w", err)
++		}
++
+ 		_, running, err := ctrl.V1Alpha1Services.IsRunning("kubelet")
+ 		if err != nil {
+ 			ctrl.V1Alpha1Services.Load(&services.Kubelet{})
+@@ -357,6 +361,68 @@ func (ctrl *KubeletServiceController) writeKubeletCredentialProviderConfig(cfgSp
+ 	return os.WriteFile(constants.KubeletCredentialProviderConfig, buf.Bytes(), 0o600)
+ }
+ 
++// writeKubeletCredentialProviderFiles writes the credential provider config files into dir
++// and removes any files in dir which are not part of files.
++func writeKubeletCredentialProviderFiles(dir string, files map[string]string) error {
++	if len(files) == 0 {
++		return os.RemoveAll(dir)
++	}
++
++	if err := os.MkdirAll(dir, 0o700); err != nil {
++		return err
++	}
++
++	entries, err := os.ReadDir(dir)
++	if err != nil {
++		return err
++	}
++
++	for _, entry := range entries {
++		if _, ok := files[entry.Name()]; ok {
++			continue
++		}
++
++		if err = os.RemoveAll(filepath.Join(dir, entry.Name())); err != nil {
++			return err
++		}
++	}
++
++	for name, content := range files {
++		if err = writeFileAtomic(filepath.Join(dir, name), []byte(content)); err != nil {
++			return err
++		}
++	}
++
++	return nil
++}
++
++// writeFileAtomic writes data to a temporary file in the directory of path and renames it over path,
++// so that concurrent readers (e.g. credential provider plugins exec'd by kubelet) never observe a partially written file.
++//
++// The file is created with permissions 0600.
++func writeFileAtomic(path string, data []byte) error {
++	tmp, err := os.CreateTemp(filepath.Dir(path), "."+filepath.Base(path)+".tmp-*")
++	if err != nil {
++		return err
++	}
++
++	tmpPath := tmp.Name()
++
++	defer os.Remove(tmpPath) //nolint:errcheck
++
++	if _, err = tmp.Write(data); err != nil {
++		tmp.Close() //nolint:errcheck
++
++		return err
++	}
++
++	if err = tmp.Close(); err != nil {
++		return err
++	}
++
++	return os.Rename(tmpPath, path)
++}
++
+ // updateKubeconfig updates the kubeconfig of kubelet with the given endpoint if it exists.
+ func (ctrl *KubeletServiceController) updateKubeconfig(newEndpoint *url.URL, newTLSServerName string, acceptedCAs []*talosx509.PEMEncodedCertificate, logger *zap.Logger) error {
+ 	config, err := clientcmd.LoadFromFile(constants.KubeletKubeconfig)
+```
+
+**File**: `internal/app/machined/pkg/controllers/k8s/kubelet_service_test.go` (added, +64/-0)
+```diff
+@@ -0,0 +1,64 @@
 +// This Source Code Form is subject to the terms of the Mozilla Public
 +// License, v. 2.0. If a copy of the MPL was not distributed with this
 +// file, You can obtain one at http://mozilla.org/MPL/2.0/.
 +
-+//go:build linux
-+
-+package xfs_test
++package k8s_test
 +
 +import (
++	"os"
++	"path/filepath"
 +	"testing"
 +
++	"github.com/stretchr/testify/assert"
 +	"github.com/stretchr/testify/require"
 +
-+	"github.com/siderolabs/talos/pkg/xfs"
++	k8sctrl "github.com/siderolabs/talos/internal/app/machined/pkg/controllers/k8s"
 +)
 +
-+func TestAsOSFile(t *testing.T) {
++func TestWriteKubeletCredentialProviderFiles(t *testing.T) {
 +	t.Parallel()
 +
-+	root := &xfs.OSRoot{Shadow: t.TempDir()}
-+	require.NoError(t, root.OpenFS())
++	dir := filepath.Join(t.TempDir(), "credentialproviders")
 +
-+	t.Cleanup(func() {
-+		require.NoError(t, root.Close())
++	require.NoError(t, k8sctrl.WriteKubeletCredentialProviderFiles(dir, map[string]string{
++		"azure.json": "foo",
++		"other.json": "bar",
++	}))
++
++	assertFiles(t, dir, map[string]string{
++		"azure.json": "foo",
++		"other.json": "bar",
 +	})
 +
-+	writeFile(t, root, "file", testFileContent)
++	require.NoError(t, k8sctrl.WriteKubeletCredentialProviderFiles(dir, map[string]string{
++		"azure.json": "baz",
++	}))
 +
-+	f, err := xfs.Open(root, "file")
++	assertFiles(t, dir, map[string]string{
++		"azure.json": "baz",
++	})
++
++	require.NoError(t, k8sctrl.WriteKubeletCredentialProviderFiles(dir, nil))
++
++	assert.NoDirExists(t, dir)
++}
++
++func assertFiles(t *testing.T, dir string, expected map[string]string) {
++	t.Helper()
++
++	entries, err := os.ReadDir(dir)
 +	require.NoError(t, err)
++	assert.Len(t, entries, len(expected))
 +
-+	t.Cleanup(func() {
-+		require.NoError(t, f.Close())
-+	})
++	for name, content := range expected {
++		path := filepath.Join(dir, name)
 +
-+	osf, err := xfs.AsOSFile(f, "file")
-+	require.NoError(t, err)
++		data, err := os.ReadFile(path)
++		require.NoError(t, err)
++		assert.Equal(t, content, string(data))
 +
-+	t.Cleanup(func() {
-+		require.NoError(t, osf.Close())
-+	})
-+
-+	assertCloseOnExec(t, osf.Fd())
++		st, err := os.Stat(path)
++		require.NoError(t, err)
++		assert.Equal(t, os.FileMode(0o600), st.Mode().Perm())
++	}
 +}
 ```
 
-**File**: `pkg/xfs/root_linux.go` (modified, +1/-1)
+**File**: `internal/app/machined/pkg/controllers/k8s/kubelet_spec.go` (modified, +1/-0)
 ```diff
-@@ -84,7 +84,7 @@ func (root *UnixRoot) Open(name string) (fs.File, error) {
+@@ -233,6 +233,7 @@ func (ctrl *KubeletSpecController) Run(ctx context.Context, r controller.Runtime
+ 				kubeletSpec.Config = unstructuredConfig
+ 				kubeletSpec.ExpectedNodename = expectedNodename
+ 				kubeletSpec.CredentialProviderConfig = cfgSpec.CredentialProviderConfig
++				kubeletSpec.CredentialProviderFiles = cfgSpec.CredentialProviderFiles
  
- // OpenFile opens a file in the root filesystem with the specified name, flags, and permissions.
- func (root *UnixRoot) OpenFile(name string, flags int, perm os.FileMode) (File, error) {
--	fd, err := unix.Openat(root.mntfd, strings.TrimLeft(name, "/"), flags, uint32(perm))
-+	fd, err := unix.Openat(root.mntfd, strings.TrimLeft(name, "/"), flags|unix.O_CLOEXEC, uint32(perm))
- 	if err != nil {
- 		return nil, err
- 	}
-```
-
-**File**: `pkg/xfs/root_test.go` (modified, +11/-0)
-```diff
-@@ -11,6 +11,7 @@ import (
- 
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
-+	"golang.org/x/sys/unix"
- 
- 	"github.com/siderolabs/talos/pkg/xfs"
- )
-@@ -46,6 +47,7 @@ func testFilesystem(t *testing.T, rwRoot xfs.Root, roRoot xfs.Root) {
- 
- 		actual, err := xfs.OpenFile(rwRoot, name, flags, 0o644)
- 		require.NoError(t, err)
-+		assertCloseOnExec(t, actual.Fd())
- 		assert.NoError(t, actual.Close())
- 	})
- 
-@@ -230,6 +232,15 @@ func testFilesystem(t *testing.T, rwRoot xfs.Root, roRoot xfs.Root) {
- 	})
- }
- 
-+// assertCloseOnExec checks that a descriptor does not leak into the processes started while it is open.
-+func assertCloseOnExec(tb testing.TB, fd uintptr) {
-+	tb.Helper()
-+
-+	flags, err := unix.FcntlInt(fd, unix.F_GETFD, 0)
-+	require.NoError(tb, err)
-+	assert.NotZero(tb, flags&unix.FD_CLOEXEC, "descriptor is not close-on-exec")
-+}
-+
- func writeFile(tb testing.TB, root xfs.Root, name string, content []byte) {
- 	tb.Helper()
- 
-```
-
----
-
-### Incident Patch 3: `e89db1cd` (2026-10-28)
-**Commit Message**: fix: ctr entrypoint,arg merge on config patch
-
-Aims to fix the patching strategy for `args`, `entrypoint` when patching the ContainerConfig
-through a machineconfig patch.
-
-Signed-off-by: Maja Bojarska <[REDACTED_EMAIL]>
-
-**File**: `pkg/machinery/config/types/container/container_config.go` (modified, +2/-2)
-```diff
-@@ -87,10 +87,10 @@ type ContainerConfigV1Alpha1 struct {
- 	//     Overrides the image's ENTRYPOINT.
- 	//
- 	//     Unset means the image's own entrypoint is used.
--	ContainerEntrypoint []string `yaml:"entrypoint,omitempty"`
-+	ContainerEntrypoint []string `yaml:"entrypoint,omitempty" merge:"replace"`
- 	//   description: |
- 	//     Overrides the image's CMD.
--	ContainerArgs []string `yaml:"args,omitempty"`
-+	ContainerArgs []string `yaml:"args,omitempty" merge:"replace"`
- 	//   description: |
- 	//     Overrides the image's WORKDIR.
- 	ContainerWorkingDir string `yaml:"workingDir,omitempty"`
-```
-
-**File**: `pkg/machinery/config/types/container/container_config_test.go` (modified, +41/-0)
-```diff
-@@ -12,6 +12,7 @@ import (
- 	"github.com/stretchr/testify/require"
- 
- 	"github.com/siderolabs/talos/pkg/machinery/config/configloader"
-+	"github.com/siderolabs/talos/pkg/machinery/config/merge"
- 	"github.com/siderolabs/talos/pkg/machinery/config/types/container"
- )
- 
-@@ -651,3 +652,43 @@ type validationMode struct{}
- func (validationMode) String() string        { return "test" }
- func (validationMode) RequiresInstall() bool { return false }
- func (validationMode) InContainer() bool     { return false }
-+
-+func TestContainerConfigMergeReplacesEntrypointAndArgs(t *testing.T) {
-+	t.Parallel()
-+
-+	base := load(t, `apiVersion: v1alpha1
-+kind: ContainerConfig
-+name: list-test
-+image: docker.io/library/python:3.13-alpine
-+entrypoint: ["python3", "-c"]
-+args: ["print('one')"]
-+`)
-+
-+	patch := load(t, `apiVersion: v1alpha1
-+kind: ContainerConfig
-+name: list-test
-+image: docker.io/library/python:3.13-alpine
-+entrypoint: ["python3", "-u", "-c"]
-+args: ["print('two')"]
-+`)
-+
-+	require.NoError(t, merge.Merge(base, patch))
-+	assert.Equal(t, []string{"python3", "-u", "-c"}, base.Entrypoint())
-+	assert.Equal(t, []string{"print('two')"}, base.Args())
-+
-+	// Re-applying the same document must be idempotent.
-+	require.NoError(t, merge.Merge(base, patch))
-+	assert.Equal(t, []string{"python3", "-u", "-c"}, base.Entrypoint())
-+	assert.Equal(t, []string{"print('two')"}, base.Args())
-+
-+	// Omitting the lists in the patch keeps the existing values.
-+	omitted := load(t, `apiVersion: v1alpha1
-+kind: ContainerConfig
-+name: list-test
-+image: docker.io/library/python:3.13-alpine
-+`)
-+
-+	require.NoError(t, merge.Merge(base, omitted))
-+	assert.Equal(t, []string{"python3", "-u", "-c"}, base.Entrypoint())
-+	assert.Equal(t, []string{"print('two')"}, base.Args())
-+}
+ 				return nil
+ 			},
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14800** (closed): fix: skip EFI variable updates when efivarfs is read-only (@excavador)
 - **PR #14797** (2026-10-30): fix: open the files of pkg/xfs roots with O_CLOEXEC (@rducom)
 - **PR #14794** (2026-10-29): fix: ctr `entrypoint`,`arg` replace instead of merge on patch (@majabojarska)
 - **PR #14792** (2026-10-29): fix: rollback alpine version (@shanduur)
-- **PR #14789** (2026-10-29): feat: correct sensitivity or the resources (@smira)
-- **PR #14787** (2026-10-29): feat: update Kubernetes to 1.38.0-alpha.3 (@smira)
-- **PR #14786** (2026-10-29): feat: deprecate the fields of the Talos API client (@utkuozdemir)
+- **PR #14791** (2026-10-30): feat: allow containers to disable seccomp explicitly (@frezbo)
+- **PR #14790** (2026-10-30): feat: add support for kubeconfig in Kubernetes authn & authz configs (@smira)
 
 ---
 
@@ -2347,46 +2652,28 @@ Signed-off-by: Maja Bojarska <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix a few flaky tests
+## X. support BGP MD5 authentication password
 
 **RULE**:
-When implementing operations in `internal/app/machined/pkg/controllers/hypervisor/cloud_init_iso_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `api/resource/definitions/network/network.proto`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dfb38dce`: fix a few flaky tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a1920121`: support BGP MD5 authentication password. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/hypervisor/cloud_init_iso_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/resource/definitions/network/network.proto`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"errors"
-
-	// The controller publishes Ready while still holding this same marker for
-	// the build, so claim it atomically once released.
-	// A plain AddFinalizer would no-op and the controller would then drop it.
-	s.Require().Eventually(func() bool {
-		_, claimErr := s.State().UpdateWithConflicts(s.Ctx(), library.Metadata(), func(r resource.Resource) error {
-			if r.Metadata().Finalizers().Has(marker) {
-				return errors.New("already claimed")
-			}
-
-			r.Metadata().Finalizers().Add(marker)
-
-			return nil
-		}, state.WithExpectedPhase(resource.PhaseRunning))
-
-		return claimErr == nil
-	}, 3*time.Second, 10*time.Millisecond, "mutation claim was never released by the controller")
-
+  string auth_password = 8;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	s.Require().NoError(s.State().AddFinalizer(s.Ctx(), library.Metadata(), marker))
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dfb38dce` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a1920121` are properly handled with clean fallback behavior.

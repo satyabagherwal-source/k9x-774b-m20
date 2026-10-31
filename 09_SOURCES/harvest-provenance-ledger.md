@@ -6483,3 +6483,5 @@ Every entry in this ledger must capture:
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `7aef6cbb` | Multi-dimensional audit evidence | 2026-10-31T05:14:24.268Z |
 | `learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-10-31T05:21:04.571Z |
 | `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `9caf2b4c` | Multi-dimensional audit evidence | 2026-10-31T05:21:18.639Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `a1920121` | Multi-dimensional audit evidence | 2026-10-31T05:29:32.994Z |
+| `learn-huggingface-baai-bge-small-en-v1-5` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-31T05:29:37.953Z |

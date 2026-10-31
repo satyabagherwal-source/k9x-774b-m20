@@ -6474,3 +6474,5 @@
 | `CYCLE-20261031-57RC` | `2026-10-31T05:14:24.264Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6080` | Yes (`be5dfca2...`) |
 | `CYCLE-20261031-DSMQ` | `2026-10-31T05:21:04.562Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | Yes (`f1bc3cfa...`) |
 | `CYCLE-20261031-E3HN` | `2026-10-31T05:21:18.635Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6081` | Yes (`73b5a687...`) |
+| `CYCLE-20261031-OOXQ` | `2026-10-31T05:29:32.990Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6082` | Yes (`27dd85d7...`) |
+| `CYCLE-20261031-OSRI` | `2026-10-31T05:29:37.950Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6083, Rule 6084, Rule 6085` | Yes (`a916287b...`) |

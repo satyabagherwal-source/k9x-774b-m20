@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T05:21:18.644Z",
-  "total_cycles_completed": 6451,
-  "total_learnings_persisted": 6451,
-  "total_rules_promoted": 6067,
+  "last_updated": "2026-10-31T05:29:37.959Z",
+  "total_cycles_completed": 6453,
+  "total_learnings_persisted": 6453,
+  "total_rules_promoted": 6071,
   "history": [
-    {
-      "timestamp": "2026-10-30T19:19:15.901Z",
-      "repository": "LiquidAI/LFM3-1.7B-GGUF",
-      "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T19:19:26.302Z",
-      "repository": "lioensky/VCPToolBox",
-      "learningId": "learn-github-lioensky-vcptoolbox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T19:29:34.046Z",
       "repository": "krakend/krakend-ce",
@@ -1403,6 +1389,20 @@
       "repository": "Mintplex-Labs/anything-llm",
       "learningId": "learn-github-mintplex-labs-anything-llm",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T05:29:32.999Z",
+      "repository": "siderolabs/talos",
+      "learningId": "learn-github-siderolabs-talos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T05:29:37.959Z",
+      "repository": "BAAI/bge-small-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

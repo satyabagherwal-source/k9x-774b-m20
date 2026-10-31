@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T05:21:18.559Z",
+  "last_updated": "2026-10-31T05:29:37.872Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18846,7 +18846,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
       "source_version": "hf-baai-bge-small-en-v1.5",
-      "content_hash": "8dafd97d4261e051a77f90e0b98dadfedd08b2cea9bff1ff2c36fcd8b4caa308",
+      "content_hash": "a916287b8109489bf58cd733203be0e4613462b9b12fd09cec82021227d1f42e",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md",
       "promoted_rules": [
@@ -18942,6 +18942,21 @@
         {
           "number": 4114,
           "title": "Inference Determinism & Dropout Disabling",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6083,
+          "title": "Strict Sequence Length Enforcement in Transformer Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6084,
+          "title": "Deterministic Tokenization for Reproducible Embeddings",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6085,
+          "title": "Batch Inference Memory Management for Variable-Length Inputs",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -19280,7 +19295,7 @@
         "learn-huggingface-hf-baai-bge-small-en-v1-5-mv42wvjy",
         "learn-huggingface-hf-baai-bge-small-en-v1-5-mv4g4zgk"
       ],
-      "verified_at": "2026-10-28T03:24:45.256Z",
+      "verified_at": "2026-10-31T05:29:37.852Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50106,8 +50121,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "cb0936a4",
-      "content_hash": "601d5241c518d7c20b10d892f0d9c6e28b59b1ea08352abc15699940619c3830",
+      "source_version": "a1920121",
+      "content_hash": "27dd85d7bd9a7d2cd25a1fbdf51de82b6c412b63e38820d13e608960cc783246",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -50160,6 +50175,11 @@
           "number": 5760,
           "title": "fix a few flaky tests",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6082,
+          "title": "support BGP MD5 authentication password",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50167,7 +50187,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T13:22:21.423Z",
+      "verified_at": "2026-10-31T05:29:32.892Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -159720,6 +159740,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T05:21:18.539Z"
+    },
+    "rule-6082": {
+      "learning_id": "rule-6082",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6082,
+      "title": "support BGP MD5 authentication password",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "a1920121",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T05:29:32.892Z"
+    },
+    "rule-6083": {
+      "learning_id": "rule-6083",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6083,
+      "title": "Strict Sequence Length Enforcement in Transformer Inference",
+      "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
+      "source_version": "hf-baai-bge-small-en-v1.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T05:29:37.852Z"
+    },
+    "rule-6084": {
+      "learning_id": "rule-6084",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6084,
+      "title": "Deterministic Tokenization for Reproducible Embeddings",
+      "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
+      "source_version": "hf-baai-bge-small-en-v1.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T05:29:37.852Z"
+    },
+    "rule-6085": {
+      "learning_id": "rule-6085",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6085,
+      "title": "Batch Inference Memory Management for Variable-Length Inputs",
+      "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
+      "source_version": "hf-baai-bge-small-en-v1.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T05:29:37.852Z"
     }
   },
   "aliases": {

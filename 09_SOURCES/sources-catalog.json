@@ -165,8 +165,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-small-en-v1.5",
     "sourceVersion": "hf-baai-bge-small-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "8dafd97d4261e051a77f90e0b98dadfedd08b2cea9bff1ff2c36fcd8b4caa308",
-    "lastHarvestedAt": "2026-10-28T03:24:45.353Z",
+    "contentHash": "a916287b8109489bf58cd733203be0e4613462b9b12fd09cec82021227d1f42e",
+    "lastHarvestedAt": "2026-10-31T05:29:37.953Z",
     "learningId": "learn-huggingface-baai-bge-small-en-v1-5"
   },
   "hf-autotrust-glm5.3-flash-e224-dgx-spark": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "cb0936a4",
+    "sourceVersion": "a1920121",
     "license": "MPL-2.0",
-    "contentHash": "601d5241c518d7c20b10d892f0d9c6e28b59b1ea08352abc15699940619c3830",
-    "lastHarvestedAt": "2026-10-30T13:22:21.526Z",
+    "contentHash": "27dd85d7bd9a7d2cd25a1fbdf51de82b6c412b63e38820d13e608960cc783246",
+    "lastHarvestedAt": "2026-10-31T05:29:32.994Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {
