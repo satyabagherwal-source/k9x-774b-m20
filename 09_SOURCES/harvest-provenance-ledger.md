@@ -6395,3 +6395,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-10-31T00:46:10.481Z |
 | `learn-github-krishhgg-insomnia` | `https://github.com/krishhgg/Insomnia` | `b8e7e20d` | Multi-dimensional audit evidence | 2026-10-31T00:52:52.257Z |
 | `learn-huggingface-reflection-beam-1-0-501b-a23b` | `https://huggingface.co/reflection/Beam-1.0-501B-A23B` | `hf-reflect` | Multi-dimensional audit evidence | 2026-10-31T00:53:04.876Z |
+| `learn-huggingface-lodestones-moss-image-sft-8-steps-dmd` | `https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-10-31T01:04:47.333Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `af2dab92` | Multi-dimensional audit evidence | 2026-10-31T01:04:48.592Z |
+| `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `eaee0c72` | Multi-dimensional audit evidence | 2026-10-31T01:04:52.845Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `c42dc08b` | Multi-dimensional audit evidence | 2026-10-31T01:04:56.275Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `bcdefac9` | Multi-dimensional audit evidence | 2026-10-31T01:05:00.805Z |

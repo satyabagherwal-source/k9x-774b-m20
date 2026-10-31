@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source**: github ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
-> **Source Version**: `1cd28b29`  
+> **Source Version**: `af2dab92`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T12:08:42.264Z  
+> **Timestamp**: 2026-10-31T01:04:47.873Z  
 > **Learning ID**: `learn-github-metalbear-co-mirrord`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T12:08:41.014Z  
+> **Harvest Timestamp**: 2026-10-31T01:04:47.864Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Run any process, on your machine or in an AI agent's environment, as if it were a pod in your Kubernetes cluster: real env vars, DNS, network, traffic.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 5390 stars
+- **Stars / Engagement**: 5395 stars
 
 ---
 
@@ -1535,581 +1535,1416 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c1878fdf` (2026-10-28)
-**Commit Message**: fix(up): keep forwarding a service's output past bytes that aren't UTF-8
+### Incident Patch 1: `db287aa0` (2026-10-29)
+**Commit Message**: feat(layer): say Ready! and hold for a debugger from the Unix layer
 
-`up` read each service's output with `lines()`, which fails on the first
-byte that isn't valid UTF-8. Forwarding then stopped and dropped the
-pipe, so the service's next write failed and `up` reported it as a
-crash. A .NET service logging `£` under a hidden console does that: it
-writes in the console's code page, where `£` is 0x9C.
+On Linux and macOS, `mirrord exec` ends with `execve`, so no `exec`
+code is left once the program runs. It printed `Ready!` right before,
+when the layer didn't exist yet, and it couldn't hold the program at
+all. Both now happen in the layer, at the one point every startup path
+ends at: `Ready!`, then the hold, before `main`.
 
-Lines are now read as bytes and decoded lossily, so a bad byte shows as
-U+FFFD and the rest of the output still arrives.
+- `exec` binds both requests to its own pid, which `execve` hands to
+  the program: `MIRRORD_LAYER_READY=<mode>:<pid>`, and
+  `MIRRORD_DEBUG_HOLD=<pid>` in place of the `1` `mirrord up` sets.
+  The layer acts only when the pid is its own and removes both, so a
+  child an earlier constructor starts never prints or holds. macOS's
+  env backup leaves them out too.
+- Only the modes machines read go to the layer (`simple`, `json`). A
+  terminal's `std` mode keeps `Ready!` in `exec`'s spinner tree.
+- The lines `up` reads leave through one writer, `ProgramStdout`: one
+  `write(2)` each, straight to fd 1, past the program's stdio buffers.
+- On Linux the layer allows any tracer before it waits, so Yama's
+  `ptrace_scope=1` doesn't refuse the IDE's attach.
+- Where no layer will load, `exec` says `Ready
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `changelog.d/+up-non-utf8-output.fixed.md` (added, +1/-0)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -0,0 +1 @@
-+`mirrord up` no longer stops showing a service's output, and reports the service as crashed, when the service prints text that isn't UTF-8, such as a Windows console code page's `£`.
+@@ -5553,6 +5553,7 @@ dependencies = [
+  "mirrord-layer-lib",
+  "mirrord-layer-macro",
+  "mirrord-layer-tests",
++ "mirrord-progress",
+  "mirrord-protocol",
+  "mirrord-sip",
+  "mirrord-test-utils",
 ```
 
-**File**: `mirrord/up/src/process.rs` (modified, +58/-4)
+**File**: `mirrord/cli/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -430,16 +430,29 @@ async fn wait_for_first_exit(
+@@ -114,7 +114,7 @@ utils-win = { path = "../utils-win" }
+ stork = { workspace = true }
  
- /// Prints each line of `stream` prefixed with the service's name. On a session's stdout, also
- /// picks up the readiness marker and the branch databases report, which is not printed.
+ [target.'cfg(any(target_os = "macos", target_os = "linux"))'.dependencies]
+-nix = { workspace = true, features = ["process", "resource", "signal"] }
++nix = { workspace = true, features = ["process", "resource", "signal", "user"] }
+ 
+ [target.'cfg(target_os = "macos")'.dependencies]
+ mirrord-sip = { path = "../sip" }
+```
+
+**File**: `mirrord/cli/src/ci.rs` (modified, +6/-0)
+```diff
+@@ -638,6 +638,12 @@ impl MirrordCi {
+     pub(super) fn is_foreground(&self) -> bool {
+         self.ci_common_args.foreground
+     }
++
++    /// Whether `mirrord ci start` runs the program as a child instead of replacing itself with it
++    /// (`execve`): it runs in the background, or the program's output goes to files.
++    pub(super) fn spawns_the_program(&self, config: &CiConfig) -> bool {
++        self.is_foreground().not() || config.output_dir.is_some()
++    }
+ }
+ 
+ #[cfg(all(test, not(target_os = "windows")))]
+```
+
+**File**: `mirrord/cli/src/error.rs` (modified, +20/-0)
+```diff
+@@ -23,6 +23,8 @@ use mirrord_vpn::error::VpnError;
+ use reqwest::StatusCode;
+ use thiserror::Error;
+ 
++#[cfg(not(target_os = "windows"))]
++use crate::no_layer::NoLayer;
+ use crate::{
+     ci::error::CiError,
+     container::{CommandDisplay, IntproxySidecarError},
+@@ -681,6 +683,24 @@ pub(crate) enum CliError {
+     ))]
+     ExecveE2Big,
+ 
++    #[cfg(not(target_os = "windows"))]
++    #[error(
++        "`{binary}` never loads the mirrord layer ({reason}), so mirrord can't hold it for a debugger"
++    )]
++    #[diagnostic(help(
++        "On Linux and macOS the mirrord layer holds the program for the debugger, from inside the program. Debug a build of the program that loads it: dynamically linked, not setuid or setgid, and on macOS not excluded by `skip_sip`.{GENERAL_HELP}"
++    ))]
++    DebugHoldWithoutLayer { binary: String, reason: NoLayer },
++
++    #[cfg(not(target_os = "windows"))]
++    #[error(
++        "`mirrord ci start` runs `{0}` as a child here (in the background, or with its output in files), so mirrord can't hold it for a debugger"
++    )]
++    #[diagnostic(help(
++        "On Linux and macOS the hold is bound to the process `mirrord exec` turns into, and this run starts a separate one. Unset `ci.output_dir` in the mirrord config (or `MIRRORD_CI_API_KEY`) to debug it.{GENERAL_HELP}"
++    ))]
++    DebugHoldSpawnedByCi(String),
++
+     #[error("mirrord dump session failed: {0}")]
+     DumpError(#[from] DumpSessionError),
+ 
+```
+
+**File**: `mirrord/cli/src/is_static.rs` (modified, +7/-2)
+```diff
+@@ -2,7 +2,12 @@ use std::{ops::Not, path::Path};
+ 
+ use xmas_elf::{ElfFile, program::Type};
+ 
+-/// Returns true if we can be certain that the binary under the given path is statically linked.
++/// Returns true if we can be certain that the binary under the given path is statically linked,
++/// static-PIE included: it names no program interpreter (`PT_INTERP`), so the dynamic loader never
++/// runs and never loads the mirrord layer from `LD_PRELOAD`.
 +///
-+/// Lines are decoded lossily: a program may write in another encoding (a Windows console's code
-+/// page, say), and one bad byte must not stop the forwarding, which would close the pipe on the
-+/// program's next write.
- async fn forward_output(
-     stream: impl AsyncRead + Unpin,
-     name: Arc<str>,
-     session: Option<SessionOutput>,
- ) {
--    let mut lines = BufReader::new(stream).lines();
-+    let mut reader = BufReader::new(stream);
-+    let mut buffer = Vec::new();
-     let mut counted = false;
-     loop {
--        match lines.next_line().await {
--            Ok(Some(line)) => {
-+        buffer.clear();
-+        match reader.read_until(b'\n', &mut buffer).await {
-+            Ok(0) => break,
-+            Ok(_) => {
-+                let line = String::from_utf8_lossy(
-+                    buffer
-+                        .strip_suffix(b"\n")
-+                        .map(|line| line.strip_suffix(b"\r").unwrap_or(line))
-+                        .unwrap_or(&buffer),
-+                );
-                 if let Some(session) = &session {
-                     if counted.not() && line.trim() == SESSION_READY_MESSAGE {
-                         counted = true;
-@@ -460,7 +473,6 @@ async fn forward_output(
-                 }
-                 println!("{name}: {line}");
-             }
--            Ok(None) => break,
-             Err(error) => {
-                 eprintln!("{name} output error: {error}");
-                 break;
-@@ -611,6 +623,48 @@ async fn supervise_with_second_signal(
- #[cfg(test)]
- mod test_support;
++/// A static-PIE binary has a `PT_DYNAMIC` segment for its own relocations, so that segment says
++/// nothing about whether the layer loads.
+ ///
+ /// Might yield false negatives.
+ ///
+@@ -35,6 +40,6 @@ pub fn is_binary_static(binary_path: &Path) -> bool {
+     };
  
+     elf.program_iter()
+-        .any(|header| matches!(header.get_type(), Ok(Type::Dynamic)))
++        .any(|header| matches!(header.get_type(), Ok(Type::Interp)))
+         .not()
+ }
+```
+
+**File**: `mirrord/cli/src/main.rs` (modified, +116/-19)
+```diff
+@@ -283,6 +283,8 @@ use mirrord_analytics::{
+     AnalyticsError, AnalyticsReporter, CollectAnalytics, ExecutionKind, Reporter,
+     read_correlation_id_from_env,
+ };
++#[cfg(not(target_os = "windows"))]
++use mirrord_config::MIRRORD_LAYER_READY;
+ use mirrord_config::{
+     LayerConfig, LayerFileConfig, MIRRORD_DEBUG_HOLD,
+     config::ConfigContext,
+@@ -301,10 +303,14 @@ use mirrord_progress::{
+     JsonProgress, Progress, ProgressTracker,
+     messages::{EXEC_CONTAINER_BINARY, SESSION_READY_MESSAGE},
+ };
++#[cfg(not(target_os = "windows"))]
++use mirrord_progress::{LineMode, messages::EXEC_RUNNING_TASK};
+ use mirrord_protocol_api::client::ProtocolConnector;
+ use mirrord_protocol_io::Connection;
+ #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
+ use nix::errno::Errno;
++#[cfg(not(target_os = "windows"))]
++use no_layer::NoLayer;
+ use operator::operator_command;
+ use port_forward::{PortForwardError, PortForwarder, ReversePortForwarder};
+ use regex::Regex;
+@@ -346,6 +352,8 @@ mod logging;
+ mod login;
+ mod mcp;
+ mod newsletter;
++#[cfg(not(target_os = "windows"))]
++mod no_layer;
+ mod operator;
+ mod operator_tip;
+ #[cfg(windows)]
+@@ -406,19 +414,53 @@ async fn exec_process(
+ ) -> CliResult<()> {
+     let mut sub_progress = progress.subtask("preparing to launch process");
+ 
+-    #[cfg(target_os = "linux")]
+-    {
+-        use std::path::Path;
++    // Resolved the way `execve` below will find it, so a bare name on `PATH` is checked too.
++    #[cfg(not(target_os = "windows"))]
++    let binary_path = process_which(&args.binary).unwrap_or_else(|_| args.binary.clone().into());
+ 
++    #[cfg(target_os = "linux")]
++    let binary_is_static = {
+         let mut sub_progress =
+             sub_progress.subtask("checking if target binary is dynamically linked");
+-        if is_static::is_binary_static(Path::new(&args.binary)) {
++        let is_static = is_static::is_binary_static(&binary_path);
++        if is_static {
+             sub_progress.failure(Some(
+                 "target binary might not be dynamically linked, mirrord might not work!",
+             ));
+         } else {
+             sub_progress.success(Some("target binary is dynamically linked"));
+         }
++        is_static
++    };
++
++    // Why the program won't load the layer, if it won't. On Unix the layer says `Ready!` and holds
++    // the program, so without it `exec` says `Ready!` itself, and a hold is refused.
++    #[cfg(target_os = "linux")]
++    let no_layer = binary_is_static.then_some(NoLayer::Static);
++    #[cfg(target_os = "macos")]
++    let no_layer = None;
++    #[cfg(not(target_os = "windows"))]
++    let no_layer = no_layer
++        .or_else(|| no_layer::changes_identity(&binary_path).then_some(NoLayer::ChangesIdentity));
++
++    // Set by `mirrord up --debug` on this service's `mirrord exec` only.
++    #[cfg(not(target_os = "windows"))]
++    let debug_hold = std::env::var_os(MIRRORD_DEBUG_HOLD).is_some_and(|value| value == "1");
++    #[cfg(not(target_os = "windows"))]
++    if debug_hold && let Some(reason) = no_layer {
++        return Err(CliError::DebugHoldWithoutLayer {
++            binary: args.binary.clone(),
++            reason,
++        });
++    }
++    // The hold is bound to this pid, which only an `execve`d program keeps.
++    #[cfg(not(target_os = "windows"))]
++    if debug_hold
++        && mirrord_for_ci
++            .as_ref()
++            .is_some_and(|ci| ci.spawns_the_program(&config.ci))
++    {
++        return Err(CliError::DebugHoldSpawnedByCi(args.binary.clone()));
+     }
+ 
+     #[cfg(target_os = "macos")]
+@@ -459,6 +501,20 @@ async fn exec_process(
+         Some(ref sip_result) => (true, sip_result.to_owned()),
+     };
+ 
++    // Known only now: `skip_sip` may have left a SIP-protected binary unpatched.
++    #[cfg(target_os = "macos")]
++    let no_layer = no_layer.or_else(|| {
++        (!_did_sip_patch && mirrord_sip::is_sip_protected(&args.binary))
++            .then_some(NoLayer::UnpatchedSip)
++    });
++    #[cfg(target_os = "macos")]
++    if debug_hold && let Some(reason) = no_layer {
++        return Err(CliError::DebugHoldWithoutLayer {
++            binary: args.binary.clone(),
++            reason,
++        });
++    }
++
+     #[cfg(not(target_os = "macos"))]
+     let (_did_sip_patch, binary) = (false, args.binary.clone());
+ 
+@@ -467,6 +523,22 @@ async fn exec_process(
+         &execution_info.environment,
+         &execution_info.env_to_unset,
+     );
++    // TRICK: the `execve` below replaces this process's image with the program's, but keeps its
++    // pid, its stdio pipes and the environment it's handed. So this pid becomes the program's pid.
++    // The layer holds only the process whose pid this names: the program holds, and a child that
++    // inherits the variable never does.
++    #[cfg(not(target_os = "windows"))]
++    let env_vars = {
++        let mut env_vars = env_vars;
++        if debug_hold {
++            process_env::set(
++                &mut env_vars,
++                MIRRORD_DEBUG_HOLD,
++              
+```
+
+**File**: `mirrord/cli/src/no_layer.rs` (added, +91/-0)
+```diff
+@@ -0,0 +1,91 @@
++//! Why a program `mirrord exec` launches on Linux or macOS won't load the mirrord layer.
++//!
++//! On these platforms the layer reports `Ready!` and holds the program for a debugger, so `exec`
++//! needs to know up front when it never loads: it then says `Ready!` itself, as before, and
++//! refuses a debug hold instead of letting the program run unheld.
++
++use std::{fmt, fs, os::unix::fs::MetadataExt, path::Path};
++
++use nix::unistd::{getgid, getuid};
++
++/// The setuid mode bit, the same on every Unix.
++const SET_UID: u32 = 0o4000;
++/// The setgid mode bit, the same on every Unix.
++const SET_GID: u32 = 0o2000;
++
++/// A reason the program won't load the mirrord layer.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub(crate) enum NoLayer {
++    /// It's statically linked, so no dynamic loader runs to load the layer.
++    #[cfg(target_os = "linux")]
++    Static,
++    /// It runs as another user or group (setuid or setgid), so the loader ignores mirrord's
++    /// preload variable.
++    ChangesIdentity,
++    /// It's SIP-protected and wasn't patched (`skip_sip`), so macOS strips mirrord's library.
++    #[cfg(target_os = "macos")]
++    UnpatchedSip,
++}
++
++impl fmt::Display for NoLayer {
++    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
++        f.write_str(match self {
++            #[cfg(target_os = "linux")]
++            Self::Static => "it is statically linked",
++            Self::ChangesIdentity => "it runs as another user or group (setuid or setgid)",
++            #[cfg(target_os = "macos")]
++            Self::UnpatchedSip => "it is SIP-protected and mirrord didn't patch it",
++        })
++    }
++}
++
++/// Whether running `binary_path` switches to another user or group: a setuid or setgid file
++/// owned by someone else. The loader then runs in secure mode, and ignores `LD_PRELOAD` paths
++/// (glibc's `AT_SECURE`) and `DYLD_INSERT_LIBRARIES` alike.
++///
++/// A file mirrord can't inspect reads as `false`, as does a setuid file on a `nosuid` mount,
++/// which can't be told apart here.
++pub(crate) fn changes_identity(binary_path: &Path) -> bool {
++    fs::metadata(binary_path).is_ok_and(|file| {
++        switches_identity(
++            file.mode(),
++            (file.uid(), file.gid()),
++            (getuid().as_raw(), getgid().as_raw()),
++        )
++    })
++}
++
++/// Whether a file with `mode`, owned by `owner` (uid, gid), runs as someone other than `runner`
++/// (uid, gid). The setuid bit only switches users when the owner is someone else, and setgid
++/// likewise for groups.
++fn switches_identity(mode: u32, owner: (u32, u32), runner: (u32, u32)) -> bool {
++    (mode & SET_UID != 0 && owner.0 != runner.0) || (mode & SET_GID != 0 && owner.1 != runner.1)
++}
++
 +#[cfg(test)]
-+mod output_tests {
++mod tests {
++    use rstest::rstest;
++
 +    use super::*;
 +
-+    /// A line in another encoding (`£` in a Windows console's code page 850, here) doesn't stop
-+    /// the forwarding: the readiness marker after it is still read.
-+    #[tokio::test]
-+    async fn a_line_that_is_not_utf8_does_not_stop_the_forwarding() {
-+        let readiness = Arc::new(Readiness {
-+            count: AtomicUsize::new(0),
-+            total: 1,
-+            start: Instant::now(),
-+            tracker: ReadyTracker::default(),
-+        });
-+        let started = Arc::new(AtomicBool::new(false));
-+        let (closed, _receiver) = oneshot::channel();
-+        let output = [
-+            b"price: \x9c5\r\n".as_slice(),
-+            SESSION_READY_MESSAGE.as_bytes(),
-+            b"\n",
-+        ]
-+        .concat();
++    const ME: (u32, u32) = (1000, 1000);
 +
-+        forward_output(
-+            output.as_slice(),
-+            Arc::from("shop"),
-+            Some(SessionOutput {
-+                readiness: readiness.clone(),
-+                started: started.clone(),
-+                _closed: closed,
-+            }),
-+        )
-+        .await;
-+
-+        assert!(
-+            started.load(Ordering::Relaxed),
-+            "the readiness marker comes after the bad byte, so it must still be read"
++    #[rstest]
++    #[case::setuid_root_like_su(0o4755, (0, 0), true)]
++    #[case::setuid_but_mine(0o4755, ME, false)]
++    #[case::setgid_another_group(0o2755, (1000, 5), true)]
++    #[case::setgid_but_my_group(0o2755, (0, 1000), false)]
++    // The odd one out: owned by root, but with neither bit it runs as whoever starts it.
++    #[case::plain_root_file(0o0755, (0, 0), false)]
++    fn the_layer_drops_only_when_the_identity_switches(
++        #[case] mode: u32,
++        #[case] owner: (u32, u32),
++        #[case] expected: bool,
++    ) {
++        assert_eq!(
++            switches_identity(mode, owner, ME),
++            expected,
++            "mode {mode:o} owned by {owner:?}, run by {ME:?}"
 +        );
-+        assert_eq!(readiness.count.load(Ordering::Relaxed), 1);
 +    }
 +}
-+
- #[cfg(all(test, windows))]
- mod windows_tests;
+```
+
+**File**: `mirrord/config/src/lib.rs` (modified, +12/-0)
+```diff
+@@ -99,6 +99,18 @@ pub const MIRRORD_TEST_INTPROXY_ADDR: &str = "MIRRORD_TEST_INTPROXY_ADDR";
+ /// Environment variable to indicate towards layer to wait for debugger.
+ pub const MIRRORD_LAYER_WAIT_FOR_DEBUGGER: &str = "MIRRORD_LAYER_WAIT_FOR_DEBUGGER";
  
++/// Environment variable asking the layer to print `mirrord exec`'s `Ready!` once it has started.
++///
++/// `mirrord exec` on Linux and macOS replaces itself with the program before the layer exists, so
++/// in the progress modes machines read it leaves `Ready!` to the layer, where it means what it
++/// means on Windows: the layer is in and connected. In a terminal's `std` mode `exec` still prints
++/// it in its own tree, and never sets this. The value is `<mode>:<pid>`: the progress mode `exec`
++/// would have printed it in (`simple` or `json`, see `MIRRORD_PROGRESS_MODE`), and `exec`'s own
++/// pid, which `execve` hands to the program. The layer prints only in the process with that pid, and removes the
++/// variable, so the program's children never print it, not even one an earlier library
++/// constructor started before the variable was removed.
++pub const MIRRORD_LAYER_READY: &str = "MIRRORD_LAYER_READY";
++
+ /// Environment variable asking `mirrord exec` to hold the program it starts before the program's
+ /// own code runs, until an IDE releases it. `mirrord up --debug` sets it on each named service's
+ /// `mirrord exec`.
 ```
 
 ---
 
-### Incident Patch 2: `0c2daf35` (2026-10-28)
-**Commit Message**: fix(layer): keep ancestors local only to calls that describe them
+### Incident Patch 2: `08dbc81e` (2026-10-29)
+**Commit Message**: feat(up): hold the services --debug names, on every platform
 
-The working directory's ancestors were in the default-local set, so
-opening one gave a local fd. An `openat` relative to a local fd goes to
-the local directory, because the layer only follows remote fds, so
-`openat(fd, "remote-only.txt")` missed the target while
-`open("/workspace/remote-only.txt")` reached it.
+The IDE debugs a set of services in one `mirrord up`, so
+`--debug api --debug web` sets `MIRRORD_DEBUG_HOLD=1` on each named
+service's `mirrord exec`, and its program waits at its entry point until
+the IDE releases it. The other services run as usual. The flag is
+hidden and experimental, since only the Visual Studio extension uses it
+so far.
 
-The ancestors now live in their own set, `default_local_entries`, which
-`ensure_remote` checks only for a `PathUse::Describe` call: `stat`,
-`access`, `readlink`, `realpath` and `statfs`. That still covers Node's
-`realpathSync`, which only `lstat`s each ancestor. Opening an ancestor,
-`readdir` included, follows the usual rules again.
+- Only repetition is accepted, not comma lists: service names are YAML
+  keys and may contain commas, and no other mirrord flag splits values.
+- Unknown names, known ones that aren't launched, and ones that run
+  with `run.type: container` are refused, each kind listing all its
+  offenders at once. The IDE would otherwise wait for a hold line that
+  never comes, and a container service's local process is the
+  container client, not the app.
+- Services `--debug` doesn't name have the variable removed, so they
+  never hold even if `mirrord up` itself runs with it set.
+- An IDE's Stop Debugging ends the programs it debugs, usually with a
+  non-zero code. A debugged service that exits once its session printed
+  the `debug-hold ` line prints
+  `<svc>: exited with <status> while debugged,
 
-The doc comment on `cwd_ancestor_patterns` also says why root never
-becomes a pattern, and why it would be harmless if it did.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `changelog.d/+cwd-ancestors-local.fixed.md` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--The folders above the working directory are now read locally by default on Linux and macOS, so resolving a local path no longer fails when the target doesn't have those folders.
-+Calls that describe a folder above the working directory, such as `stat` and `access`, now stay local by default on Linux and macOS, so resolving a local path no longer fails when the target doesn't have those folders.
-```
-
-**File**: `mirrord/layer-lib/src/file/filter.rs` (modified, +79/-16)
-```diff
-@@ -42,6 +42,16 @@ pub fn generate_local_set() -> RegexSet {
-         .expect("Building local path regex set failed")
- }
- 
-+/// Paths whose entry mirrord describes locally by default, while opening them follows the usual
-+/// rules. See [`read_local_by_default::entry_regex_set_builder`] for why the two differ.
-+#[cfg(unix)]
-+pub fn generate_local_entry_set() -> RegexSet {
-+    read_local_by_default::entry_regex_set_builder()
-+        .case_insensitive(true)
-+        .build()
-+        .expect("Building local entry regex set failed")
-+}
-+
- /// List of files that mirrord should use remotely read only
- pub fn generate_remote_ro_set() -> RegexSet {
-     let patterns = read_remote_by_default::PATHS;
-@@ -91,6 +101,10 @@ pub struct FileFilter {
-     pub local: RegexSet,
-     pub not_found: RegexSet,
-     pub default_local: RegexSet,
-+    /// Like `default_local`, but only for calls that describe a path without opening it. Built
-+    /// by [`generate_local_entry_set`].
-+    #[cfg(unix)]
-+    pub default_local_entries: RegexSet,
-     pub default_remote_ro: RegexSet,
-     pub default_not_found: RegexSet,
-     pub mode: FsModeConfig,
-@@ -133,6 +147,8 @@ impl FileFilter {
-         let not_found = make("not_found", not_found)?;
- 
-         let default_local = generate_local_set();
-+        #[cfg(unix)]
-+        let default_local_entries = generate_local_entry_set();
-         let default_remote_ro = generate_remote_ro_set();
-         let default_not_found = generate_not_found_set();
- 
-@@ -142,6 +158,8 @@ impl FileFilter {
-             local,
-             not_found,
-             default_local,
-+            #[cfg(unix)]
-+            default_local_entries,
-             default_remote_ro,
-             default_not_found,
-             mode,
-@@ -364,30 +382,72 @@ mod tests {
-         assert_eq!(mode, Some(FileMode::ReadOnly(false)));
-     }
- 
--    /// The working directory's patterns, built the way [`super::generate_local_set`] builds them.
-+    /// The working directory used by the tests below.
-+    #[cfg(unix)]
-+    const CWD: &str = "/workspace/demo/svc";
-+
-+    /// `patterns` built the way [`super::generate_local_set`] builds its own.
-     #[cfg(unix)]
--    fn cwd_set(cwd: &str) -> regex::RegexSet {
--        regex::RegexSetBuilder::new(super::read_local_by_default::cwd_patterns(
--            std::path::Path::new(cwd),
-+    fn set(patterns: impl IntoIterator<Item = String>) -> regex::RegexSet {
-+        regex::RegexSetBuilder::new(patterns)
-+            .case_insensitive(true)
-+            .build()
-+            .expect("the working directory patterns are valid regexes")
-+    }
-+
-+    /// What [`CWD`] adds to [`super::generate_local_set`].
-+    #[cfg(unix)]
-+    fn cwd_set() -> regex::RegexSet {
-+        set(super::read_local_by_default::cwd_pattern(
-+            std::path::Path::new(CWD),
-+        ))
-+    }
-+
-+    /// What [`CWD`] adds to [`super::generate_local_entry_set`].
-+    #[cfg(unix)]
-+    fn ancestor_set() -> regex::RegexSet {
-+        set(super::read_local_by_default::cwd_ancestor_patterns(
-+            std::path::Path::new(CWD),
-         ))
--        .case_insensitive(true)
--        .build()
--        .expect("the working directory patterns are valid regexes")
-     }
- 
--    /// Resolving a path under the working directory walks its ancestors (Node's `realpathSync`
--    /// `lstat`s each one), so they stay local even when the target doesn't have them.
-+    /// The working directory and everything under it is local, whatever the call does with it.
-+    #[cfg(unix)]
-+    #[rstest]
-+    #[case::cwd("/workspace/demo/svc")]
-+    #[case::under_cwd("/workspace/demo/svc/app.mjs")]
-+    fn the_working_directory_is_local(#[case] path: &str) {
-+        assert!(
-+            cwd_set().is_match(path),
-+            "{path} is in the working directory, so it must be local"
-+        );
-+    }
-+
-+    /// Resolving a path under the working directory describes each ancestor (Node's
-+    /// `realpathSync` `lstat`s each one), so they're described locally even when the target
-+    /// doesn't have them.
-     #[cfg(unix)]
-     #[rstest]
-     #[case::parent("/workspace/demo")]
-     #[case::grandparent("/workspace")]
-     #[case::trailing_slash("/workspace/")]
--    #[case::cwd("/workspace/demo/svc")]
--    #[case::under_cwd("/workspace/demo/svc/app.mjs")]
--    fn the_working_directory_and_its_ancestors_are_local(#[case] path: &str) {
-+    fn the_ancestors_are_described_locally(#[case] path: &str) {
-         assert!(
--            cwd_set("/workspace/demo/svc").is_match(path),
--            "{path} is on the way to the working directory, so it must be local"
-+            ancestor_set().is_match(path),
-+            "{path} is on the way to the working directory, so describing it must stay local"
-+        );
-+    }
-+
-+    /// Opening an ancestor follows the usual rules, so `openat` through its fd can still reach
-+    /// the target's entries.
-+    #[cfg(unix)]
-+    #[rstest]
-+    #[case::parent("/workspace/demo")]
-+    #[case::grandparent("/worksp
-```
-
-**File**: `mirrord/layer-lib/src/file/unix/read_local_by_default.rs` (modified, +42/-22)
-```diff
-@@ -87,8 +87,8 @@ pub fn regex_set_builder() -> RegexSetBuilder {
-     .map(|s| s.to_string())
-     .collect();
- 
--    if let Ok(cwd) = env::current_dir() {
--        patterns.extend(cwd_patterns(&cwd));
-+    if let Some(cwd) = env::current_dir().ok().and_then(|cwd| cwd_pattern(&cwd)) {
-+        patterns.push(cwd);
-     }
-     if let Ok(executable) = env::current_exe() {
-         patterns.push(format!("{}$", regex::escape(&executable.to_string_lossy())));
-@@ -105,31 +105,51 @@ pub fn regex_set_builder() -> RegexSetBuilder {
-     RegexSetBuilder::new(patterns)
- }
- 
--/// The patterns that keep the working directory local: everything under it, and each of its
--/// ancestors by exact match.
-+/// Path patterns whose entry is described locally by default, while opening them, or anything
-+/// under them, still follows the usual rules. These are the working directory's ancestors.
- ///
- /// Resolving a path under the working directory walks its ancestors first: Node's
- /// `realpathSync` calls `lstat` on `/workspace`, then `/workspace/app`, and so on. If an ancestor
--/// went to the remote, a target without that directory fails the whole walk with `ENOENT`. The
--/// exact match keeps only the directory itself local, so its other entries still follow the
--/// usual rules.
-+/// went to the remote, a target without that directory fails the whole walk with `ENOENT`.
- ///
--/// Root gives no patterns: a lot of containers use it as `WORKDIR`, and making *everything*
-+/// Only calls that describe the entry (`stat`, `access`, `readlink`, `realpath`, `statfs`) use
-+/// these. Opening an ancestor stays with the usual rules on purpose: an `openat` relative to a
-+/// local directory fd goes to the local directory, because the layer can only follow remote fds.
-+/// So a local fd for `/workspace` would send `openat(fd, "remote-only.txt")` to the local disk,
-+/// while `open("/workspace/remote-only.txt")` reaches the target.
-+pub fn entry_regex_set_builder() -> RegexSetBuilder {
-+    let patterns = env::current_dir()
-+        .map(|cwd| cwd_ancestor_patterns(&cwd))
-+        .unwrap_or_default();
-+
-+    RegexSetBuilder::new(patterns)
-+}
-+
-+/// The pattern that keeps the working directory and everything under it local.
-+///
-+/// Root gives no pattern: a lot of containers use it as `WORKDIR`, and making *everything*
- /// local is confusing. It's also local by default already.
--pub(crate) fn cwd_patterns(cwd: &Path) -> Vec<String> {
--    if cwd.as_os_str().as_encoded_bytes() == b"/" {
--        return Vec::new();
--    }
-+pub(crate) fn cwd_pattern(cwd: &Path) -> Option<String> {
-+    (cwd.as_os_str().as_encoded_bytes() != b"/").then(|| format!("^{}(/|$)", trimmed(cwd)))
-+}
- 
--    // `current_dir` may or may not end in '/', so trim it and add our own.
--    let escape = |dir: &Path| regex::escape(dir.to_string_lossy().trim_end_matches('/'));
-+/// One exact-match pattern per ancestor of the working directory, so only the directory itself
-+/// matches, and its other entries still follow the usual rules.
-+///
-+/// Root is never among them: it's the one ancestor without a parent. Even if it got through, it
-+/// would only repeat the `^/$` root entry in [`regex_set_builder`], since `/` trims to `^/?$`.
-+/// The root that must stay out is root as the working directory, whose `^/(/|$)` would make
-+/// every path local, and [`cwd_pattern`] skips that.
-+pub(crate) fn cwd_ancestor_patterns(cwd: &Path) -> Vec<String> {
-+    cwd.ancestors()
-+        .skip(1)
-+        .filter(|ancestor| ancestor.parent().is_some())
-+        .map(|ancestor| format!("^{}/?$", trimmed(ancestor)))
-+        .collect()
-+}
- 
--    let mut patterns = vec![format!("^{}(/|$)", escape(cwd))];
--    patterns.extend(
--        cwd.ancestors()
--            .skip(1)
--            .filter(|ancestor| ancestor.parent().is_some())
--            .map(|ancestor| format!("^{}/?$", escape(ancestor))),
--    );
--    patterns
-+/// `dir` escaped for a regex, without a trailing '/', so a pattern can add its own whether
-+/// `current_dir` ends in one or not.
-+fn trimmed(dir: &Path) -> String {
-+    regex::escape(dir.to_string_lossy().trim_end_matches('/'))
- }
-```
-
-**File**: `mirrord/layer/src/file/ops.rs` (modified, +72/-23)
-```diff
-@@ -72,8 +72,24 @@ impl PathExt for Path {
-     }
- }
- 
-+/// What an operation does with the path it's given. Only
-+/// [`FileFilter::default_local_entries`] looks at it.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub enum PathUse {
-+    /// Describes the entry itself without opening it: `stat`, `access`, `readlink`, `realpath`
-+    /// or `statfs`.
-+    Describe,
-+    /// Anything else: opens it, or creates, removes or renames it.
-+    Other,
-+}
-+
- /// Checks whether the given [`Path`] should be accessed remotely.
--pub fn ensure_remote(file_filter: &FileFilter, path: &Path, write: bool) -> Detour<()> {
-+pub fn ensure_remote(
-+    file_filter: &FileFilter,
-+    path: &Path,
-+    write: bool,
-+    path_use: PathUse,
-+) -> Detour<()> {
-     // TODO(gabriela): rewrite this using `FileFilter::check`!
- 
-     let text = path.to_str().unwrap_or_default();
-@@ -101,6 +117,9 @@ pub fn ensure_remote(file_filter: &FileFilter, path: &Path, write: bool) -> Deto
-         _ if file_filter.default_local.is_match(text) => {
-             Err(DetourError::Bypass(Bypass::ignored_file(text)))
-         }
-+        _ if path_use == PathUse::Describe && file_filter.default_local_entries.is_match(text) => {
-+            Err(DetourError::Bypass(Bypass::ignored_file(text)))
-+        }
-         FsModeConfig::LocalWithOverrides => Err(DetourError::Bypass(Bypass::ignored_file(text))),
-         FsModeConfig::Write => Ok(()),
-         FsModeConfig::Read if write => Err(DetourError::Bypass(Bypass::ReadOnly(text.into()))),
-@@ -116,11 +135,11 @@ pub fn ensure_remote(file_filter: &FileFilter, path: &Path, write: bool) -> Deto
- /// 3. Bypass if the new path should be accessed locally.
- ///
- /// Returns the remapped path.
--fn common_path_check(path: PathBuf, write: bool) -> Detour<PathBuf> {
-+fn common_path_check(path: PathBuf, write: bool, path_use: PathUse) -> Detour<PathBuf> {
-     path.ensure_not_relative_or_not_found()?;
- 
-     let path = crate::setup().file_remapper().change_path(path);
--    ensure_remote(crate::setup().file_filter(), &path, write)?;
-+    ensure_remote(crate::setup().file_filter(), &path, write, path_use)?;
-     Ok(path)
- }
- 
-@@ -149,8 +168,8 @@ fn ensure_not_prefetched(path: &Path) -> Detour<()> {
- /// or answer for the local filesystem rather than the target's (`statfs`). So do the ones that
- /// change the remote namespace (`unlink`, `rename`, `mkdir`), which still take effect in the
- /// target.
--fn prefetchable_path_check(path: PathBuf, write: bool) -> Detour<PathBuf> {
--    let path = common_path_check(path, write)?;
-+fn prefetchable_path_check(path: PathBuf, write: bool, path_use: PathUse) -> Detour<PathBuf> {
-+    let path = common_path_check(path, write, path_use)?;
-     ensure_not_prefetched(&path)?;
- 
-     Ok(path)
-@@ -298,7 +317,7 @@ fn close_remote_file_on_failure(fd: u64) -> Result<()> {
- /// [`OPEN_FILES`].
- #[mirrord_layer_macro::instrument(level = Level::TRACE, ret)]
- pub(crate) fn open(path: Detour<PathBuf>, open_options: OpenOptionsInternal) -> Detour<RawFd> {
--    let path = prefetchable_path_check(path?, open_options.is_write())?;
-+    let path = prefetchable_path_check(path?, open_options.is_write(), PathUse::Other)?;
- 
-     let OpenFileResponse { fd: remote_fd } = RemoteFile::remote_open(path.clone(), open_options)
-         .on_error(|fail| match fail {
-@@ -442,7 +461,7 @@ pub(crate) fn pread(local_fd: RawFd, buffer_size: u64, offset: u64) -> Detour<Re
- /// Resolves the symbolic link `path`.
- #[mirrord_layer_macro::instrument(level = Level::TRACE, ret)]
- pub(crate) fn read_link(path: Detour<PathBuf>) -> Detour<ReadLinkFileResponse> {
--    let path = common_path_check(path?, false)?;
-+    let path = common_path_check(path?, false, PathUse::Describe)?;
- 
-     let requesting_path = ReadLinkFileRequest { path };
- 
-@@ -456,7 +475,7 @@ pub(crate) fn read_link(path: Detour<PathBuf>) -> Detour<ReadLinkFileResponse> {
- 
- #[mirrord_layer_macro::instrument(level = Level::TRACE, ret)]
- pub(crate) fn mkdir(path: Detour<PathBuf>, mode: u32) -> Detour<()> {
--    let path = common_path_check(path?, true)?;
-+    let path = common_path_check(path?, true, PathUse::Other)?;
- 
-     let mkdir = MakeDirRequest {
-         pathname: path,
-@@ -499,7 +518,7 @@ pub(crate) fn mkdirat(dirfd: RawFd, path: Detour<PathBuf>, mode: u32) -> Detour<
- 
- #[mirrord_layer_macro::instrument(level = Level::TRACE, ret)]
- pub(crate) fn rmdir(path: Detour<PathBuf>) -> Detour<()> {
--    let path = common_path_check(path?, true)?;
-+    let path = common_path_check(path?, true, PathUse::Other)?;
- 
-     let rmdir = RemoveDirRequest { pathname: path };
- 
-@@ -513,7 +532,7 @@ pub(crate) fn rmdir(path: Detour<PathBuf>) -> Detour<()> {
- 
- #[mirrord_layer_macro::instrument(level = Level::TRACE, ret)]
- pub(crate) fn unlink(path: Detour<PathBuf>) -> Detour<()> {
--    let path = common_path_check(path?, true)?;
-+    let path = common_path_check(path?, true, PathUse::Other)?;
- 
-     let unlink = UnlinkRequest { pathname: path };
- 
-@@ -535,7 +554,7 @@ pub(cr
-```
-
----
-
-### Incident Patch 3: `db96479e` (2026-10-28)
-**Commit Message**: Fix stale CI and contributing docs
-
-**File**: `.github/workflows/README.md` (modified, +2/-2)
-```diff
-@@ -28,14 +28,14 @@ graph TD
- 
- ## 2. Release Process Flow (`release.yaml`)
- 
--**Trigger**: Pushing a tag (e.g. `1.2.3`).
-+**Trigger**: Merging a release PR (from a `releases/<version>` branch) into `main`. See "Release mirrord" in `CONTRIBUTING.md`.
- 
- This workflow handles the official release process. It builds signed artifacts for all platforms and publishes them.
- 
- ```mermaid
- %%{init: {'theme': 'neutral', 'themeVariables': {'lineColor': '#00f'}}}%%
- graph TD
--    A["Push Tag v*"] --> B["Release Workflow (release.yaml)"]
-+    A["Merge Release PR"] --> B["Release Workflow (release.yaml)"]
-     
-     subgraph "Linux & Mac"
-         B --> C["Build Linux (x64/arm64)"]
-```
-
-**File**: `.github/workflows/check-lint.yaml` (modified, +1/-1)
-```diff
-@@ -127,7 +127,7 @@ jobs:
-           chmod +x /tmp/vale/vale
-           mv /tmp/vale/vale /usr/local/bin
-       - name: check root markdown files
--        run: vale $(find . -maxdepth 1 -name '*.md' -not -name CLAUDE.md -not -name CHANGELOG.md) --output=report.tmpl
-+        run: vale $(find . -maxdepth 1 -name '*.md' -not -name CHANGELOG.md) --output=report.tmpl
-       - name: check changelog.d files
-         run: vale $(git ls-files 'changelog.d/*.md') --output=report.tmpl
-   cargo-lint:
-```
-
-**File**: `CONTRIBUTING.md` (modified, +8/-4)
-```diff
-@@ -595,8 +595,9 @@ reconciling resources created by the other. The marker is set via the `OPERATOR_
- environment variable and defaults to `mirrord-operator`. Its value is used as a special label on
- operator-managed resources (agents, copy-targets, preview sessions, etc.).
- 
--The operator reads this env var at **compile time** (via `option_env!`), while the CLI reads it at
--**runtime** (via `std::env::var`).
-+Both the operator and the CLI read this env var at runtime. The CLI labels the resources it creates
-+with the marker only when the variable is set, so to have an operator running with a custom marker
-+pick up a session's resources, run the CLI with the same `OPERATOR_ISOLATION_MARKER`.
- 
- # New Hook Guidelines
- 
-@@ -732,7 +733,7 @@ an exception in the [typos configuration file](typos.toml) at the root of the re
- 
- ## Prose Checks (Vale)
- 
--mirrord uses [Vale](https://vale.sh) to enforce writing style in Markdown files and Rust doc comments. It runs in CI on changed files. To run it locally:
-+mirrord uses [Vale](https://vale.sh) to enforce writing style in Markdown files and Rust doc comments. CI runs it on the Markdown files at the root of the repository, except `CHANGELOG.md`, and on every Markdown file in `changelog.d/`. To run it locally:
- 
- ```bash
- vale .
-@@ -769,9 +770,12 @@ Add a changelog file in `changelog.d/` named `<identifier>.<category>.md`
- - Use `+some-name` if no issue exists
- - Don't use Linear issues or private repository issue numbers
- 
--**Category:**
-+**Category** (the types in [towncrier.toml](towncrier.toml)):
- - `added` for new functionality
- - `fixed` for fixed bugs
-+- `security` for security fixes
-+- `deprecated` for functionality that a later release will remove
-+- `removed` for removed functionality
- - `internal` for anything users don't care about, e.g. changes in tests or CI
- - `changed` for anything else
- 
-```
-
-**File**: `changelog.d/+stale-docs.internal.md` (added, +1/-0)
+**File**: `changelog.d/+up-ide-list-and-debug.added.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Correct the contributing guide on `OPERATOR_ISOLATION_MARKER`, which the operator reads at runtime, on the files Vale checks, and on the changelog fragment types. The workflows README now says that merging a release pull request starts a release.
++Experimental: `mirrord up --debug <service>` holds that service's program before its own code runs, until an IDE attaches its debugger and releases it. It's hidden from help on every platform, and may still change.
 ```
 
-**File**: `mirrord/cli/src/preview.rs` (modified, +1/-1)
+**File**: `mirrord/cli/src/config.rs` (modified, +26/-0)
 ```diff
-@@ -638,7 +638,7 @@ impl PreparedPreview {
+@@ -2106,6 +2106,16 @@ pub(super) struct UpArgs {
+     #[arg(long)]
+     pub context: Option<Arc<str>>,
  
-         let session_name = PreviewSession::make_resource_name(&config_target, key.to_owned());
++    /// Experimental: hold this service's program at its entry point until an IDE releases it, so
++    /// a debugger attaches before its first line runs.
++    ///
++    /// Repeat it to hold several services, e.g. `--debug api --debug web`. Each one must be
++    /// among the services launched, and run with `type: exec`.
++    ///
++    /// Experimental, so it's hidden from help and may still change.
++    #[arg(long, hide = true, value_name = "SERVICE")]
++    pub debug: Vec<String>,
++
+     /// Subcommand. When absent, `mirrord up` runs the sessions defined in
+     /// the config file. With a subcommand, the flags above are ignored.
+     #[command(subcommand)]
+@@ -2603,6 +2613,22 @@ mod tests {
+         assert!(matches!(args.command, Some(UpSubcommand::Init { .. })));
+     }
  
--        // Operators compiled with a custom OPERATOR_ISOLATION_MARKER only reconcile preview
-+        // Operators running with a custom OPERATOR_ISOLATION_MARKER only reconcile preview
-         // sessions labeled with their marker (see the label selector in the preview-env
-         // controller). The runtime env var check here allows developers to label the session
-         // so it gets picked up by an isolated operator instead of the production one.
++    fn up_args(args: &[&str]) -> UpArgs {
++        let cli = Cli::try_parse_from(args).expect("the `up` arguments parse");
++        let Commands::Up(args) = cli.commands else {
++            panic!("expected `up` command");
++        };
++        *args
++    }
++
++    #[test]
++    fn up_debug_names_a_launched_service() {
++        let args = up_args(&["mirrord", "up", "api", "--debug", "api"]);
++        assert_eq!(args.services, ["api"]);
++        assert_eq!(args.debug, ["api"]);
++        assert!(args.command.is_none());
++    }
++
+     #[rstest]
+     #[case(
+         &["mirrord", "db-branches", "connections"],
+```
+
+**File**: `mirrord/cli/src/up.rs` (modified, +2/-2)
+```diff
+@@ -136,7 +136,7 @@ async fn run_up(args: UpArgs, analytics: &mut AnalyticsReporter) -> Result<(), U
+         .add("num_selected_services", args.services.len());
+ 
+     up_config
+-        .select_services(&args.services)
++        .select_services(&args.services, &args.debug)
+         .map_err(UpError::from)?;
+ 
+     analytics
+@@ -192,7 +192,7 @@ async fn run_up(args: UpArgs, analytics: &mut AnalyticsReporter) -> Result<(), U
+         .map(|service| (service.service_name.clone(), service.mode))
+         .collect::<Vec<_>>();
+ 
+-    let result = mirrord_up::launch(services, correlation_id, ready.clone()).await;
++    let result = mirrord_up::launch(services, correlation_id, &args.debug, ready.clone()).await;
+ 
+     analytics.get_mut().add(
+         "services",
+```
+
+**File**: `mirrord/up/src/config.rs` (modified, +179/-35)
+```diff
+@@ -1169,34 +1169,84 @@ impl UpConfig {
+     /// a service overrides its `skip` flag. When `selected` is empty,
+     /// keeps every service except those marked `skip: true`.
+     ///
+-    /// Errors if no service remains to be launched.
+-    pub fn select_services(&mut self, selected: &[String]) -> Result<(), SelectError> {
++    /// Errors if no service remains to be launched, or if any of `debug`, the services `--debug`
++    /// holds for a debugger, is unknown, not among those kept, or runs in a container. Each error
++    /// lists every offending name.
++    pub fn select_services(
++        &mut self,
++        selected: &[String],
++        debug: &[String],
++    ) -> Result<(), SelectError> {
++        let unknown = self.missing_services(debug);
++        if unknown.is_empty().not() {
++            return Err(SelectError::UnknownServices {
++                unknown,
++                available: self.service_names(),
++            });
++        }
++
+         if selected.is_empty() {
+             self.services.retain(|_, svc| svc.skip.not());
+ 
+             if self.services.is_empty() {
+                 return Err(SelectError::AllSkipped);
+             }
+         } else {
+-            let unknown: Vec<String> = selected
+-                .iter()
+-                .filter(|name| self.services.contains_key(name.as_str()).not())
+-                .cloned()
+-                .collect();
++            let unknown = self.missing_services(selected);
+             if unknown.is_empty().not() {
+-                let mut available: Vec<String> =
+-                    self.services.keys().map(|name| name.to_string()).collect();
+-                available.sort();
+-                return Err(SelectError::UnknownServices { unknown, available });
++                return Err(SelectError::UnknownServices {
++                    unknown,
++                    available: self.service_names(),
++                });
+             }
+ 
+             self.services
+                 .retain(|name, _| selected.iter().any(|s| s.as_str() == name.as_ref()));
+         }
+ 
++        let not_launched = self.missing_services(debug);
++        if not_launched.is_empty().not() {
++            return Err(SelectError::DebugNotSelected {
++                services: not_launched,
++            });
++        }
++
++        let in_containers: Vec<String> = debug
++            .iter()
++            .filter(|name| {
++                self.services
++                    .get(name.as_str())
++                    .is_some_and(|service| service.run.r#type == RunType::Container)
++            })
++            .cloned()
++            .collect();
++        if in_containers.is_empty().not() {
++            return Err(SelectError::DebugNotExec {
++                services: in_containers,
++            });
++        }
++
+         Ok(())
+     }
+ 
++    /// Those of `names` that aren't among [`Self::services`], in the order given.
++    fn missing_services(&self, names: &[String]) -> Vec<String> {
++        names
++            .iter()
++            .filter(|name| self.services.contains_key(name.as_str()).not())
++            .cloned()
++            .collect()
++    }
++
++    /// Every service name in the config, sorted.
++    fn service_names(&self) -> Vec<String> {
++        self.services
++            .keys()
++            .map(|name| name.to_string())
++            .sorted()
++            .collect()
++    }
++
+     /// Picks the image of every service for `mirrord preview up`, and drops the services that have
+     /// none: those get no preview.
+     ///
+@@ -1403,6 +1453,27 @@ pub enum SelectError {
+     #[error("no services to launch: every service is marked `skip: true`")]
+     #[diagnostic(help("Name a service explicitly to run it, or remove a `skip: true` flag."))]
+     AllSkipped,
++
++    /// Services named by `--debug` are in the config, but not among those launched.
++    #[error("cannot debug service(s) that are not launched: {}", services.join(", "))]
++    #[diagnostic(help(
++        "Name them among the services to launch, or remove their `skip: true` flags."
++    ))]
++    DebugNotSelected {
++        /// The services named by `--debug` that aren't launched.
++        services: Vec<String>,
++    },
++
++    /// Services named by `--debug` run with `type: container`. Their local process is the
++    /// container runtime's client, not the app, so holding it gives a debugger nothing to debug.
++    #[error("cannot debug service(s) that run in a container: {}", services.join(", "))]
++    #[diagnostic(help(
++        "`--debug` only holds services that run with `type: exec`. Drop these from `--debug`."
++    ))]
++    DebugNotExec {
++        /// The services named by `--debug` that run with `type: container`.
++        services: Vec<String>,
++    },
+ }
+ 
+ /// The environment variable that sets the image of `service` for `mirrord preview up`:
+@@ -1820,7 +1891,7 @@ mod tests {
+     #[test]
+     fn windows_validation_accepts_exec_without_ci() {
+         let mut config = windows_validation_fixture();
+-        config.select_ser
+```
+
+**File**: `mirrord/up/src/lib.rs` (modified, +72/-4)
+```diff
+@@ -34,6 +34,7 @@ use miette::Diagnostic;
+ use mirrord_analytics::{MIRRORD_UP_CORRELATION_ID_ENV, UpSessionDbBranch};
+ use mirrord_command::resolve_tokio_command;
+ use mirrord_config::{
++    MIRRORD_DEBUG_HOLD,
+     config::{ConfigContext, ConfigError, EnvKey},
+     target::{Target, TargetType},
+     util::GIT_BRANCH,
+@@ -882,13 +883,30 @@ pub async fn resolve_preview_services(
+ /// `ready` is filled with the time-to-ready once every session has signalled
+ /// readiness, and with the branch databases the sessions report (see [`ReadyTracker`]).
+ ///
++/// `debug` names the services whose programs are held for a debugger (see [`MIRRORD_DEBUG_HOLD`]).
++/// [`UpConfig::select_services`] has checked that each is one of the services launched.
++///
+ /// Returns when the user stops the session or one of the child sessions exits.
+ pub async fn launch(
+     service_configs: Vec<SubprocessCfg>,
+     correlation_id: Uuid,
++    debug: &[String],
+     ready: ReadyTracker,
+ ) -> Result<(), UpError> {
+-    let commands: Vec<_> = service_configs
++    let commands = service_commands(service_configs, correlation_id, debug)?;
++    process::run(commands, ready).await
++}
++
++/// The `mirrord exec`/`mirrord container` command, and `run.pre_command`, of every service.
++///
++/// Only the services named in `debug` get [`MIRRORD_DEBUG_HOLD`]. The others never inherit it from
++/// `mirrord up`'s own environment, so they run as usual whatever it holds.
++fn service_commands(
++    service_configs: Vec<SubprocessCfg>,
++    correlation_id: Uuid,
++    debug: &[String],
++) -> Result<Vec<process::ServiceCommands>, UpError> {
++    service_configs
+         .into_iter()
+         .map(|config| {
+             let SubprocessCfg {
+@@ -909,6 +927,12 @@ pub async fn launch(
+             let encoded_cfg = config.encode()?;
+ 
+             let mut cmd = resolve_tokio_command(std::env::current_exe()?);
++            let debugged = debug.iter().any(|name| **name == *service_name);
++            if debugged {
++                cmd.env(MIRRORD_DEBUG_HOLD, "1");
++            } else {
++                cmd.env_remove(MIRRORD_DEBUG_HOLD);
++            }
+             cmd.env(RESOLVED_CONFIG_ENV, encoded_cfg)
+                 .env(MIRRORD_PROGRESS_ENV, "simple")
+                 .env(MIRRORD_UP_CORRELATION_ID_ENV, correlation_id.to_string())
+@@ -938,13 +962,12 @@ pub async fn launch(
+ 
+             Ok(process::ServiceCommands {
+                 name: service_name,
++                debugged,
+                 pre,
+                 session: cmd,
+             })
+         })
+-        .collect::<Result<_, UpError>>()?;
+-
+-    process::run(commands, ready).await
++        .collect()
+ }
+ 
+ #[cfg(test)]
+@@ -1097,6 +1120,51 @@ services:
+         );
+     }
+ 
++    /// `--debug` holds exactly the programs it names: each named service's `mirrord exec` gets
++    /// the hold, and the one in between, not named, has it removed, so it runs as usual even if
++    /// `mirrord up`'s own environment holds.
++    #[test]
++    fn only_the_debugged_services_are_held() {
++        let key = EnvKey::Provided("key".to_owned());
++        let config = template(include_str!("testdata/debugged-services.yaml"), &key)
++            .expect("parse the config");
++        let service_configs = config
++            .service_configs(
++                &key,
++                &mut HashMap::new(),
++                UpKubeContext::default(),
++                &mut ConfigContext::default().strict_env(true),
++            )
++            .expect("assemble the services");
++
++        let debug = ["worker".to_owned(), "api".to_owned()];
++        let commands =
++            service_commands(service_configs, Uuid::nil(), &debug).expect("build the commands");
++
++        let holds: HashMap<_, _> = commands
++            .iter()
++            .map(|commands| {
++                let hold = commands
++                    .session
++                    .as_std()
++                    .get_envs()
++                    .find(|(name, _)| *name == MIRRORD_DEBUG_HOLD)
++                    // `None` inside: the variable is removed.
++                    .map(|(_, value)| value.map(|value| value.to_string_lossy().into_owned()));
++                (commands.name.to_string(), hold)
++            })
++            .collect();
++        assert_eq!(
++            holds,
++            HashMap::from([
++                ("api".to_owned(), Some(Some("1".to_owned()))),
++                ("web".to_owned(), Some(None)),
++                ("worker".to_owned(), Some(Some("1".to_owned()))),
++            ]),
++            "only the services `--debug` names may wait for an IDE to release them"
++        );
++    }
++
+     #[test]
+     fn config_patches_are_rendered_with_up_config() {
+         let yaml = r#"
+```
+
+**File**: `mirrord/up/src/process.rs` (modified, +119/-6)
+```diff
+@@ -44,6 +44,11 @@ const SHUTDOWN_GRACE: Duration = Duration::from_secs(10);
+ /// lines, and a descendant still holding the pipe open must not hold up the error.
+ const STDOUT_DRAIN: Duration = Duration::from_secs(1);
+ 
++/// How the line a held program's `mirrord exec` prints starts: `debug-hold pid=<pid>
++/// release=<release>`. `mirrord-layer-lib`'s debug hold prints it once the program is held and
++/// an IDE may attach.
++const DEBUG_HOLD_LINE_PREFIX: &str = "debug-hold ";
++
+ /// Records when every service has emitted its session-ready marker.
+ ///
+ /// Stdout forwarding happens concurrently, so readiness is shared by all
+@@ -87,6 +92,9 @@ impl Readiness {
+ struct Service {
+     /// Name used when reporting an unexpected service exit.
+     name: Arc<str>,
++    /// Whether `mirrord up --debug` holds the service's program for a debugger. See
++    /// [`ServiceCommands::debugged`].
++    debugged: bool,
+     /// The mirrord session to spawn once `child`, the service's
+     /// `run.pre_command`, exits successfully. `None` once `child` is the
+     /// session itself.
+@@ -99,14 +107,19 @@ struct Service {
+     /// Set once the session printed [`SESSION_READY_MESSAGE`], i.e. it got as far as launching
+     /// the service's process. Tells a session that failed to start from a service that crashed.
+     started: Arc<AtomicBool>,
+-    /// Resolves once the forwarding of the session's stdout ended, so `started` is final.
++    /// Set once the session printed its [`DEBUG_HOLD_LINE_PREFIX`] line, i.e. the program is held
++    /// and an IDE may attach. From then on a debugged program's exit is the debugger's doing.
++    held: Arc<AtomicBool>,
++    /// Resolves once the forwarding of the session's stdout ended, so `started` and `held` are
++    /// final.
+     stdout_closed: Option<oneshot::Receiver<()>>,
+ }
+ 
+ /// What forwarding a session's stdout (not a pre-command's) reports back.
+ struct SessionOutput {
+     readiness: Arc<Readiness>,
+     started: Arc<AtomicBool>,
++    held: Arc<AtomicBool>,
+     /// Dropped when forwarding ends, which resolves [`Service::stdout_closed`].
+     _closed: oneshot::Sender<()>,
+ }
+@@ -118,6 +131,7 @@ impl Service {
+     /// pre-command (one with a `then`) doesn't count toward `readiness`.
+     fn spawn(
+         name: Arc<str>,
++        debugged: bool,
+         command: Command,
+         then: Option<Command>,
+         readiness: &Arc<Readiness>,
+@@ -138,6 +152,7 @@ impl Service {
+             .map(|pid| Pid::from_raw(pid as i32))
+             .ok_or_else(|| io::Error::other("spawned child has no process ID"))?;
+         let started = Arc::new(AtomicBool::new(false));
++        let held = Arc::new(AtomicBool::new(false));
+         let mut stdout_closed = None;
+         if let Some(stdout) = child.stdout().take() {
+             let session = then.is_none().then(|| {
+@@ -146,6 +161,7 @@ impl Service {
+                 SessionOutput {
+                     readiness: readiness.clone(),
+                     started: started.clone(),
++                    held: held.clone(),
+                     _closed: closed,
+                 }
+             });
+@@ -156,11 +172,13 @@ impl Service {
+         }
+         Ok(Self {
+             name,
++            debugged,
+             then,
+             child,
+             #[cfg(unix)]
+             group,
+             started,
++            held,
+             stdout_closed,
+         })
+     }
+@@ -350,6 +368,10 @@ async fn receive_second_signal(
+ /// The processes `mirrord up` runs for one service.
+ pub(super) struct ServiceCommands {
+     pub(super) name: Arc<str>,
++    /// Whether `mirrord up --debug` holds the service's program for a debugger. Once the session
++    /// printed its hold line, the debugger owns the program's life: when it ends the program (an
++    /// IDE's Stop Debugging does), the run ends without calling it a crash.
++    pub(super) debugged: bool,
+     /// `run.pre_command`, run to completion without mirrord before `session`.
+     pub(super) pre: Option<Command>,
+     /// The `mirrord exec`/`mirrord container` child that runs `run.command`.
+@@ -402,7 +424,14 @@ async fn wait_for_first_exit(
+                     let _ = tokio::time::timeout(STDOUT_DRAIN, closed).await;
+                 }
+                 let name = service.name.clone();
+-                return Err(if service.started.load(Ordering::Relaxed) {
++                let started = service.started.load(Ordering::Relaxed);
++                // A hold that failed before announcing never reached a debugger, so its exit
++                // still reports as a crash or a failed start.
++                if service.debugged && service.held.load(Ordering::Relaxed) {
++                    println!("{name}: exited with {status} while debugged, stopping");
++                    return Ok(());
++                }
++                return Err(if started {
+                     UpError::ServiceCrashed { name, status }
+                 } else {
+                     UpError::ServiceFailedToStart { name }
+@@ 
+```
+
+**File**: `mirrord/up/src/process/windows_tests.rs` (modified, +69/-2)
+```diff
+@@ -82,6 +82,7 @@ fn service(directory: &Path, name: &str, mode: &str) -> ServiceCommands {
+     command.env(NAME_ENV, name).env(MODE_ENV, mode);
+     ServiceCommands {
+         name: Arc::from(name),
++        debugged: false,
+         pre: None,
+         session: command,
+     }
+@@ -141,6 +142,8 @@ impl Process {
+ /// - `tree`: starts a `serve` grandchild called `<name>-grandchild` first, then keeps running.
+ /// - `tree-exit`: like `tree`, but exits with 0 once the test creates `release`.
+ /// - `crash`: exits with 7 once the test creates `release`.
++/// - `held-crash`: like `crash`, but prints a debug hold line first, as a held program's
++///   `mirrord exec` does.
+ /// - `exit`: exits with 0.
+ /// - `silent`: closes its stdout and stderr first, then keeps running.
+ #[test]
+@@ -179,7 +182,7 @@ fn child_helper() {
+             CloseHandle(GetStdHandle(STD_OUTPUT_HANDLE));
+             CloseHandle(GetStdHandle(STD_ERROR_HANDLE));
+         },
+-        "serve" | "crash" | "exit" => {}
++        "serve" | "crash" | "held-crash" | "exit" => {}
+         other => panic!("unknown child_helper mode {other}"),
+     }
+ 
+@@ -190,10 +193,13 @@ fn child_helper() {
+     if mode != "silent" {
+         println!("{SESSION_READY_MESSAGE}");
+     }
++    if mode == "held-crash" {
++        println!("debug-hold pid={} release=test", std::process::id());
++    }
+ 
+     match mode.as_str() {
+         "tree-exit" => wait_for_file_blocking(&directory.join("release")),
+-        "crash" => {
++        "crash" | "held-crash" => {
+             wait_for_file_blocking(&directory.join("release"));
+             std::process::exit(7);
+         }
+@@ -374,11 +380,72 @@ async fn crash_remains_failure_and_stops_siblings() {
+     assert!(sibling.unwrap().exits());
+ }
+ 
++/// Supervises a `serve` sibling next to a debugged service in `mode`, which exits with 7 once the
++/// sibling runs, and returns what supervision returned once the sibling is gone.
++async fn supervise_debugged_exit(mode: &str) -> Result<(), UpError> {
++    let directory = TempDir::new().unwrap();
++    let mut sibling = None;
++    let release = async {
++        sibling = Some(Process::wait_for(directory.path(), "sibling").await);
++        fs::write(directory.path().join("release"), []).unwrap();
++        std::future::pending::<io::Result<ShutdownSignal>>().await
++    };
++    let result = tokio::time::timeout(
++        TIMEOUT,
++        supervise(
++            vec![
++                service(directory.path(), "sibling", "serve"),
++                ServiceCommands {
++                    debugged: true,
++                    ..service(directory.path(), "debugged", mode)
++                },
++            ],
++            ReadyTracker::default(),
++            release,
++            TEST_GRACE,
++        ),
++    )
++    .await
++    .expect("the sibling was not stopped");
++
++    assert!(sibling.unwrap().exits());
++    result
++}
++
++/// An IDE's Stop Debugging ends a held program with a non-zero code. That ends the run, and its
++/// siblings, as any exit does, but isn't a crash.
++#[tokio::test]
++async fn debugged_service_exit_stops_siblings_without_a_crash() {
++    let result = supervise_debugged_exit("held-crash").await;
++
++    assert!(
++        result.is_ok(),
++        "the program was held, so its exit is the debugger's doing: {result:?}"
++    );
++}
++
++/// A debugged service that never printed its hold line was never held, so no debugger can have
++/// ended it: its exit is still a crash.
++#[tokio::test]
++async fn debugged_service_exit_before_its_hold_is_a_crash() {
++    let result = supervise_debugged_exit("crash").await;
++
++    assert!(
++        matches!(
++            &result,
++            Err(UpError::ServiceCrashed { name, status })
++                if &**name == "debugged" && status.code() == Some(7)
++        ),
++        "no hold line was seen, so the exit must report as a crash: {result:?}"
++    );
++}
++
+ #[tokio::test]
+ async fn spawn_failure_is_returned_instead_of_panicking() {
+     let directory = TempDir::new().unwrap();
+     let missing = ServiceCommands {
+         name: Arc::from("missing"),
++        debugged: false,
+         pre: None,
+         session: resolve_tokio_command(directory.path().join("missing.exe")),
+     };
+```
+
+**File**: `mirrord/up/src/testdata/debug-run-types.yaml` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++services:
++  api:
++    run:
++      command: ["dotnet", "Api.dll"]
++  db:
++    run:
++      type: container
++      command: ["docker", "run", "postgres"]
++  queue:
++    run:
++      type: container
++      command: ["docker", "run", "rabbitmq"]
+```
+
+---
+
+### Incident Patch 3: `1828acd2` (2026-10-29)
+**Commit Message**: feat(windows): hold the program mirrord exec starts, for a debugger
+
+With `MIRRORD_DEBUG_HOLD=1`, `mirrord exec` keeps the program suspended
+after its layer reports ready, announces the hold on stdout and waits,
+with no timeout, until an IDE releases it or the program exits.
+
+- The layer loads with load-library whatever the method setting says,
+  so it finishes starting, and connects to the internal proxy, while
+  the program is still suspended. A long hold then can't run out the
+  proxy's start timeout. Descendants still get the configured method.
+- The variable never reaches the program's environment, so nothing the
+  program starts is held. Child processes the layer launches and pitm
+  never hold.
+- A held program that can't join the kill-on-close job would outlive a
+  stopped launcher, suspended forever. The launch fails instead of
+  warning and going on.
+- A caller asking for `CREATE_SUSPENDED` can't also hold, since
+  resuming is its call. It's an error, before anything is created.
+- `MIRRORD_LAYER_WAIT_FOR_DEBUGGER` naming the held program would make
+  its layer wait for a debugger that only attaches after the hold line,
+  so neither would move. It's an error, before the lay
+
+**File**: `mirrord/cli/src/main.rs` (modified, +31/-7)
+```diff
+@@ -284,7 +284,7 @@ use mirrord_analytics::{
+     read_correlation_id_from_env,
+ };
+ use mirrord_config::{
+-    LayerConfig, LayerFileConfig,
++    LayerConfig, LayerFileConfig, MIRRORD_DEBUG_HOLD,
+     config::ConfigContext,
+     feature::{
+         database_branches::{DatabaseBranchConfig, RedisBranchConfig},
+@@ -548,6 +548,9 @@ async fn exec_process(
+ /// Environment the user's process is launched with: `inherited`, then the execution's
+ /// `overrides` and progress output switched off, minus the variables in `unset`.
+ ///
++/// [`MIRRORD_DEBUG_HOLD`] is always left out: it holds only the program this
++/// `mirrord exec` starts, never anything that program starts in turn.
++///
+ /// Names are matched the way the platform matches them (see [`process_env`]), so on Windows an
+ /// override or unset of `PATH` also applies to an inherited `Path`.
+ fn compose_exec_environment(
+@@ -563,7 +566,7 @@ fn compose_exec_environment(
+         mirrord_progress::MIRRORD_PROGRESS_ENV,
+         "off".to_owned(),
+     );
+-    for name in unset {
++    for name in unset.iter().map(String::as_str).chain([MIRRORD_DEBUG_HOLD]) {
+         env.remove(name);
+     }
+     env
+@@ -691,6 +694,8 @@ where
+         // `mirrord exec` runs-and-waits; bind the child tree to this process so an
+         // abrupt kill can't leave the layer-loaded child (and thus the agent) alive.
+         true,
++        // Set by `mirrord up --debug` on this service's `mirrord exec` only.
++        std::env::var_os(MIRRORD_DEBUG_HOLD).is_some_and(|value| value == "1"),
+         Some(progress),
+     )
+     .and_then(|managed_process| managed_process.wait_until_exit())
+@@ -1401,19 +1406,16 @@ async fn prompt_outdated_version(progress: &ProgressTracker) {
+ 
+ #[cfg(test)]
+ mod tests {
+-    #[cfg(windows)]
+     use std::collections::HashMap;
+ 
+     use clap::Parser;
++    use mirrord_config::MIRRORD_DEBUG_HOLD;
+     #[cfg(windows)]
+     use mirrord_layer_lib::process::windows::environment::WindowsEnv;
+-    #[cfg(windows)]
+     use mirrord_progress::MIRRORD_PROGRESS_ENV;
+     use rstest::rstest;
+ 
+-    #[cfg(windows)]
+-    use crate::compose_exec_environment;
+-    use crate::{Cli, Commands};
++    use crate::{Cli, Commands, compose_exec_environment};
+ 
+     /// On Windows an override or unset reaches an inherited variable spelled in another casing,
+     /// so the child gets one `PATH`, holding the override.
+@@ -1434,6 +1436,28 @@ mod tests {
+         );
+     }
+ 
++    /// The debug hold is for the program `mirrord exec` starts, so the program never sees it,
++    /// whether `mirrord up` set it or the execution's own environment carries it.
++    #[test]
++    fn exec_environment_never_passes_the_debug_hold_on() {
++        let inherited = [(MIRRORD_DEBUG_HOLD.to_owned(), "1".to_owned())];
++        #[cfg(windows)]
++        let inherited = WindowsEnv::from_ordered_entries(inherited);
++        #[cfg(not(windows))]
++        let inherited = inherited.into_iter().collect();
++
++        let env = compose_exec_environment(
++            inherited,
++            &HashMap::from([(MIRRORD_DEBUG_HOLD.to_owned(), "1".to_owned())]),
++            &[],
++        );
++        assert_eq!(
++            crate::process_env::names(&env),
++            [MIRRORD_PROGRESS_ENV],
++            "only the progress setting is left"
++        );
++    }
++
+     /// Verifies that
+     /// [`ExecParams::accept_invalid_certificates`](crate::config::ExecParams::accept_invalid_certificates)
+     /// and [`PortForwardArgs::accept_invalid_certificates`](crate::config::PortForwardArgs::accept_invalid_certificates)
+```
+
+**File**: `mirrord/cli/src/pitm.rs` (modified, +2/-0)
+```diff
+@@ -161,6 +161,8 @@ pub(crate) fn pitm_command(args: PitmArgs) -> CliResult<()> {
+         // so IntelliJ/Gradle abruptly stopping the run can't orphan it (an orphaned,
+         // still-connected layer keeps the agent alive → "dirty iptables" next session).
+         true,
++        // Only the program `mirrord exec` starts is ever held for a debugger.
++        false,
+         None::<NullProgress>,
+     )
+     .map_err(|e| CliError::PitmExecuteFailed(exe.to_owned(), e.to_string()))?;
+```
+
+**File**: `mirrord/cli/src/process_env.rs` (modified, +14/-0)
+```diff
+@@ -44,3 +44,17 @@ pub(crate) fn set(env: &mut ProcessEnv, name: &str, value: String) {
+         env.insert(name.to_owned(), value);
+     }
+ }
++
++/// The variable names in `env`, in no particular order.
++#[cfg(test)]
++pub(crate) fn names(env: &ProcessEnv) -> Vec<&str> {
++    #[cfg(windows)]
++    {
++        env.iter().map(|(name, _)| name).collect()
++    }
++
++    #[cfg(not(windows))]
++    {
++        env.keys().map(String::as_str).collect()
++    }
++}
+```
+
+**File**: `mirrord/layer-lib/src/error.rs` (modified, +20/-0)
+```diff
+@@ -27,6 +27,8 @@ use thiserror::Error;
+ use tracing::{error, info};
+ #[cfg(windows)]
+ use winapi::shared::winerror::{WSAHOST_NOT_FOUND, WSANO_RECOVERY, WSATRY_AGAIN};
++#[cfg(windows)]
++use windows::WindowsError;
+ 
+ use crate::{
+     detour::DetourError, graceful_exit, process::hold::HoldError, proxy_connection::ProxyError,
+@@ -347,6 +349,24 @@ pub enum LayerError {
+     #[error(transparent)]
+     DebugHold(#[from] HoldError),
+ 
++    #[cfg(target_os = "windows")]
++    #[error(
++        "A process held for a debugger must end with mirrord, but binding it to a kill-on-close job failed: {0}"
++    )]
++    DebugHoldWithoutJob(WindowsError),
++
++    #[cfg(target_os = "windows")]
++    #[error(
++        "A process its creator asked to keep suspended cannot also be held for a debugger: resuming it is the creator's call"
++    )]
++    DebugHoldCallerSuspended,
++
++    #[cfg(target_os = "windows")]
++    #[error(
++        "MIRRORD_LAYER_WAIT_FOR_DEBUGGER={setting} makes the layer in {program} wait for a debugger before the program is held for one, so neither would ever move on. Unset it to debug {program} with `mirrord up --debug`"
++    )]
++    DebugHoldWithDebuggerWait { setting: String, program: String },
++
+     #[cfg(target_os = "windows")]
+     #[error("Process with PID {0} not found")]
+     ProcessNotFound(u32),
+```
+
+**File**: `mirrord/layer-lib/src/process/windows/execution/debug.rs` (modified, +6/-0)
+```diff
+@@ -115,6 +115,12 @@ pub fn debugger_wait_targets(setting: &str, image_stem: &str) -> bool {
+     }
+ }
+ 
++/// Whether a `MIRRORD_LAYER_WAIT_FOR_DEBUGGER` value names one program, so whether it applies to a
++/// process depends on that process's name ([`debugger_wait_targets`]'s filter case).
++pub fn debugger_wait_names_a_program(setting: &str) -> bool {
++    !matches!(setting, "" | "1")
++}
++
+ /// The current process's executable name, without extension.
+ pub use utils_win::process::get_current_process_name;
+ 
+```
+
+**File**: `mirrord/layer-lib/src/process/windows/execution/mod.rs` (modified, +403/-36)
+```diff
+@@ -1,6 +1,8 @@
+ //! Windows process execution with mirrord layer injection.
+ 
+-use std::{net::SocketAddr, ops::Deref, os::windows::io::BorrowedHandle, path::Path, ptr};
++use std::{
++    io::Write, net::SocketAddr, ops::Deref, os::windows::io::BorrowedHandle, path::Path, ptr,
++};
+ 
+ use base64::prelude::*;
+ use mirrord_config::{
+@@ -47,6 +49,7 @@ use super::{
+ use crate::{
+     error::{LayerError, LayerResult, windows::WindowsError},
+     logging::MIRRORD_LAYER_LOG_PATH,
++    process::hold::{self, Gate, HoldOutcome},
+     proxy_connection::PROXY_CONNECTION,
+     setup::setup,
+     socket::{SOCKETS, sockets::SHARED_SOCKETS_ENV_VAR},
+@@ -55,8 +58,8 @@ use crate::{
+ pub mod debug;
+ 
+ pub use debug::{
+-    debugger_wait_targets, format_debugger_config, get_current_process_name,
+-    is_debugger_wait_enabled, should_wait_for_debugger,
++    debugger_wait_names_a_program, debugger_wait_targets, format_debugger_config,
++    get_current_process_name, is_debugger_wait_enabled, should_wait_for_debugger,
+ };
+ 
+ pub const MIRRORD_AGENT_ADDR_ENV: &str = "MIRRORD_AGENT_ADDR";
+@@ -162,6 +165,9 @@ struct LaunchPlan<'a> {
+     reporting: StartupReporting,
+     /// Whether the child's layer waits for a debugger, so its startup has no time bound.
+     debugger_wait: bool,
++    /// Where the hold is announced, when the program is held at its entry point once its layer
++    /// is ready, until an IDE releases it. See [`hold::hold`].
++    debug_hold: Option<&'a mut dyn Write>,
+ }
+ 
+ /// Variables Windows itself needs in every process: without `SystemRoot`, Winsock cannot start,
+@@ -175,6 +181,9 @@ const SYSTEM_VARIABLES: &[&str] = &["SystemRoot", "windir"];
+ /// address, the child's layer fails to start. A value the block already has wins: under
+ /// `mirrord exec` that block is the session's composed environment, whose log directory, monitor
+ /// address and proxy address are fresher than the ones in the CLI's own environment.
++///
++/// Never `MIRRORD_DEBUG_HOLD`: only the program `mirrord exec` starts is held, so no child may
++/// get it. The Unix layer removes it, and `MIRRORD_LAYER_READY`, for the same reason.
+ const FORWARDED_ENV_VARS: &[&str] = &[
+     MIRRORD_LAYER_INTPROXY_ADDR,
+     MIRRORD_LAYER_TARGET_CONTAINER_PORTS,
+@@ -398,13 +407,11 @@ impl LayerManagedProcess {
+     /// handle to the job closes — including when *this* process dies and the OS
+     /// reclaims its handles — the OS terminates every process still in the job. Assign
+     /// the child while it is suspended so it is bound before it can spawn descendants.
+-    fn assign_to_kill_on_close_job(process: HANDLE) -> LayerResult<HANDLE> {
++    fn assign_to_kill_on_close_job(process: HANDLE) -> Result<HANDLE, WindowsError> {
+         unsafe {
+             let job = CreateJobObjectW(ptr::null_mut(), ptr::null());
+             if job.is_null() {
+-                return Err(LayerError::WindowsProcessCreation(
+-                    WindowsError::last_error(),
+-                ));
++                return Err(WindowsError::last_error());
+             }
+ 
+             let mut info: JOBOBJECT_EXTENDED_LIMIT_INFORMATION = std::mem::zeroed();
+@@ -418,13 +425,13 @@ impl LayerManagedProcess {
+             {
+                 let error = WindowsError::last_error();
+                 CloseHandle(job);
+-                return Err(LayerError::WindowsProcessCreation(error));
++                return Err(error);
+             }
+ 
+             if AssignProcessToJobObject(job, process) == 0 {
+                 let error = WindowsError::last_error();
+                 CloseHandle(job);
+-                return Err(LayerError::WindowsProcessCreation(error));
++                return Err(error);
+             }
+ 
+             Ok(job)
+@@ -439,13 +446,18 @@ impl LayerManagedProcess {
+     ///
+     /// `progress` succeeds before the program's primary thread first runs, so a caller that shares
+     /// its console with the program can end its own output there.
++    ///
++    /// `debug_hold` keeps the program suspended once its layer is ready, until an IDE releases it
++    /// (see [`hold::hold`]). The hold is announced on stdout.
++    #[allow(clippy::too_many_arguments)]
+     pub fn execute<P>(
+         application_name: Option<String>,
+         command_line: String,
+         current_directory: Option<String>,
+         env_vars: WindowsEnv,
+         injection_method: InjectionMethod,
+         kill_children_on_exit: bool,
++        debug_hold: bool,
+         progress: Option<P>,
+     ) -> LayerResult<Self>
+     where
+@@ -513,6 +525,11 @@ impl LayerManagedProcess {
+             }
+         };
+ 
++        // Only `mirrord exec` holds a program, never a hook inside the layer, so this stdout is
++        // the CLI's.
++        #[allow(clippy::disallowed_methods)]
++        let mut stdout = std::io::stdout();
++
+         Self::execute_with_closure(
+             &WindowsEnv::inherited(),
+             Some(env_vars),
+@@ -522,6 +539,7 @@ impl LayerManagedProcess {
+             create_process_fn,
+             kil
+```
+
+**File**: `mirrord/layer-win/src/hooks/process/mod.rs` (modified, +2/-0)
+```diff
+@@ -231,6 +231,8 @@ unsafe extern "system" fn create_process_internal_w_hook(
+             // pitm/exec job already owns the whole descendant tree via inheritance.
+             false,
+             LayerFailurePolicy::RunWithoutMirrord,
++            // Only the program `mirrord exec` starts is ever held for a debugger.
++            None,
+             None::<mirrord_progress::NullProgress>, // No progress in hook context
+         )
+         .map(LayerManagedProcess::release)
+```
+
+**File**: `mirrord/utils-win/src/process.rs` (modified, +44/-12)
+```diff
+@@ -1,6 +1,10 @@
+ //! General process helpers.
+ 
+-use std::{env, path::Path};
++use std::{
++    env,
++    os::windows::io::{AsRawHandle, BorrowedHandle},
++    path::Path,
++};
+ 
+ use str_win::{string_to_u16_buffer, u16_buffer_to_string};
+ use winapi::{
+@@ -115,17 +119,8 @@ pub fn process_status(pid: u32) -> ProcessStatus {
+             status.alive = true;
+         }
+ 
+-        // Image name, stripped of its directory via the path API. Sized past `MAX_PATH` (260) so a
+-        // long path is not truncated, matching the buffer `modules.rs` uses.
+-        let mut buf = [0u16; 1024];
+-        let mut size = buf.len() as u32;
+-        if QueryFullProcessImageNameW(handle, 0, buf.as_mut_ptr(), &mut size) != 0 {
+-            let written = buf.get(..size as usize).unwrap_or(&buf);
+-            let full = u16_buffer_to_string(written);
+-            status.name = Path::new(&full)
+-                .file_name()
+-                .map(|name| name.to_string_lossy().into_owned())
+-                .unwrap_or(full);
++        if let Some(name) = process_image_name(BorrowedHandle::borrow_raw(handle.cast())) {
++            status.name = name;
+         }
+ 
+         CloseHandle(handle);
+@@ -134,6 +129,43 @@ pub fn process_status(pid: u32) -> ProcessStatus {
+     status
+ }
+ 
++/// The image file name of the process `handle` refers to, without its directory, e.g.
++/// `python.exe`. `None` when it can't be read.
++///
++/// For a process this one created, the handle `CreateProcess` returned reads it even when opening
++/// the process again by pid would be refused.
++///
++/// # Arguments
++///
++/// * `handle` - a process handle with at least `PROCESS_QUERY_LIMITED_INFORMATION` access.
++pub fn process_image_name(handle: BorrowedHandle<'_>) -> Option<String> {
++    // Sized past `MAX_PATH` (260) so a long path is not truncated, matching the buffer
++    // `modules.rs` uses.
++    let mut buf = [0u16; 1024];
++    let mut size = buf.len() as u32;
++    // SAFETY: `handle` is open for the borrow, and `buf` holds `size` u16s, the most the call
++    // writes.
++    let read = unsafe {
++        QueryFullProcessImageNameW(
++            handle.as_raw_handle().cast(),
++            0,
++            buf.as_mut_ptr(),
++            &mut size,
++        )
++    };
++    if read == 0 {
++        return None;
++    }
++    let written = buf.get(..size as usize).unwrap_or(&buf);
++    let full = u16_buffer_to_string(written);
++    Some(
++        Path::new(&full)
++            .file_name()
++            .map(|name| name.to_string_lossy().into_owned())
++            .unwrap_or(full),
++    )
++}
++
+ /// A snapshot of the current process's identity.
+ ///
+ /// Every field is best-effort. A field that cannot be read falls back to a placeholder. This is
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5179** (2026-10-30): Release 3.282.0 (@cubby-mb[bot])
+- **PR #5176** (closed): preview: push local code into preview pods through the operator (spike) (@iniw)
+- **PR #5173** (2026-10-29): Bump libz-sys to 1.1.31 for RUSTSEC-2026-0418 (@hank-metalbear)
+- **PR #5170** (2026-10-30): fix(tests): retain dirty iptables namespace through assertions (@meowjesty)
 - **PR #5169** (2026-10-28): Configurable agent http2 recv header limit (@0x00A5)
 - **PR #5168** (2026-10-28): Keep forwarding `mirrord up` service output past bytes that aren't UTF-8 (@cristeigabriela)
-- **PR #5167** (2026-10-28): Let the dirty iptables E2E test pull an explicitly set agent image (@aviramha)
-- **PR #5166** (2026-10-28): Bump pulldown-cmark to 0.13.5 for RUSTSEC-2026-0414 (@hank-metalbear)
-- **PR #5163** (2026-10-28): Run operator e2e on releases/* branches (@skreborn)
-- **PR #5161** (2026-10-28): Fix stale CI and contributing docs (@skreborn)
 
 ---
 
@@ -2129,21 +2964,21 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. up): keep forwarding a service's output past bytes that aren't UTF-8
+## X. layer): say Ready! and hold for a debugger from the Unix layer
 
 **RULE**:
-When implementing operations in `changelog.d/+up-non-utf8-output.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c1878fdf`: up): keep forwarding a service's output past bytes that aren't UTF-8. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `db287aa0`: layer): say Ready! and hold for a debugger from the Unix layer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/+up-non-utf8-output.fixed.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-`mirrord up` no longer stops showing a service's output, and reports the service as crashed, when the service prints text that isn't UTF-8, such as a Windows console code page's `£`.
+ "mirrord-progress",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2153,4 +2988,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c1878fdf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `db287aa0` are properly handled with clean fallback behavior.

@@ -6386,3 +6386,8 @@
 | `CYCLE-20261031-K9PP` | `2026-10-31T00:46:10.477Z` | `meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md` | Yes (`8b312baf...`) |
 | `CYCLE-20261031-SVQ6` | `2026-10-31T00:52:52.254Z` | `krishhgg/Insomnia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5972` | Yes (`9d34de9e...`) |
 | `CYCLE-20261031-T5GO` | `2026-10-31T00:53:04.872Z` | `reflection/Beam-1.0-501B-A23B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5257, Rule 5973, Rule 5974` | Yes (`38107efb...`) |
+| `CYCLE-20261031-87HE` | `2026-10-31T01:04:47.330Z` | `lodestones/MOSS-Image-SFT-8-steps-dmd` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md` | Yes (`e69d82fd...`) |
+| `CYCLE-20261031-88GD` | `2026-10-31T01:04:48.589Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5975` | Yes (`c47321be...`) |
+| `CYCLE-20261031-8BQI` | `2026-10-31T01:04:52.842Z` | `karakeep-app/karakeep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5976` | Yes (`7008f662...`) |
+| `CYCLE-20261031-8EDR` | `2026-10-31T01:04:56.271Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5977` | Yes (`cc4349ef...`) |
+| `CYCLE-20261031-8HVM` | `2026-10-31T01:05:00.802Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5978` | Yes (`98d74289...`) |

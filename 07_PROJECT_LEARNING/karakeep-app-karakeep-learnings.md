@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md`  
 > **Source**: github ([https://github.com/karakeep-app/karakeep](https://github.com/karakeep-app/karakeep))  
-> **Source Version**: `fb25e427`  
+> **Source Version**: `eaee0c72`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:22:16.910Z  
+> **Timestamp**: 2026-10-31T01:04:52.152Z  
 > **Learning ID**: `learn-github-karakeep-app-karakeep`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/karakeep-app/karakeep](https://github.com/karakeep-app/karakeep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:22:16.584Z  
+> **Harvest Timestamp**: 2026-10-31T01:04:52.145Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A self-hostable bookmark-everything app (links, notes and images) with AI-based automatic tagging and full text search
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 30085 stars
+- **Stars / Engagement**: 30167 stars
 
 ---
 
@@ -732,11 +732,11 @@ export function cleanupApiClient() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #3246** (2026-10-29): **Release v2.11.6 has not matching asset when running the script**
+  *Symptoms*: ### Describe the Bug  ### Script `karakeep` (`ct/karakeep.sh` / `install/karakeep-install.sh`)  ### OS & Version Debian 13 (Trixie) — Default LXC configuration  ### Issue Description During a fresh installation of the Karakeep LXC, two issues occur right after the `Installing Dependencies` step that cause the installation to either hang or fail silently in non-verbose mode:  1. **`monolith` v2.11.6 Missing Compatible Release Asset (Interactive Prompt Hang)**    When `fetch_and_deploy_gh_release` attempts to pull the latest release of `monolith` (`v2.11.6`), it fails to find a matching precompiled binary asset and triggers an interactive fallback prompt:    ```text    💡 Release v2.11.6 has no matching asset. Previous release v2.11.2 has a compatible asset.```  ### Steps to Reproduce  run the script bash -c "$(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/karakeep.sh)"  go through the default steps    ### Expected Behaviour  When run without interruption, the script creates a fresh Debian LXC container on your Proxmox server, installs base system packages (like Chromium and FFmpeg), and downloads helper tools (Monolith, yt-dlp, Deno, and Meilisearch). It then installs Node.js and pnpm, downloads the Karakeep source code, compiles the web application and background workers, and sets up the local database. Finally, it generates your configuration file (`/etc/karakeep/karakeep.env`), starts the background services (`karakeep-web`, `karakeep-work
+
 - **Issue #3240** (2026-10-27): **Karakeep Chrome extension no longer capturing page with SingleFile after today's update**
   *Symptoms*: ### Describe the Bug  It seems I watched as functionality literally disappeared before my eyes lol  One minute, I had pulled a page with the SingleFile experimental functionality enabled and it worked fine, as evident by the presence of a file included in that bookmark labelled `Precrawled Archive` with the correct snapshot of the site. The next minute, after a browser restart and presumably a Vivaldi automatic update of the addon, the same snapshots are now no longer functioning. What previously took noticably extra time as the snapshot was saved and then uploaded is now instant, and on the Karakeep side of things, all scraping is happening based on the container's own browser instead of anything to do with my own. It worked fine literally 2 hours ago prior to the latest update as indicated on the Chrome addon's page: https://chromewebstore.google.com/detail/karakeep/kgcjekpmcjjogibpjebkhaanilehneje  ### Steps to Reproduce  1. Go to any page with the Client-side crawling option enabled in your browser addon 2. Save a page 3. Check Karakeep, see no inclusion of a Precrawled Archive attachment  ### Expected Behaviour  Precrawled Archive as saved by SingleFile should be included in the Karakeep bookmark  ### Screenshots or Additional Context  _No response_  ### Device Details  Xiaomi Pad 6 on Android 14  ### Exact Karakeep Version  v0.34.1  ### Environment Details  Docker on Debian  ### Debug Logs  _No response_  ### Have you checked the troubleshooting guide?  - [x] I have che
-
-- **Issue #3202** (2026-10-23): **Inference Job Still Working Even After Being Disabled**
-  *Symptoms*: ### Describe the Bug  My Current .env file KARAKEEP_VERSION=release NEXTAUTH_SECRET=Redacted MEILI_MASTER_KEY=Redacted NEXTAUTH_URL=Redacted WORKERS_DISABLED_WORKERS=inference,embeddings LOG_LEVEL=${LOG_LEVEL:-debug} MAX_ASSET_SIZE_MB=100 DB_WAL_MODE=true RATE_LIMITING_ENABLED=true DISABLE_SIGNUPS=true SEMANTIC_SEARCH_ENABLED=false EMBEDDING_ENABLE_AUTO_INDEXING=false INFERENCE_ENABLE_AUTO_TAGGING=false INFERENCE_ENABLE_AUTO_SUMMARIZATION=false MEILI_MASTER_KEY=Redacted CRAWLER_NUM_WORKERS=1 SEARCH_NUM_WORKERS=1 WEBHOOK_NUM_WORKERS=1 ASSET_PREPROCESSING_NUM_WORKERS=1 RULE_ENGINE_NUM_WORKERS=1 BROWSER_WEB_URL=http://chrome:9222 BROWSER_CONNECT_ONDEMAND=false CRAWLER_DOWNLOAD_BANNER_IMAGE=true CRAWLER_STORE_SCREENSHOT=true CRAWLER_FULL_PAGE_SCREENSHOT=false CRAWLER_STORE_PDF=false CRAWLER_FULL_PAGE_ARCHIVE=false CRAWLER_JOB_TIMEOUT_SEC=60 CRAWLER_NAVIGATE_TIMEOUT_SEC=30 CRAWLER_PARSE_TIMEOUT_SEC=60 CRAWLER_ENABLE_ADBLOCKER=true CRAWLER_ENABLE_AUTOCONSENT=true CRAWLER_VIDEO_DOWNLOAD=false   Even though when I bookmark something, the tag section shows a loading skeleton and it keeps loading!  ### Steps to Reproduce  deploy with inference and embeddings off  ### Expected Behaviour  It should not load the skeleton  ### Screenshots or Additional Context  <img width="490" height="471" alt="Image" src="https://github.com/user-attachments/assets/9f86589c-b3e1-4040-9a37-ac1d51983ed0" />  ### Device Details  Chrome Latest  ### Exact Karakeep Version  0.33.2  ### Environment Details  Dock
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -753,151 +753,36 @@ export function cleanupApiClient() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9b1fdf34` (2026-10-22)
-**Commit Message**: ci: unpin Node.js now that 24.22 fixes the addon cleanup crash
+### Incident Patch 1: `2bb411f9` (2026-10-29)
+**Commit Message**: fix: pin monolith in the linux install script after upstream renamed its release assets
 
-**File**: `tooling/github/setup/action.yml` (modified, +1/-1)
+monolith v2.11.5+ publishes monolith-cli-linux-<arch> instead of
+monolith-gnu-linux-<arch>, so the latest/download URL 404s. The failure was
+silent because curl was the head of an && chain, leaving installs without
+monolith. Pin the version, split the chmod so a failed download aborts the
+install, and pick the asset by uname -m so arm64 hosts get the right binary.
+
+**File**: `karakeep-linux.sh` (modified, +2/-1)
 ```diff
-@@ -7,7 +7,7 @@ runs:
-     - uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6
-     - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-       with:
--        node-version: 24.18.1
-+        node-version: 24
-         cache: "pnpm"
-         registry-url: https://registry.npmjs.org
+@@ -197,7 +197,8 @@ install_karakeep() {
+     curl -fsSL https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_linux -o /usr/bin/yt-dlp && chmod +x /usr/bin/yt-dlp
+   fi
  
-```
-
----
-
-### Incident Patch 2: `ebd122bb` (2026-10-22)
-**Commit Message**: Use node:24-slim again instead of node:24.18.1-slim to get security updates (#3217)
-
-**File**: `docker/Dockerfile` (modified, +4/-11)
-```diff
-@@ -9,8 +9,7 @@ RUN apt-get update \
-     && cargo install monolith --locked
- 
- ################# Base Builder ##############
--# Replace with node:24-slim as soon as https://github.com/nodejs/node/pull/65042 is fixed and uploaded to Docker hub
--FROM node:24.18.1-slim AS base
-+FROM node:24-slim AS base
- 
- WORKDIR /app
- ENV PNPM_HOME="/pnpm"
-@@ -88,9 +87,7 @@ FROM base AS mcp_builder
- RUN (cd apps/mcp && pnpm --config.verify-deps-before-run=false build)
- 
- ################# The All-in-one builder ##############
--
--# Replace with node:24-slim as soon as https://github.com/nodejs/node/pull/65042 is fixed and uploaded to Docker hub
--FROM node:24.18.1-slim AS aio_builder
-+FROM node:24-slim AS aio_builder
- LABEL org.opencontainers.image.source="https://github.com/karakeep-app/karakeep"
- WORKDIR /app
- 
-@@ -222,9 +219,7 @@ RUN rm /etc/s6-overlay/s6-rc.d/svc-workers/dependencies.d/init-db-migration \
- ENV USING_LEGACY_SEPARATE_CONTAINERS=true
- 
- ################# The cli ##############
--
--# Replace with node:24-slim as soon as https://github.com/nodejs/node/pull/65042 is fixed and uploaded to Docker hub
--FROM node:24.18.1-slim AS cli
-+FROM node:24-slim AS cli
- LABEL org.opencontainers.image.source="https://github.com/karakeep-app/karakeep"
- WORKDIR /app
- 
-@@ -238,9 +233,7 @@ ENV SERVER_VERSION=${SERVER_VERSION}
- ENTRYPOINT ["node", "index.mjs"]
- 
- ################# MCP server ##############
--
--# Replace with node:24-slim as soon as https://github.com/nodejs/node/pull/65042 is fixed and uploaded to Docker hub
--FROM node:24.18.1-slim AS mcp
-+FROM node:24-slim AS mcp
- LABEL org.opencontainers.image.source="https://github.com/karakeep-app/karakeep"
- WORKDIR /app
- 
-```
-
----
-
-### Incident Patch 3: `844c1f95` (2026-10-25)
-**Commit Message**: fix(users): block account deletion while a subscription is past_due
-
-Stripe keeps retrying charges on past_due subscriptions, so deleting the
-account would drop the customer mapping while the user can still be billed.
-
-**File**: `packages/trpc/models/users.ts` (modified, +4/-1)
-```diff
-@@ -153,9 +153,12 @@ export class User {
-       },
-     });
- 
-+    // past_due subscriptions are still being retried by Stripe, so they can
-+    // charge the user just like active ones.
-     if (
-       subscription?.status === "active" ||
--      subscription?.status === "trialing"
-+      subscription?.status === "trialing" ||
-+      subscription?.status === "past_due"
-     ) {
-       throw new TRPCError({
-         code: "BAD_REQUEST",
-```
-
-**File**: `packages/trpc/routers/users.test.ts` (modified, +33/-0)
-```diff
-@@ -716,6 +716,39 @@ describe("User Routes", () => {
-       expect(deletedUser).toHaveLength(1);
-     });
- 
-+    test<CustomTestContext>("deleteAccount refuses past_due Stripe subscription", async ({
-+      db,
-+    }) => {
-+      const user = await createTestUser(db, {
-+        name: "Test User",
-+        email: "deletepastdueaccount@test.com",
-+        password: "pass1234",
-+      });
-+      const caller = getApiCaller(db, user.id, user.email, user.role || "user");
-+
-+      await db.insert(subscriptions).values({
-+        userId: user.id,
-+        stripeCustomerId: "cus_123",
-+        stripeSubscriptionId: "sub_123",
-+        status: "past_due",
-+        tier: "paid",
-+      });
-+
-+      await expect(() =>
-+        caller.users.deleteAccount({
-+          password: "pass1234",
-+        }),
-+      ).rejects.toThrow(
-+        /Can't delete user while subscription is active. Please cancel your subscription first and try again./,
-+      );
-+
-+      const deletedUser = await db
-+        .select()
-+        .from(users)
-+        .where(eq(users.id, user.id));
-+      expect(deletedUser).toHaveLength(1);
-+    });
-+
-     test<CustomTestContext>("deleteAccount - wrong password", async ({
-       db,
-     }) => {
+-  curl -fsSL https://github.com/Y2Z/monolith/releases/latest/download/monolith-gnu-linux-x86_64 -o /usr/bin/monolith && chmod +x /usr/bin/monolith
++  curl -fsSL "https://github.com/Y2Z/monolith/releases/download/v2.11.6/monolith-cli-linux-$(uname -m)" -o /usr/bin/monolith
++  chmod +x /usr/bin/monolith
+   curl -fsSLO https://github.com/meilisearch/meilisearch/releases/latest/download/meilisearch.deb
+   DEBIAN_FRONTEND=noninteractive $shh apt-get install -y ./meilisearch.deb && rm ./meilisearch.deb
+   msg_done "Installed dependencies"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3251** (2026-10-30): docs(readme): use a white logo in dark mode (@colinhacks)
 - **PR #3241** (2026-10-27): fix(extension): restore client-side SingleFile capture (@MohamedBassem)
 - **PR #3236** (2026-10-26): feat(mobile): in-app subscriptions for cloud via RevenueCat (@MohamedBassem)
 - **PR #3234** (2026-10-25): feat(extension): adopt the web's new dark mode styling (@MohamedBassem)
 - **PR #3233** (2026-10-25): feat(web) modernize dark mode styling (@MohamedBassem)
 - **PR #3232** (2026-10-25): feat(extension): polish the popup UI and allow editing titles (@MohamedBassem)
-- **PR #3231** (2026-10-25): fix(crawler): preserve proxy auth for external CDP contexts (@MohamedBassem)
 
 ---
 
@@ -917,28 +802,29 @@ account would drop the customer mapping while the user can still be billed.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: unpin Node.js now that 24.22 fixes the addon cleanup crash
+## X. pin monolith in the linux install script after upstream renamed its release asse
 
 **RULE**:
-When implementing operations in `tooling/github/setup/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karakeep-app/karakeep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `karakeep-linux.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karakeep-app/karakeep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9b1fdf34`: ci: unpin Node.js now that 24.22 fixes the addon cleanup crash. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2bb411f9`: pin monolith in the linux install script after upstream renamed its release assets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tooling/github/setup/action.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `karakeep-linux.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        node-version: 24
+  curl -fsSL "https://github.com/Y2Z/monolith/releases/download/v2.11.6/monolith-cli-linux-$(uname -m)" -o /usr/bin/monolith
+  chmod +x /usr/bin/monolith
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-        node-version: 24.18.1
+  curl -fsSL https://github.com/Y2Z/monolith/releases/latest/download/monolith-gnu-linux-x86_64 -o /usr/bin/monolith && chmod +x /usr/bin/monolith
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9b1fdf34` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2bb411f9` are properly handled with clean fallback behavior.

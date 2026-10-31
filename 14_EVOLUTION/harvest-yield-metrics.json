@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T00:53:04.881Z",
-  "total_cycles_completed": 6363,
-  "total_learnings_persisted": 6363,
-  "total_rules_promoted": 5948,
+  "last_updated": "2026-10-31T01:05:00.811Z",
+  "total_cycles_completed": 6368,
+  "total_learnings_persisted": 6368,
+  "total_rules_promoted": 5952,
   "history": [
-    {
-      "timestamp": "2026-10-30T11:28:20.337Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T13:01:54.500Z",
-      "repository": "fb55/htmlparser2",
-      "learningId": "learn-github-fb55-htmlparser2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T13:09:10.870Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T13:10:12.151Z",
-      "repository": "VectifyAI/PageIndex",
-      "learningId": "learn-github-vectifyai-pageindex",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T13:11:07.853Z",
-      "repository": "inikulin/parse5",
-      "learningId": "learn-github-inikulin-parse5",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T13:13:34.909Z",
       "repository": "0xCUB3/wBlock",
@@ -1403,6 +1368,41 @@
       "repository": "reflection/Beam-1.0-501B-A23B",
       "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T01:04:47.346Z",
+      "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T01:04:48.598Z",
+      "repository": "metalbear-co/mirrord",
+      "learningId": "learn-github-metalbear-co-mirrord",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T01:04:52.851Z",
+      "repository": "karakeep-app/karakeep",
+      "learningId": "learn-github-karakeep-app-karakeep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T01:04:56.281Z",
+      "repository": "argoproj/argo-workflows",
+      "learningId": "learn-github-argoproj-argo-workflows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T01:05:00.811Z",
+      "repository": "apple/foundationdb",
+      "learningId": "learn-github-apple-foundationdb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T00:53:07.434Z",
-    "lastVerified": "2026-10-31T00:53:07.434Z",
+    "lastChecked": "2026-10-31T01:05:03.364Z",
+    "lastVerified": "2026-10-31T01:05:03.364Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -217,9 +217,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-10-30T21:13:07.072Z",
+    "lastChecked": "2026-10-31T01:04:52.955Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-10-30T21:13:07.072Z"
+    "lastVerified": "2026-10-31T01:04:52.955Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -341,9 +341,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T00:27:42.430Z",
+    "lastChecked": "2026-10-31T01:04:58.010Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T00:27:42.430Z"
+    "lastVerified": "2026-10-31T01:04:58.010Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1265,11 +1265,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "karakeep-app-karakeep": {
-    "name": "karakeep",
+    "name": "karakeep-app/karakeep",
     "officialUrl": "https://github.com/karakeep-app/karakeep",
-    "lastChecked": "2026-10-28T04:28:19.516Z",
-    "revisionIdentifier": "fb25e427",
-    "lastVerified": "2026-10-28T04:28:19.516Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-31T01:04:52.145Z",
+    "lastVerified": "2026-10-31T01:04:52.145Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-karakeep-app-karakeep",
+    "contentHash": "7008f66240c260ee2dee377f8da84482ddbd67203f8d786fcfa1813de69d3f41",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "pingcap-tidb": {
     "name": "pingcap/tidb",
@@ -1875,14 +1885,14 @@
     "officialUrl": "https://github.com/metalbear-co/mirrord",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T12:08:41.014Z",
-    "lastVerified": "2026-10-29T12:08:41.014Z",
+    "lastChecked": "2026-10-31T01:04:47.864Z",
+    "lastVerified": "2026-10-31T01:04:47.864Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-metalbear-co-mirrord",
-    "contentHash": "ab89e548536cafc6b1ac95c16e97cd5668fe96a50bdfe8a136e64101e3d34872",
+    "contentHash": "c47321bea8adacc9d1e4622ebae43a7316d198e6ae8b80dacb6c337f7e6dca76",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5437,14 +5447,14 @@
     "officialUrl": "https://github.com/apple/foundationdb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-30T04:41:50.724Z",
-    "lastVerified": "2026-10-30T04:41:50.724Z",
+    "lastChecked": "2026-10-31T01:05:00.109Z",
+    "lastVerified": "2026-10-31T01:05:00.109Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apple-foundationdb",
-    "contentHash": "4bcb0fafe291a9cf7f96db74f9019462bfddcd2d8eacbe9da820fc6eac94392d",
+    "contentHash": "98d7428950ded5b7903418c022ff16f06ebffd060c604298e19296d4dc876db8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6189,14 +6199,14 @@
     "officialUrl": "https://github.com/argoproj/argo-workflows",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T05:31:59.341Z",
-    "lastVerified": "2026-10-30T05:31:59.341Z",
+    "lastChecked": "2026-10-31T01:04:55.573Z",
+    "lastVerified": "2026-10-31T01:04:55.573Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-argoproj-argo-workflows",
-    "contentHash": "61da933d785b7d7d537eb8004215924cef5c7c8b08151f35d043e0e9de30d5b2",
+    "contentHash": "cc4349ef2254e5094b3a3f9958e4a260afba00bc26a5b88c6fbadda61c64d1e9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11710,6 +11720,23 @@
     "promotedRulesCount": 1,
     "recentFixesCount": 11,
     "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-lodestones-moss-image-sft-8-steps-dmd": {
+    "name": "lodestones/MOSS-Image-SFT-8-steps-dmd",
+    "officialUrl": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-31T01:04:45.922Z",
+    "lastVerified": "2026-10-31T01:04:45.922Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
+    "contentHash": "e69d82fd5f3284462730d8d6bd01346d164072b7b92017af1373fb56a8b897e9",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

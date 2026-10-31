@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T00:53:04.886Z",
+  "last_updated": "2026-10-31T01:05:00.816Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3876,14 +3876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karakeep-app-karakeep",
-      "content_hash": "cc18b1c2190d806ca6f57eb7ba957c0799f38e827f4f5930fd543c2d8e4ce4c9",
-      "verified_at": "2026-10-27T13:22:17.268Z",
+      "content_hash": "7008f66240c260ee2dee377f8da84482ddbd67203f8d786fcfa1813de69d3f41",
+      "verified_at": "2026-10-31T01:04:52.855Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:22:17.268Z"
+      "last_updated": "2026-10-31T01:04:52.855Z"
     },
     "authzed/spicedb": {
       "repository": "authzed/spicedb",
@@ -4641,14 +4641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-metalbear-co-mirrord",
-      "content_hash": "ab89e548536cafc6b1ac95c16e97cd5668fe96a50bdfe8a136e64101e3d34872",
-      "verified_at": "2026-10-29T12:08:42.827Z",
+      "content_hash": "c47321bea8adacc9d1e4622ebae43a7316d198e6ae8b80dacb6c337f7e6dca76",
+      "verified_at": "2026-10-31T01:04:48.601Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T12:08:42.827Z"
+      "last_updated": "2026-10-31T01:04:48.601Z"
     },
     "openkruise/kruise": {
       "repository": "openkruise/kruise",
@@ -7581,14 +7581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apple-foundationdb",
-      "content_hash": "4bcb0fafe291a9cf7f96db74f9019462bfddcd2d8eacbe9da820fc6eac94392d",
-      "verified_at": "2026-10-30T04:41:52.812Z",
+      "content_hash": "98d7428950ded5b7903418c022ff16f06ebffd060c604298e19296d4dc876db8",
+      "verified_at": "2026-10-31T01:05:00.815Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T04:41:52.812Z"
+      "last_updated": "2026-10-31T01:05:00.815Z"
     },
     "kucherenko/jscpd": {
       "repository": "kucherenko/jscpd",
@@ -8991,14 +8991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-argoproj-argo-workflows",
-      "content_hash": "61da933d785b7d7d537eb8004215924cef5c7c8b08151f35d043e0e9de30d5b2",
-      "verified_at": "2026-10-30T05:32:00.523Z",
+      "content_hash": "cc4349ef2254e5094b3a3f9958e4a260afba00bc26a5b88c6fbadda61c64d1e9",
+      "verified_at": "2026-10-31T01:04:56.284Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T05:32:00.523Z"
+      "last_updated": "2026-10-31T01:04:56.284Z"
     },
     "postgresml/postgresml": {
       "repository": "postgresml/postgresml",
@@ -15591,14 +15591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-      "content_hash": "097b839eb8a58e973d5804eb9f87ca3280d2f40ac4301ccb8c0e480efc123c7a",
-      "verified_at": "2026-10-27T23:03:21.430Z",
+      "content_hash": "e69d82fd5f3284462730d8d6bd01346d164072b7b92017af1373fb56a8b897e9",
+      "verified_at": "2026-10-31T01:04:47.349Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T23:03:21.430Z"
+      "last_updated": "2026-10-31T01:04:47.349Z"
     },
     "AhmadHassan-BTed/AutoSwarm-Shadow-Adapter": {
       "repository": "AhmadHassan-BTed/AutoSwarm-Shadow-Adapter",

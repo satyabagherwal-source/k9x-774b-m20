@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-WLNJ",
-    "timestamp": "2026-10-28T18:48:30.367Z",
-    "repository": "restatedev/restate",
-    "learningId": "learn-github-restatedev-restate",
-    "contentHash": "5538f39f701176080ae418b0f3be2bf1fcb23a29d390fb42c27d20aab93a45b5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-WQY8",
-    "timestamp": "2026-10-28T18:48:37.232Z",
-    "repository": "envoyproxy/envoy",
-    "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "7ac9efae53ec38af2a3ccb59520b6b463b1d067cfa7edbb69eda8f9c484d4b2a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-WTB0",
-    "timestamp": "2026-10-28T18:48:40.284Z",
-    "repository": "mudler/locate-anything.cpp-gguf",
-    "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-    "contentHash": "273c5e57fbbf8c9aa13b8251145d8decb017644177a0395c07e7ac47b123b532",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-WV10",
-    "timestamp": "2026-10-28T18:48:42.516Z",
-    "repository": "dragonflydb/dragonfly",
-    "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "8c57b26be7817067a104045418b1cdfa049d7a717659b9132a30488ea83472d9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-8B35",
-    "timestamp": "2026-10-28T18:57:36.545Z",
-    "repository": "jialinyyzz/humanizer",
-    "learningId": "learn-huggingface-jialinyyzz-humanizer",
-    "contentHash": "14f400da815703166329fc7d63f79f21d6cdf245376b8c88aade5e8393f313ee",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-8C7J",
     "timestamp": "2026-10-28T18:57:37.999Z",
     "repository": "jhspetersson/fselect",
@@ -7492,6 +7417,81 @@
     "contentHash": "38107efbf90864bcc84233ddae72f0156459baf7ec362c6b911eda5c51846d10",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-87HE",
+    "timestamp": "2026-10-31T01:04:47.330Z",
+    "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
+    "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
+    "contentHash": "e69d82fd5f3284462730d8d6bd01346d164072b7b92017af1373fb56a8b897e9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-88GD",
+    "timestamp": "2026-10-31T01:04:48.589Z",
+    "repository": "metalbear-co/mirrord",
+    "learningId": "learn-github-metalbear-co-mirrord",
+    "contentHash": "c47321bea8adacc9d1e4622ebae43a7316d198e6ae8b80dacb6c337f7e6dca76",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-8BQI",
+    "timestamp": "2026-10-31T01:04:52.842Z",
+    "repository": "karakeep-app/karakeep",
+    "learningId": "learn-github-karakeep-app-karakeep",
+    "contentHash": "7008f66240c260ee2dee377f8da84482ddbd67203f8d786fcfa1813de69d3f41",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-8EDR",
+    "timestamp": "2026-10-31T01:04:56.271Z",
+    "repository": "argoproj/argo-workflows",
+    "learningId": "learn-github-argoproj-argo-workflows",
+    "contentHash": "cc4349ef2254e5094b3a3f9958e4a260afba00bc26a5b88c6fbadda61c64d1e9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-8HVM",
+    "timestamp": "2026-10-31T01:05:00.802Z",
+    "repository": "apple/foundationdb",
+    "learningId": "learn-github-apple-foundationdb",
+    "contentHash": "98d7428950ded5b7903418c022ff16f06ebffd060c604298e19296d4dc876db8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

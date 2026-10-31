@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T00:53:04.793Z",
+  "last_updated": "2026-10-31T01:05:00.722Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2552,8 +2552,8 @@
       "slug": "apple-foundationdb",
       "platform": "github",
       "source_url": "https://github.com/apple/foundationdb",
-      "source_version": "c53afefe",
-      "content_hash": "4bcb0fafe291a9cf7f96db74f9019462bfddcd2d8eacbe9da820fc6eac94392d",
+      "source_version": "bcdefac9",
+      "content_hash": "98d7428950ded5b7903418c022ff16f06ebffd060c604298e19296d4dc876db8",
       "dossier_path": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "promoted_rules": [
@@ -2596,6 +2596,11 @@
           "number": 5601,
           "title": "fdbclient: misc gcc compile warning fixes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5978,
+          "title": "DD: bulkdump only targets the remote DC when it is usable (#14380)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2603,7 +2608,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T04:41:52.709Z",
+      "verified_at": "2026-10-31T01:05:00.701Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -3194,8 +3199,8 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "425b8b96",
-      "content_hash": "61da933d785b7d7d537eb8004215924cef5c7c8b08151f35d043e0e9de30d5b2",
+      "source_version": "c42dc08b",
+      "content_hash": "cc4349ef2254e5094b3a3f9958e4a260afba00bc26a5b88c6fbadda61c64d1e9",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
@@ -3243,6 +3248,11 @@
           "number": 5610,
           "title": "deps): update actions/create-github-app-token action to v3.3.0 (main) (#17349)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5977,
+          "title": "deps): update step-security/harden-runner action to v2.22.3 (main) (#17347)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3250,7 +3260,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T05:32:00.418Z",
+      "verified_at": "2026-10-31T01:04:56.172Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33392,8 +33402,8 @@
       "slug": "karakeep-app-karakeep",
       "platform": "github",
       "source_url": "https://github.com/karakeep-app/karakeep",
-      "source_version": "fb25e427",
-      "content_hash": "cc18b1c2190d806ca6f57eb7ba957c0799f38e827f4f5930fd543c2d8e4ce4c9",
+      "source_version": "eaee0c72",
+      "content_hash": "7008f66240c260ee2dee377f8da84482ddbd67203f8d786fcfa1813de69d3f41",
       "dossier_path": "07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
       "promoted_rules": [
@@ -33411,6 +33421,11 @@
           "number": 3849,
           "title": "ci: unpin Node.js now that 24.22 fixes the addon cleanup crash",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 5976,
+          "title": "pin monolith in the linux install script after upstream renamed its release asse",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33418,7 +33433,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:22:17.165Z",
+      "verified_at": "2026-10-31T01:04:52.741Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38192,8 +38207,8 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "1cd28b29",
-      "content_hash": "ab89e548536cafc6b1ac95c16e97cd5668fe96a50bdfe8a136e64101e3d34872",
+      "source_version": "af2dab92",
+      "content_hash": "c47321bea8adacc9d1e4622ebae43a7316d198e6ae8b80dacb6c337f7e6dca76",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
@@ -38236,6 +38251,11 @@
           "number": 5502,
           "title": "up): keep forwarding a service's output past bytes that aren't UTF-8",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5975,
+          "title": "layer): say Ready! and hold for a debugger from the Unix layer",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38243,7 +38263,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T12:08:42.742Z",
+      "verified_at": "2026-10-31T01:04:48.489Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -113417,7 +113437,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
       "source_version": "hf-lodestones-moss-image-sft-8-steps-dmd",
-      "content_hash": "097b839eb8a58e973d5804eb9f87ca3280d2f40ac4301ccb8c0e480efc123c7a",
+      "content_hash": "e69d82fd5f3284462730d8d6bd01346d164072b7b92017af1373fb56a8b897e9",
       "dossier_path": "07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md",
       "promoted_rules": [
@@ -113467,7 +113487,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T23:03:21.345Z",
+      "verified_at": "2026-10-31T01:04:47.224Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -157671,6 +157691,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T00:53:04.772Z"
+    },
+    "rule-5975": {
+      "learning_id": "rule-5975",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5975,
+      "title": "layer): say Ready! and hold for a debugger from the Unix layer",
+      "source_url": "https://github.com/metalbear-co/mirrord",
+      "source_version": "af2dab92",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T01:04:48.489Z"
+    },
+    "rule-5976": {
+      "learning_id": "rule-5976",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5976,
+      "title": "pin monolith in the linux install script after upstream renamed its release asse",
+      "source_url": "https://github.com/karakeep-app/karakeep",
+      "source_version": "eaee0c72",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T01:04:52.741Z"
+    },
+    "rule-5977": {
+      "learning_id": "rule-5977",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5977,
+      "title": "deps): update step-security/harden-runner action to v2.22.3 (main) (#17347)",
+      "source_url": "https://github.com/argoproj/argo-workflows",
+      "source_version": "c42dc08b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T01:04:56.172Z"
+    },
+    "rule-5978": {
+      "learning_id": "rule-5978",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5978,
+      "title": "DD: bulkdump only targets the remote DC when it is usable (#14380)",
+      "source_url": "https://github.com/apple/foundationdb",
+      "source_version": "bcdefac9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T01:05:00.701Z"
     }
   },
   "aliases": {

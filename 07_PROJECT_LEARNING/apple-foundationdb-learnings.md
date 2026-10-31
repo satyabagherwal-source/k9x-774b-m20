@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source**: github ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
-> **Source Version**: `c53afefe`  
+> **Source Version**: `bcdefac9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T04:41:52.178Z  
+> **Timestamp**: 2026-10-31T01:05:00.116Z  
 > **Learning ID**: `learn-github-apple-foundationdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T04:41:50.724Z  
+> **Harvest Timestamp**: 2026-10-31T01:05:00.109Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FoundationDB - the open source, distributed, transactional key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 16823 stars
+- **Stars / Engagement**: 16828 stars
 
 ---
 
@@ -1956,505 +1956,133 @@ constexpr std::string_view to_string(WaitState st) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f845d4b0` (2026-10-27)
-**Commit Message**: fdbclient: misc gcc compile warning fixes
+### Incident Patch 1: `bcdefac9` (2026-10-30)
+**Commit Message**: DD: bulkdump only targets the remote DC when it is usable (#14380)
 
-use matching loop variable string type:
+* DD: bulkdump only targets the remote DC when it is usable
 
-> loop variable ‘path’ of type ‘const std::string&’ {aka ‘const std::__cxx11::basic_string<char>&’}
-> binds to a temporary constructed from type ‘const char* const’ [-Werror=range-loop-construct]
+With DD_BULKDUMP_USE_REMOTE_REGION set and usable_regions == 1, the
+remote DC appears in the region configuration but has no storage
+servers. Every range was then skipped as having no replica in the
+target DC, no task was dispatched, and the job never completed. The
+BulkDumping simulation test hung until timeout whenever BUGGIFY
+enabled the knob under such a config.
 
- * ensure RandomIntGenerator prev val initialized
- * explicit grouping of compound smartQuorum conditional
- * decodeKVPairs(): remove unused var prevKey
-   (it is already pushed to results vector)
+Fall back to the primary DC unless usable_regions > 1.
 
-RandomKeyValueUtils: fix clang-tidy type-widening warning (exposed by above changes?)
+* DD: unit test for the bulkdump target DC with usable_regions == 1
 
-> error: performing an implicit widening conversion to type 'unsigned long'
-> of a multiplication performed in type 'unsigned int'
-> [bugprone-implicit-widening-of-multiplication-result,-warnings-as-errors]
+* DD: note the usable_regions == 1 exception and resolve the bulkdump target DC once per pass
 
-**File**: `fdbclient/BackupContainerLocalDirectory.cpp` (modified, +2/-2)
+Co-authored-by: Shree Chaturvedi <[REDACTED_EMAIL]>
+
+**File**: `fdbserver/core/include/fdbserver/core/Knobs.h` (modified, +2/-1)
 ```diff
-@@ -378,15 +378,15 @@ TEST_CASE("/backup/containers/localdir/rejectsEscapingPaths") {
- 		ASSERT(false);
- 	};
- 
--	for (const std::string& path : { "../x", "a/../../x", "/etc/passwd" }) {
-+	for (const char* path : { "../x", "a/../../x", "/etc/passwd" }) {
- 		expectRejected([&] { (void)bc->readFile(path); });
- 		expectRejected([&] { (void)bc->writeFile(path); });
- 		expectRejected([&] { (void)bc->deleteFile(path); });
- 		expectRejected([&] { (void)bc->listFiles(path, nullptr); });
+@@ -485,7 +485,8 @@ class SWIFT_CXX_IMMORTAL_SINGLETON_TYPE ServerKnobs : public KnobsImpl<ServerKno
+ 	                                                       // simulation.
+ 	int DD_BULKDUMP_PARALLELISM; // the max number of concurrent bulk dump tasks in DD
+ 	bool DD_BULKDUMP_USE_REMOTE_REGION; // dump from the remote region instead of the primary. The dumping server
+-	                                    // uploads the files, so its region must reach the destination.
++	                                    // uploads the files, so its region must reach the destination. Ignored
++	                                    // with usable_regions == 1, where the remote holds no storage servers.
+ 	int SS_SERVE_BULKDUMP_PARALLELISM; // the number of bulk dump tasks that can concurrently happen at a SS
+ 	int64_t SS_BULKDUMP_BATCH_BYTES; // the max bytes when SS creates a batch to dump
+ 	int SS_BULKLOAD_GETRANGE_BATCH_SIZE; // the max number of keys to scan before do context switch
+```
+
+**File**: `fdbserver/datadistributor/DataDistribution.cpp` (modified, +42/-5)
+```diff
+@@ -518,10 +518,11 @@ struct DataDistributor : NonCopyable, ReferenceCounted<DataDistributor> {
  	}
  
- 	// Names that resolve to the container directory itself are only allowed for listing.
--	for (const std::string& path : { "", ".", "a/.." }) {
-+	for (const char* path : { "", ".", "a/.." }) {
- 		expectRejected([&] { (void)bc->readFile(path); });
- 		expectRejected([&] { (void)bc->writeFile(path); });
- 		expectRejected([&] { (void)bc->deleteFile(path); });
-```
-
-**File**: `fdbclient/BackupFileFormat.cpp` (modified, +0/-1)
-```diff
-@@ -152,7 +152,6 @@ void decodeKVPairs(StringRefReader* reader, Standalone<VectorRef<KeyValueRef>>*
- 	uint32_t kLen = reader->consumeNetworkUInt32();
- 	const uint8_t* k = reader->consume(kLen);
- 	results->push_back(results->arena(), KeyValueRef(KeyRef(k, kLen), ValueRef()));
--	KeyRef prevKey = KeyRef(k, kLen);
- 	// Read kv pairs and end key
- 	while (1) {
- 		// Read a key.
-```
-
-**File**: `fdbclient/StatusClient.cpp` (modified, +2/-2)
-```diff
-@@ -328,8 +328,8 @@ AsyncResult<Optional<StatusObject>> clientCoordinatorsStatusFetcher(Reference<IC
- 			}
+ 	// The DC whose storage servers perform bulkdump uploads, or empty when the cluster has no
+-	// region configuration. Resolved per dispatch rather than cached so it follows a failover.
++	// region configuration. Resolved per scheduling pass rather than cached so it follows a failover.
+ 	std::string bulkDumpTargetDcId() const {
+-		const std::vector<Optional<Key>>& dcIds =
+-		    SERVER_KNOBS->DD_BULKDUMP_USE_REMOTE_REGION ? remoteDcIds : primaryDcId;
++		// With usable_regions == 1 the remote DC is configured but holds no storage servers.
++		const bool useRemote = SERVER_KNOBS->DD_BULKDUMP_USE_REMOTE_REGION && configuration.usableRegions > 1;
++		const std::vector<Optional<Key>>& dcIds = useRemote ? remoteDcIds : primaryDcId;
+ 		if (!dcIds.empty() && dcIds[0].present()) {
+ 			return dcIds[0].get().toString();
  		}
- 
--		co_await (smartQuorum(leaderServers, leaderServers.size() / 2 + 1, 1.5) &&
--		              smartQuorum(coordProtocols, coordProtocols.size() / 2 + 1, 1.5) ||
-+		co_await ((smartQuorum(leaderServers, leaderServers.size() / 2 + 1, 1.5) &&
-+		           smartQuorum(coordProtocols, coordProtocols.size() / 2 + 1, 1.5)) ||
- 		          delay(std::min(2.0, std::max(0.0, statusDeadline - now()))));
- 
- 		statusObj["quorum_reachable"] = *quorum_reachable =
-```
-
-**File**: `fdbclient/include/fdbclient/RandomKeyValueUtils.h` (modified, +6/-4)
-```diff
-@@ -68,8 +68,9 @@ struct RandomIntGenerator : IGenerator<unsigned int> {
- 		}
- 	}
- 
--	explicit RandomIntGenerator(unsigned int only = 0) : min(only), max(only) {}
--	RandomIntGenerator(unsigned int first, unsigned int last, bool skewTowardFirst = false) : min(first), max(last) {
-+	explicit RandomIntGenerator(unsigned int only = 0) : min(only), max(only), val(only) {}
-+	RandomIntGenerator(unsigned int first, unsigned int last, bool skewTowardFirst = false)
-+	  : min(first), max(last), val(0) {
- 		if (first != last && skewTowardFirst) {
- 			skew = (first < last) ? SMALL : LARGE;
- 		}
-@@ -92,6 +93,7 @@ struct RandomIntGenerator : IGenerator<unsigned int> {
- 			last = first;
- 		}
- 
-+		val = 0;
- 		min = parseInt(first);
- 		max = parseInt(last);
- 		if (skewTowardFirst && min != max) {
-@@ -222,8 +224,8 @@ struct RandomStringSetGeneratorBase : IKeyGenerator {
- 		std::set<Key> uniqueKeys;
- 		int inserts = 0;
- 		// for smaller indexGenerator.max, give it more insert try, as it may not find enough unique keys with 3 * max.
--		// It adds roughly log * 100. For example, even for max is 1, it will try at least 100 times.
--		const uint maxInsertTry = 3 * indexGenerator.max + (((sizeof(uint) * 8) - clz(indexGenerator.max)) * 100);
-+		// It adds roughly log(max) * 100. (total_bits - count_leading_zero_bits = high_set_bit_pos)
-+		const uint maxInsertTry = 3 * indexGenerator.max + (((uint)(sizeof(uint) * 8) - clz(indexGenerator.max)) * 100);
- 		while (uniqueKeys.size() < indexGenerator.max) {
- 			auto k = keyGen.next();
- 			uniqueKeys.insert(k);
-```
-
----
-
-### Incident Patch 2: `c53afefe` (2026-10-29)
-**Commit Message**: Merge pull request #14376 from tclinkenbeard-oai/dev/tclinkenbeard/fix-partitioned-restore-cycle-20261028
-
-Restore bulk dump snapshots from each SST range’s read version
-
-**File**: `fdbbackup/backup.cpp` (modified, +4/-3)
-```diff
-@@ -2296,7 +2296,7 @@ Future<Void> runRestore(Database db,
- 		Reference<IBackupContainer> bc = openBackupContainer(
- 		    exeRestore.toString().c_str(), container, proxy, encryptionKeyFile, /*encryptionBlockSize=*/0);
- 		// If targetVersion is unset then use the maximum restorable version from the backup description
--		if (targetVersion == invalidVersion) {
-+		if (restoreMode == RestoreMode::RANGEFILE && targetVersion == invalidVersion) {
- 			if (verbose)
- 				printf(
- 				    "No restore target version given, will use maximum restorable version from backup description.\n");
-@@ -2344,7 +2344,8 @@ Future<Void> runRestore(Database db,
- 				fmt::print("Restored to version {}\n", restoredVersion);
- 			}
- 		} else {
--			Optional<RestorableFileSet> rset = co_await bc->getRestoreSet(targetVersion, ranges);
-+			Optional<RestorableFileSet> rset = co_await bc->getRestoreSet(
-+			    targetVersion, ranges, false, invalidVersion, restoreMode == RestoreMode::BULKLOAD);
- 
- 			if (!rset.present()) {
- 				fmt::print(stderr,
-@@ -2353,7 +2354,7 @@ Future<Void> runRestore(Database db,
- 				throw restore_invalid_version();
- 			}
- 
--			fmt::print("Backup can be used to restore to version {}\n", targetVersion);
-+			fmt::print("Backup can be used to restore to version {}\n", rset.get().targetVersion);
- 		}
- 
- 	} catch (Error& e) {
-```
-
-**File**: `fdbclient/BackupContainerFileSystem.cpp` (modified, +398/-56)
-```diff
-@@ -21,6 +21,7 @@
- #include "fdbclient/BackupAgent.h"
- #include "fdbclient/BackupFileFormat.h"
- #include "fdbclient/BackupContainer.h"
-+#include "fdbclient/BulkLoading.h"
- #include "flow/BooleanParam.h"
- #include "flow/Platform.h"
- #include "fdbclient/BackupContainerFileSystem.h"
-@@ -34,6 +35,7 @@
- #include <algorithm>
- #include <charconv>
- #include <cinttypes>
-+#include <memory>
- 
- class BackupContainerFileSystemImpl {
- public:
-@@ -51,53 +53,75 @@ class BackupContainerFileSystemImpl {
- 		}
- 	}
- 
-+	// A bad snapshot need not prevent restoring through another snapshot. Transport errors
-+	// and cancellation still belong to the operation, not to an individual dump.
-+	static bool unusableSnapshot(Error e) {
-+		return e.code() == error_code_file_not_found || e.code() == error_code_file_corrupt ||
-+		       e.code() == error_code_restore_bad_read || e.code() == error_code_restore_corrupted_data ||
-+		       e.code() == error_code_bulkload_manifest_decode_error;
-+	}
-+
- 	// Returns the bulkdump job id recorded in a keyspace snapshot, or empty if the snapshot has none or
- 	// cannot be read. The job id is only in the snapshot's JSON body -- the filename carries the snapshot
- 	// type but not the id -- and it is what locates the SST tree under bulkdump_data/<jobId>/.
- 	//
--	// Deliberately tolerant: expire must not be blocked by one unreadable or unexpectedly shaped
-+	// Expiration is deliberately tolerant: it must not be blocked by one unreadable or unexpectedly shaped
- 	// snapshot. Returning empty leaves that snapshot's SSTs in place, which only costs space, whereas
--	// throwing would strand every later expire on the container.
-+	// throwing would strand every later expire on the container. A restore propagates read and decode errors.
- 	static Future<std::string> readBulkDumpJobId(Reference<BackupContainerFileSystem> bc,
--	                                             KeyspaceSnapshotFile snapshot) {
-+	                                             KeyspaceSnapshotFile snapshot,
-+	                                             bool restoring = false) {
- 		try {
- 			Reference<IAsyncFile> f = co_await bc->readFile(snapshot.fileName);
- 			int64_t size = co_await f->size();
-+			if (restoring && size > (1 << 20)) {
-+				// A bulkdump descriptor contains only the job ID and a single key range.
-+				throw restore_corrupted_data();
-+			}
- 			// A bulkdump manifest has an empty "files" array and so is a few hundred bytes, while a
- 			// rangefile manifest lists every range file and can reach hundreds of megabytes. Size is the
- 			// only cheap discriminator available: the snapshot filename carries the type suffix solely in
- 			// 'both' mode, so a plain bulkdump snapshot is indistinguishable from a rangefile one by name.
- 			// Refusing to read anything over a chunk keeps expire from pulling in a huge manifest just to
- 			// discover it has no job id.
--			if (size > CLIENT_KNOBS->BACKUP_MANIFEST_CHUNK_SIZE) {
-+			if (!restoring && size > CLIENT_KNOBS->BACKUP_MANIFEST_CHUNK_SIZE) {
- 				TraceEvent("BackupContainerExpireSkipLargeSnapshotManifest")
- 				    .detail("Snapshot", snapshot.fileName)
- 				    .detail("Size", size)
- 				    .detail("Limit", CLIENT_KNOBS->BACKUP_MANIFEST_CHUNK_SIZE);
- 				co_return std::string();
- 			}
--			std::string buf;
--			buf.resize(size);
-+			auto buf = std::make_shared<std::string>(size, '\0');
- 			for (int64_t offset = 0; offset < size;) {
--				int toRead = static_cast<int>(size - offset);
--				int r = co_await f->read((uint8_t*)buf.data() + offset, toRead, offset);
-+				int toRead =
-+				    static_cast<int>(std::min<int64_t>(CLIENT_KNOBS->BACKUP_MANIFEST_CHUNK_SIZE, size - offset));
-+				int r = co_await uncancellable(holdWhile(buf, f->read(buf->data() + offset, toRead, offset)));
- 				if (r != toRead) {
--					co_return std::string();
-+					throw restore_bad_read();
- 				}
- 				offset += r;
- 			}
- 			json_spirit::mValue json;
--			if (!json_spirit::read_string(buf, json)) {
--				co_return std::string();
-+			if (!json_spirit::read_string(*buf, json)) {
-+				throw restore_corrupted_data();
- 			}
- 			JSONDoc doc(json);
- 			std::string jobId;
--			if (doc.tryGet("bulkDumpJobId", jobId)) {
-+			if (doc.tryGet("bulkDumpJobId", jobId) && !jobId.empty()) {
- 				co_return jobId;
- 			}
-+			if (restoring) {
-+				// Without a dump job, only a traditional snapshot with actual range files is usable.
-+				std::string type;
-+				const auto& files = doc.create("files");
-+				if (snapshot.snapshotType == "bulk" || (doc.tryGet("snapshotType", type) && type == "bulkdump") ||
-+				    files.type() != json_spirit::array_type || files.get_array().empty()) {
-+					throw restore_corrupted_data();
-+				}
-+			}
- 			co_return std::string();
- 		} catch (Error& e) {
--			if (e.code() == error_code_actor_cancelled) {
-+			if (restoring || e.code() == error_code_actor_cancelled) {
- 				throw;
- 			}
- 			TraceEvent(SevWarn, "BackupContainerExpireReadBulkDumpJobIdFailed")
-@@ -284,9 +308,9 @@ class BackupContainerFileSystemImpl {
- 
-
-```
-
-**File**: `fdbclient/FileBackupAgent.cpp` (modified, +71/-94)
-```diff
-@@ -4100,29 +4100,32 @@ struct BulkDumpTaskFunc : BackupTaskFuncBase {
- 						beginEndKeys.emplace_back(range.begin, range.end);
- 					}
- 
--					// Create BulkDump snapshot metadata
--					// Note: totalBytes and totalKeys are set to 0 here. Unlike traditional range file backups
--					// which accumulate fileSize from each RangeSlice, BulkDump writes its data to manifest files
--					// in the backup container (one per shard). To get accurate byte/key counts, we would need to:
--					//   1. List all manifest files under bc->getURL()/bulkDumpJobId/
--					//   2. Read each BulkLoadManifest and call getTotalBytes()/getKeyCount()
--					//   3. Aggregate the totals
--					// For now, zeros are acceptable since the critical field is bulkDumpJobId which BulkLoad
--					// uses to locate the data. TODO: Fix. The byte counts are informational for status display.
--					SnapshotMetadata metadata =
--					    SnapshotMetadata::bulkDump(bulkDumpJob.getJobId().toString(), snapshotVersion, 0, 0);
-+					// Storage servers choose a read version for each SST batch independently.
-+					auto batches =
-+					    co_await BackupContainerFileSystem::readBulkDumpRanges(bc, bulkDumpJob.getJobId().toString());
-+					if (batches.front().range.begin != backupRanges.front().begin ||
-+					    batches.back().range.end != backupRanges.front().end) {
-+						throw backup_error();
-+					}
-+					auto bounds = std::minmax_element(batches.begin(), batches.end(), [](const auto& a, const auto& b) {
-+						return a.version < b.version;
-+					});
-+					SnapshotMetadata metadata = SnapshotMetadata::bulkDump(
-+					    bulkDumpJob.getJobId().toString(), bounds.first->version, bounds.second->version, 0);
-+					Params.snapshotVersion().set(task, metadata.endVersion);
- 
- 					// Write the snapshot file - empty file list since BulkDump uses job manifests, not range files
- 					co_await bc->writeKeyspaceSnapshotFile({}, // No individual range files for BulkDump
- 					                                       beginEndKeys,
--					                                       0, // See comment above about totalBytes
-+					                                       0, // BulkDump descriptors do not list individual SST sizes.
- 					                                       IncludeKeyRangeMap::False,
- 					                                       metadata);
- 
- 					TraceEvent("BulkDumpTaskWroteSnapshot")
- 					    .detail("BackupUID", config.getUid())
- 					    .detail("BulkDumpJobId", bulkDumpJob.getJobId())
--					    .detail("SnapshotVersion", snapshotVersion)
-+					    .detail("BeginVersion", metadata.beginVersion)
-+					    .detail("EndVersion", metadata.endVersion)
- 					    .detail("RangeCount", backupRanges.size());
- 				}
- 
-@@ -4524,69 +4527,14 @@ struct BulkLoadRestoreTaskFunc : RestoreTaskFuncBase {
- 
- 				std::vector<KeyRange> restoreRanges = co_await restore.getRestoreRangesOrDefault(tr);
- 
--				// If bulkDumpJobId is empty, read it from the snapshot file metadata
- 				if (bulkDumpJobId.empty()) {
--					// Use the backup container we already opened to find the snapshot file for our restore version
--					auto* bcfsPtr = dynamic_cast<BackupContainerFileSystem*>(bcRef.getPtr());
--					if (bcfsPtr != nullptr) {
--						Reference<BackupContainerFileSystem> bcfs =
--						    Reference<BackupContainerFileSystem>::addRef(bcfsPtr);
--						std::vector<KeyspaceSnapshotFile> snapshots = co_await bcfs->listKeyspaceSnapshots();
--						int snapIdx = snapshots.size() - 1;
--						while (snapIdx >= 0 && bulkDumpJobId.empty()) {
--							// For BulkDump snapshots: beginVersion == endVersion == snapshotVersion
--							// Accept any snapshot that is at or before our restore version
--							if (snapshots[snapIdx].endVersion <= restoreVersion) {
--								// Read the snapshot file to get bulkDumpJobId
--								std::string snapFileName = snapshots[snapIdx].fileName;
--								Reference<IAsyncFile> snapFile = co_await bcfs->readFile(snapFileName);
--								int64_t snapSize = co_await snapFile->size();
--								Standalone<StringRef> snapBuf = makeString(snapSize);
--								int bytesRead = co_await snapFile->read(mutateString(snapBuf), snapSize, 0);
--								if (bytesRead == snapSize) {
--									json_spirit::mValue json;
--									if (json_spirit::read_string(snapBuf.toString(), json)) {
--										JSONDoc doc(json);
--										std::string jobId;
--										if (doc.tryGet("bulkDumpJobId", jobId) && !jobId.empty()) {
--											bulkDumpJobId = jobId;
--											TraceEvent("BulkLoadRestoreFoundJobId")
--											    .detail("RestoreUID", restore.getUid())
--											    .detail("BulkDumpJobId", bulkDumpJobId)
--											    .detail("SnapshotFile", snapFileName);
--										}
--									}
--								}
--							}
--							snapIdx--;
--						}
--					}
-+					// A restore dispatched before per-range versions were recorded cannot safely resume.
-+					co_await abortBulkLoadRestore(
-+					    cx, restore, "Restart the bulkload restore to initialize its SST versions");
-+					throw restore_bulkload_failed();
- 				
-```
-
-**File**: `fdbclient/include/fdbclient/BackupAgent.h` (modified, +2/-2)
-```diff
-@@ -997,9 +997,9 @@ class BackupConfig : public KeyBackedTaskConfig {
- 					           }
- 					           return {}; // Not restorable until both complete
- 				           }
--				           // Use the minimum of both as the effective first snapshot version
-+				           // The log must cover either restore method before the backup can stop.
- 				           Version effectiveFirstSnapshot =
--				               std::min(firstSnapshot.get().get(), bulkDumpSnapshot.get().get());
-+				               std::max(firstSnapshot.get().get(), bulkDumpSnapshot.get().get());
- 				           if (logVersion.present() && logVersion.get() > effectiveFirstSnapshot) {
- 					           return std::max(logVersion.get() - 1, effectiveFirstSnapshot);
- 				           }
-```
-
-**File**: `fdbclient/include/fdbclient/BackupContainer.h` (modified, +15/-6)
-```diff
-@@ -167,17 +167,18 @@ struct SnapshotMetadata {
- 	std::string snapshotType = "rangefile"; // "rangefile" or "bulkdump"
- 	std::string bulkDumpJobId; // Only used for bulkdump snapshots
- 	int64_t totalKeys = 0; // Key count (primarily for bulkdump)
--	Version snapshotVersion = invalidVersion; // For bulkdump: the snapshot version (beginVersion == endVersion)
--	                                          // For rangefile: ignored (derived from files)
-+	Version beginVersion = invalidVersion;
-+	Version endVersion = invalidVersion;
- 
- 	bool isBulkDump() const { return snapshotType == "bulkdump"; }
- 
- 	// Factory for creating BulkDump metadata
--	static SnapshotMetadata bulkDump(const std::string& jobId, Version version, int64_t totalBytes, int64_t keys) {
-+	static SnapshotMetadata bulkDump(const std::string& jobId, Version begin, Version end, int64_t keys) {
- 		SnapshotMetadata m;
- 		m.snapshotType = "bulkdump";
- 		m.bulkDumpJobId = jobId;
--		m.snapshotVersion = version;
-+		m.beginVersion = begin;
-+		m.endVersion = end;
- 		m.totalKeys = keys;
- 		return m;
- 	}
-@@ -242,6 +243,11 @@ struct BackupDescription {
- 	std::string toJSON() const;
+@@ -2805,14 +2806,15 @@ Future<Void> scheduleBulkDumpJob(Reference<DataDistributor> self) {
+ 				    .detail("BulkDumpRange", bulkDumpRange)
+ 				    .detail("BeginKey", bulkDumpResult[bulkDumpResultIndex].key)
+ 				    .detail("EndKey", rangeLocations.back().range.end);
++				const std::string targetDcId = self->bulkDumpTargetDcId();
+ 				rangeLocationIndex = 0;
+ 				for (; rangeLocationIndex < rangeLocations.size(); ++rangeLocationIndex) {
+ 					// Spawn task per shard
+ 					taskRange = rangeLocations[rangeLocationIndex].range;
+ 					ASSERT(!taskRange.empty());
+ 					// Skip rather than fall back to another region: the dumping server uploads the
+-					// files, so a DC that cannot reach the destination would fail every task.
+-					const std::string targetDcId = self->bulkDumpTargetDcId();
++					// files, so a DC that cannot reach the destination would fail every task. The
++					// one exception is usable_regions == 1, handled in bulkDumpTargetDcId().
+ 					if (!targetDcId.empty()) {
+ 						const auto& servers = rangeLocations[rangeLocationIndex].servers;
+ 						auto targetDc = servers.find(targetDcId);
+@@ -5900,6 +5902,19 @@ class AuditTaskMaxBytesGuard {
+ 	int64_t saved;
  };
  
-+struct BulkDumpRangeVersion {
-+	KeyRange range;
-+	Version version;
++class BulkDumpUseRemoteRegionGuard {
++public:
++	BulkDumpUseRemoteRegionGuard() : saved(SERVER_KNOBS->DD_BULKDUMP_USE_REMOTE_REGION) {}
++	~BulkDumpUseRemoteRegionGuard() { set(saved); }
++	BulkDumpUseRemoteRegionGuard(BulkDumpUseRemoteRegionGuard const&) = delete;
++	BulkDumpUseRemoteRegionGuard& operator=(BulkDumpUseRemoteRegionGuard const&) = delete;
++
++	void set(bool value) { const_cast<ServerKnobs*>(SERVER_KNOBS)->DD_BULKDUMP_USE_REMOTE_REGION = value; }
++
++private:
++	bool saved;
 +};
 +
- struct RestorableFileSet {
- 	Version targetVersion;
- 	std::vector<LogFile> logs;
-@@ -254,7 +260,9 @@ struct RestorableFileSet {
- 	// when the entire key space snapshot is at the target version.
- 	Version continuousBeginVersion, continuousEndVersion;
+ } // namespace
  
--	KeyspaceSnapshotFile snapshot; // Info. for debug purposes
-+	KeyspaceSnapshotFile snapshot;
-+	std::string bulkDumpJobId;
-+	std::vector<BulkDumpRangeVersion> bulkDumpRanges;
- };
+ TEST_CASE("/DataDistribution/Audit/BoundAuditTaskRange") {
+@@ -5988,6 +6003,28 @@ TEST_CASE("/DataDistribution/Initialization/DcIds") {
+ 	return Void();
+ }
  
- /* IBackupContainer is an interface to a set of backup data, which contains
-@@ -368,7 +376,8 @@ class IBackupContainer {
- 	virtual Future<Optional<RestorableFileSet>> getRestoreSet(Version targetVersion,
- 	                                                          VectorRef<KeyRangeRef> keyRangesFilter = {},
- 	                                                          bool logsOnly = false,
--	                                                          Version beginVersion = -1) = 0;
-+	                                                          Version beginVersion = -1,
-+	                                                          bool useBulkDump = false) = 0;
- 
- 	// Get an IBackupContainer based on a container spec string
- 	static Reference<IBackupContainer> openContainer(const std::string& url,
-```
-
-**File**: `fdbclient/include/fdbclient/BackupContainerFileSystem.h` (modified, +5/-1)
-```diff
-@@ -68,6 +68,9 @@
-  */
- class BackupContainerFileSystem : public IBackupContainer {
- public:
-+	static Future<std::vector<BulkDumpRangeVersion>> readBulkDumpRanges(Reference<IBackupContainer> container,
-+	                                                                    std::string jobId);
++TEST_CASE("/DataDistribution/BulkDump/TargetDcId") {
++	Reference<DDSharedContext> context(new DDSharedContext(UID()));
++	Reference<AsyncVar<ServerDBInfo> const> dbInfo;
++	Reference<DataDistributor> self(new DataDistributor(dbInfo, UID(), context, ""));
++	self->primaryDcId = { Optional<Key>("primary"_sr) };
++	self->remoteDcIds = { Optional<Key>("remote"_sr) };
++	BulkDumpUseRemoteRegionGuard useRemoteRegion;
 +
- 	void addref() override = 0;
- 	void delref() override = 0;
- 
-@@ -165,7 +168,8 @@ class BackupContainerFileSystem : public IBackupContainer {
- 	Future<Optional<RestorableFileSet>> getRestoreSet(Version targetVersion,
- 	                                                  VectorRef<KeyRangeRef> keyRangesFilter,
- 	                                                  bool logsOnly,
--	                                                  Version beginVersion) final;
-+	                                                  Version beginVersion,
-+	                                                  bool useBulkDump = false) final;
- 	static Future<Void> createTestEncryptionKeyFile(std::string const& filename);
- 
- 	Future<Void> writeEncryptionMetadata(int encryptionBlockSize) override;
-```
-
-**File**: `fdbclient/include/fdbclient/BulkLoading.h` (modified, +4/-0)
-```diff
-@@ -1003,6 +1003,8 @@ struct BulkLoadJobManifestFileHeader {
- 		}
- 	}
- 
-+	size_t getManifestCount() const { return manifestCount; }
++	useRemoteRegion.set(true);
++	self->configuration.usableRegions = 2;
++	ASSERT_EQ(self->bulkDumpTargetDcId(), "remote");
++	// The remote DC is configured but holds no storage servers.
++	self->configuration.usableRegions = 1;
++	ASSERT_EQ(self->bulkDumpTargetDcId(), "primary");
 +
- 	bool isValid() const { return formatVersion > 0 && manifestCount > 0; }
- 
- 	// Generate human-readable string and the string is stored in the bulkload job-manifest.txt file.
-@@ -1078,6 +1080,8 @@ struct BulkLoadJobFileManifestEntry {
- 		return beginKey < endKey && version != invalidVersion && relativePathIsContained(manifestRelativePath);
- 	}
- 
-+	Version getVersion() const { return version; }
++	useRemoteRegion.set(false);
++	self->configuration.usableRegions = 2;
++	ASSERT_EQ(self->bulkDumpTargetDcId(), "primary");
 +
- 	bool hasEmptyData() const { return bytes == 0; }
- 
- 	Key getBeginKey() const { return beginKey; }
-```
-
----
-
-### Incident Patch 3: `83b3518d` (2026-10-27)
-**Commit Message**: fdbclient: JsonBuilder: defend against writeValue(null)
-
-gcc warns about it
-
-**File**: `fdbclient/include/fdbclient/JsonBuilder.h` (modified, +1/-1)
-```diff
-@@ -154,7 +154,7 @@ class JsonBuilder {
- 
- 	inline void writeValue(const std::string& val) { writeValue(val.data(), val.size()); }
- 
--	inline void writeValue(const char* val) { writeValue(val, strlen(val)); }
-+	inline void writeValue(const char* val) { writeValue(val, val ? strlen(val) : 0); }
- 
- 	inline void writeValue(const StringRef& s) { writeValue((const char*)s.begin(), s.size()); }
- 
++	return Void();
++}
++
+ TEST_CASE("/DataDistribution/Initialization/ResumeFromShard") {
+ 	Reference<DDSharedContext> context(new DDSharedContext(UID()));
+ 	Reference<AsyncVar<ServerDBInfo> const> dbInfo;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14395** (2026-10-30): Release notes 7.3.{80, 81} (@spraza)
+- **PR #14394** (2026-10-30): [release-7.4] build: fix aws-sdk-cpp "crypto" dep, for macOS and arm64 (@ploxiln)
+- **PR #14385** (2026-10-30): [release-7.4] DD: bulkdump only targets the remote DC when it is usable (@saintstack)
+- **PR #14380** (2026-10-30): DD: bulkdump only targets the remote DC when it is usable (@saintstack)
+- **PR #14379** (2026-10-30): [release-7.4] fdbmonitor: free resolved configuration path after symlink changes (@ploxiln)
 - **PR #14378** (closed): Record the true version span of a bulkdump snapshot (@saintstack)
-- **PR #14376** (2026-10-29): Restore bulk dump snapshots from each SST range’s read version (@tclinkenbeard-oai)
-- **PR #14373** (2026-10-28): [release-8.0] Fix onMainThread coroutine completion lifetime (@ploxiln)
-- **PR #14366** (2026-10-29): build: enable gcc warnings, fix some (@ploxiln)
-- **PR #14365** (closed): [backup] Bound restore dispatch and adapt oversized transactions (@mpatou-openai)
-- **PR #14364** (closed): RocksDB: add compaction thread priority to KeyValueStoreRocksDB (@ShreeChaturvedi)
 
 ---
 
@@ -2474,30 +2102,29 @@ gcc warns about it
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fdbclient: misc gcc compile warning fixes
+## X. DD: bulkdump only targets the remote DC when it is usable (#14380)
 
 **RULE**:
-When implementing operations in `fdbclient/BackupContainerLocalDirectory.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fdbserver/core/include/fdbserver/core/Knobs.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f845d4b0`: fdbclient: misc gcc compile warning fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bcdefac9`: DD: bulkdump only targets the remote DC when it is usable (#14380). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbclient/BackupContainerLocalDirectory.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbserver/core/include/fdbserver/core/Knobs.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-	for (const char* path : { "../x", "a/../../x", "/etc/passwd" }) {
-	for (const char* path : { "", ".", "a/.." }) {
+	                                    // uploads the files, so its region must reach the destination. Ignored
+	                                    // with usable_regions == 1, where the remote holds no storage servers.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-	for (const std::string& path : { "../x", "a/../../x", "/etc/passwd" }) {
-	for (const std::string& path : { "", ".", "a/.." }) {
+	                                    // uploads the files, so its region must reach the destination.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f845d4b0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bcdefac9` are properly handled with clean fallback behavior.
