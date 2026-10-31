@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "2f1bdadc",
+    "sourceVersion": "687e906e",
     "license": "MIT",
-    "contentHash": "1c77e86f23829faf360fba59ffb50519e466c6cb4d732092513261bed6d09156",
-    "lastHarvestedAt": "2026-10-31T01:21:35.017Z",
+    "contentHash": "5a7a4fe271f49221658f09295130854814d65903b0028c9c4da4f4968a3c47ed",
+    "lastHarvestedAt": "2026-10-31T04:38:50.187Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "e70cdbcd",
+    "sourceVersion": "9f2b612e",
     "license": "MIT",
-    "contentHash": "203c7d657158b7d9444b35c1e2e03e4d896fedc776c25eb3cb1cdef7dab74967",
-    "lastHarvestedAt": "2026-10-30T08:56:42.779Z",
+    "contentHash": "8ced0cff377f0ef10cb71d915eaa181d5cf8f5c02cc8ace30914a300ba78c43c",
+    "lastHarvestedAt": "2026-10-31T04:38:49.406Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {
@@ -7153,10 +7153,10 @@
     "repository": "zeromicro/go-zero",
     "platform": "github",
     "sourceUrl": "https://github.com/zeromicro/go-zero",
-    "sourceVersion": "4fce4e76",
+    "sourceVersion": "f753a411",
     "license": "MIT",
-    "contentHash": "3f7e65113dbba137f625ce50cc6b07ae14aea769373fd5aae153ca3c821a1974",
-    "lastHarvestedAt": "2026-10-27T10:50:49.335Z",
+    "contentHash": "7b3dab45360738bed725c2c397eb6b6a063ce8c72379025a5908c31619dd2cc3",
+    "lastHarvestedAt": "2026-10-31T04:43:44.238Z",
     "learningId": "learn-github-zeromicro-go-zero"
   },
   "t8y2-dbx": {

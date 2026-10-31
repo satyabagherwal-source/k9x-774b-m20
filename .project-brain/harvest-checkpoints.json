@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T04:26:54.146Z",
+  "last_updated": "2026-10-31T04:43:44.249Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "1c77e86f23829faf360fba59ffb50519e466c6cb4d732092513261bed6d09156",
-      "verified_at": "2026-10-31T01:21:35.023Z",
+      "content_hash": "5a7a4fe271f49221658f09295130854814d65903b0028c9c4da4f4968a3c47ed",
+      "verified_at": "2026-10-31T04:38:50.197Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T01:21:35.023Z"
+      "last_updated": "2026-10-31T04:38:50.197Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "d503df5d134a9528f91e562a0b414d009c2a9152f1e48768175e0dfad5c86f03",
-      "verified_at": "2026-10-30T14:33:38.011Z",
+      "content_hash": "8ced0cff377f0ef10cb71d915eaa181d5cf8f5c02cc8ace30914a300ba78c43c",
+      "verified_at": "2026-10-31T04:38:49.416Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T14:33:38.011Z"
+      "last_updated": "2026-10-31T04:38:49.416Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -10776,14 +10776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeromicro-go-zero",
-      "content_hash": "3f7e65113dbba137f625ce50cc6b07ae14aea769373fd5aae153ca3c821a1974",
-      "verified_at": "2026-10-27T10:50:49.340Z",
+      "content_hash": "7b3dab45360738bed725c2c397eb6b6a063ce8c72379025a5908c31619dd2cc3",
+      "verified_at": "2026-10-31T04:43:44.249Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T10:50:49.340Z"
+      "last_updated": "2026-10-31T04:43:44.249Z"
     },
     "t8y2/dbx": {
       "repository": "t8y2/dbx",

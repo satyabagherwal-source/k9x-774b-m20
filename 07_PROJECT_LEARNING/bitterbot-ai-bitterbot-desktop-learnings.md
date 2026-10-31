@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `2f1bdadc`  
+> **Source Version**: `687e906e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T01:21:34.609Z  
+> **Timestamp**: 2026-10-31T04:38:49.491Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T01:21:34.605Z  
+> **Harvest Timestamp**: 2026-10-31T04:38:48.644Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,129 +1799,642 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2f1bdadc` (2026-10-31)
-**Commit Message**: chore(deps-dev): bump @types/node from 25.2.3 to 26.6.5 (#306)
+### Incident Patch 1: `687e906e` (2026-10-31)
+**Commit Message**: fix(acp): migrate to @agentclientprotocol/sdk 2.x and fix the stdio bridge (#340)
 
-Bumps [@types/node](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/node) from 25.2.3 to 26.6.5.
-- [Release notes](https://github.com/DefinitelyTyped/DefinitelyTyped/releases)
-- [Commits](https://github.com/DefinitelyTyped/DefinitelyTyped/commits/HEAD/types/node)
+The 2.x SDK removes the class-based Agent, AgentSideConnection and
+ClientSideConnection API in favour of app builders. AcpGatewayAgent now
+holds only gateway state and pushes session updates through a notifier
+sink bound at connection time; createAcpAgentApp() registers the protocol
+handlers on an SDK agent() app, and the interactive client uses client()
+with typed handlers. Wire protocol is unchanged (ACP v1).
 
----
-updated-dependencies:
-- dependency-name: "@types/node"
-  dependency-version: 26.6.5
-  dependency-type: direct:development
-  update-type: version-update:semver-major
-...
+Fixes found while smoke-testing the built CLI over stdio:
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+- server.ts carried a "run when executed directly" block guarded by
+  isMainModule(import.meta.url). Inside the esbuild bundle that URL is
+  dist/entry.js, which is also argv[1], so every `bitterbot acp` started a
+  second server on the same stdin and answered each request twice. The
+  standalone block, its argv parser and help text are removed.
+- The gateway canonicalizes session keys before emitting chat/tool events
+  (acp:<id> comes back as agent:main:acp:<id>); the bridge compared the raw
+  key, so prompts on the default per-session key never resolved.
+  sessionKeysMatch() accepts either spelling for the same agent.
+- initialize w
+
+**File**: `docs/cli/acp.md` (modified, +2/-1)
+```diff
+@@ -11,7 +11,8 @@ title: "acp"
+ Run the ACP (Agent Client Protocol) bridge that talks to a Bitterbot Gateway.
+ 
+ This command speaks ACP over stdio for IDEs and forwards prompts to the Gateway
+-over WebSocket. It keeps ACP sessions mapped to Gateway session keys.
++over WebSocket. It keeps ACP sessions mapped to Gateway session keys. When the
++IDE closes the stdio pipe, the bridge disconnects from the Gateway and exits.
+ 
+ ## Usage
+ 
+```
 
 **File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -231,7 +231,7 @@
-     "@lit/context": "^1.1.0",
-     "@types/express": "^5.0.6",
-     "@types/markdown-it": "^14.1.2",
--    "@types/node": "^25.2.3",
-+    "@types/node": "^26.6.5",
-     "@types/proper-lockfile": "^4.1.4",
-     "@types/qrcode-terminal": "^0.12.2",
-     "@types/ws": "^8.18.2",
+@@ -157,7 +157,7 @@
+     "version:sync": "node scripts/bump-version.mjs"
+   },
+   "dependencies": {
+-    "@agentclientprotocol/sdk": "0.14.1",
++    "@agentclientprotocol/sdk": "2.0.2",
+     "@anthropic-ai/claude-agent-sdk": "^0.3.296",
+     "@anthropic-ai/sdk": "^0.133.0",
+     "@aws-sdk/client-bedrock": "^3.1146.0",
 ```
 
-**File**: `pnpm-lock.yaml` (modified, +80/-98)
+**File**: `pnpm-lock.yaml` (modified, +6/-6)
 ```diff
-@@ -30,13 +30,13 @@ importers:
-         version: 3.1158.0
-       '@buape/carbon':
-         specifier: 0.17.0
--        version: 0.17.0(@discordjs/voice@0.19.2(@emnapi/core@1.8.1)(@emnapi/runtime@1.11.3)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/node@25.2.3)
-+        version: 0.17.0(@discordjs/voice@0.19.2(@emnapi/core@1.8.1)(@emnapi/runtime@1.11.3)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/node@26.6.5)
-       '@clack/prompts':
-         specifier: ^1.8.1
-         version: 1.8.1
-       '@coinbase/agentkit':
-         specifier: ^0.10.4
--        version: 0.10.4(@tanstack/query-core@5.100.1)(@tanstack/react-query@5.100.1(react@18.3.1))(@types/node@25.2.3)(@types/react@18.3.28)(@zerodev/webauthn-key@5.5.0(viem@2.57.12(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.6.7)))(abitype@1.3.0(typescript@5.9.3)(zod@4.6.7))(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(graphql@16.13.2)(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(utf-8-validate@5.0.10)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-+        version: 0.10.4(@tanstack/query-core@5.100.1)(@tanstack/react-query@5.100.1(react@18.3.1))(@types/node@26.6.5)(@types/react@18.3.28)(@zerodev/webauthn-key@5.5.0(viem@2.57.12(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.6.7)))(abitype@1.3.0(typescript@5.9.3)(zod@4.6.7))(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(graphql@16.13.2)(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(utf-8-validate@5.0.10)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-       '@coinbase/cdp-sdk':
-         specifier: ^1.57.1
-         version: 1.60.0(@x402/evm@2.10.0(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10))(@x402/svm@2.10.0(@solana/kit@2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))))(bufferutil@4.1.0)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(utf-8-validate@5.0.10)
-@@ -102,7 +102,7 @@ importers:
-         version: 8.2.0(@twurple/auth@8.2.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-       '@whiskeysockets/baileys':
-         specifier: 7.0.0-rc14
--        version: 7.0.0-rc14(audio-decode@2.2.3)(bufferutil@4.1.0)(sharp@0.35.5(@types/node@25.2.3))(utf-8-validate@5.0.10)
-+        version: 7.0.0-rc14(audio-decode@2.2.3)(bufferutil@4.1.0)(sharp@0.35.5(@types/node@26.6.5))(utf-8-validate@5.0.10)
-       ajv:
-         specifier: ^8.20.0
-         version: 8.20.0
-@@ -192,7 +192,7 @@ importers:
-         version: 0.12.0
-       sharp:
-         specifier: ^0.35.5
--        version: 0.35.5(@types/node@25.2.3)
-+        version: 0.35.5(@types/node@26.6.5)
-       signal-utils:
-         specifier: ^0.21.1
-         version: 0.21.1(signal-polyfill@0.2.2)
-@@ -201,7 +201,7 @@ importers:
-         version: 0.1.9
-       stripe:
-         specifier: ^20.4.1
--        version: 20.4.1(@types/node@25.2.3)
-+        version: 20.4.1(@types/node@26.6.5)
-       tar:
-         specifier: 7.5.9
-         version: 7.5.9
-@@ -240,8 +240,8 @@ importers:
-         specifier: ^14.1.2
-         version: 14.1.2
-       '@types/node':
--        specifier: ^25.2.3
--        version: 25.2.3
-+        specifier: ^26.6.5
-+        version: 26.6.5
-       '@types/proper-lockfile':
-         specifier: ^4.1.4
-         version: 4.1.4
-@@ -256,7 +256,7 @@ importers:
-         version: 7.0.0-dev.20260215.1
-       '@vitest/coverage-v8':
-         specifier: ^4.0.18
--        version: 4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@6.4.4(@types/node@25.2.3)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18)
-+        version: 4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@6.4.4(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18)
-       esbuild:
-         specifier: ^0.28.2
-         version: 0.28.2
-@@ -289,7 +289,7 @@ importers:
-         version: 5.9.3
-       vitest:
-         specifier: ^4.0.18
--        version: 4.0.18(@opentelemetry/api@1.10.0)(@types/node@25.2.3)(@vitest/browser-playwright@4.0.18)(happy-dom@20.14.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1)
-+        version: 4.0.18(@opentelemetry/api@1.10.0)(@types/node@26.6.5)(@vitest/browser-playwright@4.0.18)(happy-dom@20.14.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1)
- 
-   desktop:
+@@ -17,8 +17,8 @@ importers:
+   .:
      dependencies:
-@@ -437,7 +437,7 @@ importers:
-         version: 18.3.7(@types/react@18.3.28)
-       '@vitejs/plugin-react':
-         specifier: ^6.1.2
--        version: 6.1.2(vite@8.3.4(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
-+        version: 6.1.2(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
-       autoprefixer:
-         specifier: ^10.6.1
-         version: 10.6.
+       '@agentclientprotocol/sdk':
+-        specifier: 0.14.1
+-        version: 0.14.1(zod@4.6.7)
++        specifier: 2.0.2
++        version: 2.0.2(zod@4.6.7)
+       '@anthropic-ai/claude-agent-sdk':
+         specifier: ^0.3.296
+         version: 0.3.296(@anthropic-ai/sdk@0.133.0(zod@4.6.7))(@modelcontextprotocol/sdk@1.32.2(zod@4.6.7))(zod@4.6.7)
+@@ -567,10 +567,10 @@ packages:
+   '@adraffy/ens-normalize@1.11.1':
+     resolution: {integrity: sha512-nhCBV3quEgesuf7c7KYfperqSS14T8bYuvJ8PcLJp6znkZpFc0AuW4qBtr8eKVyPPe/8RSr7sglCWPU5eaxwKQ==}
+ 
+-  '@agentclientprotocol/sdk@0.14.1':
+-    resolution: {integrity: sha512-b6r3PS3Nly+Wyw9U+0nOr47bV8tfS476EgyEMhoKvJCZLbgqoDFN7DJwkxL88RR0aiOqOYV1ZnESHqb+RmdH8w==}
++  '@agentclientprotocol/sdk@2.0.2':
++    resolution: {integrity: sha512-jLywRB42hZMRMc4aUgt0uRjkY9FQnMdybv4XgLl+ddi75QuJn8Vbl0+CHcVHJDC0+WDfi1KQXRWtHaR5vp6gHw==}
+     peerDependencies:
+-      zod: ^3.25.0 || ^4.0.0
++      zod: ^3.25.76 || ^4.0.0
+ 
+   '@alloc/quick-lru@5.3.0':
+     resolution: {integrity: sha512-U4+70Pc5ZS9osnCBCE5Jha/ciHM+Yp+CNMNC/7HvYbNRk1Ldd+f7qO65W5qfhu/TCv+/ozljlXXe9Nj8419DMA==}
+@@ -10353,7 +10353,7 @@ snapshots:
+ 
+   '@adraffy/ens-normalize@1.11.1': {}
+ 
+-  '@agentclientprotocol/sdk@0.14.1(zod@4.6.7)':
++  '@agentclientprotocol/sdk@2.0.2(zod@4.6.7)':
+     dependencies:
+       zod: 4.6.7
+ 
+```
+
+**File**: `src/acp/client.test.ts` (modified, +2/-2)
+```diff
+@@ -145,8 +145,8 @@ describe("acp event mapper", () => {
+   it("extracts text and resource blocks into prompt text", () => {
+     const text = extractTextFromPrompt([
+       { type: "text", text: "Hello" },
+-      { type: "resource", resource: { text: "File contents" } },
+-      { type: "resource_link", uri: "https://example.com", title: "Spec" },
++      { type: "resource", resource: { uri: "file:///notes.txt", text: "File contents" } },
++      { type: "resource_link", uri: "https://example.com", name: "spec", title: "Spec" },
+       { type: "image", data: "abc", mimeType: "image/png" },
+     ]);
+ 
+```
+
+**File**: `src/acp/client.ts` (modified, +24/-18)
+```diff
+@@ -5,9 +5,12 @@ import * as readline from "node:readline";
+ import { Readable, Writable } from "node:stream";
+ import { fileURLToPath } from "node:url";
+ import {
+-  ClientSideConnection,
++  client as createClientApp,
++  methods,
+   PROTOCOL_VERSION,
+   ndJsonStream,
++  type ClientConnection,
++  type ClientContext,
+   type RequestPermissionRequest,
+   type RequestPermissionResponse,
+   type SessionNotification,
+@@ -244,7 +247,10 @@ export type AcpClientOptions = {
+ };
+ 
+ export type AcpClientHandle = {
+-  client: ClientSideConnection;
++  /** The ACP connection to the spawned agent process. */
++  connection: ClientConnection;
++  /** Peer context for calling agent-side methods (initialize, session/*). */
++  peer: ClientContext;
+   agent: ChildProcess;
+   sessionId: string;
+ };
+@@ -345,20 +351,18 @@ export async function createAcpClient(opts: AcpClientOptions = {}): Promise<AcpC
+   const output = Readable.toWeb(agent.stdout) as unknown as ReadableStream<Uint8Array>;
+   const stream = ndJsonStream(input, output);
+ 
+-  const client = new ClientSideConnection(
+-    () => ({
+-      sessionUpdate: async (params: SessionNotification) => {
+-        printSessionUpdate(params);
+-      },
+-      requestPermission: async (params: RequestPermissionRequest) => {
+-        return resolvePermissionRequest(params);
+-      },
+-    }),
+-    stream,
+-  );
++  const app = createClientApp({ name: "bitterbot-acp-client" })
++    .onNotification(methods.client.session.update, ({ params }) => {
++      printSessionUpdate(params);
++    })
++    .onRequest(methods.client.session.requestPermission, ({ params }) =>
++      resolvePermissionRequest(params),
++    );
++  const connection = app.connect(stream);
++  const peer = connection.agent;
+ 
+   log("initializing");
+-  await client.initialize({
++  await peer.request(methods.agent.initialize, {
+     protocolVersion: PROTOCOL_VERSION,
+     clientCapabilities: {
+       fs: { readTextFile: true, writeTextFile: true },
+@@ -368,20 +372,21 @@ export async function createAcpClient(opts: AcpClientOptions = {}): Promise<AcpC
+   });
+ 
+   log("creating session");
+-  const session = await client.newSession({
++  const session = await peer.request(methods.agent.session.new, {
+     cwd,
+     mcpServers: [],
+   });
+ 
+   return {
+-    client,
++    connection,
++    peer,
+     agent,
+     sessionId: session.sessionId,
+   };
+ }
+ 
+ export async function runAcpClientInteractive(opts: AcpClientOptions = {}): Promise<void> {
+-  const { client, agent, sessionId } = await createAcpClient(opts);
++  const { connection, peer, agent, sessionId } = await createAcpClient(opts);
+ 
+   const rl = readline.createInterface({
+     input: process.stdin,
+@@ -400,13 +405,14 @@ export async function runAcpClientInteractive(opts: AcpClientOptions = {}): Prom
+         return;
+       }
+       if (text === "exit" || text === "quit") {
++        connection.close();
+         agent.kill();
+         rl.close();
+         process.exit(0);
+       }
+ 
+       try {
+-        const response = await client.prompt({
++        const response = await peer.request(methods.agent.session.prompt, {
+           sessionId,
+           prompt: [{ type: "text", text }],
+         });
+```
+
+**File**: `src/acp/server.ts` (modified, +16/-90)
+```diff
+@@ -1,14 +1,11 @@
+-#!/usr/bin/env node
+ import { Readable, Writable } from "node:stream";
+-import { fileURLToPath } from "node:url";
+-import { AgentSideConnection, ndJsonStream } from "@agentclientprotocol/sdk";
++import { ndJsonStream } from "@agentclientprotocol/sdk";
+ import { loadConfig } from "../config/config.js";
+ import { resolveGatewayAuth } from "../gateway/auth.js";
+ import { buildGatewayConnectionDetails } from "../gateway/call.js";
+ import { GatewayClient } from "../gateway/client.js";
+-import { isMainModule } from "../infra/is-main.js";
+ import { GATEWAY_CLIENT_MODES, GATEWAY_CLIENT_NAMES } from "../utils/message-channel.js";
+-import { AcpGatewayAgent } from "./translator.js";
++import { AcpGatewayAgent, createAcpAgentApp } from "./translator.js";
+ import type { AcpServerOptions } from "./types.js";
+ 
+ export function serveAcpGateway(opts: AcpServerOptions = {}): Promise<void> {
+@@ -39,6 +36,13 @@ export function serveAcpGateway(opts: AcpServerOptions = {}): Promise<void> {
+     onClosed = resolve;
+   });
+   let stopped = false;
++  // Resolves on the first successful gateway handshake so `initialize` can
++  // hold the IDE briefly instead of failing its first prompt with
++  // "gateway not connected" while the WebSocket is still coming up.
++  let onGatewayReady!: () => void;
++  const gatewayReady = new Promise<void>((resolve) => {
++    onGatewayReady = resolve;
++  });
+ 
+   const gateway = new GatewayClient({
+     url: connection.url,
+@@ -52,6 +56,7 @@ export function serveAcpGateway(opts: AcpServerOptions = {}): Promise<void> {
+       void agent?.handleGatewayEvent(evt);
+     },
+     onHelloOk: () => {
++      onGatewayReady();
+       agent?.handleGatewayReconnect();
+     },
+     onClose: (code, reason) => {
+@@ -83,92 +88,13 @@ export function serveAcpGateway(opts: AcpServerOptions = {}): Promise<void> {
+   const output = Readable.toWeb(process.stdin) as unknown as ReadableStream<Uint8Array>;
+   const stream = ndJsonStream(input, output);
+ 
+-  new AgentSideConnection((conn: AgentSideConnection) => {
+-    agent = new AcpGatewayAgent(conn, gateway, opts);
+-    agent.start();
+-    return agent;
+-  }, stream);
++  agent = new AcpGatewayAgent(gateway, { ...opts, gatewayReady });
++  const acpConnection = createAcpAgentApp(agent).connect(stream);
++  agent.start();
++  // When the IDE closes the stdio pipe, stop the bridge instead of lingering
++  // on the gateway WebSocket with nobody to deliver to.
++  void acpConnection.closed.then(shutdown);
+ 
+   gateway.start();
+   return closed;
+ }
+-
+-function parseArgs(args: string[]): AcpServerOptions {
+-  const opts: AcpServerOptions = {};
+-  for (let i = 0; i < args.length; i += 1) {
+-    const arg = args[i];
+-    if (arg === "--url" || arg === "--gateway-url") {
+-      opts.gatewayUrl = args[i + 1];
+-      i += 1;
+-      continue;
+-    }
+-    if (arg === "--token" || arg === "--gateway-token") {
+-      opts.gatewayToken = args[i + 1];
+-      i += 1;
+-      continue;
+-    }
+-    if (arg === "--password" || arg === "--gateway-password") {
+-      opts.gatewayPassword = args[i + 1];
+-      i += 1;
+-      continue;
+-    }
+-    if (arg === "--session") {
+-      opts.defaultSessionKey = args[i + 1];
+-      i += 1;
+-      continue;
+-    }
+-    if (arg === "--session-label") {
+-      opts.defaultSessionLabel = args[i + 1];
+-      i += 1;
+-      continue;
+-    }
+-    if (arg === "--require-existing") {
+-      opts.requireExistingSession = true;
+-      continue;
+-    }
+-    if (arg === "--reset-session") {
+-      opts.resetSession = true;
+-      continue;
+-    }
+-    if (arg === "--no-prefix-cwd") {
+-      opts.prefixCwd = false;
+-      continue;
+-    }
+-    if (arg === "--verbose" || arg === "-v") {
+-      opts.verbose = true;
+-      continue;
+-    }
+-    if (arg === "--help" || arg === "-h") {
+-      printHelp();
+-      process.exit(0);
+-    }
+-  }
+-  return opts;
+-}
+-
+-function printHelp(): void {
+-  console.log(`Usage: bitterbot acp [options]
+-
+-Gateway-backed ACP server for IDE integration.
+-
+-Options:
+-  --url <url>             Gateway WebSocket URL
+-  --token <token>         Gateway auth token
+-  --password <password>   Gateway auth password
+-  --session <key>         Default session key (e.g. "agent:main:main")
+-  --session-label <label> Default session label to resolve
+-  --require-existing      Fail if the session key/label does not exist
+-  --reset-session         Reset the session key before first use
+-  --no-prefix-cwd         Do not prefix prompts with the working directory
+-  --verbose, -v           Verbose logging to stderr
+-  --help, -h              Show this help message
+-`);
+-}
+-
+-if (isMainModule({ currentFile: fileURLToPath(import.meta.url) })) {
+-  const opts = parseArgs(process.argv.slice(2));
+-  serveAcpGateway(opts).catch((err) => {
+-    console.error(String(err));
+-    process.exit(1);
+-  });
+-}
+```
+
+**File**: `src/acp/translator.test.ts` (added, +320/-0)
+```diff
+@@ -0,0 +1,320 @@
++import {
++  client as createClientApp,
++  methods,
++  PROTOCOL_VERSION,
++  type SessionNotification,
++} from "@agentclientprotocol/sdk";
++import { describe, expect, it, vi } from "vitest";
++import type { GatewayClient } from "../gateway/client.js";
++import type { EventFrame } from "../gateway/protocol/index.js";
++import { createInMemorySessionStore } from "./session.js";
++import { AcpGatewayAgent, createAcpAgentApp, sessionKeysMatch } from "./translator.js";
++
++type RecordedRequest = { method: string; params: Record<string, unknown> };
++
++function makeGateway(recorded: RecordedRequest[]) {
++  const request = vi.fn(async (method: string, params?: unknown) => {
++    recorded.push({ method, params: (params ?? {}) as Record<string, unknown> });
++    if (method === "sessions.list") {
++      return {
++        sessions: [
++          {
++            key: "agent:main:main",
++            displayName: "Main",
++            kind: "direct",
++            updatedAt: 1_700_000_000_000,
++          },
++          { key: "agent:main:side", label: "side", kind: "group" },
++        ],
++      };
++    }
++    return {};
++  });
++  return { gateway: { request } as unknown as GatewayClient, request };
++}
++
++function chatEvent(payload: Record<string, unknown>): EventFrame {
++  return { type: "event", event: "chat", payload };
++}
++
++async function connectHarness(agentOpts: { gatewayReady?: Promise<void> } = {}) {
++  const recorded: RecordedRequest[] = [];
++  const { gateway, request } = makeGateway(recorded);
++  const agent = new AcpGatewayAgent(gateway, {
++    sessionStore: createInMemorySessionStore(),
++    ...agentOpts,
++  });
++  const updates: SessionNotification[] = [];
++  const clientApp = createClientApp({ name: "test-client" }).onNotification(
++    methods.client.session.update,
++    ({ params }) => {
++      updates.push(params);
++    },
++  );
++  const connection = clientApp.connect(createAcpAgentApp(agent));
++  const peer = connection.agent;
++
++  const init = await peer.request(methods.agent.initialize, {
++    protocolVersion: PROTOCOL_VERSION,
++    clientCapabilities: {},
++  });
++  const session = await peer.request(methods.agent.session.new, {
++    cwd: "/work/project",
++    mcpServers: [],
++  });
++  const chatSend = () => recorded.find((r) => r.method === "chat.send");
++  return { agent, peer, connection, updates, recorded, request, init, session, chatSend };
++}
++
++describe("AcpGatewayAgent over the SDK app API", () => {
++  it("initializes, creates a session, and pushes available commands", async () => {
++    const h = await connectHarness();
++    try {
++      expect(h.init.protocolVersion).toBe(PROTOCOL_VERSION);
++      expect(h.init.agentInfo?.name).toBeTruthy();
++      expect(h.init.agentCapabilities?.loadSession).toBe(true);
++      expect(h.session.sessionId).toMatch(/[0-9a-f-]{36}/);
++      await vi.waitFor(() => expect(h.updates.length).toBeGreaterThan(0));
++      expect(h.updates[0]?.sessionId).toBe(h.session.sessionId);
++      expect(h.updates[0]?.update.sessionUpdate).toBe("available_commands_update");
++      // Exactly one handler answers each request: a request must never be
++      // dispatched to two agent instances (regression for the doubled stdio server).
++      expect(
++        h.updates.filter((u) => u.update.sessionUpdate === "available_commands_update"),
++      ).toHaveLength(1);
++      expect(h.recorded.filter((r) => r.method === "sessions.resolve")).toHaveLength(0);
++    } finally {
++      h.connection.close();
++    }
++  });
++
++  it("streams gateway chat deltas as agent_message_chunk updates and ends the turn", async () => {
++    const h = await connectHarness();
++    try {
++      const promptPromise = h.peer.request(methods.agent.session.prompt, {
++        sessionId: h.session.sessionId,
++        prompt: [{ type: "text", text: "hello there" }],
++      });
++      await vi.waitFor(() => expect(h.chatSend()).toBeDefined());
++      const send = h.chatSend()!;
++      const sessionKey = send.params.sessionKey as string;
++      const runId = send.params.idempotencyKey as string;
++      expect(sessionKey).toBe(`acp:${h.session.sessionId}`);
++      expect(send.params.message).toBe("[Working directory: /work/project]\n\nhello there");
++
++      // The gateway emits events under the canonical key, not the raw one we sent.
++      const canonicalKey = `agent:main:${sessionKey}`;
++      const delta = (text: string) =>
++        h.agent.handleGatewayEvent(
++          chatEvent({
++            sessionKey: canonicalKey,
++            runId,
++            state: "delta",
++            message: { content: [{ type: "text", text }] },
++          }),
++        );
++      await delta("Hel");
++      await delta("Hello world");
++      // A delta for a different run must be ignored.
++      await h.agent.handleGatewayEvent(
++        chatEvent({
++          sessionKey: canonicalKey,
++          runId: "other-run",
++          state: "delta",
++          message: { content: [{ type: "text", text: "WRONG" }] },
++        }),
++ 
+```
+
+**File**: `src/acp/translator.ts` (modified, +168/-22)
+```diff
+@@ -1,7 +1,7 @@
+ import { randomUUID } from "node:crypto";
+ import type {
+-  Agent,
+-  AgentSideConnection,
++  AgentApp,
++  AgentContext,
+   AuthenticateRequest,
+   AuthenticateResponse,
+   CancelNotification,
+@@ -16,10 +16,16 @@ import type {
+   PromptRequest,
+   PromptResponse,
+   SetSessionModeRequest,
++  SessionNotification,
+   SetSessionModeResponse,
+   StopReason,
+ } from "@agentclientprotocol/sdk";
+-import { PROTOCOL_VERSION } from "@agentclientprotocol/sdk";
++import {
++  agent as createAgentApp,
++  methods,
++  PROTOCOL_VERSION,
++  RequestError,
++} from "@agentclientprotocol/sdk";
+ import type { GatewayClient } from "../gateway/client.js";
+ import type { EventFrame } from "../gateway/protocol/index.js";
+ import type { SessionsListResult } from "../gateway/session-utils.js";
+@@ -48,22 +54,76 @@ type PendingPrompt = {
+ 
+ type AcpGatewayAgentOptions = AcpServerOptions & {
+   sessionStore?: AcpSessionStore;
++  /** Resolves once the gateway WebSocket has completed its handshake. */
++  gatewayReady?: Promise<void>;
++  /** Upper bound on how long `initialize` waits for the gateway (ms). */
++  gatewayReadyTimeoutMs?: number;
+ };
+ 
+-export class AcpGatewayAgent implements Agent {
+-  private connection: AgentSideConnection;
++const DEFAULT_GATEWAY_READY_TIMEOUT_MS = 10_000;
++
++/**
++ * The gateway canonicalizes session keys before it emits chat/agent events:
++ * a prompt sent for `acp:<id>` comes back tagged `agent:<agentId>:acp:<id>`.
++ * Match either spelling so pending prompts resolve regardless of which form
++ * the event carries.
++ */
++export function sessionKeysMatch(eventKey: string, pendingKey: string): boolean {
++  const event = eventKey.trim().toLowerCase();
++  const pending = pendingKey.trim().toLowerCase();
++  if (!event || !pending) {
++    return false;
++  }
++  if (event === pending) {
++    return true;
++  }
++  const stripAgentPrefix = (key: string): string | null => {
++    if (!key.startsWith("agent:")) {
++      return null;
++    }
++    const rest = key.slice("agent:".length);
++    const sep = rest.indexOf(":");
++    return sep >= 0 ? rest.slice(sep + 1) : null;
++  };
++  const eventBare = stripAgentPrefix(event);
++  const pendingBare = stripAgentPrefix(pending);
++  if (eventBare !== null && pendingBare === null) {
++    return eventBare === pending;
++  }
++  if (eventBare === null && pendingBare !== null) {
++    return event === pendingBare;
++  }
++  return false;
++}
++
++/**
++ * The client-side sink the agent pushes `session/update` notifications into.
++ * Backed by the SDK's AgentContext in production; tests can supply a stub.
++ */
++export type AcpClientNotifier = {
++  sessionUpdate(params: SessionNotification): Promise<void>;
++};
++
++export function notifierFromContext(client: AgentContext): AcpClientNotifier {
++  return {
++    sessionUpdate: (params) => client.notify(methods.client.session.update, params),
++  };
++}
++
++/**
++ * Gateway-backed ACP agent. Protocol dispatch lives in {@link createAcpAgentApp};
++ * this class holds the session/prompt state and translates gateway events into
++ * ACP session updates.
++ */
++export class AcpGatewayAgent {
++  private client: AcpClientNotifier | null = null;
+   private gateway: GatewayClient;
+   private opts: AcpGatewayAgentOptions;
+   private log: (msg: string) => void;
+   private sessionStore: AcpSessionStore;
+   private pendingPrompts = new Map<string, PendingPrompt>();
+ 
+-  constructor(
+-    connection: AgentSideConnection,
+-    gateway: GatewayClient,
+-    opts: AcpGatewayAgentOptions = {},
+-  ) {
+-    this.connection = connection;
++  constructor(gateway: GatewayClient, opts: AcpGatewayAgentOptions = {}) {
+     this.gateway = gateway;
+     this.opts = opts;
+     this.log = opts.verbose ? (msg: string) => process.stderr.write(`[acp] ${msg}\n`) : () => {};
+@@ -74,14 +134,31 @@ export class AcpGatewayAgent implements Agent {
+     this.log("ready");
+   }
+ 
++  /** Bind the connected ACP client so session updates have somewhere to go. */
++  attach(client: AcpClientNotifier): void {
++    this.client = client;
++  }
++
++  /** Called when the ACP connection closes: fail any in-flight prompts. */
++  handleAcpClosed(): void {
++    this.log("acp connection closed");
++    this.client = null;
++    for (const pending of this.pendingPrompts.values()) {
++      pending.reject(new Error("ACP connection closed"));
++      this.sessionStore.clearActiveRun(pending.sessionId);
++    }
++    this.pendingPrompts.clear();
++  }
++
+   handleGatewayReconnect(): void {
+     this.log("gateway reconnected");
+   }
+ 
+   handleGatewayDisconnect(reason: string): void {
+     this.log(`gateway disconnected: ${reason}`);
+     for (const pending of this.pendingPrompts.values()) {
+-      pending.reject(new Error(`Gateway disconnected: ${reason}`));
++      const message = `Gateway disconnected: ${reason}`;
++      pending.reject(RequestError.internalError({ details: message }, message));
+       this.sessionStore.clearActiveRun(pending.sessionId);
+     }
+     this.pendingPrompts.clear();
+@@ -98,6 +175,7 @@ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #340** (2026-10-31): fix(acp): migrate to @agentclientprotocol/sdk 2.x and fix the stdio bridge (@VGIL77)
 - **PR #339** (2026-10-30): chore(deps): bump the npm-minor-patch group across 1 directory with 19 updates (@dependabot[bot])
 - **PR #336** (2026-10-30): fix(orchestrator): reconcile Cargo.lock after the ed25519-dalek and sha2 bumps (@VGIL77)
 - **PR #335** (2026-10-30): chore(deps-dev): bump the lint-format group (oxfmt 0.74.0, oxlint 1.90.0, oxlint-tsgolint 7.0.2005) (@VGIL77)
 - **PR #334** (2026-10-30): docs: reboot recovery fix, WSL2 autostart note, LongMemEval in benchmarks index (@VGIL77)
 - **PR #333** (2026-10-30): feat(gateway): WSL2 autostart and crash supervision without systemd (@VGIL77)
-- **PR #332** (2026-10-30): feat(memory): weighted RRF channel fusion with sweep and real-query validation (@VGIL77)
 
 ---
 
@@ -1941,28 +2454,29 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps-dev): bump @types/node from 25.2.3 to 26.6.5 (#306)
+## X. acp): migrate to @agentclientprotocol/sdk 2.x and fix the stdio bridge (#340)
 
 **RULE**:
-When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/cli/acp.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2f1bdadc`: deps-dev): bump @types/node from 25.2.3 to 26.6.5 (#306). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `687e906e`: acp): migrate to @agentclientprotocol/sdk 2.x and fix the stdio bridge (#340). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/cli/acp.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "@types/node": "^26.6.5",
+over WebSocket. It keeps ACP sessions mapped to Gateway session keys. When the
+IDE closes the stdio pipe, the bridge disconnects from the Gateway and exits.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "@types/node": "^25.2.3",
+over WebSocket. It keeps ACP sessions mapped to Gateway session keys.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2f1bdadc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `687e906e` are properly handled with clean fallback behavior.

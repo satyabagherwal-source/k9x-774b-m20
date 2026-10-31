@@ -18,12 +18,12 @@
     "revisionIdentifier": "139738f7"
   },
   "tanstack-router": {
-    "name": "TanStack/router",
+    "name": "router",
     "officialUrl": "https://github.com/TanStack/router",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T02:41:24.686Z",
-    "lastVerified": "2026-10-28T02:41:24.686Z",
+    "lastChecked": "2026-10-31T04:38:32.535Z",
+    "lastVerified": "2026-10-31T04:38:32.535Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tanstack-router",
@@ -32,15 +32,16 @@
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "da2adec7"
   },
   "ai-builder-brain": {
     "name": "AI-Builder-Brain",
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T04:26:56.684Z",
-    "lastVerified": "2026-10-31T04:26:56.684Z",
+    "lastChecked": "2026-10-31T04:43:46.798Z",
+    "lastVerified": "2026-10-31T04:43:46.798Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -109,8 +110,8 @@
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T00:52:57.883Z",
-    "lastVerified": "2026-10-31T00:52:57.883Z",
+    "lastChecked": "2026-10-31T04:38:40.042Z",
+    "lastVerified": "2026-10-31T04:38:40.042Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -140,22 +141,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "bitterbot-desktop",
+    "name": "Bitterbot-AI/bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T03:59:06.161Z",
-    "lastVerified": "2026-10-31T03:59:06.161Z",
+    "lastChecked": "2026-10-31T04:38:48.644Z",
+    "lastVerified": "2026-10-31T04:38:48.644Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "1c77e86f23829faf360fba59ffb50519e466c6cb4d732092513261bed6d09156",
+    "contentHash": "5a7a4fe271f49221658f09295130854814d65903b0028c9c4da4f4968a3c47ed",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "2f1bdadc"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1383,11 +1383,21 @@
     "lastVerified": "2026-10-31T01:15:02.580Z"
   },
   "zeromicro-go-zero": {
-    "name": "go-zero",
+    "name": "zeromicro/go-zero",
     "officialUrl": "https://github.com/zeromicro/go-zero",
-    "lastChecked": "2026-10-30T10:40:50.320Z",
-    "revisionIdentifier": "4fce4e76",
-    "lastVerified": "2026-10-30T10:40:50.320Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-31T04:38:40.968Z",
+    "lastVerified": "2026-10-31T04:38:40.968Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-zeromicro-go-zero",
+    "contentHash": "7b3dab45360738bed725c2c397eb6b6a063ce8c72379025a5908c31619dd2cc3",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "rustcrypto-hashes": {
     "name": "hashes",
@@ -3160,9 +3170,9 @@
   "runanywhereai-runanywhere-sdks": {
     "name": "runanywhere-sdks",
     "officialUrl": "https://github.com/RunanywhereAI/runanywhere-sdks",
-    "lastChecked": "2026-10-28T10:43:33.819Z",
+    "lastChecked": "2026-10-31T04:38:35.028Z",
     "revisionIdentifier": "259521e2",
-    "lastVerified": "2026-10-28T10:43:33.819Z"
+    "lastVerified": "2026-10-31T04:38:35.028Z"
   },
   "cdk-team-cdk": {
     "name": "CDK",
@@ -3663,9 +3673,9 @@
   "pemistahl-grex": {
     "name": "grex",
     "officialUrl": "https://github.com/pemistahl/grex",
-    "lastChecked": "2026-10-30T04:41:33.255Z",
+    "lastChecked": "2026-10-31T04:38:30.000Z",
     "revisionIdentifier": "99cc3477",
-    "lastVerified": "2026-10-30T04:41:33.255Z"
+    "lastVerified": "2026-10-31T04:38:30.000Z"
   },
   "hf-baai-bge-m3": {
     "name": "BAAI/bge-m3",
@@ -7094,14 +7104,14 @@
     "officialUrl": "https://github.com/tursodatabase/limbo",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T08:53:39.193Z",
-    "lastVerified": "2026-10-30T08:53:39.193Z",
+    "lastChecked": "2026-10-31T04:38:47.452Z",
+    "lastVerified": "2026-10-31T04:38:47.452Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "203c7d657158b7d9444b35c1e2e03e4d896fedc776c25eb3cb1cdef7dab74967",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 1,
+    "contentHash": "8ced0cff377f0ef10cb71d915eaa181d5cf8f5c02cc8ace30914a300ba78c43c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

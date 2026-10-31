@@ -6461,3 +6461,6 @@
 | `CYCLE-20261031-28TF` | `2026-10-31T04:16:06.435Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6066` | Yes (`b87c2ec5...`) |
 | `CYCLE-20261031-AC7B` | `2026-10-31T04:22:24.071Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6067` | Yes (`b4101cd6...`) |
 | `CYCLE-20261031-G4L6` | `2026-10-31T04:26:54.138Z` | `LiquidAI/LFM3-1.7B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6068, Rule 6069, Rule 6070` | Yes (`46460539...`) |
+| `CYCLE-20261031-VGHN` | `2026-10-31T04:38:49.403Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6071` | Yes (`8ced0cff...`) |
+| `CYCLE-20261031-VH3B` | `2026-10-31T04:38:50.183Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6072` | Yes (`5a7a4fe2...`) |
+| `CYCLE-20261031-1RZE` | `2026-10-31T04:43:44.234Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6073` | Yes (`7b3dab45...`) |

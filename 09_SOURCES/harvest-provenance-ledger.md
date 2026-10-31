@@ -6470,3 +6470,6 @@ Every entry in this ledger must capture:
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `6983f5a1` | Multi-dimensional audit evidence | 2026-10-31T04:16:06.437Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `49ad4202` | Multi-dimensional audit evidence | 2026-10-31T04:22:24.073Z |
 | `learn-huggingface-liquidai-lfm3-1-7b` | `https://huggingface.co/LiquidAI/LFM3-1.7B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-31T04:26:54.141Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `9f2b612e` | Multi-dimensional audit evidence | 2026-10-31T04:38:49.406Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `687e906e` | Multi-dimensional audit evidence | 2026-10-31T04:38:50.187Z |
+| `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `f753a411` | Multi-dimensional audit evidence | 2026-10-31T04:43:44.238Z |

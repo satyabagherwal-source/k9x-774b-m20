@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T04:26:54.093Z",
+  "last_updated": "2026-10-31T04:43:44.151Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4880,8 +4880,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "2f1bdadc",
-      "content_hash": "1c77e86f23829faf360fba59ffb50519e466c6cb4d732092513261bed6d09156",
+      "source_version": "687e906e",
+      "content_hash": "5a7a4fe271f49221658f09295130854814d65903b0028c9c4da4f4968a3c47ed",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -5034,6 +5034,11 @@
           "number": 5991,
           "title": "deps-dev): bump @types/node from 25.2.3 to 26.6.5 (#306)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6072,
+          "title": "acp): migrate to @agentclientprotocol/sdk 2.x and fix the stdio bridge (#340)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5041,7 +5046,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T01:21:34.959Z",
+      "verified_at": "2026-10-31T04:38:50.080Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55403,13 +55408,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "f301e7f4",
-      "content_hash": "d503df5d134a9528f91e562a0b414d009c2a9152f1e48768175e0dfad5c86f03",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "9f2b612e",
+      "content_hash": "8ced0cff377f0ef10cb71d915eaa181d5cf8f5c02cc8ace30914a300ba78c43c",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -55500,6 +55505,11 @@
           "number": 5775,
           "title": "Merge 'bindings/c: return NULL for an out-of-range column index' from app/turso-",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6071,
+          "title": "Merge 'core/translate: fix deferred FK checks for generated child keys' from app",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55507,7 +55517,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T14:33:37.944Z",
+      "verified_at": "2026-10-31T04:38:49.303Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59180,8 +59190,8 @@
       "slug": "zeromicro-go-zero",
       "platform": "github",
       "source_url": "https://github.com/zeromicro/go-zero",
-      "source_version": "4fce4e76",
-      "content_hash": "3f7e65113dbba137f625ce50cc6b07ae14aea769373fd5aae153ca3c821a1974",
+      "source_version": "f753a411",
+      "content_hash": "7b3dab45360738bed725c2c397eb6b6a063ce8c72379025a5908c31619dd2cc3",
       "dossier_path": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
       "promoted_rules": [
@@ -59214,6 +59224,11 @@
           "number": 4688,
           "title": "zrpc): skip not-ready endpoints in kube resolver (#5786)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6073,
+          "title": "deps): bump go.opentelemetry.io/otel/exporters/zipkin to v1.46.0 in tools/goctl",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59221,7 +59236,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T10:50:49.285Z",
+      "verified_at": "2026-10-31T04:43:44.130Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -159506,6 +159521,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T04:26:54.080Z"
+    },
+    "rule-6071": {
+      "learning_id": "rule-6071",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6071,
+      "title": "Merge 'core/translate: fix deferred FK checks for generated child keys' from app",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "9f2b612e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T04:38:49.303Z"
+    },
+    "rule-6072": {
+      "learning_id": "rule-6072",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6072,
+      "title": "acp): migrate to @agentclientprotocol/sdk 2.x and fix the stdio bridge (#340)",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "687e906e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T04:38:50.080Z"
+    },
+    "rule-6073": {
+      "learning_id": "rule-6073",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6073,
+      "title": "deps): bump go.opentelemetry.io/otel/exporters/zipkin to v1.46.0 in tools/goctl",
+      "source_url": "https://github.com/zeromicro/go-zero",
+      "source_version": "f753a411",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T04:43:44.130Z"
     }
   },
   "aliases": {
