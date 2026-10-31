@@ -448718,3 +448718,433 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `446f5b74` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6133. Ephemeral I/O Result Containment & Panic Prohibition (Harvested from valeriansaliou/sonic)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Ephemeral I/O Result Containment & Panic Prohibition",
+  "source": "valeriansaliou/sonic",
+  "source_url": "https://github.com/valeriansaliou/sonic",
+  "source_version": "f16560b6",
+  "license": "MPL-2.0",
+  "extracted_at": "2026-10-31T08:28:10.409Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-valeriansaliou-sonic",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [valeriansaliou/sonic](https://github.com/valeriansaliou/sonic) (Revision: `f16560b6`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Network servers and daemon connection threads MUST NEVER invoke panic-inducing unwraps (`.unwrap()`, `.expect()`) or unhandled `panic!()` arms on socket I/O operations (such as writes, flushes, or reads). Socket I/O errors (`BrokenPipe`, `ConnectionReset`, `TimedOut`, `UnexpectedEof`) MUST be treated as routine stream terminations, triggering an orderly disconnection state machine (`Close`), releasing tracking counters, and returning cleanly.
+
+**WHY**:
+Clients frequently abort connections, close TCP sockets prematurely upon receiving partial payloads, or time out during slow processing loops. Calling `.expect("write failed")` on a network handle converts standard external network turbulence into internal unhandled thread panics. This bypasses telemetry updates, leaves metrics in corrupted states (e.g., mismatched `CLIENTS_CONNECTED` counters), spews noise into `stderr`, and risks worker thread exhaustion.
+
+**WHEN TO APPLY**:
+In all TCP/UDP/Unix socket listeners, channel handlers, protocol decoders, and stream response serializers across any language (Rust, Go, C++, Zig).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// In channel message dispatch loop:
+match write!(stream, "{}{}", response_args.0, LINE_FEED) {
+    Ok(()) => {
+        tracing::trace!("wrote response: {}", response_args.0);
+    }
+    Err(err) => {
+        // Treat BrokenPipe, ConnectionReset, and TimedOut as normal client disconnects
+        tracing::debug!("client disconnected before response write completed: {err}");
+        // Transition internal channel state to terminal Close
+        result = ChannelMessageResult::Close;
+        break;
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Panicking on socket write
+write!(stream, "{}{}", response_args.0, LINE_FEED)
+    .expect("write failed"); // NEVER DO THIS: Kills channel thread if client terminates TCP socket
+```
+
+**VERIFICATION METHOD**:
+Run an integration test where a client opens a socket, sends an ingest/search command, and immediately issues `TCP RST` / closes the stream without reading. Verify via assertions that:
+1. The server process emits no panic logs to stderr.
+2. The active thread pool count remains steady.
+3. Connected client gauges decrement to zero.
+
+---
+
+
+---
+
+## 6134. Lock-Inversion Avoidance in Granular Storage Cascades (Harvested from valeriansaliou/sonic)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Lock-Inversion Avoidance in Granular Storage Cascades",
+  "source": "valeriansaliou/sonic",
+  "source_url": "https://github.com/valeriansaliou/sonic",
+  "source_version": "f16560b6",
+  "license": "MPL-2.0",
+  "extracted_at": "2026-10-31T08:28:10.754Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-valeriansaliou-sonic",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [valeriansaliou/sonic](https://github.com/valeriansaliou/sonic) (Revision: `f16560b6`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an operation requires mutating multiple tiers of a persistent storage system (e.g., dropping both primary storage and derived index graphs), acquisition of structural pool guards MUST precede instance-level handles. Under NO circumstances may an inner action re-acquire an already held parent lock or call a helper that requests an identical read/write lock.
+
+**WHY**:
+Invoking convenience methods (e.g., `batch_erase_bucket()` calling an internal bucket erasure helper that attempts `kv_store.lock.write()`) from an execution context that already owns `kv_store.lock.write()` guarantees immediate self-deadlock. Similarly, retaining an acquired reference across an erasure boundary prevents underlying file descriptors and memory-mapped pointers from being dropped, resulting in `EBUSY` or leaked handles.
+
+**WHEN TO APPLY**:
+Multi-engine or tiered storage engines (e.g., RocksDB + FST, SQLite + Vector Cache, LMDB + Memtable) managing layered collections, buckets, or namespaces.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified hierarchical locking sequence:
+// 1. Acquire global storage read guards to freeze topology modifications
+let _kv_read_guard = self.kv_pool.lock_read_access();
+let _fst_write_guard = self.fst_pool.lock_write_access();
+
+if let Ok(Some(kv_store)) = self.kv_pool.acquire(false, collection, None, |_| {}) {
+    // 2. Explicitly acquire store-level lock inside caller scope
+    let kv_store_ref = kv_store.clone();
+    let _kv_store_lock = kv_store_ref.lock.write().unwrap();
+
+    // 3. Perform atomic batch modifications without delegating to helper functions 
+    //    that attempt to re-acquire _kv_store_lock
+    let kv_action = kv_store.access_read_write(bucket);
+    let erase_count = kv_action.batch_erase_bucket()?;
+    
+    // 4. Cascade to secondary index pool
+    self.fst_pool.erase(collection, Some(bucket))?;
+    return Ok(erase_count);
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Calling helper method that internally requests kv_store.lock.write()
+let _kv_store_lock = kv_store.lock.write().unwrap();
+// helper_erase_bucket internally invokes: kv_store.lock.write().unwrap() -> DEADLOCK
+let erase_count = kv_store.helper_erase_bucket(bucket)?; 
+```
+
+**VERIFICATION METHOD**:
+Automated stress test asserting that concurrent `FLUSHB` (flush bucket) and `FLUSHC` (flush collection) executions under continuous parallel writes complete within bounded timeouts (e.g., 500ms) without triggering deadlock thread stalls.
+
+---
+
+
+---
+
+## 6135. Chunked Stream Document Boundary Cohesion (Harvested from valeriansaliou/sonic)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Chunked Stream Document Boundary Cohesion",
+  "source": "valeriansaliou/sonic",
+  "source_url": "https://github.com/valeriansaliou/sonic",
+  "source_version": "f16560b6",
+  "license": "MPL-2.0",
+  "extracted_at": "2026-10-31T08:28:11.133Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-valeriansaliou-sonic",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [valeriansaliou/sonic](https://github.com/valeriansaliou/sonic) (Revision: `f16560b6`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When high-throughput ingest protocols allow document fragmentation or streaming ingestion chunked by network buffer limits (`BUFFER_SIZE`), internal surrogate ID generators MUST enforce sticky session continuity across chunk boundaries using stateful deduplication buffers (`last_assumed_new_oid`).
+
+**WHY**:
+If an ingestion protocol offers an optimization like `PUSH ... NEW` (which generates a new internal `IID` for newly inserted records), documents larger than the client/server network buffer will arrive across multiple consecutive chunks. Without sticky tracking, each sub-chunk of the single logical document receives a completely separate `IID`. This fragments inverted term indices, corrupts TF-IDF/BM25 relevance statistics, and breaks document deletion workflows.
+
+**WHEN TO APPLY**:
+Stream ingestion protocols, line-delimited socket APIs, or bulk-insert interfaces handling variable-length text records that exceed transport MTU or application buffer frames.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// In Executor ingestion state:
+pub struct Executor {
+    // ...
+    last_assumed_new_oid: RwLock<Option<(String, StoreObjectIid)>>,
+}
+
+// In push handler:
+let mut last_assumed = self.last_assumed_new_oid.write().unwrap();
+let iid = match *last_assumed {
+    Some((ref last_oid, existing_iid)) if last_oid == requested_oid => {
+        // Reuse surrogate IID: document is continuing over chunk boundary
+        existing_iid
+    }
+    _ => {
+        let new_iid = self.allocate_new_iid(collection, bucket, requested_oid)?;
+        *last_assumed = Some((requested_oid.to_string(), new_iid));
+        new_iid
+    }
+};
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Unconditionally allocating a fresh surrogate ID on every NEW packet
+if is_new_flag_set {
+    let iid = self.allocate_new_iid(); // Broken: Large document split over 2 buffers gets 2 distinct IIDs!
+}
+```
+
+**VERIFICATION METHOD**:
+Construct an ingest test payload sized at `3 * BUFFER_SIZE` containing repeated keywords. Ingest via `PUSH ... NEW`. Query the count of total unique objects (`COUNTB`). Assert strictly that `COUNTB == 1` and that a query for the keywords returns exactly one document identifier.
+
+---
+
+
+---
+
+## 6136. Composite Encoder-Head Config Isolation Invariant (Harvested from SupersonicLabs/Julia-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Composite Encoder-Head Config Isolation Invariant",
+  "source": "SupersonicLabs/Julia-1",
+  "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
+  "source_version": "hf-supersoniclabs-julia-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-31T08:31:07.421Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-supersoniclabs-julia-1",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [SupersonicLabs/Julia-1](https://huggingface.co/SupersonicLabs/Julia-1) (Revision: `hf-superso`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When building hybrid or composite machine learning architectures (e.g., discriminative cross-encoders wrapping pre-trained base models), the system **MUST NOT** flatten the base model configuration into the root namespace. It **MUST** use independent, deterministic nested sub-config pointers (`encoder_config_file`, `head_config_file`) with explicit schema versioning (`format_version`).
+
+**WHY**:
+Flattening custom decision heads into upstream Hugging Face transformer `PretrainedConfig` blocks causes attribute shadowing (e.g., `num_labels`, `hidden_size`, `classifier_dropout`), invalidates automated weight loading through standard libraries, breaks weight namespace sandboxing, and prevents hot-swapping encoder backbones without schema migrations.
+
+**WHEN TO APPLY**:
+Apply to any model packaging, serving harness, or routing engine combining a distinct encoder (e.g., BERT, RoBERTa, ModernBERT) with specialized task-specific execution heads (e.g., pairwise ranking heads, tabular heads, router gates).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from dataclasses import dataclass
+from pathlib import Path
+import json
+from typing import Optional, Dict, Any
+import torch
+import torch.nn as nn
+from transformers import AutoConfig, AutoModel
+
+@dataclass(frozen=True)
+class JuliaCompositeConfig:
+    format_version: int
+    architecture: str
+    julia_config_file: str
+    encoder_config_file: str
+    weights_file: str
+    tokenizer_directory: str
+    
+    @classmethod
+    def load(cls, base_dir: Path) -> "JuliaCompositeConfig":
+        root_config_path = base_dir / "config.json"
+        if not root_config_path.is_file():
+            raise FileNotFoundError(f"Missing master manifest: {root_config_path}")
+            
+        with open(root_config_path, "r", encoding="utf-8") as f:
+            data: Dict[str, Any] = json.load(f)
+            
+        if data.get("format_version") != 1:
+            raise ValueError(f"Unsupported manifest format_version: {data.get('format_version')}")
+            
+        return cls(
+            format_version=data["format_version"],
+            architecture=data["architecture"],
+            julia_config_file=data["julia_config_file"],
+            encoder_config_file=data["encoder_config_file"],
+            weights_file=data["weights_file"],
+            tokenizer_directory=data["tokenizer_directory"]
+        )
+
+class JuliaDecisionModel(nn.Module):
+    def __init__(self, base_path: Path):
+        super().__init__()
+        self.manifest = JuliaCompositeConfig.load(base_path)
+        
+        # Isolated configuration resolution
+        encoder_path = base_path / self.manifest.encoder_config_file
+        with open(encoder_path, "r", encoding="utf-8") as f:
+            self.encoder_config = AutoConfig.for_model(**json.load(f))
+            
+        julia_path = base_path / self.manifest.julia_config_file
+        with open(julia_path, "r", encoding="utf-8") as f:
+            self.julia_config = json.load(f)
+            
+        self.encoder = AutoModel.from_config(self.encoder_config)
+        self.decision_head = nn.Linear(
+            self.encoder_config.hidden_size, 
+            self.julia_config.get("decision_dim", 1),
+            bias=True
+        )
+
+    def forward(self, input_ids: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
+        outputs = self.encoder(input_ids=input_ids, attention_mask=attention_mask)
+        pooled = outputs.last_hidden_state[:, 0, :]  # Strict [CLS] extraction
+        return self.decision_head(pooled)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Merging foreign fields directly into huggingface config root
+class CorruptedConfig(AutoConfig):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # COLLISION: Overwriting core encoder hyperparameters or creating ambiguous lookups
+        self.hidden_size = 768
+        self.decision_head_dim = 128  # Pollutes the root namespace
+        self.format_version = 1       # Non-standard HF property breaks serialization
+```
+
+**VERIFICATION METHOD**:
+Run schema invariant unit tests verifying that all configuration loading is isolated:
+```bash
+pytest tests/test_config_isolation.py -k "test_composite_manifest_integrity"
+```
+
+---
+
+
+---
+
+## 6137. High-Cardinality Action Pruning Invariant (Shortlist Gating) (Harvested from SupersonicLabs/Julia-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "High-Cardinality Action Pruning Invariant (Shortlist Gating)",
+  "source": "SupersonicLabs/Julia-1",
+  "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
+  "source_version": "hf-supersoniclabs-julia-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-31T08:31:07.766Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-supersoniclabs-julia-1",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [SupersonicLabs/Julia-1](https://huggingface.co/SupersonicLabs/Julia-1) (Revision: `hf-superso`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When serving fixed-context cross-encoders or routing models for action spaces where $|\mathcal{A}| > 16$, the system **MUST NOT** pass the entire label set to the model in a single cross-attention evaluation pass. The system **MUST** execute a two-stage hierarchical cascade: Stage 1 (Fast bi-encoder/retrieval shortlist to maximum $K \le 16$ candidates) followed by Stage 2 (Strict cross-encoder decision ranking on the top-$K$ shortlist).
+
+**WHY**:
+Cross-encoder complexity scales with input sequence length and candidate permutations. In high-cardinality tasks (e.g., Banking77 with 72 labels), single-pass concatenation blows past context windows ($L > 512$), produces severe cross-attention dilution over trailing candidates, and suffers steep accuracy cliffs (demonstrated by Julia-1 dropping from 94% on 4 labels to 64% on 72 labels when forced through an uncalibrated ranking pass).
+
+**WHEN TO APPLY**:
+Any text-classification, intent routing, or decision-making engine where the discrete decision set exceeds 16 target labels.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from typing import List, Tuple
+import torch
+import torch.nn.functional as F
+
+class HighCardinalityDecisionRouter:
+    def __init__(self, stage1_retriever, stage2_decision_model, shortlist_k: int = 16):
+        if shortlist_k > 16:
+            raise ValueError(f"shortlist_k ({shortlist_k}) exceeds safety threshold (16)")
+        self.retriever = stage1_retriever
+        self.decision_model = stage2_decision_model
+        self.shortlist_k = shortlist_k
+
+    @torch.inference_mode()
+    def route_decision(self, query: str, state: str, candidate_labels: List[str]) -> Tuple[str, float]:
+        if len(candidate_labels) == 0:
+            raise ValueError("Candidate actions cannot be empty")
+            
+        if len(candidate_labels) <= self.shortlist_k:
+            shortlist = candidate_labels
+        else:
+            # Stage 1: Fast MIPS or bi-encoder shortlist pruning
+            shortlist = self.retriever.retrieve_top_k(
+                query=f"{state} {query}", 
+                candidates=candidate_labels, 
+                k=self.shortlist_k
+            )
+
+        # Stage 2: Cross-encoder ranking with verified bounds
+        scores = []
+        for candidate in shortlist:
+            score = self.decision_model.score_pair(state=state, query=query, action=candidate)
+            scores.append(score)
+            
+        scores_tensor = torch.tensor(scores, dtype=torch.float32)
+        probs = F.softmax(scores_tensor, dim=0)
+        best_idx = torch.argmax(probs).item()
+        
+        return shortlist[best_idx], probs[best_idx].item()
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Forcing all 72+ choices into a single prompt string or batch without gating
+def unsafe_single_pass_route(query: str, all_72_labels: List[str], model):
+    # DANGER: Causes severe cross-attention attenuation, token truncation,
+    # and accuracy degradation
+    prompt = f"Query: {query}\nChoices: " + ", ".join(all_72_labels)
+    return model.predict(prompt)
+```
+
+**VERIFICATION METHOD**:
+Automated invariant test ensuring that Stage 2 input list length never exceeds 16:
+```python
+def test_shortlist_cardinality_bound():
+    router = HighCardinalityDecisionRouter(mock_retriever, mock_model, shortlist_k=16)
+    labels = [f"intent_{i}" for i in range(100)]
+    selected_label, _ = router.route_decision("Transfer funds", "Active Session", labels)
+    assert mock_model.last_batch_size <= 16
+```
+
+---

@@ -6519,3 +6519,5 @@ Every entry in this ledger must capture:
 | `learn-github-salvo-rs-salvo` | `https://github.com/salvo-rs/salvo` | `80808bad` | Multi-dimensional audit evidence | 2026-10-31T08:13:59.696Z |
 | `learn-huggingface-xingchen-agi-xing4-0-29b-a4b` | `https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-31T08:14:03.269Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `3cdf8de9` | Multi-dimensional audit evidence | 2026-10-31T08:14:03.687Z |
+| `learn-github-valeriansaliou-sonic` | `https://github.com/valeriansaliou/sonic` | `f16560b6` | Multi-dimensional audit evidence | 2026-10-31T08:28:11.687Z |
+| `learn-huggingface-supersoniclabs-julia-1` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-10-31T08:31:08.058Z |

@@ -395,8 +395,8 @@
     "sourceUrl": "https://huggingface.co/SupersonicLabs/Julia-1",
     "sourceVersion": "hf-supersoniclabs-julia-1",
     "license": "Open-Source",
-    "contentHash": "b61fc693d13e82eab735eed477b07aa2d177248b922b6764c174944a3db92931",
-    "lastHarvestedAt": "2026-10-28T05:24:29.517Z",
+    "contentHash": "fff2a7a34c5b658c32a383d79afe62524f132a61cb4f51c07f0f071e36af6ecd",
+    "lastHarvestedAt": "2026-10-31T08:31:08.058Z",
     "learningId": "learn-huggingface-supersoniclabs-julia-1"
   },
   "hf-apple-lensvlm-9b": {
@@ -7203,10 +7203,10 @@
     "repository": "valeriansaliou/sonic",
     "platform": "github",
     "sourceUrl": "https://github.com/valeriansaliou/sonic",
-    "sourceVersion": "b635a181",
+    "sourceVersion": "f16560b6",
     "license": "MPL-2.0",
-    "contentHash": "cb36a5075e1a5e95db3e14a52c4b665828845e96fd6dfb92f0efce05cfabe0b6",
-    "lastHarvestedAt": "2026-10-22T21:08:14.700Z",
+    "contentHash": "2df03a4b810ecf07a7d30d7ab1465057ee10b52fbce7b2a0ea4ac69d5154dfc4",
+    "lastHarvestedAt": "2026-10-31T08:28:11.687Z",
     "learningId": "learn-github-valeriansaliou-sonic"
   },
   "bgreenwell-doxx": {

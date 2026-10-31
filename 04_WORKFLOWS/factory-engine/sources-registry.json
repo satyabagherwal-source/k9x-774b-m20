@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T08:14:06.241Z",
-    "lastVerified": "2026-10-31T08:14:06.241Z",
+    "lastChecked": "2026-10-31T08:31:10.597Z",
+    "lastVerified": "2026-10-31T08:31:10.597Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -346,9 +346,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T07:28:02.561Z",
+    "lastChecked": "2026-10-31T08:26:23.869Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T07:28:02.561Z"
+    "lastVerified": "2026-10-31T08:26:23.869Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1556,11 +1556,21 @@
     "lastVerified": "2026-10-31T06:52:28.138Z"
   },
   "valeriansaliou-sonic": {
-    "name": "sonic",
+    "name": "valeriansaliou/sonic",
     "officialUrl": "https://github.com/valeriansaliou/sonic",
-    "lastChecked": "2026-10-30T15:15:01.051Z",
-    "revisionIdentifier": "b635a181",
-    "lastVerified": "2026-10-30T15:15:01.051Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-31T08:26:24.962Z",
+    "lastVerified": "2026-10-31T08:26:24.962Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-valeriansaliou-sonic",
+    "contentHash": "2df03a4b810ecf07a7d30d7ab1465057ee10b52fbce7b2a0ea4ac69d5154dfc4",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "cachix-devenv": {
     "name": "devenv",
@@ -1823,13 +1833,13 @@
     "officialUrl": "https://huggingface.co/SupersonicLabs/Julia-1",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T05:24:28.585Z",
-    "lastVerified": "2026-10-28T05:24:28.585Z",
+    "lastChecked": "2026-10-31T08:26:11.392Z",
+    "lastVerified": "2026-10-31T08:26:11.392Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-supersoniclabs-julia-1",
-    "contentHash": "b61fc693d13e82eab735eed477b07aa2d177248b922b6764c174944a3db92931",
-    "promotedRulesCount": 0,
+    "contentHash": "fff2a7a34c5b658c32a383d79afe62524f132a61cb4f51c07f0f071e36af6ecd",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -2072,8 +2082,8 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T03:52:24.481Z",
-    "lastVerified": "2026-10-31T03:52:24.481Z",
+    "lastChecked": "2026-10-31T08:26:18.872Z",
+    "lastVerified": "2026-10-31T08:26:18.872Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -3011,12 +3021,12 @@
     "lastVerified": "2026-10-31T04:09:28.762Z"
   },
   "beclab-olares": {
-    "name": "beclab/Olares",
+    "name": "Olares",
     "officialUrl": "https://github.com/beclab/Olares",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T16:29:57.085Z",
-    "lastVerified": "2026-10-30T16:29:57.085Z",
+    "lastChecked": "2026-10-31T08:26:16.360Z",
+    "lastVerified": "2026-10-31T08:26:16.360Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-beclab-olares",
@@ -3025,7 +3035,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f58f1935"
   },
   "liyupi-yu-ai-agent": {
     "name": "yu-ai-agent",
@@ -4464,12 +4475,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "software-mansion-react-native-gesture-handler": {
-    "name": "software-mansion/react-native-gesture-handler",
+    "name": "react-native-gesture-handler",
     "officialUrl": "https://github.com/software-mansion/react-native-gesture-handler",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T13:56:54.227Z",
-    "lastVerified": "2026-10-28T13:56:54.227Z",
+    "lastChecked": "2026-10-31T08:26:13.856Z",
+    "lastVerified": "2026-10-31T08:26:13.856Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-software-mansion-react-native-gesture-handler",
@@ -4478,7 +4489,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b19e2331"
   },
   "clastix-kamaji": {
     "name": "clastix/kamaji",
@@ -5010,9 +5022,9 @@
   "ekzhang-rustpad": {
     "name": "rustpad",
     "officialUrl": "https://github.com/ekzhang/rustpad",
-    "lastChecked": "2026-10-30T08:16:37.463Z",
+    "lastChecked": "2026-10-31T08:26:08.867Z",
     "revisionIdentifier": "54e4a938",
-    "lastVerified": "2026-10-30T08:16:37.463Z"
+    "lastVerified": "2026-10-31T08:26:08.867Z"
   },
   "hf-mistralai-mixtral-8x7b-instruct-v0.1": {
     "name": "mistralai/Mixtral-8x7B-Instruct-v0.1",

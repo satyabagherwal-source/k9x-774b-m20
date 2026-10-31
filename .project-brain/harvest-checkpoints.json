@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T08:14:03.696Z",
+  "last_updated": "2026-10-31T08:31:08.066Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -470,14 +470,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-supersoniclabs-julia-1",
-      "content_hash": "b61fc693d13e82eab735eed477b07aa2d177248b922b6764c174944a3db92931",
-      "verified_at": "2026-10-28T05:24:29.526Z",
+      "content_hash": "fff2a7a34c5b658c32a383d79afe62524f132a61cb4f51c07f0f071e36af6ecd",
+      "verified_at": "2026-10-31T08:31:08.065Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T05:24:29.526Z"
+      "last_updated": "2026-10-31T08:31:08.065Z"
     },
     "apple/LensVLM-9B": {
       "repository": "apple/LensVLM-9B",
@@ -10851,14 +10851,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-valeriansaliou-sonic",
-      "content_hash": "cb36a5075e1a5e95db3e14a52c4b665828845e96fd6dfb92f0efce05cfabe0b6",
-      "verified_at": "2026-10-22T21:08:14.708Z",
+      "content_hash": "2df03a4b810ecf07a7d30d7ab1465057ee10b52fbce7b2a0ea4ac69d5154dfc4",
+      "verified_at": "2026-10-31T08:28:11.695Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T21:08:14.708Z"
+      "last_updated": "2026-10-31T08:28:11.695Z"
     },
     "bgreenwell/doxx": {
       "repository": "bgreenwell/doxx",

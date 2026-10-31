@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T08:14:03.692Z",
-  "total_cycles_completed": 6487,
-  "total_learnings_persisted": 6487,
-  "total_rules_promoted": 6123,
+  "last_updated": "2026-10-31T08:31:08.062Z",
+  "total_cycles_completed": 6489,
+  "total_learnings_persisted": 6489,
+  "total_rules_promoted": 6128,
   "history": [
-    {
-      "timestamp": "2026-10-30T21:13:04.508Z",
-      "repository": "apache/arrow",
-      "learningId": "learn-github-apache-arrow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T21:13:08.703Z",
-      "repository": "wcandillon/react-native-skia",
-      "learningId": "learn-github-wcandillon-react-native-skia",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T21:19:25.368Z",
       "repository": "meta/folly",
@@ -1403,6 +1389,20 @@
       "repository": "t8y2/dbx",
       "learningId": "learn-github-t8y2-dbx",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T08:28:11.692Z",
+      "repository": "valeriansaliou/sonic",
+      "learningId": "learn-github-valeriansaliou-sonic",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T08:31:08.062Z",
+      "repository": "SupersonicLabs/Julia-1",
+      "learningId": "learn-huggingface-supersoniclabs-julia-1",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

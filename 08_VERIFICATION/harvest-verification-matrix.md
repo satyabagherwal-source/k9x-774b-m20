@@ -6510,3 +6510,5 @@
 | `CYCLE-20261031-K64S` | `2026-10-31T08:13:59.692Z` | `salvo-rs/salvo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6131` | Yes (`6c3f5fb1...`) |
 | `CYCLE-20261031-K8VV` | `2026-10-31T08:14:03.259Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`e43843c0...`) |
 | `CYCLE-20261031-K97N` | `2026-10-31T08:14:03.683Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6132` | Yes (`6ebd2dd8...`) |
+| `CYCLE-20261031-2FH1` | `2026-10-31T08:28:11.605Z` | `valeriansaliou/sonic` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6133, Rule 6134, Rule 6135` | Yes (`2df03a4b...`) |
+| `CYCLE-20261031-67MF` | `2026-10-31T08:31:08.055Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6136, Rule 6137` | Yes (`fff2a7a3...`) |

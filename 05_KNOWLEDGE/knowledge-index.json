@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T08:14:03.603Z",
+  "last_updated": "2026-10-31T08:31:07.990Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -29276,7 +29276,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
       "source_version": "hf-supersoniclabs-julia-1",
-      "content_hash": "b61fc693d13e82eab735eed477b07aa2d177248b922b6764c174944a3db92931",
+      "content_hash": "fff2a7a34c5b658c32a383d79afe62524f132a61cb4f51c07f0f071e36af6ecd",
       "dossier_path": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "promoted_rules": [
@@ -29337,6 +29337,16 @@
           "number": 4292,
           "title": "The \"Benchmark Provenance\" Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6136,
+          "title": "Composite Encoder-Head Config Isolation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6137,
+          "title": "High-Cardinality Action Pruning Invariant (Shortlist Gating)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -29357,7 +29367,7 @@
         "learn-huggingface-hf-supersoniclabs-julia-1-mv45d8ac",
         "learn-huggingface-hf-supersoniclabs-julia-1-mv4imrbh"
       ],
-      "verified_at": "2026-10-28T05:24:29.419Z",
+      "verified_at": "2026-10-31T08:31:07.973Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56363,8 +56373,8 @@
       "slug": "valeriansaliou-sonic",
       "platform": "github",
       "source_url": "https://github.com/valeriansaliou/sonic",
-      "source_version": "b635a181",
-      "content_hash": "cb36a5075e1a5e95db3e14a52c4b665828845e96fd6dfb92f0efce05cfabe0b6",
+      "source_version": "f16560b6",
+      "content_hash": "2df03a4b810ecf07a7d30d7ab1465057ee10b52fbce7b2a0ea4ac69d5154dfc4",
       "dossier_path": "07_PROJECT_LEARNING/valeriansaliou-sonic-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/valeriansaliou-sonic-learnings.md",
       "promoted_rules": [
@@ -56387,6 +56397,21 @@
           "number": 3745,
           "title": "security): Update dependencies",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6133,
+          "title": "Ephemeral I/O Result Containment & Panic Prohibition",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6134,
+          "title": "Lock-Inversion Avoidance in Granular Storage Cascades",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6135,
+          "title": "Chunked Stream Document Boundary Cohesion",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56394,7 +56419,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T21:08:14.636Z",
+      "verified_at": "2026-10-31T08:28:11.313Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -160689,6 +160714,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T08:14:03.582Z"
+    },
+    "rule-6133": {
+      "learning_id": "rule-6133",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6133,
+      "title": "Ephemeral I/O Result Containment & Panic Prohibition",
+      "source_url": "https://github.com/valeriansaliou/sonic",
+      "source_version": "f16560b6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T08:28:11.313Z"
+    },
+    "rule-6134": {
+      "learning_id": "rule-6134",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6134,
+      "title": "Lock-Inversion Avoidance in Granular Storage Cascades",
+      "source_url": "https://github.com/valeriansaliou/sonic",
+      "source_version": "f16560b6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T08:28:11.313Z"
+    },
+    "rule-6135": {
+      "learning_id": "rule-6135",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6135,
+      "title": "Chunked Stream Document Boundary Cohesion",
+      "source_url": "https://github.com/valeriansaliou/sonic",
+      "source_version": "f16560b6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T08:28:11.313Z"
+    },
+    "rule-6136": {
+      "learning_id": "rule-6136",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6136,
+      "title": "Composite Encoder-Head Config Isolation Invariant",
+      "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
+      "source_version": "hf-supersoniclabs-julia-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T08:31:07.973Z"
+    },
+    "rule-6137": {
+      "learning_id": "rule-6137",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6137,
+      "title": "High-Cardinality Action Pruning Invariant (Shortlist Gating)",
+      "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
+      "source_version": "hf-supersoniclabs-julia-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T08:31:07.973Z"
     }
   },
   "aliases": {
