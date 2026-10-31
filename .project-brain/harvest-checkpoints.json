@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T15:56:42.119Z",
+  "last_updated": "2026-10-31T16:08:35.144Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1325,14 +1325,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baidu-unlimited-ocr",
-      "content_hash": "1b7a14547cc2956ffa2211641936f856825b952fd78010b1814e0d16fef09b70",
-      "verified_at": "2026-10-28T15:22:46.080Z",
+      "content_hash": "d1a56c95d26991f1ff8d9a3d294d937276aecd132df43fa11ecbc6f22a3db681",
+      "verified_at": "2026-10-31T16:03:37.105Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T15:22:46.080Z"
+      "last_updated": "2026-10-31T16:03:37.105Z"
     },
     "Aleph-Alpha/Kolibri-1": {
       "repository": "Aleph-Alpha/Kolibri-1",
@@ -17549,6 +17549,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-31T14:01:19.861Z"
+    },
+    "Edge0/Audio8-TTS-Realistic-0.6b": {
+      "repository": "Edge0/Audio8-TTS-Realistic-0.6b",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
+      "content_hash": "6b781a5ce917580059699d28808cc7c38a043ad98ac090b08c538fddf2dca82b",
+      "verified_at": "2026-10-31T16:08:35.143Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-31T16:08:35.143Z"
     }
   },
   "repos": {

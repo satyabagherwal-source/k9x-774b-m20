@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T15:56:50.741Z",
-    "lastVerified": "2026-10-31T15:56:50.741Z",
+    "lastChecked": "2026-10-31T16:08:37.677Z",
+    "lastVerified": "2026-10-31T16:08:37.677Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T15:36:35.187Z",
-    "lastVerified": "2026-10-31T15:36:35.187Z",
+    "lastChecked": "2026-10-31T16:03:48.263Z",
+    "lastVerified": "2026-10-31T16:03:48.263Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -2083,8 +2083,8 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T12:39:33.923Z",
-    "lastVerified": "2026-10-31T12:39:33.923Z",
+    "lastChecked": "2026-10-31T16:03:43.412Z",
+    "lastVerified": "2026-10-31T16:03:43.412Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -5094,9 +5094,9 @@
   "orbitinghail-sqlsync": {
     "name": "sqlsync",
     "officialUrl": "https://github.com/orbitinghail/sqlsync",
-    "lastChecked": "2026-10-30T23:51:41.446Z",
+    "lastChecked": "2026-10-31T16:03:45.756Z",
     "revisionIdentifier": "7dc1af6b",
-    "lastVerified": "2026-10-30T23:51:41.446Z"
+    "lastVerified": "2026-10-31T16:03:45.756Z"
   },
   "async-rs-async-std": {
     "name": "async-std",
@@ -5232,12 +5232,12 @@
     "officialUrl": "https://huggingface.co/baidu/Unlimited-OCR",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T15:22:45.255Z",
-    "lastVerified": "2026-10-28T15:22:45.255Z",
+    "lastChecked": "2026-10-31T16:03:35.969Z",
+    "lastVerified": "2026-10-31T16:03:35.969Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-baidu-unlimited-ocr",
-    "contentHash": "1b7a14547cc2956ffa2211641936f856825b952fd78010b1814e0d16fef09b70",
+    "contentHash": "d1a56c95d26991f1ff8d9a3d294d937276aecd132df43fa11ecbc6f22a3db681",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6285,9 +6285,9 @@
   "someengineering-fixinventory": {
     "name": "fixinventory",
     "officialUrl": "https://github.com/someengineering/fixinventory",
-    "lastChecked": "2026-10-31T00:41:13.611Z",
+    "lastChecked": "2026-10-31T16:03:40.868Z",
     "revisionIdentifier": "21183338",
-    "lastVerified": "2026-10-31T00:41:13.611Z"
+    "lastVerified": "2026-10-31T16:03:40.868Z"
   },
   "olric-data-olric": {
     "name": "olric",
@@ -7746,9 +7746,9 @@
   "oblador-react-native-vector-icons": {
     "name": "react-native-vector-icons",
     "officialUrl": "https://github.com/oblador/react-native-vector-icons",
-    "lastChecked": "2026-10-28T20:57:37.113Z",
+    "lastChecked": "2026-10-31T16:03:38.403Z",
     "revisionIdentifier": "666a7437",
-    "lastVerified": "2026-10-28T20:57:37.113Z"
+    "lastVerified": "2026-10-31T16:03:38.403Z"
   },
   "imsnif-diskonaut": {
     "name": "diskonaut",
@@ -12458,6 +12458,23 @@
     "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
     "contentHash": "0c1d83e8dad587c927c0a7f081a970941446e66baa7d8eda82027a1bfdac4183",
     "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-edge0-audio8-tts-realistic-0.6b": {
+    "name": "Edge0/Audio8-TTS-Realistic-0.6b",
+    "officialUrl": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-31T16:03:33.486Z",
+    "lastVerified": "2026-10-31T16:03:33.486Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
+    "contentHash": "6b781a5ce917580059699d28808cc7c38a043ad98ac090b08c538fddf2dca82b",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

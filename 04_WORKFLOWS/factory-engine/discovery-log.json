@@ -19978,5 +19978,17 @@
     "downloads": 38382,
     "qualityScore": 3470,
     "discoveredAt": "2026-10-31T13:58:56.628Z"
+  },
+  {
+    "name": "Edge0/Audio8-TTS-Realistic-0.6b",
+    "fullName": "Edge0/Audio8-TTS-Realistic-0.6b",
+    "url": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Edge0/Audio8-TTS-Realistic-0.6b (144 likes, 2755 downloads)",
+    "likes": 144,
+    "downloads": 2755,
+    "qualityScore": 3440,
+    "discoveredAt": "2026-10-31T16:01:19.703Z"
   }
 ]

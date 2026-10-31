@@ -1005,8 +1005,8 @@
     "sourceUrl": "https://huggingface.co/baidu/Unlimited-OCR",
     "sourceVersion": "hf-baidu-unlimited-ocr",
     "license": "Open-Source",
-    "contentHash": "1b7a14547cc2956ffa2211641936f856825b952fd78010b1814e0d16fef09b70",
-    "lastHarvestedAt": "2026-10-28T15:22:46.075Z",
+    "contentHash": "d1a56c95d26991f1ff8d9a3d294d937276aecd132df43fa11ecbc6f22a3db681",
+    "lastHarvestedAt": "2026-10-31T16:03:37.095Z",
     "learningId": "learn-huggingface-baidu-unlimited-ocr"
   },
   "hf-aleph-alpha-kolibri-1": {
@@ -11658,5 +11658,15 @@
     "contentHash": "0c1d83e8dad587c927c0a7f081a970941446e66baa7d8eda82027a1bfdac4183",
     "lastHarvestedAt": "2026-10-31T14:01:19.852Z",
     "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf"
+  },
+  "hf-edge0-audio8-tts-realistic-0.6b": {
+    "repository": "Edge0/Audio8-TTS-Realistic-0.6b",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b",
+    "sourceVersion": "hf-edge0-audio8-tts-realistic-0.6b",
+    "license": "Open-Source",
+    "contentHash": "6b781a5ce917580059699d28808cc7c38a043ad98ac090b08c538fddf2dca82b",
+    "lastHarvestedAt": "2026-10-31T16:08:35.133Z",
+    "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b"
   }
 }

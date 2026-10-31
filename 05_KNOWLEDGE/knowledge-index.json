@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T15:56:42.016Z",
-  "total_verified_learnings": 1184,
+  "last_updated": "2026-10-31T16:08:35.028Z",
+  "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -19453,7 +19453,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/baidu/Unlimited-OCR",
       "source_version": "hf-baidu-unlimited-ocr",
-      "content_hash": "1b7a14547cc2956ffa2211641936f856825b952fd78010b1814e0d16fef09b70",
+      "content_hash": "d1a56c95d26991f1ff8d9a3d294d937276aecd132df43fa11ecbc6f22a3db681",
       "dossier_path": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md",
       "promoted_rules": [],
@@ -19474,7 +19474,7 @@
         "learn-huggingface-hf-baidu-unlimited-ocr-mv3x7ph4",
         "learn-huggingface-hf-baidu-unlimited-ocr-mv4bx9rt"
       ],
-      "verified_at": "2026-10-28T15:22:46.008Z",
+      "verified_at": "2026-10-31T16:03:36.973Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162864,6 +162864,33 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T15:56:41.987Z"
+    },
+    "learn-huggingface-edge0-audio8-tts-realistic-0-6b": {
+      "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Edge0/Audio8-TTS-Realistic-0.6b",
+      "repository": "Edge0/Audio8-TTS-Realistic-0.6b",
+      "slug": "hf-edge0-audio8-tts-realistic-0.6b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b",
+      "source_version": "hf-edge0-audio8-tts-realistic-0.6b",
+      "content_hash": "6b781a5ce917580059699d28808cc7c38a043ad98ac090b08c538fddf2dca82b",
+      "dossier_path": "07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-31T16:08:34.999Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     }
   },
   "aliases": {

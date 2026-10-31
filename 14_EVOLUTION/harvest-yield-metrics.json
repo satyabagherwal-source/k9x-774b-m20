@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T15:56:42.115Z",
-  "total_cycles_completed": 6604,
-  "total_learnings_persisted": 6604,
+  "last_updated": "2026-10-31T16:08:35.139Z",
+  "total_cycles_completed": 6606,
+  "total_learnings_persisted": 6606,
   "total_rules_promoted": 6239,
   "history": [
-    {
-      "timestamp": "2026-10-31T02:27:59.141Z",
-      "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
-      "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T02:28:00.647Z",
-      "repository": "prometheus/prometheus",
-      "learningId": "learn-github-prometheus-prometheus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T02:35:22.682Z",
       "repository": "Orange-OpenSource/hurl",
@@ -1403,6 +1389,20 @@
       "repository": "zed-industries/zed",
       "learningId": "learn-github-zed-industries-zed",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:03:37.101Z",
+      "repository": "baidu/Unlimited-OCR",
+      "learningId": "learn-huggingface-baidu-unlimited-ocr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:08:35.139Z",
+      "repository": "Edge0/Audio8-TTS-Realistic-0.6b",
+      "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -4754,3 +4754,7 @@ https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K
 # --- Automatically Discovered by AI Scout Engine [2026-10-31T14:01:04.726Z] ---
 # [HUGGINGFACE-AI-MODELS] AtomicChat/LFM3-1.7B-Uncensored-GGUF (3470 score) - Verified Hugging Face Model: AtomicChat/LFM3-1.7B-Uncensored-GGUF (147 likes, 38
 https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-31T16:03:27.759Z] ---
+# [HUGGINGFACE-AI-MODELS] Edge0/Audio8-TTS-Realistic-0.6b (3440 score) - Verified Hugging Face Model: Edge0/Audio8-TTS-Realistic-0.6b (144 likes, 2755 do
+https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b

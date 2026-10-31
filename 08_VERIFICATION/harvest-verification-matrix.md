@@ -6627,3 +6627,5 @@
 | `CYCLE-20261031-UCUE` | `2026-10-31T15:49:48.806Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6238, Rule 633, Rule 6239` | Yes (`18c0ca14...`) |
 | `CYCLE-20261031-37BH` | `2026-10-31T15:56:41.549Z` | `deepseek-ai/DeepSeek-V3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | Yes (`6795fb3c...`) |
 | `CYCLE-20261031-37QX` | `2026-10-31T15:56:42.105Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6240` | Yes (`4c7ce402...`) |
+| `CYCLE-20261031-C3Y4` | `2026-10-31T16:03:37.084Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`d1a56c95...`) |
+| `CYCLE-20261031-IHX0` | `2026-10-31T16:08:35.124Z` | `Edge0/Audio8-TTS-Realistic-0.6b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md` | Yes (`6b781a5c...`) |
