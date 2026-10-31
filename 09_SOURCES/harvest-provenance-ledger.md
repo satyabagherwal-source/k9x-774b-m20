@@ -6698,3 +6698,4 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `2a9447c5` | Multi-dimensional audit evidence | 2026-10-31T19:14:46.399Z |
 | `learn-huggingface-google-gemma-4-31b-it` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-31T19:23:42.498Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `9c5c0eb9` | Multi-dimensional audit evidence | 2026-10-31T19:23:50.819Z |
+| `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-31T19:34:03.949Z |

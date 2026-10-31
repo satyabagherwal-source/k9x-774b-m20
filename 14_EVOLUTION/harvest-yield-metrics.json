@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T19:23:50.825Z",
-  "total_cycles_completed": 6666,
-  "total_learnings_persisted": 6666,
-  "total_rules_promoted": 6295,
+  "last_updated": "2026-10-31T19:34:03.955Z",
+  "total_cycles_completed": 6667,
+  "total_learnings_persisted": 6667,
+  "total_rules_promoted": 6297,
   "history": [
-    {
-      "timestamp": "2026-10-31T06:32:12.334Z",
-      "repository": "meta-llama/Llama-3.1-8B-Instruct",
-      "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T06:38:22.899Z",
       "repository": "XingChen-AGI/TeleOCR",
@@ -1403,6 +1396,13 @@
       "repository": "gardener/gardener",
       "learningId": "learn-github-gardener-gardener",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T19:34:03.955Z",
+      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

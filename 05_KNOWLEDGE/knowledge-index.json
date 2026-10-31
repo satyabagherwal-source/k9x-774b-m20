@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T19:23:50.710Z",
+  "last_updated": "2026-10-31T19:34:03.867Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -29228,7 +29228,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "e216f53ee73f432b58ea906a1c800b31c9111d3190db21d822945abd3a4cc9a7",
+      "content_hash": "14b043207ded98d3eed29d1c67148cc5e0f94e3d96f0a6d02a2fd69aff39d6ee",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "promoted_rules": [
@@ -29276,6 +29276,16 @@
           "number": 5357,
           "title": "The Tokenizer-Model Contract Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6295,
+          "title": "Mask-Aware Mean Pooling with Epsilon Denominator Clamping",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6296,
+          "title": "RoBERTa/XLM-R Position Embedding Offset Protection",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -29294,7 +29304,7 @@
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv40nmqt",
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv4emaqx"
       ],
-      "verified_at": "2026-10-28T18:04:43.532Z",
+      "verified_at": "2026-10-31T19:34:03.847Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -163927,6 +163937,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T19:23:50.688Z"
+    },
+    "rule-6295": {
+      "learning_id": "rule-6295",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6295,
+      "title": "Mask-Aware Mean Pooling with Epsilon Denominator Clamping",
+      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T19:34:03.847Z"
+    },
+    "rule-6296": {
+      "learning_id": "rule-6296",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6296,
+      "title": "RoBERTa/XLM-R Position Embedding Offset Protection",
+      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T19:34:03.847Z"
     }
   },
   "aliases": {

@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T19:23:53.886Z",
-    "lastVerified": "2026-10-31T19:23:53.886Z",
+    "lastChecked": "2026-10-31T19:34:06.493Z",
+    "lastVerified": "2026-10-31T19:34:06.493Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -430,8 +430,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T18:52:42.113Z",
-    "lastVerified": "2026-10-31T18:52:42.113Z",
+    "lastChecked": "2026-10-31T19:30:44.649Z",
+    "lastVerified": "2026-10-31T19:30:44.649Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -943,9 +943,9 @@
   "devspace-sh-devspace": {
     "name": "devspace",
     "officialUrl": "https://github.com/devspace-sh/devspace",
-    "lastChecked": "2026-10-31T03:52:21.952Z",
+    "lastChecked": "2026-10-31T19:30:37.162Z",
     "revisionIdentifier": "8ff62607",
-    "lastVerified": "2026-10-31T03:52:21.952Z"
+    "lastVerified": "2026-10-31T19:30:37.162Z"
   },
   "bee-san-ciphey": {
     "name": "Ciphey",
@@ -1245,12 +1245,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sharkdp-fd": {
-    "name": "sharkdp/fd",
+    "name": "fd",
     "officialUrl": "https://github.com/sharkdp/fd",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T23:44:45.587Z",
-    "lastVerified": "2026-10-30T23:44:45.587Z",
+    "lastChecked": "2026-10-31T19:30:29.654Z",
+    "lastVerified": "2026-10-31T19:30:29.654Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sharkdp-fd",
@@ -1259,7 +1259,8 @@
     "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8b14e8dc"
   },
   "hf-qwen-qwen-image-2.1": {
     "name": "Qwen/Qwen-Image-2.1",
@@ -1711,8 +1712,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T15:36:30.389Z",
-    "lastVerified": "2026-10-31T15:36:30.389Z",
+    "lastChecked": "2026-10-31T19:30:39.697Z",
+    "lastVerified": "2026-10-31T19:30:39.697Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -6571,12 +6572,12 @@
     "revisionIdentifier": "285e01eb"
   },
   "startrail-org-leann": {
-    "name": "StarTrail-org/LEANN",
+    "name": "LEANN",
     "officialUrl": "https://github.com/StarTrail-org/LEANN",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-31T03:02:47.611Z",
-    "lastVerified": "2026-10-31T03:02:47.611Z",
+    "lastChecked": "2026-10-31T19:30:42.165Z",
+    "lastVerified": "2026-10-31T19:30:42.165Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-startrail-org-leann",
@@ -6585,7 +6586,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "07796bd7"
   },
   "ynqa-jnv": {
     "name": "jnv",
@@ -6644,12 +6646,12 @@
     "officialUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T18:04:33.848Z",
-    "lastVerified": "2026-10-28T18:04:33.848Z",
+    "lastChecked": "2026-10-31T19:30:32.200Z",
+    "lastVerified": "2026-10-31T19:30:32.200Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-    "contentHash": "e216f53ee73f432b58ea906a1c800b31c9111d3190db21d822945abd3a4cc9a7",
+    "contentHash": "14b043207ded98d3eed29d1c67148cc5e0f94e3d96f0a6d02a2fd69aff39d6ee",
     "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -8634,9 +8636,9 @@
   "parthjadhav-app-store-screenshots": {
     "name": "app-store-screenshots",
     "officialUrl": "https://github.com/ParthJadhav/app-store-screenshots",
-    "lastChecked": "2026-10-29T00:16:03.360Z",
+    "lastChecked": "2026-10-31T19:30:34.659Z",
     "revisionIdentifier": "5386f227",
-    "lastVerified": "2026-10-29T00:16:03.360Z"
+    "lastVerified": "2026-10-31T19:30:34.659Z"
   },
   "hf-openmoss-team-moss-image-base": {
     "name": "OpenMOSS-Team/MOSS-Image-Base",
