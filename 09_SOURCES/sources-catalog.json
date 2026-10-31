@@ -585,8 +585,8 @@
     "sourceUrl": "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
     "sourceVersion": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2",
     "license": "Open-Source",
-    "contentHash": "2cf7e82d823a47f93b8b17341303190bfdb3e956c27b2cbda687114ba8e31aba",
-    "lastHarvestedAt": "2026-10-28T21:37:08.062Z",
+    "contentHash": "73fa85d0ce37d13c473497c472232d66b8e7f7cb1dccb2279f8a31b34e09e1b1",
+    "lastHarvestedAt": "2026-10-31T23:08:22.228Z",
     "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2"
   },
   "hf-psrben-visionhope": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "aa0953e9",
+    "sourceVersion": "9f6fa547",
     "license": "MIT",
-    "contentHash": "e5861136d21c074511af7b5ed96ed5468da046a5d6b11503c19708018e3d688f",
-    "lastHarvestedAt": "2026-10-31T19:41:02.630Z",
+    "contentHash": "4504c447e8b4865cff66353cbba12e7398bc4a217b8d64dcab7bdd5bfc96a569",
+    "lastHarvestedAt": "2026-10-31T23:08:38.016Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -3993,10 +3993,10 @@
     "repository": "o2sh/onefetch",
     "platform": "github",
     "sourceUrl": "https://github.com/o2sh/onefetch",
-    "sourceVersion": "b5f80988",
+    "sourceVersion": "8d71e7f5",
     "license": "MIT",
-    "contentHash": "f088eb011c97f5e93b2fb05d7b4c54bbedd4a28af5ac183a3417b4358f0faf92",
-    "lastHarvestedAt": "2026-10-30T00:27:04.701Z",
+    "contentHash": "b9edea320a946794c6b3e1597872b4aa038cbc708ac5c157f7e817524c276547",
+    "lastHarvestedAt": "2026-10-31T23:08:22.714Z",
     "learningId": "learn-github-o2sh-onefetch"
   },
   "runanywhereai-runanywhere-sdks": {

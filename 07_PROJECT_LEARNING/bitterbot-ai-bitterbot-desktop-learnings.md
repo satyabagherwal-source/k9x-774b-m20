@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `aa0953e9`  
+> **Source Version**: `9f6fa547`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T19:41:01.941Z  
+> **Timestamp**: 2026-10-31T23:08:37.542Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T19:41:01.709Z  
+> **Harvest Timestamp**: 2026-10-31T23:08:37.537Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,325 +1799,353 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aa0953e9` (2026-10-31)
-**Commit Message**: fix(memory): record evidence only for prompt-included facts, owner searches and on an independent retention clock (#344)
+### Incident Patch 1: `9f6fa547` (2026-10-31)
+**Commit Message**: fix(infra): make batch lanes reach the Batches API and offer beta nodes the stable release (#345)
 
-Rebases PR #330 onto current main. PLAN-59 Phase 0 could record a proactive
-fact as delivered when selection, not the prompt renderer, decided; merge
-separate deliveries inside one hour bucket; count a guest's deep-recall
-search as owner retrieval evidence; let the shadow dream-mode selection draw
-from the live random stream; and prune the evidence tables only inside the
-consolidation pass.
+Two live defects seen in the 1.11.0-beta.1 gateway log while assessing the
+1.12.0 release.
 
-Delivery is now acknowledged by the full prompt renderer through a callback,
-keyed by session and run id so a rebuilt turn deduplicates while distinct
-turns stay apart. The Phase 2 shadow trial (#331) logs eligible, assigned and
-delivered through that same path, so it too sees only facts the prompt
-included. Every deep-recall route passes the owner observation flag and the
-cached sandbox is split by owner versus guest. Shadow-only draws use their own
-source and the trace records both draw sequences. Evidence retention runs on
-its own 30-minute timer from startup and drains on shutdown.
+Batch lanes never batched. complete-attributed passes `feature-runId` as the
+Batches API `custom_id`, and every feature name is slash-separated
+(`memory/dream`, `skills/evolution`), which the API rejects:
+"requests.0.custom_id: String should match pattern '^[a-zA-Z0-9_-]{1,64}$'".
+Each submit failed, fell back to the live path and paid full price. The
+batch client now coerces caller ids into that shape (slashes and other
+characters become dashes, 64-char clamp, never empty) and uses the same
+coerced id for the submit and the results lookup. Ids that already match
+are unchanged.
 
-Docs: evidence-telemetry.md states that delivery means prompt inclusion and
-names the exc
+Beta nodes were never offered the stable release. compareSemverStrings
+ignored pre-release labels, so a node on 1.11.0-beta.1 saw 1.11.0 as equal
+and the startup check, status, staleness and the Control UI banner stayed
+quiet (the live node is still on beta.1 a day after 1.11.0 shipped). The
+comparison now applies the SemVer pre-release tie-break; the CLI's
+releaseOrder helper delegates to it instead of carrying its own
 
-**File**: `docs/memory/evidence-telemetry.md` (modified, +22/-7)
+**File**: `docs/cli/update.md` (modified, +3/-1)
 ```diff
-@@ -14,7 +14,7 @@ Code: `src/memory/evidence-telemetry.ts` (writer), `src/memory/surfacing-trial.t
-     curiosity: {
-       evidence: {
-         mode: "shadow", // "off" | "observe" | "shadow"; default "shadow"
--        retentionDays: 90, // rows older than this are pruned on the consolidation tick
-+        retentionDays: 90, // rows older than this are pruned independently every 30 minutes
-         topK: 10, // at most this many retrieval rows per search
-       },
-     },
-@@ -32,7 +32,7 @@ A mode that is not one of the three falls back to `shadow` with a warning; a non
+@@ -59,7 +59,9 @@ git checkout on a branch. A configured `update.channel` always wins.
  
- ### `retrieval_hits`
+ A pre-release install such as `1.10.1-beta.2` counts as older than the stable
+ `1.10.1`, so `bitterbot update` on the stable channel moves it forward instead
+-of reporting it as current.
++of reporting it as current. The gateway's startup update check, `bitterbot
++status`, and the Control UI update banner apply the same ordering, so a node
++left on a beta is told about the stable release it preceded.
  
--One row per returned result, at most `topK` per search, written in one transaction after the final ordering (fusion, boosts, superseded demotion) is fixed. Guest searches (`guestSearch`) are never recorded. The PLAN-59 Phase 1 pilot harness (`benchmarks/plan59-phase1/`) reads this table, decayed with a 30-day half-life, as the demand term of its need estimate whenever it is present and non-empty on the snapshot under test.
-+One row per returned result, at most `topK` per search, written in one transaction after the final ordering (fusion, boosts, superseded demotion) is fixed. Guest searches (`guestSearch`) and non-owner deep-recall searches (including context and live API searches) are never recorded. The PLAN-59 Phase 1 pilot harness (`benchmarks/plan59-phase1/`) reads this table, decayed with a 30-day half-life, as the demand term of its need estimate whenever it is present and non-empty on the snapshot under test.
+ ## Usage
  
- | column               | meaning                                                                                             |
- | -------------------- | --------------------------------------------------------------------------------------------------- |
-@@ -73,6 +73,15 @@ What the agent put in front of the owner, and separately what the owner did abou
- 
- Exposure and outcome are kept apart on purpose. A surfaced item is `delivered`; usefulness is only `explicit` when the owner acted. Silence is `unknown` (NULL outcome), never "ignored" or "disliked". A label that arrives for an item with no delivered row (for example a dismiss of a target whose finding was never voiced) creates a `responded` row so the action is kept.
- 
-+For proactive recall, `delivered` means inclusion in a full model prompt, not
-+proof that the owner saw the fact. Selection, discarded prompt assembly and
-+minimal prompts record nothing. The formatter supplies only the chunk ids
-+that survived its cap. The full prompt renderer acknowledges them using
-+`pr:<keyed delivery digest>:<chunk id>`; the digest covers session and run/turn
-+identity. Rebuilding the same delivery is idempotent, while distinct turns or
-+sessions remain distinct even within the same hour. A caller without a run id
-+receives a fresh opaque delivery id for that resolved prompt.
-+
- ### `decision_traces`
- 
- Shadow mode only. One row per decision the dream engine took where a GCCRF-as-diagnostic routing could have differed.
-@@ -86,7 +95,7 @@ Shadow mode only. One row per decision the dream engine took where a GCCRF-as-di
- | `scoring_version` | `gccrf_state.scoring_version` at write time                                              |
- 
- - `dream_seed_rank`: legacy = the ids `selectSeeds` returned under `ORDER BY (importance_score + COALESCE(curiosity_reward, curiosity_boost, 0)) / (dream_count + 1)`; proposed = the same `WHERE` and `LIMIT` under `ORDER BY importance_score / (dream_count + 1)`. The dream-count penalty is kept on both sides because it is not a GCCRF signal.
--- `dream_mode_select`: legacy = the modes `selectModes` chose with their adjusted weights and the GCCRF weight in force (0.25 to 0.3); proposed = the modes chosen from the same enabled set with the GCCRF adjustment zeroed. Both selections consume the same random draws, so a divergence reflects the weights and nothing else. The reserved utility-lane slot and the exploration auto-trigger are shared by both.
-+- `dream_mode_select`: legacy = the modes `selectModes` chose with their adjusted weights and the GCCRF weight in force (0.25 to 0.3); proposed = the modes chosen from the same enabled set with the GCCRF adjustment zeroed. The counterfactual reuses the live selection's random-draw prefix. If last-mode avoidance requires extra counterfactual iterations, independent cryptographic draws extend that prefix without advancing the live `Math.random` stream. Both draw sequences are stored in the trace for replay. The reserved utility-lane slot and the exploration auto-trigger are shared by both.
- 
- ### `evidence_meta`
- 
-@@ -103,7 +112,7 @@ Digests are HMAC-SHA256 under a key that exists only in this node's database, so
- 
- ## Retention and cost
- 
--`prune()` runs once per consolidation tick (every 30 minutes by default) after the existing steps, deleting rows older than `retentionDays` in chunks of 2000 with an event-loop yield between chunks, so a backlog can never starve the gateway loop (see the event
 ```
 
-**File**: `docs/memory/plan59-phase1-independent-review.md` (added, +58/-0)
+**File**: `docs/network/soapbox-compute-mesh.md` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,58 @@
-+---
-+title: "Independent review of the PLAN-59 consolidation pilot"
-+description: "What the stopped Phase 1 pilot establishes, and what needs strengthening before an efficacy comparison."
-+---
-+
-+Reviewed PR #329 at `17abd984d741754ff0538d4dc2ee997e728685ce` on 2026-10-29.
-+This review inspects the submitted source, aggregate evidence and synthetic
-+tests. It does not rerun private queries, acquire new model responses, or open
-+the final evaluation partition. The independent workflow-practice retention
-+study remains separate and unchanged.
-+
-+All 12 reported CI checks are green at the reviewed head. Independently, all 35 synthetic tests in the five pilot test files pass when run from the submitted sources against the corrected Phase 0 checkout and pinned dependencies. This checks harness behavior; it does not reproduce the private-data pilot or resolve the experiment-design limits below.
-+
-+The saved result supports the decision to stop: 130 candidate clusters, one
-+qualifying at the fallback two-query bar, below the declared minimum of five.
-+It explicitly records `armsRun: false`. The development baseline has 212
-+questions, MRR 0.25444 and recall@5 0.34906. There is no policy contrast, task
-+completion effect or retained-learning result to interpret. Reporting this
-+qualification failure is appropriate.
-+
-+Several boundaries matter before using this harness for final collection:
-+
-+- Questions were generated from private passages; this is not the observed
-+  owner query distribution. The result says the selected candidates rarely
-+  co-surface under these generated queries. It does not establish that the
-+  real user's consolidation opportunity is near zero.
-+- The final gate validates a file hash and `status: frozen`. It does not bind
-+  the actual CLI settings, model, source closure, snapshot and question hashes
-+  to an executable frozen contract. Strengthen that check before enabling
-+  final evaluation. The runner loads the complete question file but selects
-+  only development/qualification questions for the pilot; say "final not
-+  scored or used for selection," rather than "final never read."
-+- Equal operation count K is not equal total cost. Prioritized selection pays
-+  additional single-operation forks and development searches. Recording those
-+  costs is useful, but a later equal-budget claim requires cumulative ceilings
-+  and a baseline allowed to use the same budget for useful work. The current
-+  scalar `1 + chunksTouched + 2 * embeddingCalls` is not provider dollars.
-+- The published dollar figures are estimates from text lengths, not provider
-+  receipts. The result names `ecc86c07+dirty`; an immutable tested source
-+  manifest is needed for a publishable final comparison.
-+- `needByFamily` describes counting development queries per family, but
-+  increments once per matching top-five chunk. Several results from one file
-+  count as several units of demand. Decide whether this is a redundancy
-+  signal or query demand, then implement and document that estimand before
-+  freezing a new experiment.
-+- Path-based partitioning prevents the same path crossing partitions; it
-+  does not prove that repeated facts or paraphrases stored under different
-+  paths cannot cross them. Do not claim semantic leak prevention from a
-+  path split alone.
-+
-+These limits do not invalidate the observed stopping decision. They do mean
-+the pilot is infrastructure and candidate qualification, not evidence that a
-+curiosity selector works. The next candidate investigation should use corrected
-+owner retrieval telemetry, preserve the negative result, and qualify on
-+development data before any final collection.
-+
-+References: [PR #329](https://github.com/Bitterbot-AI/bitterbot-desktop/pull/329),
-+[saved pilot result](https://github.com/Bitterbot-AI/bitterbot-desktop/blob/17abd984d741754ff0538d4dc2ee997e728685ce/benchmarks/plan59-phase1/results/2026-10-29T21-11-43-569Z.json).
-```
-
-**File**: `src/agents/cli-runner.ts` (modified, +1/-0)
-```diff
-@@ -131,6 +131,7 @@ export async function runCliAgent(params: {
-     sessionKey: params.sessionKey,
-     // PLAN-40 funnel: CLI turns are owner-driven full prompts.
-     promptMode: "full",
-+    deliveryId: params.runId,
-   }).catch(() => undefined);
+@@ -228,8 +228,8 @@ The current resolver prefers the bundled release binary, then the installed
+ sidecar, and uses local Cargo builds only as a fallback. An explicit
+ `p2p.orchestratorBinary` still takes priority, including for intentional development
+ builds; update or remove an outdated override when upgrading. Releases bundle
+-the verified 0.2.4 sidecar; from the release after v1.11.0 they pin Soapbox rc10
+-for new Linux x64 operator setups (v1.10.0 through v1.11.0 pinned rc5).
++the verified 0.2.4 sidecar; from v1.12.0 they pin Soapbox rc10 for new Linux x64
++operator setups (v1.10.0 through v1.11.0 pinned rc5).
  
-   // PLAN-33: canonical facts resolve independently of endocrine state.
+ Set `p2p.orchestratorBinary` to a versioned, signature-verified compatible release
+ binary (0.2.4 supports the Compute topic and descriptor signer), then restart the
 ```
 
-**File**: `src/agents/embedded-runner/run/attempt.ts` (modified, +1/-0)
+**File**: `docs/network/soapbox.md` (modified, +2/-2)
 ```diff
-@@ -584,6 +584,7 @@ export async function runEmbeddedAttempt(
-             // PLAN-40 funnel: dream-fact consumption stamps only in full mode
-             // (minimal assembly drops the proactive block after selection).
-             promptMode,
-+            deliveryId: params.runId,
-             // Heartbeat ticks must not spend embeddings on proactive recall or
-             // drain the continuity gate (token-efficiency build, W2 contract).
-             isHeartbeat: params.isHeartbeat === true,
+@@ -26,8 +26,8 @@ source checkout is unnecessary. The older Soapbox rc4/rc5/rc6 overlays are for
+ their recorded Bitterbot versions and must not be installed over an integrated
+ release.
+ 
+-Releases up to v1.11.0 bundle Soapbox rc5 for new Linux x64 operator setups; the
+-next release bundles rc10, which adds durable cancellation, revocation recovery
++Releases up to v1.11.0 bundle Soapbox rc5 for new Linux x64 operator setups;
++v1.12.0 and later bundle rc10, which adds durable cancellation, revocation recovery
+ and readiness checks (see [Permission changes and revocation](#permission-changes-and-revocation)).
+ 
+ Existing installs upgrade with `bitterbot update` or the in-app update; the
 ```
 
-**File**: `src/agents/embedded-runner/system-prompt.ts` (modified, +1/-0)
+**File**: `src/cli/update-cli/tarball.ts` (modified, +5/-20)
 ```diff
-@@ -61,6 +61,7 @@ export function buildEmbeddedSystemPrompt(params: {
-     maturity?: number;
-     /** Involuntary proactive-recall facts; rendered into the prompt body. */
-     proactiveMemories?: string;
-+    onProactiveRecallInjected?: () => void;
-     lastSessionBrief?: string;
-     sessionCoherence?: string;
-   };
-```
-
-**File**: `src/agents/endocrine-state.ts` (modified, +31/-11)
-```diff
-@@ -4,6 +4,7 @@
-  * phenotype summary from MEMORY.md.
+@@ -309,30 +309,15 @@ export type TarballCliOptions = UpdateCommandOptions & {
+   restoreConfig?: boolean;
+ };
+ 
+-const PRERELEASE_RE = /^v?\d+\.\d+\.\d+-/;
+-
+ /**
+- * Order two release versions. `compareSemverStrings` ignores pre-release
+- * labels, so `1.10.1-beta.2` and `1.10.1` compare equal; here the beta is
+- * behind the stable release of the same number (and ahead of nothing), so an
++ * Order two release versions. `compareSemverStrings` applies the SemVer
++ * pre-release tie-break, so `1.10.1-beta.2` sorts behind `1.10.1` and an
+  * install left on a beta still moves forward to the release it preceded.
++ * Kept as a named helper for the call sites and tests that read as
++ * "release order".
   */
+ export function releaseOrder(from: string, target: string): number | null {
+-  const cmp = compareSemverStrings(from, target);
+-  if (cmp !== 0) {
+-    return cmp;
+-  }
+-  const fromPre = PRERELEASE_RE.test(from);
+-  const targetPre = PRERELEASE_RE.test(target);
+-  if (fromPre !== targetPre) {
+-    return fromPre ? -1 : 1;
+-  }
+-  if (!fromPre) {
+-    return 0;
+-  }
+-  const a = from.replace(/^v/, "");
+-  const b = target.replace(/^v/, "");
+-  return a === b ? 0 : a.localeCompare(b, "en", { numeric: true }) < 0 ? -1 : 1;
++  return compareSemverStrings(from, target);
+ }
  
-+import { randomUUID } from "node:crypto";
- import type { BitterbotConfig } from "../config/config.js";
- import { createSubsystemLogger } from "../logging/subsystem.js";
- 
-@@ -27,6 +28,8 @@ export type EndocrineStateForPrompt = {
-   lastSessionBrief?: string;
-   /** Proactive memory facts for involuntary recall (Plan 7, Phase 1) */
-   proactiveMemories?: string;
-+  /** Called only when the full prompt renderer includes proactiveMemories. */
-+  onProactiveRecallInjected?: () => void;
-   /** Intra-session coherence context (Plan 7, Phase 2+9) */
-   sessionCoherence?: string;
-   /**
-@@ -55,6 +58,8 @@ export async function resolveEndocrineState(params: {
-    * fresh conversation is not suppressed by the previous session's window.
-    */
-   sessionKey?: string;
-+  /** Stable run/turn identity for retry-safe exposure accounting. */
-+  deliveryId?: string;
-   /**
-    * PLAN-40 funnel: the caller's prompt mode. Dream-artifact consumption is
-    * stamped ONLY when "full" — minimal-mode assembly discards the proactive
-@@ -119,6 +124,7 @@ export async function resolveEndocrineState(params: {
-     // matched directive/world_fact/mental_model crystals. This is what lets the
-     // agent answer already knowing what it has stored about a topic.
-     let proactiveMemories: string | undefined;
-+    let onProactiveRecallInjected: (() => void) | undefined;
-     let userMessageEmbedding: number[] | null = null;
-     const liveTurn = Boolean(params.userMessage) && !params.isHeartbeat;
-     try {
-@@ -130,26 +136,39 @@ export async function resolveEndocrineState(params: {
-           facts: string | undefined;
-           embedding: number[] | null;
-           renderedDreamChunkIds?: string[];
-+          renderedChunkIds?: string[];
-         }>;
-         markDreamArtifactsConsumed?(ids: readonly string[], kind: "retrieved"): void;
-+        recordProactiveRecallDelivery?(
-+          ids: readonly string[],
-+          delivery: { id: string; sessionKey?: string },
-+        ): void;
-       };
-       if (liveTurn && typeof recallManager.recallForUserTurn === "function") {
-         const recall = await recallManager.recallForUserTurn(params.userMessage!, {
-           scopeKey: params.sessionKey,
-         });
-         proactiveMemories = recall.facts;
-         userMessageEmbedding = recall.embedding;
--        // PLAN-40 funnel: these dream facts WILL render — buildEndocrine-
--        // StateSection includes proactiveMemories only on the full-mode
--        // branch, so the stamp is gated on the caller's declared mode.
--        if (
--          params.promptMode === "full" &&
--          proactiveMemories &&
--          recall.renderedDreamChunkIds &&
--          recall.renderedDreamChunkIds.length > 0 &&
--          typeof recallManager.markDreamArtifactsConsumed === "function"
--        ) {
--          recallManager.markDreamArtifactsConsumed(recall.renderedDreamChunkIds, "retrieved");
-+        // Selection may be discarded. The renderer, not the resolver, acknowledges
-+        // prompt inclusion. A stable id deduplicates rebuilds of the same turn.
-+        if (params.promptMode === "full" && proactiveMemories) {
-+          const delivery = { id: params.deliveryId ?? randomUUID(), sessionKey: params.sessionKey };
-+          onProactiveRecallInjected = () => {
-+            try {
-+              if (recall.renderedDreamChunkIds?.length) {
-+                recallManager.markDreamArtifactsConsumed?.(
-+                  recall.renderedDreamChunkIds,
-+                  "retrieved",
-+                );
-+              }
-+              if (recall.renderedChunkIds?.length) {
-+                recallManager.recordProactiveRecallDelivery?.(recall.renderedChunkIds, delivery);
-+              }
-+            } catch (err) {
-+              log.debug(`proactive recall inclusion evidence skipped: ${String(err)}`);
-+            }
-+          };
-         }
-       } else {
-         // No live message (status/compaction) or a heartbeat — identity-only
-@@ -355,6 +374,7 @@ export async function resolveEndocrineState(params: {
-       maturity,
-       lastSessionBrief,
-       proactiveMemories,
-+      onProactiveRecallInjected,
-       sessionCoherence,
-       budgetPressure,
-       budgetLabel,
+ export async function runTarballUpdateCommand(params: {
 ```
 
-**File**: `src/agents/rlm/context-builder.ts` (modified, +4/-0)
+**File**: `src/infra/anthropic-batch.test.ts` (modified, +85/-0)
 ```diff
-@@ -505,6 +505,8 @@ export async function buildDeepRecallContext(params: {
-   memoryManager?: MemorySearchManager | null;
-   /** PLAN-55: tag superseded memories with the ledger's current value (owner senders only). */
-   tagSuperseded?: boolean;
-+  /** Only an explicitly owner-authored turn contributes owner retrieval evidence. */
-+  observeEvidence?: boolean;
- }): Promise<string> {
-   const { agentId, scope, sessionId, includeMemory = true, maxTokens = 500_000 } = params;
-   const includeToolResults = params.includeToolResults ?? scope === "current_session";
-@@ -631,6 +633,8 @@ export async function buildDeepRecallContext(params: {
-           maxResults: 20,
-           tagSuperseded: params.tagSuperseded === true,
-           caller: "rlm_context",
-+          observe: params.observeEvidence === true,
-+          sessionKey: params.sessionKey,
-         });
-         for (const r of results) {
-           const key = r.snippet.slice(0, 100);
+@@ -7,6 +7,7 @@ import {
+   normalizeBatchBaseUrl,
+   resetAnthropicBatchStateForTest,
+   runAnthropicBatchCall,
++  sanitizeBatchCustomId,
+ } from "./anthropic-batch.js";
+ 
+ type Call = { url: string; method: string; body?: unknown; headers: Record<string, string> };
+@@ -270,3 +271,87 @@ describe("runAnthropicBatchCall", () => {
+     expect(batchStopReason("refusal")).toBe("error");
+   });
+ });
++
++describe("sanitizeBatchCustomId", () => {
++  it("keeps ids the Batches API already accepts", () => {
++    expect(sanitizeBatchCustomId("lane-1")).toBe("lane-1");
++    expect(sanitizeBatchCustomId("memory-dream_run-1")).toBe("memory-dream_run-1");
++  });
++
++  it("replaces the slashes in feature-derived ids and trims the ends", () => {
++    expect(sanitizeBatchCustomId("memory/dream-run-1")).toBe("memory-dream-run-1");
++    expect(sanitizeBatchCustomId("skills/evolution-")).toBe("skills-evolution");
++    expect(sanitizeBatchCustomId("rlm/deep-recall-a:b c")).toBe("rlm-deep-recall-a-b-c");
++  });
++
++  it("clamps to 64 characters without leaving a trailing dash", () => {
++    const long = `${"a".repeat(63)}/${"b".repeat(20)}`;
++    const out = sanitizeBatchCustomId(long);
++    expect(out).toHaveLength(63);
++    expect(out).toMatch(/^[a-zA-Z0-9_-]{1,64}$/);
++    expect(sanitizeBatchCustomId("x".repeat(80))).toBe("x".repeat(64));
++  });
++
++  it("never returns an empty id", () => {
++    expect(sanitizeBatchCustomId("///")).toMatch(/^[a-zA-Z0-9_-]{1,64}$/);
++  });
++});
++
++describe("runAnthropicBatchCall custom_id", () => {
++  beforeEach(() => resetAnthropicBatchStateForTest());
++
++  it("submits the sanitized id and matches the result line by that same id", async () => {
++    const request = {
++      model: "claude-test",
++      max_tokens: 16,
++      messages: [{ role: "user" as const, content: [{ type: "text" as const, text: "hi" }] }],
++    };
++    const results = `${JSON.stringify({
++      custom_id: "memory-dream-run-1",
++      result: {
++        type: "succeeded",
++        message: {
++          id: "msg_1",
++          role: "assistant",
++          content: [{ type: "text", text: "dreamt" }],
++          stop_reason: "end_turn",
++          usage: { input_tokens: 1, output_tokens: 1 },
++        },
++      },
++    })}\n`;
++    const { fetchImpl } = makeFetch([
++      (c) => {
++        const body = c.body as { requests: Array<{ custom_id: string }> };
++        expect(body.requests[0]?.custom_id).toBe("memory-dream-run-1");
++        return json(200, { id: "msgbatch_2", processing_status: "in_progress", results_url: null });
++      },
++      () =>
++        json(200, {
++          id: "msgbatch_2",
++          processing_status: "ended",
++          results_url: "https://api.anthropic.com/v1/messages/batches/msgbatch_2/results",
++          request_counts: { processing: 0, succeeded: 1, errored: 0, canceled: 0, expired: 0 },
++        }),
++      () => json(200, results),
++    ]);
++    let clock = 0;
++    const out = await runAnthropicBatchCall({
++      apiKey: "sk-test",
++      baseUrl: "https://api.anthropic.com",
++      request,
++      customId: "memory/dream-run-1",
++      fetchImpl,
++      sleep: async (ms) => {
++        clock += ms;
++      },
++      now: () => clock,
++      pollInitialMs: 1_000,
++      pollMaxMs: 2_000,
++      maxWaitMs: 60_000,
++    });
++    expect(out.ok).toBe(true);
++    if (out.ok) {
++      expect(out.message.content?.[0]?.text).toBe("dreamt");
++    }
++  });
++});
 ```
 
-**File**: `src/agents/system-prompt-endocrine.ts` (modified, +2/-0)
+**File**: `src/infra/anthropic-batch.ts` (modified, +23/-2)
 ```diff
-@@ -16,6 +16,7 @@ export type EndocrineStateInput = {
-   maturity?: number;
-   lastSessionBrief?: string;
-   proactiveMemories?: string;
-+  onProactiveRecallInjected?: () => void;
-   sessionCoherence?: string;
-   budgetPressure?: number;
-   budgetLabel?: string;
-@@ -172,6 +173,7 @@ export function buildEndocrineStateSection(params: {
-   // Plan 7, Phase 1: Proactive memory surfacing — involuntary recall
-   if (proactiveMemories) {
-     lines.push("", proactiveMemories);
-+    endocrineState.onProactiveRecallInjected?.();
+@@ -151,13 +151,32 @@ export function resetAnthropicBatchStateForTest(): void {
+   unsupportedUntil.clear();
+ }
+ 
++const CUSTOM_ID_MAX_LENGTH = 64;
++
++/**
++ * Coerce a caller-supplied id into the shape the Batches API accepts
++ * (`^[a-zA-Z0-9_-]{1,64}$`). Lane callers pass `feature-runId` and features are
++ * slash-separated (`memory/dream`, `skills/evolution`), which the API rejects with
++ * HTTP 400 on every submit; before this coercion no lane ever reached the batch
++ * queue and each call silently paid the live price. Ids that already match are
++ * returned unchanged, so the same value keys the submit and the results lookup.
++ */
++export function sanitizeBatchCustomId(id: string): string {
++  const cleaned = id
++    .replace(/[^a-zA-Z0-9_-]+/g, "-")
++    .replace(/^-+|-+$/g, "")
++    .slice(0, CUSTOM_ID_MAX_LENGTH)
++    .replace(/-+$/g, "");
++  return cleaned || makeCustomId();
++}
++
+ function makeCustomId(seed?: string): string {
+   const base = (seed ?? "")
+     .replace(/[^a-zA-Z0-9_-]+/g, "-")
+     .replace(/^-+|-+$/g, "")
+     .slice(0, 40);
+   const rand = Math.random().toString(36).slice(2, 10);
+-  return `${base || "lane"}-${Date.now().toString(36)}-${rand}`.slice(0, 64);
++  return `${base || "lane"}-${Date.now().toString(36)}-${rand}`.slice(0, CUSTOM_ID_MAX_LENGTH);
+ }
+ 
+ function defaultSleep(ms: number, signal?: AbortSignal): Promise<void> {
+@@ -226,7 +245,9 @@ export async function runAnthropicBatchCall(
+     "x-api-key": params.apiKey,
+     "anthropic-version": ANTHROPIC_API_VERSION,
+   };
+-  const customId = params.customId ?? makeCustomId(params.request.model);
++  const customId = params.customId
++    ? sanitizeBatchCustomId(params.customId)
++    : makeCustomId(params.request.model);
+ 
+   if (isBatchTemporarilyUnsupported(base, now())) {
+     return { ok: false, reason: "unsupported", waitedMs: 0, canceled: false };
+```
+
+**File**: `src/infra/update-check.test.ts` (modified, +16/-0)
+```diff
+@@ -64,6 +64,22 @@ describe("compareSemverStrings (PLAN-41 D-A CalVer guard)", async () => {
+     expect(compareSemverStrings("1.0.0", "1.1.0")).toBe(-1);
+     expect(compareSemverStrings("2.0.0", "2.0.0")).toBe(0);
+   });
++
++  it("a pre-release is behind the release it precedes (beta node sees the stable build)", () => {
++    expect(compareSemverStrings("1.11.0-beta.1", "1.11.0")).toBe(-1);
++    expect(compareSemverStrings("1.11.0", "1.11.0-beta.1")).toBe(1);
++    expect(compareSemverStrings("v1.11.0-beta.1", "v1.11.0")).toBe(-1);
++    expect(compareSemverStrings("1.11.0-beta.1", "1.10.1")).toBe(1);
++    expect(compareSemverStrings("1.12.0", "1.11.0-beta.1")).toBe(1);
++  });
++
++  it("orders pre-releases by identifier, numerically where both are numbers", () => {
++    expect(compareSemverStrings("1.11.0-beta.1", "1.11.0-beta.2")).toBe(-1);
++    expect(compareSemverStrings("1.11.0-beta.10", "1.11.0-beta.9")).toBe(1);
++    expect(compareSemverStrings("1.11.0-beta.1", "1.11.0-beta.1")).toBe(0);
++    expect(compareSemverStrings("1.11.0-alpha.1", "1.11.0-beta.1")).toBe(-1);
++    expect(compareSemverStrings("1.11.0-beta", "1.11.0-beta.1")).toBe(-1);
++  });
+ });
+ 
+ describe("fetchNpmTagVersion not-published mapping (D-J)", () => {
+```
+
+**File**: `src/infra/update-check.ts` (modified, +44/-1)
+```diff
+@@ -627,7 +627,50 @@ export function compareSemverStrings(a: string | null, b: string | null): number
+   if (pa.patch !== pb.patch) {
+     return pa.patch < pb.patch ? -1 : 1;
    }
+-  return 0;
++  return comparePrerelease(a, b);
++}
++
++const PRERELEASE_RE = /^v?\d+\.\d+\.\d+-([0-9A-Za-z.-]+)/;
++
++/**
++ * SemVer §11 tie-break once `major.minor.patch` match: a pre-release sorts
++ * before the release it precedes, and two pre-releases compare identifier by
++ * identifier (numeric before alphanumeric, numerics by value, the shorter
++ * list first). Without this a node left on `1.11.0-beta.1` saw `1.11.0` as
++ * equal and was never offered the stable build it preceded.
++ */
++function comparePrerelease(a: string | null, b: string | null): number {
++  const preA = a?.match(PRERELEASE_RE)?.[1] ?? null;
++  const preB = b?.match(PRERELEASE_RE)?.[1] ?? null;
++  if (preA === null && preB === null) {
++    return 0;
++  }
++  if (preA === null || preB === null) {
++    return preA === null ? 1 : -1;
++  }
++  const idsA = preA.split(".");
++  const idsB = preB.split(".");
++  const len = Math.min(idsA.length, idsB.length);
++  for (let i = 0; i < len; i += 1) {
++    const x = idsA[i];
++    const y = idsB[i];
++    if (x === y) {
++      continue;
++    }
++    const xNum = /^\d+$/.test(x);
++    const yNum = /^\d+$/.test(y);
++    if (xNum && yNum) {
++      return Number(x) < Number(y) ? -1 : 1;
++    }
++    if (xNum !== yNum) {
++      return xNum ? -1 : 1;
++    }
++    return x < y ? -1 : 1;
++  }
++  if (idsA.length === idsB.length) {
++    return 0;
++  }
++  return idsA.length < idsB.length ? -1 : 1;
+ }
  
-   // Plan 7, Phase 2+9: Intra-session coherence + intent tracking
+ export async function checkUpdateStatus(params: {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #345** (2026-10-31): fix(infra): make batch lanes reach the Batches API and offer beta nodes the stable release (@VGIL77)
 - **PR #344** (2026-10-31): fix(memory): record evidence only for prompt-included facts, owner searches and on an independent retention clock (@VGIL77)
 - **PR #343** (2026-10-31): feat(compute): land the beta recovery stack on main with Soapbox rc10 (@VGIL77)
 - **PR #342** (2026-10-31): feat(gateway): explain disabled OpenAI-compatible endpoints instead of a bare 404 (@VGIL77)
 - **PR #341** (2026-10-31): feat(gateway): attribute event-loop stalls with an on-demand sampling profiler (@VGIL77)
 - **PR #340** (2026-10-31): fix(acp): migrate to @agentclientprotocol/sdk 2.x and fix the stdio bridge (@VGIL77)
-- **PR #339** (2026-10-30): chore(deps): bump the npm-minor-patch group across 1 directory with 19 updates (@dependabot[bot])
 
 ---
 
@@ -2137,42 +2165,30 @@ names the exc
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. memory): record evidence only for prompt-included facts, owner searches and on a
+## X. infra): make batch lanes reach the Batches API and offer beta nodes the stable r
 
 **RULE**:
-When implementing operations in `docs/memory/evidence-telemetry.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/cli/update.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aa0953e9`: memory): record evidence only for prompt-included facts, owner searches and on an independent retention clock (#344). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9f6fa547`: infra): make batch lanes reach the Batches API and offer beta nodes the stable release (#345). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/memory/evidence-telemetry.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/cli/update.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        retentionDays: 90, // rows older than this are pruned independently every 30 minutes
-One row per returned result, at most `topK` per search, written in one transaction after the final ordering (fusion, boosts, superseded demotion) is fixed. Guest searches (`guestSearch`) and non-owner deep-recall searches (including context and live API searches) are never recorded. The PLAN-59 Phase 1 pilot harness (`benchmarks/plan59-phase1/`) reads this table, decayed with a 30-day half-life, as the demand term of its need estimate whenever it is present and non-empty on the snapshot under test.
-For proactive recall, `delivered` means inclusion in a full model prompt, not
-proof that the owner saw the fact. Selection, discarded prompt assembly and
-minimal prompts record nothing. The formatter supplies only the chunk ids
-that survived its cap. The full prompt renderer acknowledges them using
-`pr:<keyed delivery digest>:<chunk id>`; the digest covers session and run/turn
-identity. Rebuilding the same delivery is idempotent, while distinct turns or
-sessions remain distinct even within the same hour. A caller without a run id
-receives a fresh opaque delivery id for that resolved prompt.
-
-- `d
+of reporting it as current. The gateway's startup update check, `bitterbot
+status`, and the Control UI update banner apply the same ordering, so a node
+left on a beta is told about the stable release it preceded.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-        retentionDays: 90, // rows older than this are pruned on the consolidation tick
-One row per returned result, at most `topK` per search, written in one transaction after the final ordering (fusion, boosts, superseded demotion) is fixed. Guest searches (`guestSearch`) are never recorded. The PLAN-59 Phase 1 pilot harness (`benchmarks/plan59-phase1/`) reads this table, decayed with a 30-day half-life, as the demand term of its need estimate whenever it is present and non-empty on the snapshot under test.
-- `dream_mode_select`: legacy = the modes `selectModes` chose with their adjusted weights and the GCCRF weight in force (0.25 to 0.3); proposed = the modes chosen from the same enabled set with the GCCRF adjustment zeroed. Both selections consume the same random draws, so a divergence reflects the weights and nothing else. The reserved utility-lane slot and the exploration auto-trigger are shared by both.
-`prune()` runs once per consolidation tick (every 30 minutes by default) after the existing steps, deleting rows older than `retentionDays` in chunks of 2000 with an event-loop yield between chunks, so a backlog can never starve the gateway loop (see the event
+of reporting it as current.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aa0953e9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9f6fa547` are properly handled with clean fallback behavior.

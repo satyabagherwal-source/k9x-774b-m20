@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T21:37:33.023Z",
+  "last_updated": "2026-10-31T23:08:22.718Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3555,6 +3555,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-kuddev-pebrel"
+    },
+    {
+      "id": "CD-ICSE",
+      "directive_title": "bump version",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "o2sh/onefetch",
+      "source_commit": "8d71e7f5",
+      "date_staged": "2026-10-31",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-o2sh-onefetch"
     }
   ]
 }

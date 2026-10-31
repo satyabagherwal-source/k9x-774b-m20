@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T23:02:09.823Z",
+  "last_updated": "2026-10-31T23:08:38.022Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1880,14 +1880,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-      "content_hash": "2cf7e82d823a47f93b8b17341303190bfdb3e956c27b2cbda687114ba8e31aba",
-      "verified_at": "2026-10-28T21:37:08.077Z",
+      "content_hash": "73fa85d0ce37d13c473497c472232d66b8e7f7cb1dccb2279f8a31b34e09e1b1",
+      "verified_at": "2026-10-31T23:08:22.235Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T21:37:08.077Z"
+      "last_updated": "2026-10-31T23:08:22.235Z"
     },
     "ZHangZHengEric/Sage": {
       "repository": "ZHangZHengEric/Sage",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "e5861136d21c074511af7b5ed96ed5468da046a5d6b11503c19708018e3d688f",
-      "verified_at": "2026-10-31T19:41:02.639Z",
+      "content_hash": "4504c447e8b4865cff66353cbba12e7398bc4a217b8d64dcab7bdd5bfc96a569",
+      "verified_at": "2026-10-31T23:08:38.022Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T19:41:02.639Z"
+      "last_updated": "2026-10-31T23:08:38.022Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -6111,14 +6111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-o2sh-onefetch",
-      "content_hash": "f088eb011c97f5e93b2fb05d7b4c54bbedd4a28af5ac183a3417b4358f0faf92",
-      "verified_at": "2026-10-30T00:27:04.710Z",
+      "content_hash": "b9edea320a946794c6b3e1597872b4aa038cbc708ac5c157f7e817524c276547",
+      "verified_at": "2026-10-31T23:08:22.721Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T00:27:04.710Z"
+      "last_updated": "2026-10-31T23:08:22.721Z"
     },
     "RunanywhereAI/runanywhere-sdks": {
       "repository": "RunanywhereAI/runanywhere-sdks",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T23:02:09.743Z",
+  "last_updated": "2026-10-31T23:08:37.955Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4935,8 +4935,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "aa0953e9",
-      "content_hash": "e5861136d21c074511af7b5ed96ed5468da046a5d6b11503c19708018e3d688f",
+      "source_version": "9f6fa547",
+      "content_hash": "4504c447e8b4865cff66353cbba12e7398bc4a217b8d64dcab7bdd5bfc96a569",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -5119,6 +5119,11 @@
           "number": 6298,
           "title": "memory): record evidence only for prompt-included facts, owner searches and on a",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6357,
+          "title": "infra): make batch lanes reach the Batches API and offer beta nodes the stable r",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5126,7 +5131,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T19:41:02.528Z",
+      "verified_at": "2026-10-31T23:08:37.942Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26807,7 +26812,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
       "source_version": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-      "content_hash": "2cf7e82d823a47f93b8b17341303190bfdb3e956c27b2cbda687114ba8e31aba",
+      "content_hash": "73fa85d0ce37d13c473497c472232d66b8e7f7cb1dccb2279f8a31b34e09e1b1",
       "dossier_path": "07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md",
       "promoted_rules": [
@@ -26846,7 +26851,7 @@
         "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv47ewm0",
         "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv4kon4a"
       ],
-      "verified_at": "2026-10-28T21:37:07.957Z",
+      "verified_at": "2026-10-31T23:08:22.150Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43473,8 +43478,8 @@
       "slug": "o2sh-onefetch",
       "platform": "github",
       "source_url": "https://github.com/o2sh/onefetch",
-      "source_version": "b5f80988",
-      "content_hash": "f088eb011c97f5e93b2fb05d7b4c54bbedd4a28af5ac183a3417b4358f0faf92",
+      "source_version": "8d71e7f5",
+      "content_hash": "b9edea320a946794c6b3e1597872b4aa038cbc708ac5c157f7e817524c276547",
       "dossier_path": "07_PROJECT_LEARNING/o2sh-onefetch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/o2sh-onefetch-learnings.md",
       "promoted_rules": [
@@ -43509,7 +43514,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T00:27:04.587Z",
+      "verified_at": "2026-10-31T23:08:22.617Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -165102,6 +165107,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T23:02:09.724Z"
+    },
+    "rule-6357": {
+      "learning_id": "rule-6357",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6357,
+      "title": "infra): make batch lanes reach the Batches API and offer beta nodes the stable r",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "9f6fa547",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T23:08:37.942Z"
     }
   },
   "aliases": {
