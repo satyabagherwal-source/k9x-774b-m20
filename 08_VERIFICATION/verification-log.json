@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-BZS6",
-    "timestamp": "2026-10-30T05:32:00.102Z",
-    "repository": "pimalaya/himalaya",
-    "learningId": "learn-github-pimalaya-himalaya",
-    "contentHash": "4a6ccc792c1a98f15f880121473ae422f70813a31bb24d2756407b15b1b520ca",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-C03J",
-    "timestamp": "2026-10-30T05:32:00.511Z",
-    "repository": "argoproj/argo-workflows",
-    "learningId": "learn-github-argoproj-argo-workflows",
-    "contentHash": "61da933d785b7d7d537eb8004215924cef5c7c8b08151f35d043e0e9de30d5b2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-L99U",
     "timestamp": "2026-10-30T05:39:12.306Z",
     "repository": "reason-machines/reason-network",
@@ -7492,6 +7462,36 @@
     "contentHash": "8ad2c1d5e088c3b6c71a8f7f5f9ce0142fee2a0fb65b20c16cba91fa21597d73",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-4GJD",
+    "timestamp": "2026-10-31T15:29:40.537Z",
+    "repository": "stabilityai/stable-diffusion-3-medium",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
+    "contentHash": "ca0516a271b57d21200d3064454dc01f7789e1a1e9fba51dd366651582240693",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-4T1J",
+    "timestamp": "2026-10-31T15:29:56.743Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "e5a68e3168583c917cb634c5da9dd4daa8f76360a15bbbc26006d7e8353c0fff",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

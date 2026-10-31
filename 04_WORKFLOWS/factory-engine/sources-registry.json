@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T15:14:44.765Z",
-    "lastVerified": "2026-10-31T15:14:44.765Z",
+    "lastChecked": "2026-10-31T15:29:59.291Z",
+    "lastVerified": "2026-10-31T15:29:59.291Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -424,22 +424,21 @@
     "lastVerified": "2026-10-31T05:42:48.654Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T14:45:57.337Z",
-    "lastVerified": "2026-10-31T14:45:57.337Z",
+    "lastChecked": "2026-10-31T15:29:56.306Z",
+    "lastVerified": "2026-10-31T15:29:56.306Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "52c4752cf5505961617c1ad1c8d96c122408ea4de0ad177c37275babafa4baf1",
+    "contentHash": "e5a68e3168583c917cb634c5da9dd4daa8f76360a15bbbc26006d7e8353c0fff",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "279a17f6"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1632,9 +1631,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-10-31T12:00:31.484Z",
+    "lastChecked": "2026-10-31T15:29:47.050Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-10-31T12:00:31.484Z"
+    "lastVerified": "2026-10-31T15:29:47.050Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -4797,9 +4796,9 @@
   "vlcn-io-cr-sqlite": {
     "name": "cr-sqlite",
     "officialUrl": "https://github.com/vlcn-io/cr-sqlite",
-    "lastChecked": "2026-10-30T23:15:09.649Z",
+    "lastChecked": "2026-10-31T15:29:49.572Z",
     "revisionIdentifier": "43ab94ca",
-    "lastVerified": "2026-10-30T23:15:09.649Z"
+    "lastVerified": "2026-10-31T15:29:49.572Z"
   },
   "webrtc-rs-webrtc": {
     "name": "webrtc",
@@ -4934,12 +4933,12 @@
     "officialUrl": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T14:49:32.489Z",
-    "lastVerified": "2026-10-28T14:49:32.489Z",
+    "lastChecked": "2026-10-31T15:29:39.624Z",
+    "lastVerified": "2026-10-31T15:29:39.624Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-    "contentHash": "5383d64a792e4e702d5073c72aca4bb27329a9da9d05401d8e40e610fecffcae",
+    "contentHash": "ca0516a271b57d21200d3064454dc01f7789e1a1e9fba51dd366651582240693",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -5988,9 +5987,9 @@
   "snyk-driftctl": {
     "name": "driftctl",
     "officialUrl": "https://github.com/snyk/driftctl",
-    "lastChecked": "2026-10-30T23:58:37.993Z",
+    "lastChecked": "2026-10-31T15:29:44.553Z",
     "revisionIdentifier": "724f896a",
-    "lastVerified": "2026-10-30T23:58:37.993Z"
+    "lastVerified": "2026-10-31T15:29:44.553Z"
   },
   "pingcap-talent-plan": {
     "name": "talent-plan",
@@ -7541,9 +7540,9 @@
   "arkivanov-decompose": {
     "name": "Decompose",
     "officialUrl": "https://github.com/arkivanov/Decompose",
-    "lastChecked": "2026-10-28T20:15:41.774Z",
+    "lastChecked": "2026-10-31T15:29:42.104Z",
     "revisionIdentifier": "42fd8933",
-    "lastVerified": "2026-10-28T20:15:41.774Z"
+    "lastVerified": "2026-10-31T15:29:42.104Z"
   },
   "bahdotsh-wrkflw": {
     "name": "bahdotsh/wrkflw",
@@ -7794,9 +7793,9 @@
   "veirt-weathr": {
     "name": "weathr",
     "officialUrl": "https://github.com/Veirt/weathr",
-    "lastChecked": "2026-10-30T19:35:41.717Z",
+    "lastChecked": "2026-10-31T15:29:36.977Z",
     "revisionIdentifier": "7d403a0c",
-    "lastVerified": "2026-10-30T19:35:41.717Z"
+    "lastVerified": "2026-10-31T15:29:36.977Z"
   },
   "hf-microsoft-frognano-4b-2609": {
     "name": "microsoft/FrogNano-4B-2609",

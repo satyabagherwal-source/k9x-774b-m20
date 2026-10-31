@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `279a17f6`  
+> **Source Version**: `5fdfe09e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T14:19:43.747Z  
+> **Timestamp**: 2026-10-31T15:29:56.309Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T14:19:43.739Z  
+> **Harvest Timestamp**: 2026-10-31T15:29:56.306Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -371,7 +371,7 @@ pub fn compile(source: &str) -> Result<Program> {
 ```
 import "dotenv/config";
 import { start } from "./src/app";
-import * as milestone from "./src/milestone";
+import * as milestone from "./src/lib/milestone.ts";
 
 start(process.argv[2])
   .then((difference: number) => {
@@ -389,7 +389,7 @@ start(process.argv[2])
 ```
 import * as nucleoid from "./lib/nucleoid";
 import * as llm from "./lib/llm";
-import * as milestone from "./milestone";
+import * as milestone from "./lib/milestone.ts";
 
 export async function declarations({ puzzle_id, train_dataset }) {
   milestone.inferring_declarations();
@@ -525,39 +525,33 @@ export async function state(train_dataset) {
 
 ### Core Architecture Module: `arc/src/app.ts`
 ```
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 import * as analyzer from "./analyzer";
 import * as visualizer from "./visualizer";
 import * as Matrix from "./lib/Matrix";
 import * as nucleoid from "./lib/nucleoid";
-import * as milestone from "./milestone";
+import * as milestone from "./lib/milestone.ts";
+import arc_dataset from "./lib/arc_dataset.ts";
 
 // Genesis puzzle_id: 3aa6fb7a
 export async function start(puzzle_id: string = "9af7a82c") {
-  const puzzle = JSON.parse(
-    await readFile(
-      join(__dirname, "..", "data", "training", `${puzzle_id}.json`),
-      "utf8"
-    )
-  );
-  const {
-    train,
-    test: [{ input: test_input_matrix }],
-  } = puzzle;
+  const { arc_train, test_input_matrix, test_output_matrix } =
+    await arc_dataset.load(puzzle_id);
 
-  const training_input = {
-    dataset: train.map(({ input, output }) => ({
+  const train_dataset = {
+    dataset: arc_train.map(({ input, output }) => ({
       input_matrix: input,
       output_matrix: output,
       instances: [],
     })),
+    declarations: [],
+    output_canvas: "EXACT",
   };
 
   const startedAt: number = performance.now();
+
   milestone.start({
     version: await nucleoid.version(),
-    train,
+    train: arc_train,
     test_input_matrix,
   });
 
@@ -567,13 +561,11 @@ export async function start(puzzle_id: string = "9af7a82c") {
 
   const { declarations, output_canvas } = await analyzer.declarations({
     puzzle_id,
-    train_dataset: training_input,
+    train_dataset,
   });
-  const train_dataset = {
-    ...training_input,
-    declarations,
-    output_canvas,
-  };
+
+  train_dataset.declarations = declarations;
+  train_dataset.output_canvas = output_canvas;
 
   for (const [index, dataset] of train_dataset.dataset.entries()) {
     const { input_matrix, output_matrix } = dataset;
@@ -675,13 +667,13 @@ export async function start(puzzle_id: string = "9af7a82c") {
 
   result_matrix = Matrix.canvas(result_matrix, output_canvas);
 
-  const test_output_matrix = puzzle.test[0].output;
   milestone.comparison({ test_output_matrix, result_matrix });
 
   const difference: number = Matrix.difference(
     result_matrix,
     test_output_matrix
   );
+
   milestone.summary({ difference, duration: performance.now() - startedAt });
 
   return difference;
@@ -689,13 +681,7 @@ export async function start(puzzle_id: string = "9af7a82c") {
 
 ```
 
-### Core Architecture Module: `arc/src/dataset/index.ts`
-```
-export { document } from "./instruct_dataset";
-
-```
-
-### Core Architecture Module: `arc/src/dataset/instruct_dataset.ts`
+### Core Architecture Module: `arc/src/dataset/dataset.ts`
 ```
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -736,6 +722,12 @@ export function document(puzzle_id: string): string {
 
   return `[${datasets.join(",")}]`;
 }
+
+```
+
+### Core Architecture Module: `arc/src/dataset/index.ts`
+```
+export { document } from "./dataset";
 
 ```
 
@@ -976,514 +968,184 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `279a17f6` (2026-10-31)
-**Commit Message**: Add ARC dataset for size-ranked histograms
+### Incident Patch 1: `5fdfe09e` (2026-10-31)
+**Commit Message**: Extract ARC dataset loader and move milestone to lib
 
-Add four synthetic training pairs demonstrating histogram bars ranked by region cell count, with positions derived from the full object population. Document the dataset’s construction and rule behavior.
+Add arc/src/lib/arc_dataset.ts to load puzzle JSON (train, test input and output) so app.ts no longer reads files directly. Move milestone.ts into lib/ and update imports in server, analyzer, app, visualizer and openrouter. Rename dataset/instruct_dataset.ts to dataset/dataset.ts. In app.ts, build train_dataset up front with default declarations and output_canvas, then fill them in after analysis.
 
-**File**: `arc/README.md` (modified, +38/-22)
+**File**: `arc/server.ts` (modified, +1/-1)
 ```diff
-@@ -99,6 +99,17 @@ output, such as a stage, a step about to start, or a step's result, and are the
- only callers of the `src\lib\terminal.ts` renderer. The analyzer, visualizer,
- OpenRouter client, and entry point report progress only through them.
+@@ -1,6 +1,6 @@
+ import "dotenv/config";
+ import { start } from "./src/app";
+-import * as milestone from "./src/milestone";
++import * as milestone from "./src/lib/milestone.ts";
  
-+`milestone.state` displays the result of each batched state pass as a table:
-+one per training pair at the end of the analysis, titled
-+`Training pair N · State`, and one for the test objects, titled
-+`Test · State`, before their outputs are composed. Each row is an object that
-+`Obj[:]` returns after the declarative rules run, with `id` first and then one
-+column per property in the order the runtime reports them. Cells keep the
-+formatting of the boxed object states, so strings stay quoted, and a property
-+that an object lacks shows a grey `—`. Tables span the panel width. Wider
-+tables continue in panels titled `(continued)` that repeat `id`, and a cell
-+too wide for its panel wraps instead of being cut.
-+
- ## Instruction datasets
- 
- The synchronous `document(puzzle_id)` function reads only the puzzle's own
-@@ -154,30 +165,35 @@ states because the shapes are not rotated. Held-out inputs and outputs are not
- included.
- 
- `dataset.9af7a82c.json` follows the rule of `data\training\9af7a82c.json`
--with four synthesized pairs instead of copies of its grids, nineteen region
--instances in total (3, 4, 6, and 6 per pair). A seeded generator partitioned
--fully colored canvases (2 by 8, 6 by 3, 5 by 8, and 8 by 4, rows by columns,
-+with four synthesized pairs instead of copies of its grids, eighteen region
-+instances in total (3, 5, 6, and 4 per pair). A seeded generator partitioned
-+fully colored canvases (3 by 6, 7 by 3, 4 by 7, and 6 by 4, rows by columns,
- unlike the puzzle's 3 by 3, 3 by 4, and 4 by 3 inputs) into three to six
--4-connected regions, one per color, with freshly drawn shapes, cell counts
--from 1 to 17, colors, and positions; no matrix equals a grid in `data`.
-+4-connected regions, one per color, with freshly grown shapes, cell counts
-+from 1 to 11, colors, and positions; no matrix equals a grid in `data`.
- Cell counts are distinct within each pair. In every pair the count order
--differs from color order and from first-appearance order, and some pairs
--contradict ordering by bounding-box width, height, or area. Each output is a
--histogram: the region with the r-th largest cell count becomes a vertical bar
--of its color in column r, starting at the top row and as tall as the region's
--cell count, giving 11 by 3, 8 by 4, 17 by 6, and 15 by 6 outputs. The class
--takes `color`, `cell_count`, and `size_rank`, the region's zero-based position
--when its pair's regions are ordered by cell count, largest first; each pair
--lists its instances in that order. Every object executes in its own Nucleoid
--process, so the rank is a constructor property rather than a comparison across
--instances. Unconditional class-level rules introduce `bar_height` (the cell
--count), which is absent before the rules run, and move `x` to `size_rank` and
--`y` to the output origin 0. Tags identify the geometry: `l9100` is a single
--shape, as in `dataset.28bf18c6.json`, and `l6953` is a vertical bar. Input
--masks retain each pair's input canvas and output masks its output canvas;
--`output_canvas` is `FIT` because each histogram fills its nonzero bounding
--box. Orientation is 0 in both states because the regions are not rotated and
--the bars are vertical. Held-out inputs and outputs are not included.
-+differs from color order and from first-appearance order, and some bar is
-+taller than its region's bounding box; the pairs also contradict ordering by
-+bounding-box area, height, and width. Each output is a histogram: the region
-+with the r-th largest cell count becomes a vertical bar of its color in
-+column r, starting at the top row and as tall as the region's cell count,
-+giving 9 by 3, 7 by 5, 11 by 6, and 8 by 4 outputs. The class takes `color`
-+and `cell_count`, the region's number of cells, as scalars rather than a
-+matrix of cells. Unconditional class-level rules introduce `bar_height` (the
-+cell count), which is absent before the rules run, move `y` to the output
-+origin 0, and derive `x`, the bar's column, from the pair's whole population:
-+`Obj.filter(other => other.cell_count > $Obj.cell_count).length` counts the
-+larger regions and re-evaluates whenever an instance is added. The solver
-+runs each instance with the implementations of the earlier instances of its
-+training pair or test input, so each pair lists its instances largest first,
-+and every recorded `x` already counts all larger regions of its pair. Tags
-+identify the geometry: `l9100` is a single shape, as in
-+`dataset.28bf18c6.json`, and `l6953` is a vertical bar. Input masks retain
-+each pair's input canvas and output masks its output canvas; `output_canvas`
-+is `FIT` because each histogram fills its nonzero bounding box, and two
-+outputs are narrower than their inputs. Orientation is 0 in both states
-+because the 
+ start(process.argv[2])
+   .then((difference: number) => {
 ```
 
-**File**: `arc/src/dataset/dataset.9af7a82c.json` (added, +639/-0)
+**File**: `arc/src/analyzer.ts` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,639 @@
-+{
-+  "declarations": [
-+    "class Obj(x: int, y: int, orientation: int, color: int, cell_count: int):\n    this.x = x\n    this.y = y\n    this.orientation = orientation\n    this.tag = 'l9100'\n    this.color = color\n    this.cell_count = cell_count",
-+    "$Obj.tag = 'l6953'",
-+    "$Obj.bar_height = $Obj.cell_count",
-+    "$Obj.x = Obj.filter(other => other.cell_count > $Obj.cell_count).length",
-+    "$Obj.y = 0"
-+  ],
-+  "output_canvas": "FIT",
-+  "dataset": [
-+    {
-+      "input_matrix": [
-+        [4, 6, 6, 3, 3, 3],
-+        [4, 4, 6, 6, 6, 3],
-+        [4, 3, 3, 3, 3, 3]
-+      ],
-+      "output_matrix": [
-+        [3, 6, 4],
-+        [3, 6, 4],
-+        [3, 6, 4],
-+        [3, 6, 4],
-+        [3, 6, 0],
-+        [3, 0, 0],
-+        [3, 0, 0],
-+        [3, 0, 0],
-+        [3, 0, 0]
-+      ],
-+      "instances": [
-+        {
-+          "instance_name": "objd34be173a902",
-+          "input_x": 1,
-+          "output_x": 0,
-+          "input_y": 0,
-+          "output_y": 0,
-+          "input_orientation": 0,
-+          "output_orientation": 0,
-+          "input_instance_matrix": [
-+            [0, 0, 0, 3, 3, 3],
-+            [0, 0, 0, 0, 0, 3],
-+            [0, 3, 3, 3, 3, 3]
-+          ],
-+          "output_instance_matrix": [
-+            [3, 0, 0],
-+            [3, 0, 0],
-+            [3, 0, 0],
-+            [3, 0, 0],
-+            [3, 0, 0],
-+            [3, 0, 0],
-+            [3, 0, 0],
-+            [3, 0, 0],
-+            [3, 0, 0]
-+          ],
-+          "implementation": "objd34be173a902 = Obj(x=1, y=0, orientation=0, color=3, cell_count=9)",
-+          "input_value": {"cell_count":9,"color":3,"id":"objd34be173a902","orientation":0,"tag":"l9100","x":1,"y":0},
-+          "output_value": {"bar_height":9,"cell_count":9,"color":3,"id":"objd34be173a902","orientation":0,"tag":"l6953","x":0,"y":0}
-+        },
-+        {
-+          "instance_name": "objdae61419974a",
-+          "input_x": 1,
-+          "output_x": 1,
-+          "input_y": 0,
-+          "output_y": 0,
-+          "input_orientation": 0,
-+          "output_orientation": 0,
-+          "input_instance_matrix": [
-+            [0, 6, 6, 0, 0, 0],
-+            [0, 0, 6, 6, 6, 0],
-+            [0, 0, 0, 0, 0, 0]
-+          ],
-+          "output_instance_matrix": [
-+            [0, 6, 0],
-+            [0, 6, 0],
-+            [0, 6, 0],
-+            [0, 6, 0],
-+            [0, 6, 0],
-+            [0, 0, 0],
-+            [0, 0, 0],
-+            [0, 0, 0],
-+            [0, 0, 0]
-+          ],
-+          "implementation": "objdae61419974a = Obj(x=1, y=0, orientation=0, color=6, cell_count=5)",
-+          "input_value": {"cell_count":5,"color":6,"id":"objdae61419974a","orientation":0,"tag":"l9100","x":1,"y":0},
-+          "output_value": {"bar_height":5,"cell_count":5,"color":6,"id":"objdae61419974a","orientation":0,"tag":"l6953","x":1,"y":0}
-+        },
-+        {
-+          "instance_name": "obj6db755e6433b",
-+          "input_x": 0,
-+          "output_x": 2,
-+          "input_y": 0,
-+          "output_y": 0,
-+          "input_orientation": 0,
-+          "output_orientation": 0,
-+          "input_instance_matrix": [
-+            [4, 0, 0, 0, 0, 0],
-+            [4, 4, 0, 0, 0, 0],
-+            [4, 0, 0, 0, 0, 0]
-+          ],
-+          "output_instance_matrix": [
-+            [0, 0, 4],
-+            [0, 0, 4],
-+            [0, 0, 4],
-+            [0, 0, 4],
-+            [0, 0, 0],
-+            [0, 0, 0],
-+            [0, 0, 0],
-+            [0, 0, 0],
-+            [0, 0, 0]
-+          ],
-+          "implementation": "obj6db755e6433b = Obj(x=0, y=0, orientation=0, color=4, cell_count=4)",
-+          "input_value": {"cell_count":4,"color":4,"id":"obj6db755e6433b","orientation":0,"tag":"l9100","x":0,"y":0},
-+          "output_value": {"bar_height":4,"cell_count":4,"color":4,"id":"obj6db755e6433b","orientation":0,"tag":"l6953","x":2,"y":0}
-+        }
-+      ]
-+    },
-+    {
-+      "input_matrix": [
-+        [6, 7, 7],
-+        [6, 6, 7],
-+        [6, 5, 5],
-+        [6, 5, 1],
-+        [6, 5, 3],
-+        [3, 3, 3],
-+        [3, 3, 3]
-+      ],
-+      "output_matrix": [
-+        [3, 6, 5, 7, 1],
-+        [3, 6, 5, 7, 0],
-+        [3, 6, 5, 7, 0],
-+        [3, 6, 5, 0, 0],
-+        [3, 6, 0, 0, 0],
-+        [3, 6, 0, 0, 0],
-+        [3, 0, 0, 0, 0]
-+      ],
-+      "instances": [
-+        {
-+          "instance_name": "objbc770a90a54e",
-+          "input_x": 0,
-+          "output_x": 0,
-+          "input_y": 4,
-+          "output_y": 0,
-+          "input_orientation": 0,
-+          "output_orientation": 0,
-+          "input_instance_matrix": [
-+            [0, 0, 0],
-+            [0, 0, 0],
-+            [0, 0, 0],
-+            [0, 0, 0],
-+            [0, 0, 3],
-+            [3, 3, 3],
-+            [3, 3, 3]
-+          ],
-+          "output_instance_matrix": [
-+            [3, 0, 0, 0, 0],
-+            [3, 0, 0, 0, 0],
-+            [3, 0, 0, 0, 0],
-+            [3, 0, 0, 0, 0],
-+            [3, 0, 0, 0, 0],
-+            [3, 0, 0,
+@@ -1,6 +1,6 @@
+ import * as nucleoid from "./lib/nucleoid";
+ import * as llm from "./lib/llm";
+-import * as milestone from "./milestone";
++import * as milestone from "./lib/milestone.ts";
+ 
+ export async function declarations({ puzzle_id, train_dataset }) {
+   milestone.inferring_declarations();
 ```
 
----
-
-### Incident Patch 2: `4815f055` (2026-10-31)
-**Commit Message**: Add state table output and ARC-NUC-9af7a82c doc
-
-Add a terminal.table helper that renders bordered, wrapped tables and splits wide ones into panels that repeat the first column. Add milestone.state, which prints the Obj state table, and call it from the analyzer (per training pair) and the visualizer (test state).
-
-Also add the ARC-NUC-9af7a82c progress record for the region size histogram puzzle, including its dataset, the open rank-across-objects issue, and the unrecorded runs.
-
-**File**: `arc/docs/ARC-NUC-9af7a82c.md` (added, +64/-0)
+**File**: `arc/src/app.ts` (modified, +15/-23)
 ```diff
-@@ -0,0 +1,64 @@
-+# ARC-NUC-9af7a82c -- Region Size Histogram
-+
-+Progress record for ARC training puzzle `9af7a82c`: its instruction dataset,
-+the solver and Nucleoid changes it needed, its runs, and what is still open.
-+
-+| Item | Status |
-+| --- | --- |
-+| Puzzle | [`data/training/9af7a82c.json`](../data/training/9af7a82c.json) |
-+| Instruction dataset | [`dataset.9af7a82c.json`](../src/dataset/dataset.9af7a82c.json): 4 synthesized pairs, 15 region instances; not yet committed |
-+| Output canvas | `FIT` |
-+| Nucleoid enhancements | None recorded |
-+| Solver changes | None specific to this puzzle |
-+| Solver runs | None recorded |
-+| Updated | 29-Oct-2026 |
-+
-+## Puzzle
-+
-+Each training input is a small, fully colored canvas (3 by 3, 3 by 4, or 4 by
-+3) split into one region per color. The output is a histogram: the region with
-+the r-th largest cell count becomes a vertical bar of its color in column r,
-+starting at the top row and as tall as the region's cell count. Outputs can be
-+taller than their inputs, such as 5 by 3 from 3 by 3. Every bar starts at the
-+top and the tallest spans every row, so each output fills its nonzero bounding
-+box and the dataset is `FIT`; see
-+[ARC-NUC-28bf18c6](ARC-NUC-28bf18c6.md#decision-output_canvas-trims-the-composed-matrix).
-+
-+## Dataset
-+
-+The working-tree file has four synthesized pairs (5 by 4 to 8 by 3, 5 by 3 to
-+8 by 4, 2 by 5 to 7 by 3, and 6 by 3 to 6 by 5) with 3, 4, 3, and 5 regions.
-+Each region is an `Obj(x, y, orientation, color, cells)`, where `cells` is its
-+cropped mask, and unconditional class rules derive the bar:
-+
-+```nuc
-+$Obj.tag = 'l6953'
-+$Obj.cell_count = $Obj.cells.flatMap(row => row).filter(cell => cell != 0).length
-+$Obj.bar_height = $Obj.cell_count
-+$Obj.x = Obj.filter(other => other.cell_count > $Obj.cell_count).length
-+$Obj.y = 0
-+```
-+
-+`x` is the region's rank: the number of other regions with a larger cell count.
-+
-+## Runs
-+
-+No `bun start 9af7a82c` run is recorded yet; its difference is unknown, not
-+zero.
-+
-+## Open items
-+
-+- **The rank needs every region in one program.** The recorded output `x`
-+  values come out only when all of a pair's instances run together. The solver
-+  runs each object in its own Nucleoid process, where `Obj` holds just that
-+  object, so every rank is 0 and every bar lands in column 0. On 29-Oct-2026,
-+  per-object runs with the local debug runtime turned the first pair's
-+  recorded ranks 1, 2, and 0 into 0, 0, and 0. Either the world model or the
-+  per-object execution has to change for the ranks to reach placement.
-+- **The README describes an earlier version.** Its paragraph lists nineteen
-+  instances on 2 by 8, 6 by 3, 5 by 8, and 8 by 4 canvases, and a `size_rank`
-+  constructor property chosen because objects run in separate processes. The
-+  working-tree file computes `cell_count` from `cells` and ranks by comparing
-+  instances. Synchronize the two once the approach is settled.
-+- **The dataset file is not committed.**
-+- Record the first run's date, runtime, exit status, and difference.
-```
-
-**File**: `arc/src/analyzer.ts` (modified, +5/-3)
-```diff
-@@ -112,17 +112,19 @@ export async function value({
- }
+@@ -1,36 +1,30 @@
+-import { readFile } from "node:fs/promises";
+-import { join } from "node:path";
+ import * as analyzer from "./analyzer";
+ import * as visualizer from "./visualizer";
+ import * as Matrix from "./lib/Matrix";
+ import * as nucleoid from "./lib/nucleoid";
+-import * as milestone from "./milestone";
++import * as milestone from "./lib/milestone.ts";
++import arc_dataset from "./lib/arc_dataset.ts";
  
- export async function state(train_dataset) {
--  for (const entry of train_dataset.dataset) {
--    const implementations = entry.instances.map(
-+  for (const [index, dataset] of train_dataset.dataset.entries()) {
-+    const implementations = dataset.instances.map(
-       ({ implementation }) => implementation
-     );
+ // Genesis puzzle_id: 3aa6fb7a
+ export async function start(puzzle_id: string = "9af7a82c") {
+-  const puzzle = JSON.parse(
+-    await readFile(
+-      join(__dirname, "..", "data", "training", `${puzzle_id}.json`),
+-      "utf8"
+-    )
+-  );
+-  const {
+-    train,
+-    test: [{ input: test_input_matrix }],
+-  } = puzzle;
++  const { arc_train, test_input_matrix, test_output_matrix } =
++    await arc_dataset.load(puzzle_id);
  
-     const obj_list = await nucleoid.run(
-       [...train_dataset.declarations, ...implementations, "Obj[:]"].join("\n\n")
-     );
+-  const training_input = {
+-    dataset: train.map(({ input, output }) => ({
++  const train_dataset = {
++    dataset: arc_train.map(({ input, output }) => ({
+       input_matrix: input,
+       output_matrix: output,
+       instances: [],
+     })),
++    declarations: [],
++    output_canvas: "EXACT",
+   };
  
-+    milestone.state({ index, obj_list });
+   const startedAt: number = performance.now();
 +
-     [...obj_list].forEach((instance) => {
--      const found_instance = entry.instances.find(
-+      const found_instance = dataset.instances.find(
-         ({ instance_name }) => instance.id === instance_name
-       );
-       found_instance.output_value = instance;
-```
-
-**File**: `arc/src/lib/terminal.ts` (modified, +114/-0)
-```diff
-@@ -194,6 +194,120 @@ export function value(title: string, data) {
+   milestone.start({
+     version: await nucleoid.version(),
+-    train,
++    train: arc_train,
+     test_input_matrix,
+   });
+ 
+@@ -40,13 +34,11 @@ export async function start(puzzle_id: string = "9af7a82c") {
+ 
+   const { declarations, output_canvas } = await analyzer.declarations({
+     puzzle_id,
+-    train_dataset: training_input,
++    train_dataset,
+   });
+-  const train_dataset = {
+-    ...training_input,
+-    declarations,
+-    output_canvas,
+-  };
++
++  train_dataset.declarations = declarations;
++  train_dataset.output_canvas = output_canvas;
+ 
+   for (const [index, dataset] of train_dataset.dataset.entries()) {
+     const { input_matrix, output_matrix } = dataset;
+@@ -148,13 +140,13 @@ export async function start(puzzle_id: string = "9af7a82c") {
+ 
+   result_matrix = Matrix.canvas(result_matrix, output_canvas);
+ 
+-  const test_output_matrix = puzzle.test[0].output;
+   milestone.comparison({ test_output_matrix, result_matrix });
+ 
+   const difference: number = Matrix.difference(
+     result_matrix,
+     test_output_matrix
    );
- }
++
+   milestone.summary({ difference, duration: performance.now() - startedAt });
  
-+function span(widths): number {
-+  return widths.reduce((sum: number, cell: number) => sum + cell + 3, -1);
-+}
+   return difference;
+```
+
+**File**: `arc/src/dataset/index.ts` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-export { document } from "./instruct_dataset";
++export { document } from "./dataset";
+```
+
+**File**: `arc/src/lib/arc_dataset.ts` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++import { readFile } from "node:fs/promises";
++import { join } from "node:path";
 +
-+function tableRule(widths, left: string, joint: string, right: string): string {
-+  return `  ${frame(
-+    left +
-+      widths.map((cell: number) => "─".repeat(cell + 2)).join(joint) +
-+      right
-+  )}`;
-+}
-+
-+function tableRow(widths, cells) {
-+  const lines = cells.map((text: string, index: number) =>
-+    wrap(text, widths[index])
-+  );
-+  const height: number = Math.max(...lines.map((cell) => cell.length));
-+  return Array.from(
-+    { length: height },
-+    (_, line: number) =>
-+      `  ${frame("│")}${lines
-+        .map(
-+          (cell, index: number) => ` ${pad(cell[line] ?? "", widths[index])} `
-+        )
-+        .join(frame("│"))}${frame("│")}`
-+  );
-+}
-+
-+export function table(title: string, columns, rows) {
-+  if (rows.length === 0) {
-+    block(title, [styleText("gray", "(empty)")]);
-+    return;
-+  }
-+
-+  const inner: number = width() - 2;
-+  const header = columns.map((column: string) =>
-+    styleText(["bold", "white"], column)
-+  );
-+  const body = rows.map((row) =>
-+    columns.map((column: string) =>
-+      Object.hasOwn(row, column)
-+        ? styleText(
-+            "whiteBright",
-+            inspect(row[column], {
-+              colors: false,
-+              depth: null,
-+              compact: true,
-+              breakLength: Infinity,
-+              maxArrayLength: null,
-+              maxStringLength: null,
-+            })
-+          )
-+        : styleText("gray", "—")
++async function load(puzzle_id: string) {
++  const puzzle = JSON.parse(
++    await readFile(
++      join(__dirname, "../..", "data", "training", `${puzzle_id}.json`),
++      "utf8"
 +    )
 +  );
-+  const natural = columns.map((_, column: number) =>
-+    Math.max(...[header, ...body].map((cells) => stringWidth(cells[column])))
-+  );
++  const {
++    train,
++    test: [{ input: test_input_matrix, output: test_output_matrix }],
++  } = puzzle;
 +
-+  // The first column labels each row, so every panel repeats it.
-+  const panels = [];
-+  let current = [0];
-+  let used: number = natural[0] + 2;
-+  for (let column: number = 1; column < columns.length; column++) {
-+    if (current.length > 1 && used + natural[column] + 3 > inner) {
-+      panels.push(current);
-+      current = [0];
-+      used = natural[0] + 2;
-+    }
-+    current.push(column);
-+    used += natural[column] + 3;
-+  }
-+  panels.push(current);
-+
-+  for (const [index, panel] of panels.entries()) {
-+    const widths = panel.map((column: number) => natural[column]);
-+    while (span(widths) > inner && Math.max(...widths) > 1) {
-+      widths[widths.indexOf(Math.max(...widths))] -= 1;
-+    }
-+    widths[widths.length - 1] += Math.max(0, inner - span(widths));
-+
-+    const titleWidth: number = span(widths) - 2;
-+    console.log(`\n  ${frame(`┌${"─".repeat(titleWidth + 2)}┐`)}`);
-+    for (const line of wrap(
-+      stripVTControlCharacters(index === 0 ? title : `${title} (continued)`),
-+      titleWidth
-+    )) {
-+      console.log(
-+        `  ${frame("│")} ${pad(
-+          styleText(["bold", "white"], line),
-+          titleWidth
-+        )} ${frame("│")}`
-+      );
-+    }
-+    console.log(tableRule(widths, "├", "┬", "┤"));
-+    for (const line of tableRow(
-+      widths,
-+      panel.map((column: number) => header[column])
-+    )) {
-+      console.log(line);
-+    }
-+    console.log(tableRule(widths, "├", "┼", "┤"));
-+    for (const cells of body) {
-+      for (const line of tableRow(
-+        widths,
-+        panel.map((column: number) => cells[column])
-+      )) {
-+        console.log(line);
-+      }
-+    }
-+    console.log(tableRule(widths, "└", "┴", "┘"));
-+  }
++  return { arc_train: train, test_input_matrix, test_output_matrix };
 +}
 +
- function cell(value: number, colored: boolean): string {
-   const text: string = `${String(value).padStart(2)} `;
-   if (!colored || !palette[value]) {
++export default { load };
 ```
 
-**File**: `arc/src/milestone.ts` (modified, +12/-0)
+**File**: `arc/src/lib/milestone.ts` (renamed, +2/-2)
 ```diff
-@@ -65,6 +65,18 @@ export function instance_constructed({
-   terminal.value("Input state", input_value);
- }
+@@ -1,5 +1,5 @@
+-import * as Matrix from "./lib/Matrix";
+-import * as terminal from "./lib/terminal";
++import * as Matrix from "./Matrix.ts";
++import * as terminal from "./terminal.ts";
  
-+export function state({ index = null, obj_list }) {
-+  const properties = [
-+    ...new Set(obj_list.flatMap((instance) => Object.keys(instance))),
-+  ].filter((property: string) => property !== "id");
-+
-+  terminal.table(
-+    index === null ? "Test · State" : `Training pair ${index + 1} · State`,
-+    ["id", ...properties],
-+    obj_list
-+  );
-+}
-+
- export function visualization() {
-   terminal.section(
-     2,
+ export function start({ version, train, test_input_matrix }) {
+   terminal.header({ version });
 ```
 
-**File**: `arc/src/visualizer.ts` (modified, +2/-0)
+**File**: `arc/src/lib/openrouter.ts` (modified, +1/-1)
 ```diff
-@@ -225,6 +225,8 @@ export async function state({ declarations, input_instances }) {
-     [...declarations, ...implementations, "Obj[:]"].join("\n\n")
-   );
+@@ -1,5 +1,5 @@
+ import axios from "axios";
+-import * as milestone from "../milestone";
++import * as milestone from "./milestone.ts";
  
-+  milestone.state({ obj_list });
-+
-   [...obj_list].forEach((instance) => {
-     const found_instance = input_instances.find(
-       ({ instance_name }) => instance.id === instance_name
+ export async function generate({ messages = [] }) {
+   const apiKey: string = process.env.OPENROUTER_API_KEY?.trim();
+```
+
+**File**: `arc/src/visualizer.ts` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ import * as nucleoid from "./lib/nucleoid";
+ import * as Matrix from "./lib/Matrix";
+ import * as llm from "./lib/llm";
+-import * as milestone from "./milestone";
++import * as milestone from "./lib/milestone.ts";
+ 
+ export async function instances({
+   puzzle_id,
 ```
 
 #### Recent Merged Pull Requests:
@@ -1512,60 +1174,28 @@ Also add the ARC-NUC-9af7a82c progress record for the region size histogram puzz
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add ARC dataset for size-ranked histograms
+## X. Extract ARC dataset loader and move milestone to lib
 
 **RULE**:
-When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/server.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `279a17f6`: Add ARC dataset for size-ranked histograms. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5fdfe09e`: Extract ARC dataset loader and move milestone to lib. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/server.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-`milestone.state` displays the result of each batched state pass as a table:
-one per training pair at the end of the analysis, titled
-`Training pair N · State`, and one for the test objects, titled
-`Test · State`, before their outputs are composed. Each row is an object that
-`Obj[:]` returns after the declarative rules run, with `id` first and then one
-column per property in the order the runtime reports them. Cells keep the
-formatting of the boxed object states, so strings stay quoted, and a property
-that an object lacks shows a grey `—`. Tables span the panel width. Wider
-tables continue in panels titled `(continued)` that repeat `id`, and a cell
-too wide for its panel wraps instead of being cut.
-
-with four synthesized pairs instead of copies of its grids, eighteen region
-instances in total (3, 5, 6, and 4 per pair). A seeded generator partitioned
-fully colored canvases (3 by 6, 7 by 3, 4 by 7, and 6 by 4, rows by columns,
-4-connected regions, one per color, with freshly grown shapes, cell counts
-from 1 to 11, colors, and positions; no matrix equals a grid in `data`.
-differs from color order and from first-appearance order, and some bar is
-taller than its region's bounding box; t
+import * as milestone from "./src/lib/milestone.ts";
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-with four synthesized pairs instead of copies of its grids, nineteen region
-instances in total (3, 4, 6, and 6 per pair). A seeded generator partitioned
-fully colored canvases (2 by 8, 6 by 3, 5 by 8, and 8 by 4, rows by columns,
-4-connected regions, one per color, with freshly drawn shapes, cell counts
-from 1 to 17, colors, and positions; no matrix equals a grid in `data`.
-differs from color order and from first-appearance order, and some pairs
-contradict ordering by bounding-box width, height, or area. Each output is a
-histogram: the region with the r-th largest cell count becomes a vertical bar
-of its color in column r, starting at the top row and as tall as the region's
-cell count, giving 11 by 3, 8 by 4, 17 by 6, and 15 by 6 outputs. The class
-takes `color`, `cell_count`, and `size_rank`, the region's zero-based position
-when its pair's regions are ordered by cell count, largest first; each pair
-lists its instances in that order. Every object executes in its own Nucleoid
-process, so the rank is a constructor property rather than a comparison across
-instances. Unconditional class-level rules introduce `bar_height` (the cell
-count), which is absent before the rules run, and move
+import * as milestone from "./src/milestone";
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `279a17f6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5fdfe09e` are properly handled with clean fallback behavior.

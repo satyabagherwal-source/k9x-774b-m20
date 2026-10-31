@@ -6614,3 +6614,5 @@
 | `CYCLE-20261031-SOZJ` | `2026-10-31T14:52:31.999Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`7ec7c307...`) |
 | `CYCLE-20261031-1N7I` | `2026-10-31T14:59:29.598Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`344b79af...`) |
 | `CYCLE-20261031-L7DW` | `2026-10-31T15:14:42.212Z` | `bigscience/bloom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6229, Rule 6230` | Yes (`8ad2c1d5...`) |
+| `CYCLE-20261031-4GJD` | `2026-10-31T15:29:40.537Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md` | Yes (`ca0516a2...`) |
+| `CYCLE-20261031-4T1J` | `2026-10-31T15:29:56.743Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6231` | Yes (`e5a68e31...`) |

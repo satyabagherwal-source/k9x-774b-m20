@@ -935,8 +935,8 @@
     "sourceUrl": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
     "sourceVersion": "hf-stabilityai-stable-diffusion-3-medium",
     "license": "Open-Source",
-    "contentHash": "5383d64a792e4e702d5073c72aca4bb27329a9da9d05401d8e40e610fecffcae",
-    "lastHarvestedAt": "2026-10-28T14:49:33.583Z",
+    "contentHash": "ca0516a271b57d21200d3064454dc01f7789e1a1e9fba51dd366651582240693",
+    "lastHarvestedAt": "2026-10-31T15:29:40.544Z",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium"
   },
   "hf-bigscience-bloom": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "279a17f6",
+    "sourceVersion": "5fdfe09e",
     "license": "Apache-2.0",
-    "contentHash": "52c4752cf5505961617c1ad1c8d96c122408ea4de0ad177c37275babafa4baf1",
-    "lastHarvestedAt": "2026-10-31T14:19:44.472Z",
+    "contentHash": "e5a68e3168583c917cb634c5da9dd4daa8f76360a15bbbc26006d7e8353c0fff",
+    "lastHarvestedAt": "2026-10-31T15:29:56.746Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
