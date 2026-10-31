@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T06:38:38.479Z",
-    "lastVerified": "2026-10-31T06:38:38.479Z",
+    "lastChecked": "2026-10-31T06:45:34.418Z",
+    "lastVerified": "2026-10-31T06:45:34.418Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -425,22 +425,21 @@
     "lastVerified": "2026-10-31T05:42:48.654Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T06:18:08.941Z",
-    "lastVerified": "2026-10-31T06:18:08.941Z",
+    "lastChecked": "2026-10-31T06:45:31.169Z",
+    "lastVerified": "2026-10-31T06:45:31.169Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "f381216bdace17db07c372ed1171fce2ebd025f8d90f6bd9024cc5fca9856c39",
+    "contentHash": "6bba0088afc249b0496aa629bb23af09b3e8b07dd975b5b3bc2047ecefbb7a45",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "20ef3c68"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -969,14 +968,14 @@
     "officialUrl": "https://github.com/weaviate/weaviate",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T13:46:30.631Z",
-    "lastVerified": "2026-10-30T13:46:30.631Z",
+    "lastChecked": "2026-10-31T06:45:28.502Z",
+    "lastVerified": "2026-10-31T06:45:28.502Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-weaviate-weaviate",
-    "contentHash": "711603553ed7804b58a1608cb150e0c54f47efc85727e22b8c6fbe1d3e32249c",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 2,
+    "contentHash": "8fe95dd4e38f0ceb6091c290f40cbfb7477df04ee7e1cafa9e8ca3e3475d91dc",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1264,12 +1263,12 @@
     "officialUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T04:28:16.977Z",
-    "lastVerified": "2026-10-28T04:28:16.977Z",
+    "lastChecked": "2026-10-31T06:45:14.100Z",
+    "lastVerified": "2026-10-31T06:45:14.100Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1",
-    "contentHash": "18cc3b41376ba5271fbe69b7a360dc227215ac2188d1fa3380b78cb61eddc165",
+    "contentHash": "0620b4c45a23b76eb4f716d441520a1f6f4cf9dc7737d9e067e457930d5c12da",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -1479,9 +1478,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-10-31T02:51:06.259Z",
+    "lastChecked": "2026-10-31T06:45:21.387Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-10-31T02:51:06.259Z"
+    "lastVerified": "2026-10-31T06:45:21.387Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -2582,12 +2581,12 @@
     "lastVerified": "2026-10-31T03:12:27.097Z"
   },
   "goodrain-rainbond": {
-    "name": "goodrain/rainbond",
+    "name": "rainbond",
     "officialUrl": "https://github.com/goodrain/rainbond",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T15:08:20.019Z",
-    "lastVerified": "2026-10-30T15:08:20.019Z",
+    "lastChecked": "2026-10-31T06:45:18.970Z",
+    "lastVerified": "2026-10-31T06:45:18.970Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-goodrain-rainbond",
@@ -2596,7 +2595,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7e2467b9"
   },
   "caviraoss-longmemory": {
     "name": "LongMemory",
@@ -4050,14 +4050,14 @@
     "officialUrl": "https://github.com/DylanVann/react-native-fast-image",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T13:10:03.329Z",
-    "lastVerified": "2026-10-28T13:10:03.329Z",
+    "lastChecked": "2026-10-31T06:45:20.836Z",
+    "lastVerified": "2026-10-31T06:45:20.836Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dylanvann-react-native-fast-image",
-    "contentHash": "d5f13bce027e0619d0c3873dcfd9215a7fd16bf6d1edbea1fe1deeb8d193fe7c",
+    "contentHash": "baaf12be75a9c55af1cf0379a17a54569f6962555d41a6a8e679cdbc64f43ff2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4570,12 +4570,12 @@
     "lastVerified": "2026-10-30T22:49:59.971Z"
   },
   "grpc-grpc-rust": {
-    "name": "grpc/grpc-rust",
+    "name": "grpc-rust",
     "officialUrl": "https://github.com/grpc/grpc-rust",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T06:43:12.599Z",
-    "lastVerified": "2026-10-30T06:43:12.599Z",
+    "lastChecked": "2026-10-31T06:45:11.302Z",
+    "lastVerified": "2026-10-31T06:45:11.302Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-grpc-grpc-rust",
@@ -4584,7 +4584,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c49f0d09"
   },
   "hf-openai-gpt-oss-120b": {
     "name": "openai/gpt-oss-120b",

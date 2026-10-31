@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
 > **Source**: github ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
-> **Source Version**: `c49f0d09`  
+> **Source Version**: `53d5d706`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T06:43:13.514Z  
+> **Timestamp**: 2026-10-31T06:45:20.948Z  
 > **Learning ID**: `learn-github-grpc-grpc-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T06:43:12.599Z  
+> **Harvest Timestamp**: 2026-10-31T06:45:15.719Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A native gRPC client & server implementation with async/await support.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12512 stars
+- **Stars / Engagement**: 12514 stars
 
 ---
 
@@ -1920,84 +1920,156 @@ impl SubscriptionMode {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4ee04836` (2026-10-29)
-**Commit Message**: fix(server): set a timer on HTTP/1 connections so hyper's header read timeout applies (#2980)
+### Incident Patch 1: `53d5d706` (2026-10-30)
+**Commit Message**: grpc/load_balancing: Add idle check in pick_first exit_idle() (#2977)
 
 ## Motivation
 
-Since the hyper 1.0 upgrade, the server's connection builder only gets a
-timer on its HTTP/2 side (added in #1726 for keepalive). hyper's HTTP/1
-`header_read_timeout` defaults to 30s, but hyper silently disables it
-when no timer is set.
-
-As a result, a server built with `accept_http1(true)`, which `tonic-web`
-requires, never times out a client that doesn't finish sending its
-request headers. A slowloris client can hold connections open
-indefinitely and exhaust the server's file descriptors. Users can't fix
-this from outside, since the connection builder is internal and `Server`
-exposes no HTTP/1 options.
+As a leaf node of other LBs, pick_first might be told to exit_idle even
+when it is not in the idle state. This will cause unnecessary churn.
 
 ## Solution
 
-Set `TokioTimer` on the HTTP/1 builder too. This only turns on hyper's
-existing 30s default header read timeout. It adds no new API and changes
-nothing for HTTP/2-only servers.
+Add a guard to only start a new connection pass if pick first is already
+in idle.
 
-Adds `http1_header_read_timeout_is_enforced`, which sends a partial
-HTTP/1 request head, advances the clock past 30s, and checks that the
-server closed the connection. It fails without the fix and passes with
-it.
+## Notes
 
-**File**: `tonic/src/transport/server/mod.rs` (modified, +37/-0)
+This will also be fixed in the pick first revamp (#2784), but putting
+this guard in now allows us to move forward on other LBs with
+confidence. (e.g. #2931).
+
+**File**: `grpc/src/client/load_balancing/pick_first.rs` (modified, +37/-1)
 ```diff
-@@ -849,6 +849,9 @@ impl<L> Server<L> {
-                 builder.http2().max_header_list_size(max_header_list_size);
-             }
+@@ -625,7 +625,13 @@ impl LbPolicy for PickFirstPolicy {
+     }
  
-+            // hyper only enforces its default HTTP/1 header read timeout (30s) when a timer is set.
-+            builder.http1().timer(TokioTimer::new());
-+
-             builder
-         };
+     fn exit_idle(&mut self, channel_controller: &mut dyn ChannelController) {
+-        self.start_connection_pass(channel_controller);
++        // Only start a connection pass when in Idle and have already
++        // received a non-empty resolver update (`subchannels` is non-empty).
++        // Before the first resolver update, `connectivity_state` is Idle while
++        // `subchannels` is empty.
++        if self.connectivity_state == ConnectivityState::Idle && !self.subchannels.is_empty() {
++            self.start_connection_pass(channel_controller);
++        }
+     }
+ }
  
-@@ -1436,4 +1439,38 @@ mod tests {
-             Some(EXAMPLE_TCP_KEEPALIVE_RETRIES)
-         );
+@@ -1604,4 +1610,34 @@ mod test {
+         let state = env.expect_picker_update();
+         assert_eq!(state.connectivity_state, ConnectivityState::Connecting);
      }
 +
++    // Tests that exit_idle is a no-op before the first resolver update or
++    // while Connecting or Ready.
 +    #[tokio::test]
-+    async fn http1_header_read_timeout_is_enforced() {
-+        use tokio::io::{AsyncReadExt, AsyncWriteExt};
++    async fn test_pick_first_exit_idle() {
++        let mut env = new_env();
 +
-+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-+        let addr = listener.local_addr().unwrap();
-+        tokio::spawn(
-+            Server::builder()
-+                .accept_http1(true)
-+                .add_routes(Routes::default())
-+                .serve_with_incoming(TcpIncoming::from(listener)),
-+        );
++        // Before any resolver update (Idle, but subchannels is empty),
++        // exit_idle should be a no-op.
++        env.policy.exit_idle(&mut env.tcc);
++        env.expect_no_events();
 +
-+        let mut client = tokio::net::TcpStream::connect(addr).await.unwrap();
-+        client
-+            .write_all(b"POST / HTTP/1.1\r\nHost: x\r\n")
-+            .await
++        // While Connecting, exit_idle should be a no-op.
++        env.send_resolver_update(create_endpoints(vec!["addr1"], None))
 +            .unwrap();
++        let sc1 = env.expect_new_subchannel_for("addr1");
++        env.expect_connect();
++        env.expect_queuing_picker();
 +
-+        // Let the server start reading the request head, then jump past hyper's default 30s
-+        // header read timeout. Auto-advance is avoided on purpose: it races with socket I/O.
-+        tokio::time::sleep(Duration::from_millis(200)).await;
-+        tokio::time::pause();
-+        tokio::time::advance(Duration::from_secs(31)).await;
-+        tokio::time::resume();
++        env.policy.exit_idle(&mut env.tcc);
++        env.expect_no_events();
 +
-+        let mut buf = [0u8; 64];
-+        let read = tokio::time::timeout(Duration::from_secs(5), client.read(&mut buf)).await;
-+        assert!(
-+            read.is_ok(),
-+            "connection with unfinished HTTP/1 headers was not closed"
-+        );
++        // While Ready, exit_idle should be a no-op and keep the selected
++        // subchannel active.
++        env.send_subchannel_update(&sc1, &SubchannelState::ready());
++        env.expect_ready_picker(&sc1);
++
++        env.policy.exit_idle(&mut env.tcc);
++        env.expect_no_events();
 +    }
+ }
+```
+
+---
+
+### Incident Patch 2: `6e481c4e` (2026-10-30)
+**Commit Message**: grpc-xds/load_balancing: move call-once for registration into register() (#2974)
+
+## Motivation
+
+The pattern for registering into the global registery will be to have a
+single call to `register()` that gates all LB registrations behind a
+run-once guard.
+
+## Solution
+
+Move to using this policy in the grpc-xds crate by lifting the guard
+into `register()`.
+
+## Notes
+
+Originally this was #2931, but we are moving that LB into the grpc
+crate. However, since we do want that pattern I've split of this change
+into its own PR. See [this
+comment](https://github.com/grpc/grpc-rust/pull/2931#discussion_r4293203172).
+
+**File**: `grpc-xds/src/load_balancing/cluster_manager.rs` (modified, +1/-5)
+```diff
+@@ -39,7 +39,6 @@
+ 
+ use std::collections::HashMap;
+ use std::sync::Arc;
+-use std::sync::Once;
+ 
+ use grpc::__unstable::client::load_balancing::ChannelController;
+ use grpc::__unstable::client::load_balancing::LbConfigJson;
+@@ -61,7 +60,6 @@ use grpc::StatusError;
+ use serde::Deserialize;
+ 
+ static POLICY_NAME: &str = "xds_cluster_manager_experimental";
+-static START: Once = Once::new();
+ 
+ // Target cluster option for an RPC, keyed by its `TypeId` in `CallOptions`.
+ #[derive(Debug, Clone)]
+@@ -216,9 +214,7 @@ impl Picker for ClusterPicker {
+ 
+ /// Register cluster manager as a LbPolicy.
+ pub(crate) fn reg() {
+-    START.call_once(|| {
+-        GLOBAL_LB_REGISTRY.add_builder(ClusterManagerBuilder {});
+-    });
++    GLOBAL_LB_REGISTRY.add_builder(ClusterManagerBuilder {});
+ }
+ 
+ #[cfg(test)]
+```
+
+**File**: `grpc-xds/src/load_balancing/mod.rs` (modified, +7/-1)
+```diff
+@@ -24,8 +24,12 @@
+ 
+ //! xDS-specific load balancing policies.
+ 
++use std::sync::Once;
++
+ pub(crate) mod cluster_manager;
+ 
++static START: Once = Once::new();
++
+ /// Registers the xDS load balancing policies into the gRPC global LB registry.
+ ///
+ /// The `grpc` crate's registry is populated eagerly for its built-in policies,
+@@ -34,5 +38,7 @@ pub(crate) mod cluster_manager;
+ /// Only the first call has an effect, any additional ones are ignored.
+ #[allow(dead_code, reason = "no caller until there is an xDS resolver.")]
+ pub(crate) fn register() {
+-    cluster_manager::reg()
++    START.call_once(|| {
++        cluster_manager::reg();
++    });
  }
 ```
 
@@ -2005,9 +2077,9 @@ it.
 - **PR #2982** (2026-10-29): protoc-gen-grpc-rust: downgrade abseil (@dfawley)
 - **PR #2980** (2026-10-29): fix(server): set a timer on HTTP/1 connections so hyper's header read timeout applies (@LucioFranco)
 - **PR #2979** (2026-10-29): chore: release v0.14.9 (@github-actions[bot])
+- **PR #2977** (2026-10-30): grpc/load_balancing: Add idle check in pick_first exit_idle() (@nathanielford)
 - **PR #2975** (2026-10-30): grpc/load_balancing: add send_resolver_update_with_config to TestEnv (@nathanielford)
-- **PR #2973** (2026-10-28): feat(tonic-xds): expose ADS keepalive knob in config (@YutaoMa)
-- **PR #2972** (2026-10-29): feat(transport): expose h2 reset stream settings on Endpoint (@adriangb)
+- **PR #2974** (2026-10-30): grpc-xds/load_balancing: move call-once for registration into register() (@nathanielford)
 
 ---
 
@@ -2027,57 +2099,57 @@ it.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. server): set a timer on HTTP/1 connections so hyper's header read timeout applie
+## X. grpc/load_balancing: Add idle check in pick_first exit_idle() (#2977)
 
 **RULE**:
-When implementing operations in `tonic/src/transport/server/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `grpc/src/client/load_balancing/pick_first.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4ee04836`: server): set a timer on HTTP/1 connections so hyper's header read timeout applies (#2980). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `53d5d706`: grpc/load_balancing: Add idle check in pick_first exit_idle() (#2977). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tonic/src/transport/server/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `grpc/src/client/load_balancing/pick_first.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            // hyper only enforces its default HTTP/1 header read timeout (30s) when a timer is set.
-            builder.http1().timer(TokioTimer::new());
+        // Only start a connection pass when in Idle and have already
+        // received a non-empty resolver update (`subchannels` is non-empty).
+        // Before the first resolver update, `connectivity_state` is Idle while
+        // `subchannels` is empty.
+        if self.connectivity_state == ConnectivityState::Idle && !self.subchannels.is_empty() {
+            self.start_connection_pass(channel_controller);
+        }
 
-
+    // Tests that exit_idle is a no-op before the first resolver update or
+    // while Connecting or Ready.
     #[tokio::test]
-    async fn http1_header_read_timeout_is_enforced() {
-        use tokio::io::{AsyncReadExt, AsyncWriteExt};
+    async fn test_pick_first_exit_idle() {
+        let mut env = new_env();
 
-        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-        let addr = listener.local_addr().unwrap();
-        tokio::spawn(
-            Server::builder()
-                .accept_http1(true)
-                .add_routes(Routes::default())
-                .serve_with_incoming(TcpIncoming::from(listener)),
-        );
+        // Before any resolver update (Idle, but subchannels is empty),
+        // exit_idle should be a no-op.
+        env.policy.exit_idle(&mut env.tcc);
+        env.expect_no_events();
 
-        let mut client = tokio::net::TcpStream::connect(addr).await.unwrap();
-        client
-            .write_all(b"POST / HTTP/1.1\r\nHost: x\r\n")
-            .await
+        // While Connecting, exit_idle should be a no-op.
+        env.send_resolver_update(create_endpoints(vec!["addr1"], None))
             .unwrap();
+        let sc1 = env.expect_new_subchannel_for("addr1");
+        env.expect_connect();
+        env.expect_queuing_picker();
 
-        // Let the server start reading the request head, then jump past hyper's default 30s
-        // header read timeout. Auto-advance is avoided on purpose: it races with socket I/O.
-        tokio::time::sleep(Duration::from_millis(200)).await;
-        tokio::time::pause();
-        tokio::time::advance(Duration::from_secs(31)).await;
-        tokio::time::resume();
+        env.policy.exit_idle(&mut env.tcc);
+        env.expect_no_events();
 
+        // While Rea
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        self.start_connection_pass(channel_controller);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4ee04836` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `53d5d706` are properly handled with clean fallback behavior.

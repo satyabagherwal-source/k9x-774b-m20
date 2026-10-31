@@ -315,8 +315,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1",
     "sourceVersion": "hf-qwen-qwen-image-2.1",
     "license": "Open-Source",
-    "contentHash": "18cc3b41376ba5271fbe69b7a360dc227215ac2188d1fa3380b78cb61eddc165",
-    "lastHarvestedAt": "2026-10-28T04:28:17.813Z",
+    "contentHash": "0620b4c45a23b76eb4f716d441520a1f6f4cf9dc7737d9e067e457930d5c12da",
+    "lastHarvestedAt": "2026-10-31T06:45:24.611Z",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1"
   },
   "hf-contrastive-lm-clm-v0.1-8b": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "20ef3c68",
+    "sourceVersion": "081ff52e",
     "license": "Apache-2.0",
-    "contentHash": "f381216bdace17db07c372ed1171fce2ebd025f8d90f6bd9024cc5fca9856c39",
-    "lastHarvestedAt": "2026-10-30T17:21:09.142Z",
+    "contentHash": "6bba0088afc249b0496aa629bb23af09b3e8b07dd975b5b3bc2047ecefbb7a45",
+    "lastHarvestedAt": "2026-10-31T06:45:31.864Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -4703,10 +4703,10 @@
     "repository": "DylanVann/react-native-fast-image",
     "platform": "github",
     "sourceUrl": "https://github.com/DylanVann/react-native-fast-image",
-    "sourceVersion": "58661d82",
+    "sourceVersion": "df42e80f",
     "license": "MIT",
-    "contentHash": "d5f13bce027e0619d0c3873dcfd9215a7fd16bf6d1edbea1fe1deeb8d193fe7c",
-    "lastHarvestedAt": "2026-10-28T13:10:03.951Z",
+    "contentHash": "baaf12be75a9c55af1cf0379a17a54569f6962555d41a6a8e679cdbc64f43ff2",
+    "lastHarvestedAt": "2026-10-31T06:45:21.698Z",
     "learningId": "learn-github-dylanvann-react-native-fast-image"
   },
   "pulumi-pulumi": {
@@ -6853,10 +6853,10 @@
     "repository": "weaviate/weaviate",
     "platform": "github",
     "sourceUrl": "https://github.com/weaviate/weaviate",
-    "sourceVersion": "0a6bfa1a",
+    "sourceVersion": "5ef8d0c3",
     "license": "NOASSERTION",
-    "contentHash": "711603553ed7804b58a1608cb150e0c54f47efc85727e22b8c6fbe1d3e32249c",
-    "lastHarvestedAt": "2026-10-30T13:46:32.072Z",
+    "contentHash": "8fe95dd4e38f0ceb6091c290f40cbfb7477df04ee7e1cafa9e8ca3e3475d91dc",
+    "lastHarvestedAt": "2026-10-31T06:45:29.181Z",
     "learningId": "learn-github-weaviate-weaviate"
   },
   "topgrade-rs-topgrade": {

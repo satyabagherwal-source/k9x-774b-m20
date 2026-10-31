@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T06:38:35.957Z",
+  "last_updated": "2026-10-31T06:45:31.874Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -365,14 +365,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1",
-      "content_hash": "18cc3b41376ba5271fbe69b7a360dc227215ac2188d1fa3380b78cb61eddc165",
-      "verified_at": "2026-10-28T04:28:17.823Z",
+      "content_hash": "0620b4c45a23b76eb4f716d441520a1f6f4cf9dc7737d9e067e457930d5c12da",
+      "verified_at": "2026-10-31T06:45:24.620Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T04:28:17.823Z"
+      "last_updated": "2026-10-31T06:45:24.620Z"
     },
     "Contrastive-LM/CLM-v0.1-8B": {
       "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "f381216bdace17db07c372ed1171fce2ebd025f8d90f6bd9024cc5fca9856c39",
-      "verified_at": "2026-10-30T17:21:09.148Z",
+      "content_hash": "6bba0088afc249b0496aa629bb23af09b3e8b07dd975b5b3bc2047ecefbb7a45",
+      "verified_at": "2026-10-31T06:45:31.874Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T17:21:09.148Z"
+      "last_updated": "2026-10-31T06:45:31.874Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -7176,14 +7176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dylanvann-react-native-fast-image",
-      "content_hash": "d5f13bce027e0619d0c3873dcfd9215a7fd16bf6d1edbea1fe1deeb8d193fe7c",
-      "verified_at": "2026-10-28T13:10:03.958Z",
+      "content_hash": "baaf12be75a9c55af1cf0379a17a54569f6962555d41a6a8e679cdbc64f43ff2",
+      "verified_at": "2026-10-31T06:45:21.708Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T13:10:03.958Z"
+      "last_updated": "2026-10-31T06:45:21.708Z"
     },
     "pulumi/pulumi": {
       "repository": "pulumi/pulumi",
@@ -10341,14 +10341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-weaviate-weaviate",
-      "content_hash": "711603553ed7804b58a1608cb150e0c54f47efc85727e22b8c6fbe1d3e32249c",
-      "verified_at": "2026-10-30T13:46:32.087Z",
+      "content_hash": "8fe95dd4e38f0ceb6091c290f40cbfb7477df04ee7e1cafa9e8ca3e3475d91dc",
+      "verified_at": "2026-10-31T06:45:29.190Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T13:46:32.087Z"
+      "last_updated": "2026-10-31T06:45:29.190Z"
     },
     "topgrade-rs/topgrade": {
       "repository": "topgrade-rs/topgrade",

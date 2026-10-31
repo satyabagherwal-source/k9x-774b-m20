@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T06:38:35.888Z",
+  "last_updated": "2026-10-31T06:45:31.783Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10844,8 +10844,8 @@
       "slug": "dylanvann-react-native-fast-image",
       "platform": "github",
       "source_url": "https://github.com/DylanVann/react-native-fast-image",
-      "source_version": "58661d82",
-      "content_hash": "d5f13bce027e0619d0c3873dcfd9215a7fd16bf6d1edbea1fe1deeb8d193fe7c",
+      "source_version": "df42e80f",
+      "content_hash": "baaf12be75a9c55af1cf0379a17a54569f6962555d41a6a8e679cdbc64f43ff2",
       "dossier_path": "07_PROJECT_LEARNING/dylanvann-react-native-fast-image-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dylanvann-react-native-fast-image-learnings.md",
       "promoted_rules": [
@@ -10873,6 +10873,11 @@
           "number": 5289,
           "title": "ios): load data uris as other images, off the main thread and cached",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6108,
+          "title": "android): views of one url at different sizes download it once, also when one ge",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10880,7 +10885,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T13:10:03.887Z",
+      "verified_at": "2026-10-31T06:45:21.595Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27564,7 +27569,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1",
       "source_version": "hf-qwen-qwen-image-2.1",
-      "content_hash": "18cc3b41376ba5271fbe69b7a360dc227215ac2188d1fa3380b78cb61eddc165",
+      "content_hash": "0620b4c45a23b76eb4f716d441520a1f6f4cf9dc7737d9e067e457930d5c12da",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md",
       "promoted_rules": [
@@ -27609,7 +27614,7 @@
         "learn-huggingface-hf-qwen-qwen-image-2-1-mv44iwjo",
         "learn-huggingface-hf-qwen-qwen-image-2-1-mv4hrs7t"
       ],
-      "verified_at": "2026-10-28T04:28:17.725Z",
+      "verified_at": "2026-10-31T06:45:24.497Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42256,8 +42261,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "20ef3c68",
-      "content_hash": "f381216bdace17db07c372ed1171fce2ebd025f8d90f6bd9024cc5fca9856c39",
+      "source_version": "081ff52e",
+      "content_hash": "6bba0088afc249b0496aa629bb23af09b3e8b07dd975b5b3bc2047ecefbb7a45",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -42425,6 +42430,11 @@
           "number": 5811,
           "title": "Require fresh sessions for proposal cycles",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6110,
+          "title": "Revert \"Require fresh sessions for proposal cycles\"",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42432,7 +42442,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T17:21:09.074Z",
+      "verified_at": "2026-10-31T06:45:31.763Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57508,8 +57518,8 @@
       "slug": "weaviate-weaviate",
       "platform": "github",
       "source_url": "https://github.com/weaviate/weaviate",
-      "source_version": "0a6bfa1a",
-      "content_hash": "711603553ed7804b58a1608cb150e0c54f47efc85727e22b8c6fbe1d3e32249c",
+      "source_version": "5ef8d0c3",
+      "content_hash": "8fe95dd4e38f0ceb6091c290f40cbfb7477df04ee7e1cafa9e8ca3e3475d91dc",
       "dossier_path": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "promoted_rules": [
@@ -57527,6 +57537,11 @@
           "number": 5411,
           "title": "security: bump github.com/go-jose/go-jose/v4 to v4.1.6",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6109,
+          "title": "test): match testShardWithSettings signature after v1.39 merge",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -57534,7 +57549,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T13:46:31.951Z",
+      "verified_at": "2026-10-31T06:45:29.081Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -160214,6 +160229,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T06:32:12.215Z"
+    },
+    "rule-6108": {
+      "learning_id": "rule-6108",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6108,
+      "title": "android): views of one url at different sizes download it once, also when one ge",
+      "source_url": "https://github.com/DylanVann/react-native-fast-image",
+      "source_version": "df42e80f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T06:45:21.595Z"
+    },
+    "rule-6109": {
+      "learning_id": "rule-6109",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6109,
+      "title": "test): match testShardWithSettings signature after v1.39 merge",
+      "source_url": "https://github.com/weaviate/weaviate",
+      "source_version": "5ef8d0c3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T06:45:29.081Z"
+    },
+    "rule-6110": {
+      "learning_id": "rule-6110",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6110,
+      "title": "Revert \"Require fresh sessions for proposal cycles\"",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "081ff52e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T06:45:31.763Z"
     }
   },
   "aliases": {

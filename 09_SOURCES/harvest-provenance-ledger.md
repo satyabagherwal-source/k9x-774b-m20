@@ -6501,3 +6501,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-llama-llama-3-1-8b-instruct` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-31T06:32:12.328Z |
 | `learn-huggingface-xingchen-agi-teleocr` | `https://huggingface.co/XingChen-AGI/TeleOCR` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-31T06:38:22.895Z |
 | `learn-github-nirdiamant-rag_techniques` | `https://github.com/NirDiamant/RAG_Techniques` | `4fea9188` | Multi-dimensional audit evidence | 2026-10-31T06:38:35.950Z |
+| `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `53d5d706` | Multi-dimensional audit evidence | 2026-10-31T06:45:21.697Z |
+| `learn-github-dylanvann-react-native-fast-image` | `https://github.com/DylanVann/react-native-fast-image` | `df42e80f` | Multi-dimensional audit evidence | 2026-10-31T06:45:21.698Z |
+| `learn-huggingface-qwen-qwen-image-2-1` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-31T06:45:24.611Z |
+| `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `5ef8d0c3` | Multi-dimensional audit evidence | 2026-10-31T06:45:29.181Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `081ff52e` | Multi-dimensional audit evidence | 2026-10-31T06:45:31.864Z |

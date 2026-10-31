@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `20ef3c68`  
+> **Source Version**: `081ff52e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T17:21:08.695Z  
+> **Timestamp**: 2026-10-31T06:45:31.176Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T17:21:08.244Z  
+> **Harvest Timestamp**: 2026-10-31T06:45:31.169Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -957,137 +957,137 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `20ef3c68` (2026-10-30)
-**Commit Message**: Require fresh sessions for proposal cycles
+### Incident Patch 1: `081ff52e` (2026-10-31)
+**Commit Message**: Revert "Require fresh sessions for proposal cycles"
 
-Make continuous proposal cycles resume through `/clear` and `/nuc-proposal` instead of continuing in the same context. Preserve the original request and hint, and report the strategy checkpoint path and pin for the next session.
+This reverts commit 20ef3c688670ba47b6d14fb22077cbf0d92cace1.
 
-**File**: `.claude/agents/nuc-proposal.agent.md` (modified, +2/-1)
+**File**: `.claude/agents/nuc-proposal.agent.md` (modified, +1/-2)
 ```diff
-@@ -107,7 +107,8 @@ caller-owned commit yourself.
+@@ -107,8 +107,7 @@ caller-owned commit yourself.
  The caller follows the skill's
  [execution-mode rule](../skills/nuc-proposal/SKILL.md#choose-execution-mode-caller-only).
  In continuous mode, after finalizing an `Accepted` or `Rejected` outcome for a
--new NUC, it immediately starts the next proposal under the
-+new NUC, it starts the next proposal in a fresh session (`/clear`, then
-+`/nuc-proposal`) under the
+-new NUC, it starts the next proposal in a fresh session (`/clear`, then
+-`/nuc-proposal`) under the
++new NUC, it immediately starts the next proposal under the
  [continuous-cycle rule](../skills/nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only).
  In single-proposal mode, it finishes the requested outcome and stops without
  starting another proposal or running token comparison (the token non-regression
 ```
 
-**File**: `.claude/rules/proposals.instructions.md` (modified, +12/-6)
+**File**: `.claude/rules/proposals.instructions.md` (modified, +6/-12)
 ```diff
-@@ -102,7 +102,8 @@ candidate sources or prior artifacts. Return the new checkpoint path/raw pin
+@@ -102,8 +102,7 @@ candidate sources or prior artifacts. Return the new checkpoint path/raw pin
  or explicit skip/error; the caller retains one head and all ancestors,
  receipts, reports and scoring evidence for subsequent validation/selection.
  Use that updated head for the next authorized proposal, or keep the old head
--on a legitimate skip. A learner error pauses the caller as a process blocker
-+on a legitimate skip. Each continuous cycle starts a fresh session, so name
-+that head's path and raw pin in the cycle's resume report. A learner error pauses the caller as a process blocker
+-on a legitimate skip. Each continuous cycle starts a fresh session, so name
+-that head's path and raw pin in the cycle's resume report. A learner error pauses the caller as a process blocker
++on a legitimate skip. A learner error pauses the caller as a process blocker
  without changing the already-recorded gate/independent decision.
  
  This is a single-owner immutable checkpoint chain, not concurrent/global-head
-@@ -323,16 +324,21 @@ not independent behavior/integrity, accepted-corpus baseline, compatibility,
+@@ -324,21 +323,16 @@ not independent behavior/integrity, accepted-corpus baseline, compatibility,
  development evaluation, or outcome recording.
  
  In continuous mode, after finalizing and committing an `Accepted` or `Rejected`
--outcome for a new NUC, the caller immediately starts a distinct new proposal under
--the [continuous-cycle rule](../skills/nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only).
--Run cycles sequentially with fresh agents, baselines, candidate worktrees and
--reports, preserving the selection, compatibility and acceptance requirements.
-+outcome for a new NUC, the caller starts the next distinct proposal in a fresh
-+session under the [continuous-cycle rule](../skills/nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only).
-+It ends the cycle with the exact resume command: `/clear` followed by
-+`/nuc-proposal` with the same request and hint. Only the user can run
-+`/clear`; never claim to have run it or continue in the same context instead.
-+Run cycles sequentially with fresh sessions, agents, baselines, candidate
-+worktrees and reports, preserving the selection, compatibility and acceptance
-+requirements.
+-outcome for a new NUC, the caller starts the next distinct proposal in a fresh
+-session under the [continuous-cycle rule](../skills/nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only).
+-It ends the cycle with the exact resume command: `/clear` followed by
+-`/nuc-proposal` with the same request and hint. Only the user can run
+-`/clear`; never claim to have run it or continue in the same context instead.
+-Run cycles sequentially with fresh sessions, agents, baselines, candidate
+-worktrees and reports, preserving the selection, compatibility and acceptance
+-requirements.
++outcome for a new NUC, the caller immediately starts a distinct new proposal under
++the [continuous-cycle rule](../skills/nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only).
++Run cycles sequentially with fresh agents, baselines, candidate worktrees and
++reports, preserving the selection, compatibility and acceptance requirements.
  Only the caller continues; workers stop at their handoffs. This does not
  recursively reevaluate the completed NUC's outcome metadata. Stop or pause
  under the conditions defined by the skill rather than bypassing a blocker.
  
  Continuous cycles, including those coordinated through `/nuc-evaluate`, do not
--request confirmation to record an outcome or start the next NUC. An uncertain
-+request confirmation to record an outcome. The resumed session starts the next
-+NUC without asking. An uncertain
+-request confirmation to record an outcome. The resumed session starts the next
+-NUC without asking. An uncertain
++request confirmation to record an outcome or start the next NUC. An uncertain
  category addition, selection, or update is the exception: workers return it
  to the caller, who asks the user for confirmation before proceeding.
  Use the existing selection rules and verified inputs;
 ```
 
-**File**: `.claude/skills/nuc-evaluate/SKILL.md` (modified, +3/-2)
+**File**: `.claude/skills/nuc-evaluate/SKILL.md` (modified, +2/-3)
 ```diff
-@@ -308,8 +308,9 @@ Keep implementation changes isolated and preserve unrelated staged and
+@@ -308,9 +308,8 @@ Keep implementation changes isolated and preserve unrelated staged and
  unstaged work. Baselines and reports remain in the session workspace.
  
  After recording the outcome, follow the
--[continuous-cycle rule](../nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only)
--without requesting confirmation to record outcomes or continue. For uncertain
-+[continuous-cycle rule](../nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only).
-+It ends the cycle with a fresh-session resume command (`/clear`, then
-+`/nuc-proposal`), without requesting confirmation to record outcomes. For uncertain
+-[continuous-cycle rule](../nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only).
+-It ends the cycle with a fresh-session resume command (`/clear`, then
+-`/nuc-proposal`), without requesting confirmation to record outcomes. For uncertain
++[continuous-cycle rule](../nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only)
++without requesting confirmation to record outcomes or continue. For uncertain
  category additions, selections, updates, or assignments, workers return the
  question to the caller, who asks the user for confirmation under the proposal skill's
  [classification rule](../nuc-proposal/SKILL.md#classify-every-proposal).
 ```
 
-**File**: `.claude/skills/nuc-proposal/SKILL.md` (modified, +22/-10)
+**File**: `.claude/skills/nuc-proposal/SKILL.md` (modified, +10/-22)
 ```diff
-@@ -113,7 +113,8 @@ confirmed category/applicability policy, not a new random draw.
+@@ -113,8 +113,7 @@ confirmed category/applicability policy, not a new random draw.
  `/nuc-proposal [request] [--hint <text>]` takes an optional hint: everything
  after `--hint` is the user's guidance for the proposal, such as a syntax idea,
  prior art, or an area to explore. The caller passes it unchanged to each
--proposal agent it launches, in every continuous cycle of the invocation.
-+proposal agent it launches. It carries the hint into every later continuous
-+cycle through that cycle's `/clear` resume command.
+-proposal agent it launches. It carries the hint into every later continuous
+-cycle through that cycle's `/clear` resume command.
++proposal agent it launches, in every continuous cycle of the invocation.
  
  A hint is not a request. It never makes an open-ended request specific or
  changes the execution mode, category draw, runtime applicability, or selected
-@@ -328,15 +329,22 @@ coordinating caller must finish its outcome before starting the next cycle:
+@@ -329,22 +328,15 @@ coordinating caller must finish its outcome before starting the next cycle:
  - **Rejected:** record and commit only rejection documentation and index/outcome
    metadata; leave rejected language changes isolated.
  
--Immediately start another fresh "purpose a NUC" cycle without waiting for a
--new user prompt. Repeat sequentially in the active agent session until the
--user stops, pauses or redirects the work, the session ends, or a resource limit
--is reached. A `Blocked` decision, failed outcome recording, or missing required
-+Start every cycle in a fresh session. After the outcome commit, do not begin
-+the next NUC in the same context. End the cycle with a short outcome report
-+and the exact command that resumes the loop: `/clear`, then `/nuc-proposal`
-+with this invocation's unchanged request and `--hint` text, if any. `/clear`
-+is a CLI command only the user can run. Never claim to have run it, and never
-+continue in the same context in its place. The fresh session derives the next
-+NUC number, accepted revision, baselines, worktrees and report paths from
-+`main` and these rules. The loop runs one cycle per session for as long as
-+the user resumes it, and ends when the user stops, pauses or redirects the
-+work. A `Blocked` decision, failed outcome recording, or missing required
+-Start every cycle in a fresh session. After the outcome commit, do not begin
+-the next NUC in the same context. End the cycle with a short outcome report
+-and the exact command that resumes the loop: `/clear`, then `/nuc-proposal`
+-with this invocation's unchanged request and `--hint` text, if any. `/clear`
+-is a CLI command only the user can run. Never claim to have run it, and never
+-continue in the same context in its place. The fresh session derives the next
+-NUC number, accepted revision, baselines, worktrees and report paths from
+-`main` and these rules. The loop runs one cycle per session for as long as
+-the user resumes it, and ends when the user stops, pauses or redirects the
+-work. A `Blocked` decision, failed outcome recording, or missing required
++Immediately start another fresh "purpose a NUC" cycle without waiting for a
++new user prompt. Repeat sequentially in the active agent session until the
++user stops, pauses or redirects the work, the session ends, or a resource limit
++is reached. A `Blocked` decision, failed outcome recording, or missing required
  input pauses continuation; report the blocker instead of bypassing it.
  
--Continuous cycles do not ask for confirmation before recording an outcome or
--continuing, including when coordinated through `/nuc-evaluate`. The exception
--is an uncertain proposal category: the caller asks the user under
-+Continuous cycles do not ask for confirmation before recording an outcome,
-+including when coordinated through `/nuc-evaluate`. The resumed session starts
-+its NUC without asking. The resume command is a handoff, not a question. The
-+exception is an uncertain proposal category: the caller asks the user under
+-Continuous cycles do not ask for confirmation before recording an outcome,
+-including when coordinated through `/nuc-evaluate`. The resumed session starts
+-its NUC without asking. The resume command is a handoff, not a question. The
+-exception is an uncertain proposal category: the caller asks the user under
++Continuous cycles do not ask for confirmation before recording an outcome or
++continuing, including when coordinated through `/nuc-evaluate`. The exception
++is an uncertain proposal category: the caller asks the user under
  [the classification rule](#classify-every-proposal) before assigning it.
  Workers return that uncertainty to the caller. Use the existing selection
  rules and verified inputs. For other missing prerequisites or blockers,
-@@ -352,9 +360,13 @@ workers across cycles or combine pending proposals.
+@@ -360,13 +352,9 @@ workers across cycles or combine pending proposals.
  
  Use actual independent behavior/compatibility results and token measurements
  when comparison ran as feedback for the next enhancement; report legitimate
--skips rather than inventing counts. With configured strategy learning, retain
-+skips rather than inventing counts. The next cycle starts from cleared context,
-+so it takes that feedback from the committed outcome records, such as the
-+latest NUC's Evaluation section. With configured strategy learning, retain
+-skips rather than inventing counts. The next cycle starts from cleared context,
+-so it takes that feedback from the committed outcome records, such as the
+-latest NUC's Evaluation section. With configured strategy learning, retain
++skips rather than inventing counts. With configured strategy learning, retain
  the independent evaluator's new verified checkpoint as the next head (or retain
--the old head when learning legitimately skipped). Actually invoke
-+the old head when learning legitimately skipped). Name that head's path and
-+raw pin in the resume report and command, so the fresh session selects from it
-+rather than an older head or genesis. Actually invoke
+-the old head when learning legitimately skipped). Name that head's path and
+-raw pin in the resume report and command, so the fresh session selects from it
+-rather than an older head or genesis. Actually invoke
++the old head when learning legitimately skipped). Actually invoke
  `select_proposal_strategy` from that head before dispatching the next proposer;
  use fresh trial/receipt paths and never carry a stale selection pin. Preserve
  earlier artifacts and all acceptance, compatibility and version-protection
@@ -1119,13 +1119,13 @@ Make continuous proposal cycles resume through `/clear` and `/nuc-proposal` inst
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Require fresh sessions for proposal cycles
+## X. Revert "Require fresh sessions for proposal cycles"
 
 **RULE**:
 When implementing operations in `.claude/agents/nuc-proposal.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `20ef3c68`: Require fresh sessions for proposal cycles. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `081ff52e`: Revert "Require fresh sessions for proposal cycles". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/nuc-proposal.agent.md`.
@@ -1133,15 +1133,15 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-new NUC, it starts the next proposal in a fresh session (`/clear`, then
-`/nuc-proposal`) under the
+new NUC, it immediately starts the next proposal under the
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-new NUC, it immediately starts the next proposal under the
+new NUC, it starts the next proposal in a fresh session (`/clear`, then
+`/nuc-proposal`) under the
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `20ef3c68` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `081ff52e` are properly handled with clean fallback behavior.

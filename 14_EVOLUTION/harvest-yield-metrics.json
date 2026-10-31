@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T06:38:35.954Z",
-  "total_cycles_completed": 6469,
-  "total_learnings_persisted": 6469,
-  "total_rules_promoted": 6096,
+  "last_updated": "2026-10-31T06:45:31.870Z",
+  "total_cycles_completed": 6474,
+  "total_learnings_persisted": 6474,
+  "total_rules_promoted": 6100,
   "history": [
-    {
-      "timestamp": "2026-10-30T20:15:09.800Z",
-      "repository": "zed-industries/zed",
-      "learningId": "learn-github-zed-industries-zed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T20:15:11.657Z",
-      "repository": "cypress-io/cypress",
-      "learningId": "learn-github-cypress-io-cypress",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T20:15:14.249Z",
-      "repository": "TypeWhisper/typewhisper-mac",
-      "learningId": "learn-github-typewhisper-typewhisper-mac",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T20:21:58.456Z",
-      "repository": "astral-sh/ruff",
-      "learningId": "learn-github-astral-sh-ruff",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T20:22:01.280Z",
-      "repository": "webdriverio/webdriverio",
-      "learningId": "learn-github-webdriverio-webdriverio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T20:22:06.383Z",
       "repository": "zarf-dev/zarf",
@@ -1403,6 +1368,41 @@
       "repository": "NirDiamant/RAG_Techniques",
       "learningId": "learn-github-nirdiamant-rag_techniques",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T06:45:21.703Z",
+      "repository": "grpc/grpc-rust",
+      "learningId": "learn-github-grpc-grpc-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T06:45:21.704Z",
+      "repository": "DylanVann/react-native-fast-image",
+      "learningId": "learn-github-dylanvann-react-native-fast-image",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T06:45:24.616Z",
+      "repository": "Qwen/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-qwen-qwen-image-2-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T06:45:29.187Z",
+      "repository": "weaviate/weaviate",
+      "learningId": "learn-github-weaviate-weaviate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T06:45:31.870Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
