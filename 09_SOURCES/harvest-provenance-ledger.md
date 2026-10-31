@@ -6533,3 +6533,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-10-31T09:53:59.331Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `63fe6c7f` | Multi-dimensional audit evidence | 2026-10-31T09:54:02.644Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `784d6493` | Multi-dimensional audit evidence | 2026-10-31T09:54:07.310Z |
+| `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `e680c0af` | Multi-dimensional audit evidence | 2026-10-31T10:00:29.038Z |
+| `learn-huggingface-comfy-org-qwen-image-2-1` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-31T10:00:41.096Z |

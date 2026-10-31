@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T09:54:07.225Z",
+  "last_updated": "2026-10-31T10:00:41.039Z",
   "total_verified_learnings": 1181,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20760,7 +20760,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
       "source_version": "hf-comfy-org-qwen-image-2.1",
-      "content_hash": "8a8b617f238f9891418514eb74da8d6fe777ce1083a2649c28cc6740641d11e2",
+      "content_hash": "2fb456561d5404b7576c82baaab05262ce6e64c476beacb1c02395fa3e5cf2f8",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
       "promoted_rules": [
@@ -20861,6 +20861,16 @@
           "number": 4334,
           "title": "Turbo Distillation Step/CFG Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6160,
+          "title": "Model Artifact Precision-Pathway Separation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6161,
+          "title": "Control Signal Unification via Union Adapters",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -20881,7 +20891,7 @@
         "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv467olr",
         "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv4ji9no"
       ],
-      "verified_at": "2026-10-28T06:24:43.517Z",
+      "verified_at": "2026-10-31T10:00:41.023Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42353,8 +42363,8 @@
       "slug": "ntex-rs-ntex",
       "platform": "github",
       "source_url": "https://github.com/ntex-rs/ntex",
-      "source_version": "fd1cf5fc",
-      "content_hash": "3feab823677c17633a86b6af22a6f66baf7cd0fc497996c8848c583418e7bf11",
+      "source_version": "e680c0af",
+      "content_hash": "2e67c8358688f9240ca83ce5ad57b4c54a60bced1b7c026624f243d47fdf507b",
       "dossier_path": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "promoted_rules": [
@@ -42412,6 +42422,11 @@
           "number": 5716,
           "title": "Reentrancy-Safe Ephemeral Allocation Borrow Pattern",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6159,
+          "title": "Attempt to fix docs.rs build",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42419,7 +42434,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T10:11:43.044Z",
+      "verified_at": "2026-10-31T10:00:28.935Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -161216,6 +161231,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T09:54:07.205Z"
+    },
+    "rule-6159": {
+      "learning_id": "rule-6159",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6159,
+      "title": "Attempt to fix docs.rs build",
+      "source_url": "https://github.com/ntex-rs/ntex",
+      "source_version": "e680c0af",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T10:00:28.935Z"
+    },
+    "rule-6160": {
+      "learning_id": "rule-6160",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6160,
+      "title": "Model Artifact Precision-Pathway Separation",
+      "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+      "source_version": "hf-comfy-org-qwen-image-2.1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T10:00:41.023Z"
+    },
+    "rule-6161": {
+      "learning_id": "rule-6161",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6161,
+      "title": "Control Signal Unification via Union Adapters",
+      "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+      "source_version": "hf-comfy-org-qwen-image-2.1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T10:00:41.023Z"
     }
   },
   "aliases": {

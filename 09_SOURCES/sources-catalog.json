@@ -475,8 +475,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
     "sourceVersion": "hf-comfy-org-qwen-image-2.1",
     "license": "Open-Source",
-    "contentHash": "8a8b617f238f9891418514eb74da8d6fe777ce1083a2649c28cc6740641d11e2",
-    "lastHarvestedAt": "2026-10-28T06:24:43.600Z",
+    "contentHash": "2fb456561d5404b7576c82baaab05262ce6e64c476beacb1c02395fa3e5cf2f8",
+    "lastHarvestedAt": "2026-10-31T10:00:41.096Z",
     "learningId": "learn-huggingface-comfy-org-qwen-image-2-1"
   },
   "hf-akhilaaa3-jev-omni": {
@@ -5793,10 +5793,10 @@
     "repository": "ntex-rs/ntex",
     "platform": "github",
     "sourceUrl": "https://github.com/ntex-rs/ntex",
-    "sourceVersion": "fd1cf5fc",
+    "sourceVersion": "e680c0af",
     "license": "Apache-2.0",
-    "contentHash": "3feab823677c17633a86b6af22a6f66baf7cd0fc497996c8848c583418e7bf11",
-    "lastHarvestedAt": "2026-10-30T10:11:43.140Z",
+    "contentHash": "2e67c8358688f9240ca83ce5ad57b4c54a60bced1b7c026624f243d47fdf507b",
+    "lastHarvestedAt": "2026-10-31T10:00:29.038Z",
     "learningId": "learn-github-ntex-rs-ntex"
   },
   "learnapollo-learnapollo": {

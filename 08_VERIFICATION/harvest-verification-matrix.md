@@ -6524,3 +6524,5 @@
 | `CYCLE-20261031-4RHB` | `2026-10-31T09:53:59.327Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6155, Rule 6156` | Yes (`1faaf1b9...`) |
 | `CYCLE-20261031-4U1C` | `2026-10-31T09:54:02.640Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6157` | Yes (`1da5762b...`) |
 | `CYCLE-20261031-4XMY` | `2026-10-31T09:54:07.306Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6158` | Yes (`27d2df57...`) |
+| `CYCLE-20261031-D46J` | `2026-10-31T10:00:29.035Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6159` | Yes (`2e67c835...`) |
+| `CYCLE-20261031-DDHI` | `2026-10-31T10:00:41.094Z` | `Comfy-Org/Qwen-Image-2.1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6160, Rule 6161` | Yes (`2fb45656...`) |

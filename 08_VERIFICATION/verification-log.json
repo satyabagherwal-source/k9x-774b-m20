@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261029-L6D6",
-    "timestamp": "2026-10-29T02:07:31.194Z",
-    "repository": "lioensky/VCPToolBox",
-    "learningId": "learn-github-lioensky-vcptoolbox",
-    "contentHash": "050b40df3ed00819aa91af1d4a7025af8408528e83d7f5c956a6494dd19b8a9b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-O9JU",
-    "timestamp": "2026-10-29T11:01:47.994Z",
-    "repository": "fabio-rovai/open-ontologies",
-    "learningId": "learn-github-fabio-rovai-open-ontologies",
-    "contentHash": "c8f921755d9731df7233374b7534ed9f651be64d9b7caf47326920d494a49662",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261029-NUIA",
     "timestamp": "2026-10-29T11:29:28.114Z",
     "repository": "LiquidAI/LFM3-VL-2B",
@@ -7492,6 +7462,36 @@
     "contentHash": "27d2df57256a87822ae57a089c12a9683b8319c8f17c21f569f5f715c5ec1bbe",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-D46J",
+    "timestamp": "2026-10-31T10:00:29.035Z",
+    "repository": "ntex-rs/ntex",
+    "learningId": "learn-github-ntex-rs-ntex",
+    "contentHash": "2e67c8358688f9240ca83ce5ad57b4c54a60bced1b7c026624f243d47fdf507b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-DDHI",
+    "timestamp": "2026-10-31T10:00:41.094Z",
+    "repository": "Comfy-Org/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
+    "contentHash": "2fb456561d5404b7576c82baaab05262ce6e64c476beacb1c02395fa3e5cf2f8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

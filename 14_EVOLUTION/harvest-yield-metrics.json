@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T09:54:07.316Z",
-  "total_cycles_completed": 6501,
-  "total_learnings_persisted": 6501,
-  "total_rules_promoted": 6151,
+  "last_updated": "2026-10-31T10:00:41.100Z",
+  "total_cycles_completed": 6503,
+  "total_learnings_persisted": 6503,
+  "total_rules_promoted": 6154,
   "history": [
-    {
-      "timestamp": "2026-10-30T21:41:19.990Z",
-      "repository": "risingwavelabs/risingwave",
-      "learningId": "learn-github-risingwavelabs-risingwave",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T21:42:14.725Z",
-      "repository": "dubzzz/fast-check",
-      "learningId": "learn-github-dubzzz-fast-check",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T21:46:13.806Z",
       "repository": "tauri-apps/tauri",
@@ -1403,6 +1389,20 @@
       "repository": "lancedb/lancedb",
       "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T10:00:29.042Z",
+      "repository": "ntex-rs/ntex",
+      "learningId": "learn-github-ntex-rs-ntex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T10:00:41.100Z",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

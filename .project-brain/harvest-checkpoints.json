@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T09:54:07.320Z",
+  "last_updated": "2026-10-31T10:00:41.103Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -575,14 +575,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-qwen-image-2-1",
-      "content_hash": "8a8b617f238f9891418514eb74da8d6fe777ce1083a2649c28cc6740641d11e2",
-      "verified_at": "2026-10-28T06:24:43.610Z",
+      "content_hash": "2fb456561d5404b7576c82baaab05262ce6e64c476beacb1c02395fa3e5cf2f8",
+      "verified_at": "2026-10-31T10:00:41.103Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T06:24:43.610Z"
+      "last_updated": "2026-10-31T10:00:41.103Z"
     },
     "akhilaaa3/Jev-Omni": {
       "repository": "akhilaaa3/Jev-Omni",
@@ -8811,14 +8811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ntex-rs-ntex",
-      "content_hash": "3feab823677c17633a86b6af22a6f66baf7cd0fc497996c8848c583418e7bf11",
-      "verified_at": "2026-10-30T10:11:43.149Z",
+      "content_hash": "2e67c8358688f9240ca83ce5ad57b4c54a60bced1b7c026624f243d47fdf507b",
+      "verified_at": "2026-10-31T10:00:29.045Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T10:11:43.149Z"
+      "last_updated": "2026-10-31T10:00:29.045Z"
     },
     "learnapollo/learnapollo": {
       "repository": "learnapollo/learnapollo",
