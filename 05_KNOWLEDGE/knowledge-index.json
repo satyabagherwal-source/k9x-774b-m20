@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T05:00:56.241Z",
+  "last_updated": "2026-10-31T05:07:18.863Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16708,7 +16708,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
       "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
-      "content_hash": "b1540a850266e3c2df61c115737a3dd64f98de2c3412d8d3655d211c7ba5fb8d",
+      "content_hash": "156b645b21865b0253098094c6785becb638684269b7995d077122da7c1b75a9",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -16740,6 +16740,16 @@
         {
           "number": 5129,
           "title": "Multi-Format Quantization Artifact Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6076,
+          "title": "Multi-Format Quantization Artifact Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6077,
+          "title": "Quantization Format-Specific Tensor Layout Compliance",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -17083,7 +17093,7 @@
         "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv42kq8l",
         "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv4ftgho"
       ],
-      "verified_at": "2026-10-28T03:04:27.136Z",
+      "verified_at": "2026-10-31T05:07:17.142Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40882,8 +40892,8 @@
       "slug": "nats-io-nats-server",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats-server",
-      "source_version": "4e28758e",
-      "content_hash": "412c986e3d02f5bb66a5d043b8b48615a74c0e8553d659c1dc32b271b9c8fc17",
+      "source_version": "d163ae74",
+      "content_hash": "13e757876e912d413f1fe1796fabbfa66a13a8b382339bb68873c1d34eb9340d",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "promoted_rules": [
@@ -40921,6 +40931,11 @@
           "number": 5744,
           "title": "[FIXED] Stale leafnode connection when hub sends many subs on connect (#8811)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6078,
+          "title": "[FIXED] Wildcard char inside a token matched as a wildcard (#8765)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40928,7 +40943,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T11:28:14.213Z",
+      "verified_at": "2026-10-31T05:07:18.848Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -159606,6 +159621,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T05:00:56.212Z"
+    },
+    "rule-6076": {
+      "learning_id": "rule-6076",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6076,
+      "title": "Multi-Format Quantization Artifact Integrity",
+      "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
+      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T05:07:17.142Z"
+    },
+    "rule-6077": {
+      "learning_id": "rule-6077",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6077,
+      "title": "Quantization Format-Specific Tensor Layout Compliance",
+      "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
+      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T05:07:17.142Z"
+    },
+    "rule-6078": {
+      "learning_id": "rule-6078",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6078,
+      "title": "[FIXED] Wildcard char inside a token matched as a wildcard (#8765)",
+      "source_url": "https://github.com/nats-io/nats-server",
+      "source_version": "d163ae74",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T05:07:18.848Z"
     }
   },
   "aliases": {

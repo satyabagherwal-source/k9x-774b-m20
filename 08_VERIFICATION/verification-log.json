@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-XB1R",
-    "timestamp": "2026-10-28T22:33:00.207Z",
-    "repository": "SimonSchubert/LinuxCommandLibrary",
-    "learningId": "learn-github-simonschubert-linuxcommandlibrary",
-    "contentHash": "6320212b70cd5fe3c3a2058eac4d745621f4a69d7f8e182d95ef5f4335f23069",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-5N1B",
-    "timestamp": "2026-10-28T22:39:28.991Z",
-    "repository": "autotrust/JEV-35B-NVFP4",
-    "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
-    "contentHash": "cde24f79f6d3ea673638c51a3c9380c2b812a680580b4deab345d6aea04ce65a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-5OBV",
     "timestamp": "2026-10-28T22:39:30.667Z",
     "repository": "apache/arrow",
@@ -7490,6 +7460,36 @@
     "repository": "tickernelz/opencode-mem",
     "learningId": "learn-github-tickernelz-opencode-mem",
     "contentHash": "95d863686017530cb03d8e05f8e34fa5e6b58ba8e9d32173b4028a8fbfaef980",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-W28I",
+    "timestamp": "2026-10-31T05:07:17.202Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+    "contentHash": "156b645b21865b0253098094c6785becb638684269b7995d077122da7c1b75a9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-W3K5",
+    "timestamp": "2026-10-31T05:07:18.917Z",
+    "repository": "nats-io/nats-server",
+    "learningId": "learn-github-nats-io-nats-server",
+    "contentHash": "13e757876e912d413f1fe1796fabbfa66a13a8b382339bb68873c1d34eb9340d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

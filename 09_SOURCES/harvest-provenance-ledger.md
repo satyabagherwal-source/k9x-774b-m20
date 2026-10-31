@@ -6476,3 +6476,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-convaiinnovations-laya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-10-31T04:50:45.692Z |
 | `learn-huggingface-edge0-audio8-asr-infinite` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-10-31T05:00:53.700Z |
 | `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `bd173ed4` | Multi-dimensional audit evidence | 2026-10-31T05:00:56.329Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-31T05:07:17.205Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `d163ae74` | Multi-dimensional audit evidence | 2026-10-31T05:07:18.919Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
-> **Source Version**: `4e28758e`  
+> **Source Version**: `d163ae74`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T11:28:13.723Z  
+> **Timestamp**: 2026-10-31T05:07:18.456Z  
 > **Learning ID**: `learn-github-nats-io-nats-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T11:28:11.989Z  
+> **Harvest Timestamp**: 2026-10-31T05:07:17.950Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High-Performance server for NATS.io, the cloud and edge native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 20969 stars
+- **Stars / Engagement**: 20973 stars
 
 ---
 
@@ -2726,127 +2726,221 @@ func (l *Logger) Tracef(format string, v ...any) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f797bbdf` (2026-10-29)
-**Commit Message**: [FIXED] Stale leafnode connection when hub sends many subs on connect (#8811)
+### Incident Patch 1: `d163ae74` (2026-10-30)
+**Commit Message**: [FIXED] Wildcard char inside a token matched as a wildcard (#8765)
 
-The hub queued an `INFO` block to the leaf, but didn't flush it, so if
-the interest it needs to send takes longer than 2s the leaf connection
-would be marked stale. This PR fixes that by flushing the `INFO`
-immediately, before snapshotting the subs.
+Literal subjects, like `a*`, `*a` or `**`, would _sometimes_ be treated
+as containing a wildcard whereas they're not supposed to.
 
-**File**: `server/leafnode.go` (modified, +2/-1)
+Supersedes https://github.com/nats-io/nats-server/pull/8761
+
+**File**: `server/stree/parts.go` (modified, +26/-5)
 ```diff
-@@ -2585,7 +2585,8 @@ func (s *Server) sendPermsAndAccountInfo(c *client) {
- 	// s.SystemAccount() uses an atomic operation and does not get the server lock, so this is safe.
- 	info.IsSystemAccount = c.acc == s.SystemAccount()
- 	info.ConnectInfo = true
--	c.enqueueProto(generateInfoJSON(info))
-+	// Flush now, so it isn't delayed by sending all subs.
-+	c.enqueueProtoAndFlush(generateInfoJSON(info), true)
- 	c.mu.Unlock()
+@@ -17,6 +17,23 @@ import (
+ 	"strings"
+ )
+ 
++// Wildcard parts share these backing arrays and are recognized by identity.
++// A literal part trimmed down to "*" or ">" must not be mistaken for a wildcard.
++var (
++	pwcPart = []byte{pwc}
++	fwcPart = []byte{fwc}
++)
++
++// isPWCPart returns true if the part is a pwc placeholder from genParts.
++func isPWCPart(part []byte) bool {
++	return len(part) == 1 && &part[0] == &pwcPart[0]
++}
++
++// isFWCPart returns true if the part is a fwc placeholder from genParts.
++func isFWCPart(part []byte) bool {
++	return len(part) == 1 && &part[0] == &fwcPart[0]
++}
++
+ // genParts will break a filter subject up into parts.
+ // We need to break this up into chunks based on wildcards, either pwc '*' or fwc '>'.
+ // We do not care about other tokens per se, just parts that are separated by wildcards with an optional end fwc.
+@@ -29,7 +46,7 @@ func genParts(filter []byte, parts [][]byte) [][]byte {
+ 				if i > start {
+ 					parts = append(parts, filter[start:i+1])
+ 				}
+-				parts = append(parts, filter[i+1:i+2])
++				parts = append(parts, pwcPart)
+ 				i++ // Skip pwc
+ 				if i+2 <= e {
+ 					i++ // Skip next tsep from next part too.
+@@ -39,7 +56,7 @@ func genParts(filter []byte, parts [][]byte) [][]byte {
+ 				if i > start {
+ 					parts = append(parts, filter[start:i+1])
+ 				}
+-				parts = append(parts, filter[i+1:i+2])
++				parts = append(parts, fwcPart)
+ 				i++ // Skip fwc
+ 				start = i + 1
+ 			}
+@@ -57,7 +74,11 @@ func genParts(filter []byte, parts [][]byte) [][]byte {
+ 				break
+ 			}
+ 			// We start with a pwc or fwc.
+-			parts = append(parts, filter[i:i+1])
++			if filter[i] == pwc {
++				parts = append(parts, pwcPart)
++			} else {
++				parts = append(parts, fwcPart)
++			}
+ 			if i+1 <= e {
+ 				i++ // Skip next tsep from next part too.
+ 			}
+@@ -92,7 +113,7 @@ func matchParts(parts [][]byte, frag string) ([][]byte, bool) {
+ 		lp := len(part)
+ 		// Check for pwc or fwc place holders.
+ 		if lp == 1 {
+-			if part[0] == pwc {
++			if isPWCPart(part) {
+ 				index := strings.IndexByte(frag[si:], tsep)
+ 				// We are trying to match pwc and did not find our tsep.
+ 				// Will need to move to next node from caller.
+@@ -104,7 +125,7 @@ func matchParts(parts [][]byte, frag string) ([][]byte, bool) {
+ 				}
+ 				si += index + 1
+ 				continue
+-			} else if part[0] == fwc {
++			} else if isFWCPart(part) {
+ 				// If we are here we should be good.
+ 				return nil, true
+ 			}
+```
+
+**File**: `server/stree/stree.go` (modified, +3/-3)
+```diff
+@@ -317,7 +317,7 @@ func (t *SubjectTree[T]) delete(np *node, subject []byte, si int) (*T, bool) {
+ func (t *SubjectTree[T]) match(n node, parts [][]byte, pre []byte, cb func(subject []byte, val *T) bool) bool {
+ 	// Capture if we are sitting on a terminal fwc.
+ 	var hasFWC bool
+-	if lp := len(parts); lp > 0 && len(parts[lp-1]) > 0 && parts[lp-1][0] == fwc {
++	if lp := len(parts); lp > 0 && isFWCPart(parts[lp-1]) {
+ 		hasFWC = true
+ 	}
+ 
+@@ -351,7 +351,7 @@ func (t *SubjectTree[T]) match(n node, parts [][]byte, pre []byte, cb func(subje
+ 			// We could have a leafnode with no suffix which would be a match.
+ 			// We could also have a terminal pwc. Check for those here.
+ 			var hasTermPWC bool
+-			if lp := len(parts); lp > 0 && len(parts[lp-1]) == 1 && parts[lp-1][0] == pwc {
++			if lp := len(parts); lp > 0 && isPWCPart(parts[lp-1]) {
+ 				// If we are sitting on a terminal pwc, put the pwc back and continue.
+ 				nparts = parts[len(parts)-1:]
+ 				hasTermPWC = true
+@@ -391,7 +391,7 @@ func (t *SubjectTree[T]) match(n node, parts [][]byte, pre []byte, cb func(subje
+ 		fp := nparts[0]
+ 		p := pivot(fp, 0)
+ 		// Check if we have a pwc/fwc part here. This will cause us to iterate.
+-		if len(fp) == 1 && (p == pwc || p == fwc) {
++		if isPWCPart(fp) || isFWCPart(fp) {
+ 			// We need to iterate over all children here for the current node
+ 			// to see if we match further down.
+ 			for _, cn := range n.children() {
+```
+
+**File**: `server/stree/stree_test.go` (modified, +34/-0)
+```diff
+@@ -682,6 +682,40 @@ func TestSubjectTreeMatchInvalidWildcard(t *testing.T) {
+ 	match(t, st, `'*.*'`, 0)
  }
  
-```
-
-**File**: `server/leafnode_test.go` (modified, +32/-0)
-```diff
-@@ -15025,3 +15025,35 @@ func TestLeafNodeJetStreamPullForgedRequestInfo(t *testing.T) {
- 	require_Equal(t, acc, "JS")
- 	require_Equal(t, interest, "_R_.forged")
- }
++func TestSubjectTreeMatchPartialWildcardIsLiteral(t *testing.T) {
++	// Shared "a" prefix splits nodes right before the '*' or '>' in the filters.
++	st := NewSubjectTree[int]()
++	st.Insert(b("KV.a"), 1)
++	st.Insert(b("KV.apple"), 2)
++	st.Insert(b("KV.avocado"), 3)
++	st.Insert(b("KV.banana"), 4)
++	match(t, st, "KV.a*", 0)
++	match(t, st, "KV.a>", 0)
++	match(t, st, "KV.ap*", 0)
++	match(t, st, "KV.*", 4)
++	match(t, st, "KV.>", 4)
 +
-+func TestLeafNodeConnectInfoNotDelayedBySendingSubs(t *testing.T) {
-+	o := DefaultOptions()
-+	o.LeafNode.Port = -1
-+	s := RunServer(o)
-+	defer s.Shutdown()
++	// Subjects with a wildcard char inside a token are valid literals, and match exactly.
++	st.Insert(b("KV.a*"), 5)
++	st.Insert(b("KV.a*x"), 6)
++	st.Insert(b("KV.a>"), 7)
++	st.Insert(b("KV.a>x"), 8)
++	match(t, st, "KV.a*", 1)
++	match(t, st, "KV.a>", 1)
++	match(t, st, "KV.a*x", 1)
++	match(t, st, "*.a*", 1)
++	match(t, st, "KV.*", 8)
++	match(t, st, "KV.>", 8)
 +
-+	// Block sending subs, like an account with many subs would.
-+	sl := s.globalAccount().sl
-+	sl.Lock()
-+	defer sl.Unlock()
-+
-+	addr := fmt.Sprintf("127.0.0.1:%d", o.LeafNode.Port)
-+	c, err := net.Dial("tcp", addr)
-+	require_NoError(t, err)
-+	defer c.Close()
-+
-+	br := bufio.NewReader(c)
-+	require_NoError(t, c.SetReadDeadline(time.Now().Add(2*time.Second)))
-+	l, _, err := br.ReadLine()
-+	require_NoError(t, err)
-+	require_True(t, strings.HasPrefix(string(l), "INFO"))
-+
-+	_, err = c.Write([]byte("CONNECT {}\r\n"))
-+	require_NoError(t, err)
-+
-+	// The soliciting side times out if the INFO response to CONNECT is delayed.
-+	require_NoError(t, c.SetReadDeadline(time.Now().Add(2*time.Second)))
-+	l, _, err = br.ReadLine()
-+	require_NoError(t, err)
-+	require_True(t, strings.Contains(string(l), `"connect_info":true`))
++	// A trimmed '*' can also reach a leaf directly.
++	st = NewSubjectTree[int]()
++	st.Insert(b("KV.apple"), 1)
++	st.Insert(b("KV.avocado"), 2)
++	st.Insert(b("KV.a*x"), 3)
++	match(t, st, "KV.a*", 0)
++	match(t, st, "KV.a*x", 1)
 +}
++
+ func TestSubjectTreeRandomTrackEntries(t *testing.T) {
+ 	st := NewSubjectTree[int]()
+ 	smap := make(map[string]struct{}, 1000)
 ```
 
----
-
-### Incident Patch 2: `9b7c6849` (2026-10-29)
-**Commit Message**: [FIXED] Stale leafnode connection when hub sends many subs on connect
-
-Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
-
-**File**: `server/leafnode.go` (modified, +2/-1)
+**File**: `server/sublist.go` (modified, +2/-3)
 ```diff
-@@ -2585,7 +2585,8 @@ func (s *Server) sendPermsAndAccountInfo(c *client) {
- 	// s.SystemAccount() uses an atomic operation and does not get the server lock, so this is safe.
- 	info.IsSystemAccount = c.acc == s.SystemAccount()
- 	info.ConnectInfo = true
--	c.enqueueProto(generateInfoJSON(info))
-+	// Flush now, so it isn't delayed by sending all subs.
-+	c.enqueueProtoAndFlush(generateInfoJSON(info), true)
- 	c.mu.Unlock()
+@@ -1386,8 +1386,7 @@ func tokensCanMatch(t1, t2 string) bool {
+ 	if len(t1) == 0 || len(t2) == 0 {
+ 		return false
+ 	}
+-	t1c, t2c := t1[0], t2[0]
+-	if t1c == pwc || t2c == pwc || t1c == fwc || t2c == fwc {
++	if t1 == pwcs || t2 == pwcs || t1 == fwcs || t2 == fwcs {
+ 		return true
+ 	}
+ 	return t1 == t2
+@@ -1543,7 +1542,7 @@ func isSubsetMatchTokenized(tokens, test []string) bool {
+ 			}
+ 			continue
+ 		}
+-		if t2[0] != pwc && strings.Compare(t1, t2) != 0 {
++		if t2 != pwcs && strings.Compare(t1, t2) != 0 {
+ 			return false
+ 		}
+ 	}
+```
+
+**File**: `server/sublist_test.go` (modified, +15/-0)
+```diff
+@@ -1228,6 +1228,14 @@ func TestIsSubsetMatch(t *testing.T) {
+ 		{"foo.>", "foo.bar", false},
+ 		{"foo..bar", "foo.*", false}, // Bad subject, we return false
+ 		{"foo.*", "foo..bar", false}, // Bad subject, we return false
++		// A wildcard char inside a token is a literal.
++		{"foo.bar", "foo.*bar", false},
++		{"foo.bar", "foo.**", false},
++		{"foo.*bar", "foo.*bar", true},
++		{"foo.*bar", "foo.*", true},
++		{"foo.*", "foo.*bar", false},
++		{"foo.bar", "foo.bar*", false},
++		{"foo.bar", "foo.>bar", false},
+ 	} {
+ 		t.Run("", func(t *testing.T) {
+ 			if res := subjectIsSubsetMatch(test.subject, test.test); res != test.result {
+@@ -1666,6 +1674,13 @@ func TestSublistSubjectCollide(t *testing.T) {
+ 	require_True(t, SubjectsCollide("foo.*", "foo.foo"))
+ 	require_True(t, SubjectsCollide("foo.*", "*.foo"))
+ 	require_True(t, SubjectsCollide("foo.bar.>", "*.bar.foo"))
++
++	// A wildcard char inside a token is a literal.
++	require_False(t, SubjectsCollide("foo.*bar.*", "foo.baz.*"))
++	require_False(t, SubjectsCollide("foo.>bar.*", "foo.baz.*"))
++	require_False(t, SubjectsCollide("foo.**.*", "foo.baz.*"))
++	require_True(t, SubjectsCollide("foo.*bar.*", "foo.*bar.*"))
++	require_True(t, SubjectsCollide("foo.*bar.*", "foo.*.baz"))
  }
  
-```
-
-**File**: `server/leafnode_test.go` (modified, +32/-0)
-```diff
-@@ -15025,3 +15025,35 @@ func TestLeafNodeJetStreamPullForgedRequestInfo(t *testing.T) {
- 	require_Equal(t, acc, "JS")
- 	require_Equal(t, interest, "_R_.forged")
- }
-+
-+func TestLeafNodeConnectInfoNotDelayedBySendingSubs(t *testing.T) {
-+	o := DefaultOptions()
-+	o.LeafNode.Port = -1
-+	s := RunServer(o)
-+	defer s.Shutdown()
-+
-+	// Block sending subs, like an account with many subs would.
-+	sl := s.globalAccount().sl
-+	sl.Lock()
-+	defer sl.Unlock()
-+
-+	addr := fmt.Sprintf("127.0.0.1:%d", o.LeafNode.Port)
-+	c, err := net.Dial("tcp", addr)
-+	require_NoError(t, err)
-+	defer c.Close()
-+
-+	br := bufio.NewReader(c)
-+	require_NoError(t, c.SetReadDeadline(time.Now().Add(2*time.Second)))
-+	l, _, err := br.ReadLine()
-+	require_NoError(t, err)
-+	require_True(t, strings.HasPrefix(string(l), "INFO"))
-+
-+	_, err = c.Write([]byte("CONNECT {}\r\n"))
-+	require_NoError(t, err)
-+
-+	// The soliciting side times out if the INFO response to CONNECT is delayed.
-+	require_NoError(t, c.SetReadDeadline(time.Now().Add(2*time.Second)))
-+	l, _, err = br.ReadLine()
-+	require_NoError(t, err)
-+	require_True(t, strings.Contains(string(l), `"connect_info":true`))
-+}
+ func TestSublistAddCacheHitRate(t *testing.T) {
 ```
 
 #### Recent Merged Pull Requests:
@@ -2875,29 +2969,57 @@ Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Stale leafnode connection when hub sends many subs on connect (#8811)
+## X. [FIXED] Wildcard char inside a token matched as a wildcard (#8765)
 
 **RULE**:
-When implementing operations in `server/leafnode.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/stree/parts.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f797bbdf`: [FIXED] Stale leafnode connection when hub sends many subs on connect (#8811). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d163ae74`: [FIXED] Wildcard char inside a token matched as a wildcard (#8765). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/leafnode.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/stree/parts.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Flush now, so it isn't delayed by sending all subs.
-	c.enqueueProtoAndFlush(generateInfoJSON(info), true)
+// Wildcard parts share these backing arrays and are recognized by identity.
+// A literal part trimmed down to "*" or ">" must not be mistaken for a wildcard.
+var (
+	pwcPart = []byte{pwc}
+	fwcPart = []byte{fwc}
+)
+
+// isPWCPart returns true if the part is a pwc placeholder from genParts.
+func isPWCPart(part []byte) bool {
+	return len(part) == 1 && &part[0] == &pwcPart[0]
+}
+
+// isFWCPart returns true if the part is a fwc placeholder from genParts.
+func isFWCPart(part []byte) bool {
+	return len(part) == 1 && &part[0] == &fwcPart[0]
+}
+
+				parts = append(parts, pwcPart)
+				parts = append(parts, fwcPart)
+			if filter[i] == pwc {
+				parts = append(parts, pwcPart)
+			} else {
+				parts = append(parts, fwcPart)
+			}
+			if isPWCPart(part) {
+			} else if isFWCPart(part) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	c.enqueueProto(generateInfoJSON(info))
+				parts = append(parts, filter[i+1:i+2])
+				parts = append(parts, filter[i+1:i+2])
+			parts = append(parts, filter[i:i+1])
+			if part[0] == pwc {
+			} else if part[0] == fwc {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f797bbdf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d163ae74` are properly handled with clean fallback behavior.

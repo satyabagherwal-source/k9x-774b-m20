@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T05:00:56.338Z",
+  "last_updated": "2026-10-31T05:07:18.925Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2023,15 +2023,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
-      "content_hash": "59902ba69cf49be7f5faf3108f17c11fbba19df99b5174e3737f1cd922093416",
-      "verified_at": "2026-10-28T22:07:47.929Z",
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+      "content_hash": "156b645b21865b0253098094c6785becb638684269b7995d077122da7c1b75a9",
+      "verified_at": "2026-10-31T05:07:17.211Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T22:07:47.929Z"
+      "last_updated": "2026-10-31T05:07:17.211Z"
     },
     "iliyami/MacSai": {
       "repository": "iliyami/MacSai",
@@ -10941,14 +10941,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-server",
-      "content_hash": "412c986e3d02f5bb66a5d043b8b48615a74c0e8553d659c1dc32b271b9c8fc17",
-      "verified_at": "2026-10-30T11:28:14.303Z",
+      "content_hash": "13e757876e912d413f1fe1796fabbfa66a13a8b382339bb68873c1d34eb9340d",
+      "verified_at": "2026-10-31T05:07:18.925Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T11:28:14.303Z"
+      "last_updated": "2026-10-31T05:07:18.925Z"
     },
     "str4d/rage": {
       "repository": "str4d/rage",
