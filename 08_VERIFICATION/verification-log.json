@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-69WB",
-    "timestamp": "2026-10-30T06:23:32.507Z",
-    "repository": "ytsaurus/ytsaurus",
-    "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "d85f7d0d7335daf8180186d998e0b32bd1fca4571832e720871dea8a21813634",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-E9FO",
-    "timestamp": "2026-10-30T06:29:45.156Z",
-    "repository": "mikepenz/multiplatform-markdown-renderer",
-    "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer",
-    "contentHash": "0c85086e990db0e15c72bd0bca6f68663aa7b1a64b9aed9474455e5fafe4b6a4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-EBD1",
-    "timestamp": "2026-10-30T06:29:47.653Z",
-    "repository": "temporalio/temporal",
-    "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "324c9ccf38323938dfcfe96c95797bee924c8777b5dbf7d2444fd61e44715a4f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-EEGA",
-    "timestamp": "2026-10-30T06:29:51.658Z",
-    "repository": "cryfs/cryfs",
-    "learningId": "learn-github-cryfs-cryfs",
-    "contentHash": "bb118e0dbd3a12acb855f4510478124d7cf61470566b95b84b960a4f8979d471",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-MZJE",
     "timestamp": "2026-10-30T06:36:32.235Z",
     "repository": "envoyproxy/envoy",
@@ -7492,6 +7432,66 @@
     "contentHash": "d479ba4d8bdd48aaac380ecb75c209744bc6a32b55fa640ab2d7ca0fad8599f7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-6FEC",
+    "timestamp": "2026-10-31T16:27:11.604Z",
+    "repository": "tokio-rs/tokio",
+    "learningId": "learn-github-tokio-rs-tokio",
+    "contentHash": "89aa6039b36bca16fb68430949a8f7d206b43e53a1af91fc310a46e60806711d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-6I5D",
+    "timestamp": "2026-10-31T16:27:15.169Z",
+    "repository": "CrossPaste/crosspaste-desktop",
+    "learningId": "learn-github-crosspaste-crosspaste-desktop",
+    "contentHash": "c15d2e3b9ad57bbce813a3acfc6bc77c62568ac869f377547e53029e2189724c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-6NQ1",
+    "timestamp": "2026-10-31T16:27:22.393Z",
+    "repository": "sfu-db/connector-x",
+    "learningId": "learn-github-sfu-db-connector-x",
+    "contentHash": "6099519cb30cce17a0c68eb3d51131795428c3c029aa42d220d221a0397dbb59",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-D5CN",
+    "timestamp": "2026-10-31T16:32:25.175Z",
+    "repository": "FermionResearch/Phonon-2",
+    "learningId": "learn-huggingface-fermionresearch-phonon-2",
+    "contentHash": "93084ea2209b7eb5f8d6302503a7ff2986a0dfd0d3736188004bbb195679d611",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

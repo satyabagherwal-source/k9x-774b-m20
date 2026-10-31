@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T16:20:24.602Z",
+  "last_updated": "2026-10-31T16:32:25.186Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1370,14 +1370,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fermionresearch-phonon-2",
-      "content_hash": "1f041628c908c5bd32fe6d3fd470b4fedd8279adf067695ff6dff61d6a25585f",
-      "verified_at": "2026-10-28T15:36:32.003Z",
+      "content_hash": "93084ea2209b7eb5f8d6302503a7ff2986a0dfd0d3736188004bbb195679d611",
+      "verified_at": "2026-10-31T16:32:25.185Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T15:36:32.004Z"
+      "last_updated": "2026-10-31T16:32:25.185Z"
     },
     "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw": {
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -7131,14 +7131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sfu-db-connector-x",
-      "content_hash": "05f665fcdcf64645af174efd8679dd98163d2328f9225dae076479d45be3329d",
-      "verified_at": "2026-10-27T10:47:41.241Z",
+      "content_hash": "6099519cb30cce17a0c68eb3d51131795428c3c029aa42d220d221a0397dbb59",
+      "verified_at": "2026-10-31T16:27:22.404Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T10:47:41.241Z"
+      "last_updated": "2026-10-31T16:27:22.404Z"
     },
     "stenciljs/core": {
       "repository": "stenciljs/core",
@@ -11451,14 +11451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crosspaste-crosspaste-desktop",
-      "content_hash": "334bb814e46ca37bd3738f623d7ad34a9fe0aecee3539f89a9909bac28eb5822",
-      "verified_at": "2026-10-28T21:11:22.664Z",
+      "content_hash": "c15d2e3b9ad57bbce813a3acfc6bc77c62568ac869f377547e53029e2189724c",
+      "verified_at": "2026-10-31T16:27:15.180Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T21:11:22.664Z"
+      "last_updated": "2026-10-31T16:27:15.180Z"
     },
     "infiniflow/infinity": {
       "repository": "infiniflow/infinity",
@@ -11691,14 +11691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tokio-rs-tokio",
-      "content_hash": "c06962941710be4591a9c8d864e871b8e82d0b35ca4b5d3bc23b9b876e84cdf0",
-      "verified_at": "2026-10-30T20:36:16.833Z",
+      "content_hash": "89aa6039b36bca16fb68430949a8f7d206b43e53a1af91fc310a46e60806711d",
+      "verified_at": "2026-10-31T16:27:11.614Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T20:36:16.833Z"
+      "last_updated": "2026-10-31T16:27:11.614Z"
     },
     "SimonSchubert/LinuxCommandLibrary": {
       "repository": "SimonSchubert/LinuxCommandLibrary",

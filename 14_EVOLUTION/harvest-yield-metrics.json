@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T16:20:24.598Z",
-  "total_cycles_completed": 6609,
-  "total_learnings_persisted": 6609,
-  "total_rules_promoted": 6241,
+  "last_updated": "2026-10-31T16:32:25.182Z",
+  "total_cycles_completed": 6613,
+  "total_learnings_persisted": 6613,
+  "total_rules_promoted": 6247,
   "history": [
-    {
-      "timestamp": "2026-10-31T02:44:15.008Z",
-      "repository": "Comfy-Org/Fibo-2.0",
-      "learningId": "learn-huggingface-comfy-org-fibo-2-0",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T02:44:18.282Z",
-      "repository": "ytsaurus/ytsaurus",
-      "learningId": "learn-github-ytsaurus-ytsaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T02:51:10.312Z",
-      "repository": "openreplay/openreplay",
-      "learningId": "learn-github-openreplay-openreplay",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T02:55:59.658Z",
-      "repository": "KRAFTON/Raon-1-mini-preview",
-      "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T03:02:36.147Z",
       "repository": "ClementTsang/bottom",
@@ -1403,6 +1375,34 @@
       "repository": "microsoft/react-native-windows",
       "learningId": "learn-github-microsoft-react-native-windows",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:27:11.612Z",
+      "repository": "tokio-rs/tokio",
+      "learningId": "learn-github-tokio-rs-tokio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:27:15.177Z",
+      "repository": "CrossPaste/crosspaste-desktop",
+      "learningId": "learn-github-crosspaste-crosspaste-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:27:22.401Z",
+      "repository": "sfu-db/connector-x",
+      "learningId": "learn-github-sfu-db-connector-x",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:32:25.182Z",
+      "repository": "FermionResearch/Phonon-2",
+      "learningId": "learn-huggingface-fermionresearch-phonon-2",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

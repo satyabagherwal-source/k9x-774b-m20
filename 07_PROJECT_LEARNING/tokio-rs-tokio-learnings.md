@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source**: github ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
-> **Source Version**: `6470b5e4`  
+> **Source Version**: `b499257e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T20:36:16.107Z  
+> **Timestamp**: 2026-10-31T16:27:10.996Z  
 > **Learning ID**: `learn-github-tokio-rs-tokio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T20:36:14.520Z  
+> **Harvest Timestamp**: 2026-10-31T16:27:09.967Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A runtime for writing reliable asynchronous applications with Rust. Provides I/O, networking, scheduling, timers, ...
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 33550 stars
+- **Stars / Engagement**: 33553 stars
 
 ---
 
@@ -1958,160 +1958,83 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `63fd6949` (2026-10-29)
-**Commit Message**: rt: fix io_uring shutdown errors (#8634) (#8736)
+### Incident Patch 1: `b499257e` (2026-10-31)
+**Commit Message**: tests: add missing items to async_send_sync test (#8617)
 
-Shutdown errors can leave operations pending. Panicking then drops
-operation resources that the kernel may still be using.
-
-Drain available completions before retrying EINTR, EBUSY or EAGAIN
-from shutdown waits. Also retry EINTR during submission .
-
-Before panicking on other shutdown errors, leak thé operation slab
-to keep pending buffers alive (same for submission
-flush failures).
-
-(cherry picked from commit 844500fd42537518c997a9461947e91abef727ea)
-
-Co-authored-by: Thanh Dodeur <[REDACTED_EMAIL]>
-
-**File**: `tokio/src/runtime/io/driver/uring.rs` (modified, +20/-4)
+**File**: `tokio/tests/async_send_sync.rs` (modified, +241/-6)
 ```diff
-@@ -158,7 +158,11 @@ impl Drop for UringContext {
- 
-         // Make sure we flush the submission queue before dropping the driver.
-         if !self.ring_mut().submission().is_empty() {
--            self.submit().expect("Internal error when dropping driver");
-+            if let Err(error) = self.submit() {
-+                // The kernel may still be using resources from previously submitted operations.
-+                mem::forget(mem::take(&mut self.ops));
-+                panic!("Internal error when dropping driver: {error:?}");
-+            }
-         }
- 
-         let mut ops = std::mem::take(&mut self.ops);
-@@ -168,9 +172,21 @@ impl Drop for UringContext {
- 
-         while !ops.is_empty() {
-             // Wait until at least one completion is available.
--            self.ring_mut()
--                .submit_and_wait(1)
--                .expect("Internal error when dropping driver");
-+            match self.ring_mut().submit_and_wait(1) {
-+                Ok(_) => {}
-+                // A failed wait can still leave completions available. Drain them below
-+                // before retrying, retaining resources for operations that remain pending.
-+                Err(error)
-+                    if matches!(
-+                        error.raw_os_error(),
-+                        Some(libc::EINTR | libc::EBUSY | libc::EAGAIN)
-+                    ) => {}
-+                Err(error) => {
-+                    // The kernel may still be using the resources held by pending operations.
-+                    mem::forget(ops);
-+                    panic!("Internal error when dropping driver: {error:?}");
-+                }
-+            }
- 
-             for cqe in self.ring_mut().completion() {
-                 let idx = cqe.user_data() as usize;
-```
-
-**File**: `tokio/tests/fs_uring.rs` (modified, +86/-0)
-```diff
-@@ -122,6 +122,92 @@ fn open_many_files() {
-     }
+@@ -122,6 +122,7 @@ macro_rules! async_assert_fn {
+ }
+ macro_rules! assert_value {
+     ($type:ty: $($tok:tt)*) => {
++        #[allow(deprecated)]
+         #[allow(unreachable_code)]
+         #[allow(unused_variables)]
+         const _: fn() = || {
+@@ -183,14 +184,22 @@ cfg_not_wasi! {
+         async_assert_fn!(tokio::fs::rename(&str, &str): Send & Sync & !Unpin);
+         async_assert_fn!(tokio::fs::set_permissions(&str, std::fs::Permissions): Send & Sync & !Unpin);
+         async_assert_fn!(tokio::fs::symlink_metadata(&str): Send & Sync & !Unpin);
++        async_assert_fn!(tokio::fs::try_exists(&str): Send & Sync & !Unpin);
+         async_assert_fn!(tokio::fs::write(&str, Vec<u8>): Send & Sync & !Unpin);
++        #[cfg(unix)]
++        async_assert_fn!(tokio::fs::symlink(&str, &str): Send & Sync & !Unpin);
++        #[cfg(windows)]
++        async_assert_fn!(tokio::fs::symlink_dir(&str, &str): Send & Sync & !Unpin);
++        #[cfg(windows)]
++        async_assert_fn!(tokio::fs::symlink_file(&str, &str): Send & Sync & !Unpin);
+         async_assert_fn!(tokio::fs::ReadDir::next_entry(_): Send & Sync & !Unpin);
+         async_assert_fn!(tokio::fs::OpenOptions::open(_, &str): Send & Sync & !Unpin);
+         async_assert_fn!(tokio::fs::DirBuilder::create(_, &str): Send & Sync & !Unpin);
+         async_assert_fn!(tokio::fs::DirEntry::metadata(_): Send & Sync & !Unpin);
+         async_assert_fn!(tokio::fs::DirEntry::file_type(_): Send & Sync & !Unpin);
+         async_assert_fn!(tokio::fs::File::open(&str): Send & Sync & !Unpin);
+         async_assert_fn!(tokio::fs::File::create(&str): Send & Sync & !Unpin);
++        async_assert_fn!(tokio::fs::File::create_new(&str): Send & Sync & !Unpin);
+         async_assert_fn!(tokio::fs::File::sync_all(_): Send & Sync & !Unpin);
+         async_assert_fn!(tokio::fs::File::sync_data(_): Send & Sync & !Unpin);
+         async_assert_fn!(tokio::fs::File::set_len(_, u64): Send & Sync & !Unpin);
+@@ -212,6 +221,7 @@ cfg_not_wasi! {
+ cfg_not_wasi! {
+     assert_value!(tokio::net::TcpSocket: Send & Sync & Unpin);
+     async_assert_fn!(tokio::net::TcpListener::bind(SocketAddr): Send & Sync & !Unpin);
++    async_assert_fn!(tokio::net::TcpSocket::connect(_, SocketAddr): Send & Sync & !Unpin);
+     async_assert_fn!(tokio::net::TcpStream::connect(SocketAddr): Send & Sync & !Unpin);
  }
  
-+#[cfg(all(feature = "signal", feature = "time"))]
-+#[tokio::test]
-+async fn shutdown_retries_interrupted_wait() {
-+    use std::os::unix::thread::JoinHandleExt;
-+    use tokio::signal::unix::{signal, SignalKind};
-+    use tokio::time::timeout;
-+
-+    const TIMEOUT: Duration = Duration::from_secs(10);
-+
-+    let Ok(ring) = io_uring::IoUring::new(2) else {
-+        return;
-+    };
-+    let mut probe = io_uring::Probe::new();
-+    if ring.submitter().register_probe(&mut probe).is_err()
-+        || !probe.is_supported(io_uring::opcode::OpenAt::CODE)
-+    {
-+        return;
-+    }
-+    drop(ring);
-+
-+    let dir = tempfile::tempdir().unwrap();
-+    let path = dir.path().join("fifo");
-+    nix::unistd::mkfifo(&path, nix::sys::stat::Mode::S_IRWXU).unwrap();
-+    let mut signal = signal(SignalKind::user_defined1()).unwrap();
-+    let (tx, rx) = tokio::sync::oneshot::channel();
-+    let open_path = path.clone();
-+    let shutdown = std::thread::spawn(move || {
-+        let rt = current_rt()();
-+        // Initialise io_uring before polling the operation we will cancel.
-+        rt.block_on(tokio::fs::File::open("/dev/null")).unwrap();
-+        {
-+            let _enter = rt.enter();
-+            // O_CREAT forces io_uring to use its blocking open path for the FIFO.
-+            let mut open = tokio_test::task::spawn(tokio::fs::File::create(open_path));
-+            tokio_test::assert_pending!(open.poll());
-+        }
-+        // SAFETY: gettid take no arguments and returns this thread's ID.
-+        tx.send(unsafe { libc::syscall(libc::SYS_gettid) }).unwrap();
-+        drop(rt);
-+    });
-+
-+    let pthread = shutdown.as_pthread_t();
-+    let interrupt_result = tokio::spawn(timeout(TIMEOUT, async move {
-+        let tid = rx.await.unwrap();
-+        let syscall_path = format!("/proc/self/task/{tid}/syscall");
-+        let syscall_number = format!("{} ", libc::SYS_io_uring_enter);
-+        let wait_for_uring_enter = || async {
-+            while !std::fs::read_to_string(&syscall_path)
-+                .unwrap()
-+                .starts_with(&syscall_number)
-+            {
-+                tokio::task::yield_now().await;
-+            }
-+        };
-+        // The FIFO has no reader, so shutdown must wait for the cancelled open.
-+        wait_for_uring_enter().await;
-+        // SAFETY: the join handle keeps the thread ID valid, and SIGUSR1 has a handler.
-+        assert_eq!(
-+            unsafe { libc::pthread_kill(pthread as libc::pthread_t, libc::SIGUSR1) },
-+            0
-+        );
-+        signal.recv().await.unwrap();
-+        // After signal delivry, another wait proves shutdown retried before we release the FIFO.
-+        wait_for_uring_enter().await;
-+    }))
-+    .await;
-+
-+    // Release the FIFO before propagating failures. O_RDWR never waits for a peer.
-+    let _reader = std::fs::OpenOptions::new()
-+        .read(true)
-+        .write(true)
-+        .open(path)
-+        .unwrap();
-+    timeout(TIMEOUT, async {
-+        while !shutdown.is_finished() {
-+            tokio::task::yield_now().await;
-+        }
-+    })
-+    .await
-+    .expect("runtime shutdown did not complete");
-+    shutdown
-+        .join()
-+        .unwrap_or_else(|panic| std::panic::resume_unwind(panic));
-+    interrupt_result.unwrap().unwrap();
-+}
-+
- #[tokio::test]
- async fn cancel_op_future() {
-     let (_tmp_file, path): (Vec<NamedTempFile>, Vec<PathBuf>) = create_tmp_files(1);
+@@ -223,6 +233,7 @@ assert_value!(tokio::net::tcp::ReadHalf<'_>: Send & Sync & Unpin);
+ assert_value!(tokio::net::tcp::ReuniteError: Send & Sync & Unpin);
+ assert_value!(tokio::net::tcp::WriteHalf<'_>: Send & Sync & Unpin);
+ async_assert_fn!(tokio::net::TcpListener::accept(_): Send & Sync & !Unpin);
++async_assert_fn!(tokio::net::TcpStream::async_io(_, tokio::io::Interest, fn() -> std::io::Result<()>): Send & Sync & !Unpin);
+ async_assert_fn!(tokio::net::TcpStream::peek(_, &mut [u8]): Send & Sync & !Unpin);
+ async_assert_fn!(tokio::net::TcpStream::readable(_): Send & Sync & !Unpin);
+ async_assert_fn!(tokio::net::TcpStream::ready(_, tokio::io::Interest): Send & Sync & !Unpin);
+@@ -233,27 +244,42 @@ cfg_not_wasi! {
+     mod udp_socket {
+         use super::*;
+         assert_value!(tokio::net::UdpSocket: Send & Sync & Unpin);
++        async_assert_fn!(tokio::net::UdpSocket::async_io(_, tokio::io::Interest, fn() -> std::io::Result<()>): Send & Sync & !Unpin);
+         async_assert_fn!(tokio::net::UdpSocket::bind(SocketAddr): Send & Sync & !Unpin);
+         async_assert_fn!(tokio::net::UdpSocket::connect(_, SocketAddr): Send & Sync & !Unpin);
++        async_assert_fn!(tokio::net::UdpSocket::peek(_, &mut [u8]): Send & Sync & !Unpin);
+         async_assert_fn!(tokio::net::UdpSocket::peek_from(_, &mut [u8]): Send & Sync & !Unpin);
++        async_assert_fn!(tokio::net::UdpSocket::peek_sender(_): Send & Sync & !Unpin);
+         async_assert_fn!(tokio::net::UdpSocket::readable(_): Send & Sync & !Unpin);
+         async_assert_fn!(tokio::net::UdpSocket::ready(_, tokio::io::Interest): Send & Sync & !Unpin);
+         async_assert_fn!(tokio::net::UdpSocket::recv(_, &mut [u8]): Send & Sync & !Unpin);
++        async_assert_fn!(tokio::net::UdpSocket::recv_buf(_, &mut Vec<u8>): Send & Sync & !Unpin);
++        async_assert_fn!(tokio::net::UdpSocket::recv_buf_from(_, &mut Vec<u8>): Send & Sync & !Unpin);
+         async_assert_fn!(tokio::net::UdpSocket::recv_from(_, &mut [u8]): Send & Sync & !Unpin);
+         async_assert_fn!(tokio::net::UdpSocket::send(_, &[u8]): Send & Sync & !Unpin);
+         async_assert_fn!(tokio::net::UdpSocket::send_to(_, &[u8], SocketAddr): Send & Sync & !Unpin);
+         async_assert_fn!(tokio::net::UdpSocket::writable(_): Send & Sync & !Unpin);
+     }
+ }
+ async_assert_fn!(tokio::net::lookup_host(SocketAddr): Send & Sync & !Unpin);
++async_assert_fn!(tokio::net::tcp::OwnedReadHalf::peek(_, &mut [u8]): Send & Sync & !Unpin);
++async_assert_fn!(tokio::net::tcp::OwnedReadHalf::readable(_): Send & Sync & !Unpin);
++async_assert_fn!(tokio::net::tcp::OwnedReadHalf::ready(_, tokio::io::Interest): Send & Sync & !Unpin
 ```
 
 #### Recent Merged Pull Requests:
@@ -2140,50 +2063,43 @@ Co-authored-by: Thanh Dodeur <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rt: fix io_uring shutdown errors (#8634) (#8736)
+## X. tests: add missing items to async_send_sync test (#8617)
 
 **RULE**:
-When implementing operations in `tokio/src/runtime/io/driver/uring.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tokio/tests/async_send_sync.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `63fd6949`: rt: fix io_uring shutdown errors (#8634) (#8736). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b499257e`: tests: add missing items to async_send_sync test (#8617). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio/src/runtime/io/driver/uring.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio/tests/async_send_sync.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            if let Err(error) = self.submit() {
-                // The kernel may still be using resources from previously submitted operations.
-                mem::forget(mem::take(&mut self.ops));
-                panic!("Internal error when dropping driver: {error:?}");
-            }
-            match self.ring_mut().submit_and_wait(1) {
-                Ok(_) => {}
-                // A failed wait can still leave completions available. Drain them below
-                // before retrying, retaining resources for operations that remain pending.
-                Err(error)
-                    if matches!(
-                        error.raw_os_error(),
-                        Some(libc::EINTR | libc::EBUSY | libc::EAGAIN)
-                    ) => {}
-                Err(error) => {
-                    // The kernel may still be using the resources held by pending operations.
-                    mem::forget(ops);
-                    panic!("Internal error when dropping driver: {error:?}");
-                }
-            }
+        #[allow(deprecated)]
+        async_assert_fn!(tokio::fs::try_exists(&str): Send & Sync & !Unpin);
+        #[cfg(unix)]
+        async_assert_fn!(tokio::fs::symlink(&str, &str): Send & Sync & !Unpin);
+        #[cfg(windows)]
+        async_assert_fn!(tokio::fs::symlink_dir(&str, &str): Send & Sync & !Unpin);
+        #[cfg(windows)]
+        async_assert_fn!(tokio::fs::symlink_file(&str, &str): Send & Sync & !Unpin);
+        async_assert_fn!(tokio::fs::File::create_new(&str): Send & Sync & !Unpin);
+    async_assert_fn!(tokio::net::TcpSocket::connect(_, SocketAddr): Send & Sync & !Unpin);
+async_assert_fn!(tokio::net::TcpStream::async_io(_, tokio::io::Interest, fn() -> std::io::Result<()>): Send & Sync & !Unpin);
+        async_assert_fn!(tokio::net::UdpSocket::async_io(_, tokio::io::Interest, fn() -> std::io::Result<()>): Send & Sync & !Unpin);
+        async_assert_fn!(tokio::net::UdpSocket::peek(_, &mut [u8]): Send & Sync & !Unpin);
+        async_assert_fn!(tokio::net::UdpSocket::peek_sender(_): Send & Sync & !Unpin);
+        async_assert_fn!(tokio::net::UdpSocket::recv_buf(_, &mut Vec<u8>): Send & Sync & !Unpin);
+        async_assert_fn!(tokio::net::UdpSocket::recv_buf_from(_, &
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            self.submit().expect("Internal error when dropping driver");
-            self.ring_mut()
-                .submit_and_wait(1)
-                .expect("Internal error when dropping driver");
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `63fd6949` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b499257e` are properly handled with clean fallback behavior.

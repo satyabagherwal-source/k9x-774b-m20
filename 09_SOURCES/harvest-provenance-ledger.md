@@ -6641,3 +6641,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-aleph-alpha-kolibri-1` | `https://huggingface.co/Aleph-Alpha/Kolibri-1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-10-31T16:20:20.266Z |
 | `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `23a16fa0` | Multi-dimensional audit evidence | 2026-10-31T16:20:20.783Z |
 | `learn-github-microsoft-react-native-windows` | `https://github.com/microsoft/react-native-windows` | `8a95a6d5` | Multi-dimensional audit evidence | 2026-10-31T16:20:24.593Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `b499257e` | Multi-dimensional audit evidence | 2026-10-31T16:27:11.608Z |
+| `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `3f2d26fa` | Multi-dimensional audit evidence | 2026-10-31T16:27:15.172Z |
+| `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `6163eb14` | Multi-dimensional audit evidence | 2026-10-31T16:27:22.396Z |
+| `learn-huggingface-fermionresearch-phonon-2` | `https://huggingface.co/FermionResearch/Phonon-2` | `hf-fermion` | Multi-dimensional audit evidence | 2026-10-31T16:32:25.178Z |

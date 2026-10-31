@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T16:20:24.510Z",
+  "last_updated": "2026-10-31T16:32:25.108Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8299,8 +8299,8 @@
       "slug": "crosspaste-crosspaste-desktop",
       "platform": "github",
       "source_url": "https://github.com/CrossPaste/crosspaste-desktop",
-      "source_version": "bc806010",
-      "content_hash": "334bb814e46ca37bd3738f623d7ad34a9fe0aecee3539f89a9909bac28eb5822",
+      "source_version": "3f2d26fa",
+      "content_hash": "c15d2e3b9ad57bbce813a3acfc6bc77c62568ac869f377547e53029e2189724c",
       "dossier_path": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
       "promoted_rules": [
@@ -8323,6 +8323,11 @@
           "number": 5406,
           "title": ":arrow_up: bump web vite to 6.4.5 and vitest to 4.1.12 for security fixes (#5295",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6244,
+          "title": ":arrow_up: Bump org.jetbrains.kotlinx:kotlinx-serialization-json (#5297)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8330,7 +8335,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T21:11:22.564Z",
+      "verified_at": "2026-10-31T16:27:15.073Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23333,7 +23338,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FermionResearch/Phonon-2",
       "source_version": "hf-fermionresearch-phonon-2",
-      "content_hash": "1f041628c908c5bd32fe6d3fd470b4fedd8279adf067695ff6dff61d6a25585f",
+      "content_hash": "93084ea2209b7eb5f8d6302503a7ff2986a0dfd0d3736188004bbb195679d611",
       "dossier_path": "07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md",
       "promoted_rules": [
@@ -23350,6 +23355,21 @@
         {
           "number": 2586,
           "title": "TDT Forward Decoding Step Non-Zero Progression Bound",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6246,
+          "title": "Quantized Artifact Integrity & Backend Agnostic Loading",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6247,
+          "title": "Real-Time ASR Latency Budget Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6248,
+          "title": "Cross-Platform Audio Preprocessing Consistency",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -23370,7 +23390,7 @@
         "learn-huggingface-hf-fermionresearch-phonon-2-mv3xmdbo",
         "learn-huggingface-hf-fermionresearch-phonon-2-mv4ccp0f"
       ],
-      "verified_at": "2026-10-28T15:36:31.873Z",
+      "verified_at": "2026-10-31T16:32:25.091Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50166,8 +50186,8 @@
       "slug": "sfu-db-connector-x",
       "platform": "github",
       "source_url": "https://github.com/sfu-db/connector-x",
-      "source_version": "0f5ee234",
-      "content_hash": "05f665fcdcf64645af174efd8679dd98163d2328f9225dae076479d45be3329d",
+      "source_version": "6163eb14",
+      "content_hash": "6099519cb30cce17a0c68eb3d51131795428c3c029aa42d220d221a0397dbb59",
       "dossier_path": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "promoted_rules": [
@@ -50205,6 +50225,11 @@
           "number": 4687,
           "title": "build(rust): bump testcontainers from 0.23.3 to 0.28.0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6245,
+          "title": "Merge pull request #1026 from oystersuki/fix/arrow-stream-fail-fast",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50212,7 +50237,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T10:47:41.178Z",
+      "verified_at": "2026-10-31T16:27:22.311Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55160,8 +55185,8 @@
       "slug": "tokio-rs-tokio",
       "platform": "github",
       "source_url": "https://github.com/tokio-rs/tokio",
-      "source_version": "6470b5e4",
-      "content_hash": "c06962941710be4591a9c8d864e871b8e82d0b35ca4b5d3bc23b9b876e84cdf0",
+      "source_version": "b499257e",
+      "content_hash": "89aa6039b36bca16fb68430949a8f7d206b43e53a1af91fc310a46e60806711d",
       "dossier_path": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "promoted_rules": [
@@ -55209,6 +55234,11 @@
           "number": 5864,
           "title": "rt: fix io_uring shutdown errors (#8634) (#8736)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6243,
+          "title": "tests: add missing items to async_send_sync test (#8617)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55216,7 +55246,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T20:36:16.673Z",
+      "verified_at": "2026-10-31T16:27:11.499Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162929,6 +162959,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T16:20:24.490Z"
+    },
+    "rule-6243": {
+      "learning_id": "rule-6243",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6243,
+      "title": "tests: add missing items to async_send_sync test (#8617)",
+      "source_url": "https://github.com/tokio-rs/tokio",
+      "source_version": "b499257e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T16:27:11.499Z"
+    },
+    "rule-6244": {
+      "learning_id": "rule-6244",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6244,
+      "title": ":arrow_up: Bump org.jetbrains.kotlinx:kotlinx-serialization-json (#5297)",
+      "source_url": "https://github.com/CrossPaste/crosspaste-desktop",
+      "source_version": "3f2d26fa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T16:27:15.073Z"
+    },
+    "rule-6245": {
+      "learning_id": "rule-6245",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6245,
+      "title": "Merge pull request #1026 from oystersuki/fix/arrow-stream-fail-fast",
+      "source_url": "https://github.com/sfu-db/connector-x",
+      "source_version": "6163eb14",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T16:27:22.311Z"
+    },
+    "rule-6246": {
+      "learning_id": "rule-6246",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6246,
+      "title": "Quantized Artifact Integrity & Backend Agnostic Loading",
+      "source_url": "https://huggingface.co/FermionResearch/Phonon-2",
+      "source_version": "hf-fermionresearch-phonon-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T16:32:25.092Z"
+    },
+    "rule-6247": {
+      "learning_id": "rule-6247",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6247,
+      "title": "Real-Time ASR Latency Budget Enforcement",
+      "source_url": "https://huggingface.co/FermionResearch/Phonon-2",
+      "source_version": "hf-fermionresearch-phonon-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T16:32:25.092Z"
+    },
+    "rule-6248": {
+      "learning_id": "rule-6248",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6248,
+      "title": "Cross-Platform Audio Preprocessing Consistency",
+      "source_url": "https://huggingface.co/FermionResearch/Phonon-2",
+      "source_version": "hf-fermionresearch-phonon-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T16:32:25.092Z"
     }
   },
   "aliases": {

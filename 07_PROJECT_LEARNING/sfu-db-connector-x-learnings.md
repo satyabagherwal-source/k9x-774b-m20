@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  
 > **Source**: github ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  
-> **Source Version**: `0f5ee234`  
+> **Source Version**: `6163eb14`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T10:47:40.895Z  
+> **Timestamp**: 2026-10-31T16:27:21.805Z  
 > **Learning ID**: `learn-github-sfu-db-connector-x`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T10:47:40.632Z  
+> **Harvest Timestamp**: 2026-10-31T16:27:21.800Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fastest library to load data from DB to DataFrames in Rust and Python
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2661 stars
+- **Stars / Engagement**: 2660 stars
 
 ---
 
@@ -787,412 +787,598 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `20710a11` (2026-10-26)
-**Commit Message**: build(rust): bump testcontainers from 0.23.3 to 0.28.0
+### Incident Patch 1: `6163eb14` (2026-10-31)
+**Commit Message**: Merge pull request #1026 from oystersuki/fix/arrow-stream-fail-fast
 
-Bumps [testcontainers](https://github.com/testcontainers/testcontainers-rs) from 0.23.3 to 0.28.0.
-- [Release notes](https://github.com/testcontainers/testcontainers-rs/releases)
-- [Changelog](https://github.com/testcontainers/testcontainers-rs/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/testcontainers/testcontainers-rs/compare/0.23.3...0.28.0)
+feat(arrow_stream)!: report partition errors through the batch iterator
 
----
-updated-dependencies:
-- dependency-name: testcontainers
-  dependency-version: 0.28.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +123/-63)
+**File**: `connectorx-cpp/src/lib.rs` (modified, +5/-1)
 ```diff
-@@ -455,6 +455,22 @@ dependencies = [
-  "syn 2.0.119",
- ]
+@@ -404,7 +404,7 @@ pub unsafe extern "C" fn connectorx_iter_next(
+ ) -> *mut CXSlice<CXArray> {
+     let arrow_iter = unsafe { &mut *iter };
+     match arrow_iter.next_batch() {
+-        Some(rb) => {
++        Some(Ok(rb)) => {
+             let mut cols = vec![];
  
-+[[package]]
-+name = "astral-tokio-tar"
-+version = "0.6.4"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "b18457efd137254e016bbde5e1d88df61c4e1a5ae2223746e56123bac6af2463"
-+dependencies = [
-+ "futures-core",
-+ "libc",
-+ "portable-atomic",
-+ "rustc-hash 2.1.3",
-+ "rustix 1.1.5",
-+ "tokio",
-+ "tokio-stream",
-+ "xattr",
-+]
-+
- [[package]]
- name = "async-channel"
- version = "2.5.0"
-@@ -1021,6 +1037,49 @@ dependencies = [
-  "tracing",
- ]
- 
-+[[package]]
-+name = "axum"
-+version = "0.8.9"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "31b698c5f9a010f6573133b09e0de5408834d0c82f8d7475a89fc1867a71cd90"
-+dependencies = [
-+ "axum-core",
-+ "bytes",
-+ "futures-util",
-+ "http 1.5.0",
-+ "http-body 1.1.0",
-+ "http-body-util",
-+ "itoa",
-+ "matchit",
-+ "memchr",
-+ "mime",
-+ "percent-encoding",
-+ "pin-project-lite",
-+ "serde_core",
-+ "sync_wrapper 1.0.2",
-+ "tower",
-+ "tower-layer",
-+ "tower-service",
-+]
-+
-+[[package]]
-+name = "axum-core"
-+version = "0.5.6"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "08c78f31d7b1291f7ee735c1c6780ccde7785daae9a9206026862dab7d8792d1"
-+dependencies = [
-+ "bytes",
-+ "futures-core",
-+ "http 1.5.0",
-+ "http-body 1.1.0",
-+ "http-body-util",
-+ "mime",
-+ "pin-project-lite",
-+ "sync_wrapper 1.0.2",
-+ "tower-layer",
-+ "tower-service",
-+]
-+
- [[package]]
- name = "backtrace"
- version = "0.3.76"
-@@ -1275,11 +1334,14 @@ checksum = "119771309b95163ec7aaf79810da82f7cd0599c19722d48b9c03894dca833966"
- 
- [[package]]
- name = "bollard"
--version = "0.18.1"
-+version = "0.21.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "97ccca1260af6a459d75994ad5acc1651bcabcbdbc41467cc9786519ab854c30"
-+checksum = "dbe8358268799ebb3e4df23cb9d47f4c72bbc4f5247e2fa6a1bf7b6c0baea220"
- dependencies = [
-+ "async-stream",
-  "base64 0.22.1",
-+ "bitflags 2.13.2",
-+ "bollard-buildkit-proto",
-  "bollard-stubs",
-  "bytes",
-  "futures-core",
-@@ -1294,33 +1356,53 @@ dependencies = [
-  "hyper-util",
-  "hyperlocal",
-  "log",
-+ "num",
-  "pin-project-lite",
-+ "rand 0.10.2",
-  "rustls 0.23.45",
-  "rustls-native-certs",
-- "rustls-pemfile 2.2.0",
-  "rustls-pki-types",
-  "serde",
-  "serde_derive",
-  "serde_json",
-- "serde_repr",
-  "serde_urlencoded",
-  "thiserror 2.0.21",
-+ "time",
-  "tokio",
-+ "tokio-stream",
-  "tokio-util 0.7.20",
-+ "tonic",
-  "tower-service",
-  "url",
-  "winapi",
- ]
- 
-+[[package]]
-+name = "bollard-buildkit-proto"
-+version = "0.8.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "b5c97450e79c7c565302dd92e86b08823b47550fcb4fc5ce910194d1b087a1a3"
-+dependencies = [
-+ "prost",
-+ "prost-types",
-+ "tonic",
-+ "tonic-prost",
-+]
-+
- [[package]]
- name = "bollard-stubs"
--version = "1.47.1-rc.27.3.1"
-+version = "1.53.1-rc.29.3.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3f179cfbddb6e77a5472703d4b30436bff32929c0aa8a9008ecf23d1d3cdd0da"
-+checksum = "ce412eb6f7096743011dc3cb5c674caeb24ced61d8c498fe07cf7998a4fea889"
- dependencies = [
-+ "base64 0.22.1",
-+ "bollard-buildkit-proto",
-+ "bytes",
-+ "prost",
-  "serde",
-+ "serde_json",
-  "serde_repr",
-- "serde_with",
-+ "time",
- ]
- 
- [[package]]
-@@ -3471,13 +3553,12 @@ dependencies = [
- 
- [[package]]
- name = "etcetera"
--version = "0.8.0"
-+version = "0.11.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "136d1b5283a1ab77bd9257427ffd09d8667ced0570b6f938942bc7568ed5b943"
-+checksum = "de48cc4d1c1d97a20fd819def54b890cadde72ed3ad0c614822a0a433361be96"
- dependencies = [
-  "cfg-if",
-- "home",
-- "windows-sys 0.48.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -3557,23 +3638,24 @@ dependencies = [
- ]
- 
- [[package]]
--name = "ff"
--version = "0.13.1"
-+name = "ferroid"
-+version = "2.0.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c0b50bfb653653f9ca9095b427bed08ab8d75a137839d9ad64eb11810d5b6393"
-+checksum = "ee93edf3c501f0035bbeffeccfed0b79e14c311f12195ec0e661e114a0f60da4"
- dependencies = [
-- "rand_core 0.6.4",
-- "subtle",
-+ "portable-atomic",
-+ "rand 0.10.2",
-+ "web-time",
- ]
- 
- [[package]]
--name = "filetime"
--version = "0.2.29"
-+name = "ff"
-+version = "0.13.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5c287a33c7f0a620c38e641e7f60827713987b3c0f26e8ddc9462cc69cf75759"
-+checksum = "c0b50bfb653653f9ca9095b427bed08ab8d75a137839d9ad64eb11810d5b6393"
- dependencies = [
-- "cfg-if",
-- "libc",
-+ "rand_core 0.6.4",
-+ "subtle",
- ]
- 
- [[package]]
-@@ -5049,6 +5131,12 @@ dependencies = [
-  "web_atoms",
- ]
- 
-+[[package]]
-+name = "matchit"
-+version = "0.8.4"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "47e1ffaa40ddd1f3ed91f717a33c8c0ee23fff369e3aa8772b9605cc1d22f4c3"
-+
- [[package]]
- name = "md-5"
- version = "0.10.6"
-@@ -5857,9 +5945,9 @@ dependencies = [
- 
- [[package]]
- name = "parse-display"
--version = "0.9.1"
-+version = "0.11.0"
- source = "registry
+             for array in rb.columns() {
+@@ -425,6 +425,10 @@ pub unsafe extern "C" fn connectorx_iter_next(
+             let cx_rb = Box::new(CXSlice::<CXArray>::new_from_vec(cols));
+             Box::into_raw(cx_rb)
+         }
++        // The C API has no error channel, and a panic cannot unwind through
++        // `extern "C"`, so this aborts the process like every other failure
++        // in this crate, as soon as a partition fails.
++        Some(Err(e)) => panic!("cx writer failed: {}", e),
+         None => std::ptr::null_mut(),
+     }
+ }
 ```
 
-**File**: `connectorx/Cargo.toml` (modified, +1/-1)
+**File**: `connectorx-python/connectorx/tests/test_mysql.py` (modified, +21/-0)
 ```diff
-@@ -103,7 +103,7 @@ name = "connectorx"
- criterion = "0.8"
- env_logger = "0.11"
- iai = "0.1"
--testcontainers = { version = "0.23", features = ["blocking"] }
-+testcontainers = { version = "0.28", features = ["blocking"] }
- ureq = { version = "2", features = ["json"] }
- 
- # pprof depends on nix/pthread and does not build on Windows.
+@@ -806,3 +806,24 @@ def test_mysql_unconvertible_value_raises(mysql_url: str, protocol: str, column:
+         )
+     # The error names the column's type, not the Option wrapping nullable columns.
+     assert "Option<" not in str(excinfo.value)
++
++
++@pytest.mark.parametrize("protocol", ["binary", "text"])
++def test_mysql_arrow_stream_unconvertible_value_raises(mysql_url: str, protocol: str) -> None:
++    # Same values as above, streamed: the batches before the bad row are
++    # delivered, then iterating raises the same RuntimeError right away instead
++    # of a PanicException after the whole result set has been fetched.
++    reader = read_sql(
++        mysql_url,
++        "SELECT test_int, test_date FROM test_unconvertible ORDER BY test_int",
++        protocol=protocol,
++        return_type="arrow_stream",
++        batch_size=1,
++    )
++
++    first = reader.read_next_batch()
++    assert first.num_rows == 1
++    assert first.column("test_int").to_pylist() == [1]
++
++    with pytest.raises(RuntimeError, match=r"Cannot produce a .*column `test_date`"):
++        reader.read_next_batch()
 ```
 
----
-
-### Incident Patch 2: `b022f752` (2026-10-26)
-**Commit Message**: build(deps-dev): bump certifi in /connectorx-python
-
-Bumps [certifi](https://github.com/certifi/python-certifi) from 2026.2.25 to 2026.10.19.
-- [Commits](https://github.com/certifi/python-certifi/compare/2026.02.25...2026.10.19)
-
----
-updated-dependencies:
-- dependency-name: certifi
-  dependency-version: 2026.10.19
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `connectorx-python/poetry.lock` (modified, +8/-8)
+**File**: `connectorx-python/src/arrow.rs` (modified, +2/-2)
 ```diff
-@@ -1,4 +1,4 @@
--# This file is automatically @generated by Poetry 2.4.1 and should not be changed by hand.
-+# This file is automatically @generated by Poetry 2.5.1 and should not be changed by hand.
- 
- [[package]]
- name = "appnope"
-@@ -83,7 +83,7 @@ mypy-extensions = ">=0.4.3"
- pathspec = ">=0.9.0,<1"
- platformdirs = ">=2"
- tomli = ">=0.2.6,<2.0.0"
--typing-extensions = {version = ">=3.10.0.0,<3.10.0.1 || >3.10.0.1", markers = "python_version >= \"3.10\""}
-+typing-extensions = {version = ">=3.10.0.0,!=3.10.0.1", markers = "python_version >= \"3.10\""}
- 
- [package.extras]
- colorama = ["colorama (>=0.4.3)"]
-@@ -94,14 +94,14 @@ uvloop = ["uvloop (>=0.15.2)"]
- 
- [[package]]
- name = "certifi"
--version = "2026.2.25"
-+version = "2026.10.19"
- description = "Python package for providing Mozilla's CA Bundle."
- optional = false
- python-versions = ">=3.7"
- groups = ["dev"]
- files = [
--    {file = "certifi-2026.2.25-py3-none-any.whl", hash = "sha256:027692e4402ad994f1c42e52a4997a9763c646b73e4096e4d5d6db8af1d6f0fa"},
--    {file = "certifi-2026.2.25.tar.gz", hash = "sha256:e887ab5cee78ea814d3472169153c2d12cd43b14bd03329a39a9c6e2e80bfba7"},
-+    {file = "certifi-2026.10.19-py3-none-any.whl", hash = "sha256:42d35340cc5b9ba78e818ddbff0c5b1c2b779de448a340fd1b989f5fa8670e1b"},
-+    {file = "certifi-2026.10.19.tar.gz", hash = "sha256:035c1e85572b141bf1c3a3eff0e33a8eb74917522f2559075ff8d2fea780a1ae"},
- ]
- 
- [[package]]
-@@ -720,7 +720,7 @@ msgpack = ">=0.6.0"
- psutil = ">=5.0"
- pyyaml = "*"
- setuptools = "*"
--sortedcontainers = "<2.0.0 || >2.0.0,<2.0.1 || >2.0.1"
-+sortedcontainers = "!=2.0.0,!=2.0.1"
- tblib = ">=1.6.0"
- toolz = ">=0.8.2"
- tornado = {version = ">=6.0.3", markers = "python_version >= \"3.8\""}
-@@ -953,7 +953,7 @@ jedi = ">=0.16"
- matplotlib-inline = "*"
- pexpect = {version = ">4.3", markers = "sys_platform != \"win32\""}
- pickleshare = "*"
--prompt-toolkit = ">=2.0.0,<3.0.0 || >3.0.0,<3.0.1 || >3.0.1,<3.1.0"
-+prompt-toolkit = ">=2.0.0,!=3.0.0,!=3.0.1,<3.1.0"
- pygments = "*"
- setuptools = ">=18.5"
- traitlets = ">=4.2"
-@@ -2822,7 +2822,7 @@ keyring = ">=15.1"
- pkginfo = ">=1.8.1"
- readme-renderer = ">=21.0"
- requests = ">=2.20"
--requests-toolbelt = ">=0.8.0,<0.9.0 || >0.9.0"
-+requests-toolbelt = ">=0.8.0,!=0.9.0"
- rfc3986 = ">=1.4.0"
- tqdm = ">=4.14"
- urllib3 = ">=1.26.0"
+@@ -67,12 +67,12 @@ impl PyRecordBatchIterator {
+         py: Python<'py>,
+     ) -> PyResult<Option<Py<PyRecordBatch>>> {
+         match slf.0.next_batch() {
+-            Some(rb) => {
++            Some(Ok(rb)) => {
+                 let wrapped = PyRecordBatch(Some(rb));
+                 let py_obj = Py::new(py, wrapped)?;
+                 Ok(Some(py_obj))
+             }
+-
++            Some(Err(e)) => Err(ConnectorXPythonError::from(e).into()),
+             None => Ok(None),
+         }
+     }
 ```
 
----
-
-### Incident Patch 3: `6f7887ec` (2026-10-24)
-**Commit Message**: build(rust): bump serde_json from 1.0.151 to 1.0.154
-
-Bumps [serde_json](https://github.com/serde-rs/json) from 1.0.151 to 1.0.154.
-- [Release notes](https://github.com/serde-rs/json/releases)
-- [Commits](https://github.com/serde-rs/json/compare/v1.0.151...v1.0.154)
-
----
-updated-dependencies:
-- dependency-name: serde_json
-  dependency-version: 1.0.154
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +6/-6)
+**File**: `connectorx/examples/batch_test.rs` (modified, +1/-1)
 ```diff
-@@ -1710,7 +1710,7 @@ dependencies = [
-  "rand 0.9.5",
-  "serde",
-  "serde_json",
-- "thiserror 2.0.20",
-+ "thiserror 2.0.21",
-  "tokio",
-  "tracing",
-  "twox-hash 2.1.4",
-@@ -1736,7 +1736,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "d7ddab58fabf3bdde7b6fa401f72b9abc7566ff015264c89aaaa71cf1d173d06"
- dependencies = [
-  "bytes",
-- "thiserror 2.0.20",
-+ "thiserror 2.0.21",
- ]
+@@ -49,7 +49,7 @@ fn main() {
+     let mut num_rows = 0;
+     let mut num_batches = 0;
+     for record_batch in batch_iter {
+-        let record_batch = record_batch;
++        let record_batch = record_batch.expect("stream failed");
+         println!("got 1 batch, with {} rows", record_batch.num_rows());
+         num_rows += record_batch.num_rows();
+         num_batches += 1;
+```
+
+**File**: `connectorx/src/arrow_batch_iter.rs` (modified, +89/-52)
+```diff
+@@ -1,3 +1,4 @@
++use crate::errors::OutResult;
+ use crate::prelude::*;
+ use arrow::record_batch::RecordBatch;
+ use itertools::Itertools;
+@@ -32,7 +33,7 @@ where
+     dorder: DataOrder,
+     src_schema: Vec<S::TypeSystem>,
+     dst_schema: Vec<ArrowStreamTypeSystem>,
+-    handle: Option<std::thread::JoinHandle<Result<(), TP::Error>>>,
++    handle: Option<std::thread::JoinHandle<()>>,
+     _phantom: PhantomData<TP>,
+ }
  
- [[package]]
-@@ -6986,7 +6986,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "03da047801ff44bb6a4d407d4860c05fd70bb81714e6b2f3812603d5b145b042"
- dependencies = [
-  "heck",
-- "itertools 0.13.0",
-+ "itertools 0.14.0",
-  "log",
-  "multimap",
-  "petgraph",
-@@ -7007,7 +7007,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "b570b25f7617e43d59005d0990ccb79e950a423952cea19671b7a876da390adf"
- dependencies = [
-  "anyhow",
-- "itertools 0.13.0",
-+ "itertools 0.14.0",
-  "proc-macro2",
-  "quote",
-  "syn 2.0.119",
-@@ -8112,9 +8112,9 @@ dependencies = [
+@@ -67,14 +68,17 @@ where
+         })
+     }
  
- [[package]]
- name = "serde_json"
--version = "1.0.151"
-+version = "1.0.154"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c841b55ecdae098c80dcae9cf767f6f8a0c2cdb3416bbef72181df4d0fe73f14"
-+checksum = "e7e9cc8b1b85264074fbcc02a88680c4096b1e47df8f739dceb03bf482f04bd6"
- dependencies = [
-  "itoa",
-  "memchr",
+-    fn run(&mut self) {
++    fn run(&mut self)
++    where
++        ConnectorXOutError: From<TP::Error>,
++    {
+         let src_schema = self.src_schema.clone();
+         let dst_schema = self.dst_schema.clone();
+         let src_partitions = self.src_parts.take().unwrap();
+         let dst_partitions = self.dst_parts.take().unwrap();
+         let dorder = self.dorder;
+ 
+-        self.handle = Some(std::thread::spawn(move || -> Result<(), TP::Error> {
++        self.handle = Some(std::thread::spawn(move || {
+             let schemas: Vec<_> = src_schema
+                 .iter()
+                 .zip_eq(&dst_schema)
+@@ -83,57 +87,79 @@ where
+ 
+             debug!("Start writing");
+             // parse and write
+-            dst_partitions
++            //
++            // Each partition reports its own error through the record batch
++            // channel (see `ArrowPartitionWriter::send_error`), so the consumer
++            // learns about it without joining this thread. `Err(())` only tells
++            // rayon to stop scheduling the remaining partitions.
++            let _ = dst_partitions
+                 .into_par_iter()
+                 .zip_eq(src_partitions)
+                 .enumerate()
+-                .try_for_each(|(i, (mut dst, mut src))| -> Result<(), TP::Error> {
+-                    let mut parser = src.parser()?;
+-
+-                    match dorder {
+-                        DataOrder::RowMajor => loop {
+-                            let (n, is_last) = parser.fetch_next()?;
+-                            dst.aquire_row(n)?;
+-                            for _ in 0..n {
++                .try_for_each(|(i, (mut dst, mut src))| -> Result<(), ()> {
++                    let mut parser = match src.parser() {
++                        Ok(parser) => parser,
++                        Err(e) => {
++                            dst.send_error(TP::Error::from(e).into());
++                            return Err(());
++                        }
++                    };
++
++                    let result = (|| -> Result<(), TP::Error> {
++                        match dorder {
++                            DataOrder::RowMajor => loop {
++                                let (n, is_last) = parser.fetch_next()?;
++                                dst.aquire_row(n)?;
++                                for _ in 0..n {
++                                    #[allow(clippy::needless_range_loop)]
++                                    for col in 0..dst.ncols() {
++                                        {
++                                            let (s1, s2) = schemas[col];
++                                            TP::process(s1, s2, &mut parser, &mut dst)?;
++                                        }
++                                    }
++                                }
++                                if is_last {
++                                    break;
++                                }
++                            },
++                            DataOrder::ColumnMajor => loop {
++                                let (n, is_last) = parser.fetch_next()?;
++                                dst.aquire_row(n)?;
+                                 #[allow(clippy::needless_range_loop)]
+                                 for col in 0..dst.ncols() {
+-                                    {
+-                                        let (s1, s2) = schemas[col];
+-                                        TP::process(s1, s2, &mut parser, &mut dst)?;
++                                    for _ in 0..n {
++                                        {
++                                            let (s1, s2) = schemas[col];
++                                            TP::process(s1, s2, &mut parser, &mut dst)?;
++                                        }
+                                     }
+                                 }
+-                            }
+-                            if is_last {
+-                                break;
+-                            }
+-                        },
+-                        DataOrder::ColumnMajor => loop {
+-                            let (n, is_last) = parser.fetch_next()?;
+-                            dst.aquire_row(n)?;
+-                            #[allow(clippy::needless_range_loop)]
+-                            for col in 0..dst.ncols() {
+-                                for _ in 0..n {
+-                                    {
+-                                        let (s1, s2) = schemas[col];
+-                                        TP::p
+```
+
+**File**: `connectorx/src/destinations/arrowstream/mod.rs` (modified, +50/-13)
+```diff
+@@ -10,6 +10,7 @@ pub use self::typesystem::ArrowTypeSystem;
+ use super::{Consume, Destination, DestinationPartition};
+ use crate::constants::RECORD_BATCH_SIZE;
+ use crate::data_order::DataOrder;
++use crate::errors::{ConnectorXOutError, OutResult};
+ use crate::typesystem::{Realize, TypeAssoc, TypeSystem};
+ use anyhow::anyhow;
+ use arrow::{datatypes::Schema, record_batch::RecordBatch};
+@@ -28,13 +29,18 @@ use std::{
+ type Builder = Box<dyn Any + Send>;
+ type Builders = Vec<Builder>;
+ 
++/// A finished batch, or the error that stopped a partition.
++type Message = OutResult<RecordBatch>;
++
+ pub struct ArrowDestination {
+     schema: Vec<ArrowTypeSystem>,
+     names: Vec<String>,
+     arrow_schema: Arc<Schema>,
+     batch_size: usize,
+-    sender: Option<Sender<RecordBatch>>,
+-    receiver: Receiver<RecordBatch>,
++    sender: Option<Sender<Message>>,
++    /// `None` once an error has been received: the partition writers then fail
++    /// on their next send instead of buffering batches nobody will read.
++    receiver: Option<Receiver<Message>>,
+ }
+ 
+ impl Default for ArrowDestination {
+@@ -46,7 +52,7 @@ impl Default for ArrowDestination {
+             arrow_schema: Arc::new(Schema::empty()),
+             batch_size: RECORD_BATCH_SIZE,
+             sender: Some(tx),
+-            receiver: rx,
++            receiver: Some(rx),
+         }
+     }
+ }
+@@ -64,7 +70,7 @@ impl ArrowDestination {
+             arrow_schema: Arc::new(Schema::empty()),
+             batch_size,
+             sender: Some(tx),
+-            receiver: rx,
++            receiver: Some(rx),
+         }
+     }
+ }
+@@ -128,23 +134,34 @@ impl Destination for ArrowDestination {
+ }
+ 
+ impl ArrowDestination {
+-    #[throws(ArrowDestinationError)]
++    #[throws(ConnectorXOutError)]
+     pub fn arrow(self) -> Vec<RecordBatch> {
+         if self.sender.is_some() {
+             // should not happen since it is dropped after partition
+             // but need to make sure here otherwise recv will be blocked forever
+             std::mem::drop(self.sender);
+         }
+         let mut data = vec![];
+-        while let Ok(rb) = self.receiver.recv() {
+-            data.push(rb);
++        if let Some(receiver) = self.receiver {
++            while let Ok(rb) = receiver.recv() {
++                data.push(rb?);
++            }
+         }
+         data
+     }
+ 
+-    #[throws(ArrowDestinationError)]
+-    pub fn record_batch(&mut self) -> Option<RecordBatch> {
+-        self.receiver.recv().ok()
++    /// Blocks until the next record batch is available.
++    ///
++    /// Returns `None` once every partition writer is done, or `Some(Err(_))`
++    /// as soon as a partition fails. After an error the channel is closed, so
++    /// later calls return `None` and the other partitions stop at their next
++    /// batch boundary.
++    pub fn record_batch(&mut self) -> Option<Message> {
++        let msg = self.receiver.as_ref()?.recv().ok()?;
++        if msg.is_err() {
++            self.receiver = None;
++        }
++        Some(msg)
+     }
+ 
+     pub fn empty_batch(&self) -> RecordBatch {
+@@ -167,7 +184,7 @@ pub struct ArrowPartitionWriter {
+     current_col: usize,
+     arrow_schema: Arc<Schema>,
+     batch_size: usize,
+-    sender: Option<Sender<RecordBatch>>,
++    sender: Option<Sender<Message>>,
+ }
+ 
+ // unsafe impl Sync for ArrowPartitionWriter {}
+@@ -178,7 +195,7 @@ impl ArrowPartitionWriter {
+         schema: Vec<ArrowTypeSystem>,
+         arrow_schema: Arc<Schema>,
+         batch_size: usize,
+-        sender: Sender<RecordBatch>,
++        sender: Sender<Message>,
+     ) -> Self {
+         let mut pw = ArrowPartitionWriter {
+             schema,
+@@ -215,11 +232,31 @@ impl ArrowPartitionWriter {
+             .map(|(builder, &dt)| Realize::<FFinishBuilder>::realize(dt)?(builder))
+             .collect::<std::result::Result<Vec<_>, crate::errors::ConnectorXError>>()?;
+         let rb = RecordBatch::try_new(Arc::clone(&self.arrow_schema), columns)?;
+-        self.sender.as_ref().and_then(|s| s.send(rb).ok());
++        if let Some(sender) = &self.sender {
++            // The consumer is gone (dropped, or already got an error from
++            // another partition): stop instead of parsing the rest for nothing.
++            sender
++                .send(Ok(rb))
++                .map_err(|_| anyhow!("record batch receiver dropped"))?;
++        }
+ 
+         self.current_row = 0;
+         self.current_col = 0;
+     }
++
++    /// Reports `err` to the consumer and closes this partition's side of the
++    /// stream. Rows buffered since the last flush are discarded.
++    ///
++    /// Call this while the source's query is still alive: some drivers drain
++    /// the remaining result set when the query is dropped (MySQL does), and
++    /// the consumer should not have to wait for that.
++    pub fn send_error(&mut self, err: ConnectorXOutError) {
++        self.builders = None;
++        if let Some(sender) = self.sender.take() {
++            // The consumer may already be gone; nothing else to d
+```
+
+**File**: `connectorx/tests/test_arrow_stream.rs` (modified, +255/-11)
+```diff
+@@ -1,22 +1,19 @@
++use anyhow::anyhow;
+ use connectorx::arrow_batch_iter::ArrowBatchIter;
+-use connectorx::destinations::arrowstream::ArrowDestinationError;
+ use connectorx::impl_transport;
+ use connectorx::prelude::*;
+ use connectorx::sources::dummy::DummyTypeSystem;
+-
+-#[derive(Debug, thiserror::Error)]
+-pub enum PanicArrowStreamTransportError {
+-    #[error(transparent)]
+-    Destination(#[from] ArrowDestinationError),
+-    #[error(transparent)]
+-    ConnectorX(#[from] ConnectorXError),
+-}
++use connectorx::sources::{PartitionParser, Produce, Source, SourcePartition};
++use std::sync::atomic::{AtomicBool, Ordering};
++use std::sync::mpsc::{channel, Receiver};
++use std::sync::Arc;
++use std::time::Duration;
+ 
+ pub struct PanicArrowStreamTransport;
+ 
+ impl_transport!(
+     name = PanicArrowStreamTransport,
+-    error = PanicArrowStreamTransportError,
++    error = ConnectorXOutError,
+     systems = DummyTypeSystem => ArrowStreamTypeSystem,
+     route = DummySource => ArrowStreamDestination,
+     mappings = {
+@@ -53,7 +50,7 @@ fn producer_panic_propagates() {
+     .unwrap();
+     iter.prepare();
+ 
+-    let first = iter.next().unwrap();
++    let first = iter.next().unwrap().unwrap();
+     assert_eq!(first.num_rows(), 2);
+ 
+     // Two panic messages are printed during this test, both expected:
+@@ -62,3 +59,250 @@ fn producer_panic_propagates() {
+     let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| iter.next()));
+     assert!(result.is_err(), "producer panic must propagate to consumer");
+ }
++
++/// A single-column source of `i64` values `0, 1, 2, ...` per partition. A
++/// partition's parser fails when asked for value `fail_at`, if set.
++///
++/// A parser given a `release` receiver also blocks in `Drop` until the test
++/// releases it, which mimics a driver that drains the rest of the result set
++/// on teardown (MySQL does this) and lets the test check that the error
++/// reaches the consumer *before* that teardown starts.
++pub struct FailingSource {
++    partitions: Vec<FailingSourcePartition>,
++}
++
++impl FailingSource {
++    fn new(nrows: usize, fail_at: usize, release: Receiver<()>, dropped: Arc<AtomicBool>) -> Self {
++        Self {
++            partitions: vec![FailingSourcePartition::new(
++                nrows,
++                Some(fail_at),
++                Some(release),
++                dropped,
++            )],
++        }
++    }
++
++    fn with_partitions(partitions: Vec<FailingSourcePartition>) -> Self {
++        Self { partitions }
++    }
++}
++
++impl Source for FailingSource {
++    const DATA_ORDERS: &'static [DataOrder] = &[DataOrder::RowMajor];
++    type TypeSystem = DummyTypeSystem;
++    type Partition = FailingSourcePartition;
++    type Error = ConnectorXError;
++
++    fn set_data_order(&mut self, _data_order: DataOrder) -> Result<(), ConnectorXError> {
++        Ok(())
++    }
++
++    fn set_queries<Q: ToString>(&mut self, _queries: &[CXQuery<Q>]) {}
++
++    fn set_origin_query(&mut self, _query: Option<String>) {}
++
++    fn fetch_metadata(&mut self) -> Result<(), ConnectorXError> {
++        Ok(())
++    }
++
++    fn result_rows(&mut self) -> Result<Option<usize>, ConnectorXError> {
++        Ok(None)
++    }
++
++    fn names(&self) -> Vec<String> {
++        vec!["a".to_string()]
++    }
++
++    fn schema(&self) -> Vec<DummyTypeSystem> {
++        vec![DummyTypeSystem::I64(false)]
++    }
++
++    fn partition(self) -> Result<Vec<FailingSourcePartition>, ConnectorXError> {
++        Ok(self.partitions)
++    }
++}
++
++pub struct FailingSourcePartition {
++    nrows: usize,
++    fail_at: Option<usize>,
++    counter: usize,
++    release: Option<Receiver<()>>,
++    dropped: Arc<AtomicBool>,
++}
++
++impl FailingSourcePartition {
++    fn new(
++        nrows: usize,
++        fail_at: Option<usize>,
++        release: Option<Receiver<()>>,
++        dropped: Arc<AtomicBool>,
++    ) -> Self {
++        Self {
++            nrows,
++            fail_at,
++            counter: 0,
++            release,
++            dropped,
++        }
++    }
++}
++
++impl SourcePartition for FailingSourcePartition {
++    type TypeSystem = DummyTypeSystem;
++    type Parser<'a> = FailingSourceParser<'a>;
++    type Error = ConnectorXError;
++
++    fn result_rows(&mut self) -> Result<(), ConnectorXError> {
++        Ok(())
++    }
++
++    fn parser(&mut self) -> Result<FailingSourceParser<'_>, ConnectorXError> {
++        Ok(FailingSourceParser { part: self })
++    }
++
++    fn nrows(&self) -> usize {
++        self.nrows
++    }
++
++    fn ncols(&self) -> usize {
++        1
++    }
++}
++
++pub struct FailingSourceParser<'a> {
++    part: &'a mut FailingSourcePartition,
++}
++
++impl Drop for FailingSourceParser<'_> {
++    fn drop(&mut self) {
++        if let Some(release) = self.part.release.take() {
++            // Give up eventually so a regression fails the test instead of hanging it.
++            let _ = release.recv_timeout(Duration::from_secs(5));
++        }
++        self.part.dropped.store(true, Ordering::SeqCst);
++    }
++}
++
++impl<'a> PartitionP
+```
+
+**File**: `connectorx/tests/test_mysql.rs` (modified, +58/-1)
+```diff
+@@ -11,11 +11,13 @@ use arrow::{
+     record_batch::RecordBatch,
+ };
+ use connectorx::{
++    arrow_batch_iter::ArrowBatchIter,
+     destinations::arrow::ArrowDestination,
++    errors::OutResult,
+     prelude::*,
+     sources::mysql::{BinaryProtocol, MySQLSource, TextProtocol},
+     sql::CXQuery,
+-    transports::{MySQLArrowTransport, MySQLArrowTransportError},
++    transports::{MySQLArrowStreamTransport, MySQLArrowTransport, MySQLArrowTransportError},
+ };
+ 
+ #[test]
+@@ -734,3 +736,58 @@ fn test_mysql_unconvertible_value_is_error() {
+         }
+     }
+ }
++
++/// With the streaming destination the conversion failure must show up as an
++/// `Err` item of the iterator, after the batches that preceded it.
++fn assert_unconvertible_value_fails_stream(binary: bool) {
++    let _ = env_logger::builder().is_test(true).try_init();
++    let dburl = test_db::mysql_url();
++    // Row 1 is fine, row 2 holds the zero date.
++    let queries = [CXQuery::naked(
++        "select test_int, test_date from test_unconvertible order by test_int",
++    )];
++    let destination = ArrowStreamDestination::new_with_batch_size(1);
++
++    let mut iter: Box<dyn Iterator<Item = OutResult<RecordBatch>>> = if binary {
++        let source = MySQLSource::<BinaryProtocol>::new(&dburl, 1).unwrap();
++        let mut iter = ArrowBatchIter::<_, MySQLArrowStreamTransport<BinaryProtocol>>::new(
++            source,
++            destination,
++            None,
++            &queries,
++        )
++        .unwrap();
++        iter.prepare();
++        Box::new(iter)
++    } else {
++        let source = MySQLSource::<TextProtocol>::new(&dburl, 1).unwrap();
++        let mut iter = ArrowBatchIter::<_, MySQLArrowStreamTransport<TextProtocol>>::new(
++            source,
++            destination,
++            None,
++            &queries,
++        )
++        .unwrap();
++        iter.prepare();
++        Box::new(iter)
++    };
++
++    let first = iter.next().unwrap().unwrap();
++    assert_eq!(first.num_rows(), 1);
++
++    let msg = iter.next().unwrap().unwrap_err().to_string();
++    assert!(
++        msg.contains("Cannot produce a") && msg.contains("column `test_date`"),
++        "unexpected error message: {}",
++        msg
++    );
++
++    assert!(iter.next().is_none());
++}
++
++#[test]
++fn test_mysql_unconvertible_value_fails_stream() {
++    for binary in [true, false] {
++        assert_unconvertible_value_fails_stream(binary);
++    }
++}
 ```
 
 #### Recent Merged Pull Requests:
@@ -1201,7 +1387,7 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 - **PR #1032** (2026-10-26): build(rust): bump testcontainers from 0.23.3 to 0.28.0 (@dependabot[bot])
 - **PR #1031** (2026-10-26): build(rust): bump tokio-util from 0.7.19 to 0.7.20 (@dependabot[bot])
 - **PR #1028** (2026-10-23): ci(import-test): replace retired macos-10.15 runner (@tschm)
-- **PR #1025** (2026-10-20): Measure more of the test suite in coverage (@tschm)
+- **PR #1026** (2026-10-31): feat(arrow_stream)!: report partition errors through the batch iterator (@oystersuki)
 
 ---
 
@@ -1221,108 +1407,32 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(rust): bump testcontainers from 0.23.3 to 0.28.0
+## X. Merge pull request #1026 from oystersuki/fix/arrow-stream-fail-fast
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sfu-db/connector-x. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `connectorx-cpp/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sfu-db/connector-x. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `20710a11`: build(rust): bump testcontainers from 0.23.3 to 0.28.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6163eb14`: Merge pull request #1026 from oystersuki/fix/arrow-stream-fail-fast. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `connectorx-cpp/src/lib.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-[[package]]
-name = "astral-tokio-tar"
-version = "0.6.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b18457efd137254e016bbde5e1d88df61c4e1a5ae2223746e56123bac6af2463"
-dependencies = [
- "futures-core",
- "libc",
- "portable-atomic",
- "rustc-hash 2.1.3",
- "rustix 1.1.5",
- "tokio",
- "tokio-stream",
- "xattr",
-]
-
-[[package]]
-name = "axum"
-version = "0.8.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "31b698c5f9a010f6573133b09e0de5408834d0c82f8d7475a89fc1867a71cd90"
-dependencies = [
- "axum-core",
- "bytes",
- "futures-util",
- "http 1.5.0",
- "http-body 1.1.0",
- "http-body-util",
- "itoa",
- "matchit",
- "memchr",
- "mime",
- "percent-encoding",
- "pin-project-lite",
- "serde_core",
- "sync_wrapper 1.0.2",
- "tower",
- "tower-layer",
- "tower-service",
-]
-
-[[package]]
-name = "axum-core"
-version = "0.5.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "08c78f31d7b1291f7ee735c1c6780ccde7785daae9a9206026862dab7d8792d1"
-dependencies = [
- "bytes",
- "futures-core",
- "http 1.5.0",
- "http-body 1.1.0",
- "http-body-util",
- "mime",
- "pin-project-lite",
- "sync_wrapper 1.0.2",
- "tower-layer",
- "tower-service",
-]
-
-version = "0.
+        Some(Ok(rb)) => {
+        // The C API has no error channel, and a panic cannot unwind through
+        // `extern "C"`, so this aborts the process like every other failure
+        // in this crate, as soon as a partition fails.
+        Some(Err(e)) => panic!("cx writer failed: {}", e),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.18.1"
-checksum = "97ccca1260af6a459d75994ad5acc1651bcabcbdbc41467cc9786519ab854c30"
- "rustls-pemfile 2.2.0",
- "serde_repr",
-version = "1.47.1-rc.27.3.1"
-checksum = "3f179cfbddb6e77a5472703d4b30436bff32929c0aa8a9008ecf23d1d3cdd0da"
- "serde_with",
-version = "0.8.0"
-checksum = "136d1b5283a1ab77bd9257427ffd09d8667ced0570b6f938942bc7568ed5b943"
- "home",
- "windows-sys 0.48.0",
-name = "ff"
-version = "0.13.1"
-checksum = "c0b50bfb653653f9ca9095b427bed08ab8d75a137839d9ad64eb11810d5b6393"
- "rand_core 0.6.4",
- "subtle",
-name = "filetime"
-version = "0.2.29"
-checksum = "5c287a33c7f0a620c38e641e7f60827713987b3c0f26e8ddc9462cc69cf75759"
- "cfg-if",
- "libc",
-version = "0.9.1"
+        Some(rb) => {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `20710a11` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6163eb14` are properly handled with clean fallback behavior.
