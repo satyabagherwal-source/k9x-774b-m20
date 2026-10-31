@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T06:59:11.948Z",
-  "total_cycles_completed": 6478,
-  "total_learnings_persisted": 6478,
-  "total_rules_promoted": 6103,
+  "last_updated": "2026-10-31T07:32:48.883Z",
+  "total_cycles_completed": 6481,
+  "total_learnings_persisted": 6481,
+  "total_rules_promoted": 6112,
   "history": [
-    {
-      "timestamp": "2026-10-30T20:36:17.916Z",
-      "repository": "DevExpress/testcafe",
-      "learningId": "learn-github-devexpress-testcafe",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T20:47:44.828Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T20:49:21.098Z",
-      "repository": "oven-sh/bun",
-      "learningId": "learn-github-oven-sh-bun",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T20:52:08.932Z",
       "repository": "aleo-labs-protocol/snarkOS",
@@ -1403,6 +1382,27 @@
       "repository": "telemt/telemt",
       "learningId": "learn-github-telemt-telemt",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T07:30:30.858Z",
+      "repository": "karmada-io/karmada",
+      "learningId": "learn-github-karmada-io-karmada",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T07:32:04.149Z",
+      "repository": "Lightricks/LTX-2.5",
+      "learningId": "learn-huggingface-lightricks-ltx-2-5",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T07:32:48.883Z",
+      "repository": "clockworklabs/SpacetimeDB",
+      "learningId": "learn-github-clockworklabs-spacetimedb",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

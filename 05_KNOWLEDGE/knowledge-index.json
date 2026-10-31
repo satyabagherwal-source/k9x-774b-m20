@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T06:59:11.842Z",
+  "last_updated": "2026-10-31T07:32:48.794Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7329,8 +7329,8 @@
       "slug": "clockworklabs-spacetimedb",
       "platform": "github",
       "source_url": "https://github.com/clockworklabs/SpacetimeDB",
-      "source_version": "7eadd80c",
-      "content_hash": "cb949fe26751e375f4643d998505aff14c9dece93ab6c08317956a95eee57ad4",
+      "source_version": "f7e474f7",
+      "content_hash": "fc08dedea6f7838993359de0168a3df52d4bfc36170c94817a52c85c6eaea5e2",
       "dossier_path": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "promoted_rules": [
@@ -7393,6 +7393,21 @@
           "number": 5773,
           "title": "ts-sdk: stop Prettify from rewriting Uuid and branded primitives (#5971)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6119,
+          "title": "Strict Numeric Primitive Coercion Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6120,
+          "title": "Multi-Target ABI Dynamic Feature Detection Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6121,
+          "title": "Native Platform-Agnostic Static Constructor Linkage Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7400,7 +7415,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T14:18:42.384Z",
+      "verified_at": "2026-10-31T07:32:48.775Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24609,7 +24624,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Lightricks/LTX-2.5",
       "source_version": "hf-lightricks-ltx-2.5",
-      "content_hash": "be6ee49c90373d2ce2a7a7896d368dd5362bb4f30580098079791d5d487257aa",
+      "content_hash": "1dfbed9f72efe18ea80bbf0bbbe18292def8ef7e1789c3772feeac8fde867afc",
       "dossier_path": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "promoted_rules": [
@@ -24686,6 +24701,21 @@
           "number": 5178,
           "title": "VRAM Optimization via Blockwise Quantization",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6116,
+          "title": "Spatio-Temporal Causal Latent Padding Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6117,
+          "title": "Decoupled 3D Rotary Position Embedding Factorization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6118,
+          "title": "Rectified Flow Timestep Scaling & Velocity Integration Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -24706,7 +24736,7 @@
         "learn-huggingface-hf-lightricks-ltx-2-5-mv44u4a4",
         "learn-huggingface-hf-lightricks-ltx-2-5-mv4i3gub"
       ],
-      "verified_at": "2026-10-28T04:48:37.591Z",
+      "verified_at": "2026-10-31T07:32:04.042Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33670,8 +33700,8 @@
       "slug": "karmada-io-karmada",
       "platform": "github",
       "source_url": "https://github.com/karmada-io/karmada",
-      "source_version": "d72e8d00",
-      "content_hash": "b91fade310094d7c168c7f90caeebc0d0de1e93d148fa833b0aa8ed100d56749",
+      "source_version": "873bc5b1",
+      "content_hash": "cc0d646c50759bd381f44512a94f84b3013e71f86fbd1f83591c2571755cfaeb",
       "dossier_path": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "promoted_rules": [
@@ -33714,6 +33744,21 @@
           "number": 5228,
           "title": "Two-Way Merge Retention Pattern for Member Cluster Self-Mutations",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6113,
+          "title": "Defensive Slice Immutability in Pipeline Selection Algorithms",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6114,
+          "title": "Typed Error Specialization for Multi-Stage Preemption Signal Propagation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6115,
+          "title": "Controller-Runtime Logger Initialization Precedence Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33721,7 +33766,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T15:37:10.014Z",
+      "verified_at": "2026-10-31T07:30:30.751Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -160309,6 +160354,132 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T06:52:31.142Z"
+    },
+    "rule-6113": {
+      "learning_id": "rule-6113",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6113,
+      "title": "Defensive Slice Immutability in Pipeline Selection Algorithms",
+      "source_url": "https://github.com/karmada-io/karmada",
+      "source_version": "873bc5b1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T07:30:30.751Z"
+    },
+    "rule-6114": {
+      "learning_id": "rule-6114",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6114,
+      "title": "Typed Error Specialization for Multi-Stage Preemption Signal Propagation",
+      "source_url": "https://github.com/karmada-io/karmada",
+      "source_version": "873bc5b1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T07:30:30.751Z"
+    },
+    "rule-6115": {
+      "learning_id": "rule-6115",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6115,
+      "title": "Controller-Runtime Logger Initialization Precedence Invariant",
+      "source_url": "https://github.com/karmada-io/karmada",
+      "source_version": "873bc5b1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T07:30:30.751Z"
+    },
+    "rule-6116": {
+      "learning_id": "rule-6116",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6116,
+      "title": "Spatio-Temporal Causal Latent Padding Invariant",
+      "source_url": "https://huggingface.co/Lightricks/LTX-2.5",
+      "source_version": "hf-lightricks-ltx-2.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T07:32:04.042Z"
+    },
+    "rule-6117": {
+      "learning_id": "rule-6117",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6117,
+      "title": "Decoupled 3D Rotary Position Embedding Factorization Invariant",
+      "source_url": "https://huggingface.co/Lightricks/LTX-2.5",
+      "source_version": "hf-lightricks-ltx-2.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T07:32:04.042Z"
+    },
+    "rule-6118": {
+      "learning_id": "rule-6118",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6118,
+      "title": "Rectified Flow Timestep Scaling & Velocity Integration Invariant",
+      "source_url": "https://huggingface.co/Lightricks/LTX-2.5",
+      "source_version": "hf-lightricks-ltx-2.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T07:32:04.042Z"
+    },
+    "rule-6119": {
+      "learning_id": "rule-6119",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6119,
+      "title": "Strict Numeric Primitive Coercion Boundary Invariant",
+      "source_url": "https://github.com/clockworklabs/SpacetimeDB",
+      "source_version": "f7e474f7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T07:32:48.775Z"
+    },
+    "rule-6120": {
+      "learning_id": "rule-6120",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6120,
+      "title": "Multi-Target ABI Dynamic Feature Detection Invariant",
+      "source_url": "https://github.com/clockworklabs/SpacetimeDB",
+      "source_version": "f7e474f7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T07:32:48.775Z"
+    },
+    "rule-6121": {
+      "learning_id": "rule-6121",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6121,
+      "title": "Native Platform-Agnostic Static Constructor Linkage Invariant",
+      "source_url": "https://github.com/clockworklabs/SpacetimeDB",
+      "source_version": "f7e474f7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T07:32:48.775Z"
     }
   },
   "aliases": {

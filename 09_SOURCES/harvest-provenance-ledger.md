@@ -6510,3 +6510,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-contrastive-lm-clm-v0-1-8b` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-10-31T06:52:31.243Z |
 | `learn-huggingface-nvidia-nemotron-3-diarization` | `https://huggingface.co/nvidia/Nemotron-3-Diarization` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-31T06:59:11.101Z |
 | `learn-github-telemt-telemt` | `https://github.com/telemt/telemt` | `61afd6c7` | Multi-dimensional audit evidence | 2026-10-31T06:59:11.940Z |
+| `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `873bc5b1` | Multi-dimensional audit evidence | 2026-10-31T07:30:30.853Z |
+| `learn-huggingface-lightricks-ltx-2-5` | `https://huggingface.co/Lightricks/LTX-2.5` | `hf-lightri` | Multi-dimensional audit evidence | 2026-10-31T07:32:04.143Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `f7e474f7` | Multi-dimensional audit evidence | 2026-10-31T07:32:48.877Z |

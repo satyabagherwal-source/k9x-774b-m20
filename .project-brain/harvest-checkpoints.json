@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T06:59:11.953Z",
+  "last_updated": "2026-10-31T07:32:48.887Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -410,14 +410,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lightricks-ltx-2-5",
-      "content_hash": "be6ee49c90373d2ce2a7a7896d368dd5362bb4f30580098079791d5d487257aa",
-      "verified_at": "2026-10-28T04:48:37.677Z",
+      "content_hash": "1dfbed9f72efe18ea80bbf0bbbe18292def8ef7e1789c3772feeac8fde867afc",
+      "verified_at": "2026-10-31T07:32:04.152Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T04:48:37.677Z"
+      "last_updated": "2026-10-31T07:32:04.152Z"
     },
     "prism-ml/Ternary-Bonsai-2-27B-gguf": {
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -4341,14 +4341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karmada-io-karmada",
-      "content_hash": "b91fade310094d7c168c7f90caeebc0d0de1e93d148fa833b0aa8ed100d56749",
-      "verified_at": "2026-10-30T15:37:10.136Z",
+      "content_hash": "cc0d646c50759bd381f44512a94f84b3013e71f86fbd1f83591c2571755cfaeb",
+      "verified_at": "2026-10-31T07:30:30.861Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T15:37:10.136Z"
+      "last_updated": "2026-10-31T07:30:30.861Z"
     },
     "milvus-io/bootcamp": {
       "repository": "milvus-io/bootcamp",
@@ -10626,14 +10626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clockworklabs-spacetimedb",
-      "content_hash": "cb949fe26751e375f4643d998505aff14c9dece93ab6c08317956a95eee57ad4",
-      "verified_at": "2026-10-30T14:18:42.488Z",
+      "content_hash": "fc08dedea6f7838993359de0168a3df52d4bfc36170c94817a52c85c6eaea5e2",
+      "verified_at": "2026-10-31T07:32:48.886Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T14:18:42.488Z"
+      "last_updated": "2026-10-31T07:32:48.886Z"
     },
     "apollographql/apollo-kotlin": {
       "repository": "apollographql/apollo-kotlin",

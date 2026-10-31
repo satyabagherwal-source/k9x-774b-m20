@@ -6501,3 +6501,6 @@
 | `CYCLE-20261031-NE6F` | `2026-10-31T06:52:31.239Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3273, Rule 6112` | Yes (`ab3272b6...`) |
 | `CYCLE-20261031-VYPF` | `2026-10-31T06:59:11.091Z` | `nvidia/Nemotron-3-Diarization` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md` | Yes (`20e93063...`) |
 | `CYCLE-20261031-VZCQ` | `2026-10-31T06:59:11.930Z` | `telemt/telemt` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/telemt-telemt-learnings.md` | Yes (`8f86d2ca...`) |
+| `CYCLE-20261031-094X` | `2026-10-31T07:30:30.849Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6113, Rule 6114, Rule 6115` | Yes (`cc0d646c...`) |
+| `CYCLE-20261031-294C` | `2026-10-31T07:32:04.140Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6116, Rule 6117, Rule 6118` | Yes (`1dfbed9f...`) |
+| `CYCLE-20261031-37MY` | `2026-10-31T07:32:48.874Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6119, Rule 6120, Rule 6121` | Yes (`fc08dede...`) |

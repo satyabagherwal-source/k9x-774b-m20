@@ -345,8 +345,8 @@
     "sourceUrl": "https://huggingface.co/Lightricks/LTX-2.5",
     "sourceVersion": "hf-lightricks-ltx-2.5",
     "license": "Open-Source",
-    "contentHash": "be6ee49c90373d2ce2a7a7896d368dd5362bb4f30580098079791d5d487257aa",
-    "lastHarvestedAt": "2026-10-28T04:48:37.668Z",
+    "contentHash": "1dfbed9f72efe18ea80bbf0bbbe18292def8ef7e1789c3772feeac8fde867afc",
+    "lastHarvestedAt": "2026-10-31T07:32:04.143Z",
     "learningId": "learn-huggingface-lightricks-ltx-2-5"
   },
   "hf-prism-ml-ternary-bonsai-2-27b-gguf": {
@@ -2803,10 +2803,10 @@
     "repository": "karmada-io/karmada",
     "platform": "github",
     "sourceUrl": "https://github.com/karmada-io/karmada",
-    "sourceVersion": "d72e8d00",
+    "sourceVersion": "873bc5b1",
     "license": "Apache-2.0",
-    "contentHash": "b91fade310094d7c168c7f90caeebc0d0de1e93d148fa833b0aa8ed100d56749",
-    "lastHarvestedAt": "2026-10-30T15:37:10.122Z",
+    "contentHash": "cc0d646c50759bd381f44512a94f84b3013e71f86fbd1f83591c2571755cfaeb",
+    "lastHarvestedAt": "2026-10-31T07:30:30.853Z",
     "learningId": "learn-github-karmada-io-karmada"
   },
   "milvus-io-bootcamp": {
@@ -7053,10 +7053,10 @@
     "repository": "clockworklabs/SpacetimeDB",
     "platform": "github",
     "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
-    "sourceVersion": "7eadd80c",
+    "sourceVersion": "f7e474f7",
     "license": "NOASSERTION",
-    "contentHash": "cb949fe26751e375f4643d998505aff14c9dece93ab6c08317956a95eee57ad4",
-    "lastHarvestedAt": "2026-10-30T14:18:42.477Z",
+    "contentHash": "fc08dedea6f7838993359de0168a3df52d4bfc36170c94817a52c85c6eaea5e2",
+    "lastHarvestedAt": "2026-10-31T07:32:48.877Z",
     "learningId": "learn-github-clockworklabs-spacetimedb"
   },
   "apollographql-apollo-kotlin": {
