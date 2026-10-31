@@ -6683,3 +6683,7 @@
 | `CYCLE-20261031-EUJE` | `2026-10-31T18:53:42.554Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6286, Rule 6287, Rule 6288` | Yes (`c02b328f...`) |
 | `CYCLE-20261031-NUIE` | `2026-10-31T19:00:42.422Z` | `projectcontour/contour` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/projectcontour-contour-learnings.md` | Yes (`262e8a76...`) |
 | `CYCLE-20261031-PZXQ` | `2026-10-31T19:02:22.766Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6289, Rule 6290` | Yes (`7200a29b...`) |
+| `CYCLE-20261031-5M0H` | `2026-10-31T19:14:31.217Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`43ede19b...`) |
+| `CYCLE-20261031-5RR1` | `2026-10-31T19:14:38.653Z` | `kube-rs/kube` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6291` | Yes (`0ba068d4...`) |
+| `CYCLE-20261031-5X8O` | `2026-10-31T19:14:45.768Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6292` | Yes (`f25f82e7...`) |
+| `CYCLE-20261031-5XQ4` | `2026-10-31T19:14:46.396Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6293` | Yes (`4f417311...`) |

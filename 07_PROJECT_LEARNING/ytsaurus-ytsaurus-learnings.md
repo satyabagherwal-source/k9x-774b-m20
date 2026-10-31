@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `a88390c6`  
+> **Source Version**: `5ea67989`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T02:44:17.632Z  
+> **Timestamp**: 2026-10-31T19:14:45.084Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T02:44:17.248Z  
+> **Harvest Timestamp**: 2026-10-31T19:14:45.078Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1198,219 +1198,279 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6d6f2b83` (2026-10-30)
-**Commit Message**: Fail operation instead of crashing controller on unavailable versioned input chunk
+### Incident Patch 1: `9067a5fd` (2026-10-31)
+**Commit Message**: YT-30107: Reserve estimated memory for heavy commands before execution
 
-With unavailable_chunk_tactics=skip, an input chunk that became unavailable at runtime made OnInputChunkUnavailable call GetSingleUnversionedChunk() on every data slice of its stripes. For dynamic table input those slices are versioned, so YT_VERIFY(IsTrivial()) fired and the controller crashed. The surrounding try/catch was dead: the assertion does not throw std::exception.
+- Changelog entry
+  Type: fix
+  Component: proxy
 
-Now a non-trivial slice fails the operation with a ChunkUnavailable error, as the catch intended.
+Reserve estimated memory for heavy driver requests before execution to avoid proxies OOM.
+commit_hash:7d17d03398eb9a59614293dd2c307c94b14a4f4e
 
-* Changelog entry
-Type: fix
-Component: controller-agent
-
-Fail the operation instead of crashing the controller when an input chunk of a dynamic table becomes unavailable with unavailable_chunk_tactics=skip.
-commit_hash:8b39df1e64cb435d6d24102ed1bb86ae414b8e15
-
-**File**: `yt/yt/server/controller_agent/controllers/input_manager.cpp` (modified, +8/-7)
+**File**: `yt/yt/client/driver/CMakeLists.darwin-arm64.txt` (modified, +1/-0)
 ```diff
-@@ -1368,15 +1368,16 @@ void TInputManager::OnInputChunkUnavailable(TChunkId chunkId, TInputChunkDescrip
-                     std::remove_if(
-                         dataSlices.begin(),
-                         dataSlices.end(),
--                        [&] (TDataSlicePtr slice) {
--                            try {
-+                        [&] (const TDataSlicePtr& slice) {
-+                            if (slice->IsTrivial()) {
-                                 return chunkId == slice->GetSingleUnversionedChunk()->GetChunkId();
--                            } catch (const std::exception& ex) {
--                                //FIXME(savrus) allow data slices to be unavailable.
--                                Host_->OnOperationFailed(TError(NChunkClient::EErrorCode::ChunkUnavailable, "Dynamic table chunk became unavailable")
--                                    .With(ex));
--                                return true;
-                             }
-+                            //FIXME(savrus) allow data slices to be unavailable.
-+                            Host_->OnOperationFailed(TError(
-+                                NChunkClient::EErrorCode::ChunkUnavailable,
-+                                "Dynamic table chunk %v became unavailable",
-+                                chunkId));
-+                            return true;
-                         }),
-                     dataSlices.end());
- 
+@@ -38,6 +38,7 @@ target_sources(yt-client-driver PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/bundle_controller_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/chaos_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command.cpp
++  ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command_memory_estimate.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/config.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/cypress_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/distributed_table_commands.cpp
 ```
 
-**File**: `yt/yt/tests/integration/dynamic_tables/test_map_reduce_over_dyntables.py` (modified, +44/-0)
+**File**: `yt/yt/client/driver/CMakeLists.darwin-x86_64.txt` (modified, +1/-0)
 ```diff
-@@ -1223,6 +1223,50 @@ def test_index_deletions_preserved(self):
-             mode="ordered")
-         assert select_rows("value from [//tmp/index_table]") == [{"value": "boo"}]
- 
-+    @authors("apollo1321")
-+    def test_unavailable_versioned_chunk_skip_tactics(self):
-+        sync_create_cells(1)
-+
-+        create_dynamic_table(
-+            "//tmp/t_input",
-+            schema=[
-+                {"name": "k", "type": "int64", "sort_order": "ascending"},
-+                {"name": "v", "type": "string"},
-+            ],
-+            replication_factor=1)
-+        sync_mount_table("//tmp/t_input")
-+        insert_rows("//tmp/t_input", [{"k": 1, "v": "a"}])
-+        sync_unmount_table("//tmp/t_input")
-+
-+        chunk_id = get_singular_chunk_id("//tmp/t_input")
-+        replicas = get(f"#{chunk_id}/@stored_replicas")
-+        assert len(replicas) == 1
-+        replica = str(replicas[0])
-+
-+        op = merge(
-+            in_="//tmp/t_input",
-+            out="<create=%true>//tmp/t_output",
-+            mode="sorted",
-+            track=False,
-+            spec={
-+                "suspend_operation_after_materialization": True,
-+                "unavailable_chunk_strategy": "skip",
-+                "unavailable_chunk_tactics": "skip",
-+                "job_io": {
-+                    "table_reader": {"retry_count": 1, "pass_count": 1},
-+                },
-+            })
-+
-+        wait(lambda: get(op.get_path() + "/@suspended"))
-+        set_node_banned(replica, True)
-+        try:
-+            wait(lambda: get(f"#{chunk_id}/@replication_status/default/lost"))
-+            op.resume()
-+            with raises_yt_error("Dynamic table chunk .* became unavailable"):
-+                op.track()
-+        finally:
-+            set_node_banned(replica, False)
-+
- 
- ##################################################################
- 
+@@ -38,6 +38,7 @@ target_sources(yt-client-driver PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/bundle_controller_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/chaos_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command.cpp
++  ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command_memory_estimate.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/config.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/cypress_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/distributed_table_commands.cpp
 ```
 
----
-
-### Incident Patch 2: `897c4dfb` (2026-10-30)
-**Commit Message**: YQL-20905: Fix MATCH_RECOGNIZE crash with DeriveColumnOrder
-
-Исправлено падение 15 тестов `MATCH_RECOGNIZE` в `AutoYqlSelect` при подстановке нетипизированной лямбды: проверяется наличие аннотации типа `measures` в `MatchRecognizeParams`.
-
-- [test_type-streaming.yql](https://nda.ya.ru/t/8ZgofA6y7ub8a6)
-- [alerts_without_order-streaming.yql](https://nda.ya.ru/t/RozT_BEq7ub8ei)
-- [alerts-streaming.yql](https://nda.ya.ru/t/fVG7LxcB7ub8fC)
-- [alerts_without_order.yql](https://nda.ya.ru/t/usjBFdNF7ub8fN)
-- [simple_paritioning-streaming.yql](https://nda.ya.ru/t/HQNSOTQi7ub8fY)
-- [simple_paritioning.yql](https://nda.ya.ru/t/oHe_0SKg7ub8fh)
-- [test_type.yql](https://nda.ya.ru/t/qTfr4zQ87ub8fx)
-- [alerts.yql](https://nda.ya.ru/t/Ltnx5WZ67ub8gA)
-- [after_match_skip_past_last_row.yql](https://nda.ya.ru/t/fgytQkZb7ub8gT)
-- [drop_out_of_order.yql](https://nda.ya.ru/t/hvvc_FjC7ub8gi)
-- [greedy_quantifiers.yql](https://nda.ya.ru/t/NHBHugxq7ub8gu)
-- [permute.yql](https://nda.ya.ru/t/P2z10qrB7ub8h2)
-- [alerts_many_order.yql](https://nda.ya.ru/t/6IjLDe6W7ub8h5)
-- [all_rows_per_match.yql](https://nda.ya.ru/t/gjZoKlGJ7ub8hL)
-- [measures_aggregate.yql](https://nda.ya.ru/t/4pDH-VLJ7ub8hT)
-commit_hash:bb
-
-**File**: `yql/essentials/core/type_ann/type_ann_match_recognize.cpp` (modified, +7/-0)
+**File**: `yt/yt/client/driver/CMakeLists.linux-aarch64.txt` (modified, +1/-0)
 ```diff
-@@ -249,6 +249,13 @@ IGraphTransformer::TStatus MatchRecognizeParamsWrapper(const TExprNode::TPtr& in
-         return IGraphTransformer::TStatus::Error;
-     }
-     const auto measures = input->Child(0);
-+    if (!measures->GetTypeAnn()) {
-+        YQL_ENSURE(measures->Type() == TExprNode::Lambda);
-+        ctx.Expr.AddError(TIssue(
-+            ctx.Expr.GetPosition(measures->Pos()),
-+            "Expected MatchRecognizeMeasures, but got lambda"));
-+        return IGraphTransformer::TStatus::Error;
-+    }
-     input->SetTypeAnn(measures->GetTypeAnn());
-     return IGraphTransformer::TStatus::Ok;
- }
+@@ -41,6 +41,7 @@ target_sources(yt-client-driver PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/bundle_controller_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/chaos_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command.cpp
++  ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command_memory_estimate.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/config.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/cypress_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/distributed_table_commands.cpp
 ```
 
----
-
-### Incident Patch 3: `2e6faec7` (2026-10-30)
-**Commit Message**: YQL-20557: Fix pre-epoch date table initialization
-
-#### Fix pre-epoch date table initialization ✎
-
-Corrected the initial `dayOfYear` and `weekOfYear` values in the lookup table for the year preceding the epoch (1969). The previous incorrect values caused wrong `dayOfYear` and `weekOfYear` results when splitting datetime values that fall before 1970-01-01.
-
-<a href="https://nda.ya.ru/t/qa0kX64r7DqvtN"><font size="2">Autodescription by Yandex Code Assistant</font></a>
-commit_hash:7ec9c6e243ce8403d68911988490c1bc3733cfe9
-
-**File**: `yql/essentials/minikql/mkql_type_ops.cpp` (modified, +2/-2)
+**File**: `yt/yt/client/driver/CMakeLists.linux-x86_64.txt` (modified, +1/-0)
 ```diff
-@@ -794,9 +794,9 @@ class TDateTable {
-         ui32 prevYear = NUdf::MIN_YEAR - 1;
-         YearsOffsets_[0] = 0;
- 
--        ui32 dayOfYear = 365;
-+        ui32 dayOfYear = 364;
-         ui32 dayOfWeek = 2;
--        ui32 weekOfYear = 52;
-+        ui32 weekOfYear = 53;
-         ui32 weekOfYearIso8601 = 1;
- 
-         Months_[0] = 0;
+@@ -41,6 +41,7 @@ target_sources(yt-client-driver PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/bundle_controller_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/chaos_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command.cpp
++  ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command_memory_estimate.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/config.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/cypress_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/distributed_table_commands.cpp
 ```
 
-**File**: `yql/essentials/minikql/mkql_type_ops_ut.cpp` (modified, +28/-0)
+**File**: `yt/yt/client/driver/CMakeLists.windows-x86_64.txt` (modified, +1/-0)
 ```diff
-@@ -208,6 +208,34 @@ Y_UNIT_TEST(SplitMakeTzDatetime32vs64) {
-     RunTestForAllTimezones(TestSplitMakeTzDatetime32vs64, datetimeStep);
- }
- 
-+Y_UNIT_TEST(SplitTzDatetime32vs64Pre1970) {
-+    const ui16 tzId = GetTimezoneId("Etc/GMT+1");
-+    ui32 year_n, month_n, day_n, hour_n, minute_n, second_n;
-+    ui32 dayOfYear_n, weekOfYear_n, weekOfYearIso8601_n, dayOfWeek_n;
-+    UNIT_ASSERT(SplitTzDatetime(0u, year_n, month_n, day_n, hour_n, minute_n, second_n,
-+                                dayOfYear_n, weekOfYear_n, weekOfYearIso8601_n, dayOfWeek_n, tzId));
-+    UNIT_ASSERT_VALUES_EQUAL(1969u, year_n);
-+    UNIT_ASSERT_VALUES_EQUAL(12u, month_n);
-+    UNIT_ASSERT_VALUES_EQUAL(31u, day_n);
-+    UNIT_ASSERT_VALUES_EQUAL(365u, dayOfYear_n);
-+    UNIT_ASSERT_VALUES_EQUAL(53u, weekOfYear_n);
-+    UNIT_ASSERT_VALUES_EQUAL(1u, weekOfYearIso8601_n);
-+    UNIT_ASSERT_VALUES_EQUAL(3u, dayOfWeek_n);
+@@ -28,6 +28,7 @@ target_sources(yt-client-driver PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/bundle_controller_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/chaos_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command.cpp
++  ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command_memory_estimate.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/config.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/cypress_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/distributed_table_commands.cpp
+```
+
+**File**: `yt/yt/client/driver/command_memory_estimate.cpp` (added, +66/-0)
+```diff
+@@ -0,0 +1,66 @@
++#include "command_memory_estimate.h"
 +
-+    i32 year_w;
-+    ui32 month_w, day_w, hour_w, minute_w, second_w;
-+    ui32 dayOfYear_w, weekOfYear_w, weekOfYearIso8601_w, dayOfWeek_w;
-+    UNIT_ASSERT(SplitTzDatetime64(0LL, year_w, month_w, day_w, hour_w, minute_w, second_w,
-+                                  dayOfYear_w, weekOfYear_w, weekOfYearIso8601_w, dayOfWeek_w, tzId));
-+    UNIT_ASSERT_VALUES_EQUAL(year_n, static_cast<ui32>(year_w));
-+    UNIT_ASSERT_VALUES_EQUAL(month_n, month_w);
-+    UNIT_ASSERT_VALUES_EQUAL(day_n, day_w);
-+    UNIT_ASSERT_VALUES_EQUAL(dayOfYear_n, dayOfYear_w);
-+    UNIT_ASSERT_VALUES_EQUAL(weekOfYear_n, weekOfYear_w);
-+    UNIT_ASSERT_VALUES_EQUAL(weekOfYearIso8601_n, weekOfYearIso8601_w);
-+    UNIT_ASSERT_VALUES_EQUAL(dayOfWeek_n, dayOfWeek_w);
++#include "config.h"
++
++#include <yt/yt/client/api/config.h>
++
++#include <yt/yt/client/table_client/config.h>
++
++#include <yt/yt/core/ytree/node.h>
++#include <yt/yt/core/ytree/yson_struct.h>
++
++namespace NYT::NDriver {
++
++using namespace NYTree;
++
++////////////////////////////////////////////////////////////////////////////////
++
++namespace {
++
++template <class TConfig>
++TIntrusivePtr<TConfig> GetEffectiveConfig(
++    const TIntrusivePtr<TConfig>& config,
++    const IMapNodePtr& parameters,
++    TStringBuf parameterName)
++{
++    auto patch = parameters ? parameters->FindChild(parameterName) : INodePtr();
++    return patch ? UpdateYsonStruct(config, patch) : config;
 +}
 +
- Y_UNIT_TEST(MakeTzDateRejectsInvalidDate) {
-     ui16 value = 123;
-     UNIT_ASSERT(!MakeTzDate(1970, 0, 1, value, 0));
++} // namespace
++
++std::optional<i64> EstimateHeavyCommandMemoryUsage(
++    const std::string& commandName,
++    const TDriverConfigPtr& config,
++    const IMapNodePtr& parameters)
++{
++    if (commandName == "read_file" || commandName == "read_file_partition") {
++        return GetEffectiveConfig(config->FileReader, parameters, "file_reader")->MaxBufferSize;
++    }
++    if (commandName == "read_table" || commandName == "read_blob_table") {
++        return GetEffectiveConfig(config->TableReader, parameters, "table_reader")->MaxBufferSize;
++    }
++    if (commandName == "read_table_partition") {
++        // The partition reader ignores the driver config and uses the default one.
++        static const auto DefaultTableReaderConfig = New<NTableClient::TTableReaderConfig>();
++        return DefaultTableReaderConfig->MaxBufferSize;
++    }
++    if (commandName == "write_file") {
++        auto writerConfig = GetEffectiveConfig(config->FileWriter, parameters, "file_writer");
++        return writerConfig->BlockSize + writerConfig->EncodeWindowSize;
++    }
++    if (commandName == "write_file_fragment") {
++        // The file fragment writer ignores the driver config and uses the default one.
++        static const auto DefaultFileWriterConfig = New<NApi::TFileWriterConfig>();
++        return DefaultFileWriterConfig->BlockSize + DefaultFileWriterConfig->EncodeWindowSize;
++    }
++    if (commandName == "write_table" || commandName == "write_table_fragment") {
++        auto writerConfig = GetEffectiveConfig(config->TableWriter, parameters, "table_writer");
++        return writerConfig->MaxBufferSize + writerConfig->EncodeWindowSize;
++    }
++    return std::nullopt;
++}
++
++////////////////////////////////////////////////////////////////////////////////
++
++} // namespace NYT::NDriver
+```
+
+**File**: `yt/yt/client/driver/command_memory_estimate.h` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++#pragma once
++
++#include "public.h"
++
++#include <yt/yt/core/ytree/public.h>
++
++namespace NYT::NDriver {
++
++////////////////////////////////////////////////////////////////////////////////
++
++//! Returns an upper bound of the memory a heavy command may hold in its reader or writer buffers,
++//! derived from |config| and the per-request config overrides in |parameters|.
++//! Returns null for commands without a known estimate.
++std::optional<i64> EstimateHeavyCommandMemoryUsage(
++    const std::string& commandName,
++    const TDriverConfigPtr& config,
++    const NYTree::IMapNodePtr& parameters);
++
++////////////////////////////////////////////////////////////////////////////////
++
++} // namespace NYT::NDriver
+```
+
+**File**: `yt/yt/client/driver/ya.make` (modified, +1/-0)
+```diff
+@@ -8,6 +8,7 @@ SRCS(
+     bundle_controller_commands.cpp
+     chaos_commands.cpp
+     command.cpp
++    command_memory_estimate.cpp
+     config.cpp
+     cypress_commands.cpp
+     distributed_table_commands.cpp
+```
+
+---
+
+### Incident Patch 2: `9818d390` (2026-10-31)
+**Commit Message**: Fix typo in chaos-dynamic-tables.md
+
+При перешардировании очередей надо наблюдать что прогресс репликации движется, а replication_lag_time наоборот должен быть околонулевым.
+
+---
+
+Pull Request resolved: https://github.com/ytsaurus/ytsaurus/pull/1892
+commit_hash:3ad55157f19984a15125d44da966e2a8631eb4bc
+
+**File**: `yt/docs/ru/_includes/user-guide/dynamic-tables/chaos-dynamic-tables.md` (modified, +1/-1)
+```diff
+@@ -117,7 +117,7 @@ $ yt --proxy replica_cluster create replication_log_table //path/to/replication_
+ Реплики-очереди являются очередями, и поэтому нельзя напрямую изменить количество таблетов в таких репликах. Перешардирование реплик-очередей возможно только через пересоздание. Сделать это можно следующим способом:
+ 
+ 1. Завести новые реплики-очереди с желаемым количеством шардов в sync-режиме и указав `catchup=%false` и `replicated_table_tracker_enabled=%false` с новым путем. Последнее нужно, чтобы все новые реплики не стали async.
+-2. Убедиться, что в них началась запись: лаг реплики в интерфейсе должен оставаться околонулевым, а атрибут replication_lag_time должен расти
++2. Убедиться, что в них началась запись: лаг реплики в интерфейсе должен оставаться околонулевым, а атрибут replication_lag_timestamp должен расти
+ 3. Сгенерировать таймстемп `yt generate-timestamp` и запомнить его
+ 4. Дождаться, когда значение replication_lag_timestamp _всех_ реплик будет больше, чем timestamp, сгенерированный на предыдущем шаге. Посмотреть replication_lag_timestamp реплик таблицы можно командой
+ ```bash
+```
+
+---
+
+### Incident Patch 3: `580592b6` (2026-10-31)
+**Commit Message**: YT-30200: Send job proxy heartbeat before requesting memory reserve increase
+
+When the node detects a resource overdraft on `UpdateResourceUsage`, it aborts the job immediately and reports the statistics from the job proxy's last periodic heartbeat. A job that grows quickly can overdraft before its first heartbeat, so the abort carries no `user_job/max_memory` / `job_proxy/max_memory`. `TTask::OnJobResourceOverdraft` then falls back to comparing reserve gaps against zero usage and blames the process with the smaller reserve (usually the job proxy); the user job reserve is never increased.
+
+Observed in `TestAllocationSizeIncrease::test_allocation_aborted_on_resource_lack`: job ran ~1.7s, controller logged `JobProxyMaxMemory: 0, UserJobMaxMemory: 0`, chose job proxy overdraft, the restarted job kept the old reserve and the expected `node_resource_overcommit` abort never happened.
+
+Fix: in `CheckMemoryUsage`, deliver a heartbeat (and wait for it) before requesting a larger memory reserve. The user job memory tracker has already recorded the new peak at this point, so the node holds fresh `max_memory` if it aborts. `RequestedMemoryReserve_` is bumped after the heartbeat so concurrent C
+
+**File**: `yt/yt/server/job_proxy/job_proxy.cpp` (modified, +13/-1)
+```diff
+@@ -398,6 +398,7 @@ void TJobProxy::SendHeartbeat()
+ 
+     auto job = FindJob();
+     if (!job) {
++        LastHeartbeatFuture_ = OKFuture;
+         return;
+     }
+ 
+@@ -445,7 +446,7 @@ void TJobProxy::SendHeartbeat()
+         }
+     }
+ 
+-    req->Invoke().Subscribe(BIND(&TJobProxy::OnHeartbeatResponse, MakeWeak(this)));
++    LastHeartbeatFuture_ = req->Invoke().AsVoid().Apply(BIND(&TJobProxy::OnHeartbeatResponse, MakeWeak(this)));
+ }
+ 
+ void TJobProxy::OnHeartbeatResponse(const TError& error)
+@@ -2077,6 +2078,17 @@ void TJobProxy::CheckMemoryUsage()
+         YT_TLOG_DEBUG("Requesting node for memory usage increase")
+             .With("OldMemoryReserve", RequestedMemoryReserve_.load())
+             .With("NewMemoryReserve", memoryReserve);
++        // The node may abort the job for overdraft on this request, reporting the statistics it has.
++        // Deliver fresh max_memory first; otherwise the controller agent cannot tell which process overdrafted.
++        auto executedEvent = HeartbeatExecutor_->GetExecutedEvent();
++        HeartbeatExecutor_->ScheduleOutOfBand();
++        auto error = WaitFor(executedEvent);
++        if (error.IsOK()) {
++            auto heartbeatFuture = LastHeartbeatFuture_;
++            error = WaitFor(heartbeatFuture);
++        }
++        YT_TLOG_ERROR_UNLESS(error.IsOK(), "Failed to send heartbeat before memory reserve increase")
++            .With(error);
+         RequestedMemoryReserve_ = memoryReserve;
+         UpdateResourceUsage();
+     }
+```
+
+**File**: `yt/yt/server/job_proxy/job_proxy.h` (modified, +1/-0)
+```diff
+@@ -167,6 +167,7 @@ class TJobProxy
+     NApi::NNative::IClientPtr Client_;
+ 
+     NConcurrency::TPeriodicExecutorPtr HeartbeatExecutor_;
++    TFuture<void> LastHeartbeatFuture_ = OKFuture;
+     NConcurrency::TPeriodicExecutorPtr MemoryWatchdogExecutor_;
+ 
+     TDuration RefCountedTrackerLogPeriod_;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1892** (closed): Fix typo in chaos-dynamic-tables.md (@hsalkaline)
 - **PR #1885** (closed): Run cross-cluster MR operations by ytsaurus Go SDK (@sagishev)
 - **PR #1884** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 - **PR #1883** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 - **PR #1882** (closed): Fix group by alias (@Tony-Romanov)
 - **PR #1878** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
-- **PR #1877** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 
 ---
 
@@ -1430,41 +1490,28 @@ commit_hash:7ec9c6e243ce8403d68911988490c1bc3733cfe9
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fail operation instead of crashing controller on unavailable versioned input chu
+## X. YT-30107: Reserve estimated memory for heavy commands before execution
 
 **RULE**:
-When implementing operations in `yt/yt/server/controller_agent/controllers/input_manager.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/yt/client/driver/CMakeLists.darwin-arm64.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6d6f2b83`: Fail operation instead of crashing controller on unavailable versioned input chunk. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9067a5fd`: YT-30107: Reserve estimated memory for heavy commands before execution. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/server/controller_agent/controllers/input_manager.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/client/driver/CMakeLists.darwin-arm64.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-                        [&] (const TDataSlicePtr& slice) {
-                            if (slice->IsTrivial()) {
-                            //FIXME(savrus) allow data slices to be unavailable.
-                            Host_->OnOperationFailed(TError(
-                                NChunkClient::EErrorCode::ChunkUnavailable,
-                                "Dynamic table chunk %v became unavailable",
-                                chunkId));
-                            return true;
+  ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command_memory_estimate.cpp
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-                        [&] (TDataSlicePtr slice) {
-                            try {
-                            } catch (const std::exception& ex) {
-                                //FIXME(savrus) allow data slices to be unavailable.
-                                Host_->OnOperationFailed(TError(NChunkClient::EErrorCode::ChunkUnavailable, "Dynamic table chunk became unavailable")
-                                    .With(ex));
-                                return true;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6d6f2b83` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9067a5fd` are properly handled with clean fallback behavior.

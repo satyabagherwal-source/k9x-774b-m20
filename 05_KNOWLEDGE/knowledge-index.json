@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T19:02:22.681Z",
+  "last_updated": "2026-10-31T19:14:46.317Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9052,8 +9052,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "6fee7dae",
-      "content_hash": "5050336d32555b2924ddf7648432a6be16a52a400bfc40df2211e1c4d77fea43",
+      "source_version": "2a9447c5",
+      "content_hash": "4f417311c69306ee213c528b228ba4cdbf75ea13771f5397c56824da9a4c5bde",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -9361,6 +9361,11 @@
           "number": 5827,
           "title": "docs(changelog): mention qsv-clientd-tray in the 27.0.1 highlights",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6293,
+          "title": "bench: add geoclient benchmarks, uncached and cached (#4964)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9368,7 +9373,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T12:39:42.061Z",
+      "verified_at": "2026-10-31T19:14:46.298Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18751,7 +18756,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-base-en-v1.5",
       "source_version": "hf-baai-bge-base-en-v1.5",
-      "content_hash": "d1d27dfdc614f3a83ca090c8f329ad999545fb03b0802808228f959e918ac951",
+      "content_hash": "43ede19b66110bd8347db33f1ca1ab3ee672dfa54163b2036293efec33d31ee6",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md",
       "promoted_rules": [
@@ -18822,7 +18827,7 @@
         "learn-huggingface-hf-baai-bge-base-en-v1-5-mv40jxd1",
         "learn-huggingface-hf-baai-bge-base-en-v1-5-mv4ei7wc"
       ],
-      "verified_at": "2026-10-28T17:49:36.599Z",
+      "verified_at": "2026-10-31T19:14:31.114Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35322,8 +35327,8 @@
       "slug": "kube-rs-kube",
       "platform": "github",
       "source_url": "https://github.com/kube-rs/kube",
-      "source_version": "1f316bb7",
-      "content_hash": "c3330ca1c03d3de81348219554b23804f27519c6c25b3382d787a1d233d302fa",
+      "source_version": "28e3d13a",
+      "content_hash": "0ba068d4b8ef0956e5b26e897220de66b5238926c6fd94512b89b05401e64f01",
       "dossier_path": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
       "promoted_rules": [
@@ -35361,6 +35366,11 @@
           "number": 6046,
           "title": "deps): Update tokio-tungstenite requirement from 0.29.0 to 0.30.0 (#2038)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6291,
+          "title": "Expose `hyper-timeout`'s `reset_reader_on_write` config (#2111)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35368,7 +35378,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T03:34:13.828Z",
+      "verified_at": "2026-10-31T19:14:38.554Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59535,8 +59545,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "a88390c6",
-      "content_hash": "8777a89196e6f9fc2d615bbc0d0ab0dd4c81f007b1f0007ba9634b0b10ccceaf",
+      "source_version": "5ea67989",
+      "content_hash": "f25f82e7803d652ac9850e9f4212cc473274534433eaa7890076313bdbc9081a",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -59599,6 +59609,11 @@
           "number": 6028,
           "title": "Fail operation instead of crashing controller on unavailable versioned input chu",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6292,
+          "title": "YT-30107: Reserve estimated memory for heavy commands before execution",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59606,7 +59621,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T02:44:18.178Z",
+      "verified_at": "2026-10-31T19:14:45.659Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -163851,6 +163866,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T19:02:22.660Z"
+    },
+    "rule-6291": {
+      "learning_id": "rule-6291",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6291,
+      "title": "Expose `hyper-timeout`'s `reset_reader_on_write` config (#2111)",
+      "source_url": "https://github.com/kube-rs/kube",
+      "source_version": "28e3d13a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T19:14:38.554Z"
+    },
+    "rule-6292": {
+      "learning_id": "rule-6292",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6292,
+      "title": "YT-30107: Reserve estimated memory for heavy commands before execution",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "5ea67989",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T19:14:45.659Z"
+    },
+    "rule-6293": {
+      "learning_id": "rule-6293",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6293,
+      "title": "bench: add geoclient benchmarks, uncached and cached (#4964)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "2a9447c5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T19:14:46.298Z"
     }
   },
   "aliases": {

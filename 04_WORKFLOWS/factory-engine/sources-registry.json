@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T19:02:25.322Z",
-    "lastVerified": "2026-10-31T19:02:25.322Z",
+    "lastChecked": "2026-10-31T19:14:48.956Z",
+    "lastVerified": "2026-10-31T19:14:48.956Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -244,22 +244,21 @@
     "revisionIdentifier": "3a8f3f35"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T18:29:09.444Z",
-    "lastVerified": "2026-10-31T18:29:09.444Z",
+    "lastChecked": "2026-10-31T19:14:45.689Z",
+    "lastVerified": "2026-10-31T19:14:45.689Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "5050336d32555b2924ddf7648432a6be16a52a400bfc40df2211e1c4d77fea43",
+    "contentHash": "4f417311c69306ee213c528b228ba4cdbf75ea13771f5397c56824da9a4c5bde",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "6fee7dae"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -743,14 +742,14 @@
     "officialUrl": "https://github.com/kube-rs/kube",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T03:34:13.082Z",
-    "lastVerified": "2026-10-31T03:34:13.082Z",
+    "lastChecked": "2026-10-31T19:14:37.952Z",
+    "lastVerified": "2026-10-31T19:14:37.952Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kube-rs-kube",
-    "contentHash": "c3330ca1c03d3de81348219554b23804f27519c6c25b3382d787a1d233d302fa",
+    "contentHash": "0ba068d4b8ef0956e5b26e897220de66b5238926c6fd94512b89b05401e64f01",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1070,9 +1069,9 @@
   "burntsushi-ripgrep": {
     "name": "ripgrep",
     "officialUrl": "https://github.com/BurntSushi/ripgrep",
-    "lastChecked": "2026-10-30T23:28:28.847Z",
+    "lastChecked": "2026-10-31T19:14:27.497Z",
     "revisionIdentifier": "91f5d22e",
-    "lastVerified": "2026-10-30T23:28:28.847Z"
+    "lastVerified": "2026-10-31T19:14:27.497Z"
   },
   "hf-meta-llama-llama-3.1-8b-instruct": {
     "name": "meta-llama/Llama-3.1-8B-Instruct",
@@ -1553,9 +1552,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-10-31T15:14:37.556Z",
+    "lastChecked": "2026-10-31T19:14:37.479Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-10-31T15:14:37.556Z"
+    "lastVerified": "2026-10-31T19:14:37.479Z"
   },
   "valeriansaliou-sonic": {
     "name": "valeriansaliou/sonic",
@@ -6432,14 +6431,14 @@
     "officialUrl": "https://github.com/ytsaurus/ytsaurus",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-31T02:44:17.248Z",
-    "lastVerified": "2026-10-31T02:44:17.248Z",
+    "lastChecked": "2026-10-31T19:14:45.078Z",
+    "lastVerified": "2026-10-31T19:14:45.078Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "8777a89196e6f9fc2d615bbc0d0ab0dd4c81f007b1f0007ba9634b0b10ccceaf",
+    "contentHash": "f25f82e7803d652ac9850e9f4212cc473274534433eaa7890076313bdbc9081a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6533,12 +6532,12 @@
     "officialUrl": "https://huggingface.co/BAAI/bge-base-en-v1.5",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T17:49:35.314Z",
-    "lastVerified": "2026-10-28T17:49:35.314Z",
+    "lastChecked": "2026-10-31T19:14:30.123Z",
+    "lastVerified": "2026-10-31T19:14:30.123Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
-    "contentHash": "d1d27dfdc614f3a83ca090c8f329ad999545fb03b0802808228f959e918ac951",
+    "contentHash": "43ede19b66110bd8347db33f1ca1ab3ee672dfa54163b2036293efec33d31ee6",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -8586,9 +8585,9 @@
   "mochidiffusion-mochidiffusion": {
     "name": "MochiDiffusion",
     "officialUrl": "https://github.com/MochiDiffusion/MochiDiffusion",
-    "lastChecked": "2026-10-29T00:02:27.000Z",
+    "lastChecked": "2026-10-31T19:14:32.535Z",
     "revisionIdentifier": "5e978c69",
-    "lastVerified": "2026-10-29T00:02:27.000Z"
+    "lastVerified": "2026-10-31T19:14:32.535Z"
   },
   "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf": {
     "name": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",

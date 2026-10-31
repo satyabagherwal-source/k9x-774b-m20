@@ -6692,3 +6692,7 @@ Every entry in this ledger must capture:
 | `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `2c04fb37` | Multi-dimensional audit evidence | 2026-10-31T18:53:42.557Z |
 | `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `ae99b5a1` | Multi-dimensional audit evidence | 2026-10-31T19:00:42.426Z |
 | `learn-huggingface-google-vit-base-patch16-224` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-31T19:02:22.770Z |
+| `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-31T19:14:31.227Z |
+| `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `28e3d13a` | Multi-dimensional audit evidence | 2026-10-31T19:14:38.656Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `5ea67989` | Multi-dimensional audit evidence | 2026-10-31T19:14:45.772Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `2a9447c5` | Multi-dimensional audit evidence | 2026-10-31T19:14:46.399Z |

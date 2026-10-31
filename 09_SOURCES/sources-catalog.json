@@ -1255,8 +1255,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-base-en-v1.5",
     "sourceVersion": "hf-baai-bge-base-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "d1d27dfdc614f3a83ca090c8f329ad999545fb03b0802808228f959e918ac951",
-    "lastHarvestedAt": "2026-10-28T17:49:36.709Z",
+    "contentHash": "43ede19b66110bd8347db33f1ca1ab3ee672dfa54163b2036293efec33d31ee6",
+    "lastHarvestedAt": "2026-10-31T19:14:31.227Z",
     "learningId": "learn-huggingface-baai-bge-base-en-v1-5"
   },
   "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "6fee7dae",
+    "sourceVersion": "2a9447c5",
     "license": "NOASSERTION",
-    "contentHash": "5050336d32555b2924ddf7648432a6be16a52a400bfc40df2211e1c4d77fea43",
-    "lastHarvestedAt": "2026-10-31T12:39:42.169Z",
+    "contentHash": "4f417311c69306ee213c528b228ba4cdbf75ea13771f5397c56824da9a4c5bde",
+    "lastHarvestedAt": "2026-10-31T19:14:46.399Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "a88390c6",
+    "sourceVersion": "5ea67989",
     "license": "Apache-2.0",
-    "contentHash": "8777a89196e6f9fc2d615bbc0d0ab0dd4c81f007b1f0007ba9634b0b10ccceaf",
-    "lastHarvestedAt": "2026-10-31T02:44:18.277Z",
+    "contentHash": "f25f82e7803d652ac9850e9f4212cc473274534433eaa7890076313bdbc9081a",
+    "lastHarvestedAt": "2026-10-31T19:14:45.772Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {
@@ -6843,10 +6843,10 @@
     "repository": "kube-rs/kube",
     "platform": "github",
     "sourceUrl": "https://github.com/kube-rs/kube",
-    "sourceVersion": "1f316bb7",
+    "sourceVersion": "28e3d13a",
     "license": "Apache-2.0",
-    "contentHash": "c3330ca1c03d3de81348219554b23804f27519c6c25b3382d787a1d233d302fa",
-    "lastHarvestedAt": "2026-10-31T03:34:13.928Z",
+    "contentHash": "0ba068d4b8ef0956e5b26e897220de66b5238926c6fd94512b89b05401e64f01",
+    "lastHarvestedAt": "2026-10-31T19:14:38.656Z",
     "learningId": "learn-github-kube-rs-kube"
   },
   "weaviate-weaviate": {
