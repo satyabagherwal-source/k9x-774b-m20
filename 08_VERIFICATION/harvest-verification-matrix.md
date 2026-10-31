@@ -6384,3 +6384,5 @@
 | `CYCLE-20261031-IOYU` | `2026-10-31T00:44:56.934Z` | `NervJS/taro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5966, Rule 5967, Rule 5968` | Yes (`061ace3a...`) |
 | `CYCLE-20261031-JJD9` | `2026-10-31T00:45:36.333Z` | `Michael-A-Kuykendall/shimmy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5969, Rule 5970, Rule 5971` | Yes (`93d52b45...`) |
 | `CYCLE-20261031-K9PP` | `2026-10-31T00:46:10.477Z` | `meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md` | Yes (`8b312baf...`) |
+| `CYCLE-20261031-SVQ6` | `2026-10-31T00:52:52.254Z` | `krishhgg/Insomnia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5972` | Yes (`9d34de9e...`) |
+| `CYCLE-20261031-T5GO` | `2026-10-31T00:53:04.872Z` | `reflection/Beam-1.0-501B-A23B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5257, Rule 5973, Rule 5974` | Yes (`38107efb...`) |

@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T00:46:13.028Z",
-    "lastVerified": "2026-10-31T00:46:13.028Z",
+    "lastChecked": "2026-10-31T00:53:07.434Z",
+    "lastVerified": "2026-10-31T00:53:07.434Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -108,8 +108,8 @@
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T21:06:21.361Z",
-    "lastVerified": "2026-10-30T21:06:21.361Z",
+    "lastChecked": "2026-10-31T00:52:57.883Z",
+    "lastVerified": "2026-10-31T00:52:57.883Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -243,8 +243,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T00:20:37.509Z",
-    "lastVerified": "2026-10-31T00:20:37.509Z",
+    "lastChecked": "2026-10-31T00:53:02.859Z",
+    "lastVerified": "2026-10-31T00:53:02.859Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1175,9 +1175,9 @@
   "jaredpalmer-formik": {
     "name": "formik",
     "officialUrl": "https://github.com/jaredpalmer/formik",
-    "lastChecked": "2026-10-28T04:21:41.166Z",
+    "lastChecked": "2026-10-31T00:52:52.917Z",
     "revisionIdentifier": "91475adb",
-    "lastVerified": "2026-10-28T04:21:41.166Z"
+    "lastVerified": "2026-10-31T00:52:52.917Z"
   },
   "emberstack-kubernetes-reflector": {
     "name": "emberstack/kubernetes-reflector",
@@ -5366,12 +5366,12 @@
     "lastVerified": "2026-10-30T23:05:18.820Z"
   },
   "rqlite-rqlite": {
-    "name": "rqlite/rqlite",
+    "name": "rqlite",
     "officialUrl": "https://github.com/rqlite/rqlite",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T04:34:55.397Z",
-    "lastVerified": "2026-10-30T04:34:55.397Z",
+    "lastChecked": "2026-10-31T00:53:00.383Z",
+    "lastVerified": "2026-10-31T00:53:00.383Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rqlite-rqlite",
@@ -5380,7 +5380,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8b10e2d9"
   },
   "xudong-huang-may": {
     "name": "may",
@@ -6141,9 +6142,9 @@
   "camptocamp-terraboard": {
     "name": "terraboard",
     "officialUrl": "https://github.com/camptocamp/terraboard",
-    "lastChecked": "2026-10-30T05:19:26.791Z",
+    "lastChecked": "2026-10-31T00:52:55.321Z",
     "revisionIdentifier": "6f6b6b60",
-    "lastVerified": "2026-10-30T05:19:26.791Z"
+    "lastVerified": "2026-10-31T00:52:55.321Z"
   },
   "lindb-lindb": {
     "name": "lindb",
@@ -11675,6 +11676,40 @@
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-reflection-beam-1.0-501b-a23b": {
+    "name": "reflection/Beam-1.0-501B-A23B",
+    "officialUrl": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-31T00:52:50.423Z",
+    "lastVerified": "2026-10-31T00:52:50.423Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
+    "contentHash": "38107efbf90864bcc84233ddae72f0156459baf7ec362c6b911eda5c51846d10",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "krishhgg-insomnia": {
+    "name": "krishhgg/Insomnia",
+    "officialUrl": "https://github.com/krishhgg/Insomnia",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-31T00:52:51.308Z",
+    "lastVerified": "2026-10-31T00:52:51.308Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-krishhgg-insomnia",
+    "contentHash": "9d34de9e4b8805a38f1a3aae73b52f21a70ca7dfde7f001ac91608eee0a18d26",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 11,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

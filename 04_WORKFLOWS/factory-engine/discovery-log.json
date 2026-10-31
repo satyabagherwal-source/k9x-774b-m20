@@ -19912,5 +19912,20 @@
     "downloads": 221,
     "qualityScore": 1641,
     "discoveredAt": "2026-10-30T22:32:06.476Z"
+  },
+  {
+    "name": "Insomnia",
+    "fullName": "krishhgg/Insomnia",
+    "url": "https://github.com/krishhgg/Insomnia",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A macOS menu bar app that safely keeps your MacBook awake with the lid closed, for timed agent sessions.",
+    "stars": 1848,
+    "forks": 130,
+    "openIssues": 73,
+    "language": "Swift",
+    "qualityScore": 1359,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-31T00:50:56.065Z"
   }
 ]

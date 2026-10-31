@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T00:46:10.380Z",
-  "total_verified_learnings": 1179,
+  "last_updated": "2026-10-31T00:53:04.793Z",
+  "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -109020,7 +109020,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
       "source_version": "hf-reflection-beam-1.0-501b-a23b",
-      "content_hash": "739f7de5e231bb42f9de9347094ec94363cf6260018c723a1b0e451af78e968c",
+      "content_hash": "38107efbf90864bcc84233ddae72f0156459baf7ec362c6b911eda5c51846d10",
       "dossier_path": "07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md",
       "promoted_rules": [
@@ -109068,6 +109068,21 @@
           "number": 4706,
           "title": "Dense-to-Sparse Layer Transition for Stability",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5257,
+          "title": "Hybrid Attention Layer Scheduling Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 5973,
+          "title": "MoE Router Load Balancing & Expert Activation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5974,
+          "title": "Structured Output Channel Parsing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -109075,7 +109090,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:16:00.935Z",
+      "verified_at": "2026-10-31T00:53:04.772Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -146825,14 +146840,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 5257,
       "title": "Hybrid Attention Layer Scheduling Invariant",
-      "source_url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
-      "source_version": "hf-unsloth-qwen3.8-27b-gguf",
+      "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
+      "source_version": "hf-reflection-beam-1.0-501b-a23b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T11:17:02.630Z"
+      "verified_at": "2026-10-31T00:53:04.772Z"
     },
     "rule-5258": {
       "learning_id": "rule-5258",
@@ -157581,6 +157596,81 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T00:45:36.226Z"
+    },
+    "learn-github-krishhgg-insomnia": {
+      "learning_id": "learn-github-krishhgg-insomnia",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "krishhgg/Insomnia",
+      "repository": "krishhgg/Insomnia",
+      "slug": "krishhgg-insomnia",
+      "platform": "github",
+      "source_url": "https://github.com/krishhgg/Insomnia",
+      "source_version": "b8e7e20d",
+      "content_hash": "9d34de9e4b8805a38f1a3aae73b52f21a70ca7dfde7f001ac91608eee0a18d26",
+      "dossier_path": "07_PROJECT_LEARNING/krishhgg-insomnia-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/krishhgg-insomnia-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5972,
+          "title": "Install, uninstall: check Kong's client against a code requirement",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-31T00:52:52.155Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5972": {
+      "learning_id": "rule-5972",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5972,
+      "title": "Install, uninstall: check Kong's client against a code requirement",
+      "source_url": "https://github.com/krishhgg/Insomnia",
+      "source_version": "b8e7e20d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:52:52.155Z"
+    },
+    "rule-5973": {
+      "learning_id": "rule-5973",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5973,
+      "title": "MoE Router Load Balancing & Expert Activation Invariant",
+      "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
+      "source_version": "hf-reflection-beam-1.0-501b-a23b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:53:04.772Z"
+    },
+    "rule-5974": {
+      "learning_id": "rule-5974",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5974,
+      "title": "Structured Output Channel Parsing Invariant",
+      "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
+      "source_version": "hf-reflection-beam-1.0-501b-a23b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:53:04.772Z"
     }
   },
   "aliases": {

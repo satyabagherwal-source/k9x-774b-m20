@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T00:46:10.496Z",
+  "last_updated": "2026-10-31T00:53:04.886Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -13881,14 +13881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-reflection-beam-1-0-501b-a23b",
-      "content_hash": "739f7de5e231bb42f9de9347094ec94363cf6260018c723a1b0e451af78e968c",
-      "verified_at": "2026-10-27T11:16:01.030Z",
+      "content_hash": "38107efbf90864bcc84233ddae72f0156459baf7ec362c6b911eda5c51846d10",
+      "verified_at": "2026-10-31T00:53:04.885Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T11:16:01.030Z"
+      "last_updated": "2026-10-31T00:53:04.885Z"
     },
     "webrecorder/pywb": {
       "repository": "webrecorder/pywb",
@@ -17474,6 +17474,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-30T23:51:40.172Z"
+    },
+    "krishhgg/Insomnia": {
+      "repository": "krishhgg/Insomnia",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-krishhgg-insomnia",
+      "content_hash": "9d34de9e4b8805a38f1a3aae73b52f21a70ca7dfde7f001ac91608eee0a18d26",
+      "verified_at": "2026-10-31T00:52:52.267Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-31T00:52:52.267Z"
     }
   },
   "repos": {

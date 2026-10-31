@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-O90D",
-    "timestamp": "2026-10-28T18:42:00.733Z",
-    "repository": "zama-ai/tfhe-rs",
-    "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "2a59b0e1a1dd032596b49b84c738c2f0d5c805da26cd157cb4def6b56b8cf3ab",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-ODWR",
-    "timestamp": "2026-10-28T18:42:07.083Z",
-    "repository": "zai-org/GLM-5.3",
-    "learningId": "learn-huggingface-zai-org-glm-5-3",
-    "contentHash": "1ab9643a7ce9c491afd84fc2e75df7c81fc396f0bed2f015a9bc30d4009f036c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-WLNJ",
     "timestamp": "2026-10-28T18:48:30.367Z",
     "repository": "restatedev/restate",
@@ -7492,6 +7462,36 @@
     "contentHash": "8b312baf56c87b812cf657c2de3f566eeb8cae5d66368bc1452f4c37afa34e0c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-SVQ6",
+    "timestamp": "2026-10-31T00:52:52.254Z",
+    "repository": "krishhgg/Insomnia",
+    "learningId": "learn-github-krishhgg-insomnia",
+    "contentHash": "9d34de9e4b8805a38f1a3aae73b52f21a70ca7dfde7f001ac91608eee0a18d26",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-T5GO",
+    "timestamp": "2026-10-31T00:53:04.872Z",
+    "repository": "reflection/Beam-1.0-501B-A23B",
+    "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
+    "contentHash": "38107efbf90864bcc84233ddae72f0156459baf7ec362c6b911eda5c51846d10",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

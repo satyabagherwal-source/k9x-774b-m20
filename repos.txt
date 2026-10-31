@@ -4734,3 +4734,7 @@ https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF
 # --- Automatically Discovered by AI Scout Engine [2026-10-30T22:34:14.734Z] ---
 # [HUGGINGFACE-AI-MODELS] speridlabs/idol (1641 score) - Verified Hugging Face Model: speridlabs/idol (142 likes, 221 downloads)
 https://huggingface.co/speridlabs/idol
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-31T00:52:42.387Z] ---
+# [MOBILE-CROSS-PLATFORM] krishhgg/Insomnia (1359 score) - A macOS menu bar app that safely keeps your MacBook awake with the lid closed, f
+https://github.com/krishhgg/Insomnia

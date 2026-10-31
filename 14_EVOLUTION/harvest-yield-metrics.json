@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T00:46:10.491Z",
-  "total_cycles_completed": 6361,
-  "total_learnings_persisted": 6361,
-  "total_rules_promoted": 5944,
+  "last_updated": "2026-10-31T00:53:04.881Z",
+  "total_cycles_completed": 6363,
+  "total_learnings_persisted": 6363,
+  "total_rules_promoted": 5948,
   "history": [
-    {
-      "timestamp": "2026-10-30T11:28:14.300Z",
-      "repository": "nats-io/nats-server",
-      "learningId": "learn-github-nats-io-nats-server",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T11:28:19.524Z",
-      "repository": "milvus-io/milvus",
-      "learningId": "learn-github-milvus-io-milvus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T11:28:20.337Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1389,20 @@
       "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
       "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T00:52:52.263Z",
+      "repository": "krishhgg/Insomnia",
+      "learningId": "learn-github-krishhgg-insomnia",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T00:53:04.881Z",
+      "repository": "reflection/Beam-1.0-501B-A23B",
+      "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

@@ -6393,3 +6393,5 @@ Every entry in this ledger must capture:
 | `learn-github-nervjs-taro` | `https://github.com/NervJS/taro` | `0493b525` | Multi-dimensional audit evidence | 2026-10-31T00:44:56.938Z |
 | `learn-github-michael-a-kuykendall-shimmy` | `https://github.com/Michael-A-Kuykendall/shimmy` | `239bb745` | Multi-dimensional audit evidence | 2026-10-31T00:45:36.338Z |
 | `learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-10-31T00:46:10.481Z |
+| `learn-github-krishhgg-insomnia` | `https://github.com/krishhgg/Insomnia` | `b8e7e20d` | Multi-dimensional audit evidence | 2026-10-31T00:52:52.257Z |
+| `learn-huggingface-reflection-beam-1-0-501b-a23b` | `https://huggingface.co/reflection/Beam-1.0-501B-A23B` | `hf-reflect` | Multi-dimensional audit evidence | 2026-10-31T00:53:04.876Z |
