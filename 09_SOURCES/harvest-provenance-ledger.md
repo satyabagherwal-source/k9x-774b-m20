@@ -6657,3 +6657,6 @@ Every entry in this ledger must capture:
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `b4a98b73` | Multi-dimensional audit evidence | 2026-10-31T17:03:45.618Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `e38d2e32` | Multi-dimensional audit evidence | 2026-10-31T17:03:58.135Z |
 | `learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf` | `https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF` | `hf-venasti` | Multi-dimensional audit evidence | 2026-10-31T17:08:00.150Z |
+| `learn-huggingface-naiveai-naive-n0-5-flash` | `https://huggingface.co/NaiveAI/Naive-N0.5-Flash` | `hf-naiveai` | Multi-dimensional audit evidence | 2026-10-31T17:14:09.186Z |
+| `learn-github-meta-folly` | `https://github.com/facebook/folly` | `57ff303c` | Multi-dimensional audit evidence | 2026-10-31T17:14:12.165Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `229950e6` | Multi-dimensional audit evidence | 2026-10-31T17:14:24.998Z |

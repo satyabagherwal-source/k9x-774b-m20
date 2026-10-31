@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T17:08:00.157Z",
+  "last_updated": "2026-10-31T17:14:25.005Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1430,14 +1430,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-naiveai-naive-n0-5-flash",
-      "content_hash": "5bd3b1e1d49c98e496fb3ceddb2249c51a1dd676b8a50d9c00ad5e9241a70165",
-      "verified_at": "2026-10-28T16:05:09.717Z",
+      "content_hash": "dad701b8c03a38b19448b32a11f9d95c277e38ab5225840d59da22577df8af54",
+      "verified_at": "2026-10-31T17:14:09.192Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T16:05:09.717Z"
+      "last_updated": "2026-10-31T17:14:09.192Z"
     },
     "openai/clip-vit-base-patch32": {
       "repository": "openai/clip-vit-base-patch32",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "ac9a423851f4628ba3037de2de5f72740437860872becd3f7900db2388321ccb",
-      "verified_at": "2026-10-31T16:39:50.063Z",
+      "content_hash": "ab550f3bbe59c22c0693cb05fbdd71278855e412f04ca2e689e417545494626a",
+      "verified_at": "2026-10-31T17:14:25.004Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T16:39:50.063Z"
+      "last_updated": "2026-10-31T17:14:25.004Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -17181,14 +17181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meta-folly",
-      "content_hash": "c989cc34c2eb1faa8036804327f348d54463b0cf413b3e8e23ff728492216bf4",
-      "verified_at": "2026-10-30T21:19:25.370Z",
+      "content_hash": "b4de6ae48e5df2afcddd961e04b1ae98d75d0a717b50f81fe75e141b1884496b",
+      "verified_at": "2026-10-31T17:14:12.170Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T21:19:25.370Z"
+      "last_updated": "2026-10-31T17:14:12.170Z"
     },
     "LiquidAI/LFM3-Omni-2B": {
       "repository": "LiquidAI/LFM3-Omni-2B",

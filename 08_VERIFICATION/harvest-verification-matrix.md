@@ -6648,3 +6648,6 @@
 | `CYCLE-20261031-HGB3` | `2026-10-31T17:03:45.615Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6258` | Yes (`72aad5d6...`) |
 | `CYCLE-20261031-HPYR` | `2026-10-31T17:03:58.131Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6259` | Yes (`0cce4569...`) |
 | `CYCLE-20261031-MWPE` | `2026-10-31T17:08:00.146Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6260, Rule 6261` | Yes (`e3e0ac9b...`) |
+| `CYCLE-20261031-UTGA` | `2026-10-31T17:14:09.178Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | Yes (`dad701b8...`) |
+| `CYCLE-20261031-UVR6` | `2026-10-31T17:14:12.162Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6262` | Yes (`b4de6ae4...`) |
+| `CYCLE-20261031-V5NN` | `2026-10-31T17:14:24.995Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6263` | Yes (`ab550f3b...`) |
