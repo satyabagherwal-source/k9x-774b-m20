@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T23:16:01.635Z",
+  "last_updated": "2026-10-31T23:24:55.982Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4414,8 +4414,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "f58f1935",
-      "content_hash": "e1d403365c53f181ab8e4eec63b14b35828ed9d1fcbbbeb7d0966dd2245fcefb",
+      "source_version": "04ff7917",
+      "content_hash": "e180efbe3244508dea2dc8f2b8183594343affa63f42ab8fd2dd7bbad09788b9",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -4498,6 +4498,11 @@
           "number": 5800,
           "title": "docs: retire outdated protocol development guides (#4346)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6360,
+          "title": "oac): exposePort add reserved ports (#4366)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4505,7 +4510,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T16:32:45.918Z",
+      "verified_at": "2026-10-31T23:22:29.293Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18365,7 +18370,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
       "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
-      "content_hash": "52b538d4678be50c0e6aefb20ed84b0b0103b23f913dc4603851510394befd29",
+      "content_hash": "8b4e7ad744764473d47cecddd6e740be7dbd6cdf85e512f5a00792862698c045",
       "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -18398,6 +18403,16 @@
           "number": 4408,
           "title": "GGUF Quantization Integrity for Mixed-Precision Models",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6361,
+          "title": "Orthogonal Subspace Projection Invariant for Multi-Modal Latent Encoders",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6362,
+          "title": "GGUF Quantization Precision Boundary Invariant for Text Conditioning",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -18412,7 +18427,7 @@
         "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv49gron",
         "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv4mtxpo"
       ],
-      "verified_at": "2026-10-28T21:50:12.345Z",
+      "verified_at": "2026-10-31T23:24:55.969Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38613,8 +38628,8 @@
       "slug": "maziyarpanahi-openmed",
       "platform": "github",
       "source_url": "https://github.com/maziyarpanahi/openmed",
-      "source_version": "d554f264",
-      "content_hash": "3d43cd24350eaa6b6c12f33eb64fc0cb6323d5a502424182b48c75fcd7caff76",
+      "source_version": "4a3b5899",
+      "content_hash": "db274c46852bd99b603bfb771840749b3d979a66dbb77e81d6335d9cdf2ac01d",
       "dossier_path": "07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
       "promoted_rules": [
@@ -38637,6 +38652,11 @@
           "number": 5536,
           "title": "repair docs deep links and dependency security gates",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6359,
+          "title": "Qualify fixed-option decision backends offline",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38644,7 +38664,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T17:40:37.741Z",
+      "verified_at": "2026-10-31T23:22:27.785Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -165140,6 +165160,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T23:16:01.615Z"
+    },
+    "rule-6359": {
+      "learning_id": "rule-6359",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6359,
+      "title": "Qualify fixed-option decision backends offline",
+      "source_url": "https://github.com/maziyarpanahi/openmed",
+      "source_version": "4a3b5899",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T23:22:27.785Z"
+    },
+    "rule-6360": {
+      "learning_id": "rule-6360",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6360,
+      "title": "oac): exposePort add reserved ports (#4366)",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "04ff7917",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T23:22:29.293Z"
+    },
+    "rule-6361": {
+      "learning_id": "rule-6361",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6361,
+      "title": "Orthogonal Subspace Projection Invariant for Multi-Modal Latent Encoders",
+      "source_url": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T23:24:55.969Z"
+    },
+    "rule-6362": {
+      "learning_id": "rule-6362",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6362,
+      "title": "GGUF Quantization Precision Boundary Invariant for Text Conditioning",
+      "source_url": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T23:24:55.969Z"
     }
   },
   "aliases": {

@@ -775,8 +775,8 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
     "sourceVersion": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "52b538d4678be50c0e6aefb20ed84b0b0103b23f913dc4603851510394befd29",
-    "lastHarvestedAt": "2026-10-28T21:50:12.444Z",
+    "contentHash": "8b4e7ad744764473d47cecddd6e740be7dbd6cdf85e512f5a00792862698c045",
+    "lastHarvestedAt": "2026-10-31T23:24:56.045Z",
     "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf"
   },
   "hf-timm-mobilenetv3_small_100.lamb_in1k": {
@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "f58f1935",
+    "sourceVersion": "04ff7917",
     "license": "AGPL-3.0",
-    "contentHash": "e1d403365c53f181ab8e4eec63b14b35828ed9d1fcbbbeb7d0966dd2245fcefb",
-    "lastHarvestedAt": "2026-10-30T16:32:46.018Z",
+    "contentHash": "e180efbe3244508dea2dc8f2b8183594343affa63f42ab8fd2dd7bbad09788b9",
+    "lastHarvestedAt": "2026-10-31T23:22:29.360Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {
@@ -8233,10 +8233,10 @@
     "repository": "maziyarpanahi/openmed",
     "platform": "github",
     "sourceUrl": "https://github.com/maziyarpanahi/openmed",
-    "sourceVersion": "d554f264",
+    "sourceVersion": "4a3b5899",
     "license": "Apache-2.0",
-    "contentHash": "3d43cd24350eaa6b6c12f33eb64fc0cb6323d5a502424182b48c75fcd7caff76",
-    "lastHarvestedAt": "2026-10-29T17:40:37.842Z",
+    "contentHash": "db274c46852bd99b603bfb771840749b3d979a66dbb77e81d6335d9cdf2ac01d",
+    "lastHarvestedAt": "2026-10-31T23:22:27.849Z",
     "learningId": "learn-github-maziyarpanahi-openmed"
   },
   "bernaferrari-figmatocode": {

@@ -6760,3 +6760,6 @@ Every entry in this ledger must capture:
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `9f6fa547` | Multi-dimensional audit evidence | 2026-10-31T23:08:38.016Z |
 | `learn-huggingface-facebook-sam3` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-31T23:15:59.936Z |
 | `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `95194788` | Multi-dimensional audit evidence | 2026-10-31T23:16:01.720Z |
+| `learn-github-maziyarpanahi-openmed` | `https://github.com/maziyarpanahi/openmed` | `4a3b5899` | Multi-dimensional audit evidence | 2026-10-31T23:22:27.849Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `04ff7917` | Multi-dimensional audit evidence | 2026-10-31T23:22:29.360Z |
+| `learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf` | `https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-10-31T23:24:56.045Z |

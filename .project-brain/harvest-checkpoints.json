@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T23:16:01.729Z",
+  "last_updated": "2026-10-31T23:24:56.051Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1924,14 +1924,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
-      "content_hash": "52b538d4678be50c0e6aefb20ed84b0b0103b23f913dc4603851510394befd29",
-      "verified_at": "2026-10-28T21:50:12.458Z",
+      "content_hash": "8b4e7ad744764473d47cecddd6e740be7dbd6cdf85e512f5a00792862698c045",
+      "verified_at": "2026-10-31T23:24:56.051Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T21:50:12.458Z"
+      "last_updated": "2026-10-31T23:24:56.051Z"
     },
     "slopus/happy": {
       "repository": "slopus/happy",
@@ -4581,14 +4581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-beclab-olares",
-      "content_hash": "e1d403365c53f181ab8e4eec63b14b35828ed9d1fcbbbeb7d0966dd2245fcefb",
-      "verified_at": "2026-10-30T16:32:46.026Z",
+      "content_hash": "e180efbe3244508dea2dc8f2b8183594343affa63f42ab8fd2dd7bbad09788b9",
+      "verified_at": "2026-10-31T23:22:29.366Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T16:32:46.026Z"
+      "last_updated": "2026-10-31T23:22:29.366Z"
     },
     "cryfs/cryfs": {
       "repository": "cryfs/cryfs",
@@ -12381,14 +12381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-maziyarpanahi-openmed",
-      "content_hash": "3d43cd24350eaa6b6c12f33eb64fc0cb6323d5a502424182b48c75fcd7caff76",
-      "verified_at": "2026-10-29T17:40:37.851Z",
+      "content_hash": "db274c46852bd99b603bfb771840749b3d979a66dbb77e81d6335d9cdf2ac01d",
+      "verified_at": "2026-10-31T23:22:27.855Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T17:40:37.851Z"
+      "last_updated": "2026-10-31T23:22:27.855Z"
     },
     "bernaferrari/FigmaToCode": {
       "repository": "bernaferrari/FigmaToCode",
