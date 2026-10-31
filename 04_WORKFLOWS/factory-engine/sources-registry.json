@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T13:06:51.918Z",
-    "lastVerified": "2026-10-31T13:06:51.918Z",
+    "lastChecked": "2026-10-31T13:14:08.764Z",
+    "lastVerified": "2026-10-31T13:14:08.764Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -109,8 +109,8 @@
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T09:47:02.420Z",
-    "lastVerified": "2026-10-31T09:47:02.420Z",
+    "lastChecked": "2026-10-31T13:14:00.970Z",
+    "lastVerified": "2026-10-31T13:14:00.970Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -345,9 +345,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T12:46:56.833Z",
+    "lastChecked": "2026-10-31T13:14:05.781Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T12:46:56.833Z"
+    "lastVerified": "2026-10-31T13:14:05.781Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -3772,9 +3772,9 @@
   "supervc-stack-vectorchord": {
     "name": "VectorChord",
     "officialUrl": "https://github.com/supervc-stack/VectorChord",
-    "lastChecked": "2026-10-30T20:47:37.600Z",
+    "lastChecked": "2026-10-31T13:14:03.315Z",
     "revisionIdentifier": "0768657e",
-    "lastVerified": "2026-10-30T20:47:37.600Z"
+    "lastVerified": "2026-10-31T13:14:03.315Z"
   },
   "fujiapple852-trippy": {
     "name": "trippy",
@@ -3888,13 +3888,13 @@
     "officialUrl": "https://huggingface.co/amazon/chronos-2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T12:46:29.743Z",
-    "lastVerified": "2026-10-28T12:46:29.743Z",
+    "lastChecked": "2026-10-31T13:13:53.391Z",
+    "lastVerified": "2026-10-31T13:13:53.391Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-amazon-chronos-2",
-    "contentHash": "220dc4f790a66b021f17ae4f3958d978ead60bd6a0d37e331e8d8e6be74a5394",
-    "promotedRulesCount": 3,
+    "contentHash": "c7f46e4e9c353e32a7dfb3900383c2e3460179a1b72184a7024695c8010b478d",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -4892,14 +4892,14 @@
     "officialUrl": "https://github.com/pulumi/pulumi",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T21:41:15.103Z",
-    "lastVerified": "2026-10-30T21:41:15.103Z",
+    "lastChecked": "2026-10-31T13:14:05.465Z",
+    "lastVerified": "2026-10-31T13:14:05.465Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "bc897b870ad4ea0e3d3ef55238daadffd41ae7182667acd7b635a4a8716e7997",
+    "contentHash": "f06564f99c72b462b404f0419c29dde247da90c45c4a014cbee87b493e678651",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6527,9 +6527,9 @@
   "sqldelight-sqldelight": {
     "name": "sqldelight",
     "officialUrl": "https://github.com/sqldelight/sqldelight",
-    "lastChecked": "2026-10-28T17:49:37.699Z",
+    "lastChecked": "2026-10-31T13:13:56.040Z",
     "revisionIdentifier": "6f07e305",
-    "lastVerified": "2026-10-28T17:49:37.699Z"
+    "lastVerified": "2026-10-31T13:13:56.040Z"
   },
   "rook-rook": {
     "name": "rook/rook",
@@ -6951,14 +6951,14 @@
     "officialUrl": "https://github.com/restatedev/restate",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T16:39:31.618Z",
-    "lastVerified": "2026-10-30T16:39:31.618Z",
+    "lastChecked": "2026-10-31T13:13:57.007Z",
+    "lastVerified": "2026-10-31T13:13:57.007Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-restatedev-restate",
-    "contentHash": "de785172c1c2311c7afb7e94c6d6d72cfb811600b0ad9f3c8f0334ec0af2b683",
+    "contentHash": "ba8064de54ccf952e907759094e098a2aa061bc134b8d7d18b33de2bd9f36542",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

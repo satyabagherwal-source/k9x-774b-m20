@@ -6586,3 +6586,6 @@ Every entry in this ledger must capture:
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `6148ff16` | Multi-dimensional audit evidence | 2026-10-31T13:06:48.090Z |
 | `learn-huggingface-google-t5-t5-small` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-31T13:06:48.514Z |
 | `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `8602a9e3` | Multi-dimensional audit evidence | 2026-10-31T13:06:49.262Z |
+| `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-10-31T13:13:54.994Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `c30b4bce` | Multi-dimensional audit evidence | 2026-10-31T13:13:57.773Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `dd74aad1` | Multi-dimensional audit evidence | 2026-10-31T13:14:06.213Z |

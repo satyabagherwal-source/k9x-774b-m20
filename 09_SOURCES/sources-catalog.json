@@ -795,8 +795,8 @@
     "sourceUrl": "https://huggingface.co/amazon/chronos-2",
     "sourceVersion": "hf-amazon-chronos-2",
     "license": "Open-Source",
-    "contentHash": "220dc4f790a66b021f17ae4f3958d978ead60bd6a0d37e331e8d8e6be74a5394",
-    "lastHarvestedAt": "2026-10-28T12:46:43.078Z",
+    "contentHash": "c7f46e4e9c353e32a7dfb3900383c2e3460179a1b72184a7024695c8010b478d",
+    "lastHarvestedAt": "2026-10-31T13:13:54.994Z",
     "learningId": "learn-huggingface-amazon-chronos-2"
   },
   "hf-compvis-stable-diffusion-v1-4": {
@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "c94a5f2c",
+    "sourceVersion": "dd74aad1",
     "license": "Apache-2.0",
-    "contentHash": "bc897b870ad4ea0e3d3ef55238daadffd41ae7182667acd7b635a4a8716e7997",
-    "lastHarvestedAt": "2026-10-30T21:41:17.019Z",
+    "contentHash": "f06564f99c72b462b404f0419c29dde247da90c45c4a014cbee87b493e678651",
+    "lastHarvestedAt": "2026-10-31T13:14:06.213Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {
@@ -6983,10 +6983,10 @@
     "repository": "restatedev/restate",
     "platform": "github",
     "sourceUrl": "https://github.com/restatedev/restate",
-    "sourceVersion": "36cee33a",
+    "sourceVersion": "c30b4bce",
     "license": "NOASSERTION",
-    "contentHash": "de785172c1c2311c7afb7e94c6d6d72cfb811600b0ad9f3c8f0334ec0af2b683",
-    "lastHarvestedAt": "2026-10-30T16:44:33.512Z",
+    "contentHash": "ba8064de54ccf952e907759094e098a2aa061bc134b8d7d18b33de2bd9f36542",
+    "lastHarvestedAt": "2026-10-31T13:13:57.773Z",
     "learningId": "learn-github-restatedev-restate"
   },
   "kong-kubernetes-ingress-controller": {

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261029-KZJE",
-    "timestamp": "2026-10-29T23:35:04.682Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "ef0ec7224579129c5b110deaa9fa3ec80dfb5710286c641d3075ad23ac3cde2f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-TEV3",
-    "timestamp": "2026-10-29T23:41:37.791Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "5cc1f7c77d8c26226f31348c7d4cd767ca6e46c51d849cdb669036d5e31baff3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-FTQZ",
-    "timestamp": "2026-10-29T23:59:03.515Z",
-    "repository": "jellyfin/Swiftfin",
-    "learningId": "learn-github-jellyfin-swiftfin",
-    "contentHash": "469f802562c4b637b809153c2f1a66263880d15ea4a4ecc712cc3791992b2268",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-IM66",
     "timestamp": "2026-10-30T00:01:13.662Z",
     "repository": "freenet/freenet-core",
@@ -7492,6 +7447,51 @@
     "contentHash": "3dbafd230c17e5d530b8da2698c640584b667cdf197caa186af75ebe15d4aa67",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-9VE1",
+    "timestamp": "2026-10-31T13:13:54.985Z",
+    "repository": "amazon/chronos-2",
+    "learningId": "learn-huggingface-amazon-chronos-2",
+    "contentHash": "c7f46e4e9c353e32a7dfb3900383c2e3460179a1b72184a7024695c8010b478d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-9XJD",
+    "timestamp": "2026-10-31T13:13:57.769Z",
+    "repository": "restatedev/restate",
+    "learningId": "learn-github-restatedev-restate",
+    "contentHash": "ba8064de54ccf952e907759094e098a2aa061bc134b8d7d18b33de2bd9f36542",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-A41T",
+    "timestamp": "2026-10-31T13:14:06.209Z",
+    "repository": "pulumi/pulumi",
+    "learningId": "learn-github-pulumi-pulumi",
+    "contentHash": "f06564f99c72b462b404f0419c29dde247da90c45c4a014cbee87b493e678651",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

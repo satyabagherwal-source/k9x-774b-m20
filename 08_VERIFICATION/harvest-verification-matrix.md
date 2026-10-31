@@ -6577,3 +6577,6 @@
 | `CYCLE-20261031-0PZR` | `2026-10-31T13:06:48.087Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6204` | Yes (`73c11ee1...`) |
 | `CYCLE-20261031-0QBJ` | `2026-10-31T13:06:48.511Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6203, Rule 6204, Rule 6205` | Yes (`adefac15...`) |
 | `CYCLE-20261031-0QW5` | `2026-10-31T13:06:49.253Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md` | Yes (`3dbafd23...`) |
+| `CYCLE-20261031-9VE1` | `2026-10-31T13:13:54.985Z` | `amazon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md` | Yes (`c7f46e4e...`) |
+| `CYCLE-20261031-9XJD` | `2026-10-31T13:13:57.769Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6206` | Yes (`ba8064de...`) |
+| `CYCLE-20261031-A41T` | `2026-10-31T13:14:06.209Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6207` | Yes (`f06564f9...`) |

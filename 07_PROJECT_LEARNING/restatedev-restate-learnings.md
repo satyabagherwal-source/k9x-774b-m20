@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source**: github ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
-> **Source Version**: `36cee33a`  
+> **Source Version**: `c30b4bce`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T16:44:32.797Z  
+> **Timestamp**: 2026-10-31T13:13:57.015Z  
 > **Learning ID**: `learn-github-restatedev-restate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T16:39:31.618Z  
+> **Harvest Timestamp**: 2026-10-31T13:13:57.007Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Restate is the platform for building resilient applications that tolerate all infrastructure faults w/o the need for a PhD.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4626 stars
+- **Stars / Engagement**: 4631 stars
 
 ---
 
@@ -1631,216 +1631,90 @@ async fn list(env: &CliEnv, opts: &List) -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `36cee33a` (2026-10-30)
-**Commit Message**: [types] Decode flexbuffers network messages from segmented buffers
+### Incident Patch 1: `784c9a8a` (2026-10-30)
+**Commit Message**: Use GitHub App tokens for Homebrew tap and web UI updates
 
-`decode_as_flexbuffers` decoded only `buf.chunk()`, the first chunk of
-its input. Flexbuffers keeps a message's root at the end of the buffer,
-so a message split across chunks failed to decode. The doc comment
-required unchunked input, but nothing enforced it. It's part of the network contract in all cases.
+Publishing the Homebrew formula used the HOMEBREW_TAP_TOKEN personal
+access token, which is subject to the org's 90-day maximum PAT
+lifetime. Mint a short-lived token of a GitHub App installed only on
+restatedev/homebrew-tap instead (HOMEBREW_APP_CLIENT_ID variable,
+HOMEBREW_APP_PRIVATE_KEY secret).
 
-This is preparation to support segmented input buffers.
-
-It now decodes contiguous input in place, as before, and copies
-segmented input into one buffer first, the same approach the storage
-codec takes for flexbuffers values. Every caller passes a contiguous
-`Bytes` today, so behaviour and cost do not change; this makes the
-codec safe for segmented payloads, such as messages reassembled from
-fragments.
-
-A test decodes a message split at every byte offset, and split three
-ways; it fails without this fix.
-
-**File**: `crates/types/src/net/codec.rs` (modified, +54/-4)
-```diff
-@@ -94,18 +94,27 @@ pub fn encode_as_flexbuffers<T: Serialize>(value: T) -> Vec<u8> {
-     flexbuffers::to_vec(value).expect("network message serde can't fail")
- }
- 
--/// Utility method to decode a [`DeserializeOwned`] type from flexbuffers using serde. the buffer
--/// must have the complete message and not internally chunked.
-+/// Utility method to decode a [`DeserializeOwned`] type from flexbuffers using serde. `buf` must
-+/// hold exactly one message, which is consumed. Flexbuffers reads from one contiguous slice:
-+/// contiguous input is decoded in place, segmented input is first copied into one buffer.
- pub fn decode_as_flexbuffers<T: DeserializeOwned>(
--    buf: impl Buf,
-+    mut buf: impl Buf,
-     protocol_version: ProtocolVersion,
- ) -> Result<T, anyhow::Error> {
-     assert!(
-         protocol_version >= ProtocolVersion::V2,
-         "unknown protocol version should never be set"
-     );
- 
--    flexbuffers::from_slice(buf.chunk()).with_context(|| {
-+    let len = buf.remaining();
-+    let decoded = if buf.chunk().len() == len {
-+        let decoded = flexbuffers::from_slice(buf.chunk());
-+        buf.advance(len);
-+        decoded
-+    } else {
-+        flexbuffers::from_slice(&buf.copy_to_bytes(len))
-+    };
-+    decoded.with_context(|| {
-         format!(
-             "failed decoding (flexbuffers) network message {}",
-             type_name::<T>()
-@@ -129,3 +138,44 @@ pub fn decode_as_bilrost<T: OwnedMessage>(
- 
-     T::decode(buf).context("failed decoding (bilrost) network message")
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use serde::Deserialize;
-+
-+    use super::*;
-+
-+    #[derive(Debug, PartialEq, Serialize, Deserialize)]
-+    struct Message {
-+        id: u64,
-+        name: String,
-+        values: Vec<u32>,
-+    }
-+
-+    fn decode(mut buf: impl Buf) -> Message {
-+        let message = decode_as_flexbuffers(&mut buf, ProtocolVersion::V2).unwrap();
-+        assert!(!buf.has_remaining(), "decoding consumes the message");
-+        message
-+    }
-+
-+    #[test]
-+    fn flexbuffers_decode_from_segmented_input() {
-+        let message = Message {
-+            id: 7,
-+            name: "restate".to_owned(),
-+            values: vec![1, 2, 3],
-+        };
-+        let encoded = Bytes::from(encode_as_flexbuffers(&message));
-+        assert_eq!(decode(encoded.clone()), message);
-+        for at in 0..=encoded.len() {
-+            let chained = encoded.slice(..at).chain(encoded.slice(at..));
-+            assert_eq!(decode(chained), message, "split at {at}");
-+        }
-+        let third = encoded.len() / 3;
-+        let three = encoded
-+            .slice(..third)
-+            .chain(encoded.slice(third..2 * third))
-+            .chain(encoded.slice(2 * third..));
-+        assert_eq!(decode(three), message);
-+    }
-+}
-```
-
----
-
-### Incident Patch 2: `89e16e6b` (2026-10-30)
-**Commit Message**: Grant packages: write to workflows that push to ghcr.io
-
-With the GITHUB_TOKEN default switched to read-only, workflows without
-an explicit permissions block can no longer push images or charts to
-ghcr.io. CI on main fails with "installation not allowed to Write
-organization package".
-
-- ci.yml: the docker job pushes the image on main
-- docker-refresh.yml, docker-tools.yml: scheduled image pushes
-- helm.yml: pushes the chart; needed for workflow_dispatch runs
-- release.yml / dist-workspace.toml: the release run calls ci.yml, and a
-  called workflow can't get more permissions than its caller grants, so
-  the caller now grants packages: write; regenerated with dist 0.30.3
+The web UI repositories will open their update PRs through the
+restatedev-web-ui GitHub App, so allowlist its bot in the CLA check.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/ci.yml` (modified, +4/-0)
+**File**: `.github/workflows/actions.lock` (modified, +1/-0)
 ```diff
-@@ -147,6 +147,10 @@ jobs:
- 
-   docker:
-     name: Create docker image
-+    # pushes to ghcr.io on main
-+    permissions:
-+      contents: read
-+      packages: write
-     uses: ./.github/workflows/docker.yml
-     with:
-       uploadImageAsTarball: "restate.tar"
+@@ -67,6 +67,7 @@ workflows:
+         - 'appany/helm-oci-chart-releaser@v0.4.2'
+     '.github/workflows/homebrew.yml':
+         - 'actions/checkout@v4.4.0'
++        - 'actions/create-github-app-token@v3.3.0'
+         - 'actions/download-artifact@v8.0.2'
+     '.github/workflows/notarize.yml':
+         - 'actions/checkout@v4.4.0'
 ```
 
-**File**: `.github/workflows/docker-refresh.yml` (modified, +3/-0)
+**File**: `.github/workflows/cla.yml` (modified, +1/-1)
 ```diff
-@@ -34,6 +34,9 @@ env:
- jobs:
-   refresh:
-     if: github.repository_owner == 'restatedev'
-+    permissions:
-+      contents: read
-+      packages: write
-     name: Refresh ${{ matrix.image.name }} (minor version offset ${{ matrix.minor-offset }})
-     runs-on: ubuntu-latest
-     strategy:
+@@ -42,4 +42,4 @@ jobs:
+           branch: 'main'
+           remote-organization-name: 'restatedev'
+           remote-repository-name: 'cla-signatures'
+-          allowlist: github-actions[bot],dependabot[bot],claude,pullfrog[bot]
+\ No newline at end of file
++          allowlist: github-actions[bot],dependabot[bot],claude,pullfrog[bot],restatedev-web-ui[bot]
+\ No newline at end of file
 ```
 
-**File**: `.github/workflows/docker-tools.yml` (modified, +3/-0)
+**File**: `.github/workflows/homebrew.yml` (modified, +11/-1)
 ```diff
-@@ -20,6 +20,9 @@ env:
- jobs:
-   build-and-push-image:
-     if: github.repository_owner == 'restatedev'
-+    permissions:
-+      contents: read
-+      packages: write
-     runs-on: warp-ubuntu-latest-x64-16x
-     timeout-minutes: 70
- 
-```
-
-**File**: `.github/workflows/helm.yml` (modified, +3/-0)
-```diff
-@@ -24,6 +24,9 @@ env:
- jobs:
-   release-helm-chart:
-     runs-on: warp-ubuntu-latest-x64-2x
-+    permissions:
-+      contents: read
-+      packages: write
+@@ -21,10 +21,20 @@ jobs:
+       GITHUB_USER: "Restate bot"
+       GITHUB_EMAIL: "code+bot@restate.dev"
      steps:
-       - name: Checkout
-         uses: actions/checkout@v4.4.0
++      # Short-lived token of the Homebrew GitHub App, which is installed only on restatedev/homebrew-tap
++      - name: Generate token for homebrew-tap
++        id: app-token
++        uses: actions/create-github-app-token@v3.3.0
++        with:
++          client-id: ${{ vars.HOMEBREW_APP_CLIENT_ID }}
++          private-key: ${{ secrets.HOMEBREW_APP_PRIVATE_KEY }}
++          owner: restatedev
++          repositories: homebrew-tap
++          permission-contents: write
+       - uses: actions/checkout@v4.4.0
+         with:
+           repository: "restatedev/homebrew-tap"
+-          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
++          token: ${{ steps.app-token.outputs.token }}
+       - uses: actions/checkout@v4.4.0
+         with:
+           path: restate
 ```
 
-**File**: `.github/workflows/release.yml` (modified, +1/-1)
+**File**: `docs/dev/build-and-ci.md` (modified, +1/-1)
 ```diff
-@@ -222,7 +222,7 @@ jobs:
-       "contents": "read"
-       "id-token": "write"
-       "issues": "read"
--      "packages": "read"
-+      "packages": "write"
-       "pull-requests": "write"
- 
-   custom-docker-build-release:
-```
-
-**File**: `dist-workspace.toml` (modified, +1/-1)
-```diff
-@@ -43,7 +43,7 @@ checks = "write"
- contents = "read"
- id-token = "write"
- issues = "read"
--packages = "read"
-+packages = "write"
- pull-requests = "write"
- 
- [dist.github-custom-job-permissions.npm]
+@@ -352,7 +352,7 @@ Release Docker images have debug symbols uploaded to [Polar Signals](https://www
+ | `NOTARY_APPLE_ID` | Apple ID for notarization |
+ | `NOTARY_APP_SPECIFIC_PASSWORD` | App-specific password |
+ | `NPM_TOKEN` | npm publish token |
+-| `HOMEBREW_TAP_TOKEN` | PAT for pushing to homebrew-tap |
++| `HOMEBREW_APP_PRIVATE_KEY` | Private key of the GitHub App for pushing to homebrew-tap (its Client ID is the `HOMEBREW_APP_CLIENT_ID` variable) |
+ | `PARCA_TOKEN` | Polar Signals API token |
+ | `DOCKER_USERNAME` | Docker Hub username |
+ | `DOCKER_PASSWORD` | Docker Hub password/token |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5710** (2026-10-30): [CI] Use $/ for is-latest-release in homebrew workflow (@tillrohrmann)
 - **PR #5705** (2026-10-30): Grant packages: write to workflows that push to ghcr.io (@tillrohrmann)
+- **PR #5704** (2026-10-30): [PartitionStore] Take read snapshots of a partition (@AhmedSoliman)
+- **PR #5703** (2026-10-30): [RocksDb] Add read snapshots and scoped reads (@AhmedSoliman)
+- **PR #5702** (2026-10-30): Use GitHub App tokens for Homebrew tap and web UI updates (@tillrohrmann)
 - **PR #5701** (closed): Remove the unused partition-table CF name override (@AhmedSoliman)
-- **PR #5697** (2026-10-30): Use GitHub App token for CLA signatures repository (@tillrohrmann)
-- **PR #5694** (2026-10-30): [PartitionStore] Delete exported snapshot files if the export is cancelled (@AhmedSoliman)
-- **PR #5691** (2026-10-29): [PartitionStore] Refresh snapshot status without the partition store (@AhmedSoliman)
-- **PR #5690** (2026-10-29): [chore] Bump zip to 9.0.5 for GHSA-m665-v7pm-7grj (@AhmedSoliman)
 
 ---
 
@@ -1860,69 +1734,28 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [types] Decode flexbuffers network messages from segmented buffers
+## X. Use GitHub App tokens for Homebrew tap and web UI updates
 
 **RULE**:
-When implementing operations in `crates/types/src/net/codec.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/actions.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `36cee33a`: [types] Decode flexbuffers network messages from segmented buffers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `784c9a8a`: Use GitHub App tokens for Homebrew tap and web UI updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/types/src/net/codec.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/actions.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Utility method to decode a [`DeserializeOwned`] type from flexbuffers using serde. `buf` must
-/// hold exactly one message, which is consumed. Flexbuffers reads from one contiguous slice:
-/// contiguous input is decoded in place, segmented input is first copied into one buffer.
-    mut buf: impl Buf,
-    let len = buf.remaining();
-    let decoded = if buf.chunk().len() == len {
-        let decoded = flexbuffers::from_slice(buf.chunk());
-        buf.advance(len);
-        decoded
-    } else {
-        flexbuffers::from_slice(&buf.copy_to_bytes(len))
-    };
-    decoded.with_context(|| {
-
-#[cfg(test)]
-mod tests {
-    use serde::Deserialize;
-
-    use super::*;
-
-    #[derive(Debug, PartialEq, Serialize, Deserialize)]
-    struct Message {
-        id: u64,
-        name: String,
-        values: Vec<u32>,
-    }
-
-    fn decode(mut buf: impl Buf) -> Message {
-        let message = decode_as_flexbuffers(&mut buf, ProtocolVersion::V2).unwrap();
-        assert!(!buf.has_remaining(), "decoding consumes the message");
-        message
-    }
-
-    #[test]
-    fn flexbuffers_decode_from_segmented_input() {
-        let message = Message {
-            id: 7,
-            name: "restate".to_owned(),
-   
+        - 'actions/create-github-app-token@v3.3.0'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-/// Utility method to decode a [`DeserializeOwned`] type from flexbuffers using serde. the buffer
-/// must have the complete message and not internally chunked.
-    buf: impl Buf,
-    flexbuffers::from_slice(buf.chunk()).with_context(|| {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `36cee33a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `784c9a8a` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T13:06:49.273Z",
+  "last_updated": "2026-10-31T13:14:06.222Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1025,14 +1025,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-amazon-chronos-2",
-      "content_hash": "220dc4f790a66b021f17ae4f3958d978ead60bd6a0d37e331e8d8e6be74a5394",
-      "verified_at": "2026-10-28T12:46:43.086Z",
+      "content_hash": "c7f46e4e9c353e32a7dfb3900383c2e3460179a1b72184a7024695c8010b478d",
+      "verified_at": "2026-10-31T13:13:55.003Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T12:46:43.086Z"
+      "last_updated": "2026-10-31T13:13:55.003Z"
     },
     "CompVis/stable-diffusion-v1-4": {
       "repository": "CompVis/stable-diffusion-v1-4",
@@ -7191,14 +7191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "bc897b870ad4ea0e3d3ef55238daadffd41ae7182667acd7b635a4a8716e7997",
-      "verified_at": "2026-10-30T21:41:17.028Z",
+      "content_hash": "f06564f99c72b462b404f0419c29dde247da90c45c4a014cbee87b493e678651",
+      "verified_at": "2026-10-31T13:14:06.221Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T21:41:17.028Z"
+      "last_updated": "2026-10-31T13:14:06.221Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",
@@ -10536,14 +10536,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-restatedev-restate",
-      "content_hash": "de785172c1c2311c7afb7e94c6d6d72cfb811600b0ad9f3c8f0334ec0af2b683",
-      "verified_at": "2026-10-30T16:44:33.522Z",
+      "content_hash": "ba8064de54ccf952e907759094e098a2aa061bc134b8d7d18b33de2bd9f36542",
+      "verified_at": "2026-10-31T13:13:57.781Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T16:44:33.522Z"
+      "last_updated": "2026-10-31T13:13:57.781Z"
     },
     "Kong/kubernetes-ingress-controller": {
       "repository": "Kong/kubernetes-ingress-controller",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T13:06:49.182Z",
+  "last_updated": "2026-10-31T13:14:06.125Z",
   "total_verified_learnings": 1183,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17807,7 +17807,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/amazon/chronos-2",
       "source_version": "hf-amazon-chronos-2",
-      "content_hash": "220dc4f790a66b021f17ae4f3958d978ead60bd6a0d37e331e8d8e6be74a5394",
+      "content_hash": "c7f46e4e9c353e32a7dfb3900383c2e3460179a1b72184a7024695c8010b478d",
       "dossier_path": "07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md",
       "promoted_rules": [
@@ -17845,7 +17845,7 @@
         "learn-huggingface-hf-amazon-chronos-2-mv49o8cx",
         "learn-huggingface-hf-amazon-chronos-2-mv4n1u6n"
       ],
-      "verified_at": "2026-10-28T12:46:42.999Z",
+      "verified_at": "2026-10-31T13:13:54.870Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46719,8 +46719,8 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "c94a5f2c",
-      "content_hash": "bc897b870ad4ea0e3d3ef55238daadffd41ae7182667acd7b635a4a8716e7997",
+      "source_version": "dd74aad1",
+      "content_hash": "f06564f99c72b462b404f0419c29dde247da90c45c4a014cbee87b493e678651",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
@@ -46793,6 +46793,11 @@
           "number": 5894,
           "title": "Return the engine's in-memory snapshot from Backend.Import (#25448)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6207,
+          "title": "Defer default backend client source initialization (#25285)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46800,7 +46805,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T21:41:16.914Z",
+      "verified_at": "2026-10-31T13:14:06.096Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48225,8 +48230,8 @@
       "slug": "restatedev-restate",
       "platform": "github",
       "source_url": "https://github.com/restatedev/restate",
-      "source_version": "36cee33a",
-      "content_hash": "de785172c1c2311c7afb7e94c6d6d72cfb811600b0ad9f3c8f0334ec0af2b683",
+      "source_version": "c30b4bce",
+      "content_hash": "ba8064de54ccf952e907759094e098a2aa061bc134b8d7d18b33de2bd9f36542",
       "dossier_path": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "promoted_rules": [
@@ -48284,6 +48289,11 @@
           "number": 5803,
           "title": "[types] Decode flexbuffers network messages from segmented buffers",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6206,
+          "title": "Use GitHub App tokens for Homebrew tap and web UI updates",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48291,7 +48301,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T16:44:33.410Z",
+      "verified_at": "2026-10-31T13:13:57.658Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162166,6 +162176,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T13:06:48.426Z"
+    },
+    "rule-6206": {
+      "learning_id": "rule-6206",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6206,
+      "title": "Use GitHub App tokens for Homebrew tap and web UI updates",
+      "source_url": "https://github.com/restatedev/restate",
+      "source_version": "c30b4bce",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T13:13:57.658Z"
+    },
+    "rule-6207": {
+      "learning_id": "rule-6207",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6207,
+      "title": "Defer default backend client source initialization (#25285)",
+      "source_url": "https://github.com/pulumi/pulumi",
+      "source_version": "dd74aad1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T13:14:06.097Z"
     }
   },
   "aliases": {

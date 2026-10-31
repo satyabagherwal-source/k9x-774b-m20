@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T13:06:49.269Z",
-  "total_cycles_completed": 6554,
-  "total_learnings_persisted": 6554,
-  "total_rules_promoted": 6202,
+  "last_updated": "2026-10-31T13:14:06.218Z",
+  "total_cycles_completed": 6557,
+  "total_learnings_persisted": 6557,
+  "total_rules_promoted": 6204,
   "history": [
-    {
-      "timestamp": "2026-10-31T00:34:27.007Z",
-      "repository": "mistralai/Timestral-209M",
-      "learningId": "learn-huggingface-mistralai-timestral-209m",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T00:41:22.983Z",
-      "repository": "rustls/rustls",
-      "learningId": "learn-github-rustls-rustls",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T00:41:26.080Z",
-      "repository": "apache/shardingsphere",
-      "learningId": "learn-github-apache-shardingsphere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T00:41:27.064Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -1403,6 +1382,27 @@
       "repository": "SeekStorm/SeekStorm",
       "learningId": "learn-github-seekstorm-seekstorm",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T13:13:55.000Z",
+      "repository": "amazon/chronos-2",
+      "learningId": "learn-huggingface-amazon-chronos-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T13:13:57.778Z",
+      "repository": "restatedev/restate",
+      "learningId": "learn-github-restatedev-restate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T13:14:06.218Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
