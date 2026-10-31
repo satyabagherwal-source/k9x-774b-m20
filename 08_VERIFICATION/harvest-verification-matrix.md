@@ -6530,3 +6530,5 @@
 | `CYCLE-20261031-M2E1` | `2026-10-31T10:07:26.617Z` | `react/metro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6162` | Yes (`983e73d4...`) |
 | `CYCLE-20261031-0453` | `2026-10-31T10:18:22.071Z` | `vercel-labs/agent-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6163` | Yes (`5f1874c4...`) |
 | `CYCLE-20261031-2KHW` | `2026-10-31T10:20:16.580Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6164, Rule 6165, Rule 6166` | Yes (`468c73a5...`) |
+| `CYCLE-20261031-BA7W` | `2026-10-31T10:27:03.164Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md` | Yes (`938984e4...`) |
+| `CYCLE-20261031-BKTX` | `2026-10-31T10:27:16.917Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6167` | Yes (`0d17b7f7...`) |

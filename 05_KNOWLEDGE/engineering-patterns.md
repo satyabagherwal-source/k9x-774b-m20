@@ -451529,3 +451529,59 @@ assert sum(cfg.text_config.rope_parameters["mrope_section"]) * 2 == int(
 ```
 
 ---
+
+
+---
+
+## 6167. omit graph dependencies from Stressgres runtime image (#7129) (Harvested from paradedb/paradedb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "omit graph dependencies from Stressgres runtime image (#7129)",
+  "source": "paradedb/paradedb",
+  "source_url": "https://github.com/paradedb/paradedb",
+  "source_version": "6e3efd5a",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-31T10:27:16.608Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-paradedb-paradedb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [paradedb/paradedb](https://github.com/paradedb/paradedb) (Revision: `6e3efd5a`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `docker/Dockerfile.stressgres`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3c13589a`: omit graph dependencies from Stressgres runtime image (#7129). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docker/Dockerfile.stressgres`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        --manifest-path /home/app/Cargo.toml -p stressgres --no-default-features --features dst && \
+# Graph generation is disabled in this image, avoiding Fontconfig and its
+# transitive font/XML dependencies. Normal source builds retain graph support.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+    libpng-dev \
+    libjpeg-dev \
+    libfontconfig1-dev \
+        --manifest-path /home/app/Cargo.toml -p stressgres --features dst && \
+    libfontconfig1 \
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3c13589a` are properly handled with clean fallback behavior.

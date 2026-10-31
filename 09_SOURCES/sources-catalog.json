@@ -505,8 +505,8 @@
     "sourceUrl": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
     "sourceVersion": "hf-inclusionai-ming-image-0.1-design",
     "license": "Open-Source",
-    "contentHash": "756ca41ddd4e3e825928019abc9c655b0a22de41669355d7e0b9fcc6262ad235",
-    "lastHarvestedAt": "2026-10-28T06:52:47.784Z",
+    "contentHash": "938984e4a16ef2296f6b76352e4fb02fc3a9e9d99c18c62d5a5d73afdaf35fb0",
+    "lastHarvestedAt": "2026-10-31T10:27:03.174Z",
     "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash": {
@@ -7543,10 +7543,10 @@
     "repository": "paradedb/paradedb",
     "platform": "github",
     "sourceUrl": "https://github.com/paradedb/paradedb",
-    "sourceVersion": "ae198feb",
+    "sourceVersion": "6e3efd5a",
     "license": "AGPL-3.0",
-    "contentHash": "1e3f88d81a80f8e3777011f1e462521cfb45faec2ec5d34860684944477e1e7e",
-    "lastHarvestedAt": "2026-10-30T17:14:41.340Z",
+    "contentHash": "0d17b7f71aa7d28ee8abd36e3d2c254ece8c40869be3fce2be4be1da67d1b820",
+    "lastHarvestedAt": "2026-10-31T10:27:16.921Z",
     "learningId": "learn-github-paradedb-paradedb"
   },
   "imsnif-diskonaut": {

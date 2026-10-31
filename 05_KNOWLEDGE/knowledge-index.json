@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T10:20:16.502Z",
+  "last_updated": "2026-10-31T10:27:16.838Z",
   "total_verified_learnings": 1182,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -23953,7 +23953,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
       "source_version": "hf-inclusionai-ming-image-0.1-design",
-      "content_hash": "756ca41ddd4e3e825928019abc9c655b0a22de41669355d7e0b9fcc6262ad235",
+      "content_hash": "938984e4a16ef2296f6b76352e4fb02fc3a9e9d99c18c62d5a5d73afdaf35fb0",
       "dossier_path": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
       "promoted_rules": [
@@ -24064,7 +24064,7 @@
         "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv46je2y",
         "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv4jtaws"
       ],
-      "verified_at": "2026-10-28T06:52:47.690Z",
+      "verified_at": "2026-10-31T10:27:03.058Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44938,8 +44938,8 @@
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "ae198feb",
-      "content_hash": "1e3f88d81a80f8e3777011f1e462521cfb45faec2ec5d34860684944477e1e7e",
+      "source_version": "6e3efd5a",
+      "content_hash": "0d17b7f71aa7d28ee8abd36e3d2c254ece8c40869be3fce2be4be1da67d1b820",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "promoted_rules": [
@@ -44992,6 +44992,11 @@
           "number": 5807,
           "title": "enforce permissions on standalone index reads (#7023)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6167,
+          "title": "omit graph dependencies from Stressgres runtime image (#7129)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44999,7 +45004,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T17:14:41.235Z",
+      "verified_at": "2026-10-31T10:27:16.817Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -161396,6 +161401,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T10:20:16.483Z"
+    },
+    "rule-6167": {
+      "learning_id": "rule-6167",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6167,
+      "title": "omit graph dependencies from Stressgres runtime image (#7129)",
+      "source_url": "https://github.com/paradedb/paradedb",
+      "source_version": "6e3efd5a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T10:27:16.817Z"
     }
   },
   "aliases": {

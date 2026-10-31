@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source**: github ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
-> **Source Version**: `ae198feb`  
+> **Source Version**: `6e3efd5a`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T17:14:40.765Z  
+> **Timestamp**: 2026-10-31T10:27:16.232Z  
 > **Learning ID**: `learn-github-paradedb-paradedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T17:14:38.925Z  
+> **Harvest Timestamp**: 2026-10-31T10:27:16.223Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9460 stars
+- **Stars / Engagement**: 9464 stars
 
 ---
 
@@ -2322,760 +2322,682 @@ static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6610b066` (2026-10-30)
-**Commit Message**: fix: enforce permissions on standalone index reads (#7023)
+### Incident Patch 1: `3c13589a` (2026-10-30)
+**Commit Message**: fix: omit graph dependencies from Stressgres runtime image (#7129)
+
+The Stressgres runtime image installs Fontconfig and its font/XML
+dependencies for graph generation, although Antithesis only needs the
+workload runner. Make graph generation a default-enabled Cargo feature
+and disable it in the Docker build. Normal source builds retain the
+graph command; the image retains UI, headless, auto, and CSV commands.
+
+Remove the graphics development packages from the builder and
+libfontconfig1 from the runtime. Debian's package resolver confirms this
+avoids eight runtime packages: libfontconfig1, libexpat1, libfreetype6,
+libpng16-16t64, libbrotli1, fontconfig-config, fonts-dejavu-core, and
+fonts-dejavu-mono. Keep the libraries needed by PostgreSQL TLS and the
+copied psql client, plus Bash and flock for Antithesis scripts.
+
+Document that the image disables graph generation. A temporary
+runtime-dependency smoke step passed in GitHub Actions and was then
+removed; the existing Docker test remains unchanged.
+
+Validation: built the full ARM64 DST Docker image with Rust 1.99.0 and
+ran the temporary runtime smoke step successfully, both locally and in
+GitHub Actions. Stressgres/headless/CSV help,
+
+**File**: `docker/Dockerfile.stressgres` (modified, +3/-5)
+```diff
+@@ -24,9 +24,6 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
+     pkg-config \
+     libpq-dev \
+     libssl-dev \
+-    libpng-dev \
+-    libjpeg-dev \
+-    libfontconfig1-dev \
+     curl \
+     postgresql-client \
+     && rm -rf /var/lib/apt/lists/*
+@@ -46,7 +43,7 @@ RUN cargo fetch --manifest-path /home/app/Cargo.toml && \
+     TARGET="$(rustc -vV | sed -n 's/^host: //p')" && \
+     env "CARGO_TARGET_$(echo "$TARGET" | tr 'a-z-' 'A-Z_')_RUSTFLAGS=-Ccodegen-units=1 -Cpasses=sancov-module -Cllvm-args=-sanitizer-coverage-level=3 -Cllvm-args=-sanitizer-coverage-trace-pc-guard -Clink-args=-Wl,--build-id" \
+         cargo build --offline --profile dst --target "$TARGET" \
+-        --manifest-path /home/app/Cargo.toml -p stressgres --features dst && \
++        --manifest-path /home/app/Cargo.toml -p stressgres --no-default-features --features dst && \
+     cp "/home/app/target/$TARGET/dst/stressgres" /tmp/stressgres && \
+     cp /usr/lib/postgresql/17/bin/psql /tmp/psql
+ 
+@@ -59,10 +56,11 @@ FROM debian:trixie-slim AS runtime
+ # Upgrade the runtime packages so a rebuild picks up all available Debian
+ # security fixes. psql is used by the Antithesis setup/verification scripts;
+ # util-linux provides flock for the recovery-liveness script.
++# Graph generation is disabled in this image, avoiding Fontconfig and its
++# transitive font/XML dependencies. Normal source builds retain graph support.
+ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
+     bash \
+     ca-certificates \
+-    libfontconfig1 \
+     libpq5 \
+     libreadline8t64 \
+     libssl3t64 \
+```
+
+**File**: `stressgres/Cargo.toml` (modified, +4/-2)
+```diff
+@@ -9,6 +9,8 @@ license = { workspace = true }
+ workspace = true
+ 
+ [features]
++default = ["graph"]
++graph = ["dep:image", "dep:plotters"]
+ dst = ["dst/enabled"]
+ 
+ [dependencies]
+@@ -22,12 +24,12 @@ cursive_table_view = "0.15.0"
+ dst = { path = "../dst" }
+ human_bytes = "0.4.3"
+ humantime = "2.3.0"
+-image = "0.25.9"
++image = { version = "0.25.9", optional = true }
+ libc = "0.2.190"
+ openssl = "0.10.78"
+ parking_lot = "0.12.5"
+ pgrx-pg-config = "=0.19.3"
+-plotters = "0.3.7"
++plotters = { version = "0.3.7", optional = true }
+ postgres = "0.19.13"
+ postgres-openssl = "0.5.3"
+ rust_decimal = { version = "1.43.0", features = ["db-postgres"] }
+```
+
+**File**: `stressgres/README.md` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ To run Stressgres from within Docker, use:
+ docker run --rm paradedb/stressgres:latest /symbols/stressgres headless stressgres/suites/single-node-planner-paths.toml
+ ```
+ 
+-The source, including all suites, is included in the Docker image. The image prebuilds Stressgres at `/symbols/stressgres` and can run in air-gapped environments like Antithesis.
++The image includes the suites and a prebuilt Stressgres binary at `/symbols/stressgres`, and can run in air-gapped environments like Antithesis. It disables the `graph` feature to omit native font dependencies.
+ 
+ For an interactive shell:
+ 
+```
+
+**File**: `stressgres/src/cli.rs` (modified, +2/-0)
+```diff
+@@ -76,6 +76,7 @@ pub enum Command {
+     Headless(HeadlessArgs),
+ 
+     /// Parse a log file and generate metric graphs from the contained data
++    #[cfg(feature = "graph")]
+     Graph(GraphArgs),
+ 
+     /// Parse a log file and generate an aggregated CSV report of contained data
+@@ -136,6 +137,7 @@ pub struct HeadlessArgs {
+ }
+ 
+ /// Arguments for parsing a log file and generating the desired charts.
++#[cfg(feature = "graph")]
+ #[derive(Debug, Args)]
+ pub struct GraphArgs {
+     /// Path to the log file produced by a headless run.
+```
+
+**File**: `stressgres/src/main.rs` (modified, +2/-0)
+```diff
+@@ -21,6 +21,7 @@ mod auto;
+ mod cli;
+ mod csv;
+ mod fault_tolerance;
++#[cfg(feature = "graph")]
+ mod graph;
+ mod headless;
+ mod metrics;
+@@ -121,6 +122,7 @@ fn main() -> anyhow::Result<()> {
+         }
+ 
+         // When using the "graph" subcommand.
++        #[cfg(feature = "graph")]
+         Command::Graph(graph_args) => {
+             graph::run(&graph_args)?;
+         }
+```
+
+---
+
+### Incident Patch 2: `5b16358a` (2026-10-30)
+**Commit Message**: fix: raise on float division by zero in Join Scan (#7104)
+
+# Ticket(s) Closed
+
+- Closes #6930
 
 ## What
 
-Require backing-table permission checks for SQL functions that read
-ParadeDB indexes directly, including `paradedb.aggregate()`,
-diagnostics, and index inventory statistics.
+Float division by zero inside an expression absorbed by the Join Scan
+now raises PostgreSQL's `division by zero` instead of evaluating to
+`Infinity`.
 
 ## Why
 
-These functions read index storage outside PostgreSQL's normal scan
-permission and row-policy checks. MVCC visibility alone does not
-authorize access. This originated from an emailed report that a role
-without table SELECT could read indexed data through standalone
-functions.
-
-Monitoring needs a separate, explicit policy: the Cloud exporter uses a
-role inheriting `pg_monitor` without table SELECT or BYPASSRLS.
+`PredicateTranslator::translate_op_expr` maps `/` to DataFusion's
+`Operator::Divide`. For floats, Arrow follows IEEE-754 and returns
+`inf`, `-inf` or `NaN` for a zero divisor without an error, while
+`float8div` and `float4div` raise one.
 
 ## How
 
-A shared guard resolves the backing table, locks it before the requested
-index, rechecks their association, and retains both relation handles
-while producing the result. Rust arguments use `IndexOid` to avoid pgrx
-locking the index during argument decoding; SQL signatures remain
-`regclass`.
+`translate_op_expr` declines `/` when the operator's result type is
+`float4` or `float8`. `translate` then wraps the subtree with the
+existing `try_wrap_as_udf` fallback, so PostgreSQL evaluates the
+division. The expression is still absorbed by the Join Scan, as the
+EXPLAIN in the new test shows.
 
-- Content reads and strict diagnostics require schema USAGE, table-level
-SELECT, and no effective RLS. Column grants do not authorize a
-whole-index read. Effective RLS produces an error naming the table.
-- The metadata APIs listed i
+Integer division is unchanged, since Arrow's integer kernel
+(`div_checked`) already errors on a zero divisor.
 
-**File**: `docs/project/changelog/unreleased/7023.breaking.mdx` (added, +28/-0)
+The trade-off is that float division now runs through the UDF rather
+than a native Arrow kernel. Two existing expected outputs change for
+that reason, and only in their plan text. Their result rows are
+identical (`join_distinct_expr`, `topk-agg-facet`).
+
+This touches the same spo
+
+**File**: `docs/project/changelog/unreleased/7104.bugfix.mdx` (added, +5/-0)
 ```diff
-@@ -0,0 +1,28 @@
+@@ -0,0 +1,5 @@
 +---
-+header: breaking
-+title: Standalone index access permissions
++header: stability
 +---
 +
-+Standalone index reads now check permissions on the backing table. Content-reading APIs,
-+including `paradedb.aggregate()`, require table-level `SELECT` and reject calls when row-level
-+security applies to the effective caller.
-+Callers who need a filtered result under RLS can be given a `SECURITY DEFINER` function,
-+owned by the table owner, that applies the policy's filter in an ordinary `@@@` query.
-+Wrapping `paradedb.aggregate()` itself does not filter rows.
-+
-+Metadata APIs, including `paradedb.schema()`, `index_fields()`, the layer-size
-+functions, `index_created_at()`, `index_created_by()`, `merge_info()` (and its
-+`is_merging()` alias), `vacuum_info()`, `fsm_info()`, `fsm_size()`,
-+`paradedb.index_info()`, `pdb.index_segments()`, and the statistics returned by
-+`pdb.indexes()`
-+also accept callers with the privileges of `pg_stat_scan_tables`, inherited by `pg_monitor`.
-+These trusted monitoring roles can inspect whole-index metadata and document counts without
-+table `SELECT`, including counts across rows hidden by RLS. Other callers still need schema
-+`USAGE`, table-level `SELECT`, and no active RLS; inventory omits indexes they cannot inspect.
-+The monitoring privilege does not authorize document reads, verification, or maintenance.
-+
-+Only the metadata APIs listed above accept monitoring privileges. Other diagnostics,
-+including `vector_config()`, and content reads and verification retain the stricter read policy.
-+`merge_lock_garbage_collect()` requires `MAINTAIN` on the backing table on PostgreSQL 17
-+and later, including privileges inherited from `pg_maintain`. Table owners qualify
-+implicitly. PostgreSQL 15 and 16 require ownership of the backing table.
++- Float division by zero in expressions evaluated by the Join Scan now raises `division by zero` instead of returning `Infinity`.
 ```
 
-**File**: `docs/reference/sql-functions.mdx` (modified, +9/-0)
+**File**: `pg_search/src/postgres/customscan/datafusion/expr_translators.rs` (modified, +17/-0)
 ```diff
-@@ -87,6 +87,15 @@ These functions are placeholders that ParadeDB's custom scan resolves during que
- | `pdb.combine_agg`    | `pdb.combine_agg(agg jsonb) -> jsonb`                                                                                                                                                                                | Combine grouped facets using `pdb.combine_agg(pdb.agg(...)) OVER ()`.                             | [Facets with GROUP BY](/reference/aggregates/facets#facets-with-group-by) |
- | `paradedb.aggregate` | `paradedb.aggregate(index regclass, query searchqueryinput, agg json, solve_mvcc bool default null, memory_limit bigint default 500000000, bucket_limit bigint default null, visibility text default null) -> jsonb` | Execute an aggregate directly against an index. Prefer `visibility` over deprecated `solve_mvcc`. | [Aggregate Syntax](/reference/aggregates/overview)                        |
+@@ -601,6 +601,23 @@ impl<'a> PredicateTranslator<'a> {
+             return None;
+         }
  
-+`paradedb.aggregate()` requires schema `USAGE`, table-level `SELECT`, and no active
-+row-level security for the effective caller. Metadata APIs (schema and field
-+configuration, layer sizes, creation details, merge/vacuum/FSM status, segment
-+counts, and `pdb.indexes()`) also allow callers with `pg_stat_scan_tables`
-+privileges, inherited by `pg_monitor`; those roles can see whole-index metadata
-+and counts under RLS, but this exception does not authorize document reads or
-+verification. `merge_lock_garbage_collect()` instead requires table `MAINTAIN`
-+on PostgreSQL 17+, including `pg_maintain`, or table ownership on older versions.
-+
- Supported aggregate JSON shapes are documented under [Aggregates](/reference/aggregates/overview), including [terms](/reference/aggregates/bucket/terms), [range](/reference/aggregates/bucket/range), [histogram](/reference/aggregates/bucket/histogram), [date histogram](/reference/aggregates/bucket/datehistogram), [filters](/reference/aggregates/bucket/filters), [sum](/reference/aggregates/metrics/sum), [average](/reference/aggregates/metrics/average), [min/max](/reference/aggregates/metrics/minmax), [count](/reference/aggregates/metrics/count), [stats](/reference/aggregates/metrics/stats), [percentiles](/reference/aggregates/metrics/percentiles), [cardinality](/reference/aggregates/metrics/cardinality), and [top hits](/reference/aggregates/metrics/tophits).
- 
- ## Index Configuration and Tokenizers
-```
-
-**File**: `pg_search/src/api/admin.rs` (modified, +55/-93)
-```diff
-@@ -21,6 +21,7 @@ use crate::index::fast_fields_helper::FFType;
- use crate::index::mvcc::MvccSatisfies;
- use crate::index::reader::index::SearchIndexReader;
- use crate::index::reader::open_vector_field;
-+use crate::postgres::access::IndexOid;
- use crate::postgres::index::IndexKind;
- use crate::postgres::rel::PgSearchRelation;
- use crate::postgres::storage::block::{
-@@ -33,7 +34,6 @@ use crate::query::pdb_query::pdb as pdb_query;
- use crate::schema::{IndexRecordOption, SearchFieldType};
- use anyhow::{Context, Result};
- use pgrx::JsonB;
--use pgrx::PgRelation;
- use pgrx::datum::DatumWithOid;
- use pgrx::prelude::*;
- use serde_json::Value;
-@@ -43,7 +43,7 @@ use tantivy::vector::diagnostics::VectorStorageFormat;
- #[allow(clippy::type_complexity)]
- #[pg_extern]
- pub fn schema(
--    index: PgRelation,
-+    index: IndexOid,
- ) -> TableIterator<
-     'static,
-     (
-@@ -59,18 +59,10 @@ pub fn schema(
-         name!(normalizer, Option<String>),
-     ),
- > {
--    // # Safety
--    //
--    // Lock the index relation until the end of this function so it is not dropped or
--    // altered while we are reading it.
--    //
--    // Because we accept a PgRelation above, we have confidence that Postgres has already
--    // validated the existence of the relation. We are safe calling the function below as
--    // long we do not pass pg_sys::NoLock without any other locking mechanism of our own.
--    let index = PgSearchRelation::with_lock(index.oid(), pg_sys::AccessShareLock as _);
-+    let index = index.read_metadata();
- 
-     // We only consider the first partition for the purposes of computing a schema.
--    let index = IndexKind::for_index(index)
-+    let index = IndexKind::for_index(index.clone())
-         .unwrap()
-         .partitions()
-         .next()
-@@ -141,8 +133,8 @@ pub fn schema(
- }
- 
- #[pg_extern]
--pub unsafe fn index_fields(index: PgRelation) -> anyhow::Result<JsonB> {
--    let index = PgSearchRelation::with_lock(index.oid(), pg_sys::AccessShareLock as _);
-+pub unsafe fn index_fields(index: IndexOid) -> anyhow::Result<JsonB> {
-+    let index = index.read_metadata();
-     let schema = index.schema()?;
- 
-     let mut name_and_config = HashMap::default();
-@@ -158,8 +150,8 @@ pub unsafe fn index_fields(index: PgRelation) -> anyhow::Result<JsonB> {
- }
- 
- #[pg_extern]
--pub unsafe fn layer_sizes(index: PgRelation) -> Vec<AnyNumeric> {
--    let index = PgSearchRelation::with_lock(index.oid(), pg_sys::AccessShareLock as _);
-+pub unsafe fn layer_sizes(index: IndexOid) -> Vec<AnyNumeric> {
-+    let index = index.read_metadata();
-     index
-         .options()
-         .foreground_layer_sizes()
-@@ -169,8 +161,8 @@ pub unsafe fn layer_sizes(index: PgRelation) -> Vec<AnyNumeric> {
- }
- 
- #[pg_extern]
--pub unsafe fn background_layer_sizes(index: PgRelation) -> Vec<AnyNumeric> {
--    let index = PgSearchRelation::with_lock(index.oid(), pg_sys::AccessShareLock as _);
-+pub unsafe fn background_layer_sizes(index: IndexOid) -> Vec<AnyNumeric> {
-+    let index = index.read_metadata();
-     index
-         .options()
-         .background_layer_sizes()
-@@ -180,8 +172,8 @@ pub unsafe fn background_layer_sizes(index: PgRelation) -> Vec<AnyNumeric> {
- }
- 
- #[pg_extern]
--pub unsafe fn combined_layer_sizes(index: PgRelation) -> Vec<AnyNumeric> {
--    let index = PgSearchRelation::with_lock(index.oid(), pg_sys::AccessShareLock as _);
-+pub unsafe fn combined_layer_sizes(index: IndexOid) -> Vec<AnyNumeric> {
-+    let index = index.read_metadata();
-     let mut sizes: Vec<_> = index
-         .options()
-         .foreground_layer_sizes()
-@@ -198,8 +190,8 @@ pub unsafe fn combined_layer_sizes(index: PgRelation) -> Vec<AnyNumeric> {
- /// Returns the wall-clock time the given ParadeDB index was built, or NULL for indices created
- /// before build-time stamping was added.
- #[pg_extern]
--pub fn index_created_at(index: PgRelation) -> Option<pgrx::datum::TimestampWithTimeZone> {
--    let index = PgSearchRelation::with_lock(index.oid(), pg_sys::AccessShareLock as _);
-+pub fn index_created_at(index: IndexOid) -> Option<pgrx::datum::TimestampWithTimeZone> {
-+    let index = index.read_metadata();
-     MetaPage::open(&index)
-         .created_at()
-         .and_then(|ts| pgrx::datum::TimestampWithTimeZone::try_from(ts).ok())
-@@ -208,16 +200,16 @@ pub fn index_created_at(index: PgRelation) -> Option<pgrx::datum::TimestampWithT
- /// Returns the pg_search version that created the given ParadeDB index, or NULL for indices
- /// created before version stamping was added.
- #[pg_extern]
--pub fn index_created_by(index: PgRelation) -> Option<String> {
--    let index = PgSearchRelation::with_lock(index.oid(), pg_sys::AccessShareLock as _);
-+pub fn index_created_by(index: IndexOid) -> Option<String> {
-+    let index = index.read_metadata();
-     MetaPage::open(&index)
-         .created_by_version()
-         .map(|version| version.to_string())
- }
- 
- #[pg_extern]
- unsafe fn merge_info(
--    index: PgRelation,
-+    index: IndexOid,
- ) -> TableIterator<
-     'static,
-     (
-```
-
-**File**: `pg_search/src/api/aggregate.rs` (modified, +5/-4)
-```diff
-@@ -58,7 +58,7 @@
- 
- use std::error::Error;
- 
--use pgrx::{FromDatum, Json, JsonB, PgRelation, default, pg_extern};
-+use pgrx::{FromDatum, Json, JsonB, default, pg_extern};
- use serde::{Deserialize, Serialize};
- 
- use crate::aggregate::{AggregateRequest, execute_aggregate};
-@@ -67,6 +67,7 @@ use crate::api::version::VersionInfo;
- use crate::gucs;
- use crate::index::reader::index::SearchIndexReader;
- use crate::nodecast;
-+use crate::postgres::access::IndexOid;
- use crate::postgres::customscan::aggregatescan::aggregate_type::validate_agg_json_fields;
- use crate::postgres::customscan::aggregatescan::json_rewrite::rewrite_aggregate_result_json_timestamps;
- use crate::postgres::rel::PgSearchRelation;
-@@ -75,7 +76,7 @@ use crate::query::SearchQueryInput;
- use crate::schema::SearchIndexSchema;
- 
- fn aggregate_impl(
--    index: PgRelation,
-+    index: IndexOid,
-     query: SearchQueryInput,
-     agg: Json,
-     visibility: MvccVisibility,
-@@ -92,7 +93,7 @@ fn aggregate_impl(
-         .try_into()
-         .unwrap_or_else(|_| pgrx::error!("bucket_limit must be <= {}", u32::MAX));
- 
--    let relation = unsafe { PgSearchRelation::from_pg(index.as_ptr()) };
-+    let relation = index.read();
- 
-     // Validate aggregation fields exist and are supported before executing.
-     // This path bypasses the planner, so we validate here directly.
-@@ -182,7 +183,7 @@ fn resolve_udf_visibility(solve_mvcc: Option<bool>, visibility: Option<String>)
- /// in place so that positional calls written against the old signature still resolve.
- #[pg_extern]
- pub fn aggregate(
--    index: PgRelation,
-+    index: IndexOid,
-     query: SearchQueryInput,
-     agg: Json,
-     solve_mvcc: default!(Option<bool>, "NULL"),
-```
-
-**File**: `pg_search/src/api/vector.rs` (modified, +11/-12)
-```diff
-@@ -19,14 +19,20 @@
- 
- use crate::index::reader::index::SearchIndexReader;
- use crate::index::reader::open_vector_field;
--use crate::postgres::catalog::{OidExt, is_pgvector_oid};
-+use crate::postgres::access::IndexOid;
-+#[cfg(feature = "pg_test")]
-+use crate::postgres::catalog::OidExt;
-+use crate::postgres::catalog::is_pgvector_oid;
-+#[cfg(any(test, feature = "pg_test"))]
- use crate::postgres::rel::PgSearchRelation;
- use crate::vector::PgVector;
- use anyhow::{Context, Result, ensure};
- #[cfg(feature = "pg_test")]
- use pgrx::JsonB;
-+#[cfg(feature = "pg_test")]
-+use pgrx::PgRelation;
- use pgrx::prelude::*;
--use pgrx::{AnyArray, PgRelation, Spi, pg_sys};
-+use pgrx::{AnyArray, Spi, pg_sys};
- #[cfg(feature = "pg_test")]
- use tantivy::vector::diagnostics::{
-     VectorAuditMoments, VectorErrorAuditMeasurements, VectorErrorConeAuditMeasurements,
-@@ -131,7 +137,7 @@ AS 'MODULE_PATHNAME', 'vector_estimator_info_internal_wrapper';
- "#
- )]
- fn vector_estimator_info_internal(
--    index: Option<PgRelation>,
-+    index: Option<IndexOid>,
-     field: Option<String>,
-     queries: Option<AnyArray>,
- ) -> Result<
-@@ -149,16 +155,9 @@ fn vector_estimator_info_internal(
- > {
-     let index = index.context("index must not be NULL")?;
-     let field = field.context("field must not be NULL")?;
--    let index_oid = index.oid();
--    drop(index);
--
--    let index = PgSearchRelation::with_lock(index_oid, pg_sys::AccessShareLock as _);
-+    // Preserve the catalog-only parent diagnostic before opening index data.
-     reject_partitioned_index(index.oid(), PartitionedIndexOperation::EstimatorInfo)?;
--    ensure!(
--        unsafe { pg_sys::get_rel_relkind(index.oid()) as u8 } == pg_sys::RELKIND_INDEX
--            && unsafe { (*index.rd_rel).relam.is_paradedb_am() },
--        "vector_estimator_info requires a ParadeDB index"
--    );
-+    let index = index.read();
-     ensure!(index.is_usable(), "index is not valid, ready, and live");
- 
-     let (search_reader, vector_field, vector_options) = open_vector_field(&index, &field)?;
-```
-
-**File**: `pg_search/src/postgres/access.rs` (added, +315/-0)
-```diff
-@@ -0,0 +1,315 @@
-+// Copyright (c) 2023-2026 ParadeDB, Inc.
-+//
-+// This file is part of ParadeDB - Postgres for Search and Analytics
-+//
-+// This program is free software: you can redistribute it and/or modify
-+// it under the terms of the GNU Affero General Public License as published by
-+// the Free Software Foundation, either version 3 of the License, or
-+// (at your option) any later version.
-+//
-+// This program is distributed in the hope that it will be useful
-+// but WITHOUT ANY WARRANTY; without even the implied warranty of
-+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-+// GNU Affero General Public License for more details.
-+//
-+// You should have received a copy of the GNU Affero General Public License
-+// along with this program. If not, see <http://www.gnu.org/licenses/>.
-+
-+//! Authorization for SQL APIs that access an index outside a policy-aware scan.
-+//!
-+//! Do not use these guards for normal SQL scans: PostgreSQL owns their RTE
-+//! permission identity and row-policy evaluation. Low-level readers also serve
-+//! build, vacuum and recovery, so authorization belongs at the public boundary.
-+
-+use crate::postgres::catalog::OidExt;
-+use crate::postgres::rel::PgSearchRelation;
-+use pgrx::callconv::{Arg, ArgAbi};
-+use pgrx::pgrx_sql_entity_graph::metadata::{
-+    ArgumentError, ReturnsError, ReturnsRef, SqlMappingRef, SqlTranslatable, TypeOrigin,
-+};
-+use pgrx::{PgSqlErrorCode, pg_sys};
-+use std::ffi::CStr;
-+
-+/// A `regclass` argument without pgrx's implicit index lock.
-+///
-+/// `PgRelation::from_datum` locks the index before the function starts. Keeping
-+/// only the OID lets acquisition follow PostgreSQL's table-before-index order.
-+pub struct IndexOid(pg_sys::Oid);
-+
-+impl From<pg_sys::Oid> for IndexOid {
-+    fn from(oid: pg_sys::Oid) -> Self {
-+        Self(oid)
-+    }
-+}
-+
-+unsafe impl<'fcx> ArgAbi<'fcx> for IndexOid {
-+    unsafe fn unbox_arg_unchecked(arg: Arg<'_, 'fcx>) -> Self {
-+        Self(unsafe { pg_sys::Oid::unbox_arg_unchecked(arg) })
-+    }
-+}
-+
-+unsafe impl SqlTranslatable for IndexOid {
-+    const TYPE_IDENT: &'static str = pgrx::pgrx_resolved_type!(IndexOid);
-+    const TYPE_ORIGIN: TypeOrigin = TypeOrigin::External;
-+    const ARGUMENT_SQL: Result<SqlMappingRef, ArgumentError> =
-+        Ok(SqlMappingRef::literal("regclass"));
-+    const RETURN_SQL: Result<ReturnsRef, ReturnsError> = Err(ReturnsError::Datum);
-+}
-+
-+impl IndexOid {
-+    pub(crate) fn oid(&self) -> pg_sys::Oid {
-+        self.0
-+    }
-+
-+    pub(crate) fn read(self) -> IndexAccess {
-+        self.authorize(pg_sys::AccessShareLock as _, check_read)
-+    }
-+
-+    /// Inventory APIs omit entries whose direct-read policy denies access.
-+    /// Missing relations, wrong kinds and operational failures still raise errors.
-+    pub(crate) fn is_readable(&self) -> bool {
-+        let access = IndexAccess::open(self.0, pg_sys::AccessShareLock as _);
-+        check_read(access.heap()).is_ok()
-+    }
-+
-+    /// Trusted diagnostics may inspect metadata without table SELECT or RLS.
-+    pub(crate) fn read_metadata(self) -> IndexAccess {
-+        self.authorize(pg_sys::AccessShareLock as _, check_metadata)
-+    }
-+
-+    /// Like metadata reads, but inventory omits entries denied to this caller.
-+    pub(crate) fn read_metadata_if_permitted(self) -> Option<IndexAccess> {
-+        let access = IndexAccess::open(self.0, pg_sys::AccessShareLock as _);
-+        check_metadata(access.heap()).ok()?;
-+        Some(access)
-+    }
-+
-+    /// Maintenance follows REINDEX: `MAINTAIN` on the backing table from
-+    /// PostgreSQL 17, ownership before that.
-+    pub(crate) fn maintain(self) -> IndexAccess {
-+        self.authorize(pg_sys::RowExclusiveLock as _, check_maintain)
-+    }
-+
-+    fn authorize(
-+        self,
-+        index_lock: pg_sys::LOCKMODE,
-+        check: fn(&PgSearchRelation) -> Result<(), AccessDenied>,
-+    ) -> IndexAccess {
-+        let access = IndexAccess::open(self.0, index_lock);
-+        if let Err(denied) = check(access.heap()) {
-+            denied.report();
++        // Arrow divides floats by zero to Infinity or NaN where PostgreSQL raises an
++        // error, so let the UDF fallback evaluate float division.
++        if op == Operator::Divide
++            && matches!(
++                (*op_expr).opresulttype,
++                pg_sys::FLOAT4OID | pg_sys::FLOAT8OID
++            )
++        {
++            pgrx::debug1!(
++                "PredicateTranslator: float division left to PostgreSQL [OpExpr] types=({}, {}) | {}",
++                type_name(left_type),
++                type_name(right_type),
++                self.deparse_for_debug(node)
++            );
++            return None;
 +        }
-+        access
-+    }
-+}
 +
-+/// An index opened after its backing table, with both locks held until drop.
-+/// Derefs to the index; the entry method on `IndexOid` determines the policy.
-+/// `open` only locks relations and does not authorize reads.
-+// Fields drop in declaration order: the index closes before the heap.
-+pub(crate) struct IndexAccess {
-+    index: PgSearchRelation,
-+    heap: PgSearchRelation,
-+}
-+
-+impl std::ops::Deref for IndexAccess {
-+    type Target = PgSearchRelation;
-+
-+    fn deref(&self) -> &PgSearchRelation {
-+        &self.index
-+    }
-+}
-+
-+impl IndexAccess {
-+    pub(crate) fn open(index_oid: pg_sys::Oid, index_lock: pg_sys::LOCKMODE) -> Self {
-+        // Like amcheck_lock_relation_and_check: resolve without an index
-+        // lock, lock the table first, then recheck the association.
-+        let heap_oid = unsafe { pg_sys::IndexGetRelation(index_oid, true) };
-+        if heap_oid == pg_sy
+         let collid = (*op_expr).inputcollid;
+         if collid != pg_sys::Oid::INVALID {
+             let required_op = match op_str {
 ```
 
-**File**: `pg_search/src/postgres/mod.rs` (modified, +1/-0)
+**File**: `pg_search/tests/pg_regress/expected/issue_6930.out` (added, +54/-0)
 ```diff
-@@ -34,6 +34,7 @@ use pgrx::*;
- use tantivy::aggregation::intermediate_agg_result::IntermediateAggregationResults;
- use tantivy::index::SegmentId;
- 
-+pub mod access;
- mod build;
- pub mod build_logging;
- mod cost;
+@@ -0,0 +1,54 @@
++CREATE EXTENSION IF NOT EXISTS pg_search;
++CREATE TABLE issue_6930_i (id int PRIMARY KEY, body text, f float8, r float4);
++CREATE TABLE issue_6930_e (id int PRIMARY KEY, tag text, b int4, z float4);
++INSERT INTO issue_6930_i VALUES (1, 'alpha', 0.0, 0.0), (2, 'beta', 1.0, 3.0);
++INSERT INTO issue_6930_e VALUES (1, 'x', 1, 1.0), (2, 'y', 0, 0.0);
++CREATE INDEX issue_6930_i_idx ON issue_6930_i USING paradedb (id, body, f, r);
++CREATE INDEX issue_6930_e_idx ON issue_6930_e USING paradedb (id, tag, b, z);
++SET paradedb.enable_join_custom_scan = on;
++-- Float division in a Join Scan is evaluated by PostgreSQL
++EXPLAIN (COSTS OFF)
++SELECT i.id FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'beta' AND (i.f / e.b) > 0 LIMIT 10;
++                                                                                      QUERY PLAN                                                                                      
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++ Custom Scan (ParadeDB Join Scan)
++   Relation Tree: i INNER e
++   Join Cond: e.id = i.id
++   Join Predicate: heap:((i.f / (e.b)::double precision) > '0'::double precision)
++   Limit: 10
++   DataFusion Physical Plan: 
++     : ProjectionExec: expr=[id@1 as col_1, ctid_0@0 as ctid_0, ctid_1@3 as ctid_1]
++     :   GlobalLimitExec: skip=0, fetch=10
++     :     VisibilityFilterExec: tables=[i, e]
++     :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@1, id@1)], filter=pdb_eval_expr_opexpr_9c511f53(f@0, b@1) > 0
++     :         CooperativeExec
++     :           PgSearchScan: table=i, segments=1, query={"with_index":{"query":{"parse_with_field":{"field":"body","query_string":"beta","lenient":null,"conjunction_mode":null}}}}
++     :         CooperativeExec
++     :           PgSearchScan: table=e, segments=1, dynamic_filters=1, query="all"
++(14 rows)
++
++-- Division by zero raises an error instead of yielding Infinity
++SELECT i.id FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'beta' AND (i.f / e.b) > 0 LIMIT 10;
++ERROR:  division by zero
++SELECT i.id, (i.f / e.b) AS q FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'beta' LIMIT 10;
++ERROR:  division by zero
++SELECT i.id, (i.r / e.z) AS q FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'beta' LIMIT 10;
++ERROR:  division by zero
++SELECT i.id, (e.z / i.r) AS q FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'alpha' LIMIT 10;
++ERROR:  division by zero
++-- Division by a non-zero value is unchanged
++SELECT i.id, (i.f / e.b) AS q, (i.r / e.z) AS p FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'alpha' AND (i.f / e.b) >= 0 LIMIT 10;
++ id | q | p 
++----+---+---
++  1 | 0 | 0
++(1 row)
++
++RESET paradedb.enable_join_custom_scan;
++DROP TABLE issue_6930_i;
++DROP TABLE issue_6930_e;
 ```
 
-**File**: `pg_search/src/postgres/storage/fsm.rs` (modified, +6/-7)
+**File**: `pg_search/tests/pg_regress/expected/join_distinct_expr.out` (modified, +1/-1)
 ```diff
-@@ -15,13 +15,14 @@
- // You should have received a copy of the GNU Affero General Public License
- // along with this program. If not, see <http://www.gnu.org/licenses/>.
- 
-+use crate::postgres::access::IndexOid;
- use crate::postgres::rel::PgSearchRelation;
- use crate::postgres::storage::buffer::BufferManager;
- use crate::postgres::storage::fsm::v1::V1FSM;
- use crate::postgres::storage::fsm::v2::V2FSM;
- use crate::postgres::storage::metadata::MetaPage;
- use pgrx::iter::TableIterator;
--use pgrx::{PgRelation, name, pg_extern, pg_sys};
-+use pgrx::{name, pg_extern, pg_sys};
- 
- /// Denotes what the data on an FSM block looks like
- #[allow(non_camel_case_types)]
-@@ -1860,7 +1861,7 @@ pub fn convert_v1_to_v2(bman1: &mut BufferManager, mut v1: V1FSM, mut v2: V2FSM)
- 
- #[pg_extern]
- unsafe fn fsm_info(
--    index: PgRelation,
-+    index: IndexOid,
- ) -> TableIterator<
-     'static,
-     (
-@@ -1873,8 +1874,7 @@ unsafe fn fsm_info(
-     use crate::postgres::storage::fsm::v2::AvlLeaf;
-     use crate::postgres::storage::fsm::v2::V2FSM;
- 
--    let index =
--        PgSearchRelation::with_lock(index.oid(), pg_sys::AccessShareLock as pg_sys::LOCKMODE);
-+    let index = index.read_metadata();
- 
-     let meta = MetaPage::open(&index);
-     let bman = BufferManager::new(&index);
-@@ -1920,10 +1920,9 @@ unsafe fn fsm_info(
- }
- 
- #[pg_extern]
--unsafe fn fsm_size(index: PgRelation) -> i64 {
-+unsafe fn fsm_size(index: IndexOid) -> i64 {
-     use crate::postgres::storage::fsm::v2::V2FSM;
--    let index =
--        PgSearchRelation::with_lock(index.oid(), pg_sys::AccessShareLock as pg_sys::LOCKMODE);
-+    let index = index.read_metadata();
- 
-     let meta = MetaPage::open(&index);
-     let bman = BufferManager::new(&index);
+@@ -734,7 +734,7 @@ ORDER BY p.name
+    Order By: p.name asc
+    DataFusion Physical Plan: 
+      : SortExec: TopK(fetch=10), expr=[col_2@1 ASC NULLS LAST], preserve_partitioning=[false]
+-     :   AggregateExec: mode=Single, gby=[pdb_eval_expr_funcexpr_eb551b6f(supplier_id@1) / 3 as col_1, name@2 as col_2], aggr=[min(p_0.ctid_0) as ctid_0]
++     :   AggregateExec: mode=Single, gby=[pdb_eval_expr_opexpr_5205a10c(supplier_id@1) as col_1, name@2 as col_2], aggr=[min(p_0.ctid_0) as ctid_0]
+      :     VisibilityFilterExec: tables=[p, s], pruned=[s]
+      :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@0, supplier_id@1)], projection=[ctid_0@2, supplier_id@3, name@4, ctid_1@1]
+      :         CooperativeExec
+```
+
+**File**: `pg_search/tests/pg_regress/expected/topk-agg-facet.out` (modified, +3/-3)
+```diff
+@@ -2574,16 +2574,16 @@ JOIN product_reviews r ON p.id = r.product_id
+ WHERE p.description ||| 'laptop'
+ ORDER BY r.score DESC
+ LIMIT 3;
+-                                                                                                                                                                                                         QUERY PLAN                                                                                                                                                                                                         
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++                                                                                                                                                                                       QUERY PLAN                                                                                                                                                                                       
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Custom Scan (ParadeDB Join Scan)
+    Output: p.id, r.score, ((pdb.window_agg('count(*) FILTER (WHERE (r.score > 80)) OVER ()'::text) + 1)), ((r.score + pdb.window_agg('count(*) FILTER (WHERE (r.score > 80)) OVER ()'::text))), (((pdb.window_agg('count(*) FILTER (WHERE (r.score > 80)) OVER ()'::text))::double precision / (pdb.window_agg('count(*) OVER ()'::text))::double precision))
+    Relation Tree: p INNER r
+    Join Cond: p.id = r.product_id
+    Limit: 3
+    Order By: r.score desc
+    DataFusion Physical Plan: 
+-     : ProjectionExec: expr=[get_field(__topk@0, c0) as col_1, get_field(__topk@0, c1) as col_2, pdb_eval_expr_opexpr_9c4317b6(window_agg_1@1) as col_3, pdb_eval_expr_opexpr_bea5004f(get_field(__topk@0, c1), window_agg_1@1) as col_4, pdb_eval_expr_funcexpr_01980a78(window_agg_1@1) / pdb_eval_expr_funcexpr_02120823(window_agg_4@2) as col_5, get_field(__topk@0, c2) as ctid_0, get_field(__topk@0, c3) as ctid_1]
++     : ProjectionExec: expr=[get_field(__topk@0, c0) as col_1, get_field(__topk@0, c1) as col_2, pdb_eval_expr_opexpr_9c4317b6(window_agg_1@1) as col_3, pdb_eval_expr_opexpr_bea5004f(get_field(__topk@0, c1), window_agg_1@1) as col_4, pdb_eval_expr_opexpr_d5caad3d(window_agg_1@1, window_agg_4@2) as col_5, get_field(__topk@0, c2) as ctid_0, get_field(__topk@0, c3) as ctid_1]
+      :   GlobalLimitExec: skip=0, fetch=3
+      :     UnnestExec
+      :       AggregateExec: mode=Single, gby=[], aggr=[topk_as_agg(p_0.id, r_1.score, p_0.ctid_0, r_1.ctid_1, 3, [2, 3]) ORDER BY [r_1.score DESC NULLS FIRST] as __topk, count(1) FILTER (WHERE r_1.score > Int64(80)) as window_agg_1, count(1) as window_agg_4]
+```
+
+**File**: `pg_search/tests/pg_regress/sql/issue_6930.sql` (added, +34/-0)
+```diff
+@@ -0,0 +1,34 @@
++CREATE EXTENSION IF NOT EXISTS pg_search;
++
++CREATE TABLE issue_6930_i (id int PRIMARY KEY, body text, f float8, r float4);
++CREATE TABLE issue_6930_e (id int PRIMARY KEY, tag text, b int4, z float4);
++INSERT INTO issue_6930_i VALUES (1, 'alpha', 0.0, 0.0), (2, 'beta', 1.0, 3.0);
++INSERT INTO issue_6930_e VALUES (1, 'x', 1, 1.0), (2, 'y', 0, 0.0);
++CREATE INDEX issue_6930_i_idx ON issue_6930_i USING paradedb (id, body, f, r);
++CREATE INDEX issue_6930_e_idx ON issue_6930_e USING paradedb (id, tag, b, z);
++
++SET paradedb.enable_join_custom_scan = on;
++
++-- Float division in a Join Scan is evaluated by PostgreSQL
++EXPLAIN (COSTS OFF)
++SELECT i.id FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'beta' AND (i.f / e.b) > 0 LIMIT 10;
++
++-- Division by zero raises an error instead of yielding Infinity
++SELECT i.id FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'beta' AND (i.f / e.b) > 0 LIMIT 10;
++SELECT i.id, (i.f / e.b) AS q FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'beta' LIMIT 10;
++SELECT i.id, (i.r / e.z) AS q FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'beta' LIMIT 10;
++SELECT i.id, (e.z / i.r) AS q FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'alpha' LIMIT 10;
++
++-- Division by a non-zero value is unchanged
++SELECT i.id, (i.f / e.b) AS q, (i.r / e.z) AS p FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'alpha' AND (i.f / e.b) >= 0 LIMIT 10;
++
++RESET paradedb.enable_join_custom_scan;
++
++DROP TABLE issue_6930_i;
++DROP TABLE issue_6930_e;
 ```
 
 ---
 
-### Incident Patch 2: `1248c3ed` (2026-10-29)
-**Commit Message**: fix: upgrade zip to resolve archive parsing advisory (#7094)
+### Incident Patch 3: `822b944e` (2026-10-30)
+**Commit Message**: fix: raise on integer overflow in Join Scan arithmetic (#7103)
+
+# Ticket(s) Closed
+
+- Closes #6931
 
 ## What
 
-Update the locked `zip` dependency from 9.0.4 to 9.0.5, the first
-patched release for
-[GHSA-m665-v7pm-7grj](https://github.com/advisories/GHSA-m665-v7pm-7grj).
-Addresses [Dependabot alert
-#8](https://github.com/paradedb/paradedb/security/dependabot/8).
+Integer `+`, `-` and `*` inside an expression absorbed by the Join Scan
+now raise PostgreSQL's `integer out of range` / `bigint out of range` on
+overflow, instead of silently wrapping.
 
 ## Why
 
-The affected package enters through `benchmarks → duckdb → libduckdb-sys
-→ zip` (build dependency). Like pdbench#42, this uses the patched zip
-release. ParadeDB already requires DuckDB 1.10506.1, so no DuckDB
-upgrade is needed.
+`PredicateTranslator::translate_op_expr` maps these operators to
+DataFusion's `Operator::Plus`/`Minus`/`Multiply`. DataFusion's physical
+`BinaryExpr` evaluates them with Arrow's wrapping kernels unless
+`fail_on_overflow` is set. That flag only exists on the physical
+expression, and the planner always builds it as `false`, so the logical
+`Expr` we produce has no way to ask for checked arithmetic.
 
-I also checked Walter’s dependency cleanup in pdbench#43. DuckDB is
-already scoped to the benchmark crate here and excluded from the default
-extension build. Its zip build dependency is unconditional, so disabling
-default features would not remove it.
+## How
 
-## Tests
+`translate_op_expr` declines `+`, `-` and `*` when the operator's result
+type is `int2`, `int4` or `int8`. `translate` then wraps the subtree
+with the existing `try_wrap_as_udf` fallback, so PostgreSQL evaluates it
+with its own overflow checks. The expression is still absorbed by the
+Join Scan.
 
-- Cargo update changed only the zip version and checksum.
-- Locked workspace dependency tree confirms zip 9.0.5 and the
-benchmark-only path above.
-- Locked Cargo metadata passes for aarch64-apple-darwin using Rust
-1.99.1.
-- Downloaded crate SHA-256 matches the lockfile; `git diff --check`
-passes.
-- Compilation and benchmark tests were not run locally.
+Float and numeric arithmetic, and integer `/` and `%`, are unchanged.
+Arrow already errors on integer division by zero.
 
-Dependabot closure r
+The trade-off is that these expressions now run through the UDF rather
 
-**File**: `Cargo.lock` (modified, +2/-2)
+
+**File**: `docs/project/changelog/unreleased/7103.bugfix.mdx` (added, +5/-0)
 ```diff
-@@ -8570,9 +8570,9 @@ dependencies = [
- 
- [[package]]
- name = "zip"
--version = "9.0.4"
-+version = "9.0.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "a954114b47a54df49f83d2722814e86b23d4bb1b54a1b90fb7d92b41619ddc22"
-+checksum = "6e04976da629d3b04204ba8105b396a193af8ad2583b2c79bfb3ab8af580a11e"
- dependencies = [
-  "crc32fast",
-  "flate2",
+@@ -0,0 +1,5 @@
++---
++header: stability
++---
++
++- Integer `+`, `-` and `*` in expressions evaluated by the Join Scan now raise an out-of-range error on overflow instead of silently wrapping.
 ```
 
-**File**: `nix/pg_search.nix` (modified, +1/-1)
+**File**: `pg_search/src/postgres/customscan/datafusion/expr_translators.rs` (modified, +20/-2)
 ```diff
-@@ -65,7 +65,7 @@ buildPgrxExtension (finalAttrs: {
-   # If maintainers forget to do so, Nix will throw an error message that begins
-   # like this and then provides the correct new hash:
-   # error: hash mismatch in fixed-output derivation '...'
--  cargoHash = "sha256-fNtmEhJGQBZdWf0x3gAnmx0Ize5SHSUu5L50uUAdPwM=";
-+  cargoHash = "sha256-AVcHOw7envbETWm0yz0bGTWUbjHMMSK/UuH0zHLIjTA=";
- 
-   inherit cargo-pgrx postgresql;
- 
-```
-
----
-
-### Incident Patch 3: `e40d419a` (2026-10-29)
-**Commit Message**: fix: detach worker queues before destroying parallel context (#7106)
-
-When a parallel aggregate cannot launch workers inside a parallel
-InitPlan with leader participation disabled, the fallback destroys the
-parallel context before dropping its message-queue handles. Their
-cleanup can then access unmapped shared memory and crash the backend.
-
-Drop the launcher and its queue handles before destroying the context,
-matching the successful completion path. Add a SQL regression that
-asserts a parallel InitPlan/aggregate plan and checks five correct query
-results under a one-worker limit.
-
-Validation: on an isolated Linux PostgreSQL 18.6 runner, the identical
-SQL regression crashes unpatched main `d3d439e68` on its first count
-query (backend terminated by signal 11 / segmentation fault). With only
-the cleanup-order fix applied, all three repetitions pass, each checking
-five count results. [Control run and
-evidence](https://github.com/paradedb/paradedb/actions/runs/40962987145).
-
-Strict workspace/all-target Clippy, workspace check, docs with warnings
-denied, formatting, and applicable commit hooks also passed. No
-worker-limit or sweep changes are included.
-
-**File**: `pg_search/src/parallel_worker/builder.rs` (modified, +2/-1)
-```diff
-@@ -207,7 +207,8 @@ impl ParallelProcessLauncher {
-                 return Some(ParallelProcessAttach { launcher: self });
+@@ -583,6 +583,24 @@ impl<'a> PredicateTranslator<'a> {
              }
+         };
  
--            // no workers launched
-+            // Detach queues while their shared memory is still mapped.
-+            drop(self);
-             pg_sys::DestroyParallelContext(pcxt);
-             pg_sys::ExitParallelMode();
-             None
++        // Arrow wraps integer overflow where PostgreSQL raises an error, so let the
++        // UDF fallback evaluate integer arithmetic.
++        if matches!(op, Operator::Plus | Operator::Minus | Operator::Multiply)
++            && matches!(
++                (*op_expr).opresulttype,
++                pg_sys::INT2OID | pg_sys::INT4OID | pg_sys::INT8OID
++            )
++        {
++            pgrx::debug1!(
++                "PredicateTranslator: integer arithmetic left to PostgreSQL [OpExpr] op=\"{}\", types=({}, {}) | {}",
++                op_str,
++                type_name(left_type),
++                type_name(right_type),
++                self.deparse_for_debug(node)
++            );
++            return None;
++        }
++
+         let collid = (*op_expr).inputcollid;
+         if collid != pg_sys::Oid::INVALID {
+             let required_op = match op_str {
+@@ -965,7 +983,7 @@ mod tests {
+             Just("length(e.pattern) > 3".to_string()),
+             Just("upper(e.pattern) = upper(i.name)".to_string()),
+             Just("COALESCE(e.pattern, '') = i.name".to_string()),
+-            // Arithmetic operators — native via translate_op_expr (+, -, *, /, %).
++            // Arithmetic operators. Integer +, - and * go through the UDF fallback.
+             Just("e.threshold + 10 > i.value".to_string()),
+             Just("e.threshold * 2 > 50".to_string()),
+             Just("i.value - e.threshold > 0".to_string()),
+@@ -1023,7 +1041,7 @@ mod tests {
+             Just("e.pattern = i.name OR length(e.pattern) > 100".to_string()),
+             Just("e.pattern = i.name OR e.pattern IS NULL".to_string()),
+             Just("upper(e.pattern) = i.name OR e.threshold > i.value".to_string()),
+-            // Arithmetic cross-table predicates — now native OpExpr.
++            // Arithmetic cross-table predicates, absorbed via the UDF fallback.
+             Just("e.threshold * 2 > i.value".to_string()),
+             Just("e.threshold + i.value > 100".to_string()),
+         ]
 ```
 
-**File**: `pg_search/tests/pg_regress/expected/aggregate_worker_shortage.out` (added, +72/-0)
+**File**: `pg_search/tests/pg_regress/expected/issue_6931.out` (added, +58/-0)
 ```diff
-@@ -0,0 +1,72 @@
-+-- An InitPlan can consume the only worker before the aggregate launches.
-+CREATE TABLE aggregate_worker_shortage (id int, body text, hash text);
-+INSERT INTO aggregate_worker_shortage
-+SELECT i, 'test content ' || i, md5(i::text) FROM generate_series(1, 1000) i;
-+CREATE INDEX aggregate_worker_shortage_idx
-+ON aggregate_worker_shortage USING paradedb (id, body, hash);
-+SET max_parallel_workers = 1;
-+SET max_parallel_workers_per_gather = 2;
-+SET parallel_setup_cost = 0;
-+SET parallel_tuple_cost = 0;
-+SET min_parallel_table_scan_size = 0;
-+SET parallel_leader_participation = off;
-+DO $$
-+DECLARE
-+    plan jsonb;
-+BEGIN
-+    EXECUTE 'EXPLAIN (FORMAT JSON) SELECT count(*) FROM aggregate_worker_shortage
-+             WHERE body @@@ paradedb.all()
-+               AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5))'
-+    INTO plan;
-+    ASSERT jsonb_path_exists(plan, '$.**."Workers Planned" ? (@ > 0)');
-+    ASSERT plan::text LIKE '%ParadeDB Aggregate Scan%';
-+    ASSERT plan::text LIKE '%InitPlan%';
-+END
-+$$;
-+SELECT count(*) FROM aggregate_worker_shortage
-+WHERE body @@@ paradedb.all()
-+  AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5));
-+ count 
-+-------
-+     5
+@@ -0,0 +1,58 @@
++CREATE EXTENSION IF NOT EXISTS pg_search;
++CREATE TABLE issue_6931_i (id int PRIMARY KEY, body text, a int4, w int8);
++CREATE TABLE issue_6931_e (id int PRIMARY KEY, tag text, b int4);
++INSERT INTO issue_6931_i VALUES (1, 'alpha', 2147483647, 9223372036854775807), (2, 'beta', 5, 10);
++INSERT INTO issue_6931_e VALUES (1, 'x', 1), (2, 'y', 0);
++CREATE INDEX issue_6931_i_idx ON issue_6931_i USING paradedb (id, body, a, w);
++CREATE INDEX issue_6931_e_idx ON issue_6931_e USING paradedb (id, tag, b);
++SET paradedb.enable_join_custom_scan = on;
++-- Integer arithmetic in a Join Scan is evaluated by PostgreSQL
++EXPLAIN (COSTS OFF)
++SELECT i.id FROM issue_6931_i i JOIN issue_6931_e e ON e.id = i.id
++WHERE i.body @@@ 'alpha' AND (i.w + e.b) > 0 LIMIT 10;
++                                                                                      QUERY PLAN                                                                                       
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++ Custom Scan (ParadeDB Join Scan)
++   Relation Tree: i INNER e
++   Join Cond: e.id = i.id
++   Join Predicate: heap:((i.w + e.b) > 0)
++   Limit: 10
++   DataFusion Physical Plan: 
++     : ProjectionExec: expr=[id@1 as col_1, ctid_0@0 as ctid_0, ctid_1@3 as ctid_1]
++     :   GlobalLimitExec: skip=0, fetch=10
++     :     VisibilityFilterExec: tables=[i, e]
++     :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@1, id@1)], filter=pdb_eval_expr_opexpr_e8373b5a(w@0, b@1) > 0
++     :         CooperativeExec
++     :           PgSearchScan: table=i, segments=1, query={"with_index":{"query":{"parse_with_field":{"field":"body","query_string":"alpha","lenient":null,"conjunction_mode":null}}}}
++     :         CooperativeExec
++     :           PgSearchScan: table=e, segments=1, dynamic_filters=1, query="all"
++(14 rows)
++
++-- Overflow raises an error instead of wrapping
++SELECT i.id FROM issue_6931_i i JOIN issue_6931_e e ON e.id = i.id
++WHERE i.body @@@ 'alpha' AND (i.w + e.b) > 0 LIMIT 10;
++ERROR:  bigint out of range
++SELECT i.id, (i.w + e.b) AS s FROM issue_6931_i i JOIN issue_6931_e e ON e.id = i.id
++WHERE i.body @@@ 'alpha' LIMIT 10;
++ERROR:  bigint out of range
++SELECT i.id, (i.a + e.b) AS s FROM issue_6931_i i JOIN issue_6931_e e ON e.id = i.id
++WHERE i.body @@@ 'alpha' LIMIT 10;
++ERROR:  integer out of range
++SELECT i.id, (-i.a - 2 * e.b) AS s FROM issue_6931_i i JOIN issue_6931_e e ON e.id = i.id
++WHERE i.body @@@ 'alpha' LIMIT 10;
++ERROR:  integer out of range
++SELECT i.id, (i.w * (e.b + 1)) AS s FROM issue_6931_i i JOIN issue_6931_e e ON e.id = i.id
++WHERE i.body @@@ 'alpha' LIMIT 10;
++ERROR:  bigint out of range
++-- Arithmetic that does not overflow is unchanged
++SELECT i.id, (i.w + e.b) AS s, (i.a - e.b) AS d, (i.a * 2) AS m
++FROM issue_6931_i i JOIN issue_6931_e e ON e.id = i.id
++WHERE i.body @@@ 'beta' AND (i.w + e.b) > 0 LIMIT 10;
++ id | s  | d | m  
++----+----+---+----
++  2 | 10 | 5 | 10
 +(1 row)
 +
-+SELECT count(*) FROM aggregate_worker_shortage
-+WHERE body @@@ paradedb.all()
-+  AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5));
-+ count 
-+-------
-+     5
-+(1 row)
-+
-+SELECT count(*) FROM aggregate_worker_shortage
-+WHERE body @@@ paradedb.all()
-+  AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5));
-+ count 
-+-------
-+     5
-+(1 row)
-+
-+SELECT count(*) FROM aggregate_worker_shortage
-+WHERE body @@@ paradedb.all()
-+  AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5));
-+ count 
-+-------
-+     5
-+(1 row)
-+
-+SELECT count(*) FROM aggregate_worker_shortage
-+WHERE body @@@ paradedb.all()
-+  AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5));
-+ count 
-+-------
-+     5
-+(1 row)
-+
-+DROP TABLE aggregate_worker_shortage;
-+RESET max_parallel_workers;
-+RESET max_parallel_workers_per_gather;
-+RESET parallel_setup_cost;
-+RESET parallel_tuple_cost;
-+RESET min_parallel_table_scan_size;
-+RESET parallel_leader_participation;
++RESET paradedb.enable_join_custom_scan;
++DROP TABLE issue_6931_i;
++DROP TABLE issue_6931_e;
 ```
 
-**File**: `pg_search/tests/pg_regress/sql/aggregate_worker_shortage.sql` (added, +47/-0)
+**File**: `pg_search/tests/pg_regress/expected/join_distinct_expr.out` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,47 @@
-+-- An InitPlan can consume the only worker before the aggregate launches.
-+CREATE TABLE aggregate_worker_shortage (id int, body text, hash text);
-+INSERT INTO aggregate_worker_shortage
-+SELECT i, 'test content ' || i, md5(i::text) FROM generate_series(1, 1000) i;
-+CREATE INDEX aggregate_worker_shortage_idx
-+ON aggregate_worker_shortage USING paradedb (id, body, hash);
-+SET max_parallel_workers = 1;
-+SET max_parallel_workers_per_gather = 2;
-+SET parallel_setup_cost = 0;
-+SET parallel_tuple_cost = 0;
-+SET min_parallel_table_scan_size = 0;
-+SET parallel_leader_participation = off;
-+DO $$
-+DECLARE
-+    plan jsonb;
-+BEGIN
-+    EXECUTE 'EXPLAIN (FORMAT JSON) SELECT count(*) FROM aggregate_worker_shortage
-+             WHERE body @@@ paradedb.all()
-+               AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5))'
-+    INTO plan;
-+    ASSERT jsonb_path_exists(plan, '$.**."Workers Planned" ? (@ > 0)');
-+    ASSERT plan::text LIKE '%ParadeDB Aggregate Scan%';
-+    ASSERT plan::text LIKE '%InitPlan%';
-+END
-+$$;
-+SELECT count(*) FROM aggregate_worker_shortage
-+WHERE body @@@ paradedb.all()
-+  AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5));
-+SELECT count(*) FROM aggregate_worker_shortage
-+WHERE body @@@ paradedb.all()
-+  AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5));
-+SELECT count(*) FROM aggregate_worker_shortage
-+WHERE body @@@ paradedb.all()
-+  AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5));
-+SELECT count(*) FROM aggregate_worker_shortage
-+WHERE body @@@ paradedb.all()
-+  AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5));
-+SELECT count(*) FROM aggregate_worker_shortage
-+WHERE body @@@ paradedb.all()
-+  AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5));
-+DROP TABLE aggregate_worker_shortage;
-+RESET max_parallel_workers;
-+RESET max_parallel_workers_per_gather;
-+RESET parallel_setup_cost;
-+RESET parallel_tuple_cost;
-+RESET min_parallel_table_scan_size;
-+RESET parallel_leader_participation;
+@@ -206,7 +206,7 @@ ORDER BY p.name
+    Order By: p.name asc
+    DataFusion Physical Plan: 
+      : SortExec: TopK(fetch=10), expr=[col_2@1 ASC NULLS LAST], preserve_partitioning=[false]
+-     :   AggregateExec: mode=Single, gby=[supplier_id@1 * 10 + id@3 as col_1, name@2 as col_2], aggr=[min(p_0.ctid_0) as ctid_0]
++     :   AggregateExec: mode=Single, gby=[pdb_eval_expr_opexpr_06483cda(supplier_id@1, id@3) as col_1, name@2 as col_2], aggr=[min(p_0.ctid_0) as ctid_0]
+      :     VisibilityFilterExec: tables=[p, s], pruned=[s]
+      :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@0, supplier_id@1)], projection=[ctid_0@2, supplier_id@3, name@4, id@5, ctid_1@1]
+      :         CooperativeExec
+@@ -666,7 +666,7 @@ ORDER BY p.name
+    Order By: p.name asc
+    DataFusion Physical Plan: 
+      : SortExec: TopK(fetch=10), expr=[col_2@1 ASC NULLS LAST], preserve_partitioning=[false]
+-     :   AggregateExec: mode=Single, gby=[pdb_eval_expr_funcexpr_f1ebe528(supplier_id@1) * 100 as col_1, name@2 as col_2], aggr=[min(p_0.ctid_0) as ctid_0]
++     :   AggregateExec: mode=Single, gby=[pdb_eval_expr_opexpr_78b131ee(supplier_id@1) as col_1, name@2 as col_2], aggr=[min(p_0.ctid_0) as ctid_0]
+      :     VisibilityFilterExec: tables=[p, s], pruned=[s]
+      :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@0, supplier_id@1)], projection=[ctid_0@2, supplier_id@3, name@4, ctid_1@1]
+      :         CooperativeExec
+```
+
+**File**: `pg_search/tests/pg_regress/expected/join_order_from_path.out` (modified, +3/-3)
+```diff
+@@ -223,8 +223,8 @@ JOIN jo_reviews r ON r.book_id = b.id
+ JOIN jo_authors a ON a.id > b.author_id + r.rating
+ WHERE a.bio @@@ 'orchid'
+ ORDER BY b.id, r.id LIMIT 5;
+-                                                                                                         QUERY PLAN                                                                                                         
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++                                                                                                                               QUERY PLAN                                                                                                                                
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Custom Scan (ParadeDB Join Scan)
+    Relation Tree: (b INNER r) INNER a
+    Join Cond: r.book_id = b.id
+@@ -239,7 +239,7 @@ ORDER BY b.id, r.id LIMIT 5;
+      :         NestedLoopJoinExec: join_type=Inner, filter=id@0 > join_proj_push_down_1@1, projection=[id@0, ctid_2@1, ctid_0@2, author_id@3, id@4, ctid_1@5, rating@6, book_id@7, id@8]
+      :           CooperativeExec
+      :             PgSearchScan: table=a, segments=1, query={"with_index":{"query":{"parse_with_field":{"field":"bio","query_string":"orchid","lenient":null,"conjunction_mode":null}}}}
+-     :           ProjectionExec: expr=[ctid_0@0 as ctid_0, author_id@1 as author_id, id@2 as id, ctid_1@3 as ctid_1, rating@4 as rating, book_id@5 as book_id, id@6 as id, author_id@1 + rating@4 as join_proj_push_down_1]
++     :           ProjectionExec: expr=[ctid_0@0 as ctid_0, author_id@1 as author_id, id@2 as id, ctid_1@3 as ctid_1, rating@4 as rating, book_id@5 as book_id, id@6 as id, CAST(pdb_eval_expr_opexpr_6edbbeb8(author_id@1, rating@4) AS Int64) as join_proj_push_down_1]
+      :             HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@2, book_id@2)]
+      :               CooperativeExec
+      :                 PgSearchScan: table=b, segments=1, query="all"
+```
+
+**File**: `pg_search/tests/pg_regress/expected/join_orderby_expression.out` (modified, +9/-9)
+```diff
+@@ -112,7 +112,7 @@ LIMIT 10;
+    Limit: 10
+    Order By: c.id desc
+    DataFusion Physical Plan: 
+-     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, id@1 + 0 as col_3, ctid_0@0 as ctid_0]
++     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_fd4454da(id@1) as col_3, ctid_0@0 as ctid_0]
+      :   SortExec: TopK(fetch=10), expr=[id@1 DESC], preserve_partitioning=[false]
+      :     VisibilityFilterExec: tables=[c]
+      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
+@@ -195,7 +195,7 @@ LIMIT 10;
+    Limit: 10
+    Order By: c.id desc
+    DataFusion Physical Plan: 
+-     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, id@1 - 0 as col_3, ctid_0@0 as ctid_0]
++     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_e22d00d8(id@1) as col_3, ctid_0@0 as ctid_0]
+      :   SortExec: TopK(fetch=10), expr=[id@1 DESC], preserve_partitioning=[false]
+      :     VisibilityFilterExec: tables=[c]
+      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
+@@ -243,7 +243,7 @@ LIMIT 10;
+    Limit: 10
+    Order By: c.id desc
+    DataFusion Physical Plan: 
+-     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, id@1 as col_3, ctid_0@0 as ctid_0]
++     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_46622aa0(id@1) as col_3, ctid_0@0 as ctid_0]
+      :   SortExec: TopK(fetch=10), expr=[id@1 DESC], preserve_partitioning=[false]
+      :     VisibilityFilterExec: tables=[c]
+      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
+@@ -339,7 +339,7 @@ LIMIT 10;
+    Limit: 10
+    Order By: c.id desc
+    DataFusion Physical Plan: 
+-     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, id@1 + 0 as col_3, ctid_0@0 as ctid_0]
++     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_fd4454da(id@1) as col_3, ctid_0@0 as ctid_0]
+      :   SortExec: TopK(fetch=10), expr=[id@1 DESC], preserve_partitioning=[false]
+      :     VisibilityFilterExec: tables=[c]
+      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
+@@ -388,7 +388,7 @@ LIMIT 10;
+    Limit: 10
+    Order By: c.big_id desc
+    DataFusion Physical Plan: 
+-     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, big_id@2 + 0 as col_3, ctid_0@0 as ctid_0]
++     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_40249b18(big_id@2) as col_3, ctid_0@0 as ctid_0]
+      :   SortExec: TopK(fetch=10), expr=[big_id@2 DESC], preserve_partitioning=[false]
+      :     VisibilityFilterExec: tables=[c]
+      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
+@@ -419,7 +419,7 @@ LIMIT 10;
+    Limit: 10
+    Order By: c.big_id desc
+    DataFusion Physical Plan: 
+-     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, big_id@2 as col_3, ctid_0@0 as ctid_0]
++     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_a0b34269(big_id@2) as col_3, ctid_0@0 as ctid_0]
+      :   SortExec: TopK(fetch=10), expr=[big_id@2 DESC], preserve_partitioning=[false]
+      :     VisibilityFilterExec: tables=[c]
+      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
+@@ -450,7 +450,7 @@ LIMIT 10;
+    Limit: 10
+    Order By: c.id desc
+    DataFusion Physical Plan: 
+-     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, 0 + id@1 as col_3, ctid_0@0 as ctid_0]
++     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_662fe57b(id@1) as col_3, ctid_0@0 as ctid_0]
+      :   SortExec: TopK(fetch=10), expr=[id@1 DESC], preserve_partitioning=[false]
+      :     VisibilityFilterExec: tables=[c]
+      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
+@@ -481,7 +481,7 @@ LIMIT 10;
+    Limit: 10
+    Order By: c.id desc
+    DataFusion Physical Plan: 
+-     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, id@1 as col_3, ctid_0@0 as ctid_0]
++     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_cf5a22da(id@1) as col_3, ctid_0@0 as ctid_0]
+      :   SortExec: TopK(fetch=10), expr=[id@1 DESC], preserve_partitioning=[false]
+      :     VisibilityFilterExec: tables=[c]
+      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
+@@ -739,7 +739,7 @@ LIMIT 10;
+    Limit: 10
+    Order By: c.id desc
+    DataFusion Physical Plan: 
+-     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, id@1 + 0 as col_3, ctid_0@0 as ctid_0]
++     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_fd4454da(id@1) as col_3, ctid_0@0 as ctid_0]
+      :   SortExec: TopK(fetch=10), expr=[id@1 DESC], preserve_partitioning=[false]
+      :     VisibilityFilterExec: tables=[c]
+      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
+```
+
+**File**: `pg_search/tests/pg_regress/expected/join_predicates.out` (modified, +1/-1)
+```diff
+@@ -815,7 +815,7 @@ LIMIT 10;
+      : ProjectionExec: expr=[id@2 as col_1, supplier_id@1 as col_2, id@4 as col_3, ctid_0@0 as ctid_0, ctid_1@3 as ctid_1]
+      :   SortExec: TopK(fetch=10), expr=[id@2 ASC NULLS LAST], preserve_partitioning=[false]
+      :     VisibilityFilterExec: tables=[p, s]
+-     :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(supplier_id@1, id@1)], filter=abs(supplier_id@0 - id@1) >= 0
++     :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(supplier_id@1, id@1)], filter=abs(pdb_eval_expr_opexpr_1d849f2b(supplier_id@0, id@1)) >= 0
+      :         CooperativeExec
+      :           PgSearchScan: table=p, segments=1, dynamic_filters=1, query={"with_index":{"query":{"match":{"field":"description","value":"wireless","tokenizer":null,"distance":null,"transposition_cost_one":null,"prefix":null,"conjunction_mode":false}}}}
+      :         CooperativeExec
+```
+
+**File**: `pg_search/tests/pg_regress/expected/join_semi_anti_disjunctive.out` (modified, +1/-1)
+```diff
+@@ -1222,7 +1222,7 @@ LIMIT 5;
+      :   SortExec: TopK(fetch=5), expr=[id@1 DESC], preserve_partitioning=[false]
+      :     VisibilityFilterExec: tables=[i]
+      :       NestedLoopJoinExec: join_type=RightAnti, filter=join_proj_push_down_1@1 > id@0, projection=[ctid_0@0, id@1]
+-     :         ProjectionExec: expr=[id@0 as id, id@0 * 2 as join_proj_push_down_1]
++     :         ProjectionExec: expr=[id@0 as id, pdb_eval_expr_opexpr_b2e4dd8d(id@0) as join_proj_push_down_1]
+      :           CooperativeExec
+      :             PgSearchScan: table=e, segments=1, visibility=eager, query={"with_index":{"query":"all"}}
+      :         CooperativeExec
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7122** (2026-10-30): fix: reclaim merge entry segment ID pages (@rebasedming)
-- **PR #7121** (2026-10-30): ci: baseline Cohere shared buffer hits per query (@rebasedming)
-- **PR #7117** (2026-10-30): fix: leave NULL comparison values to PostgreSQL in pushdown (@paradedb-github-bot[bot])
-- **PR #7115** (2026-10-30): fix: match every row for an empty `<> ALL` array in pushdown (@paradedb-github-bot[bot])
-- **PR #7114** (2026-10-30): fix: enforce permissions on standalone index reads (@paradedb-github-bot[bot])
-- **PR #7113** (2026-10-29): fix: authenticate benchmark metric staging (@philippemnoel)
+- **PR #7140** (2026-10-31): chore: Fix clash between #6869 and #7051 (@stuhood)
+- **PR #7133** (closed): ci: Use an unlinked author for benchmark commits (@paradedb-github-bot[bot])
+- **PR #7132** (closed): ci: Use an unlinked author for benchmark commits (@paradedb-github-bot[bot])
+- **PR #7131** (2026-10-30): ci: Use an unlinked author for benchmark commits (@philippemnoel)
+- **PR #7129** (2026-10-30): fix: omit graph dependencies from Stressgres runtime image (@philippemnoel)
+- **PR #7125** (2026-10-31): fix: pin workflow actions and enforce immutable references (@philippemnoel)
 
 ---
 
@@ -3095,48 +3017,34 @@ worker-limit or sweep changes are included.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. enforce permissions on standalone index reads (#7023)
+## X. omit graph dependencies from Stressgres runtime image (#7129)
 
 **RULE**:
-When implementing operations in `docs/project/changelog/unreleased/7023.breaking.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docker/Dockerfile.stressgres`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6610b066`: enforce permissions on standalone index reads (#7023). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3c13589a`: omit graph dependencies from Stressgres runtime image (#7129). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/project/changelog/unreleased/7023.breaking.mdx`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docker/Dockerfile.stressgres`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
----
-header: breaking
-title: Standalone index access permissions
----
-
-Standalone index reads now check permissions on the backing table. Content-reading APIs,
-including `paradedb.aggregate()`, require table-level `SELECT` and reject calls when row-level
-security applies to the effective caller.
-Callers who need a filtered result under RLS can be given a `SECURITY DEFINER` function,
-owned by the table owner, that applies the policy's filter in an ordinary `@@@` query.
-Wrapping `paradedb.aggregate()` itself does not filter rows.
-
-Metadata APIs, including `paradedb.schema()`, `index_fields()`, the layer-size
-functions, `index_created_at()`, `index_created_by()`, `merge_info()` (and its
-`is_merging()` alias), `vacuum_info()`, `fsm_info()`, `fsm_size()`,
-`paradedb.index_info()`, `pdb.index_segments()`, and the statistics returned by
-`pdb.indexes()`
-also accept callers with the privileges of `pg_stat_scan_tables`, inherited by `pg_monitor`.
-These trusted monitoring roles can inspect whole-index metadata and document counts without
-table `SELECT`, including counts across rows hidden by RLS. Other callers still need schema
-`USAGE`, table-level `SELECT`, and no active RLS; inventory omits in
+        --manifest-path /home/app/Cargo.toml -p stressgres --no-default-features --features dst && \
+# Graph generation is disabled in this image, avoiding Fontconfig and its
+# transitive font/XML dependencies. Normal source builds retain graph support.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    libpng-dev \
+    libjpeg-dev \
+    libfontconfig1-dev \
+        --manifest-path /home/app/Cargo.toml -p stressgres --features dst && \
+    libfontconfig1 \
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6610b066` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3c13589a` are properly handled with clean fallback behavior.

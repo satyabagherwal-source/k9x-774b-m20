@@ -6539,3 +6539,5 @@ Every entry in this ledger must capture:
 | `learn-github-react-metro` | `https://github.com/react/metro` | `fcced577` | Multi-dimensional audit evidence | 2026-10-31T10:07:26.620Z |
 | `learn-github-vercel-labs-agent-desktop` | `https://github.com/vercel-labs/agent-desktop` | `893a4140` | Multi-dimensional audit evidence | 2026-10-31T10:18:22.075Z |
 | `learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-31T10:20:16.585Z |
+| `learn-huggingface-inclusionai-ming-image-0-1-design` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-10-31T10:27:03.174Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `6e3efd5a` | Multi-dimensional audit evidence | 2026-10-31T10:27:16.921Z |

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T10:20:16.590Z",
-  "total_cycles_completed": 6507,
-  "total_learnings_persisted": 6507,
-  "total_rules_promoted": 6159,
+  "last_updated": "2026-10-31T10:27:16.926Z",
+  "total_cycles_completed": 6509,
+  "total_learnings_persisted": 6509,
+  "total_rules_promoted": 6160,
   "history": [
-    {
-      "timestamp": "2026-10-30T21:55:55.270Z",
-      "repository": "electron/electron",
-      "learningId": "learn-github-electron-electron",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T22:03:22.463Z",
-      "repository": "aws/aws-cdk",
-      "learningId": "learn-github-aws-aws-cdk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T22:03:30.444Z",
       "repository": "rmax/scrapy-redis",
@@ -1403,6 +1389,20 @@
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T10:27:03.179Z",
+      "repository": "inclusionAI/Ming-Image-0.1-Design",
+      "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T10:27:16.926Z",
+      "repository": "paradedb/paradedb",
+      "learningId": "learn-github-paradedb-paradedb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

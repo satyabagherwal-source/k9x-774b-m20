@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261029-HKEA",
-    "timestamp": "2026-10-29T11:52:34.690Z",
-    "repository": "FalkorDB/FalkorDB",
-    "learningId": "learn-github-falkordb-falkordb",
-    "contentHash": "10e5cf306ef1822cf55468af5601ce482f28b8a925ab76f7a703df32aff81466",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-HWQD",
-    "timestamp": "2026-10-29T11:52:50.677Z",
-    "repository": "zama-ai/tfhe-rs",
-    "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "369b3482dcc7888e7b1449a31329a90a78c998e583d1155e2928f9cc6c9fce29",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261029-TG6T",
     "timestamp": "2026-10-29T12:01:49.109Z",
     "repository": "matrixorigin/matrixone",
@@ -7492,6 +7462,36 @@
     "contentHash": "468c73a5974a235844fa993a459e29779cafcdd7d343a6e80d3fae76c0b998de",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-BA7W",
+    "timestamp": "2026-10-31T10:27:03.164Z",
+    "repository": "inclusionAI/Ming-Image-0.1-Design",
+    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+    "contentHash": "938984e4a16ef2296f6b76352e4fb02fc3a9e9d99c18c62d5a5d73afdaf35fb0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-BKTX",
+    "timestamp": "2026-10-31T10:27:16.917Z",
+    "repository": "paradedb/paradedb",
+    "learningId": "learn-github-paradedb-paradedb",
+    "contentHash": "0d17b7f71aa7d28ee8abd36e3d2c254ece8c40869be3fce2be4be1da67d1b820",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

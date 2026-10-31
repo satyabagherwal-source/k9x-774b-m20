@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T10:20:16.594Z",
+  "last_updated": "2026-10-31T10:27:16.931Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -620,14 +620,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-inclusionai-ming-image-0-1-design",
-      "content_hash": "756ca41ddd4e3e825928019abc9c655b0a22de41669355d7e0b9fcc6262ad235",
-      "verified_at": "2026-10-28T06:52:47.792Z",
+      "content_hash": "938984e4a16ef2296f6b76352e4fb02fc3a9e9d99c18c62d5a5d73afdaf35fb0",
+      "verified_at": "2026-10-31T10:27:03.183Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T06:52:47.792Z"
+      "last_updated": "2026-10-31T10:27:03.183Z"
     },
     "deepseek-ai/DeepSeek-V4.1-Flash": {
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -11361,14 +11361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-paradedb-paradedb",
-      "content_hash": "1e3f88d81a80f8e3777011f1e462521cfb45faec2ec5d34860684944477e1e7e",
-      "verified_at": "2026-10-30T17:14:41.347Z",
+      "content_hash": "0d17b7f71aa7d28ee8abd36e3d2c254ece8c40869be3fce2be4be1da67d1b820",
+      "verified_at": "2026-10-31T10:27:16.930Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T17:14:41.347Z"
+      "last_updated": "2026-10-31T10:27:16.930Z"
     },
     "imsnif/diskonaut": {
       "repository": "imsnif/diskonaut",
