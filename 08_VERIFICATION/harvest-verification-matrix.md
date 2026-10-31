@@ -6754,3 +6754,4 @@
 | `CYCLE-20261031-0GW6` | `2026-10-31T23:22:27.846Z` | `maziyarpanahi/openmed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6359` | Yes (`db274c46...`) |
 | `CYCLE-20261031-0I25` | `2026-10-31T23:22:29.357Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6360` | Yes (`e180efbe...`) |
 | `CYCLE-20261031-3N8Q` | `2026-10-31T23:24:56.042Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6361, Rule 6362` | Yes (`8b4e7ad7...`) |
+| `CYCLE-20261031-HLOU` | `2026-10-31T23:35:47.214Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6363, Rule 6364, Rule 6365` | Yes (`0bb2c915...`) |

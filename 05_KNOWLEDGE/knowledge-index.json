@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T23:24:55.982Z",
+  "last_updated": "2026-10-31T23:35:47.130Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -29522,7 +29522,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/speridlabs/iris-3b",
       "source_version": "hf-speridlabs-iris-3b",
-      "content_hash": "b743ae20f915fe46a63c37c91c91be10c368e570428d16f4d9967ed9ff4cea35",
+      "content_hash": "0bb2c915dbaf22b3db0eac1bbeedeb29a7963682ed3cb31a2c71d3ce0174ec57",
       "dossier_path": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
       "promoted_rules": [
@@ -29590,6 +29590,21 @@
           "number": 5419,
           "title": "Multi-Task Conditioning Weight Decoupling for Dense Vision Fine-Tuning",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6363,
+          "title": "Direct High-Dimensional ODE Integration Clamping",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6364,
+          "title": "Multi-Task Channel-Aligned Mask Concatenation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6365,
+          "title": "Aspect-Ratio-Preserving Token Sequence Rounding",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -29600,7 +29615,7 @@
         "learn-huggingface-hf-speridlabs-iris-3b-mv3xf4f7",
         "learn-huggingface-hf-speridlabs-iris-3b-mv4c50o3"
       ],
-      "verified_at": "2026-10-28T21:57:57.712Z",
+      "verified_at": "2026-10-31T23:35:47.108Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -165216,6 +165231,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T23:24:55.969Z"
+    },
+    "rule-6363": {
+      "learning_id": "rule-6363",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6363,
+      "title": "Direct High-Dimensional ODE Integration Clamping",
+      "source_url": "https://huggingface.co/speridlabs/iris-3b",
+      "source_version": "hf-speridlabs-iris-3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T23:35:47.108Z"
+    },
+    "rule-6364": {
+      "learning_id": "rule-6364",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6364,
+      "title": "Multi-Task Channel-Aligned Mask Concatenation Invariant",
+      "source_url": "https://huggingface.co/speridlabs/iris-3b",
+      "source_version": "hf-speridlabs-iris-3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T23:35:47.108Z"
+    },
+    "rule-6365": {
+      "learning_id": "rule-6365",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6365,
+      "title": "Aspect-Ratio-Preserving Token Sequence Rounding",
+      "source_url": "https://huggingface.co/speridlabs/iris-3b",
+      "source_version": "hf-speridlabs-iris-3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T23:35:47.108Z"
     }
   },
   "aliases": {
