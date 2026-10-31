@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source**: github ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
-> **Source Version**: `1b58f5dd`  
+> **Source Version**: `cf6bafb2`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T17:23:31.235Z  
+> **Timestamp**: 2026-10-31T01:53:42.180Z  
 > **Learning ID**: `learn-github-kuddev-pebrel`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T17:23:30.208Z  
+> **Harvest Timestamp**: 2026-10-31T01:53:41.966Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI-native, GPU-accelerated terminal emulator for Windows with SSH, persistent sessions, split panes, and first-class AI CLI workflows.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3643 stars
+- **Stars / Engagement**: 3653 stars
 
 ---
 
@@ -1379,64 +1379,580 @@ pub(crate) fn shutdown() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1b58f5dd` (2026-10-28)
-**Commit Message**: docs: add WeChat group below README sponsors (#800)
+### Incident Patch 1: `cf6bafb2` (2026-10-30)
+**Commit Message**: feat(terminal): add bounded APC image rendering (#767)
 
-Add the community QR image and its expiry note to both READMEs after the Sponsors section.
+Add a bounded direct RGB/RGBA graphics profile with ordered replay, validated responses, independent placements, shared decode resources, and adjacent image paint batching. Preserve existing image protocols and enforce scoped memory budgets.
 
-**File**: `README.md` (modified, +12/-0)
+**File**: `architecture/notes/nebula_terminal/kitty_graphics/2026-10-25-kitty-graphics-placements.md` (added, +126/-0)
 ```diff
-@@ -74,6 +74,18 @@
- 
- For business cooperation or sponsorship, contact: [fickleheartedkeys@163.com](mailto:fickleheartedkeys@163.com)
- 
-+<p align="center">
-+  <strong>Pebrel WeChat Community</strong>
-+</p>
+@@ -0,0 +1,126 @@
++# Kitty protocol: placements own the grid, the cell size comes from the pane
 +
-+<p align="center">
-+  <a href="extra/community/wechat-group-2026-11-04.jpg"><img src="extra/community/wechat-group-2026-11-04.jpg" alt="QR code for the Pebrel WeChat group, valid before November 4, 2026" width="300" /></a>
-+</p>
++## Status
 +
-+<p align="center">
-+  Scan with WeChat to join. Valid before November 4, 2026. Click the image to view full size.
-+</p>
++Proposed; implemented and validated locally on Windows x64 MSVC, Rust 1.97.1,
++against yazi 26.9.1.
 +
- ## One Workspace
- 
- Pebrel (formerly Nebula) brings local shells, remote hosts, files, and AI command-line
++## Context
++
++Terminals that implement the Kitty protocol must serve two clients with
++different dialects. Neovim transmits an image and then asks the terminal to
++place it at the cursor with an explicit `c`/`r` cell count. yazi (and other
++"KGP-old" clients) instead asks for one `1x1` placement per cell: it moves the
++cursor to every cell of the preview rectangle and sends
++`a=p,i=ID,p=INDEX,x=..,y=..,w=..,h=..,c=1,r=1` each time, with the source pixel
++rectangle already computed on its side. The image is the union of the cells the
++cursor visited, and no command carries the total size.
++
++The same clients ask the terminal for its cell geometry with `CSI 16 t` before
++choosing a preview size. `vte 0.15` has no handler for that sequence, and ConPTY
++reports a zero pixel dimension, so neither the parser nor the platform PTY can
++answer. A client that never learns the cell size falls back to its configured
++maximum pixel box and stretches that box across the whole preview rectangle.
++
++The repository already owns one lifetime model for grid images: cells carry
++`ImageCell`, and a renderer keeps only weak references
++([grid-owned images](../../term/2026-09-27-grid-owned-inline-images.md)). The
++Kitty protocol has to join that model, not run beside it.
++
++## Evidence
++
++Measured on yazi 26.9.1 previewing a 1179x1279 JPEG in a 46x20 cell preview
++pane, 14x36 device pixels per cell (8.00x20.57 logical, scale 1.75).
++
++- Without `CSI 16 t` the client decoded to 1200x900 (its configured maximum),
++  asked for a 56x36 cell placement, and stretched that bitmap across the
++  preview: aspect 0.759 of the source, i.e. visibly squashed.
++- Answering `CSI 16 t` with `14`/`36` made the client decode to 644x698 and
++  place 46x20 cells; the painted aspect became 0.9226 against the source 0.9218.
++- A 1600x400 image placed as 46x5 cells painted 644x161, aspect 4.0000 against
++  the source 4.0.
++- A first implementation that reported pixel widths instead of cells, and that
++  published one event per placement, produced 3680 events for one preview and a
++  box larger than the pane.
++
++## Decision
++
++`nebula_terminal::kitty_graphics::KittyGraphics` parses the APC commands
++(`a=t` transfer with chunked base64, `a=p` placement, `a=d` erase, `a=q` probe,
++`a=T` transfer-and-place) and translates each dialect into the existing grid
++model:
++
++- A placement union-tracked per image id becomes one `ImagePlacement`, anchored
++  at the first cell the cursor visited. `a=p` writes the tile into the grid at
++  the cursor and never moves the text cursor (`C=1`), so prompt state survives.
++- The bitmap is published once per transfer, not once per placement: one
++  `Event::KittyImage` carrying raw pixels, the channel count and the placement.
++  Decoding happens on the app's background executor through the existing
++  `InlineImageStore` queue.
++- `a=d` clears the cells owning that image id, drops its pixels and geometry,
++  and lets the next transfer with the same id start from a clean slate. yazi
++  reuses one id for the process lifetime, so a surviving geometry would decode
++  the next picture at the previous stride.
++- `CSI 16 t` is answered from the raw byte stream, because the parser cannot see
++  it, with `\x1b[6;height;width t` in device pixels.
++- `Msg::CellMetrics` carries cell metrics without resizing the pseudo console.
++  Panes whose born geometry equals their target geometry never send `Resize`, so
++  without this message the stream would never learn the cell size.
++- Shared-memory transfers (`t=s`) answer `ENOTSUP` so clients fall back to
++  base64; the transfer path allocates no per-chunk temporaries and writes no
++  files.
++
++## Rejected alternatives
++
++- Reporting pixel dimensions in the event: the terminal would have to divide by
++  a cell size it may not know, which is exactly the bug above.
++- One event per placement: a single preview emits thousands of placements.
++- Keeping the previous geometry when a reused id starts a new transfer: decodes
++  the new payload at the old stride.
++- Accepting `t=s` probes: the payload is then a shared-memory name, not pixels,
++  and the terminal has no portable way to map it.
++- Asking for `a=q` support by replying `OK` to everything, including shared
++  memory: the client would then never send base64 transfers.
++- A second image store beside `InlineImageStore`: the grid already owns image
++  lifetime, and two stores disagree after scroll, reflow or alt-screen swaps.
++- Painting inside a cell-sized box and stretching the bitmap to fill it: a
++  client that rounds its pixel area up to whole cells paints a slightly
++  non-square picture; the placement therefore keeps the bitmap's own aspect.
++
++## Consequences
++
++The terminal core reports cells and pixels, never a division of the
 ```
 
-**File**: `README.zh-CN.md` (modified, +12/-0)
+**File**: `architecture/notes/nebula_terminal/kitty_graphics/2026-10-30-bounded-transfer-store.md` (added, +77/-0)
 ```diff
-@@ -74,6 +74,18 @@
- 
- 商业合作或赞助，请联系：[fickleheartedkeys@163.com](mailto:fickleheartedkeys@163.com)
- 
-+<p align="center">
-+  <strong>Pebrel 微信交流群</strong>
-+</p>
+@@ -0,0 +1,77 @@
++# Bound graphics transfers without conflating data and placement lifetimes
 +
-+<p align="center">
-+  <a href="extra/community/wechat-group-2026-11-04.jpg"><img src="extra/community/wechat-group-2026-11-04.jpg" alt="Pebrel 微信交流群二维码，2026 年 11 月 4 日前有效" width="300" /></a>
-+</p>
++## Status
 +
-+<p align="center">
-+  微信扫码加入，2026 年 11 月 4 日前有效。点击图片可查看原图。
-+</p>
++Implemented in the local PR review worktree. This budget repair is not a statement
++that the complete graphics PR is ready to merge.
 +
- ## 一个工作区
++## Context
++
++Frontend decode/cache limits do not constrain the protocol layer's raw image map
++or incomplete base64 buffers. Conversely, dropping raw data whenever the last
++visible cell disappears breaks the protocol's separate transmit/place lifecycle.
++
++## Evidence
++
++The [protocol review references](https://github.com/Kuddev/pebrel/pull/767)
++distinguishes lowercase placement deletion from uppercase data deletion and
++requires deletion commands to abort incomplete uploads. A headerless command for
++an already stored ID must not create another independent partial transfer.
++
++## Decision
++
++[`KittyGraphics`](../../../../nebula_terminal/src/kitty_graphics.rs) owns one active
++partial transfer and a FIFO-bounded named data store: at most 16 completed images
++and 128 MiB of raw payload bytes. Incomplete base64 is limited to 24 MiB and to
++the declared pixel count's encoded size, whichever is smaller. Append limits are
++checked before joining or decoding. Capacity grows geometrically within that
++limit rather than reallocating for every small chunk.
++
++Starting a new header abandons the previous partial context. A headerless new ID
++does not borrow stale dimensions from its completed image. Any delete command
++aborts the incomplete upload.
++
++Grid cells own placement identities; the protocol registry and event payloads
++hold weak references where they must not prolong a placement or queued pixels.
++Losing the last cell drops placement metadata, but named raw data remains in the
++bounded store for a later `a=p`. Uppercase data deletion and FIFO eviction release
++that stored data. A retransmission establishes new dimensions and identity.
++
++## Rejected alternatives
++
++- Rely only on the frontend's cache limit: leaves core maps unconstrained.
++- Keep a strong placement identity in the protocol map: grid erasure no longer
++  invalidates frontend work.
++- Delete raw data whenever a placement dies: breaks re-display without retransmit.
++- Reserve exactly one additional chunk each time: can repeatedly relocate an
++  increasingly large buffer.
++
++## Consequences
++
++These are per-stage logical payload budgets, not a 128 MiB process-memory promise.
++Encoded input, base64 decode temporaries, one background decode, frontend BGRA
++cache, allocator overhead and GPU storage have separate lifetimes and costs.
++The existing frontend queue/cache and synchronization semantics still require
++their own review; passing the core regression set does not validate those paths.
++
++## Validation
++
++Small fixtures cover count eviction, oversized final chunks, abandoned/headerless
++uploads, lowercase re-placement, uppercase release, deletion during an incomplete
++upload, chunk boundaries and declared-cell scaling. No large-allocation or
++reported machine-freezing reproduction is required by these tests.
++
++On 2026-10-30 the Windows core run passed 16 graphics tests and two cell-size query
++tests. Architecture and whitespace checks passed against main `1b58f5dd`.
++Full frontend rendering, synchronization and PR readiness are not established by
++those checks.
++
++## Supersedes
++
++None.
++
++## Revisit when
++
++Transport, placement or decode ownership changes, or measured workloads justify a
++different budget. Such changes must preserve bounded incomplete transfers and the
++separate stored-data/placement lifetimes.
+```
+
+**File**: `architecture/notes/nebula_terminal/kitty_graphics/2026-10-30-ordered-placements.md` (added, +108/-0)
+```diff
+@@ -0,0 +1,108 @@
++# Ordered graphics placements and shared image resources
++
++## Status
++
++Implemented for the direct, uncompressed RGB/RGBA profile. Review and validation
++are limited to that profile rather than claiming the entire graphics protocol.
++
++## Context
++
++The first implementation mutated the grid while VTE could still be buffering a
++DEC 2026 frame. It conflated a bitmap with one screen-space bounding box, lacked
++transfer/placement replies, and marked publication complete before a saturated
++frontend queue could accept it.
++
++## Evidence
++
++The [protocol review references](https://github.com/Kuddev/pebrel/pull/767) defines
++independent image/placement identities, source crops, first-chunk metadata,
++quiet-response modes, and cursor movement by the complete placement row count.
++The upstream `graphics.c` linked in the protocol review deletion filters distinguish visible placements
++from an explicit image/placement ID. VTE 0.15.0 has no general APC handler hook.
++
++## Decision
++
++Reuse the existing private, one-shot OSC title markers for ordered operations.
++The input stream holds command payloads and the protocol state. The Term holds
++only weak pending references; dropping a disconnected stream releases unfinished
++uploads even if the failed pane retains its Term. An uncontended, stream-local
++mutex permits the VTE callback to access that same state without a second owner.
++Lock order is always Term before graphics state. Capability queries are pure
++bounded validations and can answer without committing a synchronized frame.
++
++Pending markers use keyed lookup and FIFO release rather than rescanning a growing
++vector for every chunk. The existing 16-item/32-MiB OSC encoded-data admission
++remains. Graphics command metadata has a 65,536-marker ceiling within the same
++32-MiB pending-byte budget; VTE's existing bounded synchronization buffer normally
++commits much earlier. Rejected uploads receive the protocol budget error.
++
++Image IDs are scoped to the primary or alternate screen. Named images retain one
++raw allocation. Each placement has its own grid-owned lifetime, crop and scale;
++render snapshots keep weak placement lifetime and immutable geometry. All its
++placements select the same image resource/texture. Replacing one placement does
++not cancel another. Bitmap retransmission/quota eviction invalidates its resource
++lease, including stale snapshots and in-flight decode, without walking scrollback.
++
++The raw store keeps 16 images and charges their eventual BGRA cost against 128 MiB.
++Transfers keep one bounded base64 buffer. Queries never replace named data.
++The final chunk uses the first header's action/IDs and the applicable quiet mode.
++The supported selectors are a/A and i/I, including explicit placement IDs.
++
++graphics decode jobs hold weak raw-data references and have 16 metadata slots separate
++from the existing OSC encoded queue. The core already owns/bounds those raw bytes,
++so they do not consume the OSC 32-MiB encoded-data budget. Queued, active and cached
++resource IDs suppress duplicate decodes; a later placement can retry a texture
++evicted by the unchanged 16-image/128-MiB frontend cache.
++
++Independent one-cell placements can produce many render fragments. The paint path
++streams adjacent clips into one submission only when the texture, full source
++transform and vertical extent match. It preserves erased gaps and different
++mappings, and does not allocate a per-frame batch vector. The 46-by-20 tile case
++therefore uses 20 paint submissions instead of 920 without changing grid ownership.
++
++## Rejected alternatives
++
++- End synchronization for every APC chunk: breaks atomic frames and causes excess
++  work. Only real replay points perform grid changes.
++- Move the raw store into the retained Term: extends upload lifetime on disconnect.
++- One union rectangle for all placements: loses independent crops and positioning.
++- One decoded bitmap per placement: multiplies memory for tiled clients.
++- Treat unsupported file, PNG, Unicode-placeholder or relative-placement controls
++  as ordinary placements: returns success for a different operation.
++- Increase the encoded queue's byte cap: leaves duplicate ownership and starvation.
++
++## Consequences
++
++The initial profile supports direct RGB/RGBA, chunking, query/quiet replies,
++anonymous display, source crop, c/r sizing, pixel offsets, C=1, independent
++placements and scoped deletion. PNG/file/shared-memory/compression, Unicode
++placeholders, animation, relative placements and nonzero z-order return ENOTSUP.
++This remains a grid-backed profile, not an arbitrary floating overlay renderer.
++
++Per-stage bounds are not a process/GPU working-set promise: encoded input, one
++bounded decode temporary, BGRA cache, allocator and graphics-driver costs remain
++distinct. No dependency or thread pool is added. Existing OSC 1337 stays on its
++original transport and shared rendering path.
++
++## Validation
++
++Small wire fixtures cover sync
+```
+
+**File**: `nebula_app/src/display/terminal_math/tests.rs` (modified, +36/-4)
+```diff
+@@ -1728,9 +1728,33 @@ fn image_projection_preserves_erased_tiles_row_offsets_and_clipping() {
+         }],
+     };
+     let runs = [
+-        ImageRun { id: 1, row: 0, column: 6, source_row: 0, source_column: 0, columns: 1 },
+-        ImageRun { id: 1, row: 0, column: 8, source_row: 0, source_column: 2, columns: 2 },
+-        ImageRun { id: 1, row: 1, column: 6, source_row: 1, source_column: 0, columns: 4 },
++        ImageRun {
++            id: 1,
++            row: 0,
++            column: 6,
++            source_row: 0,
++            source_column: 0,
++            columns: 1,
++            placement: None,
++        },
++        ImageRun {
++            id: 1,
++            row: 0,
++            column: 8,
++            source_row: 0,
++            source_column: 2,
++            columns: 2,
++            placement: None,
++        },
++        ImageRun {
++            id: 1,
++            row: 1,
++            column: 6,
++            source_row: 1,
++            source_column: 0,
++            columns: 4,
++            placement: None,
++        },
+     ];
+     let projected = projection.project_image_runs(&runs, 9);
+     let geometry: Vec<_> = projected
+@@ -1766,7 +1790,15 @@ fn expanded_formula_clips_image_without_changing_texture_origin() {
+             shift_after: 3,
+         }],
+     };
+-    let runs = [ImageRun { id: 1, row: 0, column: 4, source_row: 2, source_column: 2, columns: 4 }];
++    let runs = [ImageRun {
++        id: 1,
++        row: 0,
++        column: 4,
++        source_row: 2,
++        source_column: 2,
++        columns: 4,
++        placement: None,
++    }];
+     let projected = projection.project_image_runs(&runs, 9);
+     assert_eq!(projected.len(), 1);
+     let r = &projected[0];
+```
+
+**File**: `nebula_app/src/gpui_shell/terminal/inline_image.rs` (modified, +496/-41)
+```diff
+@@ -5,7 +5,7 @@
+ //! expanding concurrently on the UI thread or exhausting process memory.
  
- Pebrel（原名 Nebula）把本地 Shell、远程主机、文件和 AI 命令行工具放进同一个原生桌面工作区。
+ use std::collections::VecDeque;
+-use std::sync::Arc;
++use std::sync::{Arc, Weak};
+ 
+ use gpui::{Bounds, ContentMask, Corners, Pixels, RenderImage, Window, point, px, size};
+ use image::{Frame, ImageFormat};
+@@ -19,9 +19,29 @@ const MAX_CACHE_BYTES: usize = 128 * 1024 * 1024;
+ const MAX_QUEUED_IMAGES: usize = 16;
+ const MAX_QUEUED_BYTES: usize = 32 * 1024 * 1024;
+ 
++enum ImageData {
++    Encoded(Arc<Vec<u8>>),
++    Pixels { data: Weak<Vec<u8>>, channels: u8 },
++}
++
++impl ImageData {
++    fn encoded_bytes(&self) -> usize {
++        match self {
++            Self::Encoded(data) => data.len(),
++            Self::Pixels { .. } => 0,
++        }
++    }
++    fn available(&self) -> bool {
++        match self {
++            Self::Encoded(_) => true,
++            Self::Pixels { data, .. } => data.strong_count() != 0,
++        }
++    }
++}
++
+ pub(super) struct PendingInlineImage {
+     sequence: u64,
+-    data: Arc<Vec<u8>>,
++    data: ImageData,
+     placement: ImagePlacement,
+ }
+ 
+@@ -36,13 +56,27 @@ pub(super) struct InlineImage {
+ pub(super) struct InlineImageStore {
+     queued: VecDeque<PendingInlineImage>,
+     queued_bytes: usize,
+-    decoding: bool,
++    decoding: Option<u64>,
+     next_sequence: u64,
+     images: VecDeque<(u64, InlineImage)>,
+     decoded_bytes: usize,
+ }
+ 
+ impl InlineImageStore {
++    fn prune_queued(&mut self) {
++        self.queued.retain(|pending| pending.placement.is_alive() && pending.data.available());
++        self.queued_bytes = self.queued.iter().map(|pending| pending.data.encoded_bytes()).sum();
++    }
++
++    fn contains(&self, id: u64) -> bool {
++        self.decoding == Some(id)
++            || self.queued.iter().any(|pending| pending.placement.id == id)
++            || self
++                .images
++                .iter()
++                .any(|(_, image)| image.placement.id == id && image.placement.is_alive())
++    }
++
+     pub fn enqueue(
+         &mut self,
+         data: Arc<Vec<u8>>,
+@@ -61,7 +95,14 @@ impl InlineImageStore {
+         if !placement.is_alive() {
+             return Ok(());
+         }
+-        if self.queued.len() >= MAX_QUEUED_IMAGES {
++        self.prune_queued();
++        if self
++            .queued
++            .iter()
++            .filter(|pending| matches!(pending.data, ImageData::Encoded(_)))
++            .count()
++            >= MAX_QUEUED_IMAGES
++        {
+             return Err("too many terminal images are waiting to decode");
+         }
+         let next_bytes = self
+@@ -74,27 +115,90 @@ impl InlineImageStore {
+ 
+         let sequence = self.next_sequence;
+         self.next_sequence = self.next_sequence.wrapping_add(1);
+-        self.queued.push_back(PendingInlineImage { sequence, data, placement });
++        self.queued.push_back(PendingInlineImage {
++            sequence,
++            data: ImageData::Encoded(data),
++            placement,
++        });
+         self.queued_bytes = next_bytes;
+         Ok(())
+     }
+ 
++    /// Queue a Kitty protocol transfer, whose payload is raw pixels rather than
++    /// an encoded container. `channels` is the byte count per pixel (3 = RGB,
++    /// 4 = RGBA); the pixel geometry rides along in `placement.layout`.
++    pub fn enqueue_pixels(
++        &mut self,
++        data: Weak<Vec<u8>>,
++        channels: u8,
++        placement: ImagePlacement,
++    ) -> Result<(), &'static str> {
++        if !matches!(channels, 3 | 4) {
++            return Err("image transfer has an unsupported channel count");
++        }
++
++        let Some(pixels_owner) = data.upgrade() else { return Ok(()) };
++        if pixels_owner.len() > MAX_IMAGE_DECODED_BYTES {
++            return Err("image transfer exceeds the decoded image budget");
++        }
++        if !placement.layout.width.is_finite()
++            || !placement.layout.height.is_finite()
++            || placement.layout.width <= 0.0
++            || placement.layout.height <= 0.0
++        {
++            return Err("image transfer has an invalid display size");
++        }
++        let pixels = placement.layout.width as u64 * placement.layout.height as u64;
++        if pixels > MAX_IMAGE_PIXELS {
++            return Err("image transfer exceeds the pixel budget");
++        }
++        if (pixels * u64::from(channels)) != pixels_owner.len() as u64 {
++            return Err("image transfer is shorter than its declared size");
++        }
++        if !placement.is_alive() {
++            return Ok(());
++        }
++        self.prune_queued();
++        if self.contains(placement.id) {
++            return Ok(());
++        }
++        // 原始像素仍归核心的 16 张有界仓库；队列只留弱引用，不与 OSC 编码数据争 32 MiB。
++        if self
++            .queued
++            .iter()
++            .filter(|pending| matches!(pending.data, ImageData::Pixels { .. }))
++            .count()
++            >= MAX_CACHED_IMAGES
++        {
++            return Err("too many terminal images are waiting to decode");
++        }
++
++        let se
+```
+
+**File**: `nebula_app/src/gpui_shell/terminal/native_results/viewport.rs` (modified, +10/-2)
+```diff
+@@ -381,6 +381,7 @@ mod tests {
+                     columns: 2,
+                     source_column: 2,
+                     source_row,
++                    placement: None,
+                 };
+                 let (image, clip) = super::super::super::inline_image::image_geometry(
+                     layout,
+@@ -400,8 +401,15 @@ mod tests {
+             }
+             let original = original.unwrap();
+             projection.top += 1.0;
+-            let run =
+-                ImageRun { id: 1, row: 5, column: 6, columns: 2, source_column: 2, source_row: 1 };
++            let run = ImageRun {
++                id: 1,
++                row: 5,
++                column: 6,
++                columns: 2,
++                source_column: 2,
++                source_row: 1,
++                placement: None,
++            };
+             let (scrolled, _) = super::super::super::inline_image::image_geometry(
+                 layout,
+                 &run,
+```
+
+**File**: `nebula_app/src/gpui_shell/terminal/view.rs` (modified, +8/-0)
+```diff
+@@ -789,6 +789,14 @@ impl TerminalView {
+                     Err(error) => log::warn!("terminal image dropped: {error}"),
+                 }
+             },
++            // APC graphics: pixels arrive raw, already placed in the grid, so
++            // decoding is the only work left — and it happens off the UI thread.
++            TermEvent::KittyImage { data, channels, placement } => {
++                match self.inline_images.enqueue_pixels(data, channels, placement) {
++                    Ok(()) => self.drive_inline_image_decode(cx),
++                    Err(error) => log::warn!("APC image dropped: {error}"),
++                }
++            },
+             TermEvent::CommandStart => {
+                 self.native_clipboard.clear();
+                 self.on_command_start(cx);
+```
+
+**File**: `nebula_app/src/gpui_shell/terminal/view/layout.rs` (modified, +11/-0)
+```diff
+@@ -66,6 +66,10 @@ impl TerminalView {
+                 self.commit_viewport(viewport);
+             } else {
+                 self.window_size = viewport.window_size();
++                // 出生几何就是目标几何时没有任何 resize 要下发，字节流因此永远
++                // 不知道 cell 尺寸：`CSI 16 t`（yazi 用它把像素换算成格子）无
++                // 从回答，客户端只好把预览图拉伸铺满整块 pane。这里只补度量。
++                self.announce_cell_metrics(self.window_size);
+             }
+             return;
+         }
+@@ -142,6 +146,13 @@ impl TerminalView {
+         notifier.on_resize_grid(viewport.window_size());
+     }
+ 
++    /// 只把 cell 像素尺寸告诉字节流，不动 conhost、不 reflow、不去抖。
++    fn announce_cell_metrics(&mut self, window_size: nebula_terminal::event::WindowSize) {
++        let Some(session) = &self.session else { return };
++        let mut notifier = nebula_terminal::event_loop::Notifier(session.notifier.0.clone());
++        notifier.on_cell_metrics(window_size);
++    }
++
+     /// Commit one viewport in grid-before-PTY order. Output produced after
+     /// `ResizePseudoConsole` therefore always parses against the same geometry
+     /// history ConPTY used to generate its absolute cursor coordinates.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #818** (closed): feat(terminal): render cropped graphics placements and present decoded frames (@glitch-cmyk658)
 - **PR #801** (closed): fix(terminal): preserve native TUI mouse selection across pane boundaries (@Kuddev)
 - **PR #800** (2026-10-28): docs: add WeChat community below README sponsors (@Kuddev)
 - **PR #793** (2026-10-28): i18n(settings): use typed ids for setting help and option labels (@Tettu0530)
 - **PR #790** (2026-10-27): release: prepare Pebrel 2.3.1 (@Kuddev)
 - **PR #789** (2026-10-26): feat(sponsors): add approved AIAPI branding (@Kuddev)
-- **PR #787** (2026-10-26): [codex] Fix character-art proportions without changing text spacing (@Kuddev)
 
 ---
 
@@ -1456,32 +1972,45 @@ Add the community QR image and its expiry note to both READMEs after the Sponsor
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: add WeChat group below README sponsors (#800)
+## X. terminal): add bounded APC image rendering (#767)
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `architecture/notes/nebula_terminal/kitty_graphics/2026-10-25-kitty-graphics-placements.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1b58f5dd`: docs: add WeChat group below README sponsors (#800). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cf6bafb2`: terminal): add bounded APC image rendering (#767). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `architecture/notes/nebula_terminal/kitty_graphics/2026-10-25-kitty-graphics-placements.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-<p align="center">
-  <strong>Pebrel WeChat Community</strong>
-</p>
+# Kitty protocol: placements own the grid, the cell size comes from the pane
 
-<p align="center">
-  <a href="extra/community/wechat-group-2026-11-04.jpg"><img src="extra/community/wechat-group-2026-11-04.jpg" alt="QR code for the Pebrel WeChat group, valid before November 4, 2026" width="300" /></a>
-</p>
+## Status
 
-<p align="center">
-  Scan with WeChat to join. Valid before November 4, 2026. Click the image to view full size.
-</p>
+Proposed; implemented and validated locally on Windows x64 MSVC, Rust 1.97.1,
+against yazi 26.9.1.
 
+## Context
+
+Terminals that implement the Kitty protocol must serve two clients with
+different dialects. Neovim transmits an image and then asks the terminal to
+place it at the cursor with an explicit `c`/`r` cell count. yazi (and other
+"KGP-old" clients) instead asks for one `1x1` placement per cell: it moves the
+cursor to every cell of the preview rectangle and sends
+`a=p,i=ID,p=INDEX,x=..,y=..,w=..,h=..,c=1,r=1` each time, with the source pixel
+rectangle already computed on its side. The image is the union of the cells the
+cursor visited, and no command carries the total size.
+
+The same clients ask the terminal for its cell geometry with `CSI 16 t` before
+choosing a preview size. `vte 0.15` has no handler for that sequence, and ConPTY
+reports a zero pixel dimension, so neither the parser nor the platform PTY can
+answer. A client that never learns the cell size falls back to its configured
+maximum pixel box and stretches that box across the whole preview rectangle.
+
+The repository already owns o
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1491,4 +2020,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1b58f5dd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cf6bafb2` are properly handled with clean fallback behavior.

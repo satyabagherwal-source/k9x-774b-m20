@@ -6408,3 +6408,6 @@
 | `CYCLE-20261031-Q8E0` | `2026-10-31T01:46:47.928Z` | `pubkey/rxdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5997` | Yes (`c40ffb01...`) |
 | `CYCLE-20261031-QCJL` | `2026-10-31T01:46:53.313Z` | `RecursiveSI/flint` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4612, Rule 5998, Rule 5999` | Yes (`2ab90870...`) |
 | `CYCLE-20261031-QF94` | `2026-10-31T01:46:56.824Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6000` | Yes (`b5cc2aa9...`) |
+| `CYCLE-20261031-Z45F` | `2026-10-31T01:53:42.339Z` | `XHToken/Spark-X2.6-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md` | Yes (`37014a40...`) |
+| `CYCLE-20261031-Z49K` | `2026-10-31T01:53:42.488Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md` | Yes (`8f761374...`) |
+| `CYCLE-20261031-ZAL8` | `2026-10-31T01:53:50.684Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6001` | Yes (`3f23f2d3...`) |

@@ -6417,3 +6417,6 @@ Every entry in this ledger must capture:
 | `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `e344f15d` | Multi-dimensional audit evidence | 2026-10-31T01:46:47.931Z |
 | `learn-huggingface-recursivesi-flint` | `https://huggingface.co/RecursiveSI/flint` | `hf-recursi` | Multi-dimensional audit evidence | 2026-10-31T01:46:53.317Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `9fd19cdd` | Multi-dimensional audit evidence | 2026-10-31T01:46:56.827Z |
+| `learn-huggingface-xhtoken-spark-x2-6-4b` | `https://huggingface.co/XHToken/Spark-X2.6-4B` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-10-31T01:53:42.343Z |
+| `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `cf6bafb2` | Multi-dimensional audit evidence | 2026-10-31T01:53:42.492Z |
+| `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `1408ae4a` | Multi-dimensional audit evidence | 2026-10-31T01:53:50.688Z |

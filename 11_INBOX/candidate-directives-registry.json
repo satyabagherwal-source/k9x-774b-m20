@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T01:15:16.014Z",
+  "last_updated": "2026-10-31T01:53:42.498Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3434,6 +3434,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-arangodb-arangodb"
+    },
+    {
+      "id": "CD-Z49U",
+      "directive_title": "terminal): add bounded APC image rendering (#767)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Kuddev/pebrel",
+      "source_commit": "cf6bafb2",
+      "date_staged": "2026-10-31",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-kuddev-pebrel"
     }
   ]
 }

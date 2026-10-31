@@ -3373,10 +3373,10 @@
     "repository": "Kuddev/pebrel",
     "platform": "github",
     "sourceUrl": "https://github.com/Kuddev/pebrel",
-    "sourceVersion": "1b58f5dd",
+    "sourceVersion": "cf6bafb2",
     "license": "GPL-3.0",
-    "contentHash": "cdf93f8a20dfd632d648f68990ab7f18267983372a731da35a77d9d89fed0f05",
-    "lastHarvestedAt": "2026-10-29T17:23:31.862Z",
+    "contentHash": "8f761374585ff3f26c1c78d2b8244b272f24d84a088f50d4d43514aed2918605",
+    "lastHarvestedAt": "2026-10-31T01:53:42.492Z",
     "learningId": "learn-github-kuddev-pebrel"
   },
   "alibaba-formily": {
@@ -6213,10 +6213,10 @@
     "repository": "linkerd/linkerd2",
     "platform": "github",
     "sourceUrl": "https://github.com/linkerd/linkerd2",
-    "sourceVersion": "a4c00ac5",
+    "sourceVersion": "1408ae4a",
     "license": "Apache-2.0",
-    "contentHash": "3a64b4a40e3f0dc1e1b9eb2eb7dfaca4738763f4caf5925a8086adbbe6d9614b",
-    "lastHarvestedAt": "2026-10-30T06:16:38.735Z",
+    "contentHash": "3f23f2d3ae7925a7bdfd01497c1ac83879be937fc5becbaebc22facda76fb51d",
+    "lastHarvestedAt": "2026-10-31T01:53:50.688Z",
     "learningId": "learn-github-linkerd-linkerd2"
   },
   "libsql-libsql": {
@@ -10495,8 +10495,8 @@
     "sourceUrl": "https://huggingface.co/XHToken/Spark-X2.6-4B",
     "sourceVersion": "hf-xhtoken-spark-x2.6-4b",
     "license": "Open-Source",
-    "contentHash": "41f20dbdcb0e0d8d6eab19342ee838a3d6bbc916ee6dd6c1de268684c1a847e9",
-    "lastHarvestedAt": "2026-10-26T13:51:48.929Z",
+    "contentHash": "37014a40916a3f87d7c1f483fbf55f26d34e4d7337408ba17ada4ac928590e29",
+    "lastHarvestedAt": "2026-10-31T01:53:42.343Z",
     "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b"
   },
   "hf-internscience-sage-a1.5": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T01:46:56.753Z",
+  "last_updated": "2026-10-31T01:53:50.603Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -35063,8 +35063,8 @@
       "slug": "kuddev-pebrel",
       "platform": "github",
       "source_url": "https://github.com/Kuddev/pebrel",
-      "source_version": "1b58f5dd",
-      "content_hash": "cdf93f8a20dfd632d648f68990ab7f18267983372a731da35a77d9d89fed0f05",
+      "source_version": "cf6bafb2",
+      "content_hash": "8f761374585ff3f26c1c78d2b8244b272f24d84a088f50d4d43514aed2918605",
       "dossier_path": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "promoted_rules": [
@@ -35099,7 +35099,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T17:23:31.768Z",
+      "verified_at": "2026-10-31T01:53:42.350Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36083,8 +36083,8 @@
       "slug": "linkerd-linkerd2",
       "platform": "github",
       "source_url": "https://github.com/linkerd/linkerd2",
-      "source_version": "a4c00ac5",
-      "content_hash": "3a64b4a40e3f0dc1e1b9eb2eb7dfaca4738763f4caf5925a8086adbbe6d9614b",
+      "source_version": "1408ae4a",
+      "content_hash": "3f23f2d3ae7925a7bdfd01497c1ac83879be937fc5becbaebc22facda76fb51d",
       "dossier_path": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
       "promoted_rules": [
@@ -36112,6 +36112,11 @@
           "number": 5624,
           "title": "build(deps): bump postcss-selector-parser in /web/app (#15751)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6001,
+          "title": "upgrade to network-validator 0.1.10 (#15757)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36119,7 +36124,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T06:16:38.677Z",
+      "verified_at": "2026-10-31T01:53:50.574Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -158166,6 +158171,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T01:46:56.730Z"
+    },
+    "rule-6001": {
+      "learning_id": "rule-6001",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6001,
+      "title": "upgrade to network-validator 0.1.10 (#15757)",
+      "source_url": "https://github.com/linkerd/linkerd2",
+      "source_version": "1408ae4a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T01:53:50.574Z"
     }
   },
   "aliases": {
