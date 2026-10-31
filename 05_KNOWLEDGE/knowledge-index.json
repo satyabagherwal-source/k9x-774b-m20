@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T10:00:41.039Z",
+  "last_updated": "2026-10-31T10:07:26.539Z",
   "total_verified_learnings": 1181,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17247,7 +17247,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/akhilaaa3/Jev-Omni",
       "source_version": "hf-akhilaaa3-jev-omni",
-      "content_hash": "f340b2848415c1a5859df4a077158dd89abb9af20d6be9878b59acd253aa53da",
+      "content_hash": "683486cc069a60caaf519cf3c344c09e28c1e01508facc194d85caa9b4d67ff2",
       "dossier_path": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
       "promoted_rules": [
@@ -17324,7 +17324,7 @@
         "learn-huggingface-hf-akhilaaa3-jev-omni-mv46br3m",
         "learn-huggingface-hf-akhilaaa3-jev-omni-mv4jlvuj"
       ],
-      "verified_at": "2026-10-28T06:35:55.722Z",
+      "verified_at": "2026-10-31T10:07:21.925Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47319,8 +47319,8 @@
       "slug": "react-metro",
       "platform": "github",
       "source_url": "https://github.com/react/metro",
-      "source_version": "492872b2",
-      "content_hash": "3eaf25f249348ab9cf74f11a33a78611d0832aeb0adbc823e72e64eb92abe416",
+      "source_version": "fcced577",
+      "content_hash": "983e73d40e9ed2871bd0d98c55bf028159cad57160ec6930657e7ab4c7570c91",
       "dossier_path": "07_PROJECT_LEARNING/react-metro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-metro-learnings.md",
       "promoted_rules": [
@@ -47348,6 +47348,11 @@
           "number": 5319,
           "title": "Bump @babel/traverse to ^7.29.10 and add constant-folding regression tests (#204",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6162,
+          "title": "Don't clear over output printed outside of Terminal",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47355,7 +47360,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T14:56:35.204Z",
+      "verified_at": "2026-10-31T10:07:26.520Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -161273,6 +161278,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T10:00:41.023Z"
+    },
+    "rule-6162": {
+      "learning_id": "rule-6162",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6162,
+      "title": "Don't clear over output printed outside of Terminal",
+      "source_url": "https://github.com/react/metro",
+      "source_version": "fcced577",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T10:07:26.520Z"
     }
   },
   "aliases": {

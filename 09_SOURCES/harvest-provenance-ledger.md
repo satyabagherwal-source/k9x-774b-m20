@@ -6535,3 +6535,5 @@ Every entry in this ledger must capture:
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `784d6493` | Multi-dimensional audit evidence | 2026-10-31T09:54:07.310Z |
 | `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `e680c0af` | Multi-dimensional audit evidence | 2026-10-31T10:00:29.038Z |
 | `learn-huggingface-comfy-org-qwen-image-2-1` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-31T10:00:41.096Z |
+| `learn-huggingface-akhilaaa3-jev-omni` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-10-31T10:07:22.038Z |
+| `learn-github-react-metro` | `https://github.com/react/metro` | `fcced577` | Multi-dimensional audit evidence | 2026-10-31T10:07:26.620Z |

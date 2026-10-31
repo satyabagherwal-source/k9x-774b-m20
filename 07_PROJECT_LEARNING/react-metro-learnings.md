@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-metro-learnings.md`  
 > **Source**: github ([https://github.com/react/metro](https://github.com/react/metro))  
-> **Source Version**: `492872b2`  
+> **Source Version**: `fcced577`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T14:56:34.799Z  
+> **Timestamp**: 2026-10-31T10:07:25.930Z  
 > **Learning ID**: `learn-github-react-metro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-metro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react/metro](https://github.com/react/metro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T14:56:34.790Z  
+> **Harvest Timestamp**: 2026-10-31T10:07:25.923Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🚇 The JavaScript bundler for React Native
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5657 stars
+- **Stars / Engagement**: 5659 stars
 
 ---
 
@@ -1237,6 +1237,21 @@ function chunkString(str: string, size: number): Array<string> {
 }
 
 /**
+ * Bytes written by `stream` and, when it is stdout or stderr, by both, as they
+ * usually share the terminal (e.g. `console.error()`).
+ */
+function getBytesWritten(stream: tty.WriteStream): number {
+  if (stream !== process.stdout && stream !== process.stderr) {
+    return stream.bytesWritten;
+  }
+
+  return (
+    // $FlowFixMe[prop-missing] `bytesWritten` is missing when redirected to a file
+    (process.stdout.bytesWritten ?? 0) + (process.stderr.bytesWritten ?? 0)
+  );
+}
+
+/**
  * Get the stream as a TTY if it effectively looks like a valid TTY.
  */
 function getTTYStream(stream: UnderlyingStream): ?tty.WriteStream {
@@ -1289,6 +1304,7 @@ export default class Terminal {
   #isPendingUpdate: boolean;
   #shouldFlush: boolean;
   #writeStatusThrottled: string => void;
+  #bytesWrittenAfterStatus: ?number;
 
   constructor(stream: UnderlyingStream, opts: {ttyPrint?: boolean} = {}) {
     this.#logLines = [];
@@ -1319,13 +1335,13 @@ export default class Terminal {
     }
 
     this.#isUpdating = true;
-    this.#updatePromise = this.#update().then(async () => {
+    this.#updatePromise = Promise.all(this.#updateSync()).then(async () => {
       while (this.#isPendingUpdate) {
         if (!this.#shouldFlush) {
           await new Promise(resolve => setTimeout(resolve, 33));
         }
         this.#isPendingUpdate = false;
-        await this.#update();
+        await Promise.all(this.#updateSync());
       }
       this.#isUpdating = false;
       this.#shouldFlush = false;
@@ -1351,12 +1367,10 @@ export default class Terminal {
   }
 
   /**
-   * Clear and write the new status, logging in bulk in-between. Doing this in a
-   * throttled way (in a different tick than the calls to `log()` and
-   * `status()`) prevents us from repeatedly rewriting the status in case
-   * `terminal.log()` is called several times.
+   * Issues the update's writes without awaiting in between, so no other output
+   * can land in the middle of an update. Returns the pending writes.
    */
-  async #update(): Promise<void> {
+  #updateSync(): Array<Promise<unknown>> {
     const ttyStream = this.#ttyStream;
 
     const nextStatusStr = this.#nextStatusStr;
@@ -1368,29 +1382,43 @@ export default class Terminal {
     this.#logLines = [];
 
     if (statusStr === nextStatusStr && logLines.length === 0) {
-      return;
+      return [];
     }
 
-    if (ttyStream && statusStr.length > 0) {
+    const writes: Array<Promise<unknown>> = [];
+
+    if (
+      ttyStream &&
+      statusStr.length > 0 &&
+      // If anything printed outside of Terminal (like direct console.log),
+      // don't try to clear latest status, and just print a new one instead
+      // or we might delete that external print
+      getBytesWritten(ttyStream) === this.#bytesWrittenAfterStatus
+    ) {
       const statusLinesCount = statusStr.split('\n').length - 1;
       // extra -1 because we print the status with a trailing new line
-      await moveCursor(ttyStream, -ttyStream.columns, -statusLinesCount - 1);
-      await clearScreenDown(ttyStream);
+      writes.push(
+        moveCursor(ttyStream, -ttyStream.columns, -statusLinesCount - 1),
+        clearScreenDown(ttyStream),
+      );
     }
 
     if (logLines.length > 0) {
-      await streamWrite(this.#stream, logLines.join('\n') + '\n');
+      writes.push(streamWrite(this.#stream, logLines.join('\n') + '\n'));
     }
 
     if (ttyStream) {
       if (nextStatusStr.length > 0) {
-        await streamWrite(this.#stream, nextStatusStr + '\n');
+        writes.push(streamWrite(this.#stream, nextStatusStr + '\n'));
       }
+      this.#bytesWrittenAfterStatus = getBytesWritten(ttyStream);
     } else {
       this.#writeStatusThrottled(
         nextStatusStr.length > 0 ? nextStatusStr + '\n' : '',
       );
     }
+
+    return writes;
   }
 
   /**
@@ -1469,175 +1497,210 @@ export default class Terminal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0ab227f6` (2026-10-27)
-**Commit Message**: Bump @babel/traverse to ^7.29.10 and add constant-folding regression tests (#2043)
+### Incident Patch 1: `fcced577` (2026-10-30)
+**Commit Message**: Don't clear over output printed outside of Terminal
 
-**File**: `packages/metro-source-map/package.json` (modified, +2/-2)
-```diff
-@@ -18,7 +18,8 @@
-     "cleanup-release": "test ! -e build && mv src build && mv src.real src"
-   },
-   "dependencies": {
--    "@babel/traverse": "^7.29.0",
-+    "@babel/core": "^7.25.2",
-+    "@babel/traverse": "^7.29.10",
-     "@babel/types": "^7.29.8",
-     "flow-enums-runtime": "^0.0.6",
-     "invariant": "^2.2.4",
-@@ -29,7 +30,6 @@
-   },
-   "license": "MIT",
-   "devDependencies": {
--    "@babel/core": "^7.25.2",
-     "@babel/parser": "^7.29.9",
-     "terser": "^5.15.0"
-   },
-```
+Summary:
+`Terminal` redraws its interactive status by moving the cursor up over the status lines and clearing to the end of the screen. Anything printed without going through `Terminal` (a dependency's `console.log`, `console.error`, Node deprecation warnings) lands inside that area and is erased by the next redraw.
 
-**File**: `packages/metro-source-map/src/generateFunctionMap.js` (modified, +1/-1)
+This keeps that output with a minimal change, without patching `console`, `process.stdout.write` or any other global:
+- After each status write, `Terminal` saves the stream's `bytesWritten`. When the stream is stdout or stderr, it uses the sum of both, as they usually share the terminal.
+- Before the next redraw, if the counter changed, something else printed after the status. `Terminal` then skips the cursor-up and clear and prints the new status below that output.
+- The writes of an update are issued without awaiting in between (`#updateSync`), so other output can't land between the cursor move, the clear and the new status.
+- The `--tty-print` help text in `fb-metro-cli` no longer says console output gets deleted by the status.
+
+Known limits: each time other output is detected, the previous status stays in the his
+
+**File**: `packages/metro-core/src/Terminal.js` (modified, +41/-13)
 ```diff
-@@ -30,7 +30,7 @@ import type {
- import type {MetroBabelFileMetadata} from 'metro-babel-transformer';
+@@ -49,6 +49,21 @@ function chunkString(str: string, size: number): Array<string> {
+   return str.match(new RegExp(`(?:${SKIP_ANSI}.){1,${size}}`, 'g')) || [];
+ }
  
- import B64Builder from './B64Builder';
--import traverse from '@babel/traverse';
-+import {traverse} from '@babel/core';
- import * as t from '@babel/types';
- import {
-   isAssignmentExpression,
-```
-
-**File**: `packages/metro-transform-plugins/package.json` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@
-     "@babel/core": "^7.25.2",
-     "@babel/generator": "^7.29.1",
-     "@babel/template": "^7.28.6",
--    "@babel/traverse": "^7.29.0",
-+    "@babel/traverse": "^7.29.10",
-     "flow-enums-runtime": "^0.0.6",
-     "nullthrows": "^1.1.1"
-   },
-```
-
-**File**: `packages/metro-transform-plugins/src/__tests__/constant-folding-plugin-test.js` (modified, +48/-0)
-```diff
-@@ -396,4 +396,52 @@ describe('constant expressions', () => {
++/**
++ * Bytes written by `stream` and, when it is stdout or stderr, by both, as they
++ * usually share the terminal (e.g. `console.error()`).
++ */
++function getBytesWritten(stream: tty.WriteStream): number {
++  if (stream !== process.stdout && stream !== process.stderr) {
++    return stream.bytesWritten;
++  }
++
++  return (
++    // $FlowFixMe[prop-missing] `bytesWritten` is missing when redirected to a file
++    (process.stdout.bytesWritten ?? 0) + (process.stderr.bytesWritten ?? 0)
++  );
++}
++
+ /**
+  * Get the stream as a TTY if it effectively looks like a valid TTY.
+  */
+@@ -102,6 +117,7 @@ export default class Terminal {
+   #isPendingUpdate: boolean;
+   #shouldFlush: boolean;
+   #writeStatusThrottled: string => void;
++  #bytesWrittenAfterStatus: ?number;
  
-     compare([constantFoldingPlugin], code, expected);
-   });
+   constructor(stream: UnderlyingStream, opts: {ttyPrint?: boolean} = {}) {
+     this.#logLines = [];
+@@ -132,13 +148,13 @@ export default class Terminal {
+     }
+ 
+     this.#isUpdating = true;
+-    this.#updatePromise = this.#update().then(async () => {
++    this.#updatePromise = Promise.all(this.#updateSync()).then(async () => {
+       while (this.#isPendingUpdate) {
+         if (!this.#shouldFlush) {
+           await new Promise(resolve => setTimeout(resolve, 33));
+         }
+         this.#isPendingUpdate = false;
+-        await this.#update();
++        await Promise.all(this.#updateSync());
+       }
+       this.#isUpdating = false;
+       this.#shouldFlush = false;
+@@ -164,12 +180,10 @@ export default class Terminal {
+   }
+ 
+   /**
+-   * Clear and write the new status, logging in bulk in-between. Doing this in a
+-   * throttled way (in a different tick than the calls to `log()` and
+-   * `status()`) prevents us from repeatedly rewriting the status in case
+-   * `terminal.log()` is called several times.
++   * Issues the update's writes without awaiting in between, so no other output
++   * can land in the middle of an update. Returns the pending writes.
+    */
+-  async #update(): Promise<void> {
++  #updateSync(): Array<Promise<unknown>> {
+     const ttyStream = this.#ttyStream;
+ 
+     const nextStatusStr = this.#nextStatusStr;
+@@ -181,29 +195,43 @@ export default class Terminal {
+     this.#logLines = [];
+ 
+     if (statusStr === nextStatusStr && logLines.length === 0) {
+-      return;
++      return [];
+     }
+ 
+-    if (ttyStream && statusStr.length > 0) {
++    const writes: Array<Promise<unknown>> = [];
 +
-+  test('does not fold arithmetic on destructured object bindings', () => {
-+    const code = `
-+      const O = {e: 80};
-+      export function f() {
-+        const {e} = O;
-+        return e + 1;
-+      }
-+    `;
++    if (
++      ttyStream &&
++      statusStr.length > 0 &&
++      // If anything printed outside of Terminal (like direct console.log),
++      // don't try to clear latest status, and just print a new one instead
++      // or we might delete that external print
++      getBytesWritten(ttyStream) === this.#bytesWrittenAfterStatus
++    ) {
+       const statusLinesCount = statusStr.split('\n').length - 1;
+       // extra -1 because we print the status with a trailing new line
+-      await moveCursor(ttyStream, -ttyStream.columns, -statusLinesCount - 1);
+-      await clearScreenDown(ttyStream);
++      writes.push(
++        moveCursor(ttyStream, -ttyStream.columns, -statusLinesCount - 1),
++        clearScreenDown(ttyStream),
++      );
+     }
+ 
+     if (logLines.length > 0) {
+-      await streamWrite(this.#stream, logLines.join('\n') + '\n');
++      writes.push(streamWrite(this.#stream, logLines.join('\n') + '\n'));
+     }
+ 
+     if (ttyStream) {
+       if (nextStatusStr.length > 0) {
+-        await streamWrite(this.#stream, nextStatusStr + '\n');
++        writes.push(streamWrite(this.#stream, nextStatusStr + '\n'));
+       }
++      this.#bytesWrittenAfterStatus = getBytesWritten(ttyStream);
+     } else {
+       this.#writeStatusThrottled(
+         nextStatusStr.length > 0 ? nextStatusStr + '\n' : '',
+       );
+     }
 +
-+    compare([constantFoldingPlugin], code, code);
-+  });
-+
-+  test('does not fold to non-finite numbers from destructured bindings', () => {
-+    const code = `
-+      const SHAPE = {lo: 80, hi: 85, scale: 2.8};
-+      export function f() {
-+        const {lo, hi, scale} = SHAPE;
-+        return (hi - lo) * scale;
-+      }
-+    `;
-+
-+    compare([constantFoldingPlugin], code, code);
-+  });
-+
-+  test('does not fold conditionals on destructured object bindings', () => {
-+    const code = `
-+      const O = {flag: false};
-+      export function f() {
-+        const {flag} = O;
-+        return flag ? 1 : 2;
-+      }
-+    `;
-+
-+    compare([constantFoldingPlugin], code, code);
-+  });
-+
-+  test('does not fold logical expressions on destructured object bindings', () => {
-+    const code = `
-+      const O = {flag: false};
-+      export function f() {
-+        const {flag} = O;
-+        return flag || 3;
-+      }
-+    `;
-+
-+    compare([constantFoldingPlugin], code, code);
-+  });
- });
++    return writes;
+   }
+ 
+   /**
 ```
 
-**File**: `packages/metro-transform-plugins/src/normalizePseudoGlobals.js` (modified, +1/-1)
+**File**: `packages/metro-core/src/__tests__/Terminal-test.js` (modified, +15/-0)
 ```diff
-@@ -19,7 +19,7 @@ import type {
-   Program,
- } from '@babel/types';
+@@ -54,12 +54,15 @@ describe.each([false, true])(
+           ? require('node:tty').WriteStream.prototype
+           : require('node:net').Socket,
+       );
++      let bytesWritten = 0;
++      Object.defineProperty(stream, 'bytesWritten', {get: () => bytesWritten});
+       Object.assign(stream, {
+         cursor: 0,
+         buffer: ' '.repeat(columns * lines).split(''),
+         columns,
+         lines,
+         write(str, callback = () => {}) {
++          bytesWritten += str.length;
+           for (let i = 0; i < str.length; ++i) {
+             if (str[i] === '\n') {
+               this.cursor = this.cursor - (this.cursor % columns) + columns;
+@@ -181,6 +184,18 @@ describe.each([false, true])(
+       }
+     });
  
--import traverse from '@babel/traverse';
-+import {traverse} from '@babel/core';
- import nullthrows from 'nullthrows';
- 
- export type Options = {
++    test('keeps output written outside of Terminal', async () => {
++      const {stream, terminal} = prepare({isTTY: true, ttyPrint});
++      terminal.status('status');
++      await terminal.flush();
++      stream.write('external\n');
++      terminal.status('status2');
++      await terminal.flush();
++      expect(stream.buffer.join('').trim()).toEqual(
++        'status    external  status2',
++      );
++    });
++
+     test('flush- multi-line', async () => {
+       const {stream, terminal} = prepare({isTTY: true, ttyPrint});
+       terminal.log('foo');
 ```
 
-**File**: `packages/metro/package.json` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@
-     "@babel/generator": "^7.29.1",
-     "@babel/parser": "^7.29.9",
-     "@babel/template": "^7.28.6",
--    "@babel/traverse": "^7.29.0",
-+    "@babel/traverse": "^7.29.10",
-     "@babel/types": "^7.29.8",
-     "accepts": "^2.0.0",
-     "connect": "^3.6.5",
-```
+---
 
-**File**: `packages/metro/src/DeltaBundler/Worker.flow.js` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@ import type {
-   JsTransformOptions,
- } from 'metro-transform-worker';
- 
--import traverse from '@babel/traverse';
-+import {traverse} from '@babel/core';
- import crypto from 'node:crypto';
- import fs from 'node:fs';
- import path from 'node:path';
-```
+### Incident Patch 2: `bd3fa8cb` (2026-10-30)
+**Commit Message**: Upgrade Flow in fbsource
 
-**File**: `packages/metro/src/ModuleGraph/worker/collectDependencies.js` (modified, +1/-1)
+Summary:
+Upgrade Flow.
+
+___
+
+landed-with-radar-review
+
+Differential Revision: D128608923
+
+Pull Request resolved: https://github.com/react/metro/pull/2136
+
+**File**: `packages/metro/src/lib/formatBundlingError.js` (modified, +1/-0)
 ```diff
-@@ -26,9 +26,9 @@ import type {
-   AsyncDependencyType,
- } from 'metro/private/DeltaBundler/types';
- 
-+import {traverse} from '@babel/core';
- import generate from '@babel/generator';
- import template from '@babel/template';
--import traverse from '@babel/traverse';
- import * as types from '@babel/types';
- import {isImport, isProgram} from '@babel/types';
- import invariant from 'invariant';
+@@ -66,6 +66,7 @@ export default function formatBundlingError(
+       errors: [
+         {
+           description: error.message,
++          // $FlowFixMe[prop-missing]
+           filename: error.filename,
+           lineNumber: error.lineNumber,
+         },
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2124** (2026-10-28): Apply `processModuleFilter` to inline source maps (@kwy404)
-- **PR #2123** (2026-10-27): metro-file-map: Keep other roots' files when recrawling the project root (@YevheniiKotyrlo)
-- **PR #2120** (2026-10-27): Post automated PR reviews as github-actions[bot] (@robhogan)
-- **PR #2118** (closed): Declare root dev dependencies that Yarn hoisting was hiding (@robhogan)
-- **PR #2117** (2026-10-26): Fix async-iterable return types in Node libdef (@robhogan)
-- **PR #2115** (2026-10-26): Upgrade Flow in fbsource (@SamChou19815)
+- **PR #2136** (2026-10-30): Upgrade Flow in fbsource (@SamChou19815)
+- **PR #2132** (2026-10-29): Enable unstable_disableInputAstCloning by default (@vzaidman)
+- **PR #2131** (2026-10-29): Upgrade flow in fbsource (@SamChou19815)
+- **PR #2130** (2026-10-30): Don't clear over output printed outside of Terminal (@vzaidman)
+- **PR #2129** (2026-10-30): Docs: Format the docs with prettier (@vzaidman)
+- **PR #2126** (closed): CODE_OF_CONDUCT.md (@king2168)
 
 ---
 
@@ -1657,30 +1720,70 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump @babel/traverse to ^7.29.10 and add constant-folding regression tests (#204
+## X. Don't clear over output printed outside of Terminal
 
 **RULE**:
-When implementing operations in `packages/metro-source-map/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/metro-core/src/Terminal.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0ab227f6`: Bump @babel/traverse to ^7.29.10 and add constant-folding regression tests (#2043). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fcced577`: Don't clear over output printed outside of Terminal. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/metro-source-map/package.json`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/metro-core/src/Terminal.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-    "@babel/core": "^7.25.2",
-    "@babel/traverse": "^7.29.10",
+/**
+ * Bytes written by `stream` and, when it is stdout or stderr, by both, as they
+ * usually share the terminal (e.g. `console.error()`).
+ */
+function getBytesWritten(stream: tty.WriteStream): number {
+  if (stream !== process.stdout && stream !== process.stderr) {
+    return stream.bytesWritten;
+  }
+
+  return (
+    // $FlowFixMe[prop-missing] `bytesWritten` is missing when redirected to a file
+    (process.stdout.bytesWritten ?? 0) + (process.stderr.bytesWritten ?? 0)
+  );
+}
+
+  #bytesWrittenAfterStatus: ?number;
+    this.#updatePromise = Promise.all(this.#updateSync()).then(async () => {
+        await Promise.all(this.#updateSync());
+   * Issues the update's writes without awaiting in between, so no other output
+   * can land in the middle of an update. Returns the pending writes.
+  #updateSync(): Array<Promise<unknown>> {
+      return [];
+    const writes: Array<Promise<unknown>> = [];
+
+    if (
+      ttyStream &&
+      statusStr.length > 0 &&
+      // If anything printed outside of Terminal (like direct console.log),
+      // don't try to clear latest status, and just print a new one instead
+      // or we might delete that external print
+      getBytesWritten(ttyStream) === t
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-    "@babel/traverse": "^7.29.0",
-    "@babel/core": "^7.25.2",
+    this.#updatePromise = this.#update().then(async () => {
+        await this.#update();
+   * Clear and write the new status, logging in bulk in-between. Doing this in a
+   * throttled way (in a different tick than the calls to `log()` and
+   * `status()`) prevents us from repeatedly rewriting the status in case
+   * `terminal.log()` is called several times.
+  async #update(): Promise<void> {
+      return;
+    if (ttyStream && statusStr.length > 0) {
+      await moveCursor(ttyStream, -ttyStream.columns, -statusLinesCount - 1);
+      await clearScreenDown(ttyStream);
+      await streamWrite(this.#stream, logLines.join('\n') + '\n');
+        await streamWrite(this.#stream, nextStatusStr + '\n');
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0ab227f6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fcced577` are properly handled with clean fallback behavior.

@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T10:00:43.631Z",
-    "lastVerified": "2026-10-31T10:00:43.631Z",
+    "lastChecked": "2026-10-31T10:07:32.929Z",
+    "lastVerified": "2026-10-31T10:07:32.929Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -346,9 +346,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T09:36:56.745Z",
+    "lastChecked": "2026-10-31T10:07:32.917Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T09:36:56.745Z"
+    "lastVerified": "2026-10-31T10:07:32.917Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -404,8 +404,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T05:07:16.608Z",
-    "lastVerified": "2026-10-31T05:07:16.608Z",
+    "lastChecked": "2026-10-31T10:07:27.953Z",
+    "lastVerified": "2026-10-31T10:07:27.953Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -2258,9 +2258,9 @@
   "oceanbase-oceanbase": {
     "name": "oceanbase",
     "officialUrl": "https://github.com/oceanbase/oceanbase",
-    "lastChecked": "2026-10-30T16:51:28.990Z",
+    "lastChecked": "2026-10-31T10:07:30.412Z",
     "revisionIdentifier": "5e8a63d2",
-    "lastVerified": "2026-10-30T16:51:28.990Z"
+    "lastVerified": "2026-10-31T10:07:30.412Z"
   },
   "flox-flox": {
     "name": "flox/flox",
@@ -2519,13 +2519,13 @@
     "officialUrl": "https://huggingface.co/akhilaaa3/Jev-Omni",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T06:31:04.959Z",
-    "lastVerified": "2026-10-28T06:31:04.959Z",
+    "lastChecked": "2026-10-31T10:07:20.630Z",
+    "lastVerified": "2026-10-31T10:07:20.630Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-akhilaaa3-jev-omni",
-    "contentHash": "f340b2848415c1a5859df4a077158dd89abb9af20d6be9878b59acd253aa53da",
-    "promotedRulesCount": 2,
+    "contentHash": "683486cc069a60caaf519cf3c344c09e28c1e01508facc194d85caa9b4d67ff2",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -3500,9 +3500,9 @@
   "dragonflyoss-dragonfly": {
     "name": "dragonfly",
     "officialUrl": "https://github.com/dragonflyoss/dragonfly",
-    "lastChecked": "2026-10-30T18:00:00.820Z",
+    "lastChecked": "2026-10-31T10:07:25.424Z",
     "revisionIdentifier": "fce3dc25",
-    "lastVerified": "2026-10-30T18:00:00.820Z"
+    "lastVerified": "2026-10-31T10:07:25.424Z"
   },
   "matrixorigin-matrixone": {
     "name": "matrixorigin/matrixone",
@@ -4998,14 +4998,14 @@
     "officialUrl": "https://github.com/react/metro",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-10-28T14:56:34.790Z",
-    "lastVerified": "2026-10-28T14:56:34.790Z",
+    "lastChecked": "2026-10-31T10:07:25.923Z",
+    "lastVerified": "2026-10-31T10:07:25.923Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-react-metro",
-    "contentHash": "3eaf25f249348ab9cf74f11a33a78611d0832aeb0adbc823e72e64eb92abe416",
+    "contentHash": "983e73d40e9ed2871bd0d98c55bf028159cad57160ec6930657e7ab4c7570c91",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5535,8 +5535,8 @@
     "officialUrl": "https://github.com/Xudong-Huang/may",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T10:23:41.984Z",
-    "lastVerified": "2026-10-30T10:23:41.984Z",
+    "lastChecked": "2026-10-31T10:07:17.916Z",
+    "lastVerified": "2026-10-31T10:07:17.916Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-xudong-huang-may",

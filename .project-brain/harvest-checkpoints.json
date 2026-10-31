@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T10:00:41.103Z",
+  "last_updated": "2026-10-31T10:07:26.630Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -590,14 +590,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-akhilaaa3-jev-omni",
-      "content_hash": "f340b2848415c1a5859df4a077158dd89abb9af20d6be9878b59acd253aa53da",
-      "verified_at": "2026-10-28T06:35:55.822Z",
+      "content_hash": "683486cc069a60caaf519cf3c344c09e28c1e01508facc194d85caa9b4d67ff2",
+      "verified_at": "2026-10-31T10:07:22.047Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T06:35:55.822Z"
+      "last_updated": "2026-10-31T10:07:22.047Z"
     },
     "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B": {
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -8361,14 +8361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-metro",
-      "content_hash": "3eaf25f249348ab9cf74f11a33a78611d0832aeb0adbc823e72e64eb92abe416",
-      "verified_at": "2026-10-28T14:56:35.302Z",
+      "content_hash": "983e73d40e9ed2871bd0d98c55bf028159cad57160ec6930657e7ab4c7570c91",
+      "verified_at": "2026-10-31T10:07:26.629Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T14:56:35.302Z"
+      "last_updated": "2026-10-31T10:07:26.629Z"
     },
     "Checkmarx/kics": {
       "repository": "Checkmarx/kics",

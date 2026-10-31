@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261029-NUIA",
-    "timestamp": "2026-10-29T11:29:28.114Z",
-    "repository": "LiquidAI/LFM3-VL-2B",
-    "learningId": "learn-huggingface-liquidai-lfm3-vl-2b",
-    "contentHash": "a6733be8c58afaae5e9654d0e141c44e0b76842c84f7eae57b344e5c676d81a7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-6NNE",
-    "timestamp": "2026-10-29T11:44:05.690Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "e0492d8fb856c21ed067a7a99861ebf53e4d6826ede3a1afe5fb9195d4019dd2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261029-BDO4",
     "timestamp": "2026-10-29T11:47:46.036Z",
     "repository": "neuron-core/neuron-ai",
@@ -7492,6 +7462,36 @@
     "contentHash": "2fb456561d5404b7576c82baaab05262ce6e64c476beacb1c02395fa3e5cf2f8",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-LYUL",
+    "timestamp": "2026-10-31T10:07:22.029Z",
+    "repository": "akhilaaa3/Jev-Omni",
+    "learningId": "learn-huggingface-akhilaaa3-jev-omni",
+    "contentHash": "683486cc069a60caaf519cf3c344c09e28c1e01508facc194d85caa9b4d67ff2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-M2E1",
+    "timestamp": "2026-10-31T10:07:26.617Z",
+    "repository": "react/metro",
+    "learningId": "learn-github-react-metro",
+    "contentHash": "983e73d40e9ed2871bd0d98c55bf028159cad57160ec6930657e7ab4c7570c91",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
