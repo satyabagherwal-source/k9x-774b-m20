@@ -6548,3 +6548,5 @@
 | `CYCLE-20261031-F3U2` | `2026-10-31T11:26:00.746Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6181` | Yes (`5e6328f4...`) |
 | `CYCLE-20261031-NX3B` | `2026-10-31T11:32:51.911Z` | `ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`21b167d7...`) |
 | `CYCLE-20261031-X051` | `2026-10-31T11:39:55.765Z` | `PSRben/VisionHOPE` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6182, Rule 6183` | Yes (`51da8314...`) |
+| `CYCLE-20261031-5NJA` | `2026-10-31T11:46:39.334Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md` | Yes (`717480b2...`) |
+| `CYCLE-20261031-5SXA` | `2026-10-31T11:46:46.318Z` | `callstack/agent-device` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6184` | Yes (`2e8ff6fc...`) |

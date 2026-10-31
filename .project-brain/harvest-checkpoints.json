@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T11:39:55.779Z",
+  "last_updated": "2026-10-31T11:46:46.332Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -755,14 +755,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-      "content_hash": "0ab3c0b63551c4c902b2d01ae13aac6c7bb8e0f9ec21b1e3bacc0843cd045007",
-      "verified_at": "2026-10-28T10:52:34.371Z",
+      "content_hash": "717480b25d63cafccd9ddae639436f0a49b708626d3c9fd0e285f2cb7b873a22",
+      "verified_at": "2026-10-31T11:46:39.354Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T10:52:34.371Z"
+      "last_updated": "2026-10-31T11:46:39.354Z"
     },
     "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF": {
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -9276,14 +9276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-agent-device",
-      "content_hash": "6860af672a50d9e40c513f255ac57f7fe0732bb30db95fb26b936fa4b3b2e2f7",
-      "verified_at": "2026-10-28T16:19:25.884Z",
+      "content_hash": "2e8ff6fcfefe1d463062548fa9e195d592ac95265dde7979a449f80d5e7c82ef",
+      "verified_at": "2026-10-31T11:46:46.332Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T16:19:25.884Z"
+      "last_updated": "2026-10-31T11:46:46.332Z"
     },
     "open-policy-agent/opa": {
       "repository": "open-policy-agent/opa",

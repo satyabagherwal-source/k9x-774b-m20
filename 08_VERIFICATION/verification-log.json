@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261029-5CQ5",
-    "timestamp": "2026-10-29T16:51:00.653Z",
-    "repository": "Jakeschincariol/arena-skill",
-    "learningId": "learn-github-jakeschincariol-arena-skill",
-    "contentHash": "eeb19dbf8ec3e3d6395e8aea81e71779c8f67643c0449f8d2b3a8e8313ab7ed3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-5UMT",
-    "timestamp": "2026-10-29T16:51:23.861Z",
-    "repository": "rustls/rustls",
-    "learningId": "learn-github-rustls-rustls",
-    "contentHash": "c93536ae72a820ecaa4be7cc730ab7414d909f08746ff72ba52ee2b9d637317a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261029-LIZK",
     "timestamp": "2026-10-29T17:03:35.264Z",
     "repository": "modelcontextprotocol/kotlin-sdk",
@@ -7492,6 +7462,36 @@
     "contentHash": "51da8314b6c139fe9fd53fbb3990a521b8b42090ad87dcffad6b8cdc2e41fb04",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-5NJA",
+    "timestamp": "2026-10-31T11:46:39.334Z",
+    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
+    "contentHash": "717480b25d63cafccd9ddae639436f0a49b708626d3c9fd0e285f2cb7b873a22",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-5SXA",
+    "timestamp": "2026-10-31T11:46:46.318Z",
+    "repository": "callstack/agent-device",
+    "learningId": "learn-github-callstack-agent-device",
+    "contentHash": "2e8ff6fcfefe1d463062548fa9e195d592ac95265dde7979a449f80d5e7c82ef",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

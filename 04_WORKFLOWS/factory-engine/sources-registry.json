@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T11:39:58.835Z",
-    "lastVerified": "2026-10-31T11:39:58.835Z",
+    "lastChecked": "2026-10-31T11:46:50.448Z",
+    "lastVerified": "2026-10-31T11:46:50.448Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -346,9 +346,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T11:19:24.256Z",
+    "lastChecked": "2026-10-31T11:46:50.436Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T11:19:24.256Z"
+    "lastVerified": "2026-10-31T11:46:50.436Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1479,9 +1479,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-10-31T06:45:21.387Z",
+    "lastChecked": "2026-10-31T11:46:45.609Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-10-31T06:45:21.387Z"
+    "lastVerified": "2026-10-31T11:46:45.609Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -3046,9 +3046,9 @@
   "liyupi-yu-ai-agent": {
     "name": "yu-ai-agent",
     "officialUrl": "https://github.com/liyupi/yu-ai-agent",
-    "lastChecked": "2026-10-30T18:58:34.178Z",
+    "lastChecked": "2026-10-31T11:46:47.968Z",
     "revisionIdentifier": "6d4608c5",
-    "lastVerified": "2026-10-30T18:58:34.178Z"
+    "lastVerified": "2026-10-31T11:46:47.968Z"
   },
   "clementtsang-bottom": {
     "name": "ClementTsang/bottom",
@@ -3183,13 +3183,13 @@
     "officialUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T10:43:31.395Z",
-    "lastVerified": "2026-10-28T10:43:31.395Z",
+    "lastChecked": "2026-10-31T11:46:38.197Z",
+    "lastVerified": "2026-10-31T11:46:38.197Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-    "contentHash": "0ab3c0b63551c4c902b2d01ae13aac6c7bb8e0f9ec21b1e3bacc0843cd045007",
-    "promotedRulesCount": 2,
+    "contentHash": "717480b25d63cafccd9ddae639436f0a49b708626d3c9fd0e285f2cb7b873a22",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -4150,12 +4150,12 @@
     "lastVerified": "2026-10-31T06:52:23.186Z"
   },
   "agent-field-agentfield": {
-    "name": "Agent-Field/agentfield",
+    "name": "agentfield",
     "officialUrl": "https://github.com/Agent-Field/agentfield",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T19:42:45.432Z",
-    "lastVerified": "2026-10-30T19:42:45.432Z",
+    "lastChecked": "2026-10-31T11:46:43.019Z",
+    "lastVerified": "2026-10-31T11:46:43.019Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-agent-field-agentfield",
@@ -4164,7 +4164,8 @@
     "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9fe15519"
   },
   "spacejam-sled": {
     "name": "sled",
@@ -5760,14 +5761,14 @@
     "officialUrl": "https://github.com/callstack/agent-device",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T16:19:25.242Z",
-    "lastVerified": "2026-10-28T16:19:25.242Z",
+    "lastChecked": "2026-10-31T11:46:45.581Z",
+    "lastVerified": "2026-10-31T11:46:45.581Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-callstack-agent-device",
-    "contentHash": "6860af672a50d9e40c513f255ac57f7fe0732bb30db95fb26b936fa4b3b2e2f7",
+    "contentHash": "2e8ff6fcfefe1d463062548fa9e195d592ac95265dde7979a449f80d5e7c82ef",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 13,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6174,9 +6175,9 @@
   "sentrux-sentrux": {
     "name": "sentrux",
     "officialUrl": "https://github.com/sentrux/sentrux",
-    "lastChecked": "2026-10-30T13:53:10.007Z",
+    "lastChecked": "2026-10-31T11:46:35.417Z",
     "revisionIdentifier": "6f8ff3c1",
-    "lastVerified": "2026-10-30T13:53:10.007Z"
+    "lastVerified": "2026-10-31T11:46:35.417Z"
   },
   "hf-google-gemma-4-26b-a4b-it": {
     "name": "google/gemma-4-26B-A4B-it",

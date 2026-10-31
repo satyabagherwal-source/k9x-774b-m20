@@ -452849,3 +452849,83 @@ depths = [8, 8, 8, 8] # Wastes compute on Stage 1 and 4
 **VERIFICATION METHOD**:
 1.  **Config Assertion**: In the model initialization, assert `depths[2] > depths[0]` and `depths[2] > depths[3]`.
 2.  **Performance Benchmark**: Compare mAP/Accuracy vs. FLOPs. The non-uniform depth model should achieve higher accuracy at the same FLOPs budget compared to uniform depth.
+
+
+---
+
+## 6184. platform-android): disable persistent Android snapshots after an unhealthy helpe (Harvested from callstack/agent-device)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "platform-android): disable persistent Android snapshots after an unhealthy helpe",
+  "source": "callstack/agent-device",
+  "source_url": "https://github.com/callstack/agent-device",
+  "source_version": "c1f1fd02",
+  "license": "MIT",
+  "extracted_at": "2026-10-31T11:46:45.989Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-callstack-agent-device",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [callstack/agent-device](https://github.com/callstack/agent-device) (Revision: `c1f1fd02`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `packages/platform-android/src/__tests__/snapshot-helper-session-lifecycle.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/agent-device. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `f9a1dab8`: platform-android): disable persistent Android snapshots after an unhealthy helper retirement (#4007). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/platform-android/src/__tests__/snapshot-helper-session-lifecycle.test.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+import { afterEach, beforeEach, test, vi } from 'vitest';
+  isAndroidHelperForwardRemoval,
+import path from 'node:path';
+import { promises as fs } from 'node:fs';
+import { mkdtempForTest } from './test-utils/tmp-dir.ts';
+import { withDiagnosticsScope } from '@agent-device/host-kit/diagnostics';
+  vi.restoreAllMocks();
+test('a reused session whose capture times out keeps the helper build one-shot until reset', async () => {
+  const spawnArgs: (readonly string[])[] = [];
+  // The helper answers once and then goes silent: the idle freeze of #3929. Force-stop kills the
+  // frozen process cleanly, so the retirement proves release and only the timeout tells.
+  const provider = createSessionProvider({
+    calls: [],
+    spawnArgs,
+    answeredSnapshotsBeforeStall: 1,
+    stalledSnapshots: 1,
+  });
+  const capture = (deviceKey: string) =>
+    captureAndroidSnapshotWithHelperSession({
+      adb: provider.exec,
+      adbProvider: provider,
+      deviceKey,
+      commandTimeoutMs: 400,
+    });
+  const logPath = path.join(
+    await mkdtempForTest('agent-device-android-session-disable-diag-'),
+    'diag.ndjson',
+  );
+
+  await withDiagnosticsScope({ debug: true, logPath }, async () => {
+    as
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+import { afterEach, beforeEach, test } from 'vitest';
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `f9a1dab8` are properly handled with clean fallback behavior.

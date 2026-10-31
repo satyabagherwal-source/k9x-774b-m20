@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T11:39:55.775Z",
-  "total_cycles_completed": 6525,
-  "total_learnings_persisted": 6525,
-  "total_rules_promoted": 6176,
+  "last_updated": "2026-10-31T11:46:46.328Z",
+  "total_cycles_completed": 6527,
+  "total_learnings_persisted": 6527,
+  "total_rules_promoted": 6177,
   "history": [
-    {
-      "timestamp": "2026-10-30T22:56:32.282Z",
-      "repository": "iii-hq/iii",
-      "learningId": "learn-github-iii-hq-iii",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T22:56:32.628Z",
-      "repository": "pallets/flask",
-      "learningId": "learn-github-pallets-flask",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T23:05:17.189Z",
       "repository": "Automattic/harper",
@@ -1403,6 +1389,20 @@
       "repository": "PSRben/VisionHOPE",
       "learningId": "learn-huggingface-psrben-visionhope",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T11:46:39.350Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T11:46:46.328Z",
+      "repository": "callstack/agent-device",
+      "learningId": "learn-github-callstack-agent-device",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

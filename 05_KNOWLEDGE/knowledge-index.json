@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T11:39:55.684Z",
+  "last_updated": "2026-10-31T11:46:46.237Z",
   "total_verified_learnings": 1183,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5728,8 +5728,8 @@
       "slug": "callstack-agent-device",
       "platform": "github",
       "source_url": "https://github.com/callstack/agent-device",
-      "source_version": "3537dc54",
-      "content_hash": "6860af672a50d9e40c513f255ac57f7fe0732bb30db95fb26b936fa4b3b2e2f7",
+      "source_version": "c1f1fd02",
+      "content_hash": "2e8ff6fcfefe1d463062548fa9e195d592ac95265dde7979a449f80d5e7c82ef",
       "dossier_path": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "promoted_rules": [
@@ -5767,6 +5767,11 @@
           "number": 5340,
           "title": "mutation): measure each kernel against the tests that import it (#3994)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6184,
+          "title": "platform-android): disable persistent Android snapshots after an unhealthy helpe",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5774,7 +5779,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T16:19:25.780Z",
+      "verified_at": "2026-10-31T11:46:46.216Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24372,7 +24377,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
-      "content_hash": "0ab3c0b63551c4c902b2d01ae13aac6c7bb8e0f9ec21b1e3bacc0843cd045007",
+      "content_hash": "717480b25d63cafccd9ddae639436f0a49b708626d3c9fd0e285f2cb7b873a22",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md",
       "promoted_rules": [
@@ -24415,7 +24420,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv47md9a",
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv4kw31t"
       ],
-      "verified_at": "2026-10-28T10:52:34.282Z",
+      "verified_at": "2026-10-31T11:46:39.227Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -161747,6 +161752,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T11:39:55.659Z"
+    },
+    "rule-6184": {
+      "learning_id": "rule-6184",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6184,
+      "title": "platform-android): disable persistent Android snapshots after an unhealthy helpe",
+      "source_url": "https://github.com/callstack/agent-device",
+      "source_version": "c1f1fd02",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T11:46:46.216Z"
     }
   },
   "aliases": {

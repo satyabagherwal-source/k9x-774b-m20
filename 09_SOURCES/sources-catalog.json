@@ -605,8 +605,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
     "license": "Open-Source",
-    "contentHash": "0ab3c0b63551c4c902b2d01ae13aac6c7bb8e0f9ec21b1e3bacc0843cd045007",
-    "lastHarvestedAt": "2026-10-28T10:52:34.363Z",
+    "contentHash": "717480b25d63cafccd9ddae639436f0a49b708626d3c9fd0e285f2cb7b873a22",
+    "lastHarvestedAt": "2026-10-31T11:46:39.344Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf": {
@@ -6103,10 +6103,10 @@
     "repository": "callstack/agent-device",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/agent-device",
-    "sourceVersion": "3537dc54",
+    "sourceVersion": "c1f1fd02",
     "license": "MIT",
-    "contentHash": "6860af672a50d9e40c513f255ac57f7fe0732bb30db95fb26b936fa4b3b2e2f7",
-    "lastHarvestedAt": "2026-10-28T16:19:25.876Z",
+    "contentHash": "2e8ff6fcfefe1d463062548fa9e195d592ac95265dde7979a449f80d5e7c82ef",
+    "lastHarvestedAt": "2026-10-31T11:46:46.322Z",
     "learningId": "learn-github-callstack-agent-device"
   },
   "open-policy-agent-opa": {
