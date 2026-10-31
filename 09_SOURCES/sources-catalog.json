@@ -1125,8 +1125,8 @@
     "sourceUrl": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
     "sourceVersion": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
     "license": "Open-Source",
-    "contentHash": "f04fc88b6dc5e44e1e28ddc34bff7f0c6288e3788135dad2a15d46672123d3dc",
-    "lastHarvestedAt": "2026-10-28T16:33:36.315Z",
+    "contentHash": "f0fde997a9f9237bbc3b81ee1ee979662fb46c213c6e77796f5d333618168327",
+    "lastHarvestedAt": "2026-10-31T17:43:51.263Z",
     "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese"
   },
   "hf-facebookai-xlm-roberta-base": {
@@ -7773,10 +7773,10 @@
     "repository": "SimonSchubert/LinuxCommandLibrary",
     "platform": "github",
     "sourceUrl": "https://github.com/SimonSchubert/LinuxCommandLibrary",
-    "sourceVersion": "a4fd0f15",
+    "sourceVersion": "b2852d43",
     "license": "Apache-2.0",
-    "contentHash": "6320212b70cd5fe3c3a2058eac4d745621f4a69d7f8e182d95ef5f4335f23069",
-    "lastHarvestedAt": "2026-10-28T22:33:00.209Z",
+    "contentHash": "9da528aae8a94a5e368734404a47a96b0641f50bcd548785894783a0002c3d4c",
+    "lastHarvestedAt": "2026-10-31T17:43:56.517Z",
     "learningId": "learn-github-simonschubert-linuxcommandlibrary"
   },
   "zed-industries-zed": {

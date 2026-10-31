@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T17:37:11.417Z",
+  "last_updated": "2026-10-31T17:43:56.527Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1490,14 +1490,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "content_hash": "f04fc88b6dc5e44e1e28ddc34bff7f0c6288e3788135dad2a15d46672123d3dc",
-      "verified_at": "2026-10-28T16:33:36.326Z",
+      "content_hash": "f0fde997a9f9237bbc3b81ee1ee979662fb46c213c6e77796f5d333618168327",
+      "verified_at": "2026-10-31T17:43:51.273Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T16:33:36.326Z"
+      "last_updated": "2026-10-31T17:43:51.273Z"
     },
     "FacebookAI/xlm-roberta-base": {
       "repository": "FacebookAI/xlm-roberta-base",
@@ -11706,14 +11706,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-simonschubert-linuxcommandlibrary",
-      "content_hash": "6320212b70cd5fe3c3a2058eac4d745621f4a69d7f8e182d95ef5f4335f23069",
-      "verified_at": "2026-10-28T22:33:00.214Z",
+      "content_hash": "9da528aae8a94a5e368734404a47a96b0641f50bcd548785894783a0002c3d4c",
+      "verified_at": "2026-10-31T17:43:56.526Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T22:33:00.214Z"
+      "last_updated": "2026-10-31T17:43:56.526Z"
     },
     "zed-industries/zed": {
       "repository": "zed-industries/zed",

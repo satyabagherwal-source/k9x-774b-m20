@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T17:37:11.327Z",
+  "last_updated": "2026-10-31T17:43:56.434Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -24809,7 +24809,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
       "source_version": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "content_hash": "f04fc88b6dc5e44e1e28ddc34bff7f0c6288e3788135dad2a15d46672123d3dc",
+      "content_hash": "f0fde997a9f9237bbc3b81ee1ee979662fb46c213c6e77796f5d333618168327",
       "dossier_path": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "promoted_rules": [
@@ -24856,7 +24856,7 @@
         "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv3yhjko",
         "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv4d7mje"
       ],
-      "verified_at": "2026-10-28T16:33:36.247Z",
+      "verified_at": "2026-10-31T17:43:51.147Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51270,8 +51270,8 @@
       "slug": "simonschubert-linuxcommandlibrary",
       "platform": "github",
       "source_url": "https://github.com/SimonSchubert/LinuxCommandLibrary",
-      "source_version": "a4fd0f15",
-      "content_hash": "6320212b70cd5fe3c3a2058eac4d745621f4a69d7f8e182d95ef5f4335f23069",
+      "source_version": "b2852d43",
+      "content_hash": "9da528aae8a94a5e368734404a47a96b0641f50bcd548785894783a0002c3d4c",
       "dossier_path": "07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
       "promoted_rules": [
@@ -51299,6 +51299,11 @@
           "number": 5435,
           "title": "command page markup",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6269,
+          "title": "uji man page markup",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51306,7 +51311,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:33:00.155Z",
+      "verified_at": "2026-10-31T17:43:56.413Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -163433,6 +163438,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T17:37:11.307Z"
+    },
+    "rule-6269": {
+      "learning_id": "rule-6269",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6269,
+      "title": "uji man page markup",
+      "source_url": "https://github.com/SimonSchubert/LinuxCommandLibrary",
+      "source_version": "b2852d43",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T17:43:56.413Z"
     }
   },
   "aliases": {

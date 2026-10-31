@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T17:37:13.967Z",
-    "lastVerified": "2026-10-31T17:37:13.967Z",
+    "lastChecked": "2026-10-31T17:44:02.463Z",
+    "lastVerified": "2026-10-31T17:44:02.463Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -425,12 +425,12 @@
     "lastVerified": "2026-10-31T05:42:48.654Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T17:14:24.540Z",
-    "lastVerified": "2026-10-31T17:14:24.540Z",
+    "lastChecked": "2026-10-31T17:44:02.451Z",
+    "lastVerified": "2026-10-31T17:44:02.451Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -439,7 +439,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "229950e6"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -690,9 +691,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-10-31T13:54:21.003Z",
+    "lastChecked": "2026-10-31T17:43:57.484Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-10-31T13:54:21.003Z"
+    "lastVerified": "2026-10-31T17:43:57.484Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -5821,9 +5822,9 @@
   "apache-zookeeper": {
     "name": "zookeeper",
     "officialUrl": "https://github.com/apache/zookeeper",
-    "lastChecked": "2026-10-31T01:28:23.613Z",
+    "lastChecked": "2026-10-31T17:43:59.932Z",
     "revisionIdentifier": "858c8d77",
-    "lastVerified": "2026-10-31T01:28:23.613Z"
+    "lastVerified": "2026-10-31T17:43:59.932Z"
   },
   "kubearmor-kubearmor": {
     "name": "KubeArmor",
@@ -5914,12 +5915,12 @@
     "officialUrl": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T16:33:35.459Z",
-    "lastVerified": "2026-10-28T16:33:35.459Z",
+    "lastChecked": "2026-10-31T17:43:50.052Z",
+    "lastVerified": "2026-10-31T17:43:50.052Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-    "contentHash": "f04fc88b6dc5e44e1e28ddc34bff7f0c6288e3788135dad2a15d46672123d3dc",
+    "contentHash": "f0fde997a9f9237bbc3b81ee1ee979662fb46c213c6e77796f5d333618168327",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -7019,12 +7020,12 @@
     "lastVerified": "2026-10-31T14:01:15.304Z"
   },
   "envoyproxy-envoy": {
-    "name": "envoyproxy/envoy",
+    "name": "envoy",
     "officialUrl": "https://github.com/envoyproxy/envoy",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-31T02:14:27.230Z",
-    "lastVerified": "2026-10-31T02:14:27.230Z",
+    "lastChecked": "2026-10-31T17:43:55.014Z",
+    "lastVerified": "2026-10-31T17:43:55.014Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-envoyproxy-envoy",
@@ -7033,7 +7034,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "4ab32131"
   },
   "dragonflydb-dragonfly": {
     "name": "dragonflydb/dragonfly",
@@ -8218,14 +8220,14 @@
     "officialUrl": "https://github.com/SimonSchubert/LinuxCommandLibrary",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-10-28T22:32:59.690Z",
-    "lastVerified": "2026-10-28T22:32:59.690Z",
+    "lastChecked": "2026-10-31T17:43:55.815Z",
+    "lastVerified": "2026-10-31T17:43:55.815Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-simonschubert-linuxcommandlibrary",
-    "contentHash": "6320212b70cd5fe3c3a2058eac4d745621f4a69d7f8e182d95ef5f4335f23069",
+    "contentHash": "9da528aae8a94a5e368734404a47a96b0641f50bcd548785894783a0002c3d4c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8459,9 +8461,9 @@
   "mrjackwills-oxker": {
     "name": "oxker",
     "officialUrl": "https://github.com/mrjackwills/oxker",
-    "lastChecked": "2026-10-30T22:03:08.856Z",
+    "lastChecked": "2026-10-31T17:43:47.478Z",
     "revisionIdentifier": "791342c0",
-    "lastVerified": "2026-10-30T22:03:08.856Z"
+    "lastVerified": "2026-10-31T17:43:47.478Z"
   },
   "hf-liquidai-lfm2.5-24b-a2b-gguf": {
     "name": "LiquidAI/LFM2.5-24B-A2B-GGUF",
