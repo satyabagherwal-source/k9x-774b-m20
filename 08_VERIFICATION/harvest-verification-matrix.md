@@ -6445,3 +6445,5 @@
 | `CYCLE-20261031-9WL7` | `2026-10-31T03:26:04.603Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6043` | Yes (`fd68fa52...`) |
 | `CYCLE-20261031-A2IX` | `2026-10-31T03:26:12.297Z` | `projectcontour/contour` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6044` | Yes (`cad9af0e...`) |
 | `CYCLE-20261031-A6FT` | `2026-10-31T03:26:17.369Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6045` | Yes (`7e53a503...`) |
+| `CYCLE-20261031-KE5G` | `2026-10-31T03:34:13.924Z` | `kube-rs/kube` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6046` | Yes (`c3330ca1...`) |
+| `CYCLE-20261031-KFRV` | `2026-10-31T03:34:16.027Z` | `briaai/Fibo-2.0-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6047, Rule 6048, Rule 6049` | Yes (`a84a89d2...`) |

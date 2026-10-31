@@ -6454,3 +6454,5 @@ Every entry in this ledger must capture:
 | `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `e0be1edf` | Multi-dimensional audit evidence | 2026-10-31T03:26:04.607Z |
 | `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `f1de7f97` | Multi-dimensional audit evidence | 2026-10-31T03:26:12.300Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `a64d2d98` | Multi-dimensional audit evidence | 2026-10-31T03:26:17.373Z |
+| `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `1f316bb7` | Multi-dimensional audit evidence | 2026-10-31T03:34:13.928Z |
+| `learn-huggingface-briaai-fibo-2-0-dev` | `https://huggingface.co/briaai/Fibo-2.0-dev` | `hf-briaai-` | Multi-dimensional audit evidence | 2026-10-31T03:34:16.031Z |

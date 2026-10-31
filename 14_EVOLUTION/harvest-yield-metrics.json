@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T03:26:17.380Z",
-  "total_cycles_completed": 6422,
-  "total_learnings_persisted": 6422,
-  "total_rules_promoted": 6024,
+  "last_updated": "2026-10-31T03:34:16.037Z",
+  "total_cycles_completed": 6424,
+  "total_learnings_persisted": 6424,
+  "total_rules_promoted": 6028,
   "history": [
-    {
-      "timestamp": "2026-10-30T17:14:41.344Z",
-      "repository": "paradedb/paradedb",
-      "learningId": "learn-github-paradedb-paradedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T17:20:59.955Z",
-      "repository": "iziz/libPhoneNumber-iOS",
-      "learningId": "learn-github-iziz-libphonenumber-ios",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T17:21:00.229Z",
       "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
@@ -1403,6 +1389,20 @@
       "repository": "vespa-engine/vespa",
       "learningId": "learn-github-vespa-engine-vespa",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T03:34:13.933Z",
+      "repository": "kube-rs/kube",
+      "learningId": "learn-github-kube-rs-kube",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T03:34:16.037Z",
+      "repository": "briaai/Fibo-2.0-dev",
+      "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

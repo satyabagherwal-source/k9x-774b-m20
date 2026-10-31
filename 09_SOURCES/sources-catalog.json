@@ -6843,10 +6843,10 @@
     "repository": "kube-rs/kube",
     "platform": "github",
     "sourceUrl": "https://github.com/kube-rs/kube",
-    "sourceVersion": "3b135fab",
+    "sourceVersion": "1f316bb7",
     "license": "Apache-2.0",
-    "contentHash": "94cb740579a11c32e0a61d0c8bc4545133997f3735959bc4f39bcf596d043ab5",
-    "lastHarvestedAt": "2026-10-30T08:40:59.317Z",
+    "contentHash": "c3330ca1c03d3de81348219554b23804f27519c6c25b3382d787a1d233d302fa",
+    "lastHarvestedAt": "2026-10-31T03:34:13.928Z",
     "learningId": "learn-github-kube-rs-kube"
   },
   "weaviate-weaviate": {
@@ -10765,8 +10765,8 @@
     "sourceUrl": "https://huggingface.co/briaai/Fibo-2.0-dev",
     "sourceVersion": "hf-briaai-fibo-2.0-dev",
     "license": "Open-Source",
-    "contentHash": "32d2a2a56a1f2ff910f8b7f3d1c19c5566c87d2c07dd983c1c7e19ab282ba581",
-    "lastHarvestedAt": "2026-10-26T10:15:10.611Z",
+    "contentHash": "a84a89d238982f262ee26214c3e44e1b7782c62c063ebfaf61f260b806f924fd",
+    "lastHarvestedAt": "2026-10-31T03:34:16.031Z",
     "learningId": "learn-huggingface-briaai-fibo-2-0-dev"
   },
   "vincentwei1021-video-shotcraft": {

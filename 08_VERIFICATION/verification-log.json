@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-5NQS",
-    "timestamp": "2026-10-28T21:43:30.676Z",
-    "repository": "oxc-project/oxc",
-    "learningId": "learn-github-oxc-project-oxc",
-    "contentHash": "8a9c8d74e95de0c8af9e46fb4e60dc5fd09d63a17df54764b8e8ed3fdb3c55ad",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-5TCP",
-    "timestamp": "2026-10-28T21:43:37.945Z",
-    "repository": "nats-io/nats-server",
-    "learningId": "learn-github-nats-io-nats-server",
-    "contentHash": "d0292b2a781409438d3aa22bdc4334d76c25b9575918d684ee8c3529b4dc88a1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-5UK3",
     "timestamp": "2026-10-28T21:43:39.507Z",
     "repository": "freenet/freenet-core",
@@ -7492,6 +7462,36 @@
     "contentHash": "7e53a503d5c1fda9681e48cbd823d79ba413a5e065ad2e77bddbb787e6eba504",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-KE5G",
+    "timestamp": "2026-10-31T03:34:13.924Z",
+    "repository": "kube-rs/kube",
+    "learningId": "learn-github-kube-rs-kube",
+    "contentHash": "c3330ca1c03d3de81348219554b23804f27519c6c25b3382d787a1d233d302fa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-KFRV",
+    "timestamp": "2026-10-31T03:34:16.027Z",
+    "repository": "briaai/Fibo-2.0-dev",
+    "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
+    "contentHash": "a84a89d238982f262ee26214c3e44e1b7782c62c063ebfaf61f260b806f924fd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

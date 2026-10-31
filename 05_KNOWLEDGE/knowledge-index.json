@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T03:26:17.293Z",
+  "last_updated": "2026-10-31T03:34:15.951Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34641,8 +34641,8 @@
       "slug": "kube-rs-kube",
       "platform": "github",
       "source_url": "https://github.com/kube-rs/kube",
-      "source_version": "3b135fab",
-      "content_hash": "94cb740579a11c32e0a61d0c8bc4545133997f3735959bc4f39bcf596d043ab5",
+      "source_version": "1f316bb7",
+      "content_hash": "c3330ca1c03d3de81348219554b23804f27519c6c25b3382d787a1d233d302fa",
       "dossier_path": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
       "promoted_rules": [
@@ -34675,6 +34675,11 @@
           "number": 5688,
           "title": "Structural Deserializer Guard for Polydisperse Nullable Arrays",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6046,
+          "title": "deps): Update tokio-tungstenite requirement from 0.29.0 to 0.30.0 (#2038)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34682,7 +34687,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T08:40:59.213Z",
+      "verified_at": "2026-10-31T03:34:13.828Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -135517,7 +135522,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/briaai/Fibo-2.0-dev",
       "source_version": "hf-briaai-fibo-2.0-dev",
-      "content_hash": "32d2a2a56a1f2ff910f8b7f3d1c19c5566c87d2c07dd983c1c7e19ab282ba581",
+      "content_hash": "a84a89d238982f262ee26214c3e44e1b7782c62c063ebfaf61f260b806f924fd",
       "dossier_path": "07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md",
       "promoted_rules": [
@@ -135530,6 +135535,21 @@
           "number": 4578,
           "title": "Safe Weight Serialization & Memory Safety",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6047,
+          "title": "Model Weight Integrity & Schema Validation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6048,
+          "title": "Inference Context Isolation & Memory Leak Prevention",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6049,
+          "title": "Deterministic Reproducibility for AI Artifacts",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -135537,7 +135557,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T10:15:10.540Z",
+      "verified_at": "2026-10-31T03:34:15.932Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -159031,6 +159051,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T03:26:17.273Z"
+    },
+    "rule-6046": {
+      "learning_id": "rule-6046",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6046,
+      "title": "deps): Update tokio-tungstenite requirement from 0.29.0 to 0.30.0 (#2038)",
+      "source_url": "https://github.com/kube-rs/kube",
+      "source_version": "1f316bb7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T03:34:13.828Z"
+    },
+    "rule-6047": {
+      "learning_id": "rule-6047",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6047,
+      "title": "Model Weight Integrity & Schema Validation Invariant",
+      "source_url": "https://huggingface.co/briaai/Fibo-2.0-dev",
+      "source_version": "hf-briaai-fibo-2.0-dev",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T03:34:15.932Z"
+    },
+    "rule-6048": {
+      "learning_id": "rule-6048",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6048,
+      "title": "Inference Context Isolation & Memory Leak Prevention",
+      "source_url": "https://huggingface.co/briaai/Fibo-2.0-dev",
+      "source_version": "hf-briaai-fibo-2.0-dev",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T03:34:15.932Z"
+    },
+    "rule-6049": {
+      "learning_id": "rule-6049",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6049,
+      "title": "Deterministic Reproducibility for AI Artifacts",
+      "source_url": "https://huggingface.co/briaai/Fibo-2.0-dev",
+      "source_version": "hf-briaai-fibo-2.0-dev",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T03:34:15.932Z"
     }
   },
   "aliases": {

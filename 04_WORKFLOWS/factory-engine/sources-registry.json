@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T03:26:19.930Z",
-    "lastVerified": "2026-10-31T03:26:19.930Z",
+    "lastChecked": "2026-10-31T03:34:18.588Z",
+    "lastVerified": "2026-10-31T03:34:18.588Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -244,8 +244,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T03:02:46.665Z",
-    "lastVerified": "2026-10-31T03:02:46.665Z",
+    "lastChecked": "2026-10-31T03:34:17.020Z",
+    "lastVerified": "2026-10-31T03:34:17.020Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -737,14 +737,14 @@
     "officialUrl": "https://github.com/kube-rs/kube",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T08:36:29.947Z",
-    "lastVerified": "2026-10-30T08:36:29.947Z",
+    "lastChecked": "2026-10-31T03:34:13.082Z",
+    "lastVerified": "2026-10-31T03:34:13.082Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kube-rs-kube",
-    "contentHash": "94cb740579a11c32e0a61d0c8bc4545133997f3735959bc4f39bcf596d043ab5",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 0,
+    "contentHash": "c3330ca1c03d3de81348219554b23804f27519c6c25b3382d787a1d233d302fa",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1853,12 +1853,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cilium-cilium": {
-    "name": "cilium/cilium",
+    "name": "cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T23:51:44.936Z",
-    "lastVerified": "2026-10-30T23:51:44.936Z",
+    "lastChecked": "2026-10-31T03:34:12.010Z",
+    "lastVerified": "2026-10-31T03:34:12.010Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
@@ -1867,7 +1867,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ef31e883"
   },
   "langchain4j-langchain4j": {
     "name": "langchain4j/langchain4j",
@@ -2737,12 +2738,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "wix-detox": {
-    "name": "wix/Detox",
+    "name": "Detox",
     "officialUrl": "https://github.com/wix/Detox",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-10-28T07:31:37.012Z",
-    "lastVerified": "2026-10-28T07:31:37.012Z",
+    "lastChecked": "2026-10-31T03:34:06.978Z",
+    "lastVerified": "2026-10-31T03:34:06.978Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-wix-detox",
@@ -2751,7 +2752,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "fc34e84a"
   },
   "karmada-io-karmada": {
     "name": "karmada-io/karmada",
@@ -3231,9 +3233,9 @@
   "imsnif-bandwhich": {
     "name": "bandwhich",
     "officialUrl": "https://github.com/imsnif/bandwhich",
-    "lastChecked": "2026-10-30T00:39:49.671Z",
+    "lastChecked": "2026-10-31T03:34:01.967Z",
     "revisionIdentifier": "1899870c",
-    "lastVerified": "2026-10-30T00:39:49.671Z"
+    "lastVerified": "2026-10-31T03:34:01.967Z"
   },
   "hf-unsloth-qwen3.8-27b-gguf": {
     "name": "unsloth/Qwen3.8-27B-GGUF",
@@ -6614,9 +6616,9 @@
   "postgresml-postgresml": {
     "name": "postgresml",
     "officialUrl": "https://github.com/postgresml/postgresml",
-    "lastChecked": "2026-10-30T07:03:33.332Z",
+    "lastChecked": "2026-10-31T03:34:14.523Z",
     "revisionIdentifier": "caf2b6cc",
-    "lastVerified": "2026-10-30T07:03:33.332Z"
+    "lastVerified": "2026-10-31T03:34:14.523Z"
   },
   "topgrade-rs-topgrade": {
     "name": "topgrade",
@@ -12071,6 +12073,23 @@
     "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
     "contentHash": "6f75363f5b7b6edd85731b001e09393311f05f2132d642f16e7b4e238d968c92",
     "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-briaai-fibo-2.0-dev": {
+    "name": "briaai/Fibo-2.0-dev",
+    "officialUrl": "https://huggingface.co/briaai/Fibo-2.0-dev",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-31T03:34:04.516Z",
+    "lastVerified": "2026-10-31T03:34:04.516Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
+    "contentHash": "a84a89d238982f262ee26214c3e44e1b7782c62c063ebfaf61f260b806f924fd",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
