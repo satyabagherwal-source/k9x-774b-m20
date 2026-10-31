@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T22:12:16.458Z",
-    "lastVerified": "2026-10-31T22:12:16.458Z",
+    "lastChecked": "2026-10-31T22:23:56.650Z",
+    "lastVerified": "2026-10-31T22:23:56.650Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -348,9 +348,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T21:46:12.348Z",
+    "lastChecked": "2026-10-31T22:23:54.971Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T21:46:12.348Z"
+    "lastVerified": "2026-10-31T22:23:54.971Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -422,9 +422,9 @@
   "run-llama-llama_index": {
     "name": "llama_index",
     "officialUrl": "https://github.com/run-llama/llama_index",
-    "lastChecked": "2026-10-31T05:42:48.654Z",
+    "lastChecked": "2026-10-31T22:23:52.482Z",
     "revisionIdentifier": "619d7466",
-    "lastVerified": "2026-10-31T05:42:48.654Z"
+    "lastVerified": "2026-10-31T22:23:52.482Z"
   },
   "nucleoidai-nucleoid": {
     "name": "Nucleoid",
@@ -1056,9 +1056,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-10-31T18:15:27.363Z",
+    "lastChecked": "2026-10-31T22:23:49.944Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-10-31T18:15:27.363Z"
+    "lastVerified": "2026-10-31T22:23:49.944Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -2553,8 +2553,8 @@
     "officialUrl": "https://github.com/nats-io/nats.go",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T06:38:26.903Z",
-    "lastVerified": "2026-10-31T06:38:26.903Z",
+    "lastChecked": "2026-10-31T22:23:47.435Z",
+    "lastVerified": "2026-10-31T22:23:47.435Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nats-io-nats-go",
@@ -2763,9 +2763,9 @@
   "rigellute-spotify-tui": {
     "name": "spotify-tui",
     "officialUrl": "https://github.com/Rigellute/spotify-tui",
-    "lastChecked": "2026-10-31T02:27:47.058Z",
+    "lastChecked": "2026-10-31T22:23:39.921Z",
     "revisionIdentifier": "c4dcf6b9",
-    "lastVerified": "2026-10-31T02:27:47.058Z"
+    "lastVerified": "2026-10-31T22:23:39.921Z"
   },
   "hf-akatz-ai-minimax-h3-character-swap-lora": {
     "name": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -7724,13 +7724,13 @@
     "officialUrl": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T20:50:44.099Z",
-    "lastVerified": "2026-10-28T20:50:44.099Z",
+    "lastChecked": "2026-10-31T22:23:42.570Z",
+    "lastVerified": "2026-10-31T22:23:42.570Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-    "contentHash": "cb94ac4a8d1c62f07a2f8dbde543a24d37c3bd1af57b58aabd1290598552e017",
-    "promotedRulesCount": 0,
+    "contentHash": "f2c07409b39608a106d03ef29f2a3f06d3b92ea6399c972198e35bc7ca384776",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -9049,9 +9049,9 @@
   "igorescodro-alkaa": {
     "name": "alkaa",
     "officialUrl": "https://github.com/igorescodro/alkaa",
-    "lastChecked": "2026-10-29T12:19:37.840Z",
+    "lastChecked": "2026-10-31T22:23:44.916Z",
     "revisionIdentifier": "8524e062",
-    "lastVerified": "2026-10-29T12:19:37.840Z"
+    "lastVerified": "2026-10-31T22:23:44.916Z"
   },
   "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf": {
     "name": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",

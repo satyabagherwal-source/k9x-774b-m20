@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T22:12:05.657Z",
+  "last_updated": "2026-10-31T22:23:54.022Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -21870,7 +21870,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
       "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
-      "content_hash": "cb94ac4a8d1c62f07a2f8dbde543a24d37c3bd1af57b58aabd1290598552e017",
+      "content_hash": "f2c07409b39608a106d03ef29f2a3f06d3b92ea6399c972198e35bc7ca384776",
       "dossier_path": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
       "promoted_rules": [
@@ -21896,8 +21896,8 @@
         },
         {
           "number": 1055,
-          "title": "Modular Vision Add-on Decoupling",
-          "status": "PROMOTED_AND_VERIFIED"
+          "title": "Modular Vision Add-On Decoupling",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1056,
@@ -21917,7 +21917,7 @@
         {
           "number": 2640,
           "title": "Agentic Capability Preservation Under Extreme Quantization",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 2641,
@@ -21953,6 +21953,11 @@
           "number": 4498,
           "title": "Context Window and GPU Offloading Invariants",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6347,
+          "title": "Thinking Mode Toggle for Latency Optimization",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -21971,7 +21976,7 @@
         "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv3z5aum",
         "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv4dr5p5"
       ],
-      "verified_at": "2026-10-28T20:50:45.045Z",
+      "verified_at": "2026-10-31T22:23:53.993Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84852,15 +84857,15 @@
       "learning_id": "rule-1055",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1055,
-      "title": "Modular Vision Add-on Decoupling (Harvested from ConwayResearch/Underdog-Saluki-27B-1.0)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Modular Vision Add-On Decoupling",
+      "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+      "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.817Z"
+      "verified_at": "2026-10-31T22:23:53.993Z"
     },
     "rule-1056": {
       "learning_id": "rule-1056",
@@ -107468,7 +107473,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T14:59:09.488Z"
+      "verified_at": "2026-10-31T22:23:53.993Z"
     },
     "rule-2641": {
       "learning_id": "rule-2641",
@@ -164930,6 +164935,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T22:12:05.637Z"
+    },
+    "rule-6347": {
+      "learning_id": "rule-6347",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6347,
+      "title": "Thinking Mode Toggle for Latency Optimization",
+      "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+      "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T22:23:53.993Z"
     }
   },
   "aliases": {

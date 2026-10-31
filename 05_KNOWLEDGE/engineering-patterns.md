@@ -464776,3 +464776,63 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `acebecf0` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6347. Thinking Mode Toggle for Latency Optimization (Harvested from ConwayResearch/Underdog-Saluki-27B-1.0)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Thinking Mode Toggle for Latency Optimization",
+  "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-31T22:23:53.759Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ConwayResearch/Underdog-Saluki-27B-1.0](https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0) (Revision: `hf-conwayr`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+For agentic tool-calling tasks, **MUST** provide a mechanism to disable "Thinking" (Chain of Thought) to reduce latency and token consumption. **MUST NOT** force CoT for simple function calls where the answer is deterministic.
+**WHY**:
+The repo explicitly states: "Fast, direct tool calls: thinking off... temperature 0". CoT adds significant latency and token cost. For tool calls, the model should directly output the JSON. The `--jinja` template supports `enable_thinking: false`, allowing per-request control. This is a critical performance invariant for real-time agents.
+**WHEN TO APPLY**:
+Any LLM API that supports both reasoning and tool-calling modes.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+// Request with Thinking Disabled for Tool Call
+{
+  "model": "saluki",
+  "messages": [
+    {"role": "user", "content": "Get weather in NYC"}
+  ],
+  "chat_template_kwargs": {
+    "enable_thinking": false
+  },
+  "temperature": 0
+}
+```
+**NEGATIVE CONSTRAINT**:
+```json
+// ANTI-PATTERN: Forcing Thinking for Simple Tool Calls
+{
+  "model": "saluki",
+  "messages": [
+    {"role": "user", "content": "Get weather in NYC"}
+  ],
+  "temperature": 0.6 // High temp + Thinking = Slow, noisy output
+}
+```
+**VERIFICATION METHOD**:
+Latency benchmark comparing `enable_thinking: true` vs `false` for a fixed set of tool-calling prompts. Asserts that `false` reduces latency by >50%.

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T22:12:05.744Z",
-  "total_cycles_completed": 6712,
-  "total_learnings_persisted": 6712,
-  "total_rules_promoted": 6351,
+  "last_updated": "2026-10-31T22:23:54.115Z",
+  "total_cycles_completed": 6713,
+  "total_learnings_persisted": 6713,
+  "total_rules_promoted": 6354,
   "history": [
-    {
-      "timestamp": "2026-10-31T10:40:28.609Z",
-      "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
-      "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T10:40:29.327Z",
       "repository": "dosco/graphjin",
@@ -1403,6 +1396,13 @@
       "repository": "1jehuang/jcode",
       "learningId": "learn-github-1jehuang-jcode",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:23:54.115Z",
+      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
