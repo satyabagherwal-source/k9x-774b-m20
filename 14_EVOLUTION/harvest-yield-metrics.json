@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T02:55:59.658Z",
-  "total_cycles_completed": 6413,
-  "total_learnings_persisted": 6413,
-  "total_rules_promoted": 6010,
+  "last_updated": "2026-10-31T03:02:48.471Z",
+  "total_cycles_completed": 6416,
+  "total_learnings_persisted": 6416,
+  "total_rules_promoted": 6015,
   "history": [
-    {
-      "timestamp": "2026-10-30T16:30:03.504Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T16:32:46.023Z",
-      "repository": "beclab/Olares",
-      "learningId": "learn-github-beclab-olares",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T16:39:35.938Z",
-      "repository": "RDFLib/rdflib",
-      "learningId": "learn-github-rdflib-rdflib",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T16:39:42.320Z",
       "repository": "gravitl/netmaker",
@@ -1403,6 +1382,27 @@
       "repository": "KRAFTON/Raon-1-mini-preview",
       "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T03:02:36.147Z",
+      "repository": "ClementTsang/bottom",
+      "learningId": "learn-github-clementtsang-bottom",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T03:02:45.073Z",
+      "repository": "ornith-ai/Ornith-1.5-122B",
+      "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T03:02:48.471Z",
+      "repository": "StarTrail-org/LEANN",
+      "learningId": "learn-github-startrail-org-leann",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -6445,3 +6445,6 @@ Every entry in this ledger must capture:
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `a88390c6` | Multi-dimensional audit evidence | 2026-10-31T02:44:18.277Z |
 | `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `9f1dcebf` | Multi-dimensional audit evidence | 2026-10-31T02:51:10.307Z |
 | `learn-huggingface-krafton-raon-1-mini-preview` | `https://huggingface.co/KRAFTON/Raon-1-mini-preview` | `hf-krafton` | Multi-dimensional audit evidence | 2026-10-31T02:55:59.653Z |
+| `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `17723968` | Multi-dimensional audit evidence | 2026-10-31T03:02:36.143Z |
+| `learn-huggingface-ornith-ai-ornith-1-5-122b` | `https://huggingface.co/ornith-ai/Ornith-1.5-122B` | `hf-ornith-` | Multi-dimensional audit evidence | 2026-10-31T03:02:45.068Z |
+| `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `07796bd7` | Multi-dimensional audit evidence | 2026-10-31T03:02:48.467Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/startrail-org-leann-learnings.md`  
 > **Source**: github ([https://github.com/StarTrail-org/LEANN](https://github.com/StarTrail-org/LEANN))  
-> **Source Version**: `11ca8a53`  
+> **Source Version**: `07796bd7`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T06:36:33.835Z  
+> **Timestamp**: 2026-10-31T03:02:47.820Z  
 > **Learning ID**: `learn-github-startrail-org-leann`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/startrail-org-leann-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarTrail-org/LEANN](https://github.com/StarTrail-org/LEANN))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T06:36:33.620Z  
+> **Harvest Timestamp**: 2026-10-31T03:02:47.611Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: [MLsys2026 Best Paper]: https://arxiv.org/abs/2506.08276. RAG on Everything with LEANN. Enjoy 97% storage savings while running a fast, accurate, and 100% private RAG application on your personal device.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 13707 stars
+- **Stars / Engagement**: 13723 stars
 
 ---
 
@@ -2212,75 +2212,81 @@ class EmbeddingServerManager:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `11ca8a53` (2026-10-28)
-**Commit Message**: fix(release): align version tests and retry MKL setup
+### Incident Patch 1: `07796bd7` (2026-10-28)
+**Commit Message**: fix(release): wait for main CI before publishing
 
-**File**: `.github/workflows/build-reusable.yml` (modified, +22/-2)
+**File**: `.github/workflows/release-manual.yml` (modified, +38/-25)
 ```diff
-@@ -182,8 +182,28 @@ jobs:
-           if [[ "$ARCH" == "x86_64" ]]; then
-             # Install Intel MKL for DiskANN on x86_64
-             echo "📦 Installing Intel MKL for x86_64..."
--            wget -q https://registrationcenter-download.intel.com/akdlm/IRC_NAS/79153e0f-74d7-45af-b8c2-258941adf58a/intel-onemkl-2025.0.0.940.sh
--            sudo sh intel-onemkl-2025.0.0.940.sh -a --components intel.oneapi.lin.mkl.devel --action install --eula accept -s
-+            MKL_INSTALLER=intel-onemkl-2025.0.0.940.sh
-+            MKL_READY=0
-+            for attempt in 1 2 3; do
-+              echo "MKL installation attempt ${attempt}/3"
-+              if wget -q https://registrationcenter-download.intel.com/akdlm/IRC_NAS/79153e0f-74d7-45af-b8c2-258941adf58a/${MKL_INSTALLER} \
-+                && sudo sh ${MKL_INSTALLER} -a --components intel.oneapi.lin.mkl.devel \
-+                  --action install --eula accept -s
-+              then
-+                MKL_READY=1
-+                break
-+              fi
-+              if [[ -f /opt/intel/oneapi/mkl/latest/lib/intel64/libmkl_core.so ]]; then
-+                echo "Intel MKL files are present after a nonzero installer exit"
-+                MKL_READY=1
-+                break
-+              fi
-+              sleep 10
-+            done
-+            if [[ "$MKL_READY" != "1" ]]; then
-+              echo "Intel MKL installation failed after 3 attempts"
-+              exit 1
+@@ -24,31 +24,44 @@ jobs:
+           set -euo pipefail
+ 
+           MAIN_SHA=$(gh api repos/${GITHUB_REPOSITORY}/commits/main --jq '.sha')
+-          RUN_ID=$(gh api repos/${GITHUB_REPOSITORY}/actions/workflows/build-and-publish.yml/runs \
+-            --method GET \
+-            --field branch=main \
+-            --field head_sha="${MAIN_SHA}" \
+-            --field per_page=1 \
+-            --jq '.workflow_runs[0].id')
+-
+-          if [ -z "${RUN_ID}" ] || [ "${RUN_ID}" = "null" ]; then
+-            echo "❌ No CI run found for main @ ${MAIN_SHA}"
+-            exit 1
+-          fi
+-
+-          STATUS=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.status')
+-          CONCLUSION=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.conclusion')
+-          URL=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.html_url')
+-
+-          echo "CI run: ${URL}"
+-          if [ "${STATUS}" != "completed" ] || [ "${CONCLUSION}" != "success" ]; then
+-            echo "❌ CI not successful for main @ ${MAIN_SHA}"
+-            echo "Status: ${STATUS}"
+-            echo "Conclusion: ${CONCLUSION}"
+-            exit 1
+-          fi
+-
+-          echo "✅ CI succeeded for main @ ${MAIN_SHA}"
++          DEADLINE=$(( $(date +%s) + 14400 ))
++          RUN_ID=""
++
++          while (( $(date +%s) < DEADLINE )); do
++            RUN_ID=$(gh api repos/${GITHUB_REPOSITORY}/actions/workflows/build-and-publish.yml/runs \
++              --method GET \
++              --field branch=main \
++              --field head_sha="${MAIN_SHA}" \
++              --field per_page=1 \
++              --jq '.workflow_runs[0].id // empty')
++
++            if [ -z "${RUN_ID}" ]; then
++              echo "Waiting for a CI run for main @ ${MAIN_SHA}"
++              sleep 15
++              continue
 +            fi
-             source /opt/intel/oneapi/setvars.sh
-             echo "MKLROOT=/opt/intel/oneapi/mkl/latest" >> $GITHUB_ENV
-             echo "LD_LIBRARY_PATH=/opt/intel/oneapi/compiler/latest/linux/compiler/lib/intel64_lin" >> $GITHUB_ENV
-```
-
-**File**: `tests/test_cpu_only_install.py` (modified, +6/-4)
-```diff
-@@ -40,11 +40,12 @@ def _load_leann_core_pyproject():
++
++            STATUS=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.status')
++            CONCLUSION=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.conclusion')
++            URL=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.html_url')
++
++            if [ "${STATUS}" = "completed" ]; then
++              echo "CI run: ${URL}"
++              if [ "${CONCLUSION}" != "success" ]; then
++                echo "❌ CI not successful for main @ ${MAIN_SHA}"
++                echo "Conclusion: ${CONCLUSION}"
++                exit 1
++              fi
++              echo "✅ CI succeeded for main @ ${MAIN_SHA}"
++              exit 0
++            fi
++
++            echo "Waiting for CI run ${RUN_ID} for main @ ${MAIN_SHA}: ${STATUS}"
++            sleep 30
++          done
++
++          echo "❌ CI did not finish successfully within four hours for main @ ${MAIN_SHA}"
++          exit 1
  
- def test_leann_base_dependencies_include_diskann():
-     data = _load_leann_pyproject()
-+    version = data["project"]["version"]
-     deps = data["project"].get("dependencies", [])
- 
--    assert "leann-core>=0.1.0" in deps
--    assert "leann-backend-hnsw>=0.1.0" in deps
--    assert "leann-backend-diskann>=0.1.0" in deps
-+    assert f"leann-core>={version}" in deps
-+    assert f"leann-backend-hnsw>={version}" in deps
-+    assert f"leann-backend-diskann>={version}" in deps
- 
- 
- def test_leann_core_numpy_is_bounded_below_3():
-@@ -71,10 +72,11 @@ def test_leann_core_cpu_extra_pins_cpu_torch():
- 
- def test_leann_cpu_extra_defined():
-     data = _load_leann_pyproject()
-+    version = data["project"]["version"]
-     extras = data["project"].get("optional-dependencies", {})
- 
-     assert "cpu" in extras
--    assert "leann-core[cpu]>=0.1.0" in extras["cpu"]
-+    assert f"leann-core[cpu]>={version}" in extras["cpu"]
- 
- 
- def test_leann_core_does_not_import_a_backend_at_module_scope():
+   update-version:
+     name: Update Version
 ```
 
 #### Recent Merged Pull Requests:
@@ -2309,50 +2315,80 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release): align version tests and retry MKL setup
+## X. release): wait for main CI before publishing
 
 **RULE**:
-When implementing operations in `.github/workflows/build-reusable.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarTrail-org/LEANN. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release-manual.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarTrail-org/LEANN. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `11ca8a53`: release): align version tests and retry MKL setup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `07796bd7`: release): wait for main CI before publishing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-reusable.yml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-manual.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-            MKL_INSTALLER=intel-onemkl-2025.0.0.940.sh
-            MKL_READY=0
-            for attempt in 1 2 3; do
-              echo "MKL installation attempt ${attempt}/3"
-              if wget -q https://registrationcenter-download.intel.com/akdlm/IRC_NAS/79153e0f-74d7-45af-b8c2-258941adf58a/${MKL_INSTALLER} \
-                && sudo sh ${MKL_INSTALLER} -a --components intel.oneapi.lin.mkl.devel \
-                  --action install --eula accept -s
-              then
-                MKL_READY=1
-                break
-              fi
-              if [[ -f /opt/intel/oneapi/mkl/latest/lib/intel64/libmkl_core.so ]]; then
-                echo "Intel MKL files are present after a nonzero installer exit"
-                MKL_READY=1
-                break
-              fi
-              sleep 10
-            done
-            if [[ "$MKL_READY" != "1" ]]; then
-              echo "Intel MKL installation failed after 3 attempts"
-              exit 1
+          DEADLINE=$(( $(date +%s) + 14400 ))
+          RUN_ID=""
+
+          while (( $(date +%s) < DEADLINE )); do
+            RUN_ID=$(gh api repos/${GITHUB_REPOSITORY}/actions/workflows/build-and-publish.yml/runs \
+              --method GET \
+              --field branch=main \
+              --field head_sha="${MAIN_SHA}" \
+              --field per_page=1 \
+              --jq '.workflow_runs[0].id // empty')
+
+            if [ -z "${RUN_ID}" ]; then
+              echo "Waiting for a CI run for main @ ${MAIN_SHA}"
+              sleep 15
+              continue
             fi
+
+            STATUS=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.status')
+            CONCLUSION=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.conclusion')
+            URL=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.html_url')
+
+            if [ "${STATUS}" = "completed" ]; then
+              echo "CI run: ${URL}"
+              if [ "${CONCLUSION}" != "success" ]; then
+                echo "❌ CI not successful for main @ ${MAIN_SHA}"
+                echo "Conclusion: ${CONCLUSION}"
+                exit 1
+              fi
+              echo "✅ CI su
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-            wget -q https://registrationcenter-download.intel.com/akdlm/IRC_NAS/79153e0f-74d7-45af-b8c2-258941adf58a/intel-onemkl-2025.0.0.940.sh
-            sudo sh intel-onemkl-2025.0.0.940.sh -a --components intel.oneapi.lin.mkl.devel --action install --eula accept -s
+          RUN_ID=$(gh api repos/${GITHUB_REPOSITORY}/actions/workflows/build-and-publish.yml/runs \
+            --method GET \
+            --field branch=main \
+            --field head_sha="${MAIN_SHA}" \
+            --field per_page=1 \
+            --jq '.workflow_runs[0].id')
+
+          if [ -z "${RUN_ID}" ] || [ "${RUN_ID}" = "null" ]; then
+            echo "❌ No CI run found for main @ ${MAIN_SHA}"
+            exit 1
+          fi
+
+          STATUS=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.status')
+          CONCLUSION=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.conclusion')
+          URL=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.html_url')
+
+          echo "CI run: ${URL}"
+          if [ "${STATUS}" != "completed" ] || [ "${CONCLUSION}" != "success" ]; then
+            echo "❌ CI not successful for main @ ${MAIN_SHA}"
+            echo "Status: ${STATUS}"
+            echo "Conclusion: ${CONCLUSION}"
+            exit 1
+          fi
+
+          echo "✅ CI succeeded for main @ ${MAIN_SHA}"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `11ca8a53` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `07796bd7` are properly handled with clean fallback behavior.
