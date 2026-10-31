@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261029-8K2K",
-    "timestamp": "2026-10-29T12:13:33.980Z",
-    "repository": "doobidoo/mcp-memory-service",
-    "learningId": "learn-github-doobidoo-mcp-memory-service",
-    "contentHash": "1658218cd321a5145517937f9d3b78194b7f5d67618d92368e606e94c8fa9658",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261029-CRFH",
-    "timestamp": "2026-10-29T12:16:50.141Z",
-    "repository": "unhappychoice/gitlogue",
-    "learningId": "learn-github-unhappychoice-gitlogue",
-    "contentHash": "060e625d675a9e6f41b02c01023ae490ae4dbcb683934656b35c829c3258536e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261029-GH0D",
     "timestamp": "2026-10-29T12:19:43.261Z",
     "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
@@ -7490,6 +7460,36 @@
     "repository": "dosco/graphjin",
     "learningId": "learn-github-dosco-graphjin",
     "contentHash": "123aeb3fb45c06ad43e73b6c9d97d2d9eb41b26304e35f6813837856376a5f70",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-1752",
+    "timestamp": "2026-10-31T10:47:12.230Z",
+    "repository": "unsloth/Qwen-Image-2.1-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+    "contentHash": "94da086526070c3b9720d4b0624bec848b8dca41963418272493c671906aa620",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-18FB",
+    "timestamp": "2026-10-31T10:47:13.895Z",
+    "repository": "u-root/u-root",
+    "learningId": "learn-github-u-root-u-root",
+    "contentHash": "ab63cf9e4f862e4d1b40853e8a5a716fc7cbbb67ebfada12ea1c6da24c2f3b07",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

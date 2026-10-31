@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source**: github ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
-> **Source Version**: `91846b7c`  
+> **Source Version**: `9daa0a72`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T16:19:19.945Z  
+> **Timestamp**: 2026-10-31T10:47:13.209Z  
 > **Learning ID**: `learn-github-u-root-u-root`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T16:19:19.827Z  
+> **Harvest Timestamp**: 2026-10-31T10:47:13.199Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A fully Go userland with Linux bootloaders! u-root can create a one-binary root file system (initramfs) containing a busybox-like set of tools written in Go.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 3082 stars
+- **Stars / Engagement**: 3084 stars
 
 ---
 
@@ -1264,423 +1264,72 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `db397b48` (2026-10-26)
-**Commit Message**: pkg/boot/kexec: honour #address-cells and #size-cells in the FDT memory map
+### Incident Patch 1: `9daa0a72` (2026-10-29)
+**Commit Message**: ulog: use unix.Klogctl to set the console log level
 
-MemoryMapFromFDT read every reg property with Property.AsRegion, which
-only accepts exactly 16 bytes: one 64-bit address and one 64-bit size.
-That matches arm64 and riscv64, but not a device tree whose parent node
-declares other cell counts. On 32-bit arm both are one cell, so /memory
-on a BeagleBone Black is
+Use the Klogctl function defined in the golang.org/x/sys/unix package,
+as is already done in ClearLog, instead of calling the syslog(2)
+syscall directly.
 
-    #address-cells = <1>;
-    #size-cells = <1>;
-    memory@80000000 {
-        device_type = "memory";
-        reg = <0x80000000 0x20000000>;
-    };
+Signed-off-by: Tobias Klauser <[REDACTED_EMAIL]>
 
-and reading the memory map from it fails with
-
-    property value is not <u64x2>
-
-before anything can be loaded.
-
-Add Property.AsRegions, which decodes a reg property for given address
-and size cell counts and returns every entry in it, not just the first.
-MemoryMapFromFDT now passes it the root node's cells for memory nodes and
-the reserved-memory node's cells for its children, as the devicetree
-specification defines. When a parent does not declare its cells the old
-single <u64x2> reading is kept, so device trees that worked before are
-read exactly as they were.
-
-Tested on a BeagleBone Black (AM335x, Linux 7.3-rc7): with this change
-the memory map is r
-
-**File**: `pkg/boot/kexec/memory_map_linux.go` (modified, +49/-14)
+**File**: `pkg/ulog/klog_linux.go` (modified, +4/-1)
 ```diff
-@@ -140,6 +140,30 @@ func (mm *MemoryMap) Insert(r TypedRange) {
- 	*mm = newMap
- }
- 
-+// regRegions decodes a reg property using the #address-cells and #size-cells
-+// of parent. If parent does not set them, reg is read as a single <u64x2>,
-+// which is what this package has always assumed.
-+func regRegions(parent *dt.Node, reg *dt.Property) ([]dt.Region, error) {
-+	ac, aok := parent.LookProperty("#address-cells")
-+	sc, sok := parent.LookProperty("#size-cells")
-+	if !aok || !sok {
-+		r, err := reg.AsRegion()
-+		if err != nil {
-+			return nil, err
-+		}
-+		return []dt.Region{*r}, nil
-+	}
-+	addressCells, err := ac.AsU32()
-+	if err != nil {
-+		return nil, err
-+	}
-+	sizeCells, err := sc.AsU32()
-+	if err != nil {
-+		return nil, err
-+	}
-+	return reg.AsRegions(addressCells, sizeCells)
-+}
-+
- // MemoryMapFromFDT reads firmware provided memory map from an FDT.
- func MemoryMapFromFDT(fdt *dt.FDT) (MemoryMap, error) {
- 	var mm MemoryMap
-@@ -154,14 +178,18 @@ func MemoryMapFromFDT(fdt *dt.FDT) (MemoryMap, error) {
- 		}
- 		p, found = n.LookProperty("reg")
- 		if found {
--			r, err := p.AsRegion()
-+			// Memory nodes are children of the root node, so the root's
-+			// cell sizes apply.
-+			regions, err := regRegions(fdt.RootNode, p)
- 			if err != nil {
- 				return err
- 			}
--			mm = append(mm, TypedRange{
--				Range: Range{Start: uintptr(r.Start), Size: uint(r.Size)},
--				Type:  RangeRAM,
--			})
-+			for _, r := range regions {
-+				mm = append(mm, TypedRange{
-+					Range: Range{Start: uintptr(r.Start), Size: uint(r.Size)},
-+					Type:  RangeRAM,
-+				})
-+			}
- 		}
- 		return nil
+@@ -82,7 +82,10 @@ const (
+ // After this call, only messages with a level value lower than the one
+ // specified will be printed to console by the kernel.
+ func (k *KLog) SetConsoleLogLevel(level KLogLevel) error {
+-	if _, _, err := unix.Syscall(unix.SYS_SYSLOG, unix.SYSLOG_ACTION_CONSOLE_LEVEL, 0, uintptr(level)); err != 0 {
++	// The syslog(2) "len" argument carries the console level for this
++	// action; Klogctl passes len(buf) as that argument, so size buf
++	// accordingly rather than actually writing into it.
++	if _, err := unix.Klogctl(unix.SYSLOG_ACTION_CONSOLE_LEVEL, make([]byte, level)); err != nil {
+ 		return fmt.Errorf("could not set syslog level to %d: %w", level, err)
  	}
-@@ -170,27 +198,34 @@ func MemoryMapFromFDT(fdt *dt.FDT) (MemoryMap, error) {
- 		return nil, err
- 	}
- 
--	reserveMemory := func(n *dt.Node) error {
-+	reserveMemory := func(parent, n *dt.Node) error {
- 		p, found := n.LookProperty("reg")
- 		if found {
--			r, err := p.AsRegion()
-+			regions, err := regRegions(parent, p)
- 			if err != nil {
- 				return err
- 			}
--
--			mm.Insert(TypedRange{
--				Range: Range{Start: uintptr(r.Start), Size: uint(r.Size)},
--				Type:  RangeReserved,
--			})
-+			for _, r := range regions {
-+				mm.Insert(TypedRange{
-+					Range: Range{Start: uintptr(r.Start), Size: uint(r.Size)},
-+					Type:  RangeReserved,
-+				})
-+			}
- 		}
- 		return nil
- 	}
- 	resv, found := fdt.NodeByName("reserved-memory")
- 	if found {
--		err := resv.Walk(reserveMemory)
--		if err != nil {
-+		// The reserved-memory node itself is addressed by the root's cells,
-+		// its children by the cells it declares.
-+		if err := reserveMemory(fdt.RootNode, resv); err != nil {
- 			return nil, err
- 		}
-+		for _, c := range resv.Children {
-+			if err := reserveMemory(resv, c); err != nil {
-+				return nil, err
-+			}
-+		}
- 	}
- 
- 	for _, r := range fdt.ReserveEntries {
+ 	return nil
 ```
 
-**File**: `pkg/boot/kexec/memory_map_linux_test.go` (modified, +120/-0)
+---
+
+### Incident Patch 2: `7796d399` (2026-10-29)
+**Commit Message**: rush: use unix.IoctlSetPointerInt
+
+Use the IoctlSetPointerInt function defined in the golang.org/x/sys/unix
+package instead of locally duplicating it.
+
+Signed-off-by: Tobias Klauser <[REDACTED_EMAIL]>
+
+**File**: `cmds/exp/rush/tty_linux.go` (modified, +2/-4)
 ```diff
-@@ -5,6 +5,7 @@
- package kexec
- 
- import (
-+	"errors"
- 	"fmt"
+@@ -11,7 +11,6 @@ import (
+ 	"log"
  	"os"
- 	"path"
-@@ -208,6 +209,125 @@ func TestMemoryMapFromFDT(t *testing.T) {
+ 	"os/signal"
+-	"unsafe"
+ 
+ 	"golang.org/x/sys/unix"
+ )
+@@ -55,9 +54,8 @@ func tty() {
+ func foreground() {
+ 	// Place process group in foreground.
+ 	if ttypgrp != 0 {
+-		_, _, errno := unix.RawSyscall(unix.SYS_IOCTL, ttyf.Fd(), uintptr(unix.TIOCSPGRP), uintptr(unsafe.Pointer(&ttypgrp)))
+-		if errno != 0 {
+-			log.Printf("rush pid %v: Can't set foreground to %v: %v", os.Getpid(), ttypgrp, errno)
++		if err := unix.IoctlSetPointerInt(int(ttyf.Fd()), unix.TIOCSPGRP, ttypgrp); err != nil {
++			log.Printf("rush pid %v: Can't set foreground to %v: %v", os.Getpid(), ttypgrp, err)
+ 		}
  	}
  }
- 
-+// TestMemoryMapFromFDTCells covers device trees that declare #address-cells
-+// and #size-cells, such as 32-bit arm ones whose reg entries are one cell
-+// each. The values are kept below 4 GiB so this also builds where uintptr is
-+// 32 bits wide.
-+func TestMemoryMapFromFDTCells(t *testing.T) {
-+	cells := func(address, size uint32) []dt.Property {
-+		return []dt.Property{
-+			dt.PropertyU32("#address-cells", address),
-+			dt.PropertyU32("#size-cells", size),
-+		}
-+	}
-+	memory := func(reg ...uint32) *dt.Node {
-+		return &dt.Node{
-+			Name: "memory",
-+			Properties: []dt.Property{
-+				dt.PropertyString("device_type", "memory"),
-+				dt.PropertyU32Array("reg", reg),
-+			},
-+		}
-+	}
-+
-+	for _, tc := range []struct {
-+		name    string
-+		fdt     *dt.FDT
-+		wantMap MemoryMap
-+		wantErr error
-+	}{
-+		{
-+			// Layout of a BeagleBone Black: 512 MiB at 0x80000000 and a
-+			// reserved-memory child carving 16 MiB out of it.
-+			name: "one cell each, with reserved-memory",
-+			fdt: &dt.FDT{RootNode: &dt.Node{
-+				Name:       "/",
-+				Properties: cells(1, 1),
-+				Children: []*dt.Node{
-+					memory(0x80000000, 0x20000000),
-+					{
-+						Name:       "reserved-memory",
-+						Properties: cells(1, 1),
-+						Children: []*dt.Node{{
-+							Name:       "cma",
-+							Properties: []dt.Property{dt.PropertyU32Array("reg", []uint32{0x9e800000, 0x01000000})},
-+						}},
-+					},
-+				},
-+			}},
-+			wantMap: MemoryMap{
-+				TypedRange{Range{Start: 0x80000000, Size: 0x1e800000}, RangeRAM},
-+				TypedRange{Range{Start: 0x9e800000, Size: 0x01000000}, RangeReserved},
-+				TypedRange{Range{Start: 0x9f800000, Size: 0x00800000}, RangeRAM},
-+			},
-+		},
-+		{
-+			// Children of reserved-memory use its cells, not the root's.
-+			name: "reserved-memory cells differ from the root's",
-+			fdt: &dt.FDT{RootNode: &dt.Node{
-+				Name:       "/",
-+				Properties: cells(2, 2),
-+				Children: []*dt.Node{
-+					memory(0, 0x80000000, 0, 0x20000000),
-+					{
-+						Name:       "reserved-memory",
-+						Properties: cells(1, 1),
-+						Children: []*dt.Node{{
-+							Name:       "cma",
-+							Properties: []dt.Property{dt.PropertyU32Array("reg", []uint32{0x9e800000, 0x01000000})},
-+						}},
-+					},
-+				},
-+			}},
-+			wantMap: MemoryMap{
-+				TypedRange{Range{Start: 0x80000000, Size: 0x1e800000}, RangeRAM},
-+				TypedRange{Range{Start: 0x9e800000, Size: 0x01000000}, RangeReserved},
-+				TypedRange{Range{Start: 0x9f800000, Size: 0x00800000}, RangeRAM},
-+			},
-+		},
-+		{
-+			name: "several entries in one reg",
-+			fdt: &dt.FDT{RootNode: &dt.Node{
-+				Name:       "/",
-+				Properties: cells(1, 1),
-+				Children:   []*dt.Node{memory(0x80000000, 0x10000000, 0xc0000000, 0x10000000)},
-+			}},
-+			wantMap: MemoryMap{
-+				TypedRange{Range{Start: 0x80000000, Size: 0x10000000}, RangeRAM},
-+				TypedRange{Range{Start: 0xc0000000, Size: 0x10000000}, RangeRAM},
-+			},
-+		},
-+		{
-+			name: "two address cells, one size cell",
-+			fdt: &dt.FDT{RootNode: &dt.Node{
-+				Name:       "/",
-+				Properties: cells(2, 1),
-+				Children:   []*dt.Node{memory(0, 0x40000000, 0x10000000)},
-+			}},
-+			wantMap: MemoryMap{
-+				TypedRange{Range{Start: 0x40000000, Size: 0x10000000}, RangeRAM},
-+			},
-+		},
-+		{
-+			name: "reg does not match the declared cells",
-+			fdt: &dt.FDT{RootNode: &dt.Node{
-+				Name:       "/",
-+				Properties: cells(1, 1),
-+				Children:   []*dt.Node{memory(0, 0x80000000, 0, 0x20000000, 0)},
-+			}},
-+			wantErr: dt.ErrPropertyRegionInvalid,
-+		},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			mm, err := MemoryMapFromFDT(tc.fdt)
-+			if !errors.Is(err, tc.wantErr) {
-+				t.Fatalf("MemoryMapFromFDT returned error %v, want %v", err, tc.wantErr)
-+			}
-+			checkMemoryMap(t, mm, tc.wantMap)
-+		})
-+	}
-+}
-+
- func TestMemoryMapFromSysfsMemmap(t *testing.T) {
- 	root := t.TempDir()
- 
-```
-
-**File**: `pkg/dt/node.go` (modified, +31/-0)
-```diff
-@@ -394,6 +394,37 @@ func (p *Property) AsRegion() (*Region, error) {
- 	return &Region{Start: start, Size: size}, nil
- }
- 
-+// AsRegions converts a reg-style property to Regions, where each entry is
-+// addressCells cells of address followed by sizeCells cells of size, as given
-+// by the #address-cells and #size-cells of the node's parent. Each cell is
-+// 32 bits; 1 or 2 cells are supported for both, which covers 32- and 64-bit
-+// platforms.
-+func (p *Property) AsRegions(addressCells, sizeCells uint32) ([]Region, error) {
-+	if addressCells < 1 || addressCells > 2 || sizeCells < 1 || sizeCells > 2 {
-+		return nil, fmt.Errorf("property %q: unsupported #address-cells %d / #size-cells %d: %w", p.Name, addressCells, sizeCells, ErrPropertyRegionInvalid)
-+	}
-+	entry := int(addressCells+sizeCells) * 4
-+	if len(p.Value) == 0 || len(p.Value)%entry != 0 {
-+		return nil, fmt.Errorf("property %q: %d bytes is not a multiple of %d: %w", p.Name, len(p.Value), entry, ErrPropertyRegionInvalid)
-+	}
-+	var regions []Region
-+	for b := p.Value; len(b) > 0; b = b[entry:] {
-+		regions = append(regions, Region{
-+			Start: readCells(b, addressCells),
-+			Size:  readCells(b[addressCells*4:], sizeCells),
-+		})
-+	}
-+	return regions, nil
-+}
-+
-+func readCells(b []byte, n uint32) uint64 {
-+	var v uint64
-+	for i := range n {
-+		v = v<<32 | uint64(binary.BigEndian.Uint32(b[i*4:]))
-+	}
-+	return v
-+}
-+
- // AsString converts the property to the Go string type. The trailing null
- // character is stripped.
- func (p *Property) AsString() (string, error) {
-```
-
-**File**: `pkg/dt/node_test.go` (modified, +86/-0)
-```diff
-@@ -477,3 +477,89 @@ func TestAsRegion(t *testing.T) {
- 		})
- 	}
- }
-+
-+func TestAsRegions(t *testing.T) {
-+	for _, tc := range []struct {
-+		name         string
-+		value        []byte
-+		addressCells uint32
-+		sizeCells    uint32
-+		want         []Region
-+		wantErr      error
-+	}{
-+		{
-+			// /memory on a BeagleBone Black: <0x80000000 0x20000000>.
-+			name:         "one address cell, one size cell",
-+			value:        []byte{0x80, 0x00, 0x00, 0x00, 0x20, 0x00, 0x00, 0x00},
-+			addressCells: 1,
-+			sizeCells:    1,
-+			want:         []Region{{Start: 0x80000000, Size: 0x20000000}},
-+		},
-+		{
-+			name: "two entries",
-+			value: []byte{
-+				0x80, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00,
-+				0xc0, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00,
-+			},
-+			addressCells: 1,
-+			sizeCells:    1,
-+			want: []Region{
-+				{Start: 0x80000000, Size: 0x10000000},
-+				{Start: 0xc0000000, Size: 0x08000000},
-+			},
-+		},
-+		{
-+			name:         "two address cells, one size cell",
-+			value:        []byte{0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00},
-+			addressCells: 2,
-+			sizeCells:    1,
-+			want:         []Region{{Start: 0x100000000, Size: 0x40000000}},
-+		},
-+		{
-+			name:         "two address cells, two size cells",
-+			value:        []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f},
-+			addressCells: 2,
-+			sizeCells:    2,
-+			want:         []Region{{Start: 0x0001020304050607, Size: 0x08090a0b0c0d0e0f}},
-+		},
-+		{
-+			name:         "length not a multiple of the entry size",
-+			value:        []byte{0x80, 0x00, 0x00, 0x00, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-+			addressCells: 1,
-+			sizeCells:    1,
-+			wantErr:      ErrPropertyRegionInvalid,
-+		},
-+		{
-+			name:         "empty",
-+			value:        []byte{},
-+			addressCells: 1,
-+			sizeCells:    1,
-+			wantErr:      ErrPropertyRegionInvalid,
-+		},
-+		{
-+			name:         "zero size cells",
-+			value:        []byte{0x80, 0x00, 0x00, 0x00},
-+			addressCells: 1,
-+			sizeCells:    0,
-+			wantErr:      ErrPropertyRegionInvalid,
-+		},
-+		{
-+			name:         "three address cells",
-+			value:        make([]byte, 16),
-+			addressCells: 3,
-+			sizeCells:    1,
-+			wantErr:      ErrPropertyRegionInvalid,
-+		},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			p := &Property{Name: "reg", Value: tc.value}
-+			got, err := p.AsRegions(tc.addressCells, tc.sizeCells)
-+			if !errors.Is(err, tc.wantErr) {
-+				t.Fatalf("AsRegions(%d, %d) returned error %v, want %v", tc.addressCells, tc.sizeCells, err, tc.wantErr)
-+			}
-+			if !slices.Equal(got, tc.want) {
-+				t.Errorf("AsRegions(%d, %d) = %#x, want %#x", tc.addressCells, tc.sizeCells, got, tc.want)
-+			}
-+		})
-+	}
-+}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3816** (2026-10-31): Use more `golang.org/x/sys/unix` syscall wrappers (@tklauser)
 - **PR #3813** (2026-10-27): pkg/boot/kexec: honour #address-cells and #size-cells in the FDT memory map (@alanhc)
 - **PR #3810** (2026-10-27): chmod: ignore symlinks met during recursive traversal (@alhudz)
 - **PR #3806** (2026-10-22): pkg/fdsrv: fix FD leaks, double-close, client DoS, and use context.Context (@brho)
 - **PR #3805** (2026-10-27): bootcmd: show the menu again when the shell exits (@alanhc)
 - **PR #3804** (closed): build(deps): bump markdown-it from 12.3.2 to 14.3.3 in /website (@dependabot[bot])
-- **PR #3803** (closed): build(deps): bump github.com/klauspost/compress from 1.18.0 to 1.18.7 (@dependabot[bot])
 
 ---
 
@@ -1700,79 +1349,31 @@ the memory map is r
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. pkg/boot/kexec: honour #address-cells and #size-cells in the FDT memory map
+## X. ulog: use unix.Klogctl to set the console log level
 
 **RULE**:
-When implementing operations in `pkg/boot/kexec/memory_map_linux.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/ulog/klog_linux.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `db397b48`: pkg/boot/kexec: honour #address-cells and #size-cells in the FDT memory map. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9daa0a72`: ulog: use unix.Klogctl to set the console log level. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/boot/kexec/memory_map_linux.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/ulog/klog_linux.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// regRegions decodes a reg property using the #address-cells and #size-cells
-// of parent. If parent does not set them, reg is read as a single <u64x2>,
-// which is what this package has always assumed.
-func regRegions(parent *dt.Node, reg *dt.Property) ([]dt.Region, error) {
-	ac, aok := parent.LookProperty("#address-cells")
-	sc, sok := parent.LookProperty("#size-cells")
-	if !aok || !sok {
-		r, err := reg.AsRegion()
-		if err != nil {
-			return nil, err
-		}
-		return []dt.Region{*r}, nil
-	}
-	addressCells, err := ac.AsU32()
-	if err != nil {
-		return nil, err
-	}
-	sizeCells, err := sc.AsU32()
-	if err != nil {
-		return nil, err
-	}
-	return reg.AsRegions(addressCells, sizeCells)
-}
-
-			// Memory nodes are children of the root node, so the root's
-			// cell sizes apply.
-			regions, err := regRegions(fdt.RootNode, p)
-			for _, r := range regions {
-				mm = append(mm, TypedRange{
-					Range: Range{Start: uintptr(r.Start), Size: uint(r.Size)},
-					Type:  RangeRAM,
-				})
-			}
-	reserveMemory := func(parent, n *dt.Node) error {
-			regions, err := regRegions(parent, p)
-			for _, r := range regions {
-				mm.Insert(TypedRange{
-					Range: Range{Start: uintptr(r.Start), Size: uint(r.Size)},
-					Ty
+	// The syslog(2) "len" argument carries the console level for this
+	// action; Klogctl passes len(buf) as that argument, so size buf
+	// accordingly rather than actually writing into it.
+	if _, err := unix.Klogctl(unix.SYSLOG_ACTION_CONSOLE_LEVEL, make([]byte, level)); err != nil {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			r, err := p.AsRegion()
-			mm = append(mm, TypedRange{
-				Range: Range{Start: uintptr(r.Start), Size: uint(r.Size)},
-				Type:  RangeRAM,
-			})
-	reserveMemory := func(n *dt.Node) error {
-			r, err := p.AsRegion()
-
-			mm.Insert(TypedRange{
-				Range: Range{Start: uintptr(r.Start), Size: uint(r.Size)},
-				Type:  RangeReserved,
-			})
-		err := resv.Walk(reserveMemory)
-		if err != nil {
+	if _, _, err := unix.Syscall(unix.SYS_SYSLOG, unix.SYSLOG_ACTION_CONSOLE_LEVEL, 0, uintptr(level)); err != 0 {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `db397b48` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9daa0a72` are properly handled with clean fallback behavior.

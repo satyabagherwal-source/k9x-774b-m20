@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T10:40:32.476Z",
-    "lastVerified": "2026-10-31T10:40:32.476Z",
+    "lastChecked": "2026-10-31T10:47:23.424Z",
+    "lastVerified": "2026-10-31T10:47:23.424Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -429,8 +429,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T10:18:27.828Z",
-    "lastVerified": "2026-10-31T10:18:27.828Z",
+    "lastChecked": "2026-10-31T10:47:23.412Z",
+    "lastVerified": "2026-10-31T10:47:23.412Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -877,9 +877,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-10-31T05:42:46.048Z",
+    "lastChecked": "2026-10-31T10:47:18.406Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-10-31T05:42:46.048Z"
+    "lastVerified": "2026-10-31T10:47:18.406Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "NirDiamant/RAG_Techniques",
@@ -2616,9 +2616,9 @@
   "caviraoss-longmemory": {
     "name": "LongMemory",
     "officialUrl": "https://github.com/CaviraOSS/LongMemory",
-    "lastChecked": "2026-10-30T17:51:38.196Z",
+    "lastChecked": "2026-10-31T10:47:20.899Z",
     "revisionIdentifier": "8badf44d48d0d72a07e1ea3daf1ecbd76ae1a357",
-    "lastVerified": "2026-10-30T17:51:38.196Z"
+    "lastVerified": "2026-10-31T10:47:20.899Z"
   },
   "ratatui-ratatui": {
     "name": "ratatui",
@@ -2839,13 +2839,13 @@
     "officialUrl": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T08:05:51.238Z",
-    "lastVerified": "2026-10-28T08:05:51.238Z",
+    "lastChecked": "2026-10-31T10:47:11.162Z",
+    "lastVerified": "2026-10-31T10:47:11.162Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-    "contentHash": "7f45ec5af53056af7f54db6a0950bcc696f1be6d486abc8af1799bac27eed4ab",
-    "promotedRulesCount": 2,
+    "contentHash": "94da086526070c3b9720d4b0624bec848b8dca41963418272493c671906aa620",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -3754,9 +3754,9 @@
   "alibaba-sentinel-golang": {
     "name": "sentinel-golang",
     "officialUrl": "https://github.com/alibaba/sentinel-golang",
-    "lastChecked": "2026-10-30T18:39:33.456Z",
+    "lastChecked": "2026-10-31T10:47:15.999Z",
     "revisionIdentifier": "f7a7f957",
-    "lastVerified": "2026-10-30T18:39:33.456Z"
+    "lastVerified": "2026-10-31T10:47:15.999Z"
   },
   "supervc-stack-vectorchord": {
     "name": "VectorChord",
@@ -5294,9 +5294,9 @@
   "benoitvallon-react-native-nw-react-calculator": {
     "name": "react-native-nw-react-calculator",
     "officialUrl": "https://github.com/benoitvallon/react-native-nw-react-calculator",
-    "lastChecked": "2026-10-28T15:29:38.669Z",
+    "lastChecked": "2026-10-31T10:47:13.465Z",
     "revisionIdentifier": "4f9628fa",
-    "lastVerified": "2026-10-28T15:29:38.669Z"
+    "lastVerified": "2026-10-31T10:47:13.465Z"
   },
   "bridgecrewio-checkov": {
     "name": "checkov",
@@ -5720,22 +5720,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "u-root-u-root": {
-    "name": "u-root",
+    "name": "u-root/u-root",
     "officialUrl": "https://github.com/u-root/u-root",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T11:27:59.585Z",
-    "lastVerified": "2026-10-30T11:27:59.585Z",
+    "lastChecked": "2026-10-31T10:47:13.199Z",
+    "lastVerified": "2026-10-31T10:47:13.199Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-u-root-u-root",
-    "contentHash": "39eea9f70deaa46ded912eb0afbe459b7fe87eb82438bf2be24679ae5b435dfc",
+    "contentHash": "ab63cf9e4f862e4d1b40853e8a5a716fc7cbbb67ebfada12ea1c6da24c2f3b07",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "91846b7c"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-sentence-transformers-all-mpnet-base-v2": {
     "name": "sentence-transformers/all-mpnet-base-v2",

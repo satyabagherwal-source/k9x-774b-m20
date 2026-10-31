@@ -6537,3 +6537,5 @@
 | `CYCLE-20261031-SDAG` | `2026-10-31T10:40:20.296Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`26d814f4...`) |
 | `CYCLE-20261031-SJP5` | `2026-10-31T10:40:28.601Z` | `Efficient-Large-Model/Open-H3-Regenerate-2K` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6169, Rule 6170, Rule 6171` | Yes (`1e11819b...`) |
 | `CYCLE-20261031-SK94` | `2026-10-31T10:40:29.320Z` | `dosco/graphjin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6172` | Yes (`123aeb3f...`) |
+| `CYCLE-20261031-1752` | `2026-10-31T10:47:12.230Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`94da0865...`) |
+| `CYCLE-20261031-18FB` | `2026-10-31T10:47:13.895Z` | `u-root/u-root` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6173` | Yes (`ab63cf9e...`) |

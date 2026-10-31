@@ -535,8 +535,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
     "sourceVersion": "hf-unsloth-qwen-image-2.1-gguf",
     "license": "Open-Source",
-    "contentHash": "7f45ec5af53056af7f54db6a0950bcc696f1be6d486abc8af1799bac27eed4ab",
-    "lastHarvestedAt": "2026-10-28T08:07:41.916Z",
+    "contentHash": "94da086526070c3b9720d4b0624bec848b8dca41963418272493c671906aa620",
+    "lastHarvestedAt": "2026-10-31T10:47:12.240Z",
     "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf"
   },
   "hf-xiaomimimo-mimo-v2.6-pro-rl": {
@@ -6043,10 +6043,10 @@
     "repository": "u-root/u-root",
     "platform": "github",
     "sourceUrl": "https://github.com/u-root/u-root",
-    "sourceVersion": "91846b7c",
+    "sourceVersion": "9daa0a72",
     "license": "BSD-3-Clause",
-    "contentHash": "39eea9f70deaa46ded912eb0afbe459b7fe87eb82438bf2be24679ae5b435dfc",
-    "lastHarvestedAt": "2026-10-28T16:19:20.609Z",
+    "contentHash": "ab63cf9e4f862e4d1b40853e8a5a716fc7cbbb67ebfada12ea1c6da24c2f3b07",
+    "lastHarvestedAt": "2026-10-31T10:47:13.898Z",
     "learningId": "learn-github-u-root-u-root"
   },
   "shoutem-ui": {

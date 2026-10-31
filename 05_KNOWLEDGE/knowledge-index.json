@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T10:40:29.256Z",
+  "last_updated": "2026-10-31T10:47:13.816Z",
   "total_verified_learnings": 1183,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -30117,7 +30117,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
       "source_version": "hf-unsloth-qwen-image-2.1-gguf",
-      "content_hash": "7f45ec5af53056af7f54db6a0950bcc696f1be6d486abc8af1799bac27eed4ab",
+      "content_hash": "94da086526070c3b9720d4b0624bec848b8dca41963418272493c671906aa620",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
       "promoted_rules": [
@@ -30175,7 +30175,7 @@
         "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv46v2n7",
         "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv4k568v"
       ],
-      "verified_at": "2026-10-28T08:07:41.842Z",
+      "verified_at": "2026-10-31T10:47:12.123Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56266,8 +56266,8 @@
       "slug": "u-root-u-root",
       "platform": "github",
       "source_url": "https://github.com/u-root/u-root",
-      "source_version": "91846b7c",
-      "content_hash": "39eea9f70deaa46ded912eb0afbe459b7fe87eb82438bf2be24679ae5b435dfc",
+      "source_version": "9daa0a72",
+      "content_hash": "ab63cf9e4f862e4d1b40853e8a5a716fc7cbbb67ebfada12ea1c6da24c2f3b07",
       "dossier_path": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "promoted_rules": [
@@ -56295,6 +56295,11 @@
           "number": 5339,
           "title": "pkg/boot/kexec: honour #address-cells and #size-cells in the FDT memory map",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6173,
+          "title": "ulog: use unix.Klogctl to set the console log level",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56302,7 +56307,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T16:19:20.515Z",
+      "verified_at": "2026-10-31T10:47:13.795Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -161538,6 +161543,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T10:40:29.239Z"
+    },
+    "rule-6173": {
+      "learning_id": "rule-6173",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6173,
+      "title": "ulog: use unix.Klogctl to set the console log level",
+      "source_url": "https://github.com/u-root/u-root",
+      "source_version": "9daa0a72",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T10:47:13.796Z"
     }
   },
   "aliases": {

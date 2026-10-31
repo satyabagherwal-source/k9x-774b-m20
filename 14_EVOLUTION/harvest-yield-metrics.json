@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T10:40:29.327Z",
-  "total_cycles_completed": 6514,
-  "total_learnings_persisted": 6514,
-  "total_rules_promoted": 6165,
+  "last_updated": "2026-10-31T10:47:13.903Z",
+  "total_cycles_completed": 6516,
+  "total_learnings_persisted": 6516,
+  "total_rules_promoted": 6166,
   "history": [
-    {
-      "timestamp": "2026-10-30T22:20:21.352Z",
-      "repository": "Saffsanity/sill",
-      "learningId": "learn-github-saffsanity-sill",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T22:20:27.531Z",
-      "repository": "HelixDB/helix-db",
-      "learningId": "learn-github-helixdb-helix-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T22:27:27.526Z",
       "repository": "herdrdev/herdr",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-31T10:40:29.327Z",
       "repository": "dosco/graphjin",
       "learningId": "learn-github-dosco-graphjin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T10:47:12.245Z",
+      "repository": "unsloth/Qwen-Image-2.1-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T10:47:13.903Z",
+      "repository": "u-root/u-root",
+      "learningId": "learn-github-u-root-u-root",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
