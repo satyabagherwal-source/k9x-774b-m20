@@ -6530,3 +6530,6 @@ Every entry in this ledger must capture:
 | `learn-github-czy0729-bangumi` | `https://github.com/czy0729/Bangumi` | `5a981aee` | Multi-dimensional audit evidence | 2026-10-31T09:36:52.689Z |
 | `learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-31T09:40:12.530Z |
 | `learn-huggingface-orcarouter-orcasaq-2-27b` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-31T09:47:08.303Z |
+| `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-10-31T09:53:59.331Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `63fe6c7f` | Multi-dimensional audit evidence | 2026-10-31T09:54:02.644Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `784d6493` | Multi-dimensional audit evidence | 2026-10-31T09:54:07.310Z |

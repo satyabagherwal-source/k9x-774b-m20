@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T09:47:08.313Z",
+  "last_updated": "2026-10-31T09:54:07.320Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -560,14 +560,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-      "content_hash": "eefd7ab9c826a2778bdf86c59170afc2455ec92448cac46b784325258790b653",
-      "verified_at": "2026-10-28T06:18:32.096Z",
+      "content_hash": "1faaf1b95c22ed9115fcf2cf76d5643222cd0dbf0f023c328741caba112ad34d",
+      "verified_at": "2026-10-31T09:53:59.341Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T06:18:32.096Z"
+      "last_updated": "2026-10-31T09:53:59.341Z"
     },
     "Comfy-Org/Qwen-Image-2.1": {
       "repository": "Comfy-Org/Qwen-Image-2.1",
@@ -5211,14 +5211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "6ab14291c9ea9379b932fa574f99e438ff74079560dfcdc17d19ecab316eb36d",
-      "verified_at": "2026-10-30T17:40:48.179Z",
+      "content_hash": "1da5762bc01d8cc88f6c7c59bee9fe082c7bb7c196e8cb0278554b1867872d94",
+      "verified_at": "2026-10-31T09:54:02.654Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T17:40:48.179Z"
+      "last_updated": "2026-10-31T09:54:02.654Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",
@@ -11196,14 +11196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "5248660f00db245b41c977031c08902af0eb77dfe47ac5c45e8bbd4d7d4b6f60",
-      "verified_at": "2026-10-30T16:30:03.508Z",
+      "content_hash": "27d2df57256a87822ae57a089c12a9683b8319c8f17c21f569f5f715c5ec1bbe",
+      "verified_at": "2026-10-31T09:54:07.320Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T16:30:03.508Z"
+      "last_updated": "2026-10-31T09:54:07.320Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T09:47:08.218Z",
+  "last_updated": "2026-10-31T09:54:07.225Z",
   "total_verified_learnings": 1181,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -29450,7 +29450,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
       "source_version": "hf-taichuai-zdtaichu5.0-9b",
-      "content_hash": "eefd7ab9c826a2778bdf86c59170afc2455ec92448cac46b784325258790b653",
+      "content_hash": "1faaf1b95c22ed9115fcf2cf76d5643222cd0dbf0f023c328741caba112ad34d",
       "dossier_path": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "promoted_rules": [
@@ -29655,6 +29655,16 @@
           "number": 5205,
           "title": "**Consistent Downsample Ratio Rule**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6155,
+          "title": "[Token‑ID Isolation Rule]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6156,
+          "title": "[Vision‑Encoder Configuration Consistency Rule]",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -29675,7 +29685,7 @@
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv45zyde",
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4ja6oo"
       ],
-      "verified_at": "2026-10-28T06:18:32.009Z",
+      "verified_at": "2026-10-31T09:53:59.226Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35602,8 +35612,8 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "45e00d4d",
-      "content_hash": "5248660f00db245b41c977031c08902af0eb77dfe47ac5c45e8bbd4d7d4b6f60",
+      "source_version": "784d6493",
+      "content_hash": "27d2df57256a87822ae57a089c12a9683b8319c8f17c21f569f5f715c5ec1bbe",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
@@ -35661,6 +35671,11 @@
           "number": 5799,
           "title": "python): pin an available pylance wheel on macOS",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6158,
+          "title": "fix!: support opt-in PKCE for device-code login (#4747)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35668,7 +35683,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T16:30:03.402Z",
+      "verified_at": "2026-10-31T09:54:07.205Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51034,8 +51049,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "cdd7a29a",
-      "content_hash": "6ab14291c9ea9379b932fa574f99e438ff74079560dfcdc17d19ecab316eb36d",
+      "source_version": "63fe6c7f",
+      "content_hash": "1da5762bc01d8cc88f6c7c59bee9fe082c7bb7c196e8cb0278554b1867872d94",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -51098,6 +51113,11 @@
           "number": 5812,
           "title": "README: give MCP and AI investigations equal footing with the UI (#2433)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6157,
+          "title": "Prerelease tags publish only the Docker image and Helm chart",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51105,7 +51125,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T17:40:48.071Z",
+      "verified_at": "2026-10-31T09:54:02.535Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -161140,6 +161160,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T09:47:08.198Z"
+    },
+    "rule-6155": {
+      "learning_id": "rule-6155",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6155,
+      "title": "[Token‑ID Isolation Rule]",
+      "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "source_version": "hf-taichuai-zdtaichu5.0-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T09:53:59.227Z"
+    },
+    "rule-6156": {
+      "learning_id": "rule-6156",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6156,
+      "title": "[Vision‑Encoder Configuration Consistency Rule]",
+      "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "source_version": "hf-taichuai-zdtaichu5.0-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T09:53:59.227Z"
+    },
+    "rule-6157": {
+      "learning_id": "rule-6157",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6157,
+      "title": "Prerelease tags publish only the Docker image and Helm chart",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "63fe6c7f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T09:54:02.535Z"
+    },
+    "rule-6158": {
+      "learning_id": "rule-6158",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6158,
+      "title": "fix!: support opt-in PKCE for device-code login (#4747)",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "784d6493",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T09:54:07.205Z"
     }
   },
   "aliases": {

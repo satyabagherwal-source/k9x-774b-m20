@@ -455,8 +455,8 @@
     "sourceUrl": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
     "sourceVersion": "hf-taichuai-zdtaichu5.0-9b",
     "license": "Open-Source",
-    "contentHash": "eefd7ab9c826a2778bdf86c59170afc2455ec92448cac46b784325258790b653",
-    "lastHarvestedAt": "2026-10-28T06:18:32.088Z",
+    "contentHash": "1faaf1b95c22ed9115fcf2cf76d5643222cd0dbf0f023c328741caba112ad34d",
+    "lastHarvestedAt": "2026-10-31T09:53:59.331Z",
     "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b"
   },
   "hf-phocinae-phocinae-largha-150m-v1": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "cdd7a29a",
+    "sourceVersion": "63fe6c7f",
     "license": "Apache-2.0",
-    "contentHash": "6ab14291c9ea9379b932fa574f99e438ff74079560dfcdc17d19ecab316eb36d",
-    "lastHarvestedAt": "2026-10-30T17:40:48.170Z",
+    "contentHash": "1da5762bc01d8cc88f6c7c59bee9fe082c7bb7c196e8cb0278554b1867872d94",
+    "lastHarvestedAt": "2026-10-31T09:54:02.644Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -7433,10 +7433,10 @@
     "repository": "lancedb/lancedb",
     "platform": "github",
     "sourceUrl": "https://github.com/lancedb/lancedb",
-    "sourceVersion": "45e00d4d",
+    "sourceVersion": "784d6493",
     "license": "Apache-2.0",
-    "contentHash": "5248660f00db245b41c977031c08902af0eb77dfe47ac5c45e8bbd4d7d4b6f60",
-    "lastHarvestedAt": "2026-10-30T16:30:03.499Z",
+    "contentHash": "27d2df57256a87822ae57a089c12a9683b8319c8f17c21f569f5f715c5ec1bbe",
+    "lastHarvestedAt": "2026-10-31T09:54:07.310Z",
     "learningId": "learn-github-lancedb-lancedb"
   },
   "agent-of-empires-agent-of-empires": {

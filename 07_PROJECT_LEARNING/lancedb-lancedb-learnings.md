@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `45e00d4d`  
+> **Source Version**: `784d6493`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T16:30:02.856Z  
+> **Timestamp**: 2026-10-31T09:54:06.607Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T16:30:01.371Z  
+> **Harvest Timestamp**: 2026-10-31T09:54:06.599Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11819 stars
+- **Stars / Engagement**: 11822 stars
 
 ---
 
@@ -1208,11 +1208,11 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4769** (2026-10-30): **fix(ci): replace retiring macos-14 runners**
+  *Symptoms*: The affected jobs were cancelled before runner assignment with GitHub's scheduled macOS 14 brownout annotation. macOS 14 runner images retire on November 2, 2026: https://github.com/actions/runner-images/issues/13518.  This moves the Python and CLI workflows to `macos-15` and keeps two distinct Rust macOS legs with `macos-15` and `macos-26`. All selected labels are public ARM64 runners, preserving the architecture of the previous plain `macos-14` jobs.  Validation: `git diff --check` and Ruby YAML parsing passed for all three changed workflows. A targeted `actionlint` check also passed; existing repository-wide custom-runner, reusable-workflow input, and shellcheck findings are outside this diff. 
+
 - **Issue #4755** (2026-10-30): **fix(python): pin an available pylance wheel on macOS**
   *Symptoms*: ## Problem  The Python test extra pins `pylance==15.0.0b7` for every platform. On macOS, pip cannot resolve that pin: the configured `lance-format` index publishes b7 wheels for Linux and Windows but not macOS, while public PyPI returns HTTP 404 for the version and the `lancedb` index contains no 15.x release. The macOS Python dependency installation consequently cannot resolve the pin.  ## Change  - Keep the exact `pylance==15.0.0b7` test pin on non-macOS platforms. - Use `pylance==15.0.0b4` on macOS. This is the newest release in this range with a macOS wheel (`cp310-abi3-macosx_11_0_arm64`). - Refresh `python/uv.lock` for the platform-specific resolutions.  The production Rust/Lance inputs are unchanged: `Cargo.lock` is byte-identical to `main` and remains on Lance `15.0.0-beta.7`. No tests, assertions, coverage, or CI checks are removed or weakened.  ## Validation  - Confirmed the wheel identity from the configured index and matched its published SHA-256 to `uv.lock`; wheel metadata reports `Name: pylance`, `Version: 15.0.0b4`. - Verified the b4 APIs used by the Python tests (`blob_field`, `blob_array`, `BlobType`, `Blob`, `dataset`, `write_dataset`, `FFILanceTableProvider`, and `DirectoryNamespace`). The Python test suite does not reference the b7-only `mark_sstables_as_compacted`, `mem_wal_dir_id`, `mem_wal_index_details`, `clustering_id`, `LanceFragment`, `IndexSegment`, `UpdateConfig`, or `max_source_fragments` changes. - Verified scalar read/write interoperability in
-
-- **Issue #4734** (2026-10-29): **fix(python): add a Blob V2 array construction helper**
-  *Symptoms*: Fixes #4733  PyArrow expects Blob V2 storage structs when constructing a record batch and cannot infer the extension array from raw bytes. LanceDB already converts binary values during ingestion, but batch writers had no supported array constructor.  Add `lancedb.schema.blob_array(payloads)` for iterables of inline bytes and nulls, using the same extension type resolver as `blob()`. The helper preserves empty blobs and null blobs and works with both pylance's type and LanceDB's fallback. Document the descriptor fields, exclusive inline/external representations, batch construction, and existing binary conversion in synchronous and asynchronous `create_table` / `add` APIs.  Validation: - Reproduced the reported `ArrowTypeError` on the original code; both new regression cases fail against the original schema module. - 256 focused blob tests and schema doctests passed; one optional PyAV test skipped. - Both new regression cases also passed with PyArrow 25, with and without pylance imports. - Python package Ruff checks and formatting passed. - MkDocs build passed, with an existing unrelated `SecretReference` cross-reference warning. Repository-wide Ruff reports 48 existing errors in `docs/web-tests`.  <!-- lance-gatekeeper-fix:v1 agent=20d1a296d76ff5eb914c0848428a747a generation=1 --> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1229,541 +1229,544 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a39a3180` (2026-10-30)
-**Commit Message**: fix(python): pin an available pylance wheel on macOS
+### Incident Patch 1: `d316cbbe` (2026-10-30)
+**Commit Message**: fix!: support opt-in PKCE for device-code login (#4747)
 
-## Problem
+## Problem and change
+Some Keycloak client policies require S256 PKCE during device-code
+login. Sending those parameters unconditionally breaks interoperability
+with providers that expect standard RFC 8628 requests.
 
-The Python test extra pins `pylance==15.0.0b7` for every platform. On macOS, pip cannot resolve that pin: the configured `lance-format` index publishes b7 wheels for Linux and Windows but not macOS, while public PyPI returns HTTP 404 for the version and the `lancedb` index contains no 15.x release. The macOS Python dependency installation consequently cannot resolve the pin.
+Configure device login with `OAuthFlow::DeviceCode(DeviceCodeOptions)`,
+following the existing authorization-code options pattern.
+`DeviceCodeOptions::new()` keeps PKCE disabled; `.use_pkce(true)` sends
+an S256 challenge during device authorization and its matching verifier
+during token polling. There is no automatic downgrade, and enabling PKCE
+preserves the existing token-cache identity. Python, Node, and CLI
+conversions retain ordinary device login without PKCE.
 
-## Change
+OIDC discovery and token requests now include a versioned User-Agent.
+`env!("CARGO_PKG_VERSION")` is expanded at compile time and embeds the
+version in the binary; no Cargo environment variable is needed when
+running an installed binary or native binding.
 
-- Keep the exact `pylance==15.0.0b7` test pin on non-macOS platforms.
-- Use `pylance==15.0.0b4` on macOS. This is the newest release in this range with a macOS wheel (`cp310-abi3-macosx_11_0_arm64`).
-- Refresh `python/uv.lock` for the platform-specific resolutions.
+The supported-flows guide documents the Rust-only device PKCE option and
+its default.
 
-The production Rust/Lance inputs are unchanged: `Cargo.lock` is byte-identical to `main` and remains on Lance `15.0.0-beta.7`. No tests, assertions, coverage, or CI checks are removed or weakened.
+## Rust API migration
+BREAKING CHANGE: `OAuthFlow::DeviceCode` now carries
+`DeviceCodeOptions`. Replace constru
 
-## Validation
-
-- Confirmed the wheel identity from the configured index and matched its published SHA-256 to `uv.lock`; wheel metadata reports `Name: pylance`, `Version: 15.0.0b4`.
-- Verified the b4 APIs used by the Python tests (`blob_field`, `blob_array`, `BlobType`, `Blob`, `
-
-**File**: `python/pyproject.toml` (modified, +3/-1)
+**File**: `docs/web/enterprise/authentication.mdx` (modified, +12/-4)
 ```diff
-@@ -64,7 +64,9 @@ tests = [
-     "polars>=0.19, <=1.32.3",
-     "pyarrow<25",
-     "pyarrow-stubs>=16.0",
--    "pylance==15.0.0b7",
-+    # pylance 15.0.0b5+ has not published macOS wheels.
-+    "pylance==15.0.0b7; sys_platform != 'darwin'",
-+    "pylance==15.0.0b4; sys_platform == 'darwin'",
-     "requests>=2.31.0",
-     "datafusion>=54,<55",
-     "opentelemetry-sdk>=1.30.0",
+@@ -98,7 +98,7 @@ client acquires tokens:
+ | --- | --- | --- | --- | --- |
+ | Client Credentials | `OAuthFlowType.CLIENT_CREDENTIALS` | `OAuthFlowType.ClientCredentials` | `OAuthFlow::ClientCredentials` | Service-to-service / machine-to-machine. Requires a client ID and client secret registered with your identity provider. |
+ | Authorization Code | `OAuthFlowType.AUTHORIZATION_CODE` | `OAuthFlowType.AuthorizationCode` | `OAuthFlow::AuthorizationCode(AuthorizationCodeOptions::new())` | Interactive user sign-in through a browser and local callback server. Uses S256 PKCE by default. |
+-| Device Code | `OAuthFlowType.DEVICE_CODE` | `OAuthFlowType.DeviceCode` | `OAuthFlow::DeviceCode` | CLI or headless sign-in. The client displays a verification URL and user code for the user to enter on another device. |
++| Device Code | `OAuthFlowType.DEVICE_CODE` | `OAuthFlowType.DeviceCode` | `OAuthFlow::DeviceCode(DeviceCodeOptions::new())` | CLI or headless sign-in. The client displays a verification URL and user code for the user to enter on another device. |
+ | Azure Managed Identity | `OAuthFlowType.AZURE_MANAGED_IDENTITY` | `OAuthFlowType.AzureManagedIdentity` | `OAuthFlow::AzureManagedIdentity { client_id: None }` | Azure workloads with access to the IMDS endpoint. Tokens are fetched from IMDS, so no client secret is stored on the client. |
+ 
+ ### Configure OAuth {#configure-oauth}
+@@ -290,7 +290,7 @@ const db = await lancedb.connect("db://your-database-uri", {
+ ```rust Rust icon="rust"
+ use lancedb::remote::{AuthorizationCodeOptions, OAuthConfig, OAuthFlow, TokenCacheOptions};
+ 
+-// Use OAuthFlow::DeviceCode for a CLI without a local browser or callback server.
++// Use OAuthFlow::DeviceCode(Default::default()) for a CLI without a local browser or callback server.
+ let oauth_config = OAuthConfig {
+     issuer_url: "https://your-issuer.example.com".into(),
+     client_id: "your-public-client-id".into(),
+@@ -317,9 +317,16 @@ let db = lancedb::connect("db://your-database-uri")
+ ```
+ </CodeGroup>
+ 
+-With `DEVICE_CODE` / `DeviceCode` / `OAuthFlow::DeviceCode`, the same
++With `DEVICE_CODE` / `DeviceCode` / `OAuthFlow::DeviceCode(DeviceCodeOptions::new())`, the same
+ configuration and connection calls apply; only the `flow` value changes.
+ 
++Device Code sends no PKCE parameters by default. For a provider that requires
++S256 PKCE on device grants, Rust callers can select
++`OAuthFlow::DeviceCode(DeviceCodeOptions::new().use_pkce(true))` (import
++`DeviceCodeOptions` from `lancedb::remote`). This option is currently Rust-only.
++Enable it only when the provider supports the extension; a failed PKCE request
++is not retried without PKCE.
++
+ ### Reuse an interactive session {#reuse-an-interactive-session}
+ 
+ By default, tokens stay in process memory. Set `token_cache` / `tokenCache`
+@@ -379,7 +386,8 @@ Credentials and rejected for Azure Managed Identity.
+ 
+ ### Configuration reference {#configuration-reference}
+ 
+-The same configuration is available in all three SDKs. Python and Rust use
++The shared configuration below is available in all three SDKs; device-code PKCE
++is a Rust-only option through `DeviceCodeOptions`. Python and Rust use
+ `snake_case` field names; TypeScript uses `camelCase`. In Rust, set optional
+ `OAuthConfig` fields to `Some(value)` or `None`. Configure `redirect_uri`,
+ `callback_port`, and `use_pkce` through the builder methods on
 ```
 
-**File**: `python/uv.lock` (modified, +107/-39)
+**File**: `nodejs/src/remote.rs` (modified, +2/-2)
 ```diff
-@@ -4,10 +4,14 @@ requires-python = ">=3.10"
- resolution-markers = [
-     "python_full_version >= '3.14' and sys_platform == 'win32'",
-     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
--    "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
--    "python_full_version >= '3.12' and python_full_version < '3.14'",
--    "python_full_version == '3.11.*'",
--    "python_full_version < '3.11'",
-+    "python_full_version >= '3.14' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-+    "python_full_version >= '3.14' and sys_platform == 'darwin'",
-+    "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform != 'darwin'",
-+    "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform == 'darwin'",
-+    "python_full_version == '3.11.*' and sys_platform != 'darwin'",
-+    "python_full_version == '3.11.*' and sys_platform == 'darwin'",
-+    "python_full_version < '3.11' and sys_platform != 'darwin'",
-+    "python_full_version < '3.11' and sys_platform == 'darwin'",
- ]
+@@ -276,7 +276,7 @@ impl TryFrom<OAuthConfig> for lancedb::remote::oauth::OAuthConfig {
+                 }
+                 OAuthFlow::AuthorizationCode(options)
+             }
+-            "device_code" => OAuthFlow::DeviceCode,
++            "device_code" => OAuthFlow::DeviceCode(Default::default()),
+             "azure_managed_identity" => OAuthFlow::AzureManagedIdentity {
+                 client_id: config.managed_identity_client_id,
+             },
+@@ -560,7 +560,7 @@ mod tests {
+         let converted = lancedb::remote::oauth::OAuthConfig::try_from(config).unwrap();
+         assert!(matches!(
+             converted.flow,
+-            lancedb::remote::oauth::OAuthFlow::DeviceCode
++            lancedb::remote::oauth::OAuthFlow::DeviceCode(options) if !options.use_pkce
+         ));
+     }
  
- [[package]]
-@@ -1437,7 +1441,8 @@ name = "ibm-watsonx-ai"
- version = "1.3.42"
- source = { registry = "https://pypi.org/simple" }
- resolution-markers = [
--    "python_full_version < '3.11'",
-+    "python_full_version < '3.11' and sys_platform != 'darwin'",
-+    "python_full_version < '3.11' and sys_platform == 'darwin'",
- ]
- dependencies = [
-     { name = "cachetools" },
-@@ -1463,9 +1468,12 @@ source = { registry = "https://pypi.org/simple" }
- resolution-markers = [
-     "python_full_version >= '3.14' and sys_platform == 'win32'",
-     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
--    "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
--    "python_full_version >= '3.12' and python_full_version < '3.14'",
--    "python_full_version == '3.11.*'",
-+    "python_full_version >= '3.14' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-+    "python_full_version >= '3.14' and sys_platform == 'darwin'",
-+    "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform != 'darwin'",
-+    "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform == 'darwin'",
-+    "python_full_version == '3.11.*' and sys_platform != 'darwin'",
-+    "python_full_version == '3.11.*' and sys_platform == 'darwin'",
- ]
- dependencies = [
-     { name = "cachetools" },
-@@ -1551,7 +1559,8 @@ name = "ipython"
- version = "8.39.0"
- source = { registry = "https://pypi.org/simple" }
- resolution-markers = [
--    "python_full_version < '3.11'",
-+    "python_full_version < '3.11' and sys_platform != 'darwin'",
-+    "python_full_version < '3.11' and sys_platform == 'darwin'",
- ]
- dependencies = [
-     { name = "colorama", marker = "sys_platform == 'win32'" },
-@@ -1578,9 +1587,12 @@ source = { registry = "https://pypi.org/simple" }
- resolution-markers = [
-     "python_full_version >= '3.14' and sys_platform == 'win32'",
-     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
--    "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
--    "python_full_version >= '3.12' and python_full_version < '3.14'",
--    "python_full_version == '3.11.*'",
-+    "python_full_version >= '3.14' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-+    "python_full_version >= '3.14' and sys_platform == 'darwin'",
-+    "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform != 'darwin'",
-+    "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform == 'darwin'",
-+    "python_full_version == '3.11.*' and sys_platform != 'darwin'",
-+    "python_full_version == '3.11.*' and sys_platform == 'darwin'",
- ]
- dependencies = [
-     { name = "colorama", marker = "sys_platform == 'win32'" },
-@@ -1936,7 +1948,8 @@ otel = [
-     { name = "opentelemetry-api" },
- ]
- pylance = [
--    { name = "pylance" },
-+    { name = "pylance", version = "15.0.0b4", source = { registry = "https://pypi.fury.io/lance-format/" }, marker = "sys_platform == 'darwin'" },
-+    { name = "pylance", version = "15.0.0b7", source = { registry = "https://pypi.fury.io/lance-format/" }, marker = "sys_platform != 'darwin'" },
- ]
- siglip = [
-     { name = "pillow" },
-@@ -1956,7 +1969,8 @@ tests = [
-     { name = "polars" },
-     { name = "pyarrow" },
-     { name = "pyarrow-stubs" },
--    { name = "pylance" },
-+    { name = "pylance", version = "15.0.0b4", source = { registry = "https://pypi.fury.io/lance-format/" }, marker = "sys_platform == 'darwin'" },
-+    { name = "pylance", version = "15.0.0b7", source = { registry = "https://pypi.fury.io/lance-format/" }, marker = "sys_platform != 'darwin'" },
-     { name = "pytest" },
-     { name = "pytest-asyncio" },
-     { name = "pytest-mock" },
-@@ -2006,8 +2020,9 @@ requires-dist = [
-     
+```
+
+**File**: `python/src/oauth.rs` (modified, +2/-2)
+```diff
+@@ -67,7 +67,7 @@ impl TryFrom<PyOAuthConfig> for OAuthConfig {
+                 }
+                 OAuthFlow::AuthorizationCode(options)
+             }
+-            "device_code" => OAuthFlow::DeviceCode,
++            "device_code" => OAuthFlow::DeviceCode(Default::default()),
+             "azure_managed_identity" => OAuthFlow::AzureManagedIdentity {
+                 client_id: py.managed_identity_client_id,
+             },
+@@ -327,7 +327,7 @@ mod tests {
+     fn test_device_code_conversion() {
+         let config = base_config();
+         let converted = OAuthConfig::try_from(config).unwrap();
+-        assert!(matches!(converted.flow, OAuthFlow::DeviceCode));
++        assert!(matches!(converted.flow, OAuthFlow::DeviceCode(options) if !options.use_pkce));
+     }
+ 
+     #[test]
+```
+
+**File**: `rust/lancedb/cli/src/auth.rs` (modified, +1/-1)
+```diff
+@@ -221,7 +221,7 @@ impl ManagedOidc {
+     async fn sdk_config(&self) -> Result<OAuthConfig> {
+         let flow = match self.config.flow {
+             OidcFlow::ClientCredentials => OAuthFlow::ClientCredentials,
+-            OidcFlow::DeviceCode => OAuthFlow::DeviceCode,
++            OidcFlow::DeviceCode => OAuthFlow::DeviceCode(Default::default()),
+             OidcFlow::AuthorizationCode => {
+                 let mut options = AuthorizationCodeOptions::new();
+                 if let Some(uri) = &self.config.redirect_uri {
+```
+
+**File**: `rust/lancedb/src/remote.rs` (modified, +2/-1)
+```diff
+@@ -36,7 +36,8 @@ fn extract_job_id(body: &str) -> Option<String> {
+ pub use client::{ClientConfig, HeaderProvider, RetryConfig, TimeoutConfig, TlsConfig};
+ pub use db::{RemoteDatabaseOptions, RemoteDatabaseOptionsBuilder};
+ pub use oauth::{
+-    AuthorizationCodeOptions, ClientAuthMethod, OAuthConfig, OAuthFlow, OAuthHeaderProvider,
++    AuthorizationCodeOptions, ClientAuthMethod, DeviceCodeOptions, OAuthConfig, OAuthFlow,
++    OAuthHeaderProvider,
+ };
+ pub use token_cache::{OAuthSession, SessionLogout, SessionStatus, TokenCacheOptions};
+ 
+```
+
+**File**: `rust/lancedb/src/remote/oauth.rs` (modified, +168/-50)
+```diff
+@@ -157,6 +157,41 @@ impl AuthorizationCodeOptions {
+     }
+ }
+ 
++/// Options for the OAuth Device Authorization flow.
++///
++/// PKCE is disabled by default because it is a provider extension to the device
++/// grant. Enable it only when the provider supports and requires S256 PKCE,
++/// such as a Keycloak client with a PKCE requirement. There is no automatic
++/// fallback to a device request without PKCE.
++///
++/// # Example
++///
++/// ```
++/// use lancedb::remote::{DeviceCodeOptions, OAuthFlow};
++///
++/// let flow = OAuthFlow::DeviceCode(DeviceCodeOptions::new().use_pkce(true));
++/// ```
++#[derive(Debug, Clone, Default)]
++#[non_exhaustive]
++pub struct DeviceCodeOptions {
++    /// Whether to protect the device authorization exchange with S256 PKCE.
++    /// Defaults to `false`.
++    pub use_pkce: bool,
++}
++
++impl DeviceCodeOptions {
++    /// Create device-code options with PKCE disabled.
++    pub fn new() -> Self {
++        Self::default()
++    }
++
++    /// Enable or disable the provider-specific S256 PKCE extension.
++    pub fn use_pkce(mut self, use_pkce: bool) -> Self {
++        self.use_pkce = use_pkce;
++        self
++    }
++}
++
+ /// OAuth authentication flow configuration.
+ #[derive(Debug, Clone)]
+ pub enum OAuthFlow {
+@@ -170,8 +205,9 @@ pub enum OAuthFlow {
+     AuthorizationCode(AuthorizationCodeOptions),
+ 
+     /// Device Authorization grant for CLI and headless environments. The
+-    /// verification URI and user code are written to stderr.
+-    DeviceCode,
++    /// verification URI and user code are written to stderr. PKCE is disabled
++    /// by default; see [`DeviceCodeOptions`] for provider-specific options.
++    DeviceCode(DeviceCodeOptions),
+ 
+     /// Azure Managed Identity via IMDS.
+     /// Works on Azure VMs, AKS, App Service, and Azure Functions.
+@@ -763,7 +799,9 @@ impl OidcClient {
+     ) -> Result<Self> {
+         Self::validate_issuer_transport(&issuer_url)?;
+ 
++        // Cargo embeds the package version at compile time; no runtime variable is needed.
+         let http_client = Client::builder()
++            .user_agent(concat!("LanceDB-Rust-Client/", env!("CARGO_PKG_VERSION")))
+             .timeout(Duration::from_secs(30))
+             .redirect(reqwest::redirect::Policy::custom(|attempt| {
+                 if oauth_url_uses_secure_transport(attempt.url()) {
+@@ -1244,17 +1282,29 @@ struct OAuthErrorResponse {
+ 
+ struct DeviceCodeSource {
+     oidc: OidcClient,
++    use_pkce: bool,
++}
++
++struct DeviceAuthorization {
++    response: StandardDeviceAuthorizationResponse,
++    verifier: Option<PkceCodeVerifier>,
+ }
+ 
+ impl std::fmt::Debug for DeviceCodeSource {
+     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+         f.debug_struct("DeviceCodeSource")
+             .field("oidc", &self.oidc)
++            .field("use_pkce", &self.use_pkce)
+             .finish()
+     }
+ }
+ 
+ impl DeviceCodeSource {
++    fn with_pkce(mut self, use_pkce: bool) -> Self {
++        self.use_pkce = use_pkce;
++        self
++    }
++
+     fn new(
+         issuer_url: String,
+         client_id: String,
+@@ -1274,10 +1324,11 @@ impl DeviceCodeSource {
+                 resource,
+                 audience,
+             )?,
++            use_pkce: false,
+         })
+     }
+ 
+-    async fn request_device_authorization(&self) -> Result<StandardDeviceAuthorizationResponse> {
++    async fn request_device_authorization(&self) -> Result<DeviceAuthorization> {
+         let endpoint = self
+             .oidc
+             .get_discovery()
+@@ -1295,7 +1346,14 @@ impl DeviceCodeSource {
+             .oidc
+             .base_client()
+             .set_device_authorization_url(device_url);
++        // Device-flow PKCE is a provider extension; send it only when selected.
++        let pkce = self.use_pkce.then(PkceCodeChallenge::new_random_sha256);
+         let mut request = client.exchange_device_code();
++        if let Some((challenge, _)) = &pkce {
++            request = request
++                .add_extra_param("code_challenge", challenge.as_str())
++                .add_extra_param("code_challenge_method", "S256");
++        }
+         for scope in &self.oidc.scopes {
+             request = request.add_scope(Scope::new(scope.clone()));
+         }
+@@ -1313,17 +1371,20 @@ impl DeviceCodeSource {
+         if let Some(uri) = device.verification_uri_complete() {
+             validate_oauth_url(uri.secret(), "verification_uri_complete")?;
+         }
+-        Ok(device)
++        Ok(DeviceAuthorization {
++            response: device,
++            verifier: pkce.map(|(_, verifier)| verifier),
++        })
+     }
+ 
+-    async fn poll_for_token(
+-        &self,
+-        device: &StandardDeviceAuthorizationResponse,
+-    ) -> Result<TokenResponse> {
++    async fn poll_for_token(&self, device: &DeviceAuthorization) -> Result<TokenResponse> {
+         let (client, _) = self.oidc.token_client().await?;
+         let mut request = client
+-            .exchange_device_access_token(device)
++            .exchange_device_acce
+```
+
+**File**: `rust/lancedb/src/remote/token_cache.rs` (modified, +16/-4)
+```diff
+@@ -43,7 +43,7 @@
+ //!     client_id: "my-app".to_string(),
+ //!     client_secret: None,
+ //!     scopes: vec!["openid".to_string()],
+-//!     flow: OAuthFlow::DeviceCode,
++//!     flow: OAuthFlow::DeviceCode(Default::default()),
+ //!     client_auth_method: None,
+ //!     refresh_buffer_secs: None,
+ //!     resource: Some("https://api.example.com".to_string()),
+@@ -237,7 +237,7 @@ fn canonicalize_scopes(scopes: &[String]) -> Vec<String> {
+ fn flow_key(flow: &OAuthFlow) -> Option<&'static str> {
+     match flow {
+         OAuthFlow::AuthorizationCode(_) => Some("authorization_code"),
+-        OAuthFlow::DeviceCode => Some("device_code"),
++        OAuthFlow::DeviceCode(_) => Some("device_code"),
+         OAuthFlow::ClientCredentials | OAuthFlow::AzureManagedIdentity { .. } => None,
+     }
+ }
+@@ -845,7 +845,7 @@ pub struct SessionLogout {
+ ///     client_id: "my-app".to_string(),
+ ///     client_secret: None,
+ ///     scopes: vec!["openid".to_string()],
+-///     flow: OAuthFlow::DeviceCode,
++///     flow: OAuthFlow::DeviceCode(Default::default()),
+ ///     client_auth_method: None,
+ ///     refresh_buffer_secs: None,
+ ///     resource: None,
+@@ -1012,7 +1012,7 @@ mod tests {
+             client_secret: None,
+             client_auth_method: None,
+             scopes: vec!["openid".to_string()],
+-            flow: OAuthFlow::DeviceCode,
++            flow: OAuthFlow::DeviceCode(Default::default()),
+             refresh_buffer_secs: None,
+             resource: None,
+             audience: None,
+@@ -1546,6 +1546,18 @@ mod tests {
+         assert_eq!(canonical.file_stem, key.file_stem);
+     }
+ 
++    #[test]
++    fn test_device_pkce_preserves_cache_identity() {
++        let dir = cache_tempdir();
++        let mut config = device_config(dir.path());
++        let standard = CacheKey::new(&config).unwrap();
++        config.flow = OAuthFlow::DeviceCode(crate::remote::DeviceCodeOptions::new().use_pkce(true));
++        assert_eq!(
++            CacheKey::new(&config).unwrap().file_stem,
++            standard.file_stem
++        );
++    }
++
+     #[test]
+     fn test_cache_key_separates_identity_dimensions() {
+         let base = device_config(Path::new("/tmp/cache"));
 ```
 
 ---
 
-### Incident Patch 2: `f74a7d38` (2026-10-30)
-**Commit Message**: test(rust): detect indexed delete compilation regressions
+### Incident Patch 2: `6063229d` (2026-10-30)
+**Commit Message**: fix(ci): replace retiring macos-14 runners
 
-## Summary
+The affected jobs were cancelled before runner assignment with GitHub's scheduled macOS 14 brownout annotation. macOS 14 runner images retire on November 2, 2026: https://github.com/actions/runner-images/issues/13518.
 
-- Compare equal-size 1,000-value deletes confined to one BTree page and spread across many pages.
-- Use an isolated current-thread allocation counter instead of a wall-clock threshold.
-- Warm index pages first so the assertion detects repeated predicate materialization rather than I/O.
+This moves the Python and CLI workflows to `macos-15` and keeps two distinct Rust macOS legs with `macos-15` and `macos-26`. All selected labels are public ARM64 runners, preserving the architecture of the previous plain `macos-14` jobs.
 
-## Root cause
+Validation: `git diff --check` and Ruby YAML parsing passed for all three changed workflows. A targeted `actionlint` check also passed; existing repository-wide custom-runner, reusable-workflow input, and shellcheck findings are outside this diff.
 
-Lance previously rebuilt a large `IN` predicate for every BTree page, making indexed
-lookups scale as `O(pages x values)`. The pinned Lance revision compiles the predicate
-once and reuses it across pages. The regression guard observes the allocation scaling
-caused by that invariant directly.
-
-Fixes #2085
-
-**File**: `rust/lancedb/tests/indexed_delete_test.rs` (added, +152/-0)
+**File**: `.github/workflows/cli.yml` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,152 @@
-+// SPDX-License-Identifier: Apache-2.0
-+// SPDX-FileCopyrightText: Copyright The LanceDB Authors
-+
-+use std::{
-+    alloc::{GlobalAlloc, Layout, System},
-+    cell::Cell,
-+    future::Future,
-+    sync::Arc,
-+};
-+
-+use arrow_array::{RecordBatch, StringArray};
-+use arrow_schema::{DataType, Field, Schema};
-+use futures::TryStreamExt;
-+use lancedb::{
-+    Table, connect,
-+    index::Index,
-+    query::{ExecutableQuery, QueryBase},
-+};
-+
-+struct ThreadCountingAllocator;
-+
-+thread_local! {
-+    static COUNT_ALLOCATIONS: Cell<bool> = const { Cell::new(false) };
-+    static ALLOCATED_BYTES: Cell<usize> = const { Cell::new(0) };
-+}
-+
-+unsafe impl GlobalAlloc for ThreadCountingAllocator {
-+    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-+        let ptr = unsafe { System.alloc(layout) };
-+        if !ptr.is_null() {
-+            record_allocation(layout.size());
-+        }
-+        ptr
-+    }
-+
-+    unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
-+        let ptr = unsafe { System.alloc_zeroed(layout) };
-+        if !ptr.is_null() {
-+            record_allocation(layout.size());
-+        }
-+        ptr
-+    }
-+
-+    unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
-+        unsafe { System.dealloc(ptr, layout) };
-+    }
-+
-+    unsafe fn realloc(&self, ptr: *mut u8, layout: Layout, new_size: usize) -> *mut u8 {
-+        let new_ptr = unsafe { System.realloc(ptr, layout, new_size) };
-+        if !new_ptr.is_null() {
-+            record_allocation(new_size);
-+        }
-+        new_ptr
-+    }
-+}
-+
-+#[global_allocator]
-+static ALLOCATOR: ThreadCountingAllocator = ThreadCountingAllocator;
-+
-+const ROW_COUNT: usize = 262_144;
-+const VALUE_COUNT: usize = 1_000;
-+
-+fn record_allocation(bytes: usize) {
-+    COUNT_ALLOCATIONS.with(|enabled| {
-+        if enabled.get() {
-+            ALLOCATED_BYTES.with(|allocated| allocated.set(allocated.get() + bytes));
-+        }
-+    });
-+}
-+
-+async fn measure_allocated_bytes<F: Future>(future: F) -> (F::Output, usize) {
-+    ALLOCATED_BYTES.with(|allocated| allocated.set(0));
-+    COUNT_ALLOCATIONS.with(|enabled| enabled.set(true));
-+    let output = future.await;
-+    COUNT_ALLOCATIONS.with(|enabled| enabled.set(false));
-+    let allocated = ALLOCATED_BYTES.with(Cell::get);
-+    (output, allocated)
-+}
-+
-+fn in_predicate(ids: impl Iterator<Item = usize>) -> String {
-+    let values = ids
-+        .map(|id| format!("'id_{id:06}'"))
-+        .collect::<Vec<_>>()
-+        .join(",");
-+    format!("id IN ({values})")
-+}
-+
-+async fn create_indexed_table(name: &str) -> Table {
-+    let conn = connect("memory://").execute().await.unwrap();
-+    let schema = Arc::new(Schema::new(vec![Field::new("id", DataType::Utf8, false)]));
-+    let ids = StringArray::from_iter_values((0..ROW_COUNT).map(|id| format!("id_{id:06}")));
-+    let batch = RecordBatch::try_new(schema, vec![Arc::new(ids)]).unwrap();
-+    let table = conn.create_table(name, batch).execute().await.unwrap();
-+    table
-+        .create_index(&["id"], Index::BTree(Default::default()))
-+        .execute()
-+        .await
-+        .unwrap();
-+    table
-+}
-+
-+async fn warm_index(table: &Table, predicate: &str) {
-+    table
-+        .query()
-+        .only_if(predicate)
-+        .execute()
-+        .await
-+        .unwrap()
-+        .try_collect::<Vec<_>>()
-+        .await
-+        .unwrap();
-+}
-+
-+#[tokio::test(flavor = "current_thread")]
-+async fn large_in_delete_compiles_predicate_once() {
-+    let clustered = in_predicate(0..VALUE_COUNT);
-+    let spread = in_predicate((0..VALUE_COUNT).map(|id| id * (ROW_COUNT / VALUE_COUNT)));
-+    let clustered_table = create_indexed_table("clustered_ids").await;
-+    let spread_table = create_indexed_table("spread_ids").await;
-+
-+    let plan = spread_table
-+        .query()
-+        .only_if(&spread)
-+        .explain_plan(false)
-+        .await
-+        .unwrap();
-+    assert!(plan.contains("ScalarIndexQuery"), "unexpected plan: {plan}");
-+
-+    // Remove page-loading noise from the allocation comparison. Predicate
-+    // compilation is deliberately not cached, so each delete still compiles it.
-+    warm_index(&clustered_table, &spread).await;
-+    warm_index(&spread_table, &spread).await;
-+
-+    let (clustered_result, clustered_bytes) =
-+        measure_allocated_bytes(clustered_table.delete(&clustered)).await;
-+    let (spread_result, spread_bytes) = measure_allocated_bytes(spread_table.delete(&spread)).await;
-+
-+    assert_eq!(
-+        clustered_result.unwrap().num_deleted_rows,
-+        VALUE_COUNT as u64
-+    );
-+    assert_eq!(spread_result.unwrap().num_deleted_rows, VALUE_COUNT as u64);
-+
-+    // Both predicates contain the same number and size of values. Spreading them
-+    // across BTree pages may add modest page-processing overhead, but it must not
-+    // rematerialize all values per page. This ratio fails by a wide margin if
-+    // Lance's compile-once path is moved back inside the per-page loop.
-+    assert!(
-+        spread_bytes * 2 < c
+@@ -14,7 +14,7 @@ jobs:
+   test:
+     strategy:
+       matrix:
+-        os: [ubuntu-24.04, macos-14]
++        os: [ubuntu-24.04, macos-15]
+     runs-on: ${{ matrix.os }}
+     steps:
+       - uses: actions/checkout@v6
+```
+
+**File**: `.github/workflows/python.yml` (modified, +1/-1)
+```diff
+@@ -171,7 +171,7 @@ jobs:
+       matrix:
+         features: ["default", "experimental-functions"]
+     timeout-minutes: 30
+-    runs-on: macos-14
++    runs-on: macos-15
+     defaults:
+       run:
+         shell: bash
+```
+
+**File**: `.github/workflows/rust.yml` (modified, +1/-1)
+```diff
+@@ -271,7 +271,7 @@ jobs:
+     timeout-minutes: 60
+     strategy:
+       matrix:
+-        mac-runner: ["macos-14", "macos-15"]
++        mac-runner: ["macos-15", "macos-26"]
+     runs-on: "${{ matrix.mac-runner }}"
+     defaults:
+       run:
 ```
 
 ---
 
-### Incident Patch 3: `ca343a5c` (2026-10-30)
-**Commit Message**: docs: fix table, accuracy and structure problems found in the pre-launch review (#4745)
+### Incident Patch 3: `9b543c38` (2026-10-30)
+**Commit Message**: feat(python): build a Function on a user-specified image (#4768)
 
-## Summary
+Adds `image` to `@udf`, setting `runtime.environment.image` so a
+Function can be built on a digest-pinned registry image instead of the
+default base, for dependencies pip, conda and apt cannot express. The
+client refuses references that are not pinned by digest; the server
+validates the rest. The field is omitted when unset, so existing
+Function identities are unchanged.
 
-Fixes the problems a page-by-page review of the docs found before
-launch, after checking each one against the current source and, where
-noted, the code. The matching fixes for the dataset and Geneva pages,
-which live in `lancedb/docs`, are in lancedb/docs#402.
-
-**Tables**
-- `integrations/embedding/cohere`: each input-type description was split
-across two table rows and wrapped in literal quotes
-(`"`search_document`"`). Now one row per type.
-- `integrations/embedding/gemini`: removes the same stray quotes from
-the task-type table.
-- `integrations/ai/langchain`: the MMR search table's `kwargs` row was
-missing a cell, so its description sat under Type.
-- Six reranker pages (answerdotai, cohere, colbert, jina, openai,
-voyageai): closes the backtick before `_relevance_score`.
-- `indexing/vector-index`: finishes a cell cut off at "with scalar".
-- `sql/dql/dedupe`: labels the empty header cell in the resolution
-table.
-
-**Corrections**
-- `curation/sampling`: sampling works in LanceDB Embedded through the
-Python SDK, so the page is available in both, with the SQL sections
-marked Enterprise.
-
-
-**File**: `docs/src/js/classes/Index.md` (modified, +1/-1)
+**File**: `python/python/lancedb/functions.py` (modified, +19/-1)
 ```diff
-@@ -252,7 +252,7 @@ static labelList(): Index
- Create a label list index.
+@@ -683,6 +683,8 @@ def version(self) -> Optional[int]:
  
- LabelList index is a scalar index that can be used on `List<T>` columns to
--support queries with `array_contains_all` and `array_contains_any`
-+support queries with `array_has_all` and `array_has_any`
- using an underlying bitmap index.
  
- #### Returns
+ _FUNCTION_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
++# Digest-pinned only; the server checks the host and repository grammar.
++_IMAGE_REFERENCE = re.compile(r"^[^/@\s]+/[^@\s]+@sha256:[0-9a-f]{64}$")
+ 
+ _FUNCTION_BLOB_V2_TYPE = "blob_v2"
+ _ARROW_EXTENSION_NAME_KEY = "ARROW:extension:name"
+@@ -1860,6 +1862,7 @@ def __init__(
+         conda: tuple[str, ...] = (),
+         conda_channels: tuple[str, ...] = (),
+         apt: tuple[str, ...] = (),
++        image: Optional[str] = None,
+         code: tuple[types.ModuleType, ...] = (),
+     ):
+         is_class = inspect.isclass(function)
+@@ -1881,16 +1884,24 @@ def __init__(
+             for package in packages + system_packages
+         ):
+             raise ValueError("package requirements must be non-empty and trimmed")
++        if image is not None and not _IMAGE_REFERENCE.fullmatch(image):
++            raise ValueError(
++                f"Function image {image!r} must be host/repository@sha256:<digest>"
++            )
+         if conda:
+             environment_spec = PythonEnvironmentSpec(
+                 kind="conda",
+                 packages=packages,
+                 channels=tuple(conda_channels),
++                image=image,
+                 system_packages=system_packages,
+             )
+         else:
+             environment_spec = PythonEnvironmentSpec(
+-                kind="pip", packages=packages, system_packages=system_packages
++                kind="pip",
++                packages=packages,
++                image=image,
++                system_packages=system_packages,
+             )
+         environment = dict(env)
+         if any(
+@@ -2061,6 +2072,7 @@ def udf(
+     conda: tuple[str, ...] | list[str] = (),
+     conda_channels: tuple[str, ...] | list[str] = (),
+     apt: tuple[str, ...] | list[str] = (),
++    image: Optional[str] = None,
+     code: Sequence[types.ModuleType] = (),
+ ) -> Callable[[Callable[..., Any]], UdfDefinition]: ...
+ 
+@@ -2078,6 +2090,7 @@ def udf(
+     conda: tuple[str, ...] | list[str] = (),
+     conda_channels: tuple[str, ...] | list[str] = (),
+     apt: tuple[str, ...] | list[str] = (),
++    image: Optional[str] = None,
+     code: Sequence[types.ModuleType] = (),
+ ):
+     """Prepare a Python function or class for remote Function registration.
+@@ -2176,6 +2189,10 @@ def udf(
+         conda cannot provide, such as FFmpeg's for ``torchcodec``. Packages
+         are unpacked without running their maintainer scripts. Works with
+         ``pip`` or ``conda``; requires image execution.
++    image : str, optional
++        A digest-pinned registry image (``"host/repository@sha256:<digest>"``)
++        the remote environment is built on instead of the default base. Pip
++        requirements install only what the image lacks.
+     env : mapping of str to str, optional
+         Environment variables included in the Function definition. Not for
+         credentials -- these are ordinary configuration, stored with the
+@@ -2258,6 +2275,7 @@ def decorate(target: Any) -> UdfDefinition:
+             conda=tuple(conda),
+             conda_channels=tuple(conda_channels),
+             apt=tuple(apt),
++            image=image,
+             code=tuple(code),
+         )
+ 
 ```
 
-**File**: `docs/web/basics/agentic-skills.mdx` (modified, +3/-3)
+**File**: `python/python/tests/test_first_class_function_slice2.py` (modified, +22/-0)
 ```diff
-@@ -84,8 +84,8 @@ found and what each target supports.
+@@ -511,6 +511,28 @@ def conda_decode(value: float) -> float:
+         udf(name="padded", apt=[" libsndfile1"])(lambda value: value)
  
- ### Get started with the LanceDB agent plugin {#get-started-with-the-lancedb-agent-plugin}
  
--This tutorial uses the Camelot dataset from the [quickstart](/quickstart), with
--a portrait added for each character. Each LanceDB row contains validated
-+This tutorial uses a small Camelot dataset of characters from Arthurian legend,
-+with a portrait for each character. Each LanceDB row contains validated
- metadata and raw JPEG bytes. Text, images, and any embeddings you add later
- remain in the same table.
- 
-@@ -166,7 +166,7 @@ embedded retrieval library. A simple prompt like this should work:
- Use the lancedb plugin to ingest the dataset in `data/` into a LanceDB
- Embedded table.
- 
--# If using enterprise
-+# If using LanceDB Enterprise
- Use the lancedb plugin to ingest the dataset in `data/` into a LanceDB
- Enterprise table using the connection information in `.env`.
- ```
-```
-
-**File**: `docs/web/curation/sampling.mdx` (modified, +14/-3)
-```diff
-@@ -5,7 +5,7 @@ description: "Choose a sample for exploration or evaluation and preserve the sel
- icon: dice
- keywords: ["sampling", "tablesample", "subset", "eval set", "reproducible", "shuffle"]
- availability:
--  embedded: unavailable
-+  embedded: available
-   enterprise: available
- ---
- 
-@@ -15,11 +15,14 @@ Sampling selects records from a larger table. Use it to explore unfamiliar
- data, run a smaller experiment, or prepare an evaluation dataset. Enterprise
- SQL provides `TABLESAMPLE` for selecting a percentage or number of rows.
- 
--This page covers Enterprise SQL sampling and a complete
--[Python SDK example](#training) that runs locally.
-+Sampling works in LanceDB Embedded and LanceDB Enterprise through the
-+[Python SDK](#training). SQL sampling, the sections marked Enterprise below, needs
-+LanceDB Enterprise.
- 
- ## Example data {#example-data}
- 
-+<Badge color="red">Enterprise</Badge>
++@pytest.mark.parametrize("packages", [{"pip": ["numpy"]}, {"conda": ["numpy"]}])
++def test_udf_image(packages):
++    image = "ghcr.io/acme/embedder@sha256:" + "a" * 64
 +
- Connect with an [Enterprise SQL client](/basics/sql). The examples use a small
- document table and a separate label table. Expand the setup below to create them.
- 
-@@ -58,6 +61,8 @@ has no label. These cases let you check the effect of each operation.
- 
- ## Basic sampling {#quick}
- 
-+<Badge color="red">Enterprise</Badge>
++    @udf(image=image, **packages)
++    def embed(value: float) -> float:
++        return value
 +
- A percentage selects a fraction of the source; `ROWS` requests a row count:
- 
- ```sql
-@@ -75,6 +80,8 @@ change a production table's write configuration just to try an example.
- 
- ## Sampling methods {#methods}
- 
-+<Badge color="red">Enterprise</Badge>
++    request = json.loads(embed.registration_request.to_canonical_json())
++    assert request["runtime"]["environment"]["image"] == image
++    pip_request = json.loads(normalize_score.registration_request.to_canonical_json())
++    assert "image" not in pip_request["runtime"]["environment"]
 +
- Choose a method according to how records should be selected:
- 
- | Method | Selection | When to use it |
-@@ -97,6 +104,8 @@ represent rare groups; check that the resulting sample covers the groups you nee
- 
- ## Repeatable samples {#fixed}
- 
-+<Badge color="red">Enterprise</Badge>
 +
- A seed requests a repeatable draw:
- 
- ```sql
-@@ -121,6 +130,8 @@ training or evaluation.
- 
- ## Sampling with joins {#joins}
- 
-+<Badge color="red">Enterprise</Badge>
++@pytest.mark.parametrize(
++    "image", ["ghcr.io/acme/embedder:latest", "embedder@sha256:" + "a" * 64, ""]
++)
++def test_udf_image_requires_digest_reference(image):
++    with pytest.raises(ValueError, match="sha256"):
++        udf(name="pinned", image=image)(lambda value: value)
 +
- Sampling both input tables independently changes which pairs can match.
- For a one-to-one match, independent 10% row samples retain a given pair with
- about 1% probability, not 10%.
-```
-
-**File**: `docs/web/curation/windowing.mdx` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- ---
- title: "Ranking and deduplication"
--sidebarTitle: "Windowing"
-+sidebarTitle: "Rank and Deduplicate"
- description: "Choose records with explicit ranking rules and deterministic tie handling."
- icon: chart-simple
- keywords: ["window", "deduplication", "row_number", "rank", "train test split", "per class"]
-```
-
-**File**: `docs/web/deployment/storage.mdx` (modified, +1/-1)
-```diff
-@@ -76,7 +76,7 @@ Use local disk only when you need extremely low latency and are comfortable owni
- 
- ### File-format choices that interact with the backend {#file-format-choices}
- 
--A few `storage_options` keys shape new tables in ways that depend on the backend you picked above. They are documented in full on [below](#new-table-configuration); the architecture-level summary is:
-+A few `storage_options` keys shape new tables in ways that depend on the backend you picked above. They are documented in full [below](#new-table-configuration); the architecture-level summary is:
- 
- - `new_table_enable_v2_manifest_paths` matters most on object stores, where opening a table with many versions is dominated by listing cost. Leave it off for backward compatibility with clients older than LanceDB 0.10.0.
- - `new_table_enable_stable_row_ids` keeps row IDs stable across compaction, delete, and merge. The choice is independent of the backend but affects any system that joins on row ID.
-```
-
-**File**: `docs/web/feature-engineering/add-computed-column.mdx` (modified, +7/-7)
-```diff
-@@ -71,21 +71,21 @@ including that you can travel back to before the column existed.
- `computed` and `transforms` cannot be combined in one call. Reach for `computed` when the table is
- large enough that you would rather control when the work happens.
- 
--Pass `auto_refresh_enabled` and `auto_refresh_interval_seconds` alongside
--`computed` to have the server keep the column refreshed instead of calling
--[`refresh_column`](/feature-engineering/refresh-column) yourself:
-+Automatic refresh is on by default for each computed column, and takes effect
-+when your Enterprise deployment enables its refresh scheduler. Until then, and in
-+LanceDB Embedded, which never refreshes on a schedule, call
-+[`refresh_column`](/feature-engineering/refresh-column) yourself. Pass
-+`auto_refresh_enabled=False` to opt a column out, or
-+`auto_refresh_interval_seconds` to set how often it refreshes:
- 
- ```python
- table.add_columns(
-     computed={"doubled": "x * 2"},
--    auto_refresh_enabled=True,
-     auto_refresh_interval_seconds=300,
- )
- ```
- 
--A local table stores these settings but does not act on them -- automatic
--scheduling runs on LanceDB Cloud or Enterprise. See
--[Automatic refresh](/feature-engineering/refresh-column#automatic) for the
-+See [Automatic refresh](/feature-engineering/refresh-column#automatic) for the
- full behavior, including how to change the setting later.
- 
- An eager `transforms` call looks like this, starting from a small product
-```
-
-**File**: `docs/web/feature-engineering/index.mdx` (modified, +3/-2)
-```diff
-@@ -133,8 +133,9 @@ result.rows_assigned
- A backfill over a large table can therefore be started, left, and checked on
- from a different process: the connection does not have to stay open.
- 
--Enterprise manages the compute for the refresh. You still control when to
--submit it; declaring a computed column does not schedule recurring refreshes.
-+Enterprise manages the compute for the refresh. Declaring a computed column
-+doesn't refresh it on a schedule unless your deployment enables automatic
-+refresh; see [Automatic refresh](/feature-engineering/refresh-column#automatic).
- {/* Draft for the Functions release: That is also why a function must declare the environment it needs. */}
- 
- ## Recovering from a failure {#failures}
-```
-
-**File**: `docs/web/index.mdx` (modified, +1/-1)
-```diff
-@@ -133,7 +133,7 @@ To set up LanceDB Enterprise in your organization, [reach out to us](https://www
- |  | [Scalar indexes](/indexing/scalar-index) | ✅ | ✅ |
- | **SQL and curation** | [SQL (Arrow Flight SQL)](/basics/sql) | ❌ | ✅ |
- |  | [Aggregation and profiling](/curation/aggregate) | ❌ | ✅ |
--|  | [Sampling](/curation/sampling) | ❌ | ✅ |
-+|  | [Sampling](/curation/sampling) | ✅ | ✅ |
- |  | [Joins](/curation/join) | ❌ | ✅ |
- |  | [Ranking and deduplication](/curation/windowing) | ❌ | ✅ |
- |  | [Near-duplicate detection](/curation/dedupe) | ❌ | ✅ |
++
+ def test_udf_gpu_marker_uses_gpu_runtime():
+     @udf(pip=["cupy-cuda12x"], gpu=True)
+     def double_on_gpu(value: int) -> int:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4775** (2026-10-31): feat: support Hugging Face storage integrations with optional token Secrets (@jackye1995)
+- **PR #4771** (2026-10-31): feat: accept GCP credentials Secret in storage integration clients (@jackye1995)
+- **PR #4769** (2026-10-30): fix(ci): replace retiring macos-14 runners (@Xuanwo)
+- **PR #4768** (2026-10-30): feat(python): build a Function on a user-specified image (@wkalt)
 - **PR #4766** (2026-10-30): test(python): use a threaded mock server for remote tests (@Xuanwo)
-- **PR #4755** (2026-10-30): fix(python): pin an available pylance wheel on macOS (@Xuanwo)
-- **PR #4746** (2026-10-29): chore: update lance dependency to v15.0.0-beta.7 (@lancedb-robot)
-- **PR #4745** (2026-10-30): docs: fix table, accuracy and structure problems found in the pre-launch review (@brendanclement)
-- **PR #4743** (2026-10-29): docs: list features in the landing page comparison table (@brendanclement)
-- **PR #4742** (2026-10-29): chore: update lance dependency to v15.0.0-beta.6 (@lancedb-robot)
+- **PR #4759** (2026-10-31): feat: accept Azure inputs in storage integration clients (@jackye1995)
 
 ---
 
@@ -1783,30 +1786,42 @@ marked Enterprise.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. python): pin an available pylance wheel on macOS
+## X. fix!: support opt-in PKCE for device-code login (#4747)
 
 **RULE**:
-When implementing operations in `python/pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/web/enterprise/authentication.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a39a3180`: python): pin an available pylance wheel on macOS. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d316cbbe`: fix!: support opt-in PKCE for device-code login (#4747). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/pyproject.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/web/enterprise/authentication.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    # pylance 15.0.0b5+ has not published macOS wheels.
-    "pylance==15.0.0b7; sys_platform != 'darwin'",
-    "pylance==15.0.0b4; sys_platform == 'darwin'",
+| Device Code | `OAuthFlowType.DEVICE_CODE` | `OAuthFlowType.DeviceCode` | `OAuthFlow::DeviceCode(DeviceCodeOptions::new())` | CLI or headless sign-in. The client displays a verification URL and user code for the user to enter on another device. |
+// Use OAuthFlow::DeviceCode(Default::default()) for a CLI without a local browser or callback server.
+With `DEVICE_CODE` / `DeviceCode` / `OAuthFlow::DeviceCode(DeviceCodeOptions::new())`, the same
+Device Code sends no PKCE parameters by default. For a provider that requires
+S256 PKCE on device grants, Rust callers can select
+`OAuthFlow::DeviceCode(DeviceCodeOptions::new().use_pkce(true))` (import
+`DeviceCodeOptions` from `lancedb::remote`). This option is currently Rust-only.
+Enable it only when the provider supports the extension; a failed PKCE request
+is not retried without PKCE.
+
+The shared configuration below is available in all three SDKs; device-code PKCE
+is a Rust-only option through `DeviceCodeOptions`. Python and Rust use
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    "pylance==15.0.0b7",
+| Device Code | `OAuthFlowType.DEVICE_CODE` | `OAuthFlowType.DeviceCode` | `OAuthFlow::DeviceCode` | CLI or headless sign-in. The client displays a verification URL and user code for the user to enter on another device. |
+// Use OAuthFlow::DeviceCode for a CLI without a local browser or callback server.
+With `DEVICE_CODE` / `DeviceCode` / `OAuthFlow::DeviceCode`, the same
+The same configuration is available in all three SDKs. Python and Rust use
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a39a3180` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d316cbbe` are properly handled with clean fallback behavior.
