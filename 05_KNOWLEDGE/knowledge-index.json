@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T04:43:44.151Z",
+  "last_updated": "2026-10-31T04:50:45.607Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20979,7 +20979,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/convaiinnovations/laya",
       "source_version": "hf-convaiinnovations-laya",
-      "content_hash": "e702af5da38c78e6fabb31508ecda255a175c6c1e118a2e12380f8b748fe5907",
+      "content_hash": "9acaf2dcd515a3207d6c51823eb99a5123f914ba23135bc42d882cbfbe2f7fcb",
       "dossier_path": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "promoted_rules": [
@@ -21022,7 +21022,7 @@
         {
           "number": 992,
           "title": "Language-Aware Routing Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1149,
@@ -21042,6 +21042,11 @@
         {
           "number": "EXISTING",
           "title": "Proper Scoring Rule Training Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 432,
+          "title": "Calibrated Probability Reporting Invariant",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -21432,7 +21437,7 @@
         "learn-huggingface-hf-convaiinnovations-laya-mv41qpya",
         "learn-huggingface-hf-convaiinnovations-laya-mv4flqk7"
       ],
-      "verified_at": "2026-10-28T02:48:09.773Z",
+      "verified_at": "2026-10-31T04:50:45.588Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -74800,29 +74805,29 @@
       "learning_id": "rule-431",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 431,
-      "title": "Non-Autoregressive Structured Output Invariant (Harvested from convaiinnovations/laya)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Non-Autoregressive Structured Output Invariant",
+      "source_url": "https://huggingface.co/convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.811Z"
+      "verified_at": "2026-10-31T04:50:45.588Z"
     },
     "rule-432": {
       "learning_id": "rule-432",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 432,
-      "title": "Calibrated Probability Reporting Invariant (Harvested from convaiinnovations/laya)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Calibrated Probability Reporting Invariant",
+      "source_url": "https://huggingface.co/convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.811Z"
+      "verified_at": "2026-10-31T04:50:45.588Z"
     },
     "rule-433": {
       "learning_id": "rule-433",
@@ -82654,15 +82659,15 @@
       "learning_id": "rule-992",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 992,
-      "title": "Language-Aware Routing Invariant (Harvested from convaiinnovations/laya)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Language-Aware Routing Invariant",
+      "source_url": "https://huggingface.co/convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.816Z"
+      "verified_at": "2026-10-31T04:50:45.588Z"
     },
     "rule-993": {
       "learning_id": "rule-993",

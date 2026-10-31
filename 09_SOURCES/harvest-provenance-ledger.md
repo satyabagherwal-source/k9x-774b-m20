@@ -6473,3 +6473,4 @@ Every entry in this ledger must capture:
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `9f2b612e` | Multi-dimensional audit evidence | 2026-10-31T04:38:49.406Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `687e906e` | Multi-dimensional audit evidence | 2026-10-31T04:38:50.187Z |
 | `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `f753a411` | Multi-dimensional audit evidence | 2026-10-31T04:43:44.238Z |
+| `learn-huggingface-convaiinnovations-laya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-10-31T04:50:45.692Z |

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T04:43:44.244Z",
-  "total_cycles_completed": 6441,
-  "total_learnings_persisted": 6441,
-  "total_rules_promoted": 6052,
+  "last_updated": "2026-10-31T04:50:45.697Z",
+  "total_cycles_completed": 6442,
+  "total_learnings_persisted": 6442,
+  "total_rules_promoted": 6055,
   "history": [
-    {
-      "timestamp": "2026-10-30T18:32:38.485Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T18:39:34.644Z",
       "repository": "bahdotsh/wrkflw",
@@ -1403,6 +1396,13 @@
       "repository": "zeromicro/go-zero",
       "learningId": "learn-github-zeromicro-go-zero",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T04:50:45.697Z",
+      "repository": "convaiinnovations/laya",
+      "learningId": "learn-huggingface-convaiinnovations-laya",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

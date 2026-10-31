@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-PC50",
-    "timestamp": "2026-10-28T22:26:48.372Z",
-    "repository": "t8y2/dbx",
-    "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "ec3e92cbe4553450c73ae6141ef41d535a97107e761e1aed0c40dd5c60e8d14d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-X7GH",
     "timestamp": "2026-10-28T22:32:55.553Z",
     "repository": "pola-rs/polars",
@@ -7492,6 +7477,21 @@
     "contentHash": "7b3dab45360738bed725c2c397eb6b6a063ce8c72379025a5908c31619dd2cc3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-AT6G",
+    "timestamp": "2026-10-31T04:50:45.688Z",
+    "repository": "convaiinnovations/laya",
+    "learningId": "learn-huggingface-convaiinnovations-laya",
+    "contentHash": "9acaf2dcd515a3207d6c51823eb99a5123f914ba23135bc42d882cbfbe2f7fcb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

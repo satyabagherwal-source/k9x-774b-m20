@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T04:43:46.798Z",
-    "lastVerified": "2026-10-31T04:43:46.798Z",
+    "lastChecked": "2026-10-31T04:50:48.252Z",
+    "lastVerified": "2026-10-31T04:50:48.252Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -69,12 +69,12 @@
     "officialUrl": "https://huggingface.co/convaiinnovations/laya",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T02:47:59.709Z",
-    "lastVerified": "2026-10-28T02:47:59.709Z",
+    "lastChecked": "2026-10-31T04:50:25.888Z",
+    "lastVerified": "2026-10-31T04:50:25.888Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-convaiinnovations-laya",
-    "contentHash": "e702af5da38c78e6fabb31508ecda255a175c6c1e118a2e12380f8b748fe5907",
+    "contentHash": "9acaf2dcd515a3207d6c51823eb99a5123f914ba23135bc42d882cbfbe2f7fcb",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -219,9 +219,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-10-31T01:04:52.955Z",
+    "lastChecked": "2026-10-31T04:50:33.334Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-10-31T01:04:52.955Z"
+    "lastVerified": "2026-10-31T04:50:33.334Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -245,8 +245,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T04:09:38.772Z",
-    "lastVerified": "2026-10-31T04:09:38.772Z",
+    "lastChecked": "2026-10-31T04:50:38.392Z",
+    "lastVerified": "2026-10-31T04:50:38.392Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1455,12 +1455,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "goharbor-harbor": {
-    "name": "goharbor/harbor",
+    "name": "harbor",
     "officialUrl": "https://github.com/goharbor/harbor",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T10:54:09.150Z",
-    "lastVerified": "2026-10-30T10:54:09.150Z",
+    "lastChecked": "2026-10-31T04:50:30.870Z",
+    "lastVerified": "2026-10-31T04:50:30.870Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-goharbor-harbor",
@@ -1469,7 +1469,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "58d7d2f9"
   },
   "build-trust-ockam": {
     "name": "ockam",
@@ -3235,9 +3236,9 @@
   "devhubapp-devhub": {
     "name": "devhub",
     "officialUrl": "https://github.com/devhubapp/devhub",
-    "lastChecked": "2026-10-28T11:02:06.841Z",
+    "lastChecked": "2026-10-31T04:50:28.366Z",
     "revisionIdentifier": "1d0d66a3",
-    "lastVerified": "2026-10-28T11:02:06.841Z"
+    "lastVerified": "2026-10-31T04:50:28.366Z"
   },
   "aliyuncontainerservice-pouch": {
     "name": "pouch",
@@ -3718,9 +3719,9 @@
   "fujiapple852-trippy": {
     "name": "trippy",
     "officialUrl": "https://github.com/fujiapple852/trippy",
-    "lastChecked": "2026-10-30T04:47:55.257Z",
+    "lastChecked": "2026-10-31T04:50:23.389Z",
     "revisionIdentifier": "54c8f399",
-    "lastVerified": "2026-10-30T04:47:55.257Z"
+    "lastVerified": "2026-10-31T04:50:23.389Z"
   },
   "hf-qwen-qwen3-0.6b": {
     "name": "Qwen/Qwen3-0.6B",
@@ -7150,9 +7151,9 @@
   "open-source-legal-opencontracts": {
     "name": "OpenContracts",
     "officialUrl": "https://github.com/Open-Source-Legal/OpenContracts",
-    "lastChecked": "2026-10-30T09:12:39.096Z",
+    "lastChecked": "2026-10-31T04:50:35.889Z",
     "revisionIdentifier": "6652e8dd",
-    "lastVerified": "2026-10-30T09:12:39.096Z"
+    "lastVerified": "2026-10-31T04:50:35.889Z"
   },
   "bgreenwell-doxx": {
     "name": "doxx",
