@@ -6754,3 +6754,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-microsoft-frognano-4b-2609` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-10-31T22:53:35.319Z |
 | `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `4b6a033f` | Multi-dimensional audit evidence | 2026-10-31T22:53:35.826Z |
 | `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `653afb21` | Multi-dimensional audit evidence | 2026-10-31T22:53:44.252Z |
+| `learn-huggingface-francisring-prism` | `https://huggingface.co/FrancisRing/Prism` | `hf-francis` | Multi-dimensional audit evidence | 2026-10-31T23:02:09.815Z |

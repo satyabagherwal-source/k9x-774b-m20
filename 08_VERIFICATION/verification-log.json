@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-4O68",
-    "timestamp": "2026-10-30T17:06:08.864Z",
-    "repository": "databendlabs/databend",
-    "learningId": "learn-github-databendlabs-databend",
-    "contentHash": "7f5bcbcc7b37bc949a1c2967e2cae6def93849f49bb011159c8493c29023fdb9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-FNLK",
     "timestamp": "2026-10-30T17:14:41.336Z",
     "repository": "paradedb/paradedb",
@@ -7492,6 +7477,21 @@
     "contentHash": "3cfc3a4656bdc3a3cc4e28e58fb2ef273d53729221ba4deed08bf0fd2377b7e5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-AD1V",
+    "timestamp": "2026-10-31T23:02:09.811Z",
+    "repository": "FrancisRing/Prism",
+    "learningId": "learn-huggingface-francisring-prism",
+    "contentHash": "5a184b29f69ef90f8c270d720bf272f3cdf428b535e8207a67bd6dba4f83ed91",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T22:53:46.806Z",
-    "lastVerified": "2026-10-31T22:53:46.806Z",
+    "lastChecked": "2026-10-31T23:02:12.355Z",
+    "lastVerified": "2026-10-31T23:02:12.355Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -431,8 +431,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T22:31:22.816Z",
-    "lastVerified": "2026-10-31T22:31:22.816Z",
+    "lastChecked": "2026-10-31T23:02:11.795Z",
+    "lastVerified": "2026-10-31T23:02:11.795Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -778,8 +778,8 @@
     "officialUrl": "https://github.com/topoteretes/cognee",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-31T06:32:07.160Z",
-    "lastVerified": "2026-10-31T06:32:07.160Z",
+    "lastChecked": "2026-10-31T23:02:09.432Z",
+    "lastVerified": "2026-10-31T23:02:09.432Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-topoteretes-cognee",
@@ -1483,9 +1483,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-10-31T19:00:38.980Z",
+    "lastChecked": "2026-10-31T23:02:06.964Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-10-31T19:00:38.980Z"
+    "lastVerified": "2026-10-31T23:02:06.965Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -2872,8 +2872,8 @@
     "officialUrl": "https://github.com/kgateway-dev/kgateway",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T07:53:41.358Z",
-    "lastVerified": "2026-10-31T07:53:41.358Z",
+    "lastChecked": "2026-10-31T23:02:04.473Z",
+    "lastVerified": "2026-10-31T23:02:04.473Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kgateway-dev-kgateway",
@@ -3126,9 +3126,9 @@
   "orf-gping": {
     "name": "gping",
     "officialUrl": "https://github.com/orf/gping",
-    "lastChecked": "2026-10-31T03:12:22.096Z",
+    "lastChecked": "2026-10-31T23:01:56.756Z",
     "revisionIdentifier": "fad1ee3c",
-    "lastVerified": "2026-10-31T03:12:22.096Z"
+    "lastVerified": "2026-10-31T23:01:56.756Z"
   },
   "hf-psrben-visionhope": {
     "name": "PSRben/VisionHOPE",
@@ -7888,12 +7888,12 @@
     "officialUrl": "https://huggingface.co/FrancisRing/Prism",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T21:29:50.583Z",
-    "lastVerified": "2026-10-28T21:29:50.583Z",
+    "lastChecked": "2026-10-31T23:01:59.493Z",
+    "lastVerified": "2026-10-31T23:01:59.493Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-francisring-prism",
-    "contentHash": "8040ee89005e129a8f971cf754b9867b46be32f888f2584580795cdbaa23dfd2",
+    "contentHash": "5a184b29f69ef90f8c270d720bf272f3cdf428b535e8207a67bd6dba4f83ed91",
     "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9189,12 +9189,12 @@
     "lastVerified": "2026-10-29T17:03:25.761Z"
   },
   "modelcontextprotocol-kotlin-sdk": {
-    "name": "modelcontextprotocol/kotlin-sdk",
+    "name": "kotlin-sdk",
     "officialUrl": "https://github.com/modelcontextprotocol/kotlin-sdk",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-10-29T17:03:33.378Z",
-    "lastVerified": "2026-10-29T17:03:33.378Z",
+    "lastChecked": "2026-10-31T23:02:01.826Z",
+    "lastVerified": "2026-10-31T23:02:01.826Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
@@ -9203,7 +9203,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2a028188"
   },
   "turbopress-x-seo-auditing-software": {
     "name": "seo-auditing-software",

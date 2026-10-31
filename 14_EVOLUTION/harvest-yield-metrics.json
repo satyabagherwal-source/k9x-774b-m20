@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T22:53:44.257Z",
-  "total_cycles_completed": 6722,
-  "total_learnings_persisted": 6722,
-  "total_rules_promoted": 6361,
+  "last_updated": "2026-10-31T23:02:09.820Z",
+  "total_cycles_completed": 6723,
+  "total_learnings_persisted": 6723,
+  "total_rules_promoted": 6363,
   "history": [
-    {
-      "timestamp": "2026-10-31T11:26:00.756Z",
-      "repository": "yvgude/lean-ctx",
-      "learningId": "learn-github-yvgude-lean-ctx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T11:32:51.927Z",
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -1403,6 +1396,13 @@
       "repository": "karmada-io/karmada",
       "learningId": "learn-github-karmada-io-karmada",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T23:02:09.820Z",
+      "repository": "FrancisRing/Prism",
+      "learningId": "learn-huggingface-francisring-prism",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

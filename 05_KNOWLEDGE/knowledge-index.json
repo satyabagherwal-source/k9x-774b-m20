@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T22:53:44.168Z",
+  "last_updated": "2026-10-31T23:02:09.743Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -23583,7 +23583,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FrancisRing/Prism",
       "source_version": "hf-francisring-prism",
-      "content_hash": "8040ee89005e129a8f971cf754b9867b46be32f888f2584580795cdbaa23dfd2",
+      "content_hash": "5a184b29f69ef90f8c270d720bf272f3cdf428b535e8207a67bd6dba4f83ed91",
       "dossier_path": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
       "promoted_rules": [
@@ -23630,6 +23630,16 @@
           "number": 5409,
           "title": "Joint Video-Audio Temporal Alignment Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6355,
+          "title": "Dynamic Sparse Attention Complexity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6356,
+          "title": "Joint Modality Temporal Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -23646,7 +23656,7 @@
         "learn-huggingface-hf-francisring-prism-mv43jvl8",
         "learn-huggingface-hf-francisring-prism-mv4gsoqj"
       ],
-      "verified_at": "2026-10-28T21:30:04.852Z",
+      "verified_at": "2026-10-31T23:02:09.724Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -165064,6 +165074,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T22:53:44.144Z"
+    },
+    "rule-6355": {
+      "learning_id": "rule-6355",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6355,
+      "title": "Dynamic Sparse Attention Complexity Invariant",
+      "source_url": "https://huggingface.co/FrancisRing/Prism",
+      "source_version": "hf-francisring-prism",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T23:02:09.724Z"
+    },
+    "rule-6356": {
+      "learning_id": "rule-6356",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6356,
+      "title": "Joint Modality Temporal Alignment Invariant",
+      "source_url": "https://huggingface.co/FrancisRing/Prism",
+      "source_version": "hf-francisring-prism",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T23:02:09.724Z"
     }
   },
   "aliases": {
