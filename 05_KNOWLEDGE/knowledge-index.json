@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T18:15:38.643Z",
+  "last_updated": "2026-10-31T18:22:26.389Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4925,8 +4925,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "c8d414db",
-      "content_hash": "bd83119637c49d8ce7315206e5773a20e18aa453bbf634a896b3a2a958df7c54",
+      "source_version": "9cfd9db0",
+      "content_hash": "1162a8d807d1954a5ba055cb407a451989ea70b8a3ade05892872c184a615354",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -5099,6 +5099,11 @@
           "number": 6271,
           "title": "compute): land the beta recovery stack on main with Soapbox rc10 (#343)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6279,
+          "title": "browser): teach reusable skills from reviewed demonstrations (#338)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5106,7 +5111,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T17:50:25.151Z",
+      "verified_at": "2026-10-31T18:22:26.371Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15825,8 +15830,8 @@
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "f2d74650",
-      "content_hash": "de12ab2a49a91c01287f4947d652db11ea831e83bd76e5dc318c481bfc10cbde",
+      "source_version": "c40e86c6",
+      "content_hash": "cc61f40706f0a0db1f14d438d90924474b206873acd6155dbe02a2e3e9bff3e7",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "promoted_rules": [
@@ -15884,6 +15889,11 @@
           "number": 6009,
           "title": "optimize Prometheus remote write v2 ingestion (#9928)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6278,
+          "title": "datanode): pick a node epoch above the recorded one (#9984)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15891,7 +15901,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T02:07:35.318Z",
+      "verified_at": "2026-10-31T18:22:24.231Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23791,7 +23801,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/gemma-4-26B-A4B-it",
       "source_version": "hf-google-gemma-4-26b-a4b-it",
-      "content_hash": "0149ffe568dc74abdd1b7d8aaa9c099dce4d1b87d7828d8d808f188bdf640e84",
+      "content_hash": "e0d9436914e3dbece929045542e52a2a38765f5b8f7cd9c87a271672be178bc4",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md",
       "promoted_rules": [
@@ -23828,7 +23838,7 @@
         "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv3z9d9l",
         "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv4dv0ce"
       ],
-      "verified_at": "2026-10-28T17:12:41.511Z",
+      "verified_at": "2026-10-31T18:22:09.218Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -163604,6 +163614,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T18:15:38.626Z"
+    },
+    "rule-6278": {
+      "learning_id": "rule-6278",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6278,
+      "title": "datanode): pick a node epoch above the recorded one (#9984)",
+      "source_url": "https://github.com/GreptimeTeam/greptimedb",
+      "source_version": "c40e86c6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T18:22:24.231Z"
+    },
+    "rule-6279": {
+      "learning_id": "rule-6279",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6279,
+      "title": "browser): teach reusable skills from reviewed demonstrations (#338)",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "9cfd9db0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T18:22:26.371Z"
     }
   },
   "aliases": {

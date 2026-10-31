@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T18:15:38.729Z",
+  "last_updated": "2026-10-31T18:22:26.467Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1565,14 +1565,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-gemma-4-26b-a4b-it",
-      "content_hash": "0149ffe568dc74abdd1b7d8aaa9c099dce4d1b87d7828d8d808f188bdf640e84",
-      "verified_at": "2026-10-28T17:12:41.622Z",
+      "content_hash": "e0d9436914e3dbece929045542e52a2a38765f5b8f7cd9c87a271672be178bc4",
+      "verified_at": "2026-10-31T18:22:09.324Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T17:12:41.622Z"
+      "last_updated": "2026-10-31T18:22:09.324Z"
     },
     "intfloat/multilingual-e5-small": {
       "repository": "intfloat/multilingual-e5-small",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "bd83119637c49d8ce7315206e5773a20e18aa453bbf634a896b3a2a958df7c54",
-      "verified_at": "2026-10-31T17:50:25.246Z",
+      "content_hash": "1162a8d807d1954a5ba055cb407a451989ea70b8a3ade05892872c184a615354",
+      "verified_at": "2026-10-31T18:22:26.466Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T17:50:25.246Z"
+      "last_updated": "2026-10-31T18:22:26.466Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -8181,14 +8181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-greptimeteam-greptimedb",
-      "content_hash": "de12ab2a49a91c01287f4947d652db11ea831e83bd76e5dc318c481bfc10cbde",
-      "verified_at": "2026-10-31T02:07:35.423Z",
+      "content_hash": "cc61f40706f0a0db1f14d438d90924474b206873acd6155dbe02a2e3e9bff3e7",
+      "verified_at": "2026-10-31T18:22:24.356Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T02:07:35.423Z"
+      "last_updated": "2026-10-31T18:22:24.356Z"
     },
     "heroui-inc/heroui-native": {
       "repository": "heroui-inc/heroui-native",

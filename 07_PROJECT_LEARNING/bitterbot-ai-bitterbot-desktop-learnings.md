@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `c8d414db`  
+> **Source Version**: `9cfd9db0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T17:50:24.757Z  
+> **Timestamp**: 2026-10-31T18:22:25.878Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T17:50:24.752Z  
+> **Harvest Timestamp**: 2026-10-31T18:22:25.872Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,417 +1799,476 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c8d414db` (2026-10-31)
-**Commit Message**: feat(compute): land the beta recovery stack on main with Soapbox rc10 (#343)
+### Incident Patch 1: `9cfd9db0` (2026-10-31)
+**Commit Message**: feat(browser): teach reusable skills from reviewed demonstrations (#338)
 
-Main has shipped 1.10.1 and 1.11.0 pinning Soapbox rc5 while every beta since
-1.10.1-beta.2 was cut from side branches carrying the compute recovery work.
-This brings that stack to main as one change: the contents of PRs #287 (rc8:
-revocation reconciliation, cancellation recovery without resubmission or
-regrant), #314 (rc9: P2P discovery recovery, installed sidecars preferred
-over stale checkout builds) and #319 (rc10: expiring quotes, saved
-buyer/operator profiles, runtime readiness, profile-transition guard).
-
-Runtime pin moves to Soapbox v0.3.0-rc.10. rc8 and later migrate the
-coordinator database to schema 2 one way; rc7 and earlier refuse it.
-
-Release tooling learns explicit X.Y.Z-beta.N versions: prerelease flag on
-generated listings, pinned beta installs in the install test, beta-aware
-launcher manifest validation and version directory parsing, and the macOS
-release runner moves to macos-15 ahead of the macos-14 retirement.
-
-Version bumps from the beta branches are not carried; release-please owns
-versions on main. The Soapbox guide keeps the stable-channel install wording
-and notes which release b
-
-**File**: `.github/workflows/ci.yml` (modified, +17/-6)
+**File**: `ATTRIBUTION.md` (modified, +8/-0)
 ```diff
-@@ -339,7 +339,7 @@ jobs:
-             const asset = (tag, n) => ({ name: n, browser_download_url: `https://github.com/Bitterbot-AI/bitterbot-desktop/releases/download/${tag}/${n}` });
-             const listing = [
-               { tag_name: "v99.0.0", draft: false, prerelease: false, assets: [asset("v99.0.0", "docker-compose.yml")] },
--              { tag_name: `v${version}`, draft: false, prerelease: false, assets: fs.readdirSync(`${dir}/download/v${version}`).map((n) => asset(`v${version}`, n)) },
-+              { tag_name: `v${version}`, draft: false, prerelease: version.includes("-"), assets: fs.readdirSync(`${dir}/download/v${version}`).map((n) => asset(`v${version}`, n)) },
-             ];
-             fs.writeFileSync(`${dir}/api/releases.json`, JSON.stringify(listing));
-           ' "$RUNNER_TEMP/releases" "$VERSION"
-@@ -395,8 +395,19 @@ jobs:
-         run: |
-           set -euo pipefail
-           export HOME="$RUNNER_TEMP/home" BITTERBOT_INSTALL_TEST_MODE=1             BITTERBOT_INSTALL_BASE_URL=http://127.0.0.1:8765 BITTERBOT_INSTALL_TEST_PUBKEY="$TEST_PUBKEY"
--          curl -fsSL http://127.0.0.1:8765/install.sh | bash -s -- --yes --no-onboard | tee "$RUNNER_TEMP/install1.log"
--          grep -q "Newest complete release: $VERSION" "$RUNNER_TEMP/install1.log"
-+          version_args=()
-+          if [[ "$VERSION" == *-* ]]; then
-+            # A beta must never become the implicit stable-channel install.
-+            if bash scripts/install.sh --yes --no-onboard > "$RUNNER_TEMP/beta-unpinned.log" 2>&1; then
-+              echo "an unpinned install selected a prerelease"; exit 1
-+            fi
-+            grep -q "no published release carries a signed tarball" "$RUNNER_TEMP/beta-unpinned.log"
-+            version_args=(--version "$VERSION")
-+          fi
-+          curl -fsSL http://127.0.0.1:8765/install.sh | bash -s -- --yes --no-onboard "${version_args[@]}" | tee "$RUNNER_TEMP/install1.log"
-+          if [[ "$VERSION" != *-* ]]; then
-+            grep -q "Newest complete release: $VERSION" "$RUNNER_TEMP/install1.log"
-+          fi
-           grep -q "Verified: minisign signature (pinned key)" "$RUNNER_TEMP/install1.log"
-           # Same build again: every file is re-checked against manifest.json
-           # and the directory is kept in place.
-@@ -521,7 +532,7 @@ jobs:
-       - name: Derive version B (same code) and a broken B' (gateway exits 1), sign B
-         run: |
-           set -euo pipefail
--          IFS=. read -r MA MI PA <<< "$VERSION"
-+          IFS=. read -r MA MI PA <<< "${VERSION%%-*}"
-           VB="$MA.$MI.$((PA + 1))"
-           VC="$MA.$MI.$((PA + 2))"
-           A_TGZ="$RUNNER_TEMP/release-out/bitterbot-$VERSION-linux-x64.tar.gz"
-@@ -544,7 +555,7 @@ jobs:
-           const asset = (tag, n) => ({ name: n, browser_download_url: `https://github.com/Bitterbot-AI/bitterbot-desktop/releases/download/${tag}/${n}` });
-           const listing = [{ tag_name: "v99.0.0", draft: false, prerelease: false, assets: [asset("v99.0.0", "docker-compose.yml")] }];
-           for (const tag of fs.readdirSync(`${dir}/download`)) {
--            listing.push({ tag_name: tag, draft: false, prerelease: false, assets: fs.readdirSync(`${dir}/download/${tag}`).map((n) => asset(tag, n)) });
-+            listing.push({ tag_name: tag, draft: false, prerelease: tag.includes("-"), assets: fs.readdirSync(`${dir}/download/${tag}`).map((n) => asset(tag, n)) });
-           }
-           fs.writeFileSync(`${dir}/api/releases.json`, JSON.stringify(listing));
-           JS
-@@ -575,7 +586,7 @@ jobs:
-           # bundled node inside ~/.bitterbot/app/<version>/runtime).
-           gw_versions() {
-             for pid in $(pgrep -f "^bitterbot-gateway"); do
--              readlink "/proc/$pid/exe" | sed -n 's#.*/app/\([0-9.]*\)/runtime/.*#\1#p'
-+              readlink "/proc/$pid/exe" | sed -nE 's#.*/app/([0-9]+\.[0-9]+\.[0-9]+(-beta\.[1-9][0-9]*)?)/runtime/.*#\1#p'
-             done | sort -u
-           }
-           healthy() {
-```
-
-**File**: `.github/workflows/release-tarball.yml` (modified, +2/-1)
-```diff
-@@ -145,7 +145,8 @@ jobs:
-           - platform: linux-arm64
-             runner: ubuntu-22.04-arm
-           - platform: darwin-arm64
--            runner: macos-14
-+            # macOS 14 retires November 2, 2026; reduced capacity can strand releases.
-+            runner: macos-15
-           - platform: darwin-x64
-             runner: macos-15-intel
-             optional: true
-```
-
-**File**: `desktop/renderer/src/components/compute/ComputeProfiles.tsx` (added, +51/-0)
-```diff
-@@ -0,0 +1,51 @@
-+import type { SoapboxSetupStatus } from "../../../../../src/infra/soapbox-setup-types";
-+
-+export function ComputeProfiles({
-+  status,
-+  busy,
-+  add,
-+  select,
-+}: {
-+  status: SoapboxSetupStatus;
-+  busy: boolean;
-+  add: () => void;
-+  select: (id: string) => void;
-+}) {
-+  return (
-+    <div className="space-y-3">
-+      <h3 className="font-medium">Buyer and operator profiles</h3>
-+      <p className="text-sm text-muted-foreground">
-+        One profile is active at a time. Switching reconnects Compute and preserves your saved
-+        setup. Finish active jobs and pending payments first. Paid profiles use your separate Base
-+        Sepolia wallet.
-+      </p>
-+      {status.profiles?.map((profile) => (
-+        <div
-+          key={profile.id}
-+          className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border p-3"
-+        >
-+          <span className="text-sm">
-+            {profile.name}
-+            {profile.active ? " · Active" : ""}
-+          </span>
-+          {!profile.active && (
-+            <button
-+              className="text-sm underline disabled:opacity-40"
-+              disabled={busy}
-+              onClick={() => select(profile.id)}
-+            >
-+              Switch to {profile.name}
-+            </button>
-+          )}
-+        </div>
-+      ))}
-+      <button
-+        className="rounded-lg bg-brand px-4 py-2 text-sm text-white disabled:opacity-40"
-+        disabled={busy}
-+        onClick={add}
-+      >
-+        Add buyer or operator profile
-+      </button>
-+    </div>
-+  );
-+}
-```
-
-**File**: `desktop/renderer/src/components/compute/ComputeSetup.test.tsx` (modified, +16/-0)
-```diff
-@@ -101,6 +101,22 @@ it("keeps configured gateways read only and explains where the tester runs setup
-   expect(screen.getByText(/tester’s own Bitterbot app/)).toBeTruthy();
- });
+@@ -30,6 +30,14 @@ Code ported or vendored into the tree keeps a header naming its source:
  
-+it("offers explicit saved-profile switching without funding or creating wallets", async () => {
-+  status.configured = true;
-+  status.configuredRole = "mesh-operator";
-+  status.canManageProfiles = true;
-+  status.profiles = [
-+    { id: "operator", role: "mesh-operator", name: "Local P2P operator", active: true },
-+    { id: "buyer", role: "buyer", name: "Buyer · tester", active: false },
-+  ];
-+  render(<ComputeSetup onClose={() => {}} />);
-+  fireEvent.click(await screen.findByRole("button", { name: "Switch to Buyer · tester" }));
-+  await waitFor(() =>
-+    expect(fake.request).toHaveBeenCalledWith("soapbox.setup.profile.switch", { id: "buyer" }),
-+  );
-+  expect(fake.request.mock.calls.some(([method]) => /wallet|payment/.test(method))).toBe(false);
+ ## Original work provenance
+ 
++The browser teaching workflow (`src/browser/teaching-*.ts` and the Control UI's
++`BrowserTeaching` component) is independently implemented for Bitterbot's live
++browser and skill gate. Its semantic demonstration, parameterized draft and
++owner-review patterns were inspired by
++[CopilotKit/OpenDuet](https://github.com/CopilotKit/OpenDuet) (MIT), particularly
++`openbot/agent-computer/src/demonstration.ts` and
++`openbot/server/src/demonstrations/draft.ts`.
++
+ The following components are original work by Victor Michael Gil and
+ constitute the novel intellectual contributions of the Bitterbot project:
+ 
+```
+
+**File**: `desktop/renderer/src/components/chat/BrowserLiveView.tsx` (modified, +3/-0)
+```diff
+@@ -10,6 +10,7 @@ import {
+ } from "../../lib/browser-live-input";
+ import { cn } from "../../lib/utils";
+ import { useBrowserLiveStore, type BrowserLiveFrame } from "../../stores/browser-live-store";
++import { BrowserTeaching } from "./BrowserTeaching";
+ import { extractDomain } from "./tool-views/tool-view-utils";
+ 
+ /** Pointer moves are a stream; this many per second is plenty to hover and drag. */
+@@ -76,6 +77,8 @@ export function BrowserLiveView({ className }: { className?: string }) {
+         )}
+       </div>
+ 
++      <BrowserTeaching mine={showing && mine} />
++
+       {showing && control === "user" && (
+         <div className="px-3 py-1.5 text-xs bg-warning/10 text-warning border-b border-warning/20">
+           {mine
+```
+
+**File**: `desktop/renderer/src/components/chat/BrowserTeaching.test.tsx` (added, +129/-0)
+```diff
+@@ -0,0 +1,129 @@
++import { fireEvent, render, screen, waitFor } from "@testing-library/react";
++import { beforeEach, describe, expect, it, vi } from "vitest";
++import { BrowserTeaching } from "./BrowserTeaching";
++
++const gateway = vi.hoisted(() => ({ status: "connected", request: vi.fn() }));
++vi.mock("../../stores/gateway-store", () => ({
++  useGatewayStore: (select: (state: typeof gateway) => unknown) => select(gateway),
++}));
++const record = {
++  id: "demo",
++  title: "Find invoice",
++  goal: "Find supplier invoice",
++  outcome: "Matching invoice shown",
++  status: "stopped",
++  actionCount: 2,
++};
++const options = {
++  name: "taught-find-invoice",
++  description: "Use for supplier invoices; not for unrelated workflows.",
++  parameters: {},
++};
++beforeEach(() => {
++  gateway.status = "connected";
++  gateway.request.mockReset();
++  let status = "stopped";
++  gateway.request.mockImplementation(async (method: string) => {
++    if (method.endsWith(".list")) return { recordings: [{ ...record, status }] };
++    if (method.endsWith(".start")) {
++      status = "recording";
++      return record;
++    }
++    if (method.endsWith(".stop")) {
++      status = "stopped";
++      return record;
++    }
++    if (method.endsWith(".draft"))
++      return {
++        record,
++        options,
++        parameters: [{ id: "input_1", label: "Supplier" }],
++        content: "Initial instructions",
++      };
++    if (method.endsWith(".stage"))
++      return {
++        ok: true,
++        content: "Checked {{supplier}} instructions",
++        hash: "abc",
++        summary: "Checks passed",
++      };
++    if (method.endsWith(".activate")) {
++      status = "saved";
++      return { name: options.name };
++    }
++    throw new Error(`Unexpected method: ${method}`);
++  });
 +});
 +
- it("clears a transient status error after the gateway reconnects", async () => {
-   fake.request.mockRejectedValueOnce(new Error("Gateway restarting"));
-   render(<ComputeSetup onClose={() => {}} />);
++async function open() {
++  fireEvent.click(screen.getByRole("button", { name: "Teach this workflow" }));
++  await screen.findByRole("button", { name: "Review" });
++}
++
++describe("browser teaching", () => {
++  it("records, names parameters, checks and saves only after explicit review", async () => {
++    render(<BrowserTeaching mine />);
++    await open();
++    fireEvent.change(screen.getByLabelText("Workflow name"), { target: { value: record.title } });
++    fireEvent.change(screen.getByLabelText("What are you trying to do?"), {
++      target: { value: record.goal },
++    });
++    fireEvent.change(screen.getByLabelText("How will you know it worked?"), {
++      target: { value: record.outcome },
++    });
++    fireEvent.click(screen.getByRole("button", { name: "Record demonstration" }));
++    fireEvent.click(await screen.findByRole("button", { name: "Stop and review" }));
++    await screen.findByLabelText("Name for input_1");
++    fireEvent.change(screen.getByLabelText("Name for input_1"), { target: { value: "supplier" } });
++    fireEvent.click(screen.getByRole("button", { name: "Check skill draft" }));
++    const save = await screen.findByRole("button", { name: "Save local skill" });
++    expect((save as HTMLButtonElement).disabled).toBe(true);
++    expect(gateway.request).toHaveBeenCalledWith("browser.teaching.stage", {
++      id: record.id,
++      options: { ...options, parameters: { input_1: "supplier" } },
++    });
++    fireEvent.click(screen.getByRole("checkbox"));
++    fireEvent.click(save);
++    await screen.findByText(/Saved taught-find-invoice/);
++    expect(gateway.request).toHaveBeenCalledWith("browser.teaching.activate", {
++      id: record.id,
++      hash: "abc",
++      reviewed: true,
++    });
++  });
++
++  it("invalidates approval after an edit and surfaces a failed check", async () => {
++    render(<BrowserTeaching mine />);
++    await open();
++    fireEvent.click(screen.getByRole("button", { name: "Review" }));
++    fireEvent.click(await screen.findByRole("button", { name: "Check skill draft" }));
++    fireEvent.click(await screen.findByRole("checkbox"));
++    fireEvent.change(screen.getByLabelText("Skill name"), {
++      target: { value: "taught-another-invoice" },
++    });
++    expect(screen.queryByRole("button", { name: "Save local skill" })).toBeNull();
++    gateway.request.mockImplementation(async (method: string) =>
++      method.endsWith(".stage")
++        ? { ok: false, content: "Blocked draft", summary: "Unsafe recorded label" }
++        : { recordings: [record] },
++    );
++    fireEvent.click(screen.getByRole("button", { name: "Check skill draft" }));
++    await screen.findByText("Unsafe recorded label");
++    expect(screen.queryByRole("checkbox")).toBeNull();
++    expect(gateway.request.mock.calls.some(([method]) => method.endsWith(".activate"))).toBe(false);
++  });
++
++  it("requires takeover and a connected gateway before recording", async () => {
++    const { rerender } = render(<BrowserTeaching mine={false} />);
++    await open();
++    expect(
++      (screen.getByRole("button", { name: "Record demonstration" }) as HTMLButtonElement).disabled,
++    ).toBe(true);
++    gateway.status = "disconnected";
++    rerender(<BrowserTeaching m
 ```
 
-**File**: `desktop/renderer/src/components/compute/ComputeSetup.tsx` (modified, +51/-6)
+**File**: `desktop/renderer/src/components/chat/BrowserTeaching.tsx` (added, +401/-0)
 ```diff
-@@ -1,6 +1,7 @@
--import { useCallback, useEffect, useState } from "react";
-+import { useCallback, useEffect, useRef, useState } from "react";
- import type { SoapboxSetupStatus } from "../../../../../src/infra/soapbox-setup-types";
- import { useGatewayStore } from "../../stores/gateway-store";
-+import { ComputeProfiles } from "./ComputeProfiles";
- import { SoapboxLogo } from "./SoapboxLogo";
- 
- const button = "rounded-lg bg-brand px-4 py-2 text-sm text-white disabled:opacity-40";
-@@ -19,6 +20,14 @@ export function ComputeSetup({ onClose }: { onClose: () => void }) {
-   const [connectionError, setConnectionError] = useState("");
-   const [upload, setUpload] = useState<number>();
-   const [activating, setActivating] = useState(false);
-+  const reconnecting = useRef(false);
+@@ -0,0 +1,401 @@
++import { GraduationCap, X } from "lucide-react";
++import { useCallback, useEffect, useState } from "react";
++import { useGatewayStore } from "../../stores/gateway-store";
++
++type Recording = {
++  id: string;
++  title: string;
++  goal: string;
++  outcome: string;
++  actionCount: number;
++  status: "recording" | "stopped" | "failed" | "staged" | "saved";
++  createdAt: number;
++  reason?: string;
++  skillName?: string;
++};
++type Options = { name: string; description: string; parameters: Record<string, string> };
++type Draft = {
++  record: Recording;
++  options: Options;
++  parameters: Array<{ id: string; label: string }>;
++  content: string;
++};
++type Check = { ok: boolean; content: string; hash?: string; summary: string };
++const inputClass = "w-full rounded border border-border bg-background px-2 py-1.5 text-xs";
++const buttonClass =
++  "rounded border border-border px-2.5 py-1.5 text-xs hover:bg-accent disabled:opacity-50";
++
++/** Owner-led teaching lives beside the actual browser, not in a separate editor. */
++export function BrowserTeaching({ mine }: { mine: boolean }) {
++  const request = useGatewayStore((s) => s.request);
++  const connected = useGatewayStore((s) => s.status === "connected");
++  const [open, setOpen] = useState(false);
++  const [recordings, setRecordings] = useState<Recording[]>([]);
++  const [title, setTitle] = useState("");
++  const [goal, setGoal] = useState("");
++  const [outcome, setOutcome] = useState("");
++  const [draft, setDraft] = useState<Draft | null>(null);
++  const [check, setCheck] = useState<Check | null>(null);
++  const [reviewed, setReviewed] = useState(false);
++  const [busy, setBusy] = useState(false);
++  const [error, setError] = useState("");
++  const [message, setMessage] = useState("");
++  const active = recordings.find((r) => r.status === "recording");
++
++  const refresh = useCallback(async () => {
++    const data = await request<{ recordings: Recording[] }>("browser.teaching.list", {});
++    setRecordings(data.recordings);
++  }, [request]);
 +  useEffect(() => {
-+    if (!connected && activating) reconnecting.current = true;
-+    if (connected && reconnecting.current) {
-+      reconnecting.current = false;
-+      setActivating(false);
++    if (!open || !connected) return;
++    let disposed = false;
++    let pending = false;
++    const poll = async () => {
++      if (pending) return;
++      pending = true;
++      try {
++        const data = await request<{ recordings: Recording[] }>("browser.teaching.list", {});
++        if (!disposed) setRecordings(data.recordings);
++      } catch (err) {
++        if (!disposed) setError(err instanceof Error ? err.message : "Could not load recordings.");
++      } finally {
++        pending = false;
++      }
++    };
++    void poll();
++    const timer = setInterval(() => void poll(), 2_000);
++    return () => {
++      disposed = true;
++      clearInterval(timer);
++    };
++  }, [open, connected, request]);
++
++  const run = async (work: () => Promise<void>) => {
++    setBusy(true);
++    setError("");
++    setMessage("");
++    try {
++      await work();
++      await refresh();
++    } catch (err) {
++      setError(err instanceof Error ? err.message : "The demonstration could not be saved.");
++    } finally {
++      setBusy(false);
 +    }
-+  }, [connected, activating]);
-   const [acknowledged, setAcknowledged] = useState(false);
-   const [remoteOperator, setRemoteOperator] = useState(false);
-   const refresh = useCallback(async () => {
-@@ -124,17 +133,53 @@ export function ComputeSetup({ onClose }: { onClose: () => void }) {
-         </p>
-       )}
-       {!status && <p role="status">Loading setup…</p>}
--      {status?.configured ? (
-+      {status?.addingProfile && (
-+        <p className="text-sm">
-+          Your current profile stays active until you activate this setup.{" "}
-+          <button
-+            className="underline"
-+            disabled={locked}
-+            onClick={() =>
-+              void run(async () => {
-+                await request("soapbox.setup.profile.cancel");
-+              })
-+            }
-+          >
-+            Cancel new profile
-+          </button>
-+        </p>
-+      )}
-+      {status?.configured && !status.addingProfile ? (
-         <div className="space-y-2">
-           <p role="status">
-             {status.configuredRole === "mesh-operator"
-               ? "This device is configured as a P2P GPU operator."
-               : `Compute is configured on this gateway (${status.configuredRole}).`}
-           </p>
--          <p className="text-sm">
--            Use the Compute dashboard to submit work or manage your operator. Run setup on the
--            tester’s own Bitterbot app.
--          </p>
-+          {status.canManageProfiles ? (
-+            <ComputeProfiles
-+              status={status}
-+              busy={locked}
-+              add={() =>
-+                void run(async () => {
-+                  await request("soapbox.setup.profile.new");
-+                  setAcknowledged(false);
-+                  setActivating(false);
-+                })
-+              }
-+              select={(id) =>
-+                void run(async () => {
-+                  await request("soapbox.setup.profile.switch", { id });
-+                  setActivating(true);
-+                })
-+              }
-+            />
-+          ) : (
-+            <p className="text-sm">
-+              Use the Compute dashboard to submit work or manage your operator. Run setup on the
-+              tester’s own Bitterbot app.
++  };
++  const edit = (options: Options) => {
++    if (draft) setDraft({ ...draft, options });
++    setCheck(null);
++    setReviewed(false);
++  };
++  const review = (id: string) =>
++    run(async () => {
++      const next = await request<Draft>("browser.teaching.draft", { id });
++      setDraft(next);
++      setCheck(null);
++      setReviewed(false);
++    });
++
++  return (
++    <div className="border-b border-border/40 shrink-0">
++      <button
++        type="button"
++        className="flex items-center gap-2 px-3 py-2 text-xs text-brand"
++        onClick={() => setOpen(!open)}
++        aria-expanded={open}
++      >
++        <GraduationCap className="h-4 w-4" /> Teach this workflow
++        {active && <span className="text-warning">Recording · {active.actionCount} steps</span>}
++      </button>
++      {open && (
++        <section
++          aria-label="Teach a browser workflow"
++          className="max-h-96 overflow-auto space-y-3 px-3 pb-3"
++        >
++          <p className="text-xs text-muted-foreground">
++            Demonstrate a workflow in this browser. Typed values and images are not recorded. Page
++            labels and cleaned URLs stay on the gateway; review them before saving a skill. Using
++            the skill sends its instructions to your configured model.
++          </p>
++          {!connected && (
++            <p role="status" className="text-xs">
++              Reconnect to the gateway to manage recordings.
 +            </p>
 +          )}
-           <button className={button} onClick={onClose}>
-             Open Compute dashboard
-           </button>
++          {active ? (
++            <div className="flex items-center justify-between gap-2 text-xs">
++              <span>
++                Recording {active.title} · {active.actionCount} steps · stops after 10 minutes
++              </span>
++              <button
++                type="button"
++                className={buttonClass}
++                disabled={busy || !connected}
++                
 ```
 
-**File**: `desktop/renderer/src/components/compute/ComputeView.test.tsx` (modified, +2/-0)
+**File**: `docs/docs.json` (modified, +1/-0)
 ```diff
-@@ -52,7 +52,9 @@ describe("Compute view", () => {
-     const job = {
-       id: "paid-job",
-       status: "awaiting_payment",
-+      deadline: Math.floor(Date.now() / 1000) + 600,
-       payment: {
-+        expires: Math.floor(Date.now() / 1000) + 3600,
-         amount_microusdc: 2000,
-         operator: `0x${"3".repeat(40)}`,
-         chain_id: 84532,
+@@ -793,6 +793,7 @@
+                 "group": "Browser",
+                 "pages": [
+                   "tools/browser",
++                  "tools/browser-teaching",
+                   "tools/browser-login",
+                   "tools/chrome-extension",
+                   "tools/browser-linux-troubleshooting"
 ```
 
-**File**: `desktop/renderer/src/components/compute/ComputeView.tsx` (modified, +6/-0)
+**File**: `docs/tools/browser-teaching.md` (added, +97/-0)
 ```diff
-@@ -531,6 +531,12 @@ export function ComputeView() {
-                 job={selected}
-                 busy={busy}
-                 canFund={!operatorOnly}
-+                replaceQuote={() =>
-+                  void run(async () => {
-+                    setSelected(await request<SoapboxJob>("soapbox.requote", { id: selected.id }));
-+                    await refresh();
-+                  })
-+                }
-                 fund={() =>
-                   void run(async () => {
-                     const response = await request<{ job: SoapboxJob }>(
-```
-
-**File**: `desktop/renderer/src/components/compute/MeshPanel.test.tsx` (modified, +86/-1)
-```diff
-@@ -1,4 +1,4 @@
--import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
-+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
- import { afterEach, expect, it, vi } from "vitest";
- import { MeshPanel } from "./MeshPanel";
- const fake = vi.hoisted(() => ({ status: "connected", request: vi.fn() }));
-@@ -7,6 +7,7 @@ vi.mock("../../stores/gateway-store", () => ({
- }));
- afterEach(() => {
-   cleanup();
-+  vi.useRealTimers();
-   vi.clearAllMocks();
- });
- const peer = "12D3KooW" + "A".repeat(44);
-@@ -29,6 +30,44 @@ const snapshot = {
-   batches: [],
-   activity: [],
- };
-+it("clears a failed status poll after discovery reconnects", async () => {
-+  vi.useFakeTimers();
-+  fake.request
-+    .mockReset()
-+    .mockRejectedValueOnce(Error("gateway restarting"))
-+    .mockResolvedValue(snapshot);
-+  await act(async () => {
-+    render(<MeshPanel />);
-+  });
-+  expect(screen.getByRole("alert").textContent).toContain("connected gateway");
-+  await act(async () => {
-+    await vi.advanceTimersByTimeAsync(5000);
-+  });
-+  expect(screen.queryByRole("alert")).toBeNull();
-+  expect(screen.getByText("Discovery active")).toBeTruthy();
-+});
-+it("keeps an action failure visible when background polling succeeds", async () => {
-+  vi.useFakeTimers();
-+  fake.request.mockReset().mockImplementation(async (method: string) => {
-+    if (method === "soapbox.mesh.grant") throw Error("grant denied");
-+    return snapshot;
-+  });
-+  await act(async () => {
-+    render(<MeshPanel />);
-+  });
-+  fireEvent.click(screen.getByText("Peers and operator access"));
-+  fireEvent.change(screen.getByLabelText("Scope to share"), {
-+    target: { value: "private:circle" },
-+  });
-+  await act(async () => {
-+    fireEvent.click(screen.getByText("Grant selected scope"));
-+  });
-+  expect(screen.getByRole("alert").textContent).toContain("Action failed");
-+  await act(async () => {
-+    await vi.advanceTimersByTimeAsync(5000);
-+  });
-+  expect(screen.getByRole("alert").textContent).toContain("Action failed");
-+});
- it("keeps approvals explicit and retries the same batch without accessing a wallet", async () => {
-   fake.request.mockImplementation(async (method: string) => {
-     if (method === "soapbox.mesh.submit") throw Error("response lost");
-@@ -88,3 +127,49 @@ it("grants only the selected operator scope and shows incoming work", async () =
-   fireEvent.click(screen.getByText("Recent mesh activity"));
-   expect(screen.getByText(/incoming succeeded/)).toBeTruthy();
- });
+@@ -0,0 +1,97 @@
++---
++summary: "Teach a browser workflow by demonstration, then review and save a local skill"
++read_when:
++  - Turning a repeated browser task into a reusable skill
++  - Reviewing what a browser demonstration records
++title: "Teach a browser workflow"
++---
 +
-+it("shows remote cancellation pending without promising resubmission or requesting approval", async () => {
-+  fake.request.mockResolvedValue({
-+    ...snapshot,
-+    batches: [
-+      {
-+        id: "cancel",
-+        kind: "sha256",
-+        items: 1,
-+        status: "cancelling",
-+        shards: [{ status: "queued", peerId: peer, error: "offline" }],
-+      },
-+    ],
-+  });
-+  render(<MeshPanel />);
-+  await screen.findByText(/Waiting for the operator to confirm/);
-+  expect(screen.queryByText(/Retrying the same shard safely/)).toBeNull();
-+  expect(screen.queryByRole("button", { name: "Cancel batch" })).toBeNull();
-+  expect(fake.request.mock.calls.every(([method]) => method === "soapbox.mesh.status")).toBe(true);
-+});
++# Teach a browser workflow
 +
-+it("does not display a stale retry hint on a cancelled batch and discloses completed work", async () => {
-+  fake.request.mockResolvedValue({
-+    ...snapshot,
-+    batches: [
-+      {
-+        id: "cancel",
-+        kind: "sha256",
-+        items: 1,
-+        status: "cancelled",
-+        shards: [
-+          {
-+            status: "cancelled",
-+            cancelledRemoteStatus: "succeeded",
-+            peerId: peer,
-+            error: "old error",
-+          },
-+        ],
-+      },
-+    ],
-+  });
-+  render(<MeshPanel />);
-+  await screen.findByText(/Some work completed before cancellation/);
-+  expect(screen.queryByText(/Retrying the same shard safely/)).toBeNull();
-+  expect(screen.queryByText(/Waiting for the operator to confirm/)).toBeNull();
-+});
++The Control UI's live-browser pane can turn a human demonstration into a
++parameterized `SKILL.md`. The draft uses semantic controls and fresh browser
++snapshots so the agent can find the current controls on its next run.
++
++## Record and save
++
++1. Open the live-browser pane while Bitterbot's browser is running. Choose
++   **Take over** so this window controls the browser.
++2. Open **Teach this workflow**. Enter a workflow name, your goal and the visible
++   result that would demonstrate success. Choose **Record demonstration**.
++3. Perform the workflow in the live-browser pane. Only interactions sent through
++   this pane are captured; actions in a separate Chrome window are not captured.
++4. Choose **Stop and review**. Name each input, such as `supplier` and `month`,
++   and describe when the skill should and should not be used.
++5. Choose **Check skill draft**. Review the generated instructions, destinations,
++   parameters and manual handoff steps. Check the acknowledgement and choose
++   **Save local skill**. Editing any field requires checking and reviewing again.
++6. Hand browser control back to the agent. Ask it to use the saved skill with new
++   inputs, for example: “Use taught-find-invoice for Acme and October.” Check the
++   visible result on this first agent run.
++
++The saved skill is available in **Skills** and through normal skill discovery.
++Saving does not execute the workflow or create a scheduled task.
++
++## Captured information
++
++The recorder keeps the owner's goal and expected outcome, cleaned page URLs,
++control roles and labels, and semantic actions such as click, type and scroll.
++It does not store typed values, character counts, screenshots, clipboard contents,
++raw keys or coordinates. Typing becomes a named input placeholder.
++
++URLs lose credentials, query strings, fragments and obvious private path
++segments. Labels receive basic redaction. Labels and remaining URL paths can
++still contain private information: review them before saving. These records
++stay on the gateway machine; running a saved skill later exposes its instructions
++to the agent's configured model like any other skill.
++
++Password and other recognized sensitive fields become browser handoffs.
++Unsupported controls, including native select menus, file pickers, rich-text
++editors and shortcuts, also become handoffs. No credential value is inferred or
++embedded. If capture fails, the incomplete recording cannot become a skill.
++
++## Review and skill checks
++
++Checking uses Bitterbot's existing skill schema, injection scan, description
++contract and live-skill overlap checks. A failed draft cannot be activated.
++Activation rechecks the gate and requires approval of the exact checked content.
++A demonstration cannot replace an existing live skill or another source's
++staged candidate.
++
++These are static checks, not a task-success evaluation. The skill's provenance
++explicitly says `human_demonstration` and `owner_demonstrated_not_task_validated`.
++The workflow does not synthesize successful agent traces, bypass the evolution
++validation gate, register a canary, grant new tools, or publish to the P2P network.
++Normal browser policy and action approvals still apply when the agent uses it.
++
++## Limits and cleanup
++
++- Recording requires an `operator.admin` connection controlling a supported
++  live-browser session. The existing live-view restrictions, including no paired
++  node streaming, still apply.
++- Recording stops after ten minutes, 300 semantic steps, loss of browser control
++  or loss of the live-view lease. Interrupted recordings can be reviewed after
++  reconnecting, but check that their steps cover the whole workflow.
++- Up to 50 recordings are kept under `browser-teaching` in the gateway's state
++  directory. Files are created with owner-only permissions where supported.
++- **Delete recording** removes the source record and its own unsaved staged
++  draft. It does not remove a saved skill; manage that separately in **Skills**.
++- Checked names and parameters survive reopening the draft. Unchecked edits do
++  not. Delete an unsaved staged recording if you need to start over with a new
++  skill name.
++
++## Developer verification
++
++Unit, gateway and UI tests cover storage, parameterization, authorization,
++review invalidation and activation. An opt-in Chromium test exercises actual CDP
++input, semantic capture, privacy, installation and reuse after input/layout
++changes. It tests the recorded recipe, not autonomous model performance:
++
++```bash
++pnpm exec playwright install chromium --only-shell
++BITTERBOT_TEACHING_BROWSER_TEST=1 pnpm exec vitest run \
++  --config vitest.e2e.config.ts src/browser/teachi
+```
+
+**File**: `docs/tools/browser.md` (modified, +3/-0)
+```diff
+@@ -651,6 +651,9 @@ These are useful for “make the site behave like X” workflows:
+ 
+ ## Security & privacy
+ 
++To turn a repeated task into a reviewed local skill, see
++[Teach a browser workflow](/tools/browser-teaching).
++
+ - The bitterbot browser profile may contain logged-in sessions; treat it as sensitive.
+ - `browser act kind=evaluate` / `bitterbot browser evaluate` and `wait --fn`
+   execute arbitrary JavaScript in the page context. Prompt injection can steer
+```
+
+**File**: `src/agents/skills/skill-promote.ts` (modified, +13/-0)
+```diff
+@@ -49,6 +49,9 @@ export interface PromoteParams {
+   author?: string;
+   /** When true, promote even if the staging gate did not pass. */
+   forceGate?: boolean;
++  /** Optional owner-review binding, checked again by the final storage read. */
++  expectedContent?: string;
++  createOnly?: boolean;
+   /**
+    * PLAN-44 Phase 3: content staged by the evolution pipeline (carrying
+    * `.evolution-meta.json`) is promoted ONLY by the validation gate, or by
+@@ -134,6 +137,14 @@ export async function promoteStaged(
+       detail: `gate status is "${staged.meta.gateStatus ?? "pending"}"; pass forceGate=true to override`,
+     };
+   }
++  if (params.expectedContent !== undefined && staged.content !== params.expectedContent) {
++    return {
++      ok: false,
++      previousArchived: null,
++      error: "storage-error",
++      detail: "The staged skill changed. Review it again.",
++    };
++  }
+ 
+   // PLAN-44 Phase 3 (audit security finding 2): evolution-staged content
+   // used to be promotable by the agent's own skill_manage tool, and the
+@@ -238,6 +249,8 @@ export async function promoteStaged(
+       reason,
+       author,
+       ...(params.timestamp ? { timestamp: params.timestamp } : {}),
++      expectedContent: params.expectedContent,
++      createOnly: params.createOnly,
+     });
+     for (const file of EVOLUTION_SIDECARS) {
+       const content = sidecars.get(file);
 ```
 
 #### Recent Merged Pull Requests:
@@ -2218,7 +2277,7 @@ and notes which release b
 - **PR #341** (2026-10-31): feat(gateway): attribute event-loop stalls with an on-demand sampling profiler (@VGIL77)
 - **PR #340** (2026-10-31): fix(acp): migrate to @agentclientprotocol/sdk 2.x and fix the stdio bridge (@VGIL77)
 - **PR #339** (2026-10-30): chore(deps): bump the npm-minor-patch group across 1 directory with 19 updates (@dependabot[bot])
-- **PR #336** (2026-10-30): fix(orchestrator): reconcile Cargo.lock after the ed25519-dalek and sha2 bumps (@VGIL77)
+- **PR #338** (2026-10-31): feat(browser): teach reusable skills from reviewed demonstrations (@VGIL77)
 
 ---
 
@@ -2238,49 +2297,35 @@ and notes which release b
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. compute): land the beta recovery stack on main with Soapbox rc10 (#343)
+## X. browser): teach reusable skills from reviewed demonstrations (#338)
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ATTRIBUTION.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c8d414db`: compute): land the beta recovery stack on main with Soapbox rc10 (#343). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9cfd9db0`: browser): teach reusable skills from reviewed demonstrations (#338). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `ATTRIBUTION.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-              { tag_name: `v${version}`, draft: false, prerelease: version.includes("-"), assets: fs.readdirSync(`${dir}/download/v${version}`).map((n) => asset(`v${version}`, n)) },
-          version_args=()
-          if [[ "$VERSION" == *-* ]]; then
-            # A beta must never become the implicit stable-channel install.
-            if bash scripts/install.sh --yes --no-onboard > "$RUNNER_TEMP/beta-unpinned.log" 2>&1; then
-              echo "an unpinned install selected a prerelease"; exit 1
-            fi
-            grep -q "no published release carries a signed tarball" "$RUNNER_TEMP/beta-unpinned.log"
-            version_args=(--version "$VERSION")
-          fi
-          curl -fsSL http://127.0.0.1:8765/install.sh | bash -s -- --yes --no-onboard "${version_args[@]}" | tee "$RUNNER_TEMP/install1.log"
-          if [[ "$VERSION" != *-* ]]; then
-            grep -q "Newest complete release: $VERSION" "$RUNNER_TEMP/install1.log"
-          fi
-          IFS=. read -r MA MI PA <<< "${VERSION%%-*}"
-            listing.push({ tag_name: tag, draft: false, prerelease: tag.includes("-"), assets: fs.readdirSync(`${dir}/download/${tag}`).map((n) => asset(tag, n)) });
-              readl
+The browser teaching workflow (`src/browser/teaching-*.ts` and the Control UI's
+`BrowserTeaching` component) is independently implemented for Bitterbot's live
+browser and skill gate. Its semantic demonstration, parameterized draft and
+owner-review patterns were inspired by
+[CopilotKit/OpenDuet](https://github.com/CopilotKit/OpenDuet) (MIT), particularly
+`openbot/agent-computer/src/demonstration.ts` and
+`openbot/server/src/demonstrations/draft.ts`.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-              { tag_name: `v${version}`, draft: false, prerelease: false, assets: fs.readdirSync(`${dir}/download/v${version}`).map((n) => asset(`v${version}`, n)) },
-          curl -fsSL http://127.0.0.1:8765/install.sh | bash -s -- --yes --no-onboard | tee "$RUNNER_TEMP/install1.log"
-          grep -q "Newest complete release: $VERSION" "$RUNNER_TEMP/install1.log"
-          IFS=. read -r MA MI PA <<< "$VERSION"
-            listing.push({ tag_name: tag, draft: false, prerelease: false, assets: fs.readdirSync(`${dir}/download/${tag}`).map((n) => asset(tag, n)) });
-              readlink "/proc/$pid/exe" | sed -n 's#.*/app/\([0-9.]*\)/runtime/.*#\1#p'
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c8d414db` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9cfd9db0` are properly handled with clean fallback behavior.

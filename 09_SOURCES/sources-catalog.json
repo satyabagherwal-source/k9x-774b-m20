@@ -1185,8 +1185,8 @@
     "sourceUrl": "https://huggingface.co/google/gemma-4-26B-A4B-it",
     "sourceVersion": "hf-google-gemma-4-26b-a4b-it",
     "license": "Open-Source",
-    "contentHash": "0149ffe568dc74abdd1b7d8aaa9c099dce4d1b87d7828d8d808f188bdf640e84",
-    "lastHarvestedAt": "2026-10-28T17:12:41.609Z",
+    "contentHash": "e0d9436914e3dbece929045542e52a2a38765f5b8f7cd9c87a271672be178bc4",
+    "lastHarvestedAt": "2026-10-31T18:22:09.316Z",
     "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it"
   },
   "infisical-infisical": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "c8d414db",
+    "sourceVersion": "9cfd9db0",
     "license": "MIT",
-    "contentHash": "bd83119637c49d8ce7315206e5773a20e18aa453bbf634a896b3a2a958df7c54",
-    "lastHarvestedAt": "2026-10-31T17:50:25.218Z",
+    "contentHash": "1162a8d807d1954a5ba055cb407a451989ea70b8a3ade05892872c184a615354",
+    "lastHarvestedAt": "2026-10-31T18:22:26.458Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -5373,10 +5373,10 @@
     "repository": "GreptimeTeam/greptimedb",
     "platform": "github",
     "sourceUrl": "https://github.com/GreptimeTeam/greptimedb",
-    "sourceVersion": "f2d74650",
+    "sourceVersion": "c40e86c6",
     "license": "Apache-2.0",
-    "contentHash": "de12ab2a49a91c01287f4947d652db11ea831e83bd76e5dc318c481bfc10cbde",
-    "lastHarvestedAt": "2026-10-31T02:07:35.415Z",
+    "contentHash": "cc61f40706f0a0db1f14d438d90924474b206873acd6155dbe02a2e3e9bff3e7",
+    "lastHarvestedAt": "2026-10-31T18:22:24.349Z",
     "learningId": "learn-github-greptimeteam-greptimedb"
   },
   "heroui-inc-heroui-native": {

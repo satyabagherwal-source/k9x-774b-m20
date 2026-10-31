@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source**: github ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
-> **Source Version**: `f2d74650`  
+> **Source Version**: `c40e86c6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T02:07:34.738Z  
+> **Timestamp**: 2026-10-31T18:22:23.727Z  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T02:07:34.457Z  
+> **Harvest Timestamp**: 2026-10-31T18:22:23.722Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6774 stars
+- **Stars / Engagement**: 6778 stars
 
 ---
 
@@ -1651,11 +1651,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #10061** (2026-10-31): **docs: link the observability database definition from README**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Depends on GreptimeTeam/docs#3013, which adds the `#what-an-observability-database-is` section the first link points to. Merge after that PR is deployed.  ## What's changed and what's your intention?  README-only change. The README calls GreptimeDB an observability database without saying what that means. The term now links to the definition in the docs, and Project Status links the blog post that explains it.  ## PR Checklist Please convert it to a draft if some of the following conditions are not met.  - [ ] I have written the necessary rustdoc comments. - [ ] I have added the necessary unit tests and integration tests. - [ ] This PR requires documentation updates. - [ ] API changes are backward compatible. - [ ] Schema or data changes are backward compatible. - [ ] This PR needs to be backported to release branches, and I have added the `backport-<target>` labels (e.g. `backport-v1.3` targets `release/v1.3`). 
+
 - **Issue #10056** (2026-10-29): **ci: authenticate ECR Public pulls in benchmark workflows**
   *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  - Failed anonymous pull: https://github.com/GreptimeTeam/greptimedb/actions/runs/40809997410 - Agent benchmark with authenticated pulls: https://github.com/GreptimeTeam/greptimedb/actions/runs/40813622374  ## What's changed and what's your intention?  Agent Observability could not start because anonymous ECR Public runtime pulls repeatedly returned `Data limit exceeded`. Authenticate before the first pull in both validation and benchmark jobs for Agent Observability, Tracesbench, VMBench Long Range, and OS WAL S3 Benchmark.  Reuse the existing `AWS_ECR_ACCESS_KEY_ID` and `AWS_ECR_SECRET_ACCESS_KEY` credentials and `aws-actions/amazon-ecr-login@v2`, with the ECR Public authentication region fixed to `us-east-1`. Both credential setup and login run only when the runtime image starts with `public.ecr.aws/`. EC2 provisioning and benchmark resource settings are unchanged; the existing S3 steps keep their explicit bucket credentials.  Validation:  - `actionlint` passed for all four workflows; `git diff --check` passed. - Existing CI runner tests: 34 passed; version-comparison tests: 6 passed; OS WAL benchmark tests: 62 passed. The OS WAL tests required a rerun outside the socket-restricted sandbox so their local HTTP fixtures could bind. - The Agent benchmark run above passed validation and provisioning and advanced past 
-
-- **Issue #10054** (2026-10-29): **chore(ci): slide the compatibility window to v1.3.0**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Follow-up to the `v1.3.0` release published on 2026-10-28. No issue filed.  ## What's changed and what's your intention?  `tests/compatibility/ci.toml` still names `["v1.1.4", "v1.2.1"]` as the PR compatibility window. With `v1.3.0` now published — and carrying the `greptime-linux-amd64` `tar.gz` and `.sha256sum` assets the window requires — the two newest stable minor lines are `1.3` and `1.2`, so the window must slide to `["v1.2.1", "v1.3.0"]`.  This is the change `Check compat version updater` is asking for. Before the change, the job's command fails on every PR targeting `narthex`:  ``` $ python3 .github/scripts/update-compat-versions.py --check --published-only --check-anchors --- a/tests/compatibility/ci.toml +++ b/tests/compatibility/ci.toml @@ -6,7 +6,7 @@ -from_versions = ["v1.1.4", "v1.2.1"] +from_versions = ["v1.2.1", "v1.3.0"] ```  The file was generated with the documented command rather than edited by hand:  ```bash python3 .github/scripts/update-compat-versions.py --update --published-only ```  `downgrade_to_versions` is deliberately unchanged at `["v1.1.4"]`. The updater only rewrites `from_versions`, and this entry has not moved since it was introduced in #8707 (2026-07-31); neither the automation in #8608 nor the window bump in #9075 touched it. It is worth noting that `v1.1.4` now sits *below* the
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1672,551 +1672,193 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f2d74650` (2026-10-30)
-**Commit Message**: fix: optimize Prometheus remote write v2 ingestion (#9928)
+### Incident Patch 1: `c40e86c6` (2026-10-31)
+**Commit Message**: fix(datanode): pick a node epoch above the recorded one (#9984)
 
-* fix: optimize Prometheus remote write v2 ingestion
+* fix(datanode): pick a node epoch above the recorded one
 
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
+The metasrv fences a datanode whose node epoch is lower than the
+highest one it has recorded for the node id. A datanode used its start
+time as its epoch, so after a restart on a host whose clock is behind
+the previous process's, or after the clock stepped back, the new
+process picked a lower epoch and was fenced for good: no region lease,
+no keep-alive.
 
-* fix: correct remote write v2 memory accounting and response counts
+Before it creates the heartbeat task, the datanode now reads the
+recorded epoch through its metadata backend and uses one more than it
+if its start time is not higher. The node info still reports the local
+start time. A failed read fails the startup, like the other metadata
+reads.
 
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
+Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
 
----------
+* test(datanode): tighten the node epoch tests
 
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
+Use a lower record that leaves room below the start time, so the test
+fails if the start time is ignored, and a nonzero node id, so it fails
+if the node id is ignored. Clarify the doc comment of the epoch choice.
 
-**File**: `Cargo.lock` (modified, +1/-0)
+This assumes the previous process of a node id has stopped before a new
+one starts.
+
+Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
+
+
+
+**File**: `src/datanode/src/heartbeat.rs` (modified, +94/-5)
 ```diff
-@@ -13848,6 +13848,7 @@ dependencies = [
-  "prost 0.14.1",
-  "snafu 0.8.6",
-  "sql",
-+ "tokio",
-  "uuid",
- ]
+@@ -32,6 +32,8 @@ use common_meta::heartbeat::handler::{
+ };
+ use common_meta::heartbeat::mailbox::{HeartbeatMailbox, MailboxRef};
+ use common_meta::heartbeat::utils::outgoing_message_to_mailbox_message;
++use common_meta::key::MetadataValue;
++use common_meta::key::datanode_epoch::{DatanodeEpochKey, DatanodeEpochValue};
+ use common_meta::kv_backend::KvBackendRef;
+ use common_stat::ResourceStatRef;
+ use common_telemetry::{debug, error, info, trace, warn};
+@@ -47,19 +49,39 @@ use tokio::time::Instant;
+ use self::handler::RegionHeartbeatResponseHandler;
+ use crate::alive_keeper::{CountdownTaskHandlerExtRef, RegionAliveKeeper};
+ use crate::config::DatanodeOptions;
+-use crate::error::{self, MetaClientInitSnafu, RegionEngineNotFoundSnafu, Result};
++use crate::error::{
++    self, GetMetadataSnafu, MetaClientInitSnafu, RegionEngineNotFoundSnafu, Result,
++};
+ use crate::event_listener::RegionServerEventReceiver;
+ use crate::metrics::{self, HEARTBEAT_RECV_COUNT, HEARTBEAT_SENT_COUNT};
+ use crate::region_server::RegionServer;
  
-```
-
-**File**: `src/mito2/src/region_write_ctx.rs` (modified, +1/-0)
-```diff
-@@ -398,6 +398,7 @@ impl RegionWriteCtx {
+ pub(crate) mod handler;
+ pub(crate) mod task_tracker;
+ 
++/// Returns the epoch of this process: its start time, or one more than the epoch the metasrv has
++/// recorded for the node when the record is not lower than the start time, as after a restart on
++/// a slower clock or after the clock stepped back. The metasrv fences an epoch lower than the
++/// recorded one.
++async fn node_epoch_above_record(
++    kv_backend: &KvBackendRef,
++    node_id: u64,
++    start_time_ms: u64,
++) -> Result<u64> {
++    let key = DatanodeEpochKey::new(node_id).to_bytes();
++    let Some(kv) = kv_backend.get(&key).await.context(GetMetadataSnafu)? else {
++        return Ok(start_time_ms);
++    };
++    let recorded = DatanodeEpochValue::try_from_raw_value(&kv.value).context(GetMetadataSnafu)?;
++    Ok(start_time_ms.max(recorded.node_epoch + 1))
++}
++
+ /// The datanode heartbeat task which sending `[HeartbeatRequest]` to Metasrv periodically in background.
+ pub struct HeartbeatTask {
+     node_id: u64,
+     workload_types: Vec<DatanodeWorkloadType>,
+     node_epoch: u64,
++    start_time_ms: u64,
+     peer_addr: String,
+     running: Arc<AtomicBool>,
+     meta_client: MetaClientRef,
+@@ -87,6 +109,9 @@ impl HeartbeatTask {
+         plugins: Plugins,
+         resource_stat: ResourceStatRef,
+     ) -> Result<Self> {
++        let node_id = opts.node_id.unwrap_or(0);
++        let start_time_ms = common_time::util::current_time_millis() as u64;
++        let node_epoch = node_epoch_above_record(&kv_backend, node_id, start_time_ms).await?;
+         let countdown_task_handler_ext = plugins.get::<CountdownTaskHandlerExtRef>();
+         let region_alive_keeper = Arc::new(RegionAliveKeeper::new(
+             region_server.clone(),
+@@ -105,10 +130,10 @@ impl HeartbeatTask {
+         ]));
+ 
+         Ok(Self {
+-            node_id: opts.node_id.unwrap_or(0),
++            node_id,
+             workload_types: opts.workload_types.clone(),
+-            // We use datanode's start time millis as the node's epoch.
+-            node_epoch: common_time::util::current_time_millis() as u64,
++            node_epoch,
++            start_time_ms,
+             peer_addr: addrs::resolve_addr(&opts.grpc.bind_addr, Some(&opts.grpc.server_addr)),
+             running: Arc::new(AtomicBool::new(false)),
+             meta_client,
+@@ -227,6 +252,7 @@ impl HeartbeatTask {
          }
+         let node_id = self.node_id;
+         let node_epoch = self.node_epoch;
++        let start_time_ms = self.start_time_ms;
+         let addr = &self.peer_addr;
  
-         self.has_skip_wal_writes |= bulk.num_rows() > 0 && self.is_skip_wal_write(skip_wal);
-+        // WriteAttribution requires the input count on success, before any deduplication.
-         self.bulk_notifiers
-             .push(WriteNotify::new(sender, bulk.num_rows()));
- 
-```
-
-**File**: `src/operator/AGENTS.md` (modified, +2/-0)
-```diff
-@@ -41,6 +41,8 @@ cargo sqlness bare -t <case>
- Check standalone and distributed routing when changing region dispatch.
- Write retries operate on prepared region requests in `write_dispatcher`; keep
- admission and Flow side effects outside retries, and preserve successful regions.
-+Process-local write attribution must follow the same row masks through batching
-+and retry repartitioning; only confirmed storage responses advance progress.
- 
- Write admission uses fallible `write_meter!` calls in `Inserter::do_request`
- and `handle_bulk_insert`, before flow side effects and datanode dispatch. Bulk
-```
-
-**File**: `src/operator/src/bulk_insert.rs` (modified, +16/-11)
-```diff
-@@ -41,7 +41,7 @@ use crate::error::Result;
- use crate::insert::Inserter;
- use crate::req_convert::TablePartitioner;
- use crate::req_convert::insert;
--use crate::write_dispatcher::WriteAttempt;
-+use crate::write_dispatcher::{WriteAttempt, WriteAttribution};
- use crate::{error, metrics};
- 
- impl Inserter {
-@@ -54,26 +54,31 @@ impl Inserter {
-         table_info: TableInfoRef,
-         batch: RecordBatch,
-         ctx: QueryContextRef,
-+        attribution: WriteAttribution,
-     ) -> Result<AffectedRows> {
-         let requests = TablePartitioner::try_new(&self.partition_manager, &table_info)
-             .await
-             .context(error::InvalidPartitionSnafu)?
--            .partition_bulk_insert_requests(batch, None, ctx.skip_wal())?;
-+            .partition_attributed_bulk_requests(batch, ctx.skip_wal(), attribution)?;
-         let writes = requests
-             .into_iter()
--            .map(|request| RegionRequest {
--                header: Some(RegionRequestHeader {
--                    dbname: ctx.get_db_string(),
--                    tracing_context: TracingContext::from_current_span().to_w3c(),
--                    ..Default::default()
--                }),
--                body: Some(region_request::Body::BulkInsert(request)),
-+            .map(|(request, attribution)| {
-+                (
-+                    RegionRequest {
-+                        header: Some(RegionRequestHeader {
-+                            dbname: ctx.get_db_string(),
-+                            tracing_context: TracingContext::from_current_span().to_w3c(),
-+                            ..Default::default()
-+                        }),
-+                        body: Some(region_request::Body::BulkInsert(request)),
-+                    },
-+                    attribution,
-+                )
-             })
-             .collect();
--        let writes = self.write_dispatcher.prepare(writes).await?;
-         Ok(self
-             .write_dispatcher
--            .execute(writes, None, None)
-+            .dispatch_attributed(writes, None)
-             .await
-             .context(error::RequestInsertsSnafu)?
-             .affected_rows)
-```
-
-**File**: `src/operator/src/insert.rs` (modified, +4/-1)
-```diff
-@@ -861,8 +861,11 @@ impl Inserter {
-         // Dropping the caller stops retries without abandoning in-flight writes.
-         let cancellation = CancellationToken::new();
-         let _guard = cancellation.clone().drop_guard();
-+        let progress = ctx.write_progress().cloned();
-         let affected_rows = common_runtime::spawn_global(async move {
--            dispatcher.execute(writes, None, Some(&cancellation)).await
-+            dispatcher
-+                .execute_with_progress(writes, None, Some(&cancellation), progress)
-+                .await
-         })
-         .await
-         .context(JoinTaskSnafu)?
-```
-
-**File**: `src/operator/src/req_convert/common/partitioner.rs` (modified, +120/-6)
-```diff
-@@ -37,6 +37,7 @@ use store_api::storage::{RegionId, RegionNumber, TableId};
- use table::metadata::TableInfo;
- 
- use crate::error::{self, Result, SplitDeleteSnafu, SplitInsertSnafu};
-+use crate::write_dispatcher::{WriteAttribution, write_row_count};
- 
- /// Loads table routing rules and converts rows to region write requests.
- pub struct Partitioner<'a> {
-@@ -83,6 +84,101 @@ impl<'a> Partitioner<'a> {
- }
- 
- impl TablePartitioner {
-+    pub(crate) fn rebuild_attributed_write(
-+        &self,
-+        request: RegionRequest,
-+        table_info: &TableInfo,
-+        attribution: WriteAttribution,
-+    ) -> Result<Vec<(RegionRequest, WriteAttribution)>> {
-+        if !attribution.is_tracked() {
-+            return Ok(self
-+                .rebuild_write_requests(request, table_info)?
-+                .into_iter()
-+                .map(|request| (request, WriteAttribution::default()))
-+                .collect());
-+        }
-+        let RegionRequest { header, body } = request;
-+        if let Some(Body::BulkInsert(bulk)) = body {
-+            return Ok(self
-+                .rebuild_bulk_insert_request(bulk, table_info, attribution)?
-+                .into_iter()
-+                .map(|(body, attribution)| {
-+                    (
-+                        RegionRequest {
-+                            header: header.clone(),
-+                            body: Some(body),
-+                        },
-+                        attribution,
-+                    )
-+                })
-+                .collect());
-+        }
-+        self.rebuild_write_requests(RegionRequest { header, body }, table_info)?
-+            .into_iter()
-+            .map(|request| {
-+                let attribution = attribution
-+                    .for_rows(write_row_count(&request))
-+                    .map_err(BoxedError::new)
-+                    .context(error::ExternalSnafu)?;
-+                Ok((request, attribution))
-+            })
-+            .collect()
-+    }
-+
-+    pub fn partition_attributed_bulk_requests(
-+        &self,
-+        batch: RecordBatch,
-+        skip_wal: bool,
-+        attribution: WriteAttribution,
-+    ) -> Result<Vec<(BulkInsertRequest, WriteAttribution)>> {
-+        if !attribution.is_tracked() {
-+            return Ok(self
-+                .partition_bulk_insert_requests(batch, None, skip_wal)?
-+                .into_iter()
-+                .map(|request| (request, WriteAttribution::default()))
-+                .collect());
-+        }
-+        let masks = self
-+            .rule
-+            .split_record_batch(&batch)
-+            .context(SplitInsertSnafu)?;
-+        self.build_attributed_bulk_requests(batch, masks, None, skip_wal, attribution)
-+    }
-+
-+    fn build_attributed_bulk_requests(
-+        &self,
-+        batch: RecordBatch,
-+        masks: HashMap<RegionNumber, RegionMask>,
-+        original_ipc: Option<ArrowIpc>,
-+        skip_wal: bool,
-+        attribution: WriteAttribution,
-+    ) -> Result<Vec<(BulkInsertRequest, WriteAttribution)>> {
-+        let mut by_region = masks
-+            .iter()
-+            .filter(|(_, mask)| !mask.select_none())
-+            .map(|(region, mask)| {
-+                Ok((
-+                    *region,
-+                    attribution
-+                        .filter(mask)
-+                        .map_err(BoxedError::new)
-+                        .context(error::ExternalSnafu)?,
-+                ))
-+            })
-+            .collect::<Result<HashMap<_, _>>>()?;
-+        self.build_bulk_insert_requests(batch, masks, original_ipc, skip_wal)?
-+            .into_iter()
-+            .map(|request| {
-+                let attribution = by_region
-+                    .remove(&RegionId::from_u64(request.region_id).region_number())
-+                    .context(error::UnexpectedSnafu {
-+                        violated: "Missing write ownership after partitioning",
-+                    })?;
-+                Ok((request, attribution))
-+            })
-+            .collect()
-+    }
-+
-     /// Reads a table's partition rule and expression versions into one routing snapshot.
-     pub async fn try_new(
-         partition_manager: &PartitionRuleManager,
-@@ -119,7 +215,11 @@ impl TablePartitioner {
-         })? {
-             Body::Inserts(inserts) => self.rebuild_insert_requests(inserts)?,
-             Body::Deletes(deletes) => self.rebuild_delete_requests(deletes)?,
--            Body::BulkInsert(bulk) => self.rebuild_bulk_insert_request(bulk, table_info)?,
-+            Body::BulkInsert(bulk) => self
-+                .rebuild_bulk_insert_request(bulk, table_info, WriteAttribution::default())?
-+                .into_iter()
-+                .map(|(body, _)| body)
-+                .collect(),
-             _ => {
-                 return error::UnexpectedSnafu {
-                     violated: "Only writes can be rebuilt",
-@@ -278,10 +378,11 @@ impl TablePartitioner {
-         &self,
-         bulk: BulkInsertRequest,
-         table_info: &TableInfo,
--    ) -> Result<Vec<Body>
-```
-
-**File**: `src/operator/src/write_dispatcher.rs` (modified, +150/-9)
-```diff
-@@ -12,7 +12,9 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
-+mod attribution;
- mod options;
-+pub use attribution::WriteAttribution;
- #[cfg(test)]
- mod tests;
- 
-@@ -35,6 +37,7 @@ use common_meta::rpc::router;
- use futures::future;
- use partition::manager::{PartitionRuleManager, PartitionRuleManagerRef};
- use prometheus::Histogram;
-+use session::write_progress::WriteProgress;
- use snafu::{IntoError, OptionExt, ResultExt, ensure};
- use store_api::storage::RegionId;
- use table::table_name::TableName;
-@@ -110,6 +113,35 @@ impl WriteDispatcher {
-         self.dispatch_inner(requests, Some(histogram)).await
+         let meta_client = self.meta_client.clone();
+@@ -301,7 +327,7 @@ impl HeartbeatTask {
+                 info: Some(NodeInfo {
+                     version: build_info.version.to_string(),
+                     git_commit: build_info.commit_short.to_string(),
+-                    start_time_ms: node_epoch,
++                    start_time_ms,
+                     total_cpu_millicores,
+                     total_memory_bytes,
+                     cpu_usage_millicores: 0,
+@@ -471,3 +497,66 @@ impl HeartbeatTask {
+         Ok(())
      }
- 
-+    /// Dispatches shared batches with row ownership retained across retries.
-+    pub async fn dispatch_attributed(
-+        &self,
-+        requests: Vec<(RegionRequest, WriteAttribution)>,
-+        histogram: Option<Histogram>,
-+    ) -> Result<RegionResponse> {
-+        let regions = requests
-+            .iter()
-+            .map(|(request, _)| write_region_id(request))
-+            .collect::<Result<Vec<_>>>()?;
-+        let peers = self
-+            .resolve_peers(&regions)
-+            .await
-+            .map_err(BoxedError::new)
-+            .context(ExternalSnafu)?;
-+        let writes = requests
-+            .into_iter()
-+            .zip(regions)
-+            .map(|((request, attribution), region)| {
-+                Ok((get_peer(&peers, region)?, request, attribution))
-+            })
-+            .collect::<Result<Vec<_>>>()?;
-+        let attempts = future::join_all(writes.into_iter().map(|(peer, request, attribution)| {
-+            self.send_attributed(peer, request, attribution, histogram.as_ref())
-+        }))
-+        .await;
-+        self.finish(attempts, histogram.as_ref(), None).await
-+    }
-+
-     /// Resolves routes before writes are detached from the caller.
-     pub(crate) async fn prepare(
-         &self,
-@@ -178,11 +210,23 @@ impl WriteDispatcher {
-         writes: Vec<(PeerRef, RegionRequest)>,
-         histogram: Option<Histogram>,
-         cancellation: Option<&CancellationToken>,
-+    ) -> Result<RegionResponse> {
-+        self.execute_with_progress(writes, histogram, cancellation, None)
-+            .await
-+    }
-+
-+    pub(crate) async fn execute_with_progress(
-+        &self,
-+        writes: Vec<(PeerRef, RegionRequest)>,
-+        histogram: Option<Histogram>,
-+        cancellation: Option<&CancellationToken>,
-+        progress: Option<Arc<WriteProgress>>,
-     ) -> Result<RegionResponse> {
-         let histogram = histogram.as_ref();
-+        let progress = progress.as_ref();
-         let attempts = future::join_all(writes.into_iter().map(|(peer, request)| async move {
--            if self.retry.is_some() {
--                self.send_batch(peer, request, histogram).await
-+            if self.retry.is_some() || progress.is_some() {
-+                self.send_batch(peer, request, histogram, progress).await
-             } else {
-                 vec![self.send(peer, request, histogram).await]
-             }
-@@ -196,9 +240,20 @@ impl WriteDispatcher {
- 
-     /// Sends the first attempt immediately so bulk encoding can overlap other sends.
-     pub(crate) async fn send(
-+        &self,
-+        peer: PeerRef,
-+        request: RegionRequest,
-+        histogram: Option<&Histogram>,
-+    ) -> WriteAttempt {
-+        self.send_attributed(peer, request, WriteAttribution::default(), histogram)
-+            .await
-+    }
-+
-+    async fn send_attributed(
-         &self,
-         peer: PeerRef,
-         mut request: RegionRequest,
-+        attribution: WriteAttribution,
-         histogram: Option<&Histogram>,
-     ) -> WriteAttempt {
-         if let Some(retry) = &self.retry {
-@@ -210,6 +265,7 @@ impl WriteDispatcher {
-                     RoutedWrite {
-                         peer,
-                         request: Arc::new(request),
-+                        attribution,
-                     },
-                     histogram,
-                 )
-@@ -218,7 +274,7 @@ impl WriteDispatcher {
-         let _timer = histogram.map(Histogram::start_timer);
-         let datanode = self.node_manager.datanode(&peer).await;
-         match datanode.handle(request).await {
--            Ok(response) => WriteAttempt::Success(response),
-+            Ok(response) => acknowledged(response, &attribution),
-             Err(error) => WriteAttempt::Failed {
-                 error,
-                 request: None,
-@@ -267,21 +323,61 @@ impl WriteDispatcher {
-         peer: PeerRef,
-         mut request: RegionRequest,
-         histogram: Option<&Histogram>,
-+        progress: Option<&Arc<WriteProgress>>,
-     ) -> Vec<WriteAttempt> {
-         if !matches!(&request.body, Some(Body::Inserts(_) | Body::Deletes(_))) {
-             return vec![self.send(peer, request, histogram).await];
-         }
-         // Upgrade datanodes first and roll back frontends first: old datanodes
-         // cannot report which entries succeeded, so retrying 
-```
-
-**File**: `src/operator/src/write_dispatcher/attribution.rs` (added, +144/-0)
-```diff
-@@ -0,0 +1,144 @@
-+// Copyright 2023 Greptime Team
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+use std::sync::Arc;
-+
-+use common_meta::error::{Result, UnexpectedSnafu};
-+use partition::partition::RegionMask;
-+use session::write_progress::WriteProgress;
-+use snafu::ensure;
-+
-+/// Row ownership in payload order. Kept in process memory, never encoded in an RPC.
-+#[derive(Clone, Debug, Default)]
-+pub struct WriteAttribution {
-+    spans: Vec<(usize, Option<Arc<WriteProgress>>)>,
-+}
-+
-+impl WriteAttribution {
-+    pub fn new(rows: usize, progress: Option<Arc<WriteProgress>>) -> Self {
-+        Self {
-+            spans: vec![(rows, progress)],
-+        }
-+    }
-+
-+    pub fn extend(&mut self, other: Self) {
-+        self.spans.extend(other.spans);
-+    }
-+
-+    pub fn row_count(&self) -> usize {
-+        self.spans.iter().map(|(rows, _)| rows).sum()
-+    }
-+
-+    pub fn is_tracked(&self) -> bool {
-+        self.spans.iter().any(|(_, progress)| progress.is_some())
-+    }
-+
-+    /// Selects ownership using the exact mask applied to the Arrow payload.
-+    pub fn filter(&self, mask: &RegionMask) -> Result<Self> {
-+        ensure!(
-+            self.row_count() == mask.array().len(),
-+            UnexpectedSnafu {
-+                err_msg: "Write ownership does not match the partition mask",
-+            }
-+        );
-+        if !self.is_tracked() {
-+            return Ok(Self::default());
-+        }
-+        let mut offset = 0;
-+        let mut selected = Self::default();
-+        for (rows, progress) in &self.spans {
-+            let count = mask.array().slice(offset, *rows).true_count();
-+            if count > 0 {
-+                selected.spans.push((count, progress.clone()));
-+            }
-+            offset += rows;
-+        }
-+        Ok(selected)
-+    }
-+
-+    /// Successful writes must acknowledge every input row, including duplicates, as
-+    /// Mito's `RegionWriteCtx::push_bulk` does. A partial count cannot identify owners.
-+    pub(crate) fn record(&self, affected_rows: usize) -> Result<()> {
-+        if !self.is_tracked() {
-+            return Ok(());
-+        }
-+        ensure!(
-+            affected_rows == self.row_count(),
-+            UnexpectedSnafu {
-+                err_msg: format!(
-+                    "Write affected {affected_rows} rows, expected {}; cannot attribute the result",
-+                    self.row_count()
-+                ),
-+            }
-+        );
-+        for (rows, progress) in &self.spans {
-+            if let Some(progress) = progress {
-+                progress.add_written(*rows);
-+            }
-+        }
-+        Ok(())
-+    }
-+
-+    /// Direct row writes have one owner even when a refreshed route splits them.
-+    pub(crate) fn for_rows(&self, rows: usize) -> Result<Self> {
-+        ensure!(
-+            self.spans.len() <= 1,
-+            UnexpectedSnafu {
-+                err_msg: "Cannot repartition shared ownership without a row mask",
-+            }
-+        );
-+        Ok(Self::new(
-+            rows,
-+            self.spans.first().and_then(|(_, p)| p.clone()),
-+        ))
-+    }
-+}
+ }
 +
 +#[cfg(test)]
 +mod tests {
-+    use datatypes::arrow::array::BooleanArray;
++    use common_meta::cache_invalidator::DummyCacheInvalidator;
++    use common_meta::kv_backend::memory::MemoryKvBackend;
++    use common_meta::rpc::store::PutRequest;
++    use common_stat::ResourceStatImpl;
++    use meta_client::client::MetaClientBuilder;
 +
 +    use super::*;
++    use crate::tests::mock_region_server;
 +
-+    #[test]
-+    fn ownership_survives_filtering_and_repartition() {
-+        let first = Arc::new(WriteProgress::default());
-+        let second = Arc::new(WriteProgress::default());
-+        let mut owners = WriteAttribution::new(3, Some(first.clone()));
-+        owners.extend(WriteAttribution::new(2, Some(second.clone())));
-+        let initial = owners
-+            .filter(&RegionMask::new(
-+                BooleanArray::from(vec![true, false, true, false, true]),
-+                3,
-+            ))
-+            .unwrap();
-+        let retry = initial
-+            .filter(&RegionMask::new(
-+                BooleanArray::from(vec![false, true, true]),
-+                2,
-+            ))
-+            .unwrap();
-+        assert!(retry.record(1).is_err());
-+        assert_eq!(first.written(), 0);
-+        retry.record(2).unwrap();
-+        assert_eq!(first.written(), 1);
-+        assert_eq!(second.written(), 1);
-+        assert!(owners.for_rows(5).is_err());
-+        assert!(
-+            owners
-+                .filter(&RegionMask::new(BooleanArray::from(vec![true]), 1))
-+                .is_err()
-+        );
-+    }
-+}
++    const NODE_ID: u64 = 7;
++
++    async fn kv_backend_with_record(node_epoch: Option<u64>) -> KvBackendRef {
++        let kv_backend: KvBackendRef = Arc::new(MemoryKvBackend::new());
++        if let Some(node_epoch) = node_epoch {
++            let key = DatanodeEpochKey::new(NODE_ID).to_bytes();
++            let value = DatanodeEpochValue { node_epoch }
++                .try_as_raw_value()
++                .unwrap();
++            let req = PutRequest::new().with_key(key).with_value(value);
++            kv_backend.put(req).await.unwr
+```
+
+**File**: `src/meta-srv/src/service/heartbeat.rs` (modified, +14/-0)
+```diff
+@@ -1311,6 +1311,20 @@ mod tests {
+             assert!(accept_node_epoch(&cached, 1, e2).await.unwrap());
+         }
+ 
++        #[tokio::test]
++        async fn test_epoch_above_a_record_ahead_of_the_clock_is_accepted() {
++            let group = new_group();
++            let ctx = TestEnv::new().ctx();
++            // The previous process of the node ran on a faster clock.
++            let recorded = current_time_millis() as u64 + 60_000;
++            record(&ctx, recorded).await;
++
++            let mut restarted = Stream::open(&group, &ctx).await;
++            let res = restarted.send(heartbeat(recorded + 1, "a2")).await;
++            assert!(res.region_lease.is_some());
++            assert_eq!(lease_addr(&ctx).await.as_deref(), Some("a2"));
++        }
++
+         #[tokio::test]
+         async fn test_epoch_far_ahead_is_not_recorded() {
+             let kv_backend = MemoryKvBackend::new();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #10061** (2026-10-31): docs: link the observability database definition from README (@killme2008)
 - **PR #10056** (2026-10-29): ci: authenticate ECR Public pulls in benchmark workflows (@WenyXu)
 - **PR #10054** (2026-10-29): chore(ci): slide the compatibility window to v1.3.0 (@discord9)
 - **PR #10053** (2026-10-29): ci: backport scoped heavy CI to narthex (@WenyXu)
 - **PR #10052** (closed): feat(promql): restore the ordered raw series merge (@discord9)
 - **PR #10051** (2026-10-29): chore(ci): update compatibility versions (@MichaelScofield)
-- **PR #10048** (closed): ci(query-regression): update precompiled helpers image (@MichaelScofield)
 
 ---
 
@@ -2236,28 +1878,57 @@ Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. optimize Prometheus remote write v2 ingestion (#9928)
+## X. datanode): pick a node epoch above the recorded one (#9984)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/datanode/src/heartbeat.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f2d74650`: optimize Prometheus remote write v2 ingestion (#9928). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c40e86c6`: datanode): pick a node epoch above the recorded one (#9984). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/datanode/src/heartbeat.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "tokio",
+use common_meta::key::MetadataValue;
+use common_meta::key::datanode_epoch::{DatanodeEpochKey, DatanodeEpochValue};
+use crate::error::{
+    self, GetMetadataSnafu, MetaClientInitSnafu, RegionEngineNotFoundSnafu, Result,
+};
+/// Returns the epoch of this process: its start time, or one more than the epoch the metasrv has
+/// recorded for the node when the record is not lower than the start time, as after a restart on
+/// a slower clock or after the clock stepped back. The metasrv fences an epoch lower than the
+/// recorded one.
+async fn node_epoch_above_record(
+    kv_backend: &KvBackendRef,
+    node_id: u64,
+    start_time_ms: u64,
+) -> Result<u64> {
+    let key = DatanodeEpochKey::new(node_id).to_bytes();
+    let Some(kv) = kv_backend.get(&key).await.context(GetMetadataSnafu)? else {
+        return Ok(start_time_ms);
+    };
+    let recorded = DatanodeEpochValue::try_from_raw_value(&kv.value).context(GetMetadataSnafu)?;
+    Ok(start_time_ms.max(recorded.node_epoch + 1))
+}
+
+    start_time_ms: u64,
+        let node_id = opts.node_id.unwrap_or(0);
+        let start_time_ms = common_time::util::current_time_millis() as u64;
+        let node_epoch = node_epoch_above_record(&kv_backend, no
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+use crate::error::{self, MetaClientInitSnafu, RegionEngineNotFoundSnafu, Result};
+            node_id: opts.node_id.unwrap_or(0),
+            // We use datanode's start time millis as the node's epoch.
+            node_epoch: common_time::util::current_time_millis() as u64,
+                    start_time_ms: node_epoch,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f2d74650` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c40e86c6` are properly handled with clean fallback behavior.

@@ -6679,3 +6679,6 @@ Every entry in this ledger must capture:
 | `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `cbe1b6fa` | Multi-dimensional audit evidence | 2026-10-31T18:08:48.607Z |
 | `learn-huggingface-nomic-ai-nomic-embed-text-v1-5` | `https://huggingface.co/nomic-ai/nomic-embed-text-v1.5` | `hf-nomic-a` | Multi-dimensional audit evidence | 2026-10-31T18:15:20.888Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `a138218b` | Multi-dimensional audit evidence | 2026-10-31T18:15:38.721Z |
+| `learn-huggingface-google-gemma-4-26b-a4b-it` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-31T18:22:09.316Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `c40e86c6` | Multi-dimensional audit evidence | 2026-10-31T18:22:24.349Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `9cfd9db0` | Multi-dimensional audit evidence | 2026-10-31T18:22:26.458Z |
