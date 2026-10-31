@@ -1355,8 +1355,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-35B",
     "sourceVersion": "hf-autotrust-jev-35b",
     "license": "Open-Source",
-    "contentHash": "d8f57c2f5b8191bda0fa8d922e1c24bc446327a29ad44b348b704f0464220ae4",
-    "lastHarvestedAt": "2026-10-28T22:13:58.450Z",
+    "contentHash": "d28367d7c749b3bc512d3a2ebdd82c48f44a19144dc8b48f483e1b1f8fdbaa52",
+    "lastHarvestedAt": "2026-10-31T23:49:44.417Z",
     "learningId": "learn-huggingface-autotrust-jev-35b"
   },
   "hf-openbmb-minicpm-v-4.7-35b-a3b": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "2476fc1b",
+    "sourceVersion": "1a886517",
     "license": "NOASSERTION",
-    "contentHash": "f660edd916cec73c9d78d9f23b85b8906dde02871990e12be4fc49cff45e3659",
-    "lastHarvestedAt": "2026-10-31T19:49:56.138Z",
+    "contentHash": "fbb9e0bb1b2cebcaff796cf055bb25c5c3519935798f7f14af531453b87ceefb",
+    "lastHarvestedAt": "2026-10-31T23:50:00.976Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "45aba0f1",
+    "sourceVersion": "31315b3d",
     "license": "MIT",
-    "contentHash": "713bdd6598848ea265bfd7d7feeb68f2be566a5fe99ba42092c59dca4fb62035",
-    "lastHarvestedAt": "2026-10-31T07:55:11.583Z",
+    "contentHash": "cfdc22f149ce64ba4417bc2736a0c54c67cb58b9eae578a9b680dd2b835749b8",
+    "lastHarvestedAt": "2026-10-31T23:49:59.398Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {

@@ -6757,3 +6757,6 @@
 | `CYCLE-20261031-HLOU` | `2026-10-31T23:35:47.214Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6363, Rule 6364, Rule 6365` | Yes (`0bb2c915...`) |
 | `CYCLE-20261031-QK0W` | `2026-10-31T23:42:44.960Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6366, Rule 6367` | Yes (`0c7bb006...`) |
 | `CYCLE-20261031-QPA9` | `2026-10-31T23:42:51.777Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md` | Yes (`01a647e5...`) |
+| `CYCLE-20261031-ZJO7` | `2026-10-31T23:49:44.407Z` | `autotrust/JEV-35B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md` | Yes (`d28367d7...`) |
+| `CYCLE-20261031-ZV8I` | `2026-10-31T23:49:59.394Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6368` | Yes (`cfdc22f1...`) |
+| `CYCLE-20261031-ZWGC` | `2026-10-31T23:50:00.972Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6369` | Yes (`fbb9e0bb...`) |

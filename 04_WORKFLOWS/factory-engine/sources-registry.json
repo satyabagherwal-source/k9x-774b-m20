@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T23:42:54.320Z",
-    "lastVerified": "2026-10-31T23:42:54.320Z",
+    "lastChecked": "2026-10-31T23:50:03.525Z",
+    "lastVerified": "2026-10-31T23:50:03.525Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -243,22 +243,21 @@
     "revisionIdentifier": "3a8f3f35"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T23:16:10.855Z",
-    "lastVerified": "2026-10-31T23:16:10.855Z",
+    "lastChecked": "2026-10-31T23:50:00.174Z",
+    "lastVerified": "2026-10-31T23:50:00.174Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "f660edd916cec73c9d78d9f23b85b8906dde02871990e12be4fc49cff45e3659",
+    "contentHash": "fbb9e0bb1b2cebcaff796cf055bb25c5c3519935798f7f14af531453b87ceefb",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "2476fc1b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1339,14 +1338,14 @@
     "officialUrl": "https://github.com/tursodatabase/turso",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T07:53:51.310Z",
-    "lastVerified": "2026-10-31T07:53:51.310Z",
+    "lastChecked": "2026-10-31T23:49:58.602Z",
+    "lastVerified": "2026-10-31T23:49:58.602Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "713bdd6598848ea265bfd7d7feeb68f2be566a5fe99ba42092c59dca4fb62035",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 3,
+    "contentHash": "cfdc22f149ce64ba4417bc2736a0c54c67cb58b9eae578a9b680dd2b835749b8",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2001,8 +2000,8 @@
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T20:02:17.687Z",
-    "lastVerified": "2026-10-31T20:02:17.687Z",
+    "lastChecked": "2026-10-31T23:49:50.807Z",
+    "lastVerified": "2026-10-31T23:49:50.807Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -3213,9 +3212,9 @@
   "cdk-team-cdk": {
     "name": "CDK",
     "officialUrl": "https://github.com/cdk-team/CDK",
-    "lastChecked": "2026-10-31T09:29:33.872Z",
+    "lastChecked": "2026-10-31T23:49:48.181Z",
     "revisionIdentifier": "69da22ad",
-    "lastVerified": "2026-10-31T09:29:33.872Z"
+    "lastVerified": "2026-10-31T23:49:48.181Z"
   },
   "lioensky-vcptoolbox": {
     "name": "VCPToolBox",
@@ -3481,9 +3480,9 @@
   "kuberwastaken-claurst": {
     "name": "claurst",
     "officialUrl": "https://github.com/Kuberwastaken/claurst",
-    "lastChecked": "2026-10-31T03:58:51.119Z",
+    "lastChecked": "2026-10-31T23:49:40.694Z",
     "revisionIdentifier": "e4228cc6",
-    "lastVerified": "2026-10-31T03:58:51.119Z"
+    "lastVerified": "2026-10-31T23:49:40.694Z"
   },
   "hf-cloudflare-clef-flash": {
     "name": "Cloudflare/clef-flash",
@@ -8134,12 +8133,12 @@
     "officialUrl": "https://huggingface.co/autotrust/JEV-35B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T22:13:57.628Z",
-    "lastVerified": "2026-10-28T22:13:57.628Z",
+    "lastChecked": "2026-10-31T23:49:43.370Z",
+    "lastVerified": "2026-10-31T23:49:43.370Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-autotrust-jev-35b",
-    "contentHash": "d8f57c2f5b8191bda0fa8d922e1c24bc446327a29ad44b348b704f0464220ae4",
+    "contentHash": "d28367d7c749b3bc512d3a2ebdd82c48f44a19144dc8b48f483e1b1f8fdbaa52",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9328,12 +9327,12 @@
     "lastVerified": "2026-10-29T22:25:57.809Z"
   },
   "buresdv-cork": {
-    "name": "buresdv/Cork",
+    "name": "Cork",
     "officialUrl": "https://github.com/buresdv/Cork",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-10-29T22:26:05.586Z",
-    "lastVerified": "2026-10-29T22:26:05.586Z",
+    "lastChecked": "2026-10-31T23:49:45.733Z",
+    "lastVerified": "2026-10-31T23:49:45.733Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-buresdv-cork",
@@ -9342,7 +9341,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "01177307"
   },
   "crawlseo-crawlseo": {
     "name": "crawlseo",

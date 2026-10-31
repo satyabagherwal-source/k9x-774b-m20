@@ -6766,3 +6766,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-speridlabs-iris-3b` | `https://huggingface.co/speridlabs/iris-3b` | `hf-speridl` | Multi-dimensional audit evidence | 2026-10-31T23:35:47.218Z |
 | `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-31T23:42:44.964Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `c9dd9650` | Multi-dimensional audit evidence | 2026-10-31T23:42:51.784Z |
+| `learn-huggingface-autotrust-jev-35b` | `https://huggingface.co/autotrust/JEV-35B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-31T23:49:44.417Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `31315b3d` | Multi-dimensional audit evidence | 2026-10-31T23:49:59.398Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `1a886517` | Multi-dimensional audit evidence | 2026-10-31T23:50:00.976Z |

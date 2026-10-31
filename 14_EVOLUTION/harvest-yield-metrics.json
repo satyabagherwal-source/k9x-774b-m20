@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T23:42:51.792Z",
-  "total_cycles_completed": 6734,
-  "total_learnings_persisted": 6734,
-  "total_rules_promoted": 6374,
+  "last_updated": "2026-10-31T23:50:00.982Z",
+  "total_cycles_completed": 6737,
+  "total_learnings_persisted": 6737,
+  "total_rules_promoted": 6376,
   "history": [
-    {
-      "timestamp": "2026-10-31T12:15:50.061Z",
-      "repository": "zarf-dev/zarf",
-      "learningId": "learn-github-zarf-dev-zarf",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T12:22:45.658Z",
-      "repository": "Cloudflare/clef-flash",
-      "learningId": "learn-huggingface-cloudflare-clef-flash",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T12:29:46.502Z",
-      "repository": "clastix/kamaji",
-      "learningId": "learn-github-clastix-kamaji",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T12:29:47.556Z",
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -1403,6 +1382,27 @@
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T23:49:44.423Z",
+      "repository": "autotrust/JEV-35B",
+      "learningId": "learn-huggingface-autotrust-jev-35b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T23:49:59.404Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T23:50:00.982Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

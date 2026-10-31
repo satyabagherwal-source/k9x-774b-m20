@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T23:42:51.661Z",
+  "last_updated": "2026-10-31T23:50:00.885Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9082,8 +9082,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "2476fc1b",
-      "content_hash": "f660edd916cec73c9d78d9f23b85b8906dde02871990e12be4fc49cff45e3659",
+      "source_version": "1a886517",
+      "content_hash": "fbb9e0bb1b2cebcaff796cf055bb25c5c3519935798f7f14af531453b87ceefb",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -9401,6 +9401,11 @@
           "number": 6300,
           "title": "geocode): cache-info reports real entry counts and oldest/newest timestamps (#49",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6369,
+          "title": "profile): compute DCAT-US v3 properties from stats, with an inferred tier (#4967",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9408,7 +9413,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T19:49:56.021Z",
+      "verified_at": "2026-10-31T23:50:00.855Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56624,13 +56629,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "8193b024",
-      "content_hash": "b8a64a97f588d005aca83d18a6ad7ea62af9f52762848b4fa3b7ecadeed5ec85",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "31315b3d",
+      "content_hash": "cfdc22f149ce64ba4417bc2736a0c54c67cb58b9eae578a9b680dd2b835749b8",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -56756,6 +56761,11 @@
           "number": 6326,
           "title": "Exhaustive Existing-Row Type Barrier on Metadata-Only DDL Alterations",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6368,
+          "title": "Merge 'core/translate: skip sqlite_sequence rows with a NULL name' from app/turs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56763,7 +56773,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T21:10:38.396Z",
+      "verified_at": "2026-10-31T23:49:59.279Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68793,7 +68803,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-35B",
       "source_version": "hf-autotrust-jev-35b",
-      "content_hash": "d8f57c2f5b8191bda0fa8d922e1c24bc446327a29ad44b348b704f0464220ae4",
+      "content_hash": "d28367d7c749b3bc512d3a2ebdd82c48f44a19144dc8b48f483e1b1f8fdbaa52",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md",
       "promoted_rules": [
@@ -68818,7 +68828,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:13:58.389Z",
+      "verified_at": "2026-10-31T23:49:44.295Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -165311,6 +165321,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T23:42:44.825Z"
+    },
+    "rule-6368": {
+      "learning_id": "rule-6368",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6368,
+      "title": "Merge 'core/translate: skip sqlite_sequence rows with a NULL name' from app/turs",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "31315b3d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T23:49:59.279Z"
+    },
+    "rule-6369": {
+      "learning_id": "rule-6369",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6369,
+      "title": "profile): compute DCAT-US v3 properties from stats, with an inferred tier (#4967",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "1a886517",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T23:50:00.855Z"
     }
   },
   "aliases": {

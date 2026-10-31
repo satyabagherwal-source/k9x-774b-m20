@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `2476fc1b`  
+> **Source Version**: `1a886517`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T19:49:55.352Z  
+> **Timestamp**: 2026-10-31T23:50:00.182Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T19:49:55.344Z  
+> **Harvest Timestamp**: 2026-10-31T23:50:00.174Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,244 +2203,433 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2476fc1b` (2026-10-31)
-**Commit Message**: fix(geocode): cache-info reports real entry counts and oldest/newest timestamps (#4966)
+### Incident Patch 1: `1a886517` (2026-10-31)
+**Commit Message**: feat(profile): compute DCAT-US v3 properties from stats, with an inferred tier (#4967)
 
-The help promised an entry count and the oldest/newest cached entry
-timestamps, but cache-info printed "Entries: unknown" and no timestamps:
-cached's RedbCache returns Ok(None) from cache_size() and has no iterator.
+* feat(profile): compute DCAT-US v3 properties from stats, with an inferred tier
 
-Read each cache file directly instead. Its layout is frozen for the file
-version in its name (_v3): table cached_disk_cache, each value a positional
-rmp-serde array of the value then created_at. cached's handle is dropped
-first, since redb locks the file. Undecodable entries are counted and also
-reported as undecodable_entries. redb becomes a direct optional dependency
-of the geocode feature, on the same major as cached's, so no second copy is
-built.
+The default DCAT-US v3 projection now derives properties that are tedious
+to author by hand from the stats/frequency profile already runs, plus a
+Polars-SQL pass over the input (new src/cmd/profile/derive.rs, profile
+5.0.0):
 
-geocode_geoclient_disk_cache now pins the count (2), the timestamps and the
-empty state after cache-clear. That also catches a future cached release
-that changes the layout. Mutation-checked: an off-by-one in the scan, and
-keeping cached's handle open, both fail it.
+- temporalResolution: a regular series' step (PT15M, P1D, P1M), else
+  the recording precision (P1D/PT1M/PT1S)
+- accrualPeriodicity: ISO 19115 code only for a regular calendar series
+  (>=90% of gaps one exact step)
+- spatial bbox excluding out-of-range and (0,0) rows; Distribution
+  spatialResolutionInMeters from coordinate decimal precision
+- language: ISO 639-1 via describegpt's chunk-agreement detector
+- hasQualityMeasurement (DQV, ldqd dimensions): completeness; with
+  --validate, duplicate rows and RFC 4180/UTF-8 validity
+- with --validate: Distribution conformsTo RFC 4180 + characterEncoding
+- Distribution modified from HTTP Last-Modified for URL inputs
+- CSVW tableSchema constraints (required, min/max, lengths, enumeration
+  regex, primaryKey)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+New FieldDecl `fallback:` / `review_note:
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `CHANGELOG.md` (modified, +15/-0)
 ```diff
-@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - `viz map`/`viz geo`: a non-numeric `--color` or `--size` column now gets an error that names it. Both options are numeric encodings, so a categorical column (e.g. `--color Borough`) dropped every row, and the error blamed `--lat`/`--lon` even though the coordinates were valid. The message now names the column and points to `--series` for categorical coloring; in `--density` mode, which rejects `--series`, it explains that the column is the numeric heatmap weight. ([#4959](https://github.com/dathere/qsv/pull/4959))
- - `viz smart`: clicking a region on a county-name map now keeps the rows whose state is blank. When county names are qualified by a state column, the data viewer filter required one of the state spellings seen for that county, so a row the map had placed without a state (its county name unique on its own) was counted on the map but dropped from the drill-down; a county whose rows all lacked a state showed no rows at all. Blank states now match through the filter's "Empty" condition. Found on the WPRDC 2-1-1 gallery page (#4952). ([#4953](https://github.com/dathere/qsv/pull/4953))
- - **`viz smart`: a map in a sandboxed iframe now says why it's blank** ([#4947](https://github.com/dathere/qsv/pull/4947), [#4946](https://github.com/dathere/qsv/issues/4946)). Embedded in an `<iframe sandbox>` without `allow-same-origin` (the CKAN Webpage view the wiki recommends), every MapLibre map panel stayed empty with no error: the map library bundled with plotly.js 3.x rejects its own worker's messages when the page's origin is `null`. The schematic now shows a note above each such map telling the viewer to open it in its own tab. Pages opened from a file aren't affected. Rendering the maps there needs a plotly.js upgrade; #4946 tracks it.
-+- `geocode cache-info` now reports what its help promises: each result cache's real entry count, plus the timestamps of its oldest and newest entries (`oldest_entry`/`newest_entry`, RFC 3339 UTC). It printed `Entries: unknown` and no timestamps, because the cache library can't count its entries. It now reads each cache file once to count them. Expired entries that haven't been pruned yet are included. Entries that can't be decoded are counted in `entry_count` and also reported apart as `undecodable_entries`; `cache-prune` removes them.
- - `get`: overwriting an existing file with `--output` (`get`, `get cache-fetch`) no longer briefly exposes the new contents: the temp file that replaces it is owner-only (`0600`) while the data is written, and takes the old file's mode only afterwards. It also keeps the old file's group, so a group-readable file isn't handed to a different group; where the group can't be kept, the new file isn't group-readable, and other users get no access the old file denied its group. Setuid/setgid bits aren't carried over, as an in-place overwrite would have cleared them. Follow-up to [#4945](https://github.com/dathere/qsv/pull/4945). ([#4948](https://github.com/dathere/qsv/pull/4948))
+@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ ## [Unreleased]
  
- ## [27.0.1] - 2026-10-27 📡 The "Live Data Schematics" Release 📊
+ ### Added
++- **`profile` (DCAT-US v3) computes properties that are tedious to write by hand**, deterministically, from the stats and frequency it already runs plus a SQL pass over the file. New MiniJinja helpers (`src/cmd/profile/derive.rs`) feed `resources/profiles/dcat-us-v3.yaml` (profile 5.0.0): ([#4967](https://github.com/dathere/qsv/pull/4967))
++  - `temporalResolution`, as an exact xsd:duration. A regular series reports its step (`PT15M`, `P1D`, and calendar steps such as `P1M` instead of a day count that varies from 28 to 31). Irregular data, such as event timestamps, reports the precision its values are recorded at (`P1D`, `PT1M`, `PT1S`). The smallest gap between two events is a sampling accident, not a resolution.
++  - `accrualPeriodicity`: an ISO 19115 code (`daily`, `weekly`, `monthly`, ...) only when the dates form a regular calendar series, where 90% or more of the gaps are the same exact step. Event timestamps, such as 311 requests, describe no update schedule and get none.
++  - `spatial`: the bounding box now excludes out-of-range coordinates and (0, 0) "null island" placeholder rows, noting how many it dropped. Distribution `spatialResolutionInMeters` is now the finest separation the coordinates' decimal precision can express. The DP+ helper it replaces as the default measures the bbox diagonal, which is the area's extent.
++  - `language`: the ISO 639-1 language of the text values, using describegpt's chunk-agreement detector. Free-text columns are sampled from the file, and a sample made of a few repeated values is declined.
++  - `hasQualityMeasurement` (DQV, the v3 replacement for `dataQuality`): percentage of non-empty cells and all-empty and partly-empty column counts. With `--validate`, duplicate rows and CSV structure / UTF-8 validity are added too. The duplicate-row count hashes every row (about +223 MB peak memory on a 1M-row, 149 MB file), so it never runs on the default path. Dimension IRIs come from the W3C `ldqd` vocabulary and are configurable in the profile.
++  - With `--validate`, the Distribution's `characterEncoding` (`["UTF-8"]`), asserted only after `qsv validate` passes. No RFC 4180 `conformsTo` is claimed, because `qsv validate` is deliberately lenient (LF line endings, any delimiter).
++  - Distribution `modified` from the server's `Last-Modified` header for URL inputs.
++  - CSVW `csvw:tableSchema` columns carry constraints: `required`, numeric/date `minimum`/`maximum`, string `minLength`/`maxLength` for ASCII columns, an enumeration regex for small categorical columns, and a table `primaryKey` (a column whose distinct count equals the row count).
++- `profile`: an **inferred tier** for profile fields. A field's new `fallback:` template supplies a value only when nothing was supplied, forced or spec-derived. Discovered publisher metadata replaces an inferred value, where a measured value still wins over discovery. A new `projection_provenance` output block lists each inferred value as `inferred`, or `replaced` once discovery or an override superseded it. A field's `review_note:` adds a Recommended warning while the inferred value stands. ([#4967](https://github.com/dathere/qsv/pull/4967))
++- `profile`: when no description is supplied, DCAT-US v3 gets a factual one generated from the statistics (row and column counts, time span, columns). It ends with a describegpt-style disclosure: "WARNING: Description generated automatically by qsv profile from summary statistics; not reviewed by a person. Verify before using!" A Recommended review warning keeps the missing human-authored description visible. For URL inputs with no identifier, the source URL is used as an inferred `identifier`. ([#4967](https://github.com/dathere/qsv/pull/4967))
+ - `viz smart`: a Data Schematic embedded in an iframe now reports its own height to the embedding page (`postMessage({qsvVizHeight: <px>}, "*")`), so a host such as CKAN can size the iframe to its content without injecting a script. It reports only when framed, on load, on resize (including the data viewer drawer opening and closing, so the iframe grows and shrinks), and when its content reflows. The data viewer now accepts the embedding page's `qsvVizViewport` answer only from that page. The gallery generator injects only its scroll-forwarding script into these pages. ([#4949](https://github.com/dathere/qsv/pull/4949))
+ - Gallery: the WPRDC 2-1-1 and Boston 311 Data Schematics can now be made **Live Data Schematics**. Each gallery entry has a "Make it a Live Data Schematic" how-to: download the page and the exact data it was rendered from, register it with qsv-clientd, and open it from disk, approving the pairing in a shell or from the qsv-clientd tray app's menu. The two data files too large to commit (`wpa_211_requests.csv`, `boston311-2025.tsv.gz`) are attached to the 27.0.1 release. The WPRDC figure is now rendered from t
 ```
 
-**File**: `Cargo.lock` (modified, +1/-0)
+**File**: `_typos.toml` (modified, +2/-0)
 ```diff
-@@ -7127,6 +7127,7 @@ dependencies = [
-  "rand_hc",
-  "rand_xoshiro",
-  "rayon",
-+ "redb",
-  "redis",
-  "regex",
-  "reqwest",
-```
-
-**File**: `Cargo.toml` (modified, +4/-0)
-```diff
-@@ -427,6 +427,9 @@ rand = "0.10"
- rand_hc = "0.5"
- rand_xoshiro = "0.8"
- rayon = "1.12"
-+# geocode cache-info reads the `cached` crate's redb cache files directly; keep this on the same
-+# major as cached's own redb so only one copy is built
-+redb = { version = "4", optional = true }
- redis = { version = "1", features = ["ahash"], default-features = false }
- regex = "1"
- reqwest = { version = "0.13", features = [
-@@ -725,6 +728,7 @@ geocode = [
-     "geosuggest-utils",
-     "geozero",
-     "governor",
-+    "redb",
-     # multipart: used by `geocode census` batch uploads (the Census batch endpoints take a
-     # multipart file). Listed explicitly, like reqwest's `query`: never rely on another
-     # dependent of reqwest to enable it.
-```
-
-**File**: `src/cmd/geocode.rs` (modified, +79/-11)
-```diff
-@@ -882,7 +882,7 @@ use std::{
-     time::{Duration, SystemTime},
- };
+@@ -39,6 +39,8 @@ lits          = "lits"
+ "sav"         = "sav"
+ "missings"    = "missings"
+ "emial"       = "emial"
++# ISO 639-3 code for Thai, mapped to 639-1 "th" in profile language detection
++"tha"         = "tha"
  
--use cached::{ConcurrentCacheBase, ConcurrentCached, RedbCache, macros::concurrent_cached};
-+use cached::{ConcurrentCached, RedbCache, macros::concurrent_cached};
- use dynfmt2::Format;
- use geosuggest_core::{
-     Engine, EngineData, EngineMetadata,
-@@ -2888,6 +2888,60 @@ fn resolve_older_than(value: &str) -> CliResult<Duration> {
-         })
+ [files]
+ extend-exclude = [
+```
+
+**File**: `docs/help/profile.md` (modified, +16/-1)
+```diff
+@@ -38,6 +38,21 @@ evaluates the spec's `formula` / `suggestion_formula` templates against that
+ context. Jinja2 helpers and filters are a native Rust port of DP+'s
+ `jinja2_helpers.py`, built on `minijinja`.
+ 
++For DCAT-US v3 the projection also COMPUTES properties that are tedious to
++author by hand, from the same statistics: temporal coverage and resolution
++(an exact xsd:duration: a regular series' step, else recording precision),
++spatial bounding box (excluding out-of-range and (0, 0) placeholder
++coordinates) and resolution, an update schedule (only for
++a regular calendar series), the content language, DQV quality measurements
++(completeness, plus duplicate rows and CSV/UTF-8 validity with `--validate`),
++and a CSVW table schema with per-column constraints (required, ranges,
++lengths, enumerations, primary key). Values
++that are generated or detected rather than measured - a description, the
++language, the schedule - form an "inferred" tier that the publisher's own
++metadata replaces; `projection_provenance` lists them. A generated
++description carries a disclosure and a review warning, so it never passes
++for a human-authored one.
++
+ When the input is a URL whose response carries DCAT markup (HTTP
+ `Link: rel=describedBy`), qsv discovers the publisher's stated metadata and
+ merges it as a base layer beneath the inferred projection.
+@@ -154,7 +169,7 @@ qsv profile --help
+ | &nbsp;`‑‑dcat‑legacy‑license`&nbsp; | flag | Also emit `license` on the Dataset, alongside the Distribution-level copy. Both are valid DCAT-US v3 (the Dataset-level property was added upstream), but the migration guide directs publishers to put license on each Distribution, so that is what qsv emits by default. Default: off. |  |
+ | &nbsp;`‑‑no‑dcat‑discovery`&nbsp; | flag | Skip DCAT-markup discovery on URL inputs. Discovery sniffs HTTP Link: rel=describedBy (and, in future, sibling .metadata.json / JSON-LD <script> blocks) to use the publisher's stated metadata as a base layer. |  |
+ | &nbsp;`‑‑dcat‑discovery‑timeout`&nbsp; | integer | Per-request timeout for DCAT-markup discovery probes. Default: 5. |  |
+-| &nbsp;`‑‑validate`&nbsp; | flag | Validate the emitted projection block against the active profile's declared validators. For dcat-us-v3 that's the vendored GSA JSON Schema bundle (see resources/dcat-us-v3/); for dcat-ap-v3 / geoconnex it's pyshacl over the bundled SHACL shapes; for croissant it's mlcroissant. Catches missing mandatory fields, cardinality issues, and shape violations. Violations append to projection_warnings by default. |  |
++| &nbsp;`‑‑validate`&nbsp; | flag | Validate the emitted projection block against the active profile's declared validators. For dcat-us-v3 that's the vendored GSA JSON Schema bundle (see resources/dcat-us-v3/); for dcat-ap-v3 / geoconnex it's pyshacl over the bundled SHACL shapes; for croissant it's mlcroissant. Catches missing mandatory fields, cardinality issues, and shape violations. Violations append to projection_warnings by default. Also runs `qsv validate` over the input (CSV structure + UTF-8), so a passing file is declared UTF-8 encoded and its syntactic validity is recorded as a quality measurement. |  |
+ | &nbsp;`‑‑strict`&nbsp; | flag | With --validate, fail the command on Required-severity schema violations, or on non-Info external-validator findings, instead of just warning. Severity comes from the DCAT-US v3 schema's own requirementLevel annotations, so a missing mandatory property aborts while a recommended-field advisory does not. |  |
+ | &nbsp;`‑‑allow‑external‑validator`&nbsp; | flag | Opt in to spawning the validator binary declared by `validation.external` when the profile was loaded from an arbitrary YAML file. Bundled profiles (dcat-us-v3, dcat-ap-v3, croissant, geoconnex) always run their declared external validators because the profile content is vetted at qsv release time. Without this flag, file-loaded profiles emit a Recommended-severity warning instead of running the binary, so an untrusted YAML can't silently execute arbitrary commands. Default: off. |  |
+ | &nbsp;`‑‑catalog`&nbsp; | flag | Wrap the emitted DCAT-US v3 Dataset inside a Catalog envelope (Catalog{dataset:[...]}). Useful for federation harvesters (data.gov, CKAN ingest) that expect Catalog-shaped top-level metadata. Default: off (Dataset-only, backwards-compatible). |  |
+```
+
+**File**: `resources/profiles/README.md` (modified, +31/-0)
+```diff
+@@ -49,6 +49,37 @@ Every entry under `dataset.fields[]`, `distribution.fields[]`, and
+ | `emit_when` | Optional guard template; field skipped when this renders falsy/empty. |
+ | `default` | Literal fallback when the main template renders empty (suppresses the warning). |
+ | `for_each_column` | Croissant-style expansion: emit one entry per stats column. |
++| `fallback` | Inferred-tier template, rendered only when `emit_when` is falsy or `template` renders empty. A value from here is listed in `projection_provenance`, and discovered publisher metadata **replaces** it (a `template` value wins over discovery). Use for judgement calls such as a generated description or a detected language, not for facts measured from the file. A failing fallback is reported at Info severity, never Required. |
++| `review_note` | Message added to `projection_warnings` (Recommended) while a `fallback` value stands, e.g. "replace this generated description before publishing". Dropped once discovery or an override replaces the value. |
++
++### Inferred tier and precedence
++
++For a field with both `template` and `fallback`, the final value comes
++from the first of: a forced `--initial-context` value, a
++`dataset_info` override, the `template` (supplied CKAN/spec values),
++discovered publisher DCAT, the `fallback`.
++
++### Stats-derived helpers
++
++Besides the DP+ ports in `formula_helpers.rs`, templates can call these
++qsv-native helpers (`src/cmd/profile/derive.rs`). Each returns
++undefined, not an error, when its inputs are absent, so guard with
++`is defined` or `| default("")`.
++
++| Helper | Returns |
++|---|---|
++| `xsd_temporal_resolution(field?)` | Temporal resolution of a date/datetime column as an exact xsd:duration: the step of a regular series (`PT15M`, `P1D`, `P1M`, `P1Y`), otherwise the precision values are recorded at (`P1D`, `PT1M`, `PT1S`). Defaults to the first detected date, then datetime, column. |
++| `confident_accrual_periodicity(field?)` | ISO 19115 frequency code, only when ≥90% of gaps are one exact calendar step (whole days at the same time, or whole months on the same day). |
++| `coordinate_resolution_in_meters(dpp, stats)` | Finest separation the lat/lon decimal precision resolves, in metres (3 significant figures). |
++| `robust_bbox(dpp, stats)` | `[Location]` with a WKT `bbox`, excluding out-of-range and (0, 0) coordinates (Info note with the count dropped). |
++| `quality_measurements(stats, dpp, dims, rfc4180)` | DQV `QualityMeasurement` array; `dims` maps `completeness` / `conciseness` / `syntacticValidity` to dimension IRIs. |
++| `build_csvw_schema_rich(stats, dppf, headers, rows)` | CSVW table schema in file order, with per-column constraints (string lengths only for ASCII columns: qsv counts bytes, CSVW characters) and a `primaryKey` (a column whose cardinality equals `rows`). |
++| `detect_data_language(stats, dppf)` | ISO 639-1 code of the text values (needs the `whatlang` feature). |
++
++The projection context also exposes `dppf` (per-column frequency),
++`headers` (column names in file order — template maps iterate
++key-sorted), `rfc4180` (`{valid}` when `--validate` ran `qsv
++validate`, else null; lenient, so not proof of strict RFC 4180) and `http_last_modified` (URL inputs).
+ 
+ ## Catalog envelope
+ 
+```
+
+**File**: `resources/profiles/dcat-us-v3.yaml` (modified, +81/-4)
+```diff
+@@ -15,7 +15,7 @@
+ # re-run the golden parity tests. CI hard-fails on drift.
+ 
+ name: dcat-us-v3
+-version: 4.0.0
++version: 5.0.0
+ about: DCAT-US v3 metadata projection (resources.data.gov)
+ about_url: https://resources.data.gov/resources/dcat-us3/
+ 
+@@ -128,6 +128,22 @@ vocabularies:
+     DateTime:      "dateTime"
+     NULL:          "string"
+ 
++  # Data-quality dimension IRIs for hasQualityMeasurement, from the W3C
++  # DQV "Linked Data Quality Dimensions" vocabulary
++  # (https://www.w3.org/2016/05/ldqd). Swap these to report against a
++  # different quality framework; a dimension mapped to "" is omitted.
++  quality_dimensions:
++    completeness:      "http://www.w3.org/2016/05/ldqd#completeness"
++    conciseness:       "http://www.w3.org/2016/05/ldqd#conciseness"
++    syntacticValidity: "http://www.w3.org/2016/05/ldqd#syntacticValidity"
++
++  # Disclosures appended to text qsv generates, in the style of
++  # describegpt's "WARNING: ... Verify before using!" attribution.
++  # Reword or localize freely, but keep one: a generated description
++  # must never pass for a human-authored one.
++  disclosures:
++    stats_description: "WARNING: Description generated automatically by qsv profile from summary statistics; not reviewed by a person. Verify before using!"
++
+ # =========================================================================
+ # CKAN → DCAT pointer mappings (force-override + warning-filter use only)
+ # =========================================================================
+@@ -223,13 +239,38 @@ dataset:
+       template: '{{ pkg.title | default(source_label | basename | file_stem) | default("dataset") }}'
+       required_level: required
+ 
++    # Mandatory. When nobody supplied one, qsv writes a factual,
++    # deterministic summary from the stats (inferred tier: a
++    # publisher's discovered description replaces it) — carrying a
++    # disclosure, and a review note in projection_warnings so --strict
++    # users still see that a human-authored description is missing.
+     - path: "description"
+       template: '{{ pkg.notes | default("") }}'
+       emit_when: '{{ (pkg.notes | default("")) != "" }}'
++      fallback: |
++        {%- set cols = headers | default(stats | list) -%}
++        {%- set rows = dpp.RECORD_COUNT | default(0) -%}
++        {%- set tfields = (dpp.DATE_FIELDS | default([])) + (dpp.DATETIME_FIELDS | default([])) -%}
++        {%- if cols | length > 0 -%}
++        Tabular data (CSV) with {{ rows }} {{ "row" if rows == 1 else "rows" }} and {{ cols | length }} {{ "column" if cols | length == 1 else "columns" }}
++        {%- if tfields | length > 0 -%}
++        {%- set tf = tfields | first -%}
++        {%- set ts = stats[tf].stats -%}
++        {%- if ts.min and ts.max %}, with `{{ tf }}` values from {{ ts.min[:10] }} to {{ ts.max[:10] }}{% endif -%}
++        {%- endif -%}
++        . Columns: {{ cols[:8] | join(", ") }}{% if cols | length > 8 %}, and {{ cols | length - 8 }} more{% endif %}.
++
++        {{ lookup("disclosures", "stats_description") }}
++        {%- endif -%}
++      review_note: "description was generated by qsv from summary statistics; replace it with a human-authored description before publishing"
+ 
++    # Mandatory. For URL inputs with no supplied identifier, the source
++    # URL is a stable, unique-enough default (inferred tier).
+     - path: "identifier"
+       template: '{{ pkg.name | default("") }}'
+       emit_when: '{{ (pkg.name | default("")) != "" }}'
++      fallback: '{{ (res.url | default("")) | only_if_absolute_iri }}'
++      review_note: "identifier defaulted to the source URL; supply the dataset's own identifier if it has one"
+ 
+     - path: "issued"
+       template: '{{ pkg.metadata_created | default("") | dcat_us_date }}'
+@@ -306,14 +347,14 @@ dataset:
+     - path: "spatial"
+       template: |
+         {%- set wkt = pkg.dpp_suggestions.spatial_extent.value | default("") -%}
+-        {%- set bbox = bbox_from_dpps(dpp, stats) -%}
++        {%- set bbox = robust_bbox(dpp, stats) -%}
+         {%- if wkt != "" -%}
+         [{
+           "@type": "Location",
+           "geometry": {{ wkt | tojson }}
+         }]
+         {%- elif bbox -%}{{ bbox | tojson }}{%- endif -%}
+-      emit_when: '{{ (pkg.dpp_suggestions.spatial_extent.value | default("")) != "" or bbox_from_dpps(dpp, stats) is defined }}'
++      emit_when: '{{ (pkg.dpp_suggestions.spatial_extent.value | default("")) != "" or robust_bbox(dpp, stats) is defined }}'
+ 
+     - path: "temporal"
+       template: |
+@@ -353,9 +394,13 @@ dataset:
+            "title":      "DCAT-US 3.0",
+            "identifier": "https://resources.data.gov/dcat-us/3.0.0" }]
+ 
++    # Inferred tier: the natural language of the text values, detected
++    # with describegpt's chunk-agreement gate (absent on builds without
++    # the `whatlang` feature, and for data with too little text).
+     - path: "language"
+       template: '{{ lookup("iso_639_1", pkg.language | default("")) }}'
+       emit_when: '{{ (pkg.language | default("")) 
+```
+
+**File**: `src/cmd/describegpt.rs` (modified, +1/-1)
+```diff
+@@ -1423,7 +1423,7 @@ fn split_into_chunks(text: &str, k: usize) -> Option<Vec<String>> {
+ ///
+ /// Returns (English name, ISO 639-3 code, confidence).
+ #[cfg(feature = "whatlang")]
+-fn detect_language_in_text(
++pub(crate) fn detect_language_in_text(
+     text: &str,
+     min_confidence: Option<f64>,
+ ) -> Option<(String, String, f64)> {
+```
+
+**File**: `src/cmd/profile.rs` (modified, +274/-46)
+```diff
+@@ -26,6 +26,21 @@ evaluates the spec's `formula` / `suggestion_formula` templates against that
+ context. Jinja2 helpers and filters are a native Rust port of DP+'s
+ `jinja2_helpers.py`, built on `minijinja`.
+ 
++For DCAT-US v3 the projection also COMPUTES properties that are tedious to
++author by hand, from the same statistics: temporal coverage and resolution
++(an exact xsd:duration: a regular series' step, else recording precision),
++spatial bounding box (excluding out-of-range and (0, 0) placeholder
++coordinates) and resolution, an update schedule (only for
++a regular calendar series), the content language, DQV quality measurements
++(completeness, plus duplicate rows and CSV/UTF-8 validity with `--validate`),
++and a CSVW table schema with per-column constraints (required, ranges,
++lengths, enumerations, primary key). Values
++that are generated or detected rather than measured - a description, the
++language, the schedule - form an "inferred" tier that the publisher's own
++metadata replaces; `projection_provenance` lists them. A generated
++description carries a disclosure and a review warning, so it never passes
++for a human-authored one.
++
+ When the input is a URL whose response carries DCAT markup (HTTP
+ `Link: rel=describedBy`), qsv discovers the publisher's stated metadata and
+ merges it as a base layer beneath the inferred projection.
+@@ -145,7 +160,11 @@ profile options:
+                               mlcroissant. Catches missing mandatory fields,
+                               cardinality issues, and shape violations.
+                               Violations append to projection_warnings by
+-                              default.
++                              default. Also runs `qsv validate` over the
++                              input (CSV structure + UTF-8), so a passing
++                              file is declared UTF-8 encoded and its
++                              syntactic validity is recorded as a
++                              quality measurement.
+     --strict                  With --validate, fail the command on
+                               Required-severity schema violations, or on
+                               non-Info external-validator findings,
+@@ -212,13 +231,14 @@ Common options:
+ use std::path::Path;
+ 
+ use serde::Deserialize;
+-use serde_json::{Value, json};
++use serde_json::{Map, Value, json};
+ 
+-use crate::{CliError, CliResult, util};
++use crate::{CliError, CliResult, config::Config, util};
+ 
+ mod context;
+ mod dcat_discover;
+ mod dcat_validate;
++mod derive;
+ mod discovery_merge;
+ mod external_validate;
+ mod formula_engine;
+@@ -265,17 +285,24 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+     // stdin): "stdin" for piped input, the original path/URL otherwise.
+     // `original_url` is preserved separately so the DCAT projection can
+     // use it as `dcat:downloadURL` and to derive a title fallback.
+-    let (input_path, original_url, display_input, from_stdin, _kept_temp) =
++    let (input_path, original_url, display_input, from_stdin, _kept_temp, http_last_modified) =
+         match args.arg_input.as_deref() {
+             Some("-") | None => {
+                 let temp = stdin_to_tempfile()?;
+                 let local = temp.path().to_string_lossy().to_string();
+-                (local, None, "stdin".to_string(), true, Some(temp))
++                (local, None, "stdin".to_string(), true, Some(temp), None)
+             },
+             Some(p) => {
+-                let (local, url, kept) = resolve_input(p)?;
+-                let display = url.clone().unwrap_or_else(|| p.to_string());
+-                (local, url, display, false, kept)
++                let resolved = resolve_input(p)?;
++                let display = resolved.url.clone().unwrap_or_else(|| p.to_string());
++                (
++                    resolved.local,
++                    resolved.url,
++                    display,
++                    false,
++                    resolved.kept,
++                    resolved.last_modified,
++                )
+             },
+         };
+ 
+@@ -319,24 +346,31 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+         memcheck:        args.flag_memcheck,
+         initial_context: args.flag_initial_context.as_deref(),
+         profile:         &profile,
++        check_rfc4180:   args.flag_validate && !args.flag_no_projection,
+     };
+     let analysis = context::build(&ctx_args, spec_opt.as_ref())?;
+ 
++    // One SQL backend for both the spec's formulas and the projection
++    // templates, honoring the same CSV parsing options as the stats /
++    // frequency passes so SQL-backed helpers see the same columns.
++    // The delimiter resolves exactly as stats' does (--delimiter, then
++    // the file extension / QSV_DEFAULT_DELIMITER), so a `.tsv` input is
++    // not read as one comma-less column. --no-headers maps to
++    // has_header=false.
++    let resolved_delimiter = Config::new(Some(&input_path))
++        .delimiter(args.flag_delimiter)
++        .get_delimiter(
+```
+
+**File**: `src/cmd/profile/context.rs` (modified, +39/-1)
+```diff
+@@ -43,6 +43,11 @@ pub struct ContextArgs<'a> {
+     /// construction stays decoupled from the orchestrator's profile
+     /// load.
+     pub profile:         &'a super::profile_spec::ProfileSpec,
++    /// Run `qsv validate` (RFC 4180 + UTF-8) so the projection can
++    /// assert `conformsTo` / `characterEncoding`. Set from `--validate`:
++    /// a profile that was not asked to validate never pays for the
++    /// extra full-file scan (§5.8).
++    pub check_rfc4180:   bool,
  }
  
-+/// What `cache-info` reports about one result cache's stored entries.
-+#[derive(Default)]
-+struct CacheEntryStats {
-+    entries:     u64,
-+    undecodable: u64,
-+    oldest:      Option<SystemTime>,
-+    newest:      Option<SystemTime>,
-+}
-+
-+/// Count a result cache's stored entries (expired-but-unpruned ones included) and find the
-+/// oldest and newest. `cached`'s `RedbCache` won't count (`cache_size()` is `Ok(None)`) and has
-+/// no iterator, so read its redb file directly. That format is frozen for the file version in
-+/// the file name (`_v3`): table `cached_disk_cache`, each value a positional array, encoded with
-+/// `rmp_serde`, of the cached value, then its `created_at`. An entry that doesn't decode is counted
-+/// apart: `cached` treats it as expired, so `cache-prune` removes it.
-+/// A `cached` upgrade that changed this layout would show up here as 0 entries, or as entries
-+/// that are all undecodable. `test_geocode::geocode_geoclient_disk_cache` pins the count to
-+/// catch that.
-+fn scan_cache_entries(path: &Path) -> Result<CacheEntryStats, String> {
-+    use redb::{ReadableDatabase, ReadableTable};
-+
-+    // only the timestamp is needed: IgnoredAny skips the value without allocating it
-+    #[derive(Deserialize)]
-+    struct EntryMeta(serde::de::IgnoredAny, SystemTime);
-+    const TABLE: redb::TableDefinition<&str, &[u8]> =
-+        redb::TableDefinition::new("cached_disk_cache");
-+
-+    let db = redb::ReadOnlyDatabase::open(path).map_err(|e| e.to_string())?;
-+    let rtxn = db.begin_read().map_err(|e| e.to_string())?;
-+    let table = match rtxn.open_table(TABLE) {
-+        Ok(table) => table,
-+        // a cache file that was never written to has no table yet
-+        Err(redb::TableError::TableDoesNotExist(_)) => return Ok(CacheEntryStats::default()),
-+        Err(e) => return Err(e.to_string()),
+ /// Result of the analysis pass — the JSON context plus the column headers we
+@@ -220,13 +225,46 @@ pub fn build(args: &ContextArgs, _spec: Option<&Spec>) -> CliResult<AnalysisCont
+             .insert("name".to_string(), Value::String(name.to_string()));
+     }
+ 
+-    // --- 7. assemble ------------------------------------------------------
++    // --- 7. RFC 4180 + UTF-8 conformance (with --validate) ---------------
++    // `qsv validate` with no schema checks the file is well-formed CSV
++    // (consistent field counts, quoting) and valid UTF-8. The projection
++    // derives `conformsTo`, `characterEncoding` and a syntactic-validity
++    // quality measurement from the result, so they are only asserted
++    // when actually checked; without --validate `rfc4180` is null and
++    // they are omitted. Any failure — invalid data or a validator that
++    // could not run — reads as `valid: false` rather than aborting.
++    let rfc4180 = if args.check_rfc4180 {
++        let mut validate_owned: Vec<String> = Vec::new();
++        append_csv_flags(
++            &mut validate_owned,
++            args,
++            FreqOrCount {
++                jobs:     false,
++                force:    false,
++                memcheck: false,
++            },
++        );
++        let validate_args: Vec<&str> = validate_owned.iter().map(String::as_str).collect();
++        let valid = util::run_qsv_cmd(
++            "validate",
++            &validate_args,
++            args.input_path,
++            "qsv profile: ran `validate` (RFC 4180 / UTF-8)",
++        )
++        .is_ok();
++        json!({ "valid": valid })
++    } else {
++        Value::Null
 +    };
-+    let mut stats = CacheEntryStats::default();
-+    for item in table.iter().map_err(|e| e.to_string())? {
-+        let (_, value) = item.map_err(|e| e.to_string())?;
-+        if let Ok(EntryMeta(_, created_at)) = rmp_serde::from_slice::<EntryMeta>(value.value()) {
-+            stats.entries += 1;
-+            stats.oldest = Some(stats.oldest.map_or(created_at, |t| t.min(created_at)));
-+            stats.newest = Some(stats.newest.map_or(created_at, |t| t.max(created_at)));
-+        } else {
-+            stats.undecodable += 1;
-+        }
-+    }
-+    Ok(stats)
-+}
 +
-+/// An entry timestamp as RFC 3339 UTC, to the second.
-+fn rfc3339_utc(t: SystemTime) -> String {
-+    chrono::DateTime::<chrono::Utc>::from(t).to_rfc3339_opts(chrono::SecondsFormat::Secs, true)
-+}
-+
- fn run_cache_mgmt(args: &Args, mode: GeocodeSubCmd, cache_dir: &Path) -> CliResult<()> {
-     for (cache_name, provider) in [
-         (OPENCAGE_CACHE_NAME, "OpenCage"),
-@@ -2929,6 +2983,8 @@ fn manage_one_cache(
-                     "cache_dir":   cache_dir.display().to_string(),
-                     "exists":      false,
-                     "entry_count": 0,
-+                    "oldest_entry": null,
-+                    "newest_entry": null,
-                 })
-             );
-         }
-@@ -2985,23 +3041,32 @@ fn manage_one_cache(
-             winfo!("Pruned {pruned} expired entries from the {provider} cache.");
-         },
-         GeocodeSubCmd::CacheInfo => {
--            // RedbCache::cache_size() is Ok(None) (an exact count is an O(n) scan it
--            // won't pay implicitly), so entry_count is reported as unavailable rather
--            // than a misleading 0.
--            let entry_count = cache
--                .cache_size()
-+            let disk_path = cache.disk_path().to_path_buf();
-+            // redb locks the file, so release cached's handle before opening it again
-+            drop(cache);
-+            let stats = scan_cache_entries(&disk_path)
-                 .map_err(|e| CliError::Other(format!("Error reading {provider} cache: {e}")))?;
--            let disk_path = cache.disk_path();
-+            let entry_count = stats.entries + stats.undecodable;
-+            let oldest_entry = stats.oldest.map(rfc3339_utc);
-+            let newest_entry = stats.newest.map(rfc3339_utc);
-+            let disk_path = disk_path.as_path();
-             // metadata() can fail on I/O errors; degrade gracefully rather than
-             // reporting a misleading 0 bytes (None -> "unknown" / JSON null)
-             let size_on_disk: Option<u64> = std::fs::metadata(disk_path).ok().map(|m| m.len());
-             let size_human = size_on_disk.map(|s| HumanBytes(s).to_string());
++    // --- 8. assemble ------------------------------------------------------
+     let context = json!({
+         "package":  package,
+         "resource": resource,
+         "dpps":     dpps,
+         "dppf":     dppf,
+         "dpp":      dpp,
++        "rfc4180":  rfc4180,
+     });
  
-             winfo!("{provider
-```
-
-**File**: `tests/test_geocode.rs` (modified, +36/-7)
-```diff
-@@ -3699,14 +3699,43 @@ fn geocode_geoclient_disk_cache() {
-     );
-     assert_eq!(mock.requests(), 2);
- 
--    let mut info = wrk.command("geocode");
--    info.env("QSV_CACHE_DIR", wrk.path("").to_string_lossy().to_string())
--        .arg("cache-info");
--    let output = wrk.output(&mut info);
--    let stdout = String::from_utf8_lossy(&output.stdout);
-+    let cache_info = || {
-+        let mut info = wrk.command("geocode");
-+        info.env("QSV_CACHE_DIR", wrk.path("").to_string_lossy().to_string())
-+            .arg("cache-info");
-+        let output = wrk.output(&mut info);
-+        assert!(output.status.success());
-+        let stdout = String::from_utf8_lossy(&output.stdout).to_string();
-+        let line = stdout
-+            .lines()
-+            .find(|l| l.contains(r#""provider":"Geoclient""#))
-+            .unwrap_or_else(|| panic!("no Geoclient line in stdout: {stdout}"));
-+        serde_json::from_str::<serde_json::Value>(line).unwrap()
-+    };
-+    let info = cache_info();
-+    assert_eq!(info["exists"], true, "{info}");
-+    // the match and the cached non-match
-+    assert_eq!(info["entry_count"], 2, "{info}");
-+    assert_eq!(info["undecodable_entries"], 0, "{info}");
-+    let oldest = info["oldest_entry"].as_str().unwrap();
-+    let newest = info["newest_entry"].as_str().unwrap();
-+    // RFC 3339 UTC to the second, so the strings order like the instants
-     assert!(
--        stdout.contains(r#""provider":"Geoclient""#) && stdout.contains(r#""exists":true"#),
--        "stdout: {stdout}"
-+        oldest.len() == 20 && oldest.ends_with('Z') && oldest <= newest,
-+        "{info}"
-+    );
-+
-+    let mut clear = wrk.command("geocode");
-+    clear
-+        .env("QSV_CACHE_DIR", wrk.path("").to_string_lossy().to_string())
-+        .arg("cache-clear");
-+    wrk.assert_success(&mut clear);
-+    let info = cache_info();
-+    assert_eq!(info["exists"], true, "{info}");
-+    assert_eq!(info["entry_count"], 0, "{info}");
-+    assert!(
-+        info["oldest_entry"].is_null() && info["newest_entry"].is_null(),
-+        "{info}"
-     );
- }
- 
+     Ok(AnalysisContext {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4967** (2026-10-31): feat(profile): compute DCAT-US v3 properties from stats, with an inferred tier (@jqnatividad)
 - **PR #4966** (2026-10-31): fix(geocode): cache-info reports real entry counts and oldest/newest timestamps (@jqnatividad)
 - **PR #4965** (2026-10-31): test(frequency): match the "Other (N)" overflow label in property tests (@jqnatividad)
 - **PR #4964** (2026-10-31): bench: add geoclient benchmarks, uncached and cached (@jqnatividad)
 - **PR #4963** (2026-10-30): deps: bump datasketches from 0.5 to 0.6 (@jqnatividad)
 - **PR #4962** (2026-10-30): build(deps): bump anthropics/claude-code-action from 1.0.263 to 1.0.264 (@dependabot[bot])
-- **PR #4961** (2026-10-30): build(deps): bump Swatinem/rust-cache from 2.9.1 to 2.9.3 (@dependabot[bot])
 
 ---
 
@@ -2460,13 +2649,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. geocode): cache-info reports real entry counts and oldest/newest timestamps (#49
+## X. profile): compute DCAT-US v3 properties from stats, with an inferred tier (#4967
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2476fc1b`: geocode): cache-info reports real entry counts and oldest/newest timestamps (#4966). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1a886517`: profile): compute DCAT-US v3 properties from stats, with an inferred tier (#4967). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2474,7 +2663,10 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- `geocode cache-info` now reports what its help promises: each result cache's real entry count, plus the timestamps of its oldest and newest entries (`oldest_entry`/`newest_entry`, RFC 3339 UTC). It printed `Entries: unknown` and no timestamps, because the cache library can't count its entries. It now reads each cache file once to count them. Expired entries that haven't been pruned yet are included. Entries that can't be decoded are counted in `entry_count` and also reported apart as `undecodable_entries`; `cache-prune` removes them.
+- **`profile` (DCAT-US v3) computes properties that are tedious to write by hand**, deterministically, from the stats and frequency it already runs plus a SQL pass over the file. New MiniJinja helpers (`src/cmd/profile/derive.rs`) feed `resources/profiles/dcat-us-v3.yaml` (profile 5.0.0): ([#4967](https://github.com/dathere/qsv/pull/4967))
+  - `temporalResolution`, as an exact xsd:duration. A regular series reports its step (`PT15M`, `P1D`, and calendar steps such as `P1M` instead of a day count that varies from 28 to 31). Irregular data, such as event timestamps, reports the precision its values are recorded at (`P1D`, `PT1M`, `PT1S`). The smallest gap between two events is a sampling accident, not a resolution.
+  - `accrualPeriodicity`: an ISO 19115 code (`daily`, `weekly`, `monthly`, ...) only when the dates form a regular calendar series, where 90% or more of the gaps are the same exact step. Event timestamps, such as 311 requests, describe no update schedule and get none.
+  - `spatial`: the bounding box now excludes out-of-range coordinates and (0, 0) "null island" placeholder rows, noting how many it dropped. Distribution `spatialResolutionInMeters` is now the finest separati
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2484,4 +2676,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2476fc1b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1a886517` are properly handled with clean fallback behavior.
