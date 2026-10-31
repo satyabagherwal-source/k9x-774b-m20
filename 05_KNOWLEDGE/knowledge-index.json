@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T16:32:25.108Z",
+  "last_updated": "2026-10-31T16:39:50.178Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -42712,8 +42712,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "5fdfe09e",
-      "content_hash": "e5a68e3168583c917cb634c5da9dd4daa8f76360a15bbbc26006d7e8353c0fff",
+      "source_version": "e7b53052",
+      "content_hash": "ac9a423851f4628ba3037de2de5f72740437860872becd3f7900db2388321ccb",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -42903,7 +42903,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T15:29:56.686Z",
+      "verified_at": "2026-10-31T16:39:49.887Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44903,8 +44903,8 @@
       "slug": "oven-sh-bun",
       "platform": "github",
       "source_url": "https://github.com/oven-sh/bun",
-      "source_version": "f7607a3d",
-      "content_hash": "a9c1b0fb2b0937446af449d8fa0a8e7168ded809e47b4c55e16d2e5856dfa9eb",
+      "source_version": "34cbc70f",
+      "content_hash": "b644955beab173561023e80370047467c0bf46f267ae6801871651b65ad9485c",
       "dossier_path": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "promoted_rules": [
@@ -44952,6 +44952,11 @@
           "number": 5869,
           "title": "Register Mutation Invariant in Linear Instruction Disassembly Scanners",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6251,
+          "title": "Instantiate BunGlobWalker's methods once, in bun_glob (#47513)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44959,7 +44964,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T20:49:20.991Z",
+      "verified_at": "2026-10-31T16:39:39.588Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52262,8 +52267,8 @@
       "slug": "sqlpage-sqlpage",
       "platform": "github",
       "source_url": "https://github.com/sqlpage/SQLPage",
-      "source_version": "2d45bd4d",
-      "content_hash": "9f577e887a0dcb88b76acd68591fcb83cb285da8c6f8553c1610789767d28034",
+      "source_version": "321ad215",
+      "content_hash": "8e2ed796779bd5e8d6f97c7e29e095cc395120f5ffbdfddf105f53c2de7ecb4e",
       "dossier_path": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "promoted_rules": [
@@ -52301,6 +52306,11 @@
           "number": 5957,
           "title": "table) :: show striped rows in dark mode (#1579)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6252,
+          "title": "card) :: let a card's link open a new tab (#1586)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52308,7 +52318,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T00:20:40.774Z",
+      "verified_at": "2026-10-31T16:39:50.149Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -149185,7 +149195,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-OCR-1.0",
       "source_version": "hf-openbmb-minicpm-ocr-1.0",
-      "content_hash": "74e0b70fe85623c2bb9d54f67644bc2969faad3f1102825226a089b087d9b705",
+      "content_hash": "5e4f3b536abf755bba4d12c62fa4355280cd4bbd6d1a709d664c9af934b62790",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-ocr-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-ocr-1.0-learnings.md",
       "promoted_rules": [
@@ -149203,6 +149213,16 @@
           "number": 5329,
           "title": "Dtype Alignment for Mixed‑Precision Decoding",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6249,
+          "title": "Shared‑Embedding Consistency Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6250,
+          "title": "Special‑Token Uniqueness Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -149210,7 +149230,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T15:43:14.301Z",
+      "verified_at": "2026-10-31T16:39:38.473Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -163043,6 +163063,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T16:32:25.092Z"
+    },
+    "rule-6249": {
+      "learning_id": "rule-6249",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6249,
+      "title": "Shared‑Embedding Consistency Rule",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-OCR-1.0",
+      "source_version": "hf-openbmb-minicpm-ocr-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T16:39:38.473Z"
+    },
+    "rule-6250": {
+      "learning_id": "rule-6250",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6250,
+      "title": "Special‑Token Uniqueness Rule",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-OCR-1.0",
+      "source_version": "hf-openbmb-minicpm-ocr-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T16:39:38.473Z"
+    },
+    "rule-6251": {
+      "learning_id": "rule-6251",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6251,
+      "title": "Instantiate BunGlobWalker's methods once, in bun_glob (#47513)",
+      "source_url": "https://github.com/oven-sh/bun",
+      "source_version": "34cbc70f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T16:39:39.588Z"
+    },
+    "rule-6252": {
+      "learning_id": "rule-6252",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6252,
+      "title": "card) :: let a card's link open a new tab (#1586)",
+      "source_url": "https://github.com/sqlpage/SQLPage",
+      "source_version": "321ad215",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T16:39:50.149Z"
     }
   },
   "aliases": {

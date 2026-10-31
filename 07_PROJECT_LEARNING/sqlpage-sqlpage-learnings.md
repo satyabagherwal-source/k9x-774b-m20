@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source**: github ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
-> **Source Version**: `2d45bd4d`  
+> **Source Version**: `321ad215`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T00:20:40.300Z  
+> **Timestamp**: 2026-10-31T16:39:49.465Z  
 > **Learning ID**: `learn-github-sqlpage-sqlpage`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T00:20:39.318Z  
+> **Harvest Timestamp**: 2026-10-31T16:39:49.457Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1161,286 +1161,83 @@ export function initInstantMotion(root) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2d45bd4d` (2026-10-30)
-**Commit Message**: fix(table) :: show striped rows in dark mode (#1579)
+### Incident Patch 1: `321ad215` (2026-10-31)
+**Commit Message**: feat(card) :: let a card's link open a new tab (#1586)
 
-Tabler 1.5.0 didn't show table stripes in dark mode. This was fixed in Tabler 1.7.3 (tabler/tabler#3279). So we upgraded and added tests.
+Each card accepts a `target`, such as `_blank`, for its link. It works like the button component's `target`.
 
-Fixes #957
-
-Assisted-By :: Claude Opus 5.5
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -4,6 +4,8 @@
- 
- - Now a tab with a `color` is underlined only when it is active. ([#791](https://github.com/sqlpage/SQLPage/issues/791))
- 
-+- Striped table rows are visible in dark mode again. Tabler was updated to [v1.7.3](https://github.com/tabler/tabler/releases/tag/%40tabler%2Fcore%401.7.3) to fix this. ([#957](https://github.com/sqlpage/SQLPage/issues/957))
-+
- - Shell submenus stay open again when you click inside them. ([#1011](https://github.com/sqlpage/SQLPage/issues/1011))
- 
- - Refined the official website with muted blue accents, simpler navigation, a clearer primary action, and a level SQL ribbon with vertical separators, and a grounded studio scene with brushed metal and physical reflections. Restored visible progress in the streaming comparison animation.
-```
-
-**File**: `package-lock.json` (modified, +12/-4)
-```diff
-@@ -12,7 +12,7 @@
-         "tests/end-to-end"
-       ],
-       "dependencies": {
--        "@tabler/core": "1.5.0",
-+        "@tabler/core": "1.7.3",
-         "@tabler/icons-sprite": "3.46.0",
-         "apexcharts": "7.6.0",
-         "tom-select": "2.6.2"
-@@ -502,9 +502,9 @@
-       "license": "MIT"
-     },
-     "node_modules/@tabler/core": {
--      "version": "1.5.0",
--      "resolved": "https://registry.npmjs.org/@tabler/core/-/core-1.5.0.tgz",
--      "integrity": "sha512-nXFwOF0jlH6cH57eCRDI6uxhlQGtN92hBmkSwgIsUNg+hQBwnK9clAv3dEcSkVkXY+lKpDq8hpCvDT1AwPIzZw==",
-+      "version": "1.7.3",
-+      "resolved": "https://registry.npmjs.org/@tabler/core/-/core-1.7.3.tgz",
-+      "integrity": "sha512-9PDS6U69svI987zIpd0AVLF4Gw9Uxfq1aypceVMNxye9Jp4QWYZEtzTL7z60L8qLyVQupHA+ug1AIA8gGAnYRA==",
-       "license": "MIT",
-       "dependencies": {
-         "@popperjs/core": "^2.11.8"
-@@ -515,6 +515,14 @@
-       "funding": {
-         "type": "github",
-         "url": "https://github.com/sponsors/codecalm"
-+      },
-+      "peerDependencies": {
-+        "vanilla-calendar-pro": "^3.3.2"
-+      },
-+      "peerDependenciesMeta": {
-+        "vanilla-calendar-pro": {
-+          "optional": true
-+        }
-       }
-     },
-     "node_modules/@tabler/icons": {
-```
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@
-   },
-   "license": "MIT",
-   "dependencies": {
--    "@tabler/core": "1.5.0",
-+    "@tabler/core": "1.7.3",
-     "@tabler/icons-sprite": "3.46.0",
-     "apexcharts": "7.6.0",
-     "tom-select": "2.6.2"
-```
-
-**File**: `tests/end-to-end/component-assertions.ts` (modified, +2/-1)
-```diff
-@@ -166,10 +166,11 @@ export async function checkToastNotifications(page: Page) {
-         backgroundColor: rgba(style.backgroundColor),
-         closeColor: rgba(closeStyle.backgroundColor),
-         color: rgba(style.color),
-+        themeDark: rgba(style.getPropertyValue("--tblr-dark")),
-       };
-     });
-   expect(whiteToastStyle.backgroundColor).toEqual([255, 255, 255, 255]);
--  expect(whiteToastStyle.color).toEqual([31, 41, 55, 255]);
-+  expect(whiteToastStyle.color).toEqual(whiteToastStyle.themeDark);
-   expect(whiteToastStyle.closeColor).toEqual(whiteToastStyle.color);
- 
-   const bottomContainer = page.locator(
-```
-
----
-
-### Incident Patch 2: `c5a34fcc` (2026-10-30)
-**Commit Message**: fix(hero) :: show image first on small screens when `reversed` (#1582)
-
-Fixes #828
+Fixes #820
 
 Assisted-By :: Claude Opus 5.5
 
 **File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -8,6 +8,8 @@
- 
- - Refined the official website with muted blue accents, simpler navigation, a clearer primary action, and a level SQL ribbon with vertical separators, and a grounded studio scene with brushed metal and physical reflections. Restored visible progress in the streaming comparison animation.
- 
-+- A hero with `reverse` shows its image above the text on small screens. ([#828](https://github.com/sqlpage/SQLPage/issues/828))
-+
- - The table component accepts a top-level `title`, shown in a header above the table like in the list and datagrid components. ([#1261](https://github.com/sqlpage/SQLPage/issues/1261))
- 
- - Browser developer tools no longer report missing `.css.map` files. ([#1163](https://github.com/sqlpage/SQLPage/issues/1163))
-```
-
-**File**: `examples/official-site/sqlpage/migrations/02_hero_component.sql` (modified, +1/-1)
-```diff
-@@ -92,7 +92,7 @@ FROM
-             ('loop', 'Loop the video', 'BOOLEAN', TRUE, TRUE),
-             (
-                 'reverse',
--                'Reverse the order of the image and text: the image will be on the left, and the text on the right.',
-+                'Reverse the order of the image and text: the image will be on the left, and the text on the right. On small screens, the image will be above the text.',
-                 'BOOLEAN',
-                 TRUE,
-                 TRUE
-```
-
-**File**: `sqlpage/templates/hero.handlebars` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--<header class="row align-items-center{{#if reverse}} flex-row-reverse{{/if}}" {{#if id}} id="{{id}}"{{/if}}>
-+<header class="row align-items-center{{#if reverse}} flex-column-reverse flex-lg-row-reverse{{/if}}" {{#if id}} id="{{id}}"{{/if}}>
-   <div class="hero-title col text-center">
-     <h1 class="lh-lg" style="font-size: 3rem">{{title}}</h1>
-     <div class="fs-1 mx-5 text-muted">
-```
-
-**File**: `tests/end-to-end/fixtures/hero/reversed/index.sql` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+SELECT
-+    'hero' AS component,
-+    'Reversed hero' AS title,
-+    'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400"/>' AS image,
-+    TRUE AS reverse;
-```
-
-**File**: `tests/end-to-end/fixtures/hero/reversed/test.ts` (added, +27/-0)
-```diff
-@@ -0,0 +1,27 @@
-+import { expect, type Page, test } from "../../../fixture.ts";
-+
-+async function heroLayout(page: Page, width: number) {
-+  await page.setViewportSize({ width, height: 900 });
-+  const image = await page
-+    .getByRole("img", { name: "Reversed hero" })
-+    .boundingBox();
-+  const title = await page
-+    .getByRole("heading", { name: "Reversed hero" })
-+    .boundingBox();
-+  if (!image || !title) throw new Error("the hero is not visible");
-+  return { image, title };
-+}
-+
-+test("a reversed hero shows the image above the title on phones", async ({
-+  page,
-+}) => {
-+  const { image, title } = await heroLayout(page, 390);
-+  expect(image.y + image.height).toBeLessThanOrEqual(title.y);
-+});
-+
-+test("a reversed hero shows the image left of the title on desktops", async ({
-+  page,
-+}) => {
-+  const { image, title } = await heroLayout(page, 1400);
-+  expect(image.x + image.width).toBeLessThanOrEqual(title.x);
-+});
-```
-
----
-
-### Incident Patch 3: `f1c714ab` (2026-10-30)
-**Commit Message**: fix(templates) :: let `each_row` call inline partials (#1580)
-
-Fixes #846
-
-Assisted By :: Claude Opus 5.5
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -18,6 +18,8 @@
+@@ -22,6 +22,8 @@
  
  - Each item of the tracking component accepts a `link`. ([#900](https://github.com/sqlpage/SQLPage/issues/900))
  
-+- Custom components can call inline partials inside `each_row` and after it, when the partials are defined before `each_row`. ([#846](https://github.com/sqlpage/SQLPage/issues/846))
++- Each card of the card component accepts a `target`, such as `_blank` to open its link in a new tab. ([#820](https://github.com/sqlpage/SQLPage/issues/820))
 +
+ - Custom components can call inline partials inside `each_row` and after it, when the partials are defined before `each_row`. ([#846](https://github.com/sqlpage/SQLPage/issues/846))
+ 
  ## v0.47.0 (2026-10-15)
- - Redesigned the official website homepage with live SQLPage examples, an interactive database sculpture, flowing section transitions, responsive layouts, and direct links to documentation and deployment guides.
- - For sites that store their pages in a database, checking for page updates no longer makes other pages wait when the database is busy. In a test, another page loaded in under 1 ms instead of about 250 ms.
 ```
 
-**File**: `src/render.rs` (modified, +19/-0)
+**File**: `examples/official-site/sqlpage/migrations/31_card_docs_update.sql` (modified, +1/-0)
 ```diff
-@@ -1187,6 +1187,25 @@ mod tests {
-         Ok(())
-     }
- 
-+    #[actix_web::test]
-+    async fn inline_partials_defined_before_each_row_render_in_every_part() -> anyhow::Result<()> {
-+        let template = Template::compile(
-+            "{{#*inline \"item\"}}[{{x}}]{{/inline}}\
-+            {{> item x=\"start\"}}{{#each_row}}{{> item}}{{/each_row}}{{> item x=\"end\"}}",
-+        )?;
-+        let split = split_template(template);
-+        let mut output = Vec::new();
-+        let config = app_config::tests::test_config();
-+        let app_state = Arc::new(AppState::init(&config).await.unwrap());
-+        let mut rdr = SplitTemplateRenderer::new(Arc::new(split), app_state, 0, 0);
-+        rdr.render_start(&mut output, json!(null))?;
-+        rdr.render_item(&mut output, json!({"x": 1}))?;
-+        rdr.render_item(&mut output, json!({"x": 2}))?;
-+        rdr.render_end(&mut output)?;
-+        assert_eq!(String::from_utf8_lossy(&output), "[start][1][2][end]");
-+        Ok(())
-+    }
-+
-     #[actix_web::test]
-     async fn test_delayed() -> anyhow::Result<()> {
-         let template = Template::compile(
+@@ -24,6 +24,7 @@ INSERT INTO parameter(component, name, description, type, top_level, optional) S
+     ('footer', 'Muted text to display at the bottom of the card.', 'TEXT', FALSE, TRUE),
+     ('footer_md', 'Muted text to display at the bottom of the card, with rich text formatting in Markdown format.', 'TEXT', FALSE, TRUE),
+     ('link', 'An URL to which the user should be taken when they click on the card.', 'URL', FALSE, TRUE),
++    ('target', 'Where the card''s link opens: "_blank" for a new tab, "_self" for the same tab, "_parent" for the parent frame, or "_top" for the full body of the window.', 'TEXT', FALSE, TRUE),
+     ('footer_link', 'An URL to which the user should be taken when they click on the footer.', 'URL', FALSE, TRUE),
+     ('style', 'Inline style property to your iframe embed code. For example "background-color: #FFFFFF"', 'TEXT', FALSE, TRUE),
+     ('height', 'Height of the iframe embed code, in pixels. Used only when embed_mode is ''iframe''.', 'INTEGER', FALSE, TRUE),
 ```
 
-**File**: `src/templates.rs` (modified, +23/-0)
+**File**: `sqlpage/templates/card.handlebars` (modified, +1/-1)
 ```diff
-@@ -44,6 +44,10 @@ pub fn split_template(mut original: Template) -> SplitTemplate {
-     after_list.name = Some(format!("{original_name} after each block"));
-     after_list.elements = elements_after;
-     after_list.mapping = mapping_after;
-+    // Each part renders in a fresh render context, which is where handlebars
-+    // registers inline partials, so every part has to define them again.
-+    prepend_inline_partials(&before_list, &mut list_content);
-+    prepend_inline_partials(&before_list, &mut after_list);
-     SplitTemplate {
-         before_list,
-         list_content,
-@@ -64,6 +68,25 @@ impl AsyncFromStrWithState for SplitTemplate {
-     }
- }
- 
-+fn prepend_inline_partials(defining: &Template, using: &mut Template) {
-+    let (elements, mapping): (Vec<_>, Vec<_>) = defining
-+        .elements
-+        .iter()
-+        .zip(&defining.mapping)
-+        .filter(|(element, _)| is_inline_partial(element))
-+        .map(|(element, position)| (element.clone(), position.clone()))
-+        .unzip();
-+    using.elements.splice(0..0, elements);
-+    using.mapping.splice(0..0, mapping);
-+}
+@@ -35,7 +35,7 @@
+                 "
+                 {{#if (and embed (ne embed_mode "iframe"))}}data-pre-init="card" data-embed="{{embed}}"{{/if}}>
+                 {{#if link}}
+-                    <a href="{{link}}" style="text-decoration: inherit; color: inherit">
++                    <a href="{{link}}"{{#if target}} target="{{target}}"{{/if}} style="text-decoration: inherit; color: inherit">
+                 {{/if}}
+                 {{#if top_image}}
+                     <img src="{{top_image}}" class="card-img-top"{{#if top_image_width}} width="{{top_image_width}}"{{/if}}{{#if top_image_height}} height="{{top_image_height}}"{{/if}}{{#if top_image_lazy}} loading="lazy"{{/if}}/>
+```
+
+**File**: `tests/end-to-end/fixtures/card/target/index.sql` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++SELECT 'card' AS component;
++SELECT 'In a new tab' AS title, 'https://example.com' AS link, '_blank' AS target;
++SELECT 'In the same tab' AS title, 'https://example.com' AS link;
+```
+
+**File**: `tests/end-to-end/fixtures/card/target/test.ts` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++import { expect, test } from "../../../fixture.ts";
 +
-+fn is_inline_partial(element: &TemplateElement) -> bool {
-+    use handlebars::template::Parameter::Name;
-+    matches!(element,
-+                    TemplateElement::DecoratorBlock(decorator)
-+                        if matches!(&decorator.name, Name(name) if name == "inline"))
-+}
-+
- fn is_template_list_item(element: &TemplateElement) -> bool {
-     use Parameter::Name;
-     use handlebars::template::Parameter;
++test("a card's link opens where its target says", async ({ page }) => {
++  await expect(
++    page.getByRole("link", { name: "In a new tab" }),
++  ).toHaveAttribute("target", "_blank");
++  await expect(
++    page.getByRole("link", { name: "In the same tab" }),
++  ).not.toHaveAttribute("target");
++});
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1586** (2026-10-31): feat(card) :: let a card's link open a new tab (@81reap)
 - **PR #1584** (2026-10-30): fix(frontend) :: drop source map comments from joined sylesheet (@81reap)
 - **PR #1583** (2026-10-30): fix(tab) :: underline only the active tab (@81reap)
 - **PR #1582** (2026-10-30): fix(hero) :: show image first on small screens when `reversed` (@81reap)
 - **PR #1581** (2026-10-30): build(deps): bump rustls from 0.23.45 to 0.23.46 in /fuzz (@dependabot[bot])
 - **PR #1580** (2026-10-30): fix(templates) :: let `each_row` call inline partials (@81reap)
-- **PR #1579** (2026-10-30): fix(table) :: show striped rows in dark mode (@81reap)
 
 ---
 
@@ -1460,13 +1257,13 @@ Assisted By :: Claude Opus 5.5
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. table) :: show striped rows in dark mode (#1579)
+## X. card) :: let a card's link open a new tab (#1586)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2d45bd4d`: table) :: show striped rows in dark mode (#1579). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `321ad215`: card) :: let a card's link open a new tab (#1586). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1474,7 +1271,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Striped table rows are visible in dark mode again. Tabler was updated to [v1.7.3](https://github.com/tabler/tabler/releases/tag/%40tabler%2Fcore%401.7.3) to fix this. ([#957](https://github.com/sqlpage/SQLPage/issues/957))
+- Each card of the card component accepts a `target`, such as `_blank` to open its link in a new tab. ([#820](https://github.com/sqlpage/SQLPage/issues/820))
 
 ```
 
@@ -1485,4 +1282,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2d45bd4d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `321ad215` are properly handled with clean fallback behavior.

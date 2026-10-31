@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "5fdfe09e",
+    "sourceVersion": "e7b53052",
     "license": "Apache-2.0",
-    "contentHash": "e5a68e3168583c917cb634c5da9dd4daa8f76360a15bbbc26006d7e8353c0fff",
-    "lastHarvestedAt": "2026-10-31T15:29:56.746Z",
+    "contentHash": "ac9a423851f4628ba3037de2de5f72740437860872becd3f7900db2388321ccb",
+    "lastHarvestedAt": "2026-10-31T16:39:50.051Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -4723,10 +4723,10 @@
     "repository": "sqlpage/SQLPage",
     "platform": "github",
     "sourceUrl": "https://github.com/sqlpage/SQLPage",
-    "sourceVersion": "2d45bd4d",
+    "sourceVersion": "321ad215",
     "license": "MIT",
-    "contentHash": "9f577e887a0dcb88b76acd68591fcb83cb285da8c6f8553c1610789767d28034",
-    "lastHarvestedAt": "2026-10-31T00:20:40.865Z",
+    "contentHash": "8e2ed796779bd5e8d6f97c7e29e095cc395120f5ffbdfddf105f53c2de7ecb4e",
+    "lastHarvestedAt": "2026-10-31T16:39:50.266Z",
     "learningId": "learn-github-sqlpage-sqlpage"
   },
   "douyinfe-semi-design": {
@@ -7703,10 +7703,10 @@
     "repository": "oven-sh/bun",
     "platform": "github",
     "sourceUrl": "https://github.com/oven-sh/bun",
-    "sourceVersion": "f7607a3d",
+    "sourceVersion": "34cbc70f",
     "license": "NOASSERTION",
-    "contentHash": "a9c1b0fb2b0937446af449d8fa0a8e7168ded809e47b4c55e16d2e5856dfa9eb",
-    "lastHarvestedAt": "2026-10-30T20:49:21.092Z",
+    "contentHash": "b644955beab173561023e80370047467c0bf46f267ae6801871651b65ad9485c",
+    "lastHarvestedAt": "2026-10-31T16:39:39.739Z",
     "learningId": "learn-github-oven-sh-bun"
   },
   "codeeditapp-codeedit": {
@@ -11415,8 +11415,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-OCR-1.0",
     "sourceVersion": "hf-openbmb-minicpm-ocr-1.0",
     "license": "Open-Source",
-    "contentHash": "74e0b70fe85623c2bb9d54f67644bc2969faad3f1102825226a089b087d9b705",
-    "lastHarvestedAt": "2026-10-28T15:43:14.396Z",
+    "contentHash": "5e4f3b536abf755bba4d12c62fa4355280cd4bbd6d1a709d664c9af934b62790",
+    "lastHarvestedAt": "2026-10-31T16:39:38.590Z",
     "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0"
   },
   "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b": {

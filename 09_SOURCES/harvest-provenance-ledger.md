@@ -6645,3 +6645,7 @@ Every entry in this ledger must capture:
 | `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `3f2d26fa` | Multi-dimensional audit evidence | 2026-10-31T16:27:15.172Z |
 | `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `6163eb14` | Multi-dimensional audit evidence | 2026-10-31T16:27:22.396Z |
 | `learn-huggingface-fermionresearch-phonon-2` | `https://huggingface.co/FermionResearch/Phonon-2` | `hf-fermion` | Multi-dimensional audit evidence | 2026-10-31T16:32:25.178Z |
+| `learn-huggingface-openbmb-minicpm-ocr-1-0` | `https://huggingface.co/openbmb/MiniCPM-OCR-1.0` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-31T16:39:38.590Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `34cbc70f` | Multi-dimensional audit evidence | 2026-10-31T16:39:39.739Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `e7b53052` | Multi-dimensional audit evidence | 2026-10-31T16:39:50.051Z |
+| `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `321ad215` | Multi-dimensional audit evidence | 2026-10-31T16:39:50.266Z |

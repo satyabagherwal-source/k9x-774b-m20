@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T14:08:14.806Z",
+  "last_updated": "2026-10-31T16:39:50.058Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3522,6 +3522,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-apollographql-apollo-kotlin"
+    },
+    {
+      "id": "CD-MOMH",
+      "directive_title": "NUC 66 Imperative Value Assignment",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "e7b53052",
+      "date_staged": "2026-10-31",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
     }
   ]
 }

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T16:32:25.182Z",
-  "total_cycles_completed": 6613,
-  "total_learnings_persisted": 6613,
-  "total_rules_promoted": 6247,
+  "last_updated": "2026-10-31T16:39:50.272Z",
+  "total_cycles_completed": 6617,
+  "total_learnings_persisted": 6617,
+  "total_rules_promoted": 6251,
   "history": [
-    {
-      "timestamp": "2026-10-31T03:02:36.147Z",
-      "repository": "ClementTsang/bottom",
-      "learningId": "learn-github-clementtsang-bottom",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T03:02:45.073Z",
-      "repository": "ornith-ai/Ornith-1.5-122B",
-      "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T03:02:48.471Z",
-      "repository": "StarTrail-org/LEANN",
-      "learningId": "learn-github-startrail-org-leann",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T03:12:35.870Z",
-      "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
-      "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T03:19:21.912Z",
       "repository": "HuggingFaceBio/Carbon-X",
@@ -1403,6 +1375,34 @@
       "repository": "FermionResearch/Phonon-2",
       "learningId": "learn-huggingface-fermionresearch-phonon-2",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:39:38.596Z",
+      "repository": "openbmb/MiniCPM-OCR-1.0",
+      "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:39:39.745Z",
+      "repository": "oven-sh/bun",
+      "learningId": "learn-github-oven-sh-bun",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:39:50.060Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:39:50.272Z",
+      "repository": "sqlpage/SQLPage",
+      "learningId": "learn-github-sqlpage-sqlpage",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

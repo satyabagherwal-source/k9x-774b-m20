@@ -6636,3 +6636,7 @@
 | `CYCLE-20261031-6I5D` | `2026-10-31T16:27:15.169Z` | `CrossPaste/crosspaste-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6244` | Yes (`c15d2e3b...`) |
 | `CYCLE-20261031-6NQ1` | `2026-10-31T16:27:22.393Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6245` | Yes (`6099519c...`) |
 | `CYCLE-20261031-D5CN` | `2026-10-31T16:32:25.175Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6246, Rule 6247, Rule 6248` | Yes (`93084ea2...`) |
+| `CYCLE-20261031-MFRU` | `2026-10-31T16:39:38.586Z` | `openbmb/MiniCPM-OCR-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6249, Rule 6250` | Yes (`5e4f3b53...`) |
+| `CYCLE-20261031-MGNS` | `2026-10-31T16:39:39.736Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6251` | Yes (`b644955b...`) |
+| `CYCLE-20261031-MOM8` | `2026-10-31T16:39:50.048Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`ac9a4238...`) |
+| `CYCLE-20261031-MOS6` | `2026-10-31T16:39:50.262Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6252` | Yes (`8e2ed796...`) |

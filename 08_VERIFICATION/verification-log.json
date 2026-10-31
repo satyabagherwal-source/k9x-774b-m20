@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-MZJE",
-    "timestamp": "2026-10-30T06:36:32.235Z",
-    "repository": "envoyproxy/envoy",
-    "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "173f90f732d266dd50b088ac79e84454a5e7fdc946229a26edc007927251cb2f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-N16L",
-    "timestamp": "2026-10-30T06:36:34.365Z",
-    "repository": "StarTrail-org/LEANN",
-    "learningId": "learn-github-startrail-org-leann",
-    "contentHash": "51221a6a7eaaeb776534b0ae2060a5f8ab604039714a838a9ed1f6b20418a3a9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-VLO1",
-    "timestamp": "2026-10-30T06:43:14.161Z",
-    "repository": "grpc/grpc-rust",
-    "learningId": "learn-github-grpc-grpc-rust",
-    "contentHash": "87fa322a40d3cec3864a6a5df5b46d58429c4e5da0be79ec49296473652b736c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-VOWK",
-    "timestamp": "2026-10-30T06:43:18.356Z",
-    "repository": "chrisbanes/skills",
-    "learningId": "learn-github-chrisbanes-skills",
-    "contentHash": "a3db5c8fa7ad3a09694f1f95dfbc85c4d6fece4a0f472851ccd13a1841303f87",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-VS7B",
     "timestamp": "2026-10-30T06:43:22.631Z",
     "repository": "k3s-io/k3s",
@@ -7492,6 +7432,66 @@
     "contentHash": "93084ea2209b7eb5f8d6302503a7ff2986a0dfd0d3736188004bbb195679d611",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-MFRU",
+    "timestamp": "2026-10-31T16:39:38.586Z",
+    "repository": "openbmb/MiniCPM-OCR-1.0",
+    "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
+    "contentHash": "5e4f3b536abf755bba4d12c62fa4355280cd4bbd6d1a709d664c9af934b62790",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-MGNS",
+    "timestamp": "2026-10-31T16:39:39.736Z",
+    "repository": "oven-sh/bun",
+    "learningId": "learn-github-oven-sh-bun",
+    "contentHash": "b644955beab173561023e80370047467c0bf46f267ae6801871651b65ad9485c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-MOM8",
+    "timestamp": "2026-10-31T16:39:50.048Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "ac9a423851f4628ba3037de2de5f72740437860872becd3f7900db2388321ccb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-MOS6",
+    "timestamp": "2026-10-31T16:39:50.262Z",
+    "repository": "sqlpage/SQLPage",
+    "learningId": "learn-github-sqlpage-sqlpage",
+    "contentHash": "8e2ed796779bd5e8d6f97c7e29e095cc395120f5ffbdfddf105f53c2de7ecb4e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
