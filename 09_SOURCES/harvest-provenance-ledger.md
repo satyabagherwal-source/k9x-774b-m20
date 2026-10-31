@@ -6652,3 +6652,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw` | `https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | `hf-infatos` | Multi-dimensional audit evidence | 2026-10-31T16:50:25.604Z |
 | `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `564a2074` | Multi-dimensional audit evidence | 2026-10-31T16:50:26.530Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `299269af` | Multi-dimensional audit evidence | 2026-10-31T16:50:40.225Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `c8c0e7a2` | Multi-dimensional audit evidence | 2026-10-31T16:57:11.318Z |
+| `learn-huggingface-pablodawson-minimax-h3-360-orbit-lora` | `https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA` | `hf-pabloda` | Multi-dimensional audit evidence | 2026-10-31T16:57:19.342Z |

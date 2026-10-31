@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T16:50:40.142Z",
+  "last_updated": "2026-10-31T16:57:19.271Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -27438,7 +27438,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "adbd11d3a7f2766b779648e849740d2a8e8a5ea407aa9fba6799f23fe76157eb",
+      "content_hash": "d1ab6a83a62cdab8f4ac358c082503a69bf7853b2c5330ff5acb223ec049a48e",
       "dossier_path": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "promoted_rules": [
@@ -27531,6 +27531,16 @@
           "number": 5333,
           "title": "Motion Isolation via Semantic Negative Constraints",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6256,
+          "title": "The Temporal Loop Closure Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6257,
+          "title": "The Frozen-Time Semantic Constraint Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -27550,7 +27560,7 @@
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv3xukgu",
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4ckgca"
       ],
-      "verified_at": "2026-10-28T15:50:40.170Z",
+      "verified_at": "2026-10-31T16:57:19.254Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46189,8 +46199,8 @@
       "slug": "pola-rs-polars",
       "platform": "github",
       "source_url": "https://github.com/pola-rs/polars",
-      "source_version": "ee5f3e7b",
-      "content_hash": "f648c2a9c4d820451af43bc75f61667ef0a2e8ea4498dcdb95d8987fed81bfd8",
+      "source_version": "c8c0e7a2",
+      "content_hash": "cec490885cf8631f35510160cc25f6fe94235dc316c815fbf6dd2acd0e33aabf",
       "dossier_path": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "promoted_rules": [
@@ -46248,6 +46258,11 @@
           "number": 5877,
           "title": "Fix segfaults and leaked references with Object values in group contexts (#30458",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6255,
+          "title": "Raise an error instead of panicking for SQL decimal types with an invalid precis",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46255,7 +46270,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T21:06:26.105Z",
+      "verified_at": "2026-10-31T16:57:11.231Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -163157,6 +163172,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T16:50:40.122Z"
+    },
+    "rule-6255": {
+      "learning_id": "rule-6255",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6255,
+      "title": "Raise an error instead of panicking for SQL decimal types with an invalid precis",
+      "source_url": "https://github.com/pola-rs/polars",
+      "source_version": "c8c0e7a2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T16:57:11.231Z"
+    },
+    "rule-6256": {
+      "learning_id": "rule-6256",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6256,
+      "title": "The Temporal Loop Closure Invariant",
+      "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T16:57:19.254Z"
+    },
+    "rule-6257": {
+      "learning_id": "rule-6257",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6257,
+      "title": "The Frozen-Time Semantic Constraint Rule",
+      "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T16:57:19.254Z"
     }
   },
   "aliases": {

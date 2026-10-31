@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T16:50:40.231Z",
-  "total_cycles_completed": 6620,
-  "total_learnings_persisted": 6620,
-  "total_rules_promoted": 6253,
+  "last_updated": "2026-10-31T16:57:19.346Z",
+  "total_cycles_completed": 6622,
+  "total_learnings_persisted": 6622,
+  "total_rules_promoted": 6256,
   "history": [
-    {
-      "timestamp": "2026-10-31T03:26:12.306Z",
-      "repository": "projectcontour/contour",
-      "learningId": "learn-github-projectcontour-contour",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T03:26:17.380Z",
-      "repository": "vespa-engine/vespa",
-      "learningId": "learn-github-vespa-engine-vespa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T03:34:13.933Z",
       "repository": "kube-rs/kube",
@@ -1403,6 +1389,20 @@
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:57:11.323Z",
+      "repository": "pola-rs/polars",
+      "learningId": "learn-github-pola-rs-polars",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:57:19.346Z",
+      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

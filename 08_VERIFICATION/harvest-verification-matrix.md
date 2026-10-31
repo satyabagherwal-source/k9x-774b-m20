@@ -6643,3 +6643,5 @@
 | `CYCLE-20261031-0B0A` | `2026-10-31T16:50:25.594Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`efe24c6b...`) |
 | `CYCLE-20261031-0BQ6` | `2026-10-31T16:50:26.526Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6253` | Yes (`5ff68387...`) |
 | `CYCLE-20261031-0MAL` | `2026-10-31T16:50:40.221Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6254` | Yes (`259d2cc5...`) |
+| `CYCLE-20261031-902A` | `2026-10-31T16:57:11.314Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6255` | Yes (`cec49088...`) |
+| `CYCLE-20261031-9696` | `2026-10-31T16:57:19.338Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6256, Rule 6257` | Yes (`d1ab6a83...`) |

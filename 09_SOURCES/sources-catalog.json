@@ -1065,8 +1065,8 @@
     "sourceUrl": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
     "sourceVersion": "hf-pablodawson-minimax-h3-360-orbit-lora",
     "license": "Open-Source",
-    "contentHash": "adbd11d3a7f2766b779648e849740d2a8e8a5ea407aa9fba6799f23fe76157eb",
-    "lastHarvestedAt": "2026-10-28T15:50:40.275Z",
+    "contentHash": "d1ab6a83a62cdab8f4ac358c082503a69bf7853b2c5330ff5acb223ec049a48e",
+    "lastHarvestedAt": "2026-10-31T16:57:19.342Z",
     "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora"
   },
   "hf-venastine-research-xing4.0-29b-a4b-gguf": {
@@ -7743,10 +7743,10 @@
     "repository": "pola-rs/polars",
     "platform": "github",
     "sourceUrl": "https://github.com/pola-rs/polars",
-    "sourceVersion": "ee5f3e7b",
+    "sourceVersion": "c8c0e7a2",
     "license": "MIT",
-    "contentHash": "f648c2a9c4d820451af43bc75f61667ef0a2e8ea4498dcdb95d8987fed81bfd8",
-    "lastHarvestedAt": "2026-10-30T21:06:26.205Z",
+    "contentHash": "cec490885cf8631f35510160cc25f6fe94235dc316c815fbf6dd2acd0e33aabf",
+    "lastHarvestedAt": "2026-10-31T16:57:11.318Z",
     "learningId": "learn-github-pola-rs-polars"
   },
   "mrkai77-loop": {

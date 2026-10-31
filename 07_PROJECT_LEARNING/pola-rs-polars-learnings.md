@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source**: github ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
-> **Source Version**: `ee5f3e7b`  
+> **Source Version**: `c8c0e7a2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T21:06:25.517Z  
+> **Timestamp**: 2026-10-31T16:57:10.724Z  
 > **Learning ID**: `learn-github-pola-rs-polars`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T21:06:16.509Z  
+> **Harvest Timestamp**: 2026-10-31T16:57:10.421Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Extremely fast Query Engine for DataFrames, written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40236 stars
+- **Stars / Engagement**: 40239 stars
 
 ---
 
@@ -1692,574 +1692,252 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3e90bfa0` (2026-10-30)
-**Commit Message**: fix: Fix segfaults and leaked references with Object values in group contexts (#30458)
+### Incident Patch 1: `c8c0e7a2` (2026-10-31)
+**Commit Message**: fix: Raise an error instead of panicking for SQL decimal types with an invalid precision or scale (#30450)
 
-**File**: `crates/polars-core/src/chunked_array/list/iterator.rs` (modified, +20/-1)
+**File**: `crates/polars-sql/src/types.rs` (modified, +15/-4)
 ```diff
-@@ -14,7 +14,7 @@ pub struct AmortizedListIter<'a, I: Iterator<Item = Option<ArrayBox>>> {
-     inner: NonNull<ArrayRef>,
-     lifetime: PhantomData<&'a ArrayRef>,
-     iter: I,
--    // used only if feature="dtype-struct"
-+    // used only if feature="dtype-struct" or feature="object"
-     #[allow(dead_code)]
-     inner_dtype: DataType,
- }
-@@ -64,6 +64,25 @@ impl<I: Iterator<Item = Option<ArrayBox>>> Iterator for AmortizedListIter<'_, I>
-                         return AmortSeries::new(self.series_container.clone());
-                     }
-                 }
-+                #[cfg(feature = "object")]
-+                // lists hold object values in an extension array, which only converts to the
-+                // series' object array through `from_chunks_and_dtype_unchecked`; as for structs,
-+                // `self.inner` is not used once the container is replaced
-+                if matches!(self.inner_dtype, DataType::Object(_)) {
-+                    // SAFETY:
-+                    // dtype is known
-+                    unsafe {
-+                        let s = Series::from_chunks_and_dtype_unchecked(
-+                            self.series_container.name().clone(),
-+                            vec![array_ref],
-+                            &self.inner_dtype,
-+                        );
-+                        let inner = Rc::make_mut(&mut self.series_container);
-+                        *inner = s;
-+
-+                        return AmortSeries::new(self.series_container.clone());
-+                    }
-+                }
-                 // The series is cloned, we make a new container.
-                 if Arc::strong_count(&self.series_container.0) > 1
-                     || Rc::strong_count(&self.series_container) > 1
+@@ -190,10 +190,21 @@ pub(crate) fn map_sql_dtype_to_polars(dtype: &SQLDataType) -> PolarsResult<DataT
+         SQLDataType::Dec(info)
+         | SQLDataType::Decimal(info)
+         | SQLDataType::BigDecimal(info)
+-        | SQLDataType::Numeric(info) => match *info {
+-            ExactNumberInfo::PrecisionAndScale(p, s) => DataType::Decimal(p as usize, s as usize),
+-            ExactNumberInfo::Precision(p) => DataType::Decimal(p as usize, 0),
+-            ExactNumberInfo::None => DataType::Decimal(38, 9),
++        | SQLDataType::Numeric(info) => {
++            let (precision, scale) = match *info {
++                ExactNumberInfo::PrecisionAndScale(p, s) => (p, s),
++                ExactNumberInfo::Precision(p) => (p, 0),
++                ExactNumberInfo::None => (38, 9),
++            };
++            polars_ensure!(
++                (1..=38).contains(&precision),
++                SQLSyntax: "invalid DECIMAL precision (expected 1-38, found {})", precision
++            );
++            polars_ensure!(
++                (0..=precision as i64).contains(&scale),
++                SQLSyntax: "invalid DECIMAL scale (expected 0-{}, found {})", precision, scale
++            );
++            DataType::Decimal(precision as usize, scale as usize)
+         },
+ 
+         // ---------------------------------
 ```
 
-**File**: `crates/polars-core/src/chunked_array/object/extension/mod.rs` (modified, +13/-10)
+**File**: `py-polars/tests/unit/sql/test_numeric.py` (modified, +30/-0)
 ```diff
-@@ -84,22 +84,25 @@ pub(crate) fn create_extension<I: Iterator<Item = Option<T>> + TrustedLen, T: Si
-     for opt_t in iter.into_iter() {
-         match opt_t {
-             Some(t) => {
--                unsafe {
--                    buf.extend_from_slice(any_as_u8_slice(&t));
--                    // SAFETY: we allocated upfront
--                    validity.push_unchecked(true)
--                }
-+                unsafe { buf.extend_from_slice(any_as_u8_slice(&t)) };
-+                validity.push(true);
-                 mem::forget(t);
-             },
-             None => {
--                unsafe {
--                    buf.extend_from_slice(any_as_u8_slice(&T::default()));
--                    // SAFETY: we allocated upfront
--                    validity.push_unchecked(false)
--                }
-+                // The drop function frees this copy, so the original must not be dropped too.
-+                let t = T::default();
-+                unsafe { buf.extend_from_slice(any_as_u8_slice(&t)) };
-+                validity.push(false);
-+                mem::forget(t);
-             },
-         }
-     }
-+    // The drop function frees exactly `n_t_vals` values.
-+    assert_eq!(
-+        validity.len(),
-+        n_t_vals,
-+        "object iterator did not yield its declared length"
-+    );
- 
-     // We slice the buffer because we want to ignore the padding bytes from here
-     // they can be forgotten.
-```
-
-**File**: `crates/polars-core/src/frame/group_by/aggregations/agg_list.rs` (modified, +6/-4)
-```diff
-@@ -220,7 +220,8 @@ impl<T: PolarsObject> AggList for ObjectChunked<T> {
-         let mut length_so_far = 0i64;
-         offsets.push(length_so_far);
- 
--        //  we know that iterators length
-+        // The values of every group: `num_elements`, which differs from `self.len()` for groups
-+        // that skip or repeat values.
-         let iter = {
-             groups
-                 .iter()
-@@ -248,10 +249,11 @@ impl<T: PolarsObject> AggList for ObjectChunked<T> {
-                     // we know that offsets has allocated enough slots
-                     offsets.push_unchecked(length_so_far);
- 
--                    let arr = group_vals.downcast_iter().next().unwrap().clone();
--                    arr.into_iter_cloned()
-+                    // A slice can span several chunks.
-+                    let arrs = group_vals.downcast_iter().cloned().collect::<Vec<_>>();
-+                    arrs.into_iter().flat_map(|arr| arr.into_iter_cloned())
-                 })
--                .trust_my_length(self.len())
-+                .trust_my_length(groups.num_elements())
-         };
- 
-         let mut pe = create_extension(iter);
-```
-
-**File**: `py-polars/tests/unit/datatypes/test_object.py` (modified, +91/-0)
-```diff
-@@ -1,7 +1,9 @@
- from __future__ import annotations
- 
- import io
-+import sys
- from pathlib import Path
-+from typing import TYPE_CHECKING
- from uuid import uuid4
- 
- import numpy as np
-@@ -11,6 +13,9 @@
- from polars.exceptions import ComputeError
- from polars.testing import assert_series_equal
- 
-+if TYPE_CHECKING:
-+    from polars._typing import EngineType
-+
- 
- def test_series_init_instantiated_object() -> None:
-     s = pl.Series([object(), object()], dtype=pl.Object())
-@@ -309,3 +314,89 @@ def test_implode_object_raises() -> None:
- 
-     with pytest.raises(pl.exceptions.InvalidOperationError, match="nested objects"):
-         df.select(pl.col("obj").implode())
-+
-+
-+@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
-+def test_object_groups_skipping_values(engine: EngineType) -> None:
-+    # Groups that skip values gather only those, not as many as the column holds.
-+    lf = pl.LazyFrame(
-+        {
-+            "g": [0, 1, 0, 1, 0, 1],
-+            "x": [1, -2, 3, 4, -5, 6],
-+            "v": pl.Series(["a", "b", None, "d", "e", None], dtype=pl.Object),
-+        }
-+    )
-+    v, x = pl.col.v, pl.col.x
-+    out = (
-+        lf.group_by("g", maintain_order=True)
-+        .agg(filter=v.filter(x > 0).shift(1).last(), head=v.head(2).shift(1).last())
-+        .collect(engine=engine)
-+    )
-+    assert out["filter"].to_list() == ["a", "d"]
-+    assert out["head"].to_list() == ["a", "b"]
-+
-+    out = lf.select(v.filter(x > 0).shift(1).len().over("g")).collect(engine=engine)
-+    assert out["v"].to_list() == [2] * 6
-+
-+
-+@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
-+def test_object_group_slice_spanning_chunks(engine: EngineType) -> None:
-+    a = pl.DataFrame(
-+        {"g": [0, 0, 0], "v": pl.Series(["a", None, "c"], dtype=pl.Object)}
-+    )
-+    b = pl.DataFrame(
-+        {"g": [0, 1, 1], "v": pl.Series(["d", "e", None], dtype=pl.Object)}
-+    )
-+    df = pl.concat([a, b], rechunk=False).with_columns(pl.col.g.set_sorted())
-+    out = df.lazy().select(pl.col.v.shift(1).over("g")).collect(engine=engine)
-+    assert out["v"].to_list() == [None, "a", None, "c", None, "e"]
-+
-+
-+def test_object_overlapping_windows_references() -> None:
-+    # Windows repeat values: every gathered value must be released again.
-+    objs = [object() for _ in range(100)]
-+    before = [sys.getrefcount(o) for o in objs]
-+    df = pl.DataFrame({"t": range(100), "v": pl.Series(objs, dtype=pl.Object)})
-+    out = df.rolling("t", period="10i").agg(pl.col.v.gather([0]).first())
-+    assert out["v"].to_list() == [objs[max(0, i - 9)] for i in range(100)]
-+    del out, df
-+    after = [sys.getrefcount(o) for o in objs]
-+    assert after == before
-+
-+
-+@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
-+@pytest.mark.parametrize("sorted_keys", [False, True])
-+def test_object_gather_in_groups(engine: EngineType, sorted_keys: bool) -> None:
-+    # Each group's values reach `gather` as an object series, also after the first.
-+    g = [0, 0, 0, 1, 1, 1] if sorted_keys else [0, 1, 0, 1, 0, 1]
-+    df = pl.DataFrame(
-+        {"g": g, "v": pl.Series(["a", None, "c", "d", "e", "f"], dtype=pl.Object)}
-+    )
-+    if sorted_keys:
-+        df = df.with_columns(pl.col.g.set_sorted())
-+    v = pl.col.v.gather([1, 0])
-+    out = (
-+        df.lazy()
-+        .group_by("g", maintain_order=True)
-+        .agg(first=v.first(), last=v.last())
-+        .collect(engine=engine)
-+    )
-+    if sorted_keys:
-+        assert out["first"].to_list() == [None, "e"]
-+        assert out["last"].to_list() == ["a", "d"]
-+    else:
-+        assert out["first"].to_list() == ["c", "d"]
-+        assert out["last"].to_list() == ["a", None]
-+
-+
-+def test_object_null_slots_release_none_once() -> None:
-+    # Each null slot of an object list is released once; visible before Python 3.12,
-+    # where `None` is not immortal and a double release takes references from it.
-+    df = pl.DataFrame(
-+        {"g": [0, 1] * 500, "v": pl.Series([None] * 1000, dtype=pl.Object)}
-+    )
-+    before = sys.getrefcount(None)
-+    out = df.lazy().select(pl.col.v.shift(1).over("g")).collect()
-+    del out
-+    after = sys.getrefcount(None)
-+    assert after - before > -100
-```
-
----
-
-### Incident Patch 2: `22c1bb73` (2026-10-30)
-**Commit Message**: fix: Clear the sorted flag of aggregated literals with empty groups (#30461)
-
-**File**: `crates/polars-core/src/frame/column/mod.rs` (modified, +8/-1)
-```diff
-@@ -18,6 +18,8 @@ use self::series::SeriesColumn;
- use crate::chunked_array::cast::CastOptions;
- use crate::chunked_array::flags::StatisticsFlags;
- use crate::datatypes::ReshapeDimension;
-+#[cfg(feature = "algorithm_group_by")]
-+use crate::frame::group_by::aggregations::nulls_at_one_end;
- use crate::prelude::*;
- use crate::series::{BitRepr, IsSorted};
- use crate::utils::Container;
-@@ -790,7 +792,12 @@ impl Column {
- 
-                 // Use dtype-aware validity updates so Struct fields see the nulls.
-                 let s = scalar_col.take_materialized_series().rechunk();
--                s.with_validity(validity.into_opt_validity()).into_column()
-+                let mut out = s.with_validity(validity.into_opt_validity());
-+                // The values are equal, so the result is sorted only if its nulls are at one end.
-+                if !nulls_at_one_end(&out) {
-+                    out.set_sorted_flag(IsSorted::Not);
-+                }
-+                out.into_column()
-             },
-         }
-     }
-```
-
-**File**: `crates/polars-core/src/frame/group_by/aggregations/dispatch.rs` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@ use crate::prelude::row_encode::encode_rows_unordered;
- const N_UNIQUE_SORT_FALLBACK_THRESHOLD: usize = 16384;
- 
- /// Whether the nulls of `s`, if any, are all at its start or all at its end.
--fn nulls_at_one_end(s: &Series) -> bool {
-+pub(crate) fn nulls_at_one_end(s: &Series) -> bool {
-     let null_count = s.null_count();
-     if null_count == 0 {
-         return true;
-```
-
-**File**: `crates/polars-core/src/frame/group_by/aggregations/mod.rs` (modified, +1/-0)
-```diff
-@@ -8,6 +8,7 @@ mod string;
- use std::borrow::Cow;
- 
- pub use agg_list::*;
-+pub(crate) use dispatch::nulls_at_one_end;
- use num_traits::pow::Pow;
- use num_traits::{Bounded, Float, Num, NumCast, ToPrimitive, Zero};
- use polars_arrow::bitmap::{Bitmap, MutableBitmap};
-```
-
-**File**: `py-polars/tests/unit/operations/test_group_by.py` (modified, +48/-0)
-```diff
-@@ -3770,3 +3770,51 @@ def s(e: pl.Expr) -> pl.Expr:
-         .agg(pl.col(list(exprs(over=True))))
-     )
-     assert_frame_equal(out.collect(engine=engine), expected.collect(engine=engine))
-+
-+
-+@pytest.mark.parametrize(
-+    "agg",
-+    [
-+        Expr.first,
-+        Expr.last,
-+        lambda e: e.first(ignore_nulls=True),
-+        lambda e: e.last(ignore_nulls=True),
-+        Expr.min,
-+        Expr.max,
-+        Expr.mean,
-+        Expr.median,
-+        Expr.bitwise_and,
-+        Expr.bitwise_or,
-+    ],
-+)
-+@pytest.mark.parametrize(
-+    ("keep", "is_sorted"),
-+    [
-+        ([True, False, True, False], False),
-+        ([False, True, True, False], False),
-+        ([True, True, False, False], True),
-+        ([False, False, True, True], True),
-+    ],
-+)
-+def test_group_by_literal_agg_empty_groups_sorted_flag_30326(
-+    agg: Callable[[Expr], Expr], keep: list[bool], is_sorted: bool
-+) -> None:
-+    df = pl.DataFrame({"g": [1, 2, 3, 4], "keep": keep}).with_columns(v=pl.lit(5))
-+    v = df.group_by("g", maintain_order=True).agg(agg(pl.col("v").filter("keep")))["v"]
-+
-+    assert v.to_list() == [5 if k else None for k in keep]
-+    assert v.flags["SORTED_ASC"] == is_sorted
-+    assert v.max() == 5
-+    assert v.n_unique() == 2
-+    assert v.unique().sort().to_list() == [None, 5]
-+
-+
-+def test_group_by_literal_agg_empty_groups_categorical_30326() -> None:
-+    df = pl.DataFrame({"g": [1, 2, 3, 4], "keep": [True, False, True, False]})
-+    df = df.with_columns(v=pl.lit("x", dtype=pl.Categorical))
-+    out = df.group_by("g", maintain_order=True).agg(pl.col("v").filter("keep").first())
-+    v = out["v"]
-+
-+    # The sorted flag sits on the physical, which `flags` does not show.
-+    assert v.n_unique() == 2
-+    assert v.unique().len() == 2
-```
-
----
-
-### Incident Patch 3: `0260c775` (2026-10-30)
-**Commit Message**: fix(python): Correct `scalar // Series` and `DataFrame` floordiv (#30452)
-
-**File**: `crates/polars-core/src/frame/arithmetic.rs` (modified, +2/-1)
-```diff
-@@ -107,7 +107,8 @@ impl Rem<&Series> for DataFrame {
- }
- 
- impl DataFrame {
--    fn binary_aligned(
-+    /// Applies `f` to positionally aligned column pairs, cast to their supertype.
-+    pub fn binary_aligned(
-         &self,
-         other: &DataFrame,
-         f: &(dyn Fn(&Series, &Series) -> PolarsResult<Series> + Sync + Send),
-```
-
-**File**: `crates/polars-python/src/dataframe/general.rs` (modified, +8/-0)
-```diff
-@@ -87,6 +87,14 @@ impl PyDataFrame {
-         py.enter_polars_df(|| &*self.df.read() / &*s.df.read())
-     }
- 
-+    pub fn floordiv_df(&self, py: Python<'_>, s: &Self) -> PyResult<Self> {
-+        py.enter_polars_df(|| {
-+            self.df
-+                .read()
-+                .binary_aligned(&s.df.read(), &polars_ops::prelude::floor_div_series)
-+        })
-+    }
-+
-     pub fn rem_df(&self, py: Python<'_>, s: &Self) -> PyResult<Self> {
-         py.enter_polars_df(|| &*self.df.read() % &*s.df.read())
-     }
-```
-
-**File**: `py-polars/src/polars/_plr.pyi` (modified, +1/-0)
-```diff
-@@ -598,6 +598,7 @@ class PyDataFrame:
-     def sub_df(self, s: PyDataFrame) -> PyDataFrame: ...
-     def mul_df(self, s: PyDataFrame) -> PyDataFrame: ...
-     def div_df(self, s: PyDataFrame) -> PyDataFrame: ...
-+    def floordiv_df(self, s: PyDataFrame) -> PyDataFrame: ...
-     def rem_df(self, s: PyDataFrame) -> PyDataFrame: ...
-     def sample_n(
-         self,
-```
-
-**File**: `py-polars/src/polars/dataframe/frame.py` (modified, +13/-20)
-```diff
-@@ -1132,26 +1132,19 @@ def _div(self, other: Any, *, floordiv: bool) -> DataFrame:
-             s = _prepare_other_arg(other, length=self.height)
-             other = DataFrame([s.alias(f"n{i}") for i in range(self.width)])
- 
--        orig_dtypes = other.dtypes
--        # TODO: Dispatch to a native floordiv
--        other = self._cast_all_from_to(other, INTEGER_DTYPES, Float64)
--        df = self._from_pydf(self._df.div_df(other._df))
--
--        df = (
--            df
--            if not floordiv
--            else df.with_columns([s.floor() for s in df if s.dtype.is_float()])
--        )
--        if floordiv:
--            int_casts = [
--                col(column).cast(tp)
--                for i, (column, tp) in enumerate(self.schema.items())
--                if tp.is_integer()
--                and (orig_dtypes[i].is_integer() or orig_dtypes[i] == Null)
--            ]
--            if int_casts:
--                return df.with_columns(int_casts)
--        return df
-+        if not floordiv:
-+            other = self._cast_all_from_to(other, INTEGER_DTYPES, Float64)
-+            return self._from_pydf(self._df.div_df(other._df))
-+
-+        df = self._from_pydf(self._df.floordiv_df(other._df))
-+        int_casts = [
-+            col(column).cast(tp)
-+            for (column, tp), other_tp in zip(
-+                self.schema.items(), other.dtypes, strict=False
-+            )
-+            if tp.is_integer() and (other_tp.is_integer() or other_tp == Null)
-+        ]
-+        return df.with_columns(int_casts) if int_casts else df
- 
-     def _cast_all_from_to(
-         self, df: DataFrame, from_: frozenset[PolarsDataType], to: PolarsDataType
-```
-
-**File**: `py-polars/src/polars/series/series.py` (modified, +8/-2)
-```diff
-@@ -1264,13 +1264,19 @@ def __rtruediv__(self, other: Any) -> Series:
-             other = float(other)
-         if self.dtype != String:
-             self = self.cast(Float64)
--        return self.__rfloordiv__(other)
-+        return self._arithmetic(other, "div", "div_<>_rhs")
- 
-     def __rfloordiv__(self, other: Any) -> Series:
-         if self.dtype.is_temporal():
-             msg = "first cast to integer before dividing datelike dtypes"
-             raise TypeError(msg)
--        return self._arithmetic(other, "div", "div_<>_rhs")
-+        if isinstance(other, Series):
-+            return other // self
-+        return (
-+            self.to_frame()
-+            .select_seq((F.lit(other) // F.col(self.name)).alias(self.name))
-+            .to_series()
-+        )
- 
-     def __rmul__(self, other: Any) -> Series:
-         if self.dtype.is_temporal() and not isinstance(self.dtype, Duration):
-```
-
-**File**: `py-polars/tests/unit/operations/arithmetic/test_arithmetic.py` (modified, +57/-1)
-```diff
-@@ -1,11 +1,13 @@
- from __future__ import annotations
- 
-+import math
- import operator
- import re
- from collections import OrderedDict
- from datetime import date, datetime, timedelta
- from decimal import Decimal
- from decimal import Decimal as PyDecimal
-+from fractions import Fraction
- from typing import TYPE_CHECKING, Any
- 
- import numpy as np
-@@ -244,6 +246,30 @@ def test_floor_division_float_int_consistency() -> None:
-     )
+@@ -115,6 +115,36 @@ def test_numeric_decimal_type(
+     assert_frame_equal(result, expected)
  
  
 +@pytest.mark.parametrize(
-+    ("lhs", "values", "dtype"),
++    ("sqltype", "error"),
 +    [
-+        (-7, [2, -2, 3, -3], pl.Int64),
-+        (7, [2, -2, 3, -3], pl.Int8),
-+        (-7, [2, -2, 3, -3], pl.Int128),
-+        (-7, [2, 3], pl.UInt8),
-+        (-7.5, [2.0, -2.0, 0.5, -4.0], pl.Float64),
-+        (7, [2.0, -2.0], pl.Float32),
-+        (PyDecimal("-7.25"), [PyDecimal("2"), PyDecimal("-0.5")], pl.Decimal(10, 2)),
++        ("DECIMAL(2, 3)", r"invalid DECIMAL scale \(expected 0-2, found 3\)"),
++        ("NUMERIC(10, 2147483648)", r"invalid DECIMAL scale \(expected 0-10"),
++        ("DECIMAL(39, 2)", r"invalid DECIMAL precision \(expected 1-38, found 39\)"),
++        ("DECIMAL(0)", r"invalid DECIMAL precision \(expected 1-38, found 0\)"),
++        ("DECIMAL(10, -1)", r"invalid DECIMAL scale \(expected 0-10, found -1\)"),
++        ("DEC(5, 6)", r"invalid DECIMAL scale \(expected 0-5, found 6\)"),
++        ("DECIMAL(2, 3)[]", r"invalid DECIMAL scale \(expected 0-2, found 3\)"),
 +    ],
 +)
-+def test_series_rfloordiv(lhs: Any, values: list[Any], dtype: PolarsDataType) -> None:
-+    s = pl.Series("s", values, dtype=dtype)
-+    out = lhs // s
-+    assert out.name == "s"
-+    assert out.dtype == s.to_frame().select(lhs // pl.col("s")).to_series().dtype
-+    expected = [math.floor(Fraction(lhs) / Fraction(v)) for v in values]
-+    assert [Fraction(v) for v in out.to_list()] == expected
++def test_numeric_decimal_type_invalid(sqltype: str, error: str) -> None:
++    # an error, not a panic in the cast
++    for query in (
++        f"SELECT CAST(1 AS {sqltype})",
++        f"SELECT TRY_CAST(1 AS {sqltype})",
++        f"SELECT 1::{sqltype}",
++    ):
++        with pytest.raises(SQLSyntaxError, match=error):
++            pl.sql(query, eager=True)
 +
-+    # true division is unaffected
-+    assert (lhs / s).to_list() == pytest.approx([float(lhs) / float(v) for v in values])
 +
-+
- def test_truncdiv_int() -> None:
-     lf = pl.LazyFrame(
-         {
-@@ -626,6 +652,32 @@ def test_df_series_division() -> None:
-     }
- 
- 
-+def test_df_floordiv() -> None:
-+    big = 2**62 + 1
-+    df = pl.DataFrame(
-+        {
-+            "i": [big, -big],
-+            "i8": [7, -7],
-+            "f": [7.5, -7.5],
-+            "d": [PyDecimal("7.5"), PyDecimal("-7.5")],
-+        },
-+        schema={"i": pl.Int64, "i8": pl.Int8, "f": pl.Float32, "d": pl.Decimal(10, 2)},
-+    )
-+    expected = {
-+        "i": [big // 3, -big // 3],
-+        "i8": [2, -3],
-+        "f": [2.0, -3.0],
-+        "d": [PyDecimal("2"), PyDecimal("-3")],
-+    }
-+    by_scalar = df // 3
-+    by_frame = df // pl.DataFrame({k: [3, 3] for k in "abcd"})
-+    for out in (by_scalar, by_frame):
-+        assert out.to_dict(as_series=False) == expected
-+        assert out.schema["i"] == pl.Int64
-+        assert out.schema["i8"] == pl.Int8
-+        assert out.schema["d"].is_decimal()
++@pytest.mark.parametrize("prec_scale", [(1, 0), (1, 1), (38, 0), (38, 38)])
++def test_numeric_decimal_type_bounds(prec_scale: tuple[int, int]) -> None:
++    precision, scale = prec_scale
++    res = pl.sql(f"SELECT CAST(0 AS DECIMAL({precision}, {scale})) AS d", eager=True)
++    assert res.schema["d"] == pl.Decimal(precision, scale)
 +
 +
  @pytest.mark.parametrize(
-     "s", [pl.Series([1, 2], dtype=Int64), pl.Series([1, 2], dtype=Float64)]
- )
-@@ -648,15 +700,19 @@ def test_arithmetic_series(s: pl.Series) -> None:
+     ("decimals", "expected"),
+     [
+```
+
+---
+
+### Incident Patch 2: `456d1d7a` (2026-10-31)
+**Commit Message**: fix: Allow TOP as a SQL table alias or column name (#30476)
+
+**File**: `crates/polars-sql/src/context.rs` (modified, +2/-11)
+```diff
+@@ -30,8 +30,6 @@ use sqlparser::ast::{
+     UnaryOperator as SQLUnaryOperator, Value as SQLValue, ValueWithSpan, Values, VisitorMut,
+     WildcardAdditionalOptions, WindowSpec, WindowType, With,
+ };
+-use sqlparser::dialect::GenericDialect;
+-use sqlparser::parser::{Parser, ParserOptions};
  
-     # integer division
-     assert_series_equal(1 / a, pl.Series([1.0, 0.5]))
--    expected = pl.Series([1, 0]) if s.dtype == Int64 else pl.Series([1.0, 0.5])
-+    expected = pl.Series([1, 0]) if s.dtype == Int64 else pl.Series([1.0, 0.0])
-     assert_series_equal(1 // a, expected)
+ use crate::catalog::{
+     CatalogAlter, CatalogDdl, CatalogNamespace, CatalogRegistry, CatalogSpellings, CatalogTable,
+@@ -56,7 +54,7 @@ use crate::join_keys::{sql_join_key_pair, sql_join_where_predicate};
+ use crate::sql_expr::{
+     convert_int_literal_for_string, is_string_expr, order_by_sort_options, parse_sql_array,
+     parse_sql_expr, resolve_compound_identifier, resolve_expr_dtype, series_from_literals,
+-    to_sql_interface_err,
++    sql_parser, to_sql_interface_err,
+ };
+ use crate::sql_visitors::{
+     QualifyExpression, TableIdentifierCollector, check_ambiguous_column,
+@@ -7621,14 +7619,7 @@ fn parse_single_statement(query: &str) -> PolarsResult<Statement> {
+ }
+ 
+ fn parse_sql(query: &str) -> PolarsResult<Vec<Statement>> {
+-    let mut parser = Parser::new(&GenericDialect);
+-    parser = parser.with_options(ParserOptions {
+-        trailing_commas: true,
+-        ..Default::default()
+-    });
+-    parser
+-        .try_with_sql(query)
+-        .map_err(to_sql_interface_err)?
++    sql_parser(query)?
+         .parse_statements()
+         .map_err(to_sql_interface_err)
+ }
+```
+
+**File**: `crates/polars-sql/src/sql_expr.rs` (modified, +46/-9)
+```diff
+@@ -34,9 +34,9 @@ use sqlparser::ast::{
+     UnaryOperator as SQLUnaryOperator, Value as SQLValue, ValueWithSpan,
+ };
+ use sqlparser::dialect::GenericDialect;
+-use sqlparser::keywords;
++use sqlparser::keywords::{self, Keyword};
+ use sqlparser::parser::{Parser, ParserOptions};
+-use sqlparser::tokenizer::Token;
++use sqlparser::tokenizer::{Token, TokenWithSpan, Tokenizer};
+ 
+ use crate::context::join_idents;
+ use crate::dyn_visit::visit_expressions;
+@@ -61,6 +61,49 @@ pub fn to_sql_interface_err(err: impl Display) -> PolarsError {
+     PolarsError::SQLInterface(err.to_string().into())
+ }
+ 
++/// A parser of `sql`. `TOP` is only a keyword in `SELECT TOP n`, so that it can also name a
++/// relation or a column.
++pub(crate) fn sql_parser(sql: &str) -> PolarsResult<Parser<'static>> {
++    let options = ParserOptions {
++        trailing_commas: true,
++        ..Default::default()
++    };
++    let mut tokens = Tokenizer::new(&GenericDialect, sql)
++        .with_unescape(options.unescape)
++        .tokenize_with_location()
++        .map_err(to_sql_interface_err)?;
++    demote_top_keyword(&mut tokens);
++    Ok(Parser::new(&GenericDialect)
++        .with_options(options)
++        .with_tokens_with_locations(tokens))
++}
 +
-     # modulo
-     assert ((1 % a) == [0, 1]).sum() == 2
-     assert ((a % 1) == [0, 0]).sum() == 2
++fn demote_top_keyword(tokens: &mut [TokenWithSpan]) {
++    let is_keyword = |token: &Token, keywords: &[Keyword]| matches!(token, Token::Word(word) if keywords.contains(&word.keyword));
++    let mut previous: Option<usize> = None;
++    for i in 0..tokens.len() {
++        if matches!(tokens[i].token, Token::Whitespace(_)) {
++            continue;
++        }
++        if is_keyword(&tokens[i].token, &[Keyword::TOP]) {
++            let next = tokens[i + 1..]
++                .iter()
++                .find(|t| !matches!(t.token, Token::Whitespace(_)))
++                .map(|t| &t.token);
++            let starts_top = previous.is_some_and(|p| {
++                is_keyword(
++                    &tokens[p].token,
++                    &[Keyword::SELECT, Keyword::DISTINCT, Keyword::ALL],
++                )
++            }) && matches!(next, Some(Token::Number(..) | Token::LParen));
++            if !starts_top && let Token::Word(word) = &mut tokens[i].token {
++                word.keyword = Keyword::NoKeyword;
++            }
++        }
++        previous = Some(i);
++    }
++}
 +
-     # negate
-     assert (-a == [-1, -2]).sum() == 2
+ /// Sort options for a single `ORDER BY` key.
+ ///
+ /// If not given, 'NULLS FIRST' is the default for DESC and 'NULLS LAST' otherwise;
+@@ -2116,14 +2159,8 @@ pub fn sql_expr<S: AsRef<str>>(s: S) -> PolarsResult<Expr> {
+     let mut ctx = SQLContext::new();
+     let s = s.as_ref();
+ 
+-    let mut parser = Parser::new(&GenericDialect);
+-    parser = parser.with_options(ParserOptions {
+-        trailing_commas: true,
+-        ..Default::default()
+-    });
+-
+     // `sql_expr` should only translate expressions, not statements or clauses
+-    let mut ast = parser.try_with_sql(s).map_err(to_sql_interface_err)?;
++    let mut ast = sql_parser(s)?;
+     if let Token::Word(word) = &ast.peek_token().token {
+         if keywords::RESERVED_FOR_COLUMN_ALIAS.contains(&word.keyword) {
+             polars_bail!(SQLInterface: "expected an expression (found '{}' clause)", word.value)
+```
+
+**File**: `py-polars/tests/unit/sql/test_miscellaneous.py` (modified, +32/-0)
+```diff
+@@ -792,3 +792,35 @@ def test_sql_context_eager_execution_removed() -> None:
+     msg = "It was renamed to 'eager'."
+     with pytest.raises(ArgumentRemovedError, match=re.escape(msg)):
+         pl.SQLContext(eager_execution=True)  # type: ignore[call-arg]
 +
-     # unary plus
-     assert (+a == a).all()
 +
-     # wrong dtypes in rhs operands
-     assert ((1.0 - a) == [0.0, -1.0]).sum() == 2
-     assert ((1.0 / a) == [1.0, 0.5]).sum() == 2
++@pytest.mark.parametrize(
++    ("query", "expected"),
++    [
++        ("SELECT top FROM t ORDER BY top", [(1,), (2,), (3,)]),
++        ("SELECT top.x FROM t top ORDER BY 1", [(1,), (2,), (3,)]),
++        ("SELECT x, top FROM t AS top WHERE top.top > 1 ORDER BY x", [(1, 3), (3, 2)]),
++        (
++            "WITH top AS (SELECT * FROM t) "
++            "SELECT CONCAT_WS(',', top.x, TOP.top) AS s FROM top ORDER BY s",
++            [("1,3",), ("2,1",), ("3,2",)],
++        ),
++    ],
++)
++def test_top_as_identifier(query: str, expected: list[tuple[Any, ...]]) -> None:
++    t = pl.DataFrame({"top": [3, 1, 2], "x": [1, 2, 3]})
++    assert pl.SQLContext(t=t).execute(query, eager=True).rows() == expected
++
++
++@pytest.mark.parametrize(
++    "query",
++    [
++        "SELECT TOP 2 x FROM t",
++        "SELECT TOP (1) x FROM t",
++        "SELECT DISTINCT TOP 1 x FROM t",
++    ],
++)
++def test_top_clause_unsupported(query: str) -> None:
++    t = pl.DataFrame({"x": [1, 2, 3]})
++    with pytest.raises(SQLInterfaceError, match="`TOP` clause is not supported"):
++        pl.SQLContext(t=t).execute(query, eager=True)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #30480** (2026-10-31): feat: Support SQL REPEAT, CARDINALITY and ARRAY_LENGTH with a dimension (@ritchie46)
+- **PR #30476** (2026-10-31): fix: Allow TOP as a SQL table alias or column name (@ritchie46)
+- **PR #30474** (2026-10-31): perf: Split streaming merge join windows in linear time (@ritchie46)
+- **PR #30469** (2026-10-31): test: Run the sort allocator decay test in a new process (@ritchie46)
 - **PR #30467** (2026-10-30): feat: Support SQL derived tables that read the relations joined before them (LATERAL) (@ritchie46)
 - **PR #30466** (2026-10-30): feat: Support correlated SQL EXISTS with HAVING or with outer-only subquery conditions (@ritchie46)
-- **PR #30464** (2026-10-30): fix: Coerce SQL temporal strings, set operation columns, and untyped join keys to a common type (@ritchie46)
-- **PR #30463** (2026-10-30): feat: Support SQL `INSERT INTO` and `INSERT OVERWRITE` on attached Iceberg catalog tables (@kdn36)
-- **PR #30461** (2026-10-30): fix: Clear the sorted flag of aggregated literals with empty groups (@kdn36)
-- **PR #30459** (2026-10-30): feat: Support LIMIT and outer ORDER BY keys in correlated SQL subqueries (@ritchie46)
 
 ---
 
@@ -2279,47 +1957,45 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fix segfaults and leaked references with Object values in group contexts (#30458
+## X. Raise an error instead of panicking for SQL decimal types with an invalid precis
 
 **RULE**:
-When implementing operations in `crates/polars-core/src/chunked_array/list/iterator.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/polars-sql/src/types.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3e90bfa0`: Fix segfaults and leaked references with Object values in group contexts (#30458). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c8c0e7a2`: Raise an error instead of panicking for SQL decimal types with an invalid precision or scale (#30450). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-core/src/chunked_array/list/iterator.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-sql/src/types.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    // used only if feature="dtype-struct" or feature="object"
-                #[cfg(feature = "object")]
-                // lists hold object values in an extension array, which only converts to the
-                // series' object array through `from_chunks_and_dtype_unchecked`; as for structs,
-                // `self.inner` is not used once the container is replaced
-                if matches!(self.inner_dtype, DataType::Object(_)) {
-                    // SAFETY:
-                    // dtype is known
-                    unsafe {
-                        let s = Series::from_chunks_and_dtype_unchecked(
-                            self.series_container.name().clone(),
-                            vec![array_ref],
-                            &self.inner_dtype,
-                        );
-                        let inner = Rc::make_mut(&mut self.series_container);
-                        *inner = s;
-
-                        return AmortSeries::new(self.series_container.clone());
-                    }
-                }
+        | SQLDataType::Numeric(info) => {
+            let (precision, scale) = match *info {
+                ExactNumberInfo::PrecisionAndScale(p, s) => (p, s),
+                ExactNumberInfo::Precision(p) => (p, 0),
+                ExactNumberInfo::None => (38, 9),
+            };
+            polars_ensure!(
+                (1..=38).contains(&precision),
+                SQLSyntax: "invalid DECIMAL precision (expected 1-38, found {})", precision
+            );
+            polars_ensure!(
+                (0..=precision as i64).contains(&scale),
+                SQLSyntax: "invalid DECIMAL scale (expected 0-{}, found {})", precision, scale
+            );
+            DataType::Decimal(precision as usize, scale as usize)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    // used only if feature="dtype-struct"
+        | SQLDataType::Numeric(info) => match *info {
+            ExactNumberInfo::PrecisionAndScale(p, s) => DataType::Decimal(p as usize, s as usize),
+            ExactNumberInfo::Precision(p) => DataType::Decimal(p as usize, 0),
+            ExactNumberInfo::None => DataType::Decimal(38, 9),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3e90bfa0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c8c0e7a2` are properly handled with clean fallback behavior.

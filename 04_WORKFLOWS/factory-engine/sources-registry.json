@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T16:50:42.786Z",
-    "lastVerified": "2026-10-31T16:50:42.786Z",
+    "lastChecked": "2026-10-31T16:57:21.882Z",
+    "lastVerified": "2026-10-31T16:57:21.882Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -110,8 +110,8 @@
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T13:14:00.970Z",
-    "lastVerified": "2026-10-31T13:14:00.970Z",
+    "lastChecked": "2026-10-31T16:57:15.946Z",
+    "lastVerified": "2026-10-31T16:57:15.946Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -246,8 +246,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T16:20:30.606Z",
-    "lastVerified": "2026-10-31T16:20:30.606Z",
+    "lastChecked": "2026-10-31T16:57:20.952Z",
+    "lastVerified": "2026-10-31T16:57:20.952Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -5414,9 +5414,9 @@
   "cockroachdb-cockroach": {
     "name": "cockroach",
     "officialUrl": "https://github.com/cockroachdb/cockroach",
-    "lastChecked": "2026-10-31T00:34:27.476Z",
+    "lastChecked": "2026-10-31T16:57:18.656Z",
     "revisionIdentifier": "d30c905f",
-    "lastVerified": "2026-10-31T00:34:27.476Z"
+    "lastVerified": "2026-10-31T16:57:18.656Z"
   },
   "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
     "name": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -5515,12 +5515,12 @@
     "officialUrl": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T15:50:29.192Z",
-    "lastVerified": "2026-10-28T15:50:29.192Z",
+    "lastChecked": "2026-10-31T16:57:08.535Z",
+    "lastVerified": "2026-10-31T16:57:08.535Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-    "contentHash": "adbd11d3a7f2766b779648e849740d2a8e8a5ea407aa9fba6799f23fe76157eb",
+    "contentHash": "d1ab6a83a62cdab8f4ac358c082503a69bf7853b2c5330ff5acb223ec049a48e",
     "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6614,9 +6614,9 @@
   "databricks-click": {
     "name": "click",
     "officialUrl": "https://github.com/databricks/click",
-    "lastChecked": "2026-10-31T01:28:18.412Z",
+    "lastChecked": "2026-10-31T16:57:13.350Z",
     "revisionIdentifier": "47ff7d1b",
-    "lastVerified": "2026-10-31T01:28:18.412Z"
+    "lastVerified": "2026-10-31T16:57:13.350Z"
   },
   "activeloopai-deeplake": {
     "name": "deeplake",
@@ -7964,9 +7964,9 @@
   "msasikanth-twine": {
     "name": "twine",
     "officialUrl": "https://github.com/msasikanth/twine",
-    "lastChecked": "2026-10-28T21:43:29.523Z",
+    "lastChecked": "2026-10-31T16:57:10.825Z",
     "revisionIdentifier": "4b3aa942",
-    "lastVerified": "2026-10-28T21:43:29.523Z"
+    "lastVerified": "2026-10-31T16:57:10.825Z"
   },
   "zed-industries-zed": {
     "name": "zed-industries/zed",
@@ -8178,14 +8178,14 @@
     "officialUrl": "https://github.com/pola-rs/polars",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T21:06:16.509Z",
-    "lastVerified": "2026-10-30T21:06:16.509Z",
+    "lastChecked": "2026-10-31T16:57:10.421Z",
+    "lastVerified": "2026-10-31T16:57:10.421Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "f648c2a9c4d820451af43bc75f61667ef0a2e8ea4498dcdb95d8987fed81bfd8",
+    "contentHash": "cec490885cf8631f35510160cc25f6fe94235dc316c815fbf6dd2acd0e33aabf",
     "promotedRulesCount": 1,
-    "recentFixesCount": 16,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
