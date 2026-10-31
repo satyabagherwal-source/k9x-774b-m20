@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T06:32:12.334Z",
-  "total_cycles_completed": 6467,
-  "total_learnings_persisted": 6467,
+  "last_updated": "2026-10-31T06:38:35.954Z",
+  "total_cycles_completed": 6469,
+  "total_learnings_persisted": 6469,
   "total_rules_promoted": 6096,
   "history": [
-    {
-      "timestamp": "2026-10-30T20:05:20.621Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T20:05:20.987Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T20:15:09.800Z",
       "repository": "zed-industries/zed",
@@ -1403,6 +1389,20 @@
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
       "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T06:38:22.899Z",
+      "repository": "XingChen-AGI/TeleOCR",
+      "learningId": "learn-huggingface-xingchen-agi-teleocr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T06:38:35.954Z",
+      "repository": "NirDiamant/RAG_Techniques",
+      "learningId": "learn-github-nirdiamant-rag_techniques",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nirdiamant-rag_techniques-learnings.md`  
 > **Source**: github ([https://github.com/NirDiamant/RAG_Techniques](https://github.com/NirDiamant/RAG_Techniques))  
-> **Source Version**: `4eacd2fa`  
+> **Source Version**: `4fea9188`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T13:37:41.805Z  
+> **Timestamp**: 2026-10-31T06:38:35.761Z  
 > **Learning ID**: `learn-github-nirdiamant-rag_techniques`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nirdiamant-rag_techniques-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NirDiamant/RAG_Techniques](https://github.com/NirDiamant/RAG_Techniques))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T13:37:41.548Z  
+> **Harvest Timestamp**: 2026-10-31T06:38:35.756Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: This repository showcases various advanced techniques for Retrieval-Augmented Generation (RAG) systems. Each technique has a detailed notebook tutorial.
 - **Primary Language / Ecosystem**: Jupyter Notebook
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 30136 stars
+- **Stars / Engagement**: 30149 stars
 
 ---
 
@@ -48,7 +48,7 @@ from pydantic import BaseModel, Field
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import ChatOpenAI
-from langchain.chains import RetrievalQA
+from langchain_classic.chains import RetrievalQA
 from langchain_core.prompts import PromptTemplate
 
 sys.path.append(os.path.abspath(os.path.join(os.getcwd(), '..')))  # Add the parent directory to the path
@@ -60,6 +60,9 @@ load_dotenv()
 
 # Set the OpenAI API key environment variable
 os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
+
+# Chat model used in this script
+LLM_MODEL = "gpt-5.4-mini"
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 
@@ -110,7 +113,7 @@ def adjust_relevance_scores(query: str, docs: List[Any], feedback_data: List[Dic
         Is this feedback relevant? Respond with only 'Yes' or 'No'.
         """
     )
-    llm = ChatOpenAI(temperature=0, model_name="gpt-4o", max_tokens=4000)
+    llm = ChatOpenAI(temperature=0, model_name=LLM_MODEL, max_tokens=4000)
     relevance_chain = relevance_prompt | llm.with_structured_output(Response)
 
     for doc in docs:
@@ -149,15 +152,15 @@ class RetrievalAugmentedGeneration:
         self.content = read_pdf_to_string(self.path)
         self.vectorstore = encode_from_string(self.content)
         self.retriever = self.vectorstore.as_retriever()
-        self.llm = ChatOpenAI(temperature=0, model_name="gpt-4o", max_tokens=4000)
+        self.llm = ChatOpenAI(temperature=0, model_name=LLM_MODEL, max_tokens=4000)
         self.qa_chain = RetrievalQA.from_chain_type(self.llm, retriever=self.retriever)
 
     def run(self, query: str, relevance: int, quality: int):
-        response = self.qa_chain(query)["result"]
+        response = self.qa_chain.invoke(query)["result"]
         feedback = get_user_feedback(query, response, relevance, quality)
         store_feedback(feedback)
 
-        docs = self.retriever.get_relevant_documents(query)
+        docs = self.retriever.invoke(query)
         adjusted_docs = adjust_relevance_scores(query, docs, load_feedback_data())
         self.retriever.search_kwargs['k'] = len(adjusted_docs)
         self.retriever.search_kwargs['docs'] = adjusted_docs
@@ -209,10 +212,13 @@ load_dotenv()
 # Set the OpenAI API key environment variable
 os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
 
+# Chat model used in this script
+LLM_MODEL = "gpt-5.4-mini"
+
 # Define the HyDe retriever class - creating vector store, generating hypothetical document, and retrieving
 class HyDERetriever:
     def __init__(self, files_path, chunk_size=500, chunk_overlap=100):
-        self.llm = ChatOpenAI(temperature=0, model_name="gpt-4o-mini", max_tokens=4000)
+        self.llm = ChatOpenAI(temperature=0, model_name=LLM_MODEL, max_tokens=4000)
         self.embeddings = OpenAIEmbeddings()
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
@@ -295,6 +301,9 @@ from evaluation.evalute_rag import *
 load_dotenv()
 os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
 
+# Chat model used in this script
+LLM_MODEL = "gpt-5.4-mini"
+
 class HyPE:
     """
     A class to handle the HyPE RAG process, which enhances document chunking by 
@@ -334,7 +343,7 @@ class HyPE:
         Returns:
         tuple: (Original chunk text, List of embedding vectors generated from the questions)
         """
-        llm = ChatOpenAI(temperature=0, model_name="gpt-4o-mini")
+        llm = ChatOpenAI(temperature=0, model_name=LLM_MODEL)
         embedding_model = OpenAIEmbeddings(model="text-embedding-3-small")
 
         question_gen_prompt = PromptTemplate.from_template(
@@ -493,9 +502,9 @@ from langchain_text_splitters import CharacterTextSplitter
 
 from langchain_core.retrievers import BaseRetriever
 from typing import List, Dict, Any
-from langchain.docstore.document import Document
+from langchain_core.documents import Document
 from langchain_openai import ChatOpenAI
-from langchain_core.pydantic_v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 sys.path.append(os.path.abspath(
     os.path.join(os.getcwd(), '..')))  # Add the parent directory to the path since we work with notebooks
@@ -507,6 +516,9 @@ load_dotenv()
 
 # Set the OpenAI API key environment variable
 os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
+
+# Chat model used in this script
+LLM_MODEL = "gpt-5.4-mini"
 
 
 # Define all the required classes and strategies
@@ -532,7 +544,7 @@ class SubQueries(BaseModel):
 
 class QueryClassifier:
     def __init__(self):
-        self.llm = ChatOpenAI(temperature=0, model_name="gpt-4o", max_tokens=4000)
+        self.llm = ChatOpenAI(temperature=0, model_name=LLM_MODEL, max_tokens=4000)
         self.prompt = PromptTemplate(
             input_variables=["query"],
             template="Classify the following query into one of these categories: Factual, Analytical, Opinion, or Contextual.\nQuery: {query}\nCategory:"
@@ -550,7 +562,7 @@ class BaseRetrievalStrategy:
         text_splitter = CharacterTextSplitter(chunk_size=800, chunk_overlap=0)
         self.documents = text_splitter.create_documents(texts)
         self.db = FAISS.from_documents(self.documents, self.embeddings)
-        self.llm = ChatOpenAI(temperature=0, model_name="gpt-4o", max_tokens=4000)
+        self.llm = ChatOpenAI(temperature=0, model_name=LLM_MODEL, max_tokens=4000)
 
     def retrieve(self, query, k=4):
         return self.db.similarity_search(query, k=k)
@@ -685,7 +697,7 @@ class AdaptiveRAG:
             "Opinion": OpinionRetrievalStrategy(texts),
             "Contextual": ContextualRetrievalStrategy(texts)
         }
-        self.llm = ChatOpenAI(temperature=0, model_name="gpt-4o", max_tokens=4000)
+        self.llm = ChatOpenAI(temperature=0, model_name=LLM_MODEL, max_tokens=4000)
         prompt_template = """Use the following pieces of context to answer the question at the end. 
         If you don't know the answer, just say that you don't know, don't try to make up an answer.
 
@@ -715,8 +727,7 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
     texts = args.texts or [
-        "The Earth is the third planet from the Sun and the only astronomical object known to harbor life."]
-    rag_sys
+        "The Earth is the third planet from the Sun and the only astronomical
 ```
 
 ### Core Architecture Module: `all_rag_techniques_runnable_scripts/choose_chunk_size.py`
@@ -741,12 +752,16 @@ load_dotenv()
 # Set the OpenAI API key environment variable
 os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
 
+# Models used in this script: a small one answers, a stronger one judges
+LLM_MODEL = "gpt-5.4-mini"
+JUDGE_MODEL = "gpt-5.4"
+
 
 # Utility functions
 def evaluate_response_time_and_accuracy(chunk_size, eval_questions, eval_documents, faithfulness_evaluator,
                                         relevancy_evaluator):
     """
-    Evaluate the average response time, faithfulness, and relevancy of responses generated by GPT-3.5-turbo for a given chunk size.
+    Evaluate the average response time, faithfulness, and relevancy of responses generated by LLM_MODEL for a given chunk size.
 
     Parameters:
     chunk_size (int): The size of data chunks being processed.
@@ -763,8 +778,8 @@ def evaluate_response_time_and_accuracy(chunk_size, eval_questions, eval_documen
     total_faithfulness = 0
     total_relevancy = 0
 
-    # Set global LLM as GPT-3.5 
-    llm = OpenAI(model="gpt-3.5-turbo")
+    # Set the global LLM to the small answering model
+    llm = OpenAI(model=LLM_MODEL)
     Settings.llm = llm
     
     # Create vector index
@@ -804,8 +819,8 @@ class RAGEvaluator:
         self.chunk_sizes = chunk_sizes
         self.documents = self.load_documents()
         self.eval_questions = self.generate_eval_questions()
-        # Set GPT-4o as local configuration for evaluation
-        self.llm_gpt4 = OpenAI(model="gpt-4o")
+        # Use the stronger judge model for evaluation
+        self.llm_gpt4 = OpenAI(model=JUDGE_MODEL)
         self.faithfulness_evaluator = self.create_faithfulness_evaluator()
         self.relevancy_evaluator = self.create_relevancy_evaluator()
 
@@ -814,7 +829,8 @@ class RAGEvaluator:
 
     def generate_eval_questions(self):
         eval_documents = self.documents[0:20]
-        data_generator = DatasetGenerator.from_documents(eval_documents)
+        # Name the question-writing model: LlamaIndex's default, gpt-3.5-turbo, was shut down on 2026-10-23
+        data_generator = DatasetGenerator.from_documents(eval_documents, llm=OpenAI(model=LLM_MODEL))
         eval_questions = data_generator.generate_questions_from_nodes()
         return random.sample(eval_questions, self.num_eval_questions)
 
@@ -871,6 +887,7 @@ import os
 import sys
 from dotenv import load_dotenv
 from langchain_core.documents import Document
+sys.path.append(os.path.abspath(os.path.join(os.getcwd(), '..')))  # repo root, for helper_functions and evaluation: set it before importing them
 from helper_functions import *
 from evaluation.evalute_rag import *
 from typing import List
@@ -906,7 +923,7 @@ def get_chunk_by_index(vectorstore, target_index: int) -> Document:
 # Function that retrieves from the vectorstore based on semantic similarity and pads each retrieved chunk with its neighboring chunks
 def retrieve_with_context_overlap(vectorstore, retriever, query: str, num_neighbors: int = 1, chunk_size: int = 200,
                                   chunk_overlap: int = 20) -> List[str]:
-    relevant_chunks = retriever.get_relevant_documents(query)
+    relevant_chunks = retriever.invoke(query)
     result_sequences = []
 
     for chunk in relevant_chunks:
@@ -983,7 +1000,7 @@ class RAGMethod:
         return vectorstore, retriever
 
     def run(self, query: str, num_neighbors: int = 1):
-        baseline_chunk = self.retriever.get_relevant_documents(query)
+        baseline_chunk = self.retriever.invoke(query)
         enriched_chunks = retrieve_with_context_overlap(self.vectorstore, self.retriever, query, num_neighbors,
                                                         self.chunk_size, self.chunk_overlap)
         return baseline_chunk[0].page_content, enriched_chunks[0]
@@ -1024,9 +1041,10 @@ import sys
 import time
 import argparse
 from dotenv import load_dotenv
-from langchain.retrievers.document_compressors import LLMChainExtractor
-from langchain.retrievers import ContextualCompressionRetriever
-from langchain.chains import RetrievalQA
+from langchain_classic.retrievers.document_compressors import LLMChainExtractor
+from langchain_classic.retrievers import ContextualCompressionRetriever
+from langchain_classic.chains import RetrievalQA
+sys.path.append(os.path.abspath(os.path.join(os.getcwd(), '..')))  # repo root, for helper_functions and evaluation: set it before importing them
 from helper_functions import *
 from evaluation.evalute_rag import *
 
@@ -1037,6 +1055,9 @@ sys.path.append(os.path.abspath(os.path.join(os.getcwd(), '..')))
 load_dotenv()
 os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
 
+# Chat model used in this script
+LLM_MODEL = "gpt-5.4-mini"
+
 
 class ContextualCompressionRAG:
     """
@@ -1044,13 +1065,13 @@ class ContextualCompressionRAG:
     with a contextual compression retriever.
     """
 
-    def __init__(self, path, model_name="gpt-4o-mini", temperature=0, max_tokens=4000):
+    def __init__(self, path, model_name=LLM_MODEL, temperature=0, max_tokens=4000):
         """
         Initializes the ContextualCompressionRAG by setting up the document store and retriever.
 
         Args:
             path (str): Path to the PDF file to process.
-            model_name (str): The name of the language model to use (default: gpt-4o-mini).
+            model_name (str): The name of the language model to use (default: gpt-5.4-mini).
             temperature (float): The temperature for the language model.
             max_tokens (int): The maximum tokens for the language model (default: 4000).
         """
@@ -1113,8 +1134,8 @@ class ContextualCompressionRAG:
 # Function to parse command line arguments
 def parse_args():
     parser = argparse.ArgumentParser(description="Process a PDF document with contextual compression RAG.")
-    parser.add_argument("--model_name", type=str, default="gpt-4o-mini",
-                        help="Name of the language model to use (default: gpt-4o-mini).")
+    parser.add_argument("--model_name", type=str, default=LLM_MODEL,
+                        help="Name of the language model to use (default: gpt-5.4-mini).")
     parser.add_argument("--path", type=str, default="../data/Understanding_Climate_Change.pdf",
                         help="Path to the PDF file to process.")
     parser.add_argument("--query", type=str, default="What is the main topic of the document?",
@@ -1155,8 +1176,9 @@ import argparse
 from dotenv import load_dotenv
 from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
-from langchain_core.pydantic_v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 from langchain_community.tools import DuckDuckGoSearchResults
+sys.path.append(os.path.abspath(os.path.join(os.getcwd(), '..')))  # repo root, for helper_functions and evaluation: set it before importing them
 from helper_functions import encode_pdf
 import json
 
@@ -1166,6 +1188,9 @@ sys.path.append(os.path.abspath(
 # Load environment variables from a .env file
 load_dotenv()
 os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
+
+# Chat model used in this script
+LLM_MODEL = "gpt-5.4-mini"
 
 
 class RetrievalEvaluatorInput(BaseModel):
@@ -1195,7 +1220,7 @@ class CRAG:
     A class to handle the CRAG process for document retrieval, evaluation, and knowledge refinement.
     """
 
-    def __init__(self, path, model="gpt-4o-mini", max_tokens=1000, temperature=0, lower_threshold=0.3,
+    def __init__(self, path, model=LLM_MODEL, max_tokens=1000, temperature=0, lower_threshold=0.3,
                  upper_threshold=0.7):
         """
         Initializes the CRAG Retriever by encoding the PDF document and creating the necessary models and search tools.
@@ -1220,7 +1245,7 @@ class CRAG:
         self.llm = ChatOpenAI(model=model, max_tokens=max_tokens, temperature=temperature)
 
         # Initialize search tool
-        self.search = DuckDuckGoSearchResults()
+        self.search = DuckDuckGoSearchResults(output_format="json")  # parse_search_results reads JSON
 
     @staticmethod
     def retrieve_documents(query, faiss_index, k=3):
@@ -1349,8 +1374,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description="CRAG Process for Document Retrieval and Query Answering.")
     parser.add_argument("--path", type=str, default="../data/Understanding_Climate_Change.pdf",
                         help="Path to the PDF file to encode.")
-    parser.add_argument("--model", type=str, default="gpt-4o-mini",
-                        help="Language model to use (default: gpt-4o-mini).")
+    parser.add_argument("--model", type=str, default=LLM_MODEL,
+                        help="Language model to use (default: gpt-5.4-mini).")
     parser.add_argument("--max_tokens", type=int, default=1000,
                         help="Maximum tokens to use in LLM responses (default: 1000).")
     parser.add_argument("--temperature", type=float, default=0,
@@ -1378,14 +1403,6 @@ def main(args):
     )
 
     # Process the query
-    response = crag.run(args.query)
-    print(f"Query: {args.query}")
-    print(f"Answer: {response}")
-
-
-if __name__ == '__main__':
-    main(parse_args())
-
 ```
 
 ### Core Architecture Module: `all_rag_techniques_runnable_scripts/document_augmentation.py`
@@ -1407,6 +1424,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
+
+# Chat model used in this script
+LLM_MODEL = "gpt-5.4-mini"
 
 sys.path.append(os.path.abspath(os.path.join(os.getcwd(), '..')))  # Add the parent directory to the path
 
@@ -1451,7 +1471,7 @@ def clean_and_filter_questions(questions: List[str]) -> List[str]:
 
 
 def generate_questions(text: str) -> List[str]:
-    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+    llm = ChatOpenAI(model=LLM_MODEL, temperature=0)
     prompt = PromptTemplate(
         input_variables=["context", "num_questions"],
         template="Using the context data: {context}\n\nGenerate a list of at least {num_questions} "
@@ -1465,7 +1485,7 @@ def generate_questions(text: str) -> List[str]:
 
 
 def generate_answer(content: str, question: str) -> str:
-    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+    llm = ChatOpenAI(model=LLM_MODEL, temperature=0)
     prompt = PromptTemplate(
         input_variables=["context", "question"],
         template="Using the context data: {context}\n\nProvide a brief and precise answer to the question: {question}"
@@ -1564,13 +1584,13 @@ if __name__ == "__main__":
 
     # Example usage of the retriever
     query = "What is climate change?"
-    retrieved_docs = document_query_retriever.get_relevant_documents(query)
+    retrieved_docs = document_query_retriever.invoke(query)
     print(f"\nQuery: {query}")
     print(f"Retrieved document: {retrieved_docs[0].page_content}")
 
     # Further query example
     query = "How do freshwater ecosystems change due to alterations in climatic factors?"
-    retrieved_documents = document_query_retriever.get_relevant_documents(query)
+    retrieved_documents = document_query_retriever.invoke(query)
     for doc in retrieved_documents:
         print_document("Relevant fragment retrieved", doc)
 
@@ -1596,13 +1616,16 @@ load_dotenv()
 # Set the OpenAI API key environment variable
 os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
 
+# Chat model used in this script
+LLM_MODEL = "gpt-5.4-mini"
+
 
 # Define utility classes/functions
 class ExplainableRetriever:
     def __init__(self, texts):
         self.embeddings = OpenAIEmbeddings()
         self.vectorstore = FAISS.from_texts(texts, self.embeddings)
-        self.llm = ChatOpenAI(temperature=0, model_name="gpt-4o-mini", max_tokens=4000)
+        self.llm = ChatOpenAI(temperature=0, model_name=LLM_MODEL, max_tokens=4000)
         self.retriever = self.vectorstore.as_retriever(search_kwargs={"k": 5})
 
         explain_prompt = PromptTemplate(
@@ -1621,7 +1644,7 @@ class ExplainableRetriever:
         self.explain_chain = explain_prompt | self.llm
 
     def retrieve_and_explain(self, query):
-        docs = self.retriever.get_relevant_documents(query)
+        docs = self.retriever.invoke(query)
         explained_results = []
 
         for doc in docs:
@@ -1677,17 +1700,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #210** (2026-10-20): **Add Document Parsing with Mistral OCR 4 (sponsored by Mistral AI)**
-  *Symptoms*: Adds `all_rag_techniques/document_parsing_with_mistral_ocr.ipynb`, sponsored by Mistral AI.  - Prints what PyPDF produces for a two-column paper's results table, then swaps the parsing step for Mistral OCR 4 with the rest of the pipeline unchanged. - A block-aware chunker keeps each table whole with its caption; the repository's reranker runs over all three pipelines. - The source PDFs (CC BY 4.0, US public domain) and the cached OCR output are in `data/`, so every cell runs without a Mistral key. - README: list entry and table row #38, plus the recently-added line.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  - - - - - - - - - - - - - - - - - - - - - -  <h3>PR Summary by Qodo</h3>  Demonstrate structure-aware PDF parsing with Mistral OCR 4  <code>✨ Enhancement</code> <code>📝 Documentation</code> <code>🕐 40+ Minutes</code>  ---  <details> <summary>AI Description</summary>  <dl> <dd> <br/>  ><pre> >• Compare PyPDF and Mistral OCR 4 on tables, showing how parsing and chunking affect answers. >• Add block-aware chunking and rerank all three example pipelines to demonstrate the value of intact >  tables. >• Ship source PDFs, cached OCR output, a diagram, and README links for the sponsored notebook. ></pre>  </dd> </dl>  </details>  <details> <summary>Diagram</summary>  <dl> <dd>  <br/>  ```mermaid graph TD   PDF["Source PDFs"] --> PY["PyPDF parser"] --> SPLIT["Character splitter"] --> INDEX["FAISS index"] --> RERANK["LLM reranker"] --> ANSWER["Answer compar
-  **Post-Mortem & Fix Analysis**:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/NirDiamant/RAG_Techniques/pull/210?cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- This is an auto-generated comment: review in progress by coderabbit.ai -->  > [!NOTE] > Currently processing new changes in this PR. This may take a few minutes, please wait... >  > <details> > <summary><strong>⚙️ Run configuration</str
-  > <h3>Code Review by Qodo</h3>  <code>🐞 Bugs (1)</code>  <code>📘 Rule violations (0)</code>  <code>📜 Skill insights (1)</code>  ---  <br/>  🟠 **Medium**  <details> <summary>  1.  <s>The new list item displays as number seven</s> <code>✓ Resolved</code></summary>  <br/>  > <details open> ><summary>Description</summary> ><br/> > ><pre> >The new foundational-list entry starts with <b><i>38.</i></b> after entries numbered one through six, but an >ordered Markdown list renders subsequent item numbers sequentially. Readers therefore see number >seven in the list while the technique table identifies the same entry as number 38. ></pre> ></details>  > <details> ><summary>Code</summary> ><br/> > ><code>[README.md[304]](https://github.com/NirDiamant/RAG_Techniques/pull/210/files#diff-b335630551682c19a781afebcf4d07bf978fb1f8ac04c6bf87428ed5106870f5R304-R304)</code> > >```diff >+38. **Document Parsing with Mistral OCR 4 📄**: [<img src="https://img.shields.io/badge/GitHub-View-blue" height="20">
+- **Issue #212** (2026-10-31): **Make notebooks and scripts import and run on LangChain 1.x and LlamaIndex 0.14**
+  *Symptoms*: Second wave after #211. On a fresh install, 21 notebooks, 2 evaluation notebooks and 9 scripts failed at their import cell because they import paths LangChain 1.x removed, and most install cells did not list what the notebook imports. This PR fixes both, plus the follow-ups #211 left open.  ## What changed  **Imports (21 notebooks, 2 evaluation notebooks, 9 scripts).** Every import was checked in a fresh Python 3.11 venv with current releases (langchain-core 1.7.3, langchain-community 0.4.2, langchain-classic 1.0.8, langchain-openai 1.7.3, llama-index 0.14.25). - `langchain.text_splitter`, `.vectorstores`, `.embeddings`, `.prompts`, `.docstore`, `.schema`, `.document_loaders`, `.callbacks`, `.output_parsers`, `.tools`, `.chat_models` and `langchain_core.pydantic_v1` now import from `langchain_text_splitters`, `langchain_community`, `langchain_openai`, `langchain_core` or `pydantic`. - `langchain.chains` (RetrievalQA, create_retrieval_chain, load_summarize_chain), `langchain.retrievers` (ContextualCompressionRetriever, LLMChainExtractor) and `langchain.evaluation` now import from `langchain_classic`, where LangChain moved them. - fusion_retrieval_with_llamaindex: `llama_index.legacy` no longer exists; BM25 comes from `llama_index.retrievers.bm25`. - Calls that LangChain 1.x removed: custom retrievers (adaptive_retrieval, reranking) implement `_get_relevant_documents`; `get_relevant_documents()` calls became `invoke()`; `qa_chain(...)` became `qa_chain.invoke(...)`; raptor no l
 
-- **Issue #208** (2026-10-11): **Add Late Chunking notebook**
-  *Symptoms*: Demo PR for a walkthrough of RAG_Techniques' automated contribution review (Qodo). It intentionally skips parts of CONTRIBUTING.md and will be closed afterwards.  - - - - - - - - - - - - - - - - - - - - - -  <h3>PR Summary by Qodo</h3>  Add a minimal document-chunking notebook  <code>✨ Enhancement</code> <code>📝 Documentation</code> <code>🕐 Less than 10 minutes</code>  ---  <details> <summary>AI Description</summary>  <dl> <dd> <br/>  ><pre> >• Adds a short notebook titled “Late Chunking” for a RAG contribution-review walkthrough. >• Splits decoded PDF bytes into 500-character chunks, embeds them, and prints the vector count. >• The notebook splits before embedding; it does not demonstrate late chunking. ></pre>  </dd> </dl>  </details>  <details> <summary>Diagram</summary>  <dl> <dd>  <br/>  ```mermaid graph TD   A["Climate PDF"] --> B["Latin-1 decode"] --> C["Character splitter"] --> D["OpenAI embeddings"] --> E["Vector count"] ```  </dd> </dl>  </details>     <details> <summary>High-Level Assessment</summary>  <dl> <dd>  <br/>  >The following are alternative approaches to this PR:  <details> <summary><b>1. Implement context-first late chunking</b></summary>  <dl> <dd>  - ➕ Would demonstrate the technique named in the notebook: contextualize the document before pooling chunk embeddings. - ➖ Requires a suitable token-level embedding model, token-to-chunk alignment, and a longer tutorial.  </dd> </dl>  </details>  >**Recommendation:** The minimal pipeline serves the stated,
-  **Post-Mortem & Fix Analysis**:
-  > <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/NirDiamant/RAG_Techniques/pull/208?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- walkthrough_start -->  <details> <summary><strong>📝 Walkthrough</strong></summary> <dl> <dd>  ## Walkthrough  Adds a Python 3.11 notebook that reads PDF text, splits it into 500-character chunks, embeds the chunks,
-  > <h3>Code Review by Qodo</h3>  <code>🐞 Bugs (0)</code>  <code>📘 Rule violations (0)</code>  <code>📜 Skill insights (6)</code>  ---  <br/>  🔴 **High**  <details> <summary>  1.  Late Chunking notebook is misplaced <code>📜 Skill insight</code> <code>⚙ Maintainability</code></summary>  <br/>  > <details open> ><summary>Description</summary> ><br/> > ><pre> ><b><i>late_chunking.ipynb</i></b> is committed at the repository root instead of <b><i>all_rag_techniques/</i></b>, so it >does not follow the required technique-notebook placement. Contributors and repository tooling that >browse or index the technique directory will not treat it as part of the tutorial collection, and >README links cannot use the required technique path until it is moved. ></pre> ></details>  > <details> ><summary>Code</summary> ><br/> > ><code>[late_chunking.ipynb[R1-2]](https://github.com/NirDiamant/RAG_Techniques/pull/208/files#diff-97690b6ab0893fb3ad9453763d293e0d0b8125bdfb08dc39d26704433f7614eaR1-R2)</code> >
+- **Issue #211** (2026-10-31): **Fix the 31 Oct audit: retired models, HyPE syntax error, CI, footer links**
+  *Symptoms*: Fixes the problems the 31 Oct audit found in this repo: retired model IDs, the HyPE syntax error, the broken CI set, and missing cross-links in the README footer.  ## What changed  **Models (56 files: 38 notebooks, 16 scripts, evaluation/evalute_rag.py, tests/conftest.py).** OpenAI shut down gpt-3.5-turbo, gpt-4 and gpt-4-turbo on 2026-10-23, and shuts down gpt-4o, gpt-4o-mini, gpt-4.1 and gpt-4.1-mini on 2027-01-14. - OpenAI chat calls now use `gpt-5.4-mini`, set once per notebook or script (`LLM_MODEL`, or the constant the notebook already had), so the next shutdown is a one-line change. Where a lesson pairs a small generator with a stronger judge (choose_chunk_size, GroUSE, end-to-end evaluation), the judge is `gpt-5.4`. - Raw OpenAI client calls send `max_completion_tokens` instead of `max_tokens`, which GPT-5.x rejects (contextual_chunk_headers, memorag). - Two notebooks silently used LlamaIndex's default LLM, gpt-3.5-turbo, so they had been failing since 23 Oct: simple_rag_with_llamaindex and the question generation in choose_chunk_size. Both now name their model. - GroUSE's default judge is gpt-4, so the notebook now passes a model explicitly. - `evaluation/evalute_rag.py`, the shared judge that simple_rag, HyPE and memorag call, used gpt-4-turbo for `evaluate_rag` and its three deepeval metrics. They now use one `EVAL_MODEL = "gpt-5.4"`, and `evaluate_rag` retrieves with `invoke()` (LangChain 1.x removed `get_relevant_documents()`). The judge no longer passes `tempera
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1704,78 +1721,440 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4eacd2fa` (2026-10-29)
-**Commit Message**: Add a follow-the-author-on-Amazon line to the book footer
+### Incident Patch 1: `aa49b841` (2026-10-31)
+**Commit Message**: Fix the 31 Oct audit: retired models, HyPE syntax error, CI, footer links (#211)
+
+* Fix the SyntaxError in the HyPE notebook's vector store cell
+
+A missing comma after faiss.IndexFlatL2(...) in the FAISS(...) call stopped
+the notebook from parsing.
 
 Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
-**File**: `README.md` (modified, +2/-0)
-```diff
-@@ -714,6 +714,8 @@ To begin implementing these advanced RAG techniques in your projects:
- 
- **[AI Agents Made Simple](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=book-footer-agents&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0HNXRSRH2%3Fmaas%3Dmaas_adg_api_580351185840460851_static_9_573%26ref_%3Daa_maas%26tag%3Dmaas%26aa_campaignid%3Dagents-en%26aa_adgroupid%3Dgithub-readme%26aa_creativeid%3Drag-book-footer-agents&retarget=0&text=book-footer-agents)** - the decision guide to building agents that work: 28 chapters on what each pattern does, what breaks, what it costs, and when it is overkill. No code.
- 
-+*To hear when the next book comes out, [follow the author on Amazon](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=author-follow-amazon&target=https%3A%2F%2Fwww.amazon.com%2Fstores%2FNir-Diamant%2Fauthor%2FB0DZMTVQHJ&retarget=0&text=author-follow-amazon).*
-+
- *Run a course, newsletter, or dev community? You can [earn 25% recommending RAG Made Simple](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=affiliate-signup&target=https%3A%2F%2Fnirdiamant.gumroad.com%2Faffiliates&retarget=0&text=affiliate-signup) to your audience.*
- 
- ## Contributing
-```
+* CI: replace the never-triggered requirements test with a notebook parse check
 
----
-
-### Incident Patch 2: `cad39f9d` (2026-10-29)
-**Commit Message**: Tag book links with Amazon Attribution, add book links to the Sponsor button
-
-Every Amazon book link in the README keeps the click tracker and now carries
-an Attribution tag per surface, so purchases can be traced to the link that
-sent them. FUNDING.yml gains the book link(s) next to GitHub Sponsors.
+github-test.yml only ran when a root requirements.txt changed, and that file
+was removed in 97b19f9, so it could never fire. notebook-smoke.yml runs on
+every push and pull request: it compiles each notebook's code cells in order
+(IPython magics and shell lines converted the way Jupyter sees them) and
+byte-compiles every .py file. No API keys and no execution.
 
 Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
-**File**: `.github/FUNDING.yml` (modified, +2/-1)
+* Move retired and retiring model IDs to current ones
+
+OpenAI shut down gpt-3.5-turbo, gpt-4 and gpt-4-turbo on 2026-10-23 and
+shuts down gpt-4o, gpt-4o-mini, gpt-4.1 and gpt-4.1-mini on 2027-01-14.
+
+- OpenAI chat calls now use gpt-5.4-mini, set once per notebook or script
+  (LLM_MODEL, or the notebook's existing constant). Where a lesson pairs a
+  small generator with a st
+
+**File**: `.github/workflows/github-test.yml` (removed, +0/-35)
 ```diff
-@@ -1 +1,2 @@
--github: NirDiamant
+@@ -1,35 +0,0 @@
+-name: GitHub PR Test
+-
+-on:
+-  pull_request:
+-    types: [opened, synchronize, reopened]
+-    branches:
+-      - main
+-    paths:
+-      - "requirements.txt"
+-
+-jobs:
+-  test:
+-    runs-on: ubuntu-latest
+-
+-    env:
+-      OPENAI_API_KEY: "123"
+-      
+-    steps:
+-      - name: Checkout code
+-        uses: actions/checkout@v7
+-
+-      - name: Set up Python
+-        uses: actions/setup-python@v7
+-        with:
+-          python-version: '3.12.6'
+-          cache: 'pip'
+-
+-      - name: Install dependencies
+-        run: |
+-          python -m pip install --upgrade pip
+-          pip install -r requirements.txt
+-
+-      - name: Run tests
+-        run: |
+-          pytest
 \ No newline at end of file
-+github: NirDiamant
-+custom: ["https://www.amazon.com/dp/B0GWDH8JJL?maas=maas_adg_api_580351185840460851_static_9_573&ref_=aa_maas&tag=maas&aa_campaignid=rag-en&aa_adgroupid=github-funding&aa_creativeid=rag", "https://www.amazon.com/dp/B0HNXRSRH2?maas=maas_adg_api_580351185840460851_static_9_573&ref_=aa_maas&tag=maas&aa_campaignid=agents-en&aa_adgroupid=github-funding&aa_creativeid=rag"]
 ```
 
-**File**: `README.md` (modified, +3/-3)
+**File**: `.github/workflows/notebook-smoke.yml` (added, +70/-0)
 ```diff
-@@ -3,7 +3,7 @@
+@@ -0,0 +1,70 @@
++# Parse check for every notebook and script. It needs no API keys and runs no code:
++# each notebook's code cells are converted the way Jupyter sees them (IPython turns
++# %magics and !shell lines into plain Python), joined in order and compiled, and every
++# .py file is byte-compiled. A syntax error anywhere fails the check.
++name: Notebook smoke test
++
++on:
++  push:
++  pull_request:
++
++permissions:
++  contents: read
++
++jobs:
++  parse:
++    runs-on: ubuntu-latest
++    steps:
++      - name: Checkout code
++        uses: actions/checkout@v7
++
++      - name: Set up Python
++        uses: actions/setup-python@v7
++        with:
++          python-version: "3.11"
++
++      - name: Install parser dependencies
++        run: python -m pip install --quiet nbformat ipython
++
++      - name: Parse every notebook and script
++        run: |
++          python - <<'EOF'
++          import ast
++          import pathlib
++          import py_compile
++          import sys
++          import warnings
++
++          import nbformat
++          from IPython.core.inputtransformer2 import TransformerManager
++
++          warnings.filterwarnings("ignore")
++          to_python = TransformerManager().transform_cell
++          failures = []
++
++          notebooks = sorted(p for p in pathlib.Path(".").rglob("*.ipynb") if ".git" not in p.parts)
++          for path in notebooks:
++              try:
++                  nb = nbformat.read(path, as_version=4)
++              except Exception as exc:
++                  failures.append(f"{path}: cannot load ({exc})")
++                  continue
++              cells = [to_python(c.source) for c in nb.cells if c.cell_type == "code"]
++              try:
++                  compile("\n\n".join(cells), str(path), "exec", flags=ast.PyCF_ALLOW_TOP_LEVEL_AWAIT)
++              except SyntaxError as exc:
++                  failures.append(f"{path}: line {exc.lineno}: {exc.msg}")
++
++          scripts = sorted(p for p in pathlib.Path(".").rglob("*.py") if ".git" not in p.parts)
++          for path in scripts:
++              try:
++                  py_compile.compile(str(path), doraise=True)
++              except py_compile.PyCompileError as exc:
++                  failures.append(f"{path}: {exc.msg}")
++
++          print(f"Checked {len(notebooks)} notebooks and {len(scripts)} scripts.")
++          if failures:
++              print("\n".join(failures))
++              sys.exit(1)
++          print("Everything parses.")
++          EOF
+```
+
+**File**: `README.md` (modified, +8/-2)
+```diff
+@@ -533,7 +533,7 @@ Explore our extensive list of cutting-edge RAG techniques:
+     Evaluate the final stage of Retrieval-Augmented Generation using metrics of the GroUSE framework and meta-evaluate your custom LLM judge on GroUSE unit tests.
  
- **_AI Agents Made Simple_ reached #1 in Software Development, Software Engineering and Software Design Tools on Amazon.com's Kindle Store.**<br>
- A decision guide to building AI agents that work: 28 chapters, 148 illustrations, no code.<br>
--**[Get the book on Amazon →](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=launch-banner-099&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0HNXRSRH2&retarget=0&text=launch-banner-099)**
-+**[Get the book on Amazon →](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=launch-banner-099&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0HNXRSRH2%3Fmaas%3Dmaas_adg_api_580351185840460851_static_9_573%26ref_%3Daa_maas%26tag%3Dmaas%26aa_campaignid%3Dagents-en%26aa_adgroupid%3Dgithub-readme%26aa_creativeid%3Drag-launch-banner-099&retarget=0&text=launch-banner-099)**
+     #### Implementation 🛠️
+-    Use the `grouse` package to evaluate contextually-grounded LLM generations with GPT-4 on the 6 metrics of the GroUSE framework and use unit tests to evaluate a custom Llama 3.1 405B evaluator.
++    Use the `grouse` package to evaluate contextually-grounded LLM generations with an OpenAI judge (gpt-5.4) on the 6 metrics of the GroUSE framework and use unit tests to evaluate a custom, cheaper gpt-5.4-mini evaluator.
+     
  
- </div>
- <!-- /launch-banner-099 -->
-@@ -708,11 +708,11 @@ To begin implementing these advanced RAG techniques in your projects:
+ 27. **End-to-End RAG Evaluation**: [<img src="https://img.shields.io/badge/GitHub-View-blue" height="20">](https://github.com/NirDiamant/RAG_TECHNIQUES/blob/main/evaluation/end-2-end_rag_evaluation.ipynb) [<img src="https://colab.research.google.com/assets/colab-badge.svg" height="20">](https://colab.research.google.com/github/NirDiamant/RAG_Techniques/blob/main/evaluation/end-2-end_rag_evaluation.ipynb) | Complete evaluation pipeline |
+@@ -706,14 +706,20 @@ To begin implementing these advanced RAG techniques in your projects:
  
- ## 📚 More from the same author
+ > 🌟 **Support This Project:** Your sponsorship fuels innovation in RAG technologies. **[Become a sponsor](https://www.diamant-ai.com/sponsorship)** to help maintain and expand this valuable resource!
  
--**[Agent Memory Made Simple](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=book-footer-am&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0HCRMGHCM&retarget=0&text=book-footer-am)** - the visual guide to memory for AI agents: buffers, vector and graph memory, cognitive architectures and the frameworks in production.
-+**[Agent Memory Made Simple](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=book-footer-am&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0HCRMGHCM%3Fmaas%3Dmaas_adg_api_580351185840460851_static_9_573%26ref_%3Daa_maas%26tag%3Dmaas%26aa_campaignid%3Dam-en%26aa_adgroupid%3Dgithub-readme%26aa_creativeid%3Drag-book-footer-am&retarget=0&text=book-footer-am)** - the visual guide to memory for AI agents: buffers, vector and graph memory, cognitive architectures and the frameworks in production.
+-## 📚 More from the same author
++## 📚 More from DiamantAI
++
++**[RAG Made Simple](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=footer-book-rag&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0GWDH8JJL%3Fmaas%3Dmaas_adg_api_580351185840460851_static_9_573%26ref_%3Daa_maas%26tag%3Dmaas%26aa_campaignid%3Drag-en%26aa_adgroupid%3Dgithub-readme%26aa_creativeid%3Drag-book-footer-rag&retarget=0&text=footer-book-rag)** - the companion book to this repo, featured at the top.
+ 
+ **[Agent Memory Made Simple](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=book-footer-am&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0HCRMGHCM%3Fmaas%3Dmaas_adg_api_580351185840460851_static_9_573%26ref_%3Daa_maas%26tag%3Dmaas%26aa_campaignid%3Dam-en%26aa_adgroupid%3Dgithub-readme%26aa_creativeid%3Drag-book-footer-am&retarget=0&text=book-footer-am)** - the visual guide to memory for AI agents: buffers, vector and graph memory, cognitive architectures and the frameworks in production.
  
  **[Prompt Engineering: Master the Art of AI Interaction](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=book-footer-pe&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0DZ85RPB5%3Ftag%3Ddiamantai-ragrm-20&retarget=0&text=book-footer-pe)** - the prompting foundation that makes RAG work better. Same visual approach, 22 hands-on techniques.
  
--**[AI Agents Made Simple](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=book-footer-agents&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0HNXRSRH2&retarget=0&text=book-footer-agents)** - the decision guide to building agents that work: 28 chapters on what each pattern does, what breaks, what it costs, and when it is overkill. No code.
-+**[AI Agents Made Simple](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=book-footer-agents&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0HNXRSRH2%3Fmaas%3Dmaas_adg_api_580351185840460851_static_9_573%26ref_%3Daa_maas%26tag%3Dmaas%26aa_campaignid%3Dagents-en%26aa_adgroupid%3Dgithub-readme%26aa_creativeid%3Drag-book-footer-agents&retarget=0&text=book-footer-agents)** - the decision guide to building agents that work: 28 chapters on what each pattern does, what breaks, what it costs, and when it is overkill. No code.
+ **[AI Agents Made Simple](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=book-footer-agents&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0HNXRSRH2%3Fmaas%3Dmaas_adg_api_580351185840460851_static_9_573%26ref_%3Daa_maas%26tag%3Dmaas%26aa_campaignid%3Dagents-en%26aa_adgroupid%3Dgithub-readme%26aa_creativeid%3Drag-book-footer-agents&retarget=0&text=book-footer-agents)** - the decision guide to building agents that work: 28 chapters on what each pattern does, what breaks, what it costs, and when it is overkill. No code.
  
- *Run a course, newsletter, or dev community? You can [earn 25% recommending RAG Made Simple](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=affiliate-signup&target=https%3A%2F%2Fnirdiamant.gumroad.com%2Faffiliates&retarget=0&text=affiliate-signup) to your audience.*
- 
++**Other repos:** [GenAI Agents](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=footer-genai-agents&target=https%3A%2F%2Fgithub.com%2FNirDiamant%2FGenAI_Agents&retarget=0&text=footer-genai-agents) · [Agents Towards Production](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=footer-atp&target=https%3A%2F%2Fgithub.com%2FNirDiamant%2Fagents-towards-production&retarget=0&text=footer-atp) · [Prompt Engineering](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=footer-prompt-engineering&target=https%3A%2F%2Fgithub.com%2FNirDiamant%2FPrompt_Engineering&retarget=0&text=footer-prompt-engineering) · [Agent Memory Techniques](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=footer-agent-memory&target=https%3A%2F%2Fgithub.com%2FNirDiamant%2FAgent_Memory_Techniques&retarget=0&text=footer-agent-memory)
++
++**Follow along:** [Newsletter](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=footer-newsletter&target=https%3A%2F%2Fnewsletter.diamant-ai.com&retarget=0&text=footer-newsletter) · [YouTube](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?no
+```
+
+**File**: `all_rag_techniques/HyDe_Hypothetical_Document_Embedding.ipynb` (modified, +7/-4)
+```diff
+@@ -30,7 +30,7 @@
+     "\n",
+     "### Hypothetical Document Generation\n",
+     "\n",
+-    "1. A language model (GPT-4) is used to generate a hypothetical document that answers the given query.\n",
++    "1. A language model (gpt-5.4-mini) is used to generate a hypothetical document that answers the given query.\n",
+     "2. The generation is guided by a prompt template that ensures the hypothetical document is detailed and matches the chunk size used in the vector store.\n",
+     "\n",
+     "### Retrieval Process\n",
+@@ -45,7 +45,7 @@
+     "\n",
+     "1. Query Expansion: Transforms short queries into detailed hypothetical documents.\n",
+     "2. Flexible Configuration: Allows adjustment of chunk size, overlap, and number of retrieved documents.\n",
+-    "3. Integration with OpenAI Models: Uses GPT-4 for hypothetical document generation and OpenAI embeddings for vector representation.\n",
++    "3. Integration with OpenAI Models: Uses gpt-5.4-mini for hypothetical document generation and OpenAI embeddings for vector representation.\n",
+     "\n",
+     "## Benefits of this Approach\n",
+     "\n",
+@@ -146,7 +146,10 @@
+     "load_dotenv()\n",
+     "\n",
+     "# Set the OpenAI API key environment variable\n",
+-    "os.environ[\"OPENAI_API_KEY\"] = os.getenv('OPENAI_API_KEY')"
++    "os.environ[\"OPENAI_API_KEY\"] = os.getenv('OPENAI_API_KEY')\n",
++    "\n",
++    "# Chat model used in this notebook\n",
++    "LLM_MODEL = \"gpt-5.4-mini\""
+    ]
+   },
+   {
+@@ -195,7 +198,7 @@
+    "source": [
+     "class HyDERetriever:\n",
+     "    def __init__(self, files_path, chunk_size=500, chunk_overlap=100):\n",
+-    "        self.llm = ChatOpenAI(temperature=0, model_name=\"gpt-4o-mini\", max_tokens=4000)\n",
++    "        self.llm = ChatOpenAI(temperature=0, model_name=LLM_MODEL, max_tokens=4000)\n",
+     "\n",
+     "        self.embeddings = OpenAIEmbeddings()\n",
+     "        self.chunk_size = chunk_size\n",
+```
+
+**File**: `all_rag_techniques/HyPE_Hypothetical_Prompt_Embeddings.ipynb` (modified, +3/-3)
+```diff
+@@ -178,7 +178,7 @@
+    "outputs": [],
+    "source": [
+     "PATH = \"data/Understanding_Climate_Change.pdf\"\n",
+-    "LANGUAGE_MODEL_NAME = \"gpt-4o-mini\"\n",
++    "LANGUAGE_MODEL_NAME = \"gpt-5.4-mini\"\n",
+     "EMBEDDING_MODEL_NAME = \"text-embedding-3-small\"\n",
+     "CHUNK_SIZE = 1000\n",
+     "CHUNK_OVERLAP = 200"
+@@ -232,7 +232,7 @@
+     "\n",
+     "    # parse questions from response\n",
+     "    # Notes: \n",
+-    "    # - gpt4o likes to split questions by \\n\\n so we remove one \\n\n",
++    "    # - the model often splits questions by \\n\\n so we remove one \\n\n",
+     "    # - for production or if using smaller models from ollama, it's beneficial to use regex to parse \n",
+     "    # things like (un)ordeed lists\n",
+     "    # r\"^\\s*[\\-\\*\\\u2022]|\\s*\\d+\\.\\s*|\\s*[a-zA-Z]\\)\\s*|\\s*\\(\\d+\\)\\s*|\\s*\\([a-zA-Z]\\)\\s*|\\s*\\([ivxlcdm]+\\)\\s*\"\n",
+@@ -295,7 +295,7 @@
+     "            if vector_store == None:  \n",
+     "                vector_store = FAISS(\n",
+     "                    embedding_function=OpenAIEmbeddings(model=EMBEDDING_MODEL_NAME),  # Define embedding model\n",
+-    "                    index=faiss.IndexFlatL2(len(vectors[0]))  # Define an L2 index for similarity search\n",
++    "                    index=faiss.IndexFlatL2(len(vectors[0])),  # Define an L2 index for similarity search\n",
+     "                    docstore=InMemoryDocstore(),  # Use in-memory document storage\n",
+     "                    index_to_docstore_id={}  # Maintain index-to-document mapping\n",
+     "                )\n",
+```
+
+**File**: `all_rag_techniques/Microsoft_GraphRag.ipynb` (modified, +10/-4)
+```diff
+@@ -94,7 +94,7 @@
+    "source": [
+     "AZURE_OPENAI_API_KEY=\"\"\n",
+     "AZURE_OPENAI_ENDPOINT=\"\"\n",
+-    "GPT4O_MODEL_NAME=\"gpt-4o\"\n",
++    "CHAT_DEPLOYMENT_NAME=\"\"  # Azure: your chat deployment. Older .env files call it GPT4O_MODEL_NAME, which still works.\n",
+     "TEXT_EMBEDDING_3_LARGE_DEPLOYMENT_NAME=\"\"\n",
+     "AZURE_OPENAI_API_VERSION=\"2024-06-01\"\n",
+     "\n",
+@@ -159,11 +159,17 @@
+     "load_dotenv()\n",
+     "from openai import AzureOpenAI, OpenAI\n",
+     "\n",
++    "# OpenAI chat model. On Azure, set this to the model behind your chat deployment.\n",
++    "LLM_MODEL = \"gpt-5.4-mini\"\n",
++    "\n",
+     "AZURE=True #Change to False to use OpenAI\n",
+     "if AZURE:\n",
+     "    AZURE_OPENAI_API_KEY = os.getenv(\"AZURE_OPENAI_API_KEY\")\n",
+     "    AZURE_OPENAI_ENDPOINT = os.getenv(\"AZURE_OPENAI_ENDPOINT\")\n",
+-    "    GPT4O_DEPLOYMENT_NAME = os.getenv(\"GPT4O_MODEL_NAME\")\n",
++    "    # Your Azure chat deployment name. Older .env files call it GPT4O_MODEL_NAME, which still works.\n",
++    "    CHAT_DEPLOYMENT_NAME = os.getenv(\"CHAT_DEPLOYMENT_NAME\") or os.getenv(\"GPT4O_MODEL_NAME\")\n",
++    "    if not CHAT_DEPLOYMENT_NAME:\n",
++    "        raise ValueError(\"Set CHAT_DEPLOYMENT_NAME in your .env to the name of your Azure chat deployment.\")\n",
+     "    TEXT_EMBEDDING_3_LARGE_NAME = os.getenv(\"TEXT_EMBEDDING_3_LARGE_DEPLOYMENT_NAME\")\n",
+     "    AZURE_OPENAI_API_VERSION = os.getenv(\"AZURE_OPENAI_API_VERSION\")\n",
+     "    oai = AzureOpenAI(azure_endpoint=AZURE_OPENAI_ENDPOINT, api_key=AZURE_OPENAI_API_KEY, api_version=AZURE_OPENAI_API_VERSION)\n",
+@@ -224,15 +230,15 @@
+     "\n",
+     "with open('data/graphrag/settings.yaml', 'r') as f:\n",
+     "    settings_yaml = yaml.load(f, Loader=yaml.FullLoader)\n",
+-    "settings_yaml['llm']['model'] = \"gpt-4o\"\n",
++    "settings_yaml['llm']['model'] = LLM_MODEL\n",
+     "settings_yaml['llm']['api_key'] = AZURE_OPENAI_API_KEY if AZURE else OPENAI_API_KEY\n",
+     "settings_yaml['llm']['type'] = 'azure_openai_chat' if AZURE else 'openai_chat'\n",
+     "settings_yaml['embeddings']['llm']['api_key'] = AZURE_OPENAI_API_KEY if AZURE else OPENAI_API_KEY\n",
+     "settings_yaml['embeddings']['llm']['type'] = 'azure_openai_embedding' if AZURE else 'openai_embedding'\n",
+     "settings_yaml['embeddings']['llm']['model'] = TEXT_EMBEDDING_3_LARGE_NAME if AZURE else 'text-embedding-3-large'\n",
+     "if AZURE:\n",
+     "    settings_yaml['llm']['api_version'] = AZURE_OPENAI_API_VERSION\n",
+-    "    settings_yaml['llm']['deployment_name'] = GPT4O_DEPLOYMENT_NAME\n",
++    "    settings_yaml['llm']['deployment_name'] = CHAT_DEPLOYMENT_NAME\n",
+     "    settings_yaml['llm']['api_base'] = AZURE_OPENAI_ENDPOINT\n",
+     "    settings_yaml['embeddings']['llm']['api_version'] = AZURE_OPENAI_API_VERSION\n",
+     "    settings_yaml['embeddings']['llm']['deployment_name'] = TEXT_EMBEDDING_3_LARGE_NAME\n",
+```
+
+**File**: `all_rag_techniques/adaptive_retrieval.ipynb` (modified, +8/-5)
+```diff
+@@ -164,7 +164,10 @@
+     "load_dotenv()\n",
+     "\n",
+     "# Set the OpenAI API key environment variable\n",
+-    "os.environ[\"OPENAI_API_KEY\"] = os.getenv('OPENAI_API_KEY')"
++    "os.environ[\"OPENAI_API_KEY\"] = os.getenv('OPENAI_API_KEY')\n",
++    "\n",
++    "# Chat model used in this notebook\n",
++    "LLM_MODEL = \"gpt-5.4-mini\""
+    ]
+   },
+   {
+@@ -186,7 +189,7 @@
+     "\n",
+     "class QueryClassifier:\n",
+     "    def __init__(self):\n",
+-    "        self.llm = ChatOpenAI(temperature=0, model_name=\"gpt-4o\", max_tokens=4000)\n",
++    "        self.llm = ChatOpenAI(temperature=0, model_name=LLM_MODEL, max_tokens=4000)\n",
+     "        self.prompt = PromptTemplate(\n",
+     "            input_variables=[\"query\"],\n",
+     "            template=\"Classify the following query into one of these categories: Factual, Analytical, Opinion, or Contextual.\\nQuery: {query}\\nCategory:\"\n",
+@@ -218,7 +221,7 @@
+     "        text_splitter = CharacterTextSplitter(chunk_size=800, chunk_overlap=0)\n",
+     "        self.documents = text_splitter.create_documents(texts)\n",
+     "        self.db = FAISS.from_documents(self.documents, self.embeddings)\n",
+-    "        self.llm = ChatOpenAI(temperature=0, model_name=\"gpt-4o\", max_tokens=4000)\n",
++    "        self.llm = ChatOpenAI(temperature=0, model_name=LLM_MODEL, max_tokens=4000)\n",
+     "\n",
+     "\n",
+     "    def retrieve(self, query, k=4):\n",
+@@ -303,7 +306,7 @@
+     "            template=\"Generate {k} sub-questions for: {query}\"\n",
+     "        )\n",
+     "\n",
+-    "        llm = ChatOpenAI(temperature=0, model_name=\"gpt-4o\", max_tokens=4000)\n",
++    "        llm = ChatOpenAI(temperature=0, model_name=LLM_MODEL, max_tokens=4000)\n",
+     "        sub_queries_chain = sub_queries_prompt | llm.with_structured_output(SubQueries)\n",
+     "\n",
+     "        input_data = {\"query\": query, \"k\": k}\n",
+@@ -496,7 +499,7 @@
+     "    def __init__(self, texts: List[str]):\n",
+     "        adaptive_retriever = AdaptiveRetriever(texts)\n",
+     "        self.retriever = PydanticAdaptiveRetriever(adaptive_retriever=adaptive_retriever)\n",
+-    "        self.llm = ChatOpenAI(temperature=0, model_name=\"gpt-4o\", max_tokens=4000)\n",
++    "        self.llm = ChatOpenAI(temperature=0, model_name=LLM_MODEL, max_tokens=4000)\n",
+     "        \n",
+     "        # Create a custom prompt\n",
+     "        prompt_template = \"\"\"Use the following pieces of context to answer the question at the end. \n",
+```
+
+**File**: `all_rag_techniques/choose_chunk_size.ipynb` (modified, +14/-9)
+```diff
+@@ -46,7 +46,11 @@
+     "import time\n",
+     "import os\n",
+     "load_dotenv()\n",
+-    "openai.api_key = os.getenv(\"OPENAI_API_KEY\")"
++    "openai.api_key = os.getenv(\"OPENAI_API_KEY\")\n",
++    "\n",
++    "# Models used in this notebook: a small one answers, a stronger one judges\n",
++    "LLM_MODEL = \"gpt-5.4-mini\"\n",
++    "JUDGE_MODEL = \"gpt-5.4\""
+    ]
+   },
+   {
+@@ -82,7 +86,8 @@
+     "num_eval_questions = 25\n",
+     "\n",
+     "eval_documents = documents[0:20]\n",
+-    "data_generator = DatasetGenerator.from_documents(eval_documents)\n",
++    "# Name the question-writing model: LlamaIndex's default, gpt-3.5-turbo, was shut down on 2026-10-23\n",
++    "data_generator = DatasetGenerator.from_documents(eval_documents, llm=OpenAI(model=LLM_MODEL))\n",
+     "eval_questions = data_generator.generate_questions_from_nodes()\n",
+     "k_eval_questions = random.sample(eval_questions, num_eval_questions)"
+    ]
+@@ -100,13 +105,13 @@
+    "metadata": {},
+    "outputs": [],
+    "source": [
+-    "# We will use GPT-4 for evaluating the responses\n",
+-    "gpt4 = OpenAI(temperature=0, model=\"gpt-4o\")\n",
++    "# We use the stronger model (JUDGE_MODEL) to evaluate the responses\n",
++    "gpt4 = OpenAI(temperature=0, model=JUDGE_MODEL)\n",
+     "\n",
+     "# Set appropriate settings for the LLM\n",
+     "Settings.llm = gpt4\n",
+     "\n",
+-    "# Define Faithfulness Evaluators which are based on GPT-4\n",
++    "# Define Faithfulness Evaluators which are based on the judge model\n",
+     "faithfulness_gpt4 = FaithfulnessEvaluator()\n",
+     "\n",
+     "faithfulness_new_prompt_template = PromptTemplate(\"\"\" Please tell if a given piece of information is directly supported by the context.\n",
+@@ -137,7 +142,7 @@
+     "\n",
+     "faithfulness_gpt4.update_prompts({\"your_prompt_key\": faithfulness_new_prompt_template}) # Update the prompts dictionary with the new prompt template\n",
+     "\n",
+-    "# Define Relevancy Evaluators which are based on GPT-4\n",
++    "# Define Relevancy Evaluators which are based on the judge model\n",
+     "relevancy_gpt4 = RelevancyEvaluator()"
+    ]
+   },
+@@ -155,10 +160,10 @@
+    "outputs": [],
+    "source": [
+     "# Define function to calculate average response time, average faithfulness and average relevancy metrics for given chunk size\n",
+-    "# We use GPT-3.5-Turbo to generate response and GPT-4 to evaluate it.\n",
++    "# We use LLM_MODEL to generate responses and the stronger JUDGE_MODEL to evaluate them.\n",
+     "def evaluate_response_time_and_accuracy(chunk_size, eval_questions):\n",
+     "    \"\"\"\n",
+-    "    Evaluate the average response time, faithfulness, and relevancy of responses generated by GPT-3.5-turbo for a given chunk size.\n",
++    "    Evaluate the average response time, faithfulness, and relevancy of responses generated by LLM_MODEL for a given chunk size.\n",
+     "    \n",
+     "    Parameters:\n",
+     "    chunk_size (int): The size of data chunks being processed.\n",
+@@ -172,7 +177,7 @@
+     "    total_relevancy = 0\n",
+     "\n",
+     "    # create vector index\n",
+-    "    llm = OpenAI(model=\"gpt-3.5-turbo\")\n",
++    "    llm = OpenAI(model=LLM_MODEL)\n",
+     "\n",
+     "    Settings.llm = llm\n",
+     "    Settings.chunk_size = chunk_size\n",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #212** (2026-10-31): Make notebooks and scripts import and run on LangChain 1.x and LlamaIndex 0.14 (@NirDiamant)
+- **PR #211** (2026-10-31): Fix the 31 Oct audit: retired models, HyPE syntax error, CI, footer links (@NirDiamant)
 - **PR #210** (2026-10-20): Add Document Parsing with Mistral OCR 4 (sponsored by Mistral AI) (@NirDiamant)
+- **PR #209** (2026-10-31): ci: fix invalid local-test workflow (missing runs-on) (@NirDiamant)
 - **PR #208** (closed): Add Late Chunking notebook (@NirDiamant)
 - **PR #207** (2026-10-11): Decode HTML entities in Qodo finding titles (@NirDiamant)
-- **PR #206** (closed): [TEST - do not merge] Add late chunking notebook (@NirDiamant)
-- **PR #205** (2026-10-11): Request changes when Qodo finds High or Medium issues (@NirDiamant)
-- **PR #204** (2026-10-11): Add REVIEW.md with the contribution-guidelines check (@NirDiamant)
 
 ---
 
@@ -1789,35 +2168,3 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Add a follow-the-author-on-Amazon line to the book footer
-
-**RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NirDiamant/RAG_Techniques. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `4eacd2fa`: Add a follow-the-author-on-Amazon line to the book footer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Jupyter Notebook data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```jupyter notebook
-// Verified production-grade fix pattern:
-*To hear when the next book comes out, [follow the author on Amazon](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=author-follow-amazon&target=https%3A%2F%2Fwww.amazon.com%2Fstores%2FNir-Diamant%2Fauthor%2FB0DZMTVQHJ&retarget=0&text=author-follow-amazon).*
-
-```
-
-**NEGATIVE CONSTRAINT**:
-```jupyter notebook
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4eacd2fa` are properly handled with clean fallback behavior.

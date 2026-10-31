@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T06:32:12.338Z",
+  "last_updated": "2026-10-31T06:38:35.957Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -350,14 +350,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xingchen-agi-teleocr",
-      "content_hash": "c2e631605ffbe0a0873d4f113ed5d62e049e431189cbe7bace7e88174ecb2684",
-      "verified_at": "2026-10-28T04:21:40.028Z",
+      "content_hash": "820b8f50fc6730b6c286c35cffde8629d84153d9f45336077f4bffe6c1c80e42",
+      "verified_at": "2026-10-31T06:38:22.901Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T04:21:40.028Z"
+      "last_updated": "2026-10-31T06:38:22.901Z"
     },
     "Qwen/Qwen-Image-2.1": {
       "repository": "Qwen/Qwen-Image-2.1",
@@ -10416,14 +10416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nirdiamant-rag_techniques",
-      "content_hash": "3896a9b482418fc433f120bae366160bedbba047dc229b3e6561e758f5f063cd",
-      "verified_at": "2026-10-30T13:37:42.509Z",
+      "content_hash": "3892b71ecd09005dbc794fe63de61152afc5c2082c3605e5e4c76f5346fd9bfb",
+      "verified_at": "2026-10-31T06:38:35.957Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T13:37:42.509Z"
+      "last_updated": "2026-10-31T06:38:35.957Z"
     },
     "medialab/xan": {
       "repository": "medialab/xan",

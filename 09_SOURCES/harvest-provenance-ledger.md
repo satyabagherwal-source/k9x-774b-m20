@@ -6499,3 +6499,5 @@ Every entry in this ledger must capture:
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `3184116c` | Multi-dimensional audit evidence | 2026-10-31T06:32:06.378Z |
 | `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `a87308b0` | Multi-dimensional audit evidence | 2026-10-31T06:32:09.005Z |
 | `learn-huggingface-meta-llama-llama-3-1-8b-instruct` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-31T06:32:12.328Z |
+| `learn-huggingface-xingchen-agi-teleocr` | `https://huggingface.co/XingChen-AGI/TeleOCR` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-31T06:38:22.895Z |
+| `learn-github-nirdiamant-rag_techniques` | `https://github.com/NirDiamant/RAG_Techniques` | `4fea9188` | Multi-dimensional audit evidence | 2026-10-31T06:38:35.950Z |

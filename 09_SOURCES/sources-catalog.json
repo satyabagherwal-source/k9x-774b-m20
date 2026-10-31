@@ -305,8 +305,8 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/TeleOCR",
     "sourceVersion": "hf-xingchen-agi-teleocr",
     "license": "Open-Source",
-    "contentHash": "c2e631605ffbe0a0873d4f113ed5d62e049e431189cbe7bace7e88174ecb2684",
-    "lastHarvestedAt": "2026-10-28T04:21:40.020Z",
+    "contentHash": "820b8f50fc6730b6c286c35cffde8629d84153d9f45336077f4bffe6c1c80e42",
+    "lastHarvestedAt": "2026-10-31T06:38:22.895Z",
     "learningId": "learn-huggingface-xingchen-agi-teleocr"
   },
   "hf-qwen-qwen-image-2.1": {
@@ -6903,10 +6903,10 @@
     "repository": "NirDiamant/RAG_Techniques",
     "platform": "github",
     "sourceUrl": "https://github.com/NirDiamant/RAG_Techniques",
-    "sourceVersion": "4eacd2fa",
+    "sourceVersion": "4fea9188",
     "license": "NOASSERTION",
-    "contentHash": "3896a9b482418fc433f120bae366160bedbba047dc229b3e6561e758f5f063cd",
-    "lastHarvestedAt": "2026-10-30T13:37:42.500Z",
+    "contentHash": "3892b71ecd09005dbc794fe63de61152afc5c2082c3605e5e4c76f5346fd9bfb",
+    "lastHarvestedAt": "2026-10-31T06:38:35.950Z",
     "learningId": "learn-github-nirdiamant-rag_techniques"
   },
   "medialab-xan": {

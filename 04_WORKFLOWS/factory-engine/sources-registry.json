@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T06:32:14.871Z",
-    "lastVerified": "2026-10-31T06:32:14.871Z",
+    "lastChecked": "2026-10-31T06:38:38.479Z",
+    "lastVerified": "2026-10-31T06:38:38.479Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -346,9 +346,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T06:04:12.713Z",
+    "lastChecked": "2026-10-31T06:38:34.339Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T06:04:12.713Z"
+    "lastVerified": "2026-10-31T06:38:34.339Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -886,14 +886,14 @@
     "officialUrl": "https://github.com/NirDiamant/RAG_Techniques",
     "sourceType": "github",
     "technology": "Jupyter Notebook",
-    "lastChecked": "2026-10-30T13:37:41.548Z",
-    "lastVerified": "2026-10-30T13:37:41.548Z",
+    "lastChecked": "2026-10-31T06:38:35.756Z",
+    "lastVerified": "2026-10-31T06:38:35.756Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nirdiamant-rag_techniques",
-    "contentHash": "3896a9b482418fc433f120bae366160bedbba047dc229b3e6561e758f5f063cd",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "contentHash": "3892b71ecd09005dbc794fe63de61152afc5c2082c3605e5e4c76f5346fd9bfb",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1170,12 +1170,12 @@
     "officialUrl": "https://huggingface.co/XingChen-AGI/TeleOCR",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T04:21:38.640Z",
-    "lastVerified": "2026-10-28T04:21:38.640Z",
+    "lastChecked": "2026-10-31T06:38:22.057Z",
+    "lastVerified": "2026-10-31T06:38:22.057Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xingchen-agi-teleocr",
-    "contentHash": "c2e631605ffbe0a0873d4f113ed5d62e049e431189cbe7bace7e88174ecb2684",
+    "contentHash": "820b8f50fc6730b6c286c35cffde8629d84153d9f45336077f4bffe6c1c80e42",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -1406,9 +1406,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-10-31T02:44:09.404Z",
+    "lastChecked": "2026-10-31T06:38:29.386Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-10-31T02:44:09.404Z"
+    "lastVerified": "2026-10-31T06:38:29.386Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -2526,12 +2526,12 @@
     "lastVerified": "2026-10-31T03:02:36.660Z"
   },
   "nats-io-nats.go": {
-    "name": "nats-io/nats.go",
+    "name": "nats.go",
     "officialUrl": "https://github.com/nats-io/nats.go",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T14:40:26.811Z",
-    "lastVerified": "2026-10-30T14:40:26.811Z",
+    "lastChecked": "2026-10-31T06:38:26.903Z",
+    "lastVerified": "2026-10-31T06:38:26.903Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nats-io-nats-go",
@@ -2540,7 +2540,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "36314d40"
   },
   "infiniflow-infinity": {
     "name": "infinity",
@@ -3971,9 +3972,9 @@
   "margelo-react-native-mmkv": {
     "name": "react-native-mmkv",
     "officialUrl": "https://github.com/margelo/react-native-mmkv",
-    "lastChecked": "2026-10-28T13:03:32.825Z",
+    "lastChecked": "2026-10-31T06:38:24.422Z",
     "revisionIdentifier": "ca5acf0c",
-    "lastVerified": "2026-10-28T13:03:32.825Z"
+    "lastVerified": "2026-10-31T06:38:24.422Z"
   },
   "krakend-krakend-ce": {
     "name": "krakend/krakend-ce",
@@ -4517,8 +4518,8 @@
     "officialUrl": "https://github.com/transact-rs/sqlx",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T06:36:16.846Z",
-    "lastVerified": "2026-10-30T06:36:16.846Z",
+    "lastChecked": "2026-10-31T06:38:19.397Z",
+    "lastVerified": "2026-10-31T06:38:19.397Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-transact-rs-sqlx",

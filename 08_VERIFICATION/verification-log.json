@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-FKST",
-    "timestamp": "2026-10-28T23:43:11.885Z",
-    "repository": "pyannote/speaker-diarization-community-1",
-    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
-    "contentHash": "8aa69fbaeb95bf32ab00355df9e4a458bb9be8684560b9d749799e6c81998026",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-R4OO",
-    "timestamp": "2026-10-28T23:52:10.872Z",
-    "repository": "herdrdev/herdr",
-    "learningId": "learn-github-herdrdev-herdr",
-    "contentHash": "7266e83b80eef2e150bf6bb4b3c17b4a17796ec586c9660b95e679d6cda0c4f4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-RDGF",
     "timestamp": "2026-10-28T23:52:22.239Z",
     "repository": "databendlabs/databend",
@@ -7492,6 +7462,36 @@
     "contentHash": "c42b524c39f900f609f691a31ed8f6832787f91000957a32661816555fcc0d0b",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-57L4",
+    "timestamp": "2026-10-31T06:38:22.888Z",
+    "repository": "XingChen-AGI/TeleOCR",
+    "learningId": "learn-huggingface-xingchen-agi-teleocr",
+    "contentHash": "820b8f50fc6730b6c286c35cffde8629d84153d9f45336077f4bffe6c1c80e42",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-5HNQ",
+    "timestamp": "2026-10-31T06:38:35.942Z",
+    "repository": "NirDiamant/RAG_Techniques",
+    "learningId": "learn-github-nirdiamant-rag_techniques",
+    "contentHash": "3892b71ecd09005dbc794fe63de61152afc5c2082c3605e5e4c76f5346fd9bfb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

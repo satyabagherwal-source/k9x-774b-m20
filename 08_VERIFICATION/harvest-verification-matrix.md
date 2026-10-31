@@ -6490,3 +6490,5 @@
 | `CYCLE-20261031-X52E` | `2026-10-31T06:32:06.374Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5879` | Yes (`eb606276...`) |
 | `CYCLE-20261031-X73D` | `2026-10-31T06:32:09.002Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6104` | Yes (`81044e7e...`) |
 | `CYCLE-20261031-X9NP` | `2026-10-31T06:32:12.325Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6105, Rule 6106, Rule 6107` | Yes (`c42b524c...`) |
+| `CYCLE-20261031-57L4` | `2026-10-31T06:38:22.888Z` | `XingChen-AGI/TeleOCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md` | Yes (`820b8f50...`) |
+| `CYCLE-20261031-5HNQ` | `2026-10-31T06:38:35.942Z` | `NirDiamant/RAG_Techniques` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nirdiamant-rag_techniques-learnings.md` | Yes (`3892b71e...`) |

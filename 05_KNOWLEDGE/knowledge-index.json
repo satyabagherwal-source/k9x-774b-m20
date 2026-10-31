@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T06:32:12.243Z",
+  "last_updated": "2026-10-31T06:38:35.888Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -30578,7 +30578,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/TeleOCR",
       "source_version": "hf-xingchen-agi-teleocr",
-      "content_hash": "c2e631605ffbe0a0873d4f113ed5d62e049e431189cbe7bace7e88174ecb2684",
+      "content_hash": "820b8f50fc6730b6c286c35cffde8629d84153d9f45336077f4bffe6c1c80e42",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "promoted_rules": [
@@ -30645,7 +30645,7 @@
         "learn-huggingface-hf-xingchen-agi-teleocr-mv44etxd",
         "learn-huggingface-hf-xingchen-agi-teleocr-mv4hnsqw"
       ],
-      "verified_at": "2026-10-28T04:21:39.923Z",
+      "verified_at": "2026-10-31T06:38:22.823Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41818,8 +41818,8 @@
       "slug": "nirdiamant-rag_techniques",
       "platform": "github",
       "source_url": "https://github.com/NirDiamant/RAG_Techniques",
-      "source_version": "4eacd2fa",
-      "content_hash": "3896a9b482418fc433f120bae366160bedbba047dc229b3e6561e758f5f063cd",
+      "source_version": "4fea9188",
+      "content_hash": "3892b71ecd09005dbc794fe63de61152afc5c2082c3605e5e4c76f5346fd9bfb",
       "dossier_path": "07_PROJECT_LEARNING/nirdiamant-rag_techniques-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nirdiamant-rag_techniques-learnings.md",
       "promoted_rules": [
@@ -41854,7 +41854,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T13:37:42.400Z",
+      "verified_at": "2026-10-31T06:38:35.876Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
