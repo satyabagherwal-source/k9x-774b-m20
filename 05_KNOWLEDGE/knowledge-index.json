@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T09:22:45.232Z",
+  "last_updated": "2026-10-31T09:29:56.867Z",
   "total_verified_learnings": 1181,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17505,7 +17505,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
       "source_version": "hf-altworld-hemmingway-1",
-      "content_hash": "caf758cf8fe02bf866fda1a7bdedd5c3ecf42211e851c05c4b5c80586aabeeeb",
+      "content_hash": "635df26599bbd798449d00634499c770a3dc60d4495c7a61e36c9fc3677f59d1",
       "dossier_path": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "promoted_rules": [
@@ -17719,6 +17719,21 @@
           "number": 5194,
           "title": "[Attention‑Bias Contract]",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6148,
+          "title": "**Rule #1 – Token‑ID Consistency Across Config Artifacts**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6149,
+          "title": "**Rule #2 – Explicit Attention‑Kernel Dispatch**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6150,
+          "title": "**Rule #3 – Mandatory `dtype` Alignment Between Model Weights and Runtime Tensor Type**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17739,7 +17754,7 @@
         "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
         "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04"
       ],
-      "verified_at": "2026-10-28T05:48:32.715Z",
+      "verified_at": "2026-10-31T09:29:56.847Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59985,8 +60000,8 @@
       "slug": "zseven-w-openpencil",
       "platform": "github",
       "source_url": "https://github.com/ZSeven-W/openpencil",
-      "source_version": "070c7c77",
-      "content_hash": "4cc98072246a559874fedb1ea53e62b8d0ea8d8e3848cefcb30a57b71560533f",
+      "source_version": "68d01235",
+      "content_hash": "6323c3e39c2f1384a46c976e25bb72ec104ab2267bf7ea71fd44e8663ac73a1d",
       "dossier_path": "07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
       "promoted_rules": [
@@ -59999,6 +60014,11 @@
           "number": 5307,
           "title": "web): isolate managed editor config and repair native CI (#252)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6147,
+          "title": "install): fall back to the newest release when no stable release exists",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60006,7 +60026,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T14:22:31.475Z",
+      "verified_at": "2026-10-31T09:29:36.365Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -160983,6 +161003,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T09:22:45.213Z"
+    },
+    "rule-6147": {
+      "learning_id": "rule-6147",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6147,
+      "title": "install): fall back to the newest release when no stable release exists",
+      "source_url": "https://github.com/ZSeven-W/openpencil",
+      "source_version": "68d01235",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T09:29:36.365Z"
+    },
+    "rule-6148": {
+      "learning_id": "rule-6148",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6148,
+      "title": "**Rule #1 – Token‑ID Consistency Across Config Artifacts**",
+      "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+      "source_version": "hf-altworld-hemmingway-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T09:29:56.847Z"
+    },
+    "rule-6149": {
+      "learning_id": "rule-6149",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6149,
+      "title": "**Rule #2 – Explicit Attention‑Kernel Dispatch**",
+      "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+      "source_version": "hf-altworld-hemmingway-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T09:29:56.847Z"
+    },
+    "rule-6150": {
+      "learning_id": "rule-6150",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6150,
+      "title": "**Rule #3 – Mandatory `dtype` Alignment Between Model Weights and Runtime Tensor Type**",
+      "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+      "source_version": "hf-altworld-hemmingway-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T09:29:56.847Z"
     }
   },
   "aliases": {

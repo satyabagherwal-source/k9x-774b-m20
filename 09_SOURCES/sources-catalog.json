@@ -415,8 +415,8 @@
     "sourceUrl": "https://huggingface.co/Altworld/Hemmingway-1",
     "sourceVersion": "hf-altworld-hemmingway-1",
     "license": "Open-Source",
-    "contentHash": "caf758cf8fe02bf866fda1a7bdedd5c3ecf42211e851c05c4b5c80586aabeeeb",
-    "lastHarvestedAt": "2026-10-28T05:48:32.765Z",
+    "contentHash": "635df26599bbd798449d00634499c770a3dc60d4495c7a61e36c9fc3677f59d1",
+    "lastHarvestedAt": "2026-10-31T09:29:56.949Z",
     "learningId": "learn-huggingface-altworld-hemmingway-1"
   },
   "hf-fastino-gliner2.5-decide": {
@@ -5253,10 +5253,10 @@
     "repository": "ZSeven-W/openpencil",
     "platform": "github",
     "sourceUrl": "https://github.com/ZSeven-W/openpencil",
-    "sourceVersion": "070c7c77",
+    "sourceVersion": "68d01235",
     "license": "MIT",
-    "contentHash": "4cc98072246a559874fedb1ea53e62b8d0ea8d8e3848cefcb30a57b71560533f",
-    "lastHarvestedAt": "2026-10-28T14:22:31.571Z",
+    "contentHash": "6323c3e39c2f1384a46c976e25bb72ec104ab2267bf7ea71fd44e8663ac73a1d",
+    "lastHarvestedAt": "2026-10-31T09:29:36.468Z",
     "learningId": "learn-github-zseven-w-openpencil"
   },
   "diggerhq-digger": {

@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T09:22:47.874Z",
-    "lastVerified": "2026-10-31T09:22:47.874Z",
+    "lastChecked": "2026-10-31T09:29:59.511Z",
+    "lastVerified": "2026-10-31T09:29:59.511Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -247,8 +247,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T08:13:52.669Z",
-    "lastVerified": "2026-10-31T08:13:52.669Z",
+    "lastChecked": "2026-10-31T09:29:41.400Z",
+    "lastVerified": "2026-10-31T09:29:41.400Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1796,12 +1796,12 @@
     "lastVerified": "2026-10-31T07:53:43.821Z"
   },
   "alibaba-zvec": {
-    "name": "alibaba/zvec",
+    "name": "zvec",
     "officialUrl": "https://github.com/alibaba/zvec",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-30T15:49:23.137Z",
-    "lastVerified": "2026-10-30T15:49:23.137Z",
+    "lastChecked": "2026-10-31T09:29:38.932Z",
+    "lastVerified": "2026-10-31T09:29:38.932Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-alibaba-zvec",
@@ -1810,7 +1810,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "4c5be75d"
   },
   "michael-a-kuykendall-shimmy": {
     "name": "Michael-A-Kuykendall/shimmy",
@@ -2135,12 +2136,12 @@
     "officialUrl": "https://huggingface.co/Altworld/Hemmingway-1",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T05:48:26.411Z",
-    "lastVerified": "2026-10-28T05:48:26.411Z",
+    "lastChecked": "2026-10-31T09:29:29.097Z",
+    "lastVerified": "2026-10-31T09:29:29.097Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-altworld-hemmingway-1",
-    "contentHash": "caf758cf8fe02bf866fda1a7bdedd5c3ecf42211e851c05c4b5c80586aabeeeb",
+    "contentHash": "635df26599bbd798449d00634499c770a3dc60d4495c7a61e36c9fc3677f59d1",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -2324,8 +2325,8 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T04:15:57.928Z",
-    "lastVerified": "2026-10-31T04:15:57.928Z",
+    "lastChecked": "2026-10-31T09:29:36.415Z",
+    "lastVerified": "2026-10-31T09:29:36.415Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -3201,9 +3202,9 @@
   "cdk-team-cdk": {
     "name": "CDK",
     "officialUrl": "https://github.com/cdk-team/CDK",
-    "lastChecked": "2026-10-30T17:05:55.847Z",
+    "lastChecked": "2026-10-31T09:29:33.872Z",
     "revisionIdentifier": "69da22ad",
-    "lastVerified": "2026-10-30T17:05:55.847Z"
+    "lastVerified": "2026-10-31T09:29:33.872Z"
   },
   "lioensky-vcptoolbox": {
     "name": "lioensky/VCPToolBox",
@@ -4679,14 +4680,14 @@
     "officialUrl": "https://github.com/ZSeven-W/openpencil",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T14:22:30.999Z",
-    "lastVerified": "2026-10-28T14:22:30.999Z",
+    "lastChecked": "2026-10-31T09:29:34.708Z",
+    "lastVerified": "2026-10-31T09:29:34.708Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zseven-w-openpencil",
-    "contentHash": "4cc98072246a559874fedb1ea53e62b8d0ea8d8e3848cefcb30a57b71560533f",
+    "contentHash": "6323c3e39c2f1384a46c976e25bb72ec104ab2267bf7ea71fd44e8663ac73a1d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 24,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5124,9 +5125,9 @@
   "datadog-glommio": {
     "name": "glommio",
     "officialUrl": "https://github.com/DataDog/glommio",
-    "lastChecked": "2026-10-30T08:53:21.955Z",
+    "lastChecked": "2026-10-31T09:29:26.397Z",
     "revisionIdentifier": "84348159",
-    "lastVerified": "2026-10-30T08:53:21.955Z"
+    "lastVerified": "2026-10-31T09:29:26.397Z"
   },
   "hf-deepseek-ai-deepseek-v3": {
     "name": "deepseek-ai/DeepSeek-V3",

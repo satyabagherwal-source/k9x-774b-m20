@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T09:22:45.320Z",
-  "total_cycles_completed": 6492,
-  "total_learnings_persisted": 6492,
-  "total_rules_promoted": 6137,
+  "last_updated": "2026-10-31T09:29:56.955Z",
+  "total_cycles_completed": 6494,
+  "total_learnings_persisted": 6494,
+  "total_rules_promoted": 6141,
   "history": [
-    {
-      "timestamp": "2026-10-30T21:19:31.442Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T21:19:36.973Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T21:30:01.181Z",
       "repository": "aquasecurity/trivy",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-31T09:22:45.320Z",
       "repository": "fastino/GLiNER2.5-Decide",
       "learningId": "learn-huggingface-fastino-gliner2-5-decide",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T09:29:36.473Z",
+      "repository": "ZSeven-W/openpencil",
+      "learningId": "learn-github-zseven-w-openpencil",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T09:29:56.955Z",
+      "repository": "HemmingwayAI/Hemmingway-1",
+      "learningId": "learn-huggingface-altworld-hemmingway-1",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

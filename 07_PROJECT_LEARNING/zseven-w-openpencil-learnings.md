@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md`  
 > **Source**: github ([https://github.com/ZSeven-W/openpencil](https://github.com/ZSeven-W/openpencil))  
-> **Source Version**: `070c7c77`  
+> **Source Version**: `68d01235`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T14:22:31.008Z  
+> **Timestamp**: 2026-10-31T09:29:35.778Z  
 > **Learning ID**: `learn-github-zseven-w-openpencil`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ZSeven-W/openpencil](https://github.com/ZSeven-W/openpencil))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T14:22:30.999Z  
+> **Harvest Timestamp**: 2026-10-31T09:29:34.708Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The world's first open-source AI-native vector design tool and the first to feature concurrent Agent Teams. Design-as-Code. Turn prompts into UI directly on the live canvas. A modern alternative to Pencil.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6771 stars
+- **Stars / Engagement**: 6991 stars
 
 ---
 
@@ -1827,725 +1827,70 @@ pub struct Account {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a84c0b5e` (2026-10-08)
-**Commit Message**: fix(web): isolate managed editor config and repair native CI (#252)
+### Incident Patch 1: `68d01235` (2026-10-28)
+**Commit Message**: fix(install): fall back to the newest release when no stable release exists
 
-* fix(web): isolate managed daemon configuration from standalone settings
+`resolve_version` asks `/releases/latest`, which GitHub answers with 404 while every published tag
+is still a pre-release — the case for the whole pre-1.0 line. The documented default install command
+therefore failed with "could not resolve the latest release tag from GitHub" even though a usable
+release existed, and the error only mentioned the `OP_PRERELEASE` opt-in.
 
-* fix(security): require patched rustls and cryptoki releases
+When the stable lookup yields nothing and `OP_PRERELEASE` was not requested, read `/releases` and
+use the newest tag, printing a note that it is a pre-release and how to pin a version with
+`OP_VERSION`. With a stable release present the path is unchanged; `OP_PRERELEASE=1` and
+`OP_VERSION` keep their behaviour; when no release exists at all the existing error is unchanged.
 
-* test(web): align chat and rail fixtures with docked panels
+Both lookups now share `release_tag()`, so the JSON parsing is in one place.
 
-* test(web): remove unused import from overlay fixture
-
-**File**: `crates/op-acp/Cargo.toml` (modified, +1/-1)
+**File**: `scripts/install-op.sh` (modified, +17/-2)
 ```diff
-@@ -51,7 +51,7 @@ tokio-tungstenite = { version = "0.24", optional = true, default-features = fals
-   "rustls-tls-webpki-roots",
- ] }
- futures-util = { version = "0.3", optional = true }
--rustls = { version = "0.23", optional = true, default-features = false, features = [
-+rustls = { version = "0.23.45", optional = true, default-features = false, features = [
-   "ring",
-   "std",
-   "tls12",
-```
-
-**File**: `crates/op-collab-relay-client/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@ tokio-tungstenite = { version = "0.24", default-features = false, features = [
-   # connect; the bundled webpki roots make relay TLS work on every target.
-   "rustls-tls-webpki-roots",
- ] }
--rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
-+rustls = { version = "0.23.45", default-features = false, features = ["ring", "std", "tls12"] }
- rustls-native-certs = "0.8"
- webpki-roots = "0.26"
- url = "2"
-```
-
-**File**: `crates/op-collab-relay-locator-hsm/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ publish = false
- # PKCS#11 and crypto stack for code that cannot run there.
- [target.'cfg(unix)'.dependencies]
- base64 = "0.22"
--cryptoki = "0.12"
-+cryptoki = "0.12.1"
- ed25519-dalek = { version = "2.2", default-features = false, features = ["std"] }
- libc = "0.2"
- op-collab-relay-protocol = { path = "../op-collab-relay-protocol" }
-```
-
-**File**: `crates/op-host-services/src/cli_modes.rs` (modified, +8/-0)
-```diff
-@@ -120,6 +120,14 @@ fn serve_web(prog: &str, args: impl Iterator<Item = String>) -> Option<i32> {
-             return Some(2);
-         }
-     };
-+    // Select the supervisor-owned store before settings or user
-+    // templates can initialize the process-global default store.
-+    if let Some(root) = options.config_root.as_ref() {
-+        if let Err(e) = op_config_store::configure_user_root(root) {
-+            eprintln!("{prog} --serve-web: could not initialize private config root: {e}");
-+            return Some(1);
-+        }
-+    }
-     // The online daemon is multi-tenant and must not install host-user
-     // material into a process-global registry. Its MCP profile also
-     // refuses user-template tools; local and managed daemons load the
-```
-
-**File**: `crates/op-host-services/src/web_canvas_server/run_loop.rs` (modified, +1/-0)
-```diff
-@@ -40,6 +40,7 @@ pub fn run_web_canvas(options: ServeWebOptions) -> Result<()> {
-         managed,
-         allow_origins,
-         online: _,
-+        config_root: _,
-     } = options;
-     let current_path = path.clone();
-     let credential_persistence = crate::web_credential_policy::from_env();
-```
-
-**File**: `crates/op-host-services/src/web_canvas_server/serve_options.rs` (modified, +22/-0)
-```diff
-@@ -27,6 +27,9 @@ pub struct ServeWebOptions {
-     /// Mutually exclusive with `--managed`: managed mode's whole contract is
-     /// one supervising operator holding the process stdin lease.
-     pub online: bool,
-+    /// Private settings and user-resource directory selected by a supervisor.
-+    /// Only managed mode accepts this; standalone hosts keep platform defaults.
-+    pub config_root: Option<PathBuf>,
+@@ -49,6 +49,10 @@ detect_label() {
+   printf '%s-%s' "$os" "$arch"
  }
  
- impl ServeWebOptions {
-@@ -98,6 +101,7 @@ pub fn parse_serve_web_args<I: Iterator<Item = String>>(mut args: I) -> Result<S
-         managed: false,
-         allow_origins: Vec::new(),
-         online,
-+        config_root: None,
-     })
- }
++release_tag() {
++  curl -fsSL "$1" | grep -o '"tag_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -n1 | sed 's/.*"\(v\{0,1\}[^"]*\)"$/\1/'
++}
++
+ resolve_version() {
+   if [ -n "${OP_VERSION:-}" ]; then
+     printf '%s' "$OP_VERSION"
+@@ -59,13 +63,24 @@ resolve_version() {
+     return
+   fi
  
-@@ -117,10 +121,22 @@ pub(super) fn parse_serve_web_args_managed<I: Iterator<Item = String>>(
-     let mut allow_origins: Vec<String> = Vec::new();
-     let mut online = false;
-     let mut next_flag = Some(first_flag);
-+    let mut config_root = None;
-     while let Some(arg) = next_flag.take().or_else(|| args.next()) {
-         match arg.as_str() {
-             "--managed" => managed = true,
-             "--online" => online = true,
-+            "--config-root" => {
-+                let root = PathBuf::from(args.next().ok_or_else(|| {
-+                    WebCanvasError::Config("--config-root needs an absolute directory".into())
-+                })?);
-+                if config_root.is_some() || !root.is_absolute() {
-+                    return Err(WebCanvasError::Config(
-+                        "--config-root must be one absolute directory".into(),
-+                    ));
-+                }
-+                config_root = Some(root);
-+            }
-             "--port" => {
-                 let value = args
-                     .next()
-@@ -167,13 +183,19 @@ pub(super) fn parse_serve_web_args_managed<I: Iterator<Item = String>>(
-             "--managed requires a loopback --host (127.0.0.1, localhost, or ::1)".into(),
-         ));
-     }
-+    if config_root.is_some() && !managed {
-+        return Err(WebCanvasError::Config(
-+            "--config-root requires --managed".into(),
-+        ));
-+    }
-     Ok(ServeWebOptions {
-         port,
-         path,
-         host,
-         managed,
-         allow_origins,
-         online,
-+        config_root,
-     })
- }
- 
-```
-
-**File**: `crates/op-host-services/src/web_canvas_server_args_tests.rs` (modified, +41/-0)
-```diff
-@@ -148,6 +148,47 @@ fn parse_serve_web_args_managed_flag_form() {
-     assert_eq!(o.allow_origins.len(), 2);
- }
- 
-+#[test]
-+fn managed_config_root_is_explicit_and_never_changes_standalone_defaults() {
-+    let root = std::env::temp_dir().join("op-managed-config-test");
-+    let parse = |args: Vec<String>| parse_serve_web_args(args.into_iter());
-+    let options = parse(vec![
-+        "--managed".into(),
-+        "--port".into(),
-+        "0".into(),
-+        "--config-root".into(),
-+        root.to_string_lossy().into_owned(),
-+    ])
-+    .unwrap();
-+    assert_eq!(options.config_root.as_deref(), Some(root.as_path()));
-+    assert!(parse(vec!["3100".into()]).unwrap().config_root.is_none());
-+    for args in [
-+        vec!["--managed", "--port", "0", "--config-root"],
-+        vec!["--managed", "--port", "0", "--config-root", "relative"],
-+        vec!["--online", "--port", "0", "--config-root"],
-+    ] {
-+        assert!(parse(args.into_iter().map(String::from).collect()).is_err());
-+    }
-+    let absolute = root.to_string_lossy().into_owned();
-+    assert!(parse(vec![
-+        "--port".into(),
-+        "0".into(),
-+        "--config-root".into(),
-+        absolute.clone()
-+    ])
-+    .is_err());
-+    assert!(parse(vec![
-+        "--managed".into(),
-+        "--port".into(),
-+        "0".into(),
-+        "--config-root".into(),
-+        absolute.clone(),
-+        "--config-root".into(),
-+        absolute
-+    ])
-+    .is_err());
-+}
-+
- #[test]
- fn parse_serve_web_args_managed_accepts_only_loopback_hosts() {
-     for host in ["127.0.0.1", "localhost", "::1"] {
-```
-
-**File**: `crates/op-host-web/src/widget_host/ai_chat_geometry_tests.rs` (modified, +19/-0)
-```diff
-@@ -48,6 +48,25 @@ fn the_composer_card_header_pins_the_chat_into_the_agent_rail() {
-     assert!(after.size.y > before.size.y);
- }
- 
-+#[test]
-+fn maximizing_pinned_chat_keeps_its_column_geometry() {
-+    let mut host = WidgetHost::new();
-+    host.editor_state.editor_ui.enter_chat_tab();
-+    let before = host
-+        .ai_chat_rect(1200.0, 800.0)
-+        .expect("pinned chat visible");
-+    host.editor_state.chat.maximized = true;
-+    let after = host
-+        .ai_chat_rect(1200.0, 800.0)
-+        .expect("pinned chat still visible");
-+    assert_eq!(
-+        after, before,
-+        "the retired floating maximize flag cannot move the rail"
-+    );
-+    assert_eq!(after.origin.x, 0.0);
-+    assert_eq!(after.size.x, host.editor_state.editor_ui.layer_panel_width);
-+}
-+
- #[test]
- fn vscode_embed_has_no_chat_rect() {
-     let mut host = WidgetHost::new();
-```
-
----
-
-### Incident Patch 2: `3a4b5b31` (2026-10-27)
-**Commit Message**: fix(editor): allow verified auth metadata rebinds
-
-Permit a complete local-full ABI 4 metadata rebind when both signed matrices verify, all ten native archives and original build attestations remain identical, and every required metadata binding is renewed. Preserve the normal archive-changing promotion checks.
-
-**File**: `tools/check-op-auth-artifact-commit.sh` (modified, +111/-6)
-```diff
-@@ -25,7 +25,7 @@ done
-     printf 'error: run the release from the exact selected auth artifact commit\n' >&2
-     exit 2
- }
--[[ "$(git -C "$repo_root" rev-parse HEAD)" == "$artifact_commit" ]] || {
-+[[ "$(git --no-replace-objects -C "$repo_root" rev-parse HEAD)" == "$artifact_commit" ]] || {
-     printf 'error: checked-out source is not the selected auth artifact commit\n' >&2
-     exit 1
- }
-@@ -47,7 +47,7 @@ else
- fi
- 
- read -r commit parent extra < <(
--    git -C "$repo_root" rev-list --parents -n 1 "$artifact_commit"
-+    git --no-replace-objects -C "$repo_root" rev-list --parents -n 1 "$artifact_commit"
- )
- [[ "$commit" == "$artifact_commit" && "$parent" =~ ^[0-9a-f]{40}$ \
-     && -z "${extra:-}" ]] || {
-@@ -88,7 +88,7 @@ trap cleanup EXIT
-         done
-     done
- } | LC_ALL=C sort > "$allowed_changes"
--git -C "$repo_root" diff-tree --no-commit-id --name-only --no-renames -r \
-+git --no-replace-objects -C "$repo_root" diff-tree --no-commit-id --name-only --no-renames -r \
-     "$parent" "$artifact_commit" | LC_ALL=C sort > "$actual_changes"
- unexpected=$(LC_ALL=C comm -23 "$actual_changes" "$allowed_changes")
- [[ -z "$unexpected" ]] || {
-@@ -99,14 +99,13 @@ unexpected=$(LC_ALL=C comm -23 "$actual_changes" "$allowed_changes")
- for required_change in \
-     crates/op-auth-bridge/AUTH-RELEASE-POLICY \
-     crates/op-auth-bridge/prebuilt/RELEASE-MANIFEST \
--    crates/op-auth-bridge/prebuilt/RELEASE-MANIFEST.sig \
--    crates/op-auth-bridge/prebuilt/aarch64-apple-ios/libop_auth.a; do
-+    crates/op-auth-bridge/prebuilt/RELEASE-MANIFEST.sig; do
-     grep -Fxq "$required_change" "$actual_changes" || {
-         printf 'error: artifact commit did not update %s\n' "$required_change" >&2
-         exit 1
-     }
- done
--policy_change=$(git -C "$repo_root" diff-tree --no-commit-id --name-status \
-+policy_change=$(git --no-replace-objects -C "$repo_root" diff-tree --no-commit-id --name-status \
-     --no-renames -r "$parent" "$artifact_commit" -- \
-     crates/op-auth-bridge/AUTH-RELEASE-POLICY)
- [[ "$policy_change" == $'A\tcrates/op-auth-bridge/AUTH-RELEASE-POLICY' \
-@@ -125,6 +124,112 @@ if [[ -n "$ref_version" && "$ref_version" != "$version" ]]; then
-     printf 'error: branch or tag version does not match the Cargo workspace\n' >&2
-     exit 1
- fi
-+# Ordinary promotions still require a changed iOS archive. The only exception
-+# is a complete, newly signed local-full ABI 4 metadata rebind of the exact
-+# archives already authenticated by the parent's signed matrix and policy.
-+if ! grep -Fxq crates/op-auth-bridge/prebuilt/aarch64-apple-ios/libop_auth.a \
-+    "$actual_changes"; then
-+    python3 -I - "$repo_root" "$parent" "$artifact_commit" "$version" <<'PY'
-+import importlib.util
-+import os
-+from pathlib import Path
-+import subprocess
-+import sys
-+import tempfile
-+
-+repo, parent, current, version = sys.argv[1:]
-+helper = Path(repo) / "tools/check-local-full-auth.py"
-+prefix = "crates/op-auth-bridge/prebuilt/"
-+policy_path = "crates/op-auth-bridge/AUTH-RELEASE-POLICY"
-+
-+
-+def git(*args):
-+    return subprocess.check_output(
-+        ["git", "--no-replace-objects", "-C", repo, *args],
-+        env={**os.environ, "GIT_NO_LAZY_FETCH": "1", "GIT_TERMINAL_PROMPT": "0"},
-+    )
-+
-+
-+helper_source = git("show", current + ":tools/check-local-full-auth.py")
-+if helper.read_bytes() != helper_source:
-+    raise SystemExit("error: local-full verifier differs from committed source")
-+spec = importlib.util.spec_from_file_location("local_full_rebind", helper)
-+contract = importlib.util.module_from_spec(spec)
-+# Execute committed source bytes, never working-file or bytecode substitutions.
-+exec(compile(helper_source, str(helper), "exec"), contract.__dict__)
-+snapshot_paths = {policy_path} | {prefix + name for name in
-+                                ("RELEASE-MANIFEST", "RELEASE-MANIFEST.sig", "PROVENANCE_PUBKEY", "README.md")}
-+for target in contract.TARGETS:
-+    snapshot_paths.update(prefix + target + "/" + name for name in
-+                          (contract.artifact_name(target), "ABI_VERSION", "VERSION", "SHA256",
-+                           "HARDENING-ATTESTATION", "PROVENANCE", "PROVENANCE.sig"))
-+
-+
-+def snapshot(revision, destination):
-+    destination.mkdir()
-+    entries = {}
-+    tree = git("ls-tree", "-r", "-z", revision, "--", prefix, policy_path)
-+    for record in tree.split(b"\0"):
-+        if not record:
-+            continue
-+        metadata, raw_path = record.split(b"\t", 1)
-+        mode, kind, oid = metadata.split(b" ")
-+        path = raw_path.decode()
-+        contract.require(path in snapshot_paths, "Rebind snapshot contains an unallowlisted Git path")
-+        contract.require(kind == b"blob" and mode in (b"100644", b"100755"),
-+                         "Rebind inputs must be regular Git blobs")
-+        entries[path] = (mode, oid)
-+        relative = "policy" if path == policy_path else "matrix/" + path.removeprefix(prefix)
-+        output = destination / relative
-+        output.parent.mkdir(par
-```
-
-**File**: `tools/check-op-auth-artifact-commit.test.sh` (modified, +235/-0)
-```diff
-@@ -211,4 +211,239 @@ if (
-     exit 1
- fi
- 
-+# Exercise the exception with real Ed25519 signatures and the production
-+# semantic verifier, changing its fixed root only inside this temporary fixture.
-+python3 -I - "$script_dir" "$temp_root" <<'PY'
-+import hashlib
-+import importlib.util
-+import os
-+from pathlib import Path
-+import shutil
-+import subprocess
-+import sys
-+
-+source, temporary = map(Path, sys.argv[1:])
-+repo = temporary / "rebind-repo"
-+repo.mkdir()
-+key = temporary / "ephemeral-rebind-key.pem"
-+
-+
-+def run(args, **kwargs):
-+    return subprocess.check_output(args, stderr=subprocess.PIPE, **kwargs)
-+
-+
-+def git(*args):
-+    return run(["git", "-C", str(repo), *args]).decode().strip()
-+
-+
-+def write(path, value):
-+    path.parent.mkdir(parents=True, exist_ok=True)
-+    path.write_bytes(value if isinstance(value, bytes) else value.encode())
-+
-+
-+def sha(value):
-+    return hashlib.sha256(value).hexdigest()
-+
-+
-+def commit(message):
-+    git("add", ".")
-+    git("commit", "-q", "-m", message)
-+    return git("rev-parse", "HEAD")
-+
-+
-+run(["openssl", "genpkey", "-algorithm", "ED25519", "-out", str(key)])
-+pin = run(["openssl", "pkey", "-in", str(key), "-pubout", "-outform", "DER"])[-32:].hex()
-+helper_source = (source / "check-local-full-auth.py").read_text()
-+helper_source = helper_source.replace('PIN = "07e073b30d6de0df7343f8a11c4dccaf69aa87518d94917375eda6e63cc506e1"',
-+                                      'PIN = "' + pin + '"')
-+write(repo / "tools/check-local-full-auth.py", helper_source)
-+spec = importlib.util.spec_from_file_location("rebind_contract", repo / "tools/check-local-full-auth.py")
-+c = importlib.util.module_from_spec(spec)
-+exec(compile(helper_source, spec.origin, "exec"), c.__dict__)
-+shutil.copy2(source / "check-op-auth-artifact-commit.sh", repo / "tools/check-op-auth-artifact-commit.sh")
-+write(repo / "scripts/workspace-version.sh", '#!/usr/bin/env bash\nprintf "0.8.5\\n"\n')
-+# The exception itself invokes the real verifier twice. The existing shell
-+# dispatch is also retained and must still request strict + consumer validation.
-+write(repo / "tools/check-op-auth-release-matrix.sh", '''#!/usr/bin/env bash
-+set -euo pipefail
-+if [[ -n "${OP_AUTH_RELEASE_EXPECTED_OPENPENCIL_REVISION:-}" ]]; then
-+    [[ "$OP_AUTH_RELEASE_EXPECTED_OPENPENCIL_REVISION" == "$EXPECTED_FIXTURE_PARENT" ]]
-+    [[ "$OP_AUTH_RELEASE_WORKSPACE_VERSION" == 0.8.5 ]]
-+    printf 'strict\n' >> "$MATRIX_CHECK_LOG"
-+else
-+    printf 'consumer\n' >> "$MATRIX_CHECK_LOG"
-+fi
-+''')
-+write(repo / "tools/check-op-auth-prebuilt.sh", '#!/usr/bin/env bash\n[[ "$1" == --require-hardened ]]\n')
-+for path in [*repo.joinpath("tools").glob("*.sh"), repo / "scripts/workspace-version.sh"]:
-+    path.chmod(0o755)
-+git("init", "-q")
-+git("config", "user.name", "OpenPencil fixture")
-+git("config", "user.email", "fixture@openpencil.invalid")
-+root = repo / "crates/op-auth-bridge/prebuilt"
-+policy = repo / "crates/op-auth-bridge/AUTH-RELEASE-POLICY"
-+write(root / "PROVENANCE_PUBKEY", pin + "\n")
-+p, q, version = "1" * 40, "3" * 40, "0.8.5"
-+
-+
-+def sign(path):
-+    output = temporary / "ephemeral-signature.bin"
-+    run(["openssl", "pkeyutl", "-sign", "-rawin", "-inkey", str(key), "-in", str(path), "-out", str(output)])
-+    write(path.with_name(path.name + ".sig"), output.read_bytes().hex() + "\n")
-+
-+
-+def raw(target, payload, private):
-+    prefix = "_" if "-apple-" in target else ""
-+    abi = sha("".join(prefix + symbol + "\n" for symbol in c.SYMBOLS).encode())
-+    protector = sha(("protector:" + target).encode())
-+    binding = sha((f"op-auth-protector-binding-v1\ntarget={target}\nreview_id=source-{private}\nprotector_sha256={protector}\n").encode())
-+    mobile = c.platform(target) in ("android", "ios", "ios-simulator")
-+    cross = mobile or target in c.WINDOWS or target == "x86_64-apple-darwin"
-+    minimum = "21" if c.platform(target) == "android" else "15.0" if mobile else "native"
-+    values = ["3", "production", "4", target, c.artifact_name(target), sha(payload), str(len(payload)),
-+              private, "clean", "1792991219", "private-ci-fat-lto", "remapped", "none", "stripped",
-+              "eliminated", "op-auth-hardened-v3", abi, sha(b"coff-globals") if target in c.WINDOWS else abi,
-+              sha(("sections:" + target).encode()), "1", "0", "cross-final-link" if cross else "native-link-run",
-+              "not-applicable" if mobile else "passed", c.platform(target), minimum, sha(("binary:" + target).encode()),
-+              "source-" + private, protector, binding, "none", "none", "none", "none", "none", "none", "none",
-+              "rustc 1.95.0 (synthetic 2026-01-01);host: aarch64-apple-darwin;"]
-+    return dict(zip(c.RAW_KEYS, values))
-+
-+
-+def matrix(public, build, evidence, *, private=p, signer=q, mutation=None, payload_change=None):
-+    rows = ["format=op-auth-release-matrix-v1", "version=" + version, "abi=4", "source_revision=" + private,
-+            "openpencil_revision=" + public, "build_i
-```
-
----
-
-### Incident Patch 3: `d95b14e6` (2026-10-26)
-**Commit Message**: fix(ai): narrow scaffold sidebars to the rail drawn inside them
-
-The dashboard shell pre-builds a 260px sidebar column; on the cinema console the model drew its own 112px rail with a right border in it, leaving a 148px empty strip. A full-height painted rail at the column's top-left with nothing else visible beside it is the column's edge, so the column shrinks to it. When the rail asks to fill the height but a hugging wrapper collapsed it (the second draft, 104px rail cut to 495px), the wrapper is stretched first. A/B replay over 40 earlier sidebar documents changed nothing.
-
-Claude-Session: 87a7da3f-5d16-4c4a-9f25-2e6873c43ac2
-
-**File**: `crates/op-orchestrator/src/geometry_sidebar_rail.rs` (added, +153/-0)
-```diff
-@@ -0,0 +1,153 @@
-+//! A scaffold sidebar wider than the rail the model drew inside it.
-+//!
-+//! The two-column dashboard shell pre-builds a 260px `Sidebar` column. On the
-+//! astra-new2 cinema console the model drew its own 112px navigation rail in
-+//! it — a full-height frame with a right border — so a 148px empty strip sat
-+//! between the rail's border and the content in both drafts. The rail's
-+//! border is the authored edge of the sidebar; the column is shrunk to it and
-+//! the fill-width content column takes the strip back. In the second draft
-+//! the rail (a 104px card meant to run the full 900px) sat in a hugging
-+//! wrapper and collapsed to its content, so the wrapper is first stretched to
-+//! the column's height.
-+
-+use super::*;
-+use crate::scaffold::SIDEBAR_COLUMN_NAME;
-+
-+/// Narrower gaps are ordinary breathing room beside a rail.
-+const MIN_EMPTY_STRIP: f64 = 48.0;
-+/// The rail must run (almost) the column's full height to be its edge.
-+const MIN_HEIGHT_SHARE: f64 = 0.8;
-+
-+fn paints_surface(v: &Value) -> bool {
-+    let filled = v
-+        .get("fill")
-+        .and_then(Value::as_array)
-+        .is_some_and(|fills| !fills.is_empty());
-+    filled || v.get("stroke").is_some_and(|stroke| !stroke.is_null())
-+}
-+
-+fn is_hidden(v: &Value) -> bool {
-+    v.get("visible").and_then(Value::as_bool) == Some(false)
-+}
-+
-+/// What the column holds: one or more rails drawn from its top-left corner,
-+/// seen through transparent wrappers, and nothing else visible.
-+struct Rails<'a> {
-+    right_edge: f64,
-+    /// Transparent wrappers above a full-height rail that collapsed to its
-+    /// content: the rail asks to fill the column, a hugging wrapper says no.
-+    collapsed_wrappers: Vec<&'a str>,
-+}
-+
-+fn find_rails<'a>(
-+    column: &'a Value,
-+    column_rect: &Rect,
-+    rects: &HashMap<String, Rect>,
-+) -> Option<Rails<'a>> {
-+    let mut rails = Rails {
-+        right_edge: f64::MIN,
-+        collapsed_wrappers: Vec::new(),
-+    };
-+    let mut stack: Vec<(&Value, Vec<&str>)> =
-+        children(column).iter().map(|c| (c, Vec::new())).collect();
-+    while let Some((node, wrappers)) = stack.pop() {
-+        if is_hidden(node) {
-+            continue;
-+        }
-+        let Some(id) = node.get("id").and_then(Value::as_str) else {
-+            continue;
-+        };
-+        let Some(rect) = rects.get(id) else {
-+            continue;
-+        };
-+        let is_rail = node.get("type").and_then(Value::as_str) == Some("frame")
-+            && fixed_width(node).is_some()
-+            && paints_surface(node)
-+            && (rect.x - column_rect.x).abs() <= 1.0
-+            && (rect.y - column_rect.y).abs() <= 1.0;
-+        if is_rail {
-+            rails.right_edge = rails.right_edge.max(rect.x + rect.w);
-+            let short = rect.h < column_rect.h * MIN_HEIGHT_SHARE;
-+            if short {
-+                if node.get("height").and_then(Value::as_str) != Some("fill_container") {
-+                    // A rail sized shorter on purpose is a card, not the edge.
-+                    return None;
-+                }
-+                rails.collapsed_wrappers.extend(wrappers);
-+            }
-+            continue;
-+        }
-+        // A transparent wrapper (the subtask's own section frame) is looked
-+        // through; anything painted or fixed outside a rail ends the search.
-+        if paints_surface(node) || fixed_width(node).is_some() {
-+            return None;
-+        }
-+        let hugs = node.get("height").and_then(Value::as_str) != Some("fill_container");
-+        for child in children(node) {
-+            let mut path = wrappers.clone();
-+            if hugs {
-+                path.push(id);
-+            }
-+            stack.push((child, path));
-+        }
-+    }
-+    (rails.right_edge > column_rect.x).then_some(rails)
-+}
-+
-+pub(super) fn collect_sidebar_rail_fixes(
-+    v: &Value,
-+    rects: &HashMap<String, Rect>,
-+    cmds: &mut Vec<EditorCommand>,
-+) {
-+    if layout_str(v) == Some("horizontal") {
-+        for column in children(v) {
-+            if column.get("name").and_then(Value::as_str) != Some(SIDEBAR_COLUMN_NAME) {
-+                continue;
-+            }
-+            let (Some(id), Some(width)) = (
-+                column.get("id").and_then(Value::as_str),
-+                fixed_width(column),
-+            ) else {
-+                continue;
-+            };
-+            let Some(column_rect) = rects.get(id) else {
-+                continue;
-+            };
-+            let Some(rails) = find_rails(column, column_rect, rects) else {
-+                continue;
-+            };
-+            if !rails.collapsed_wrappers.is_empty() {
-+                // Let the rail reach the floor first; the next round sees
-+                // its full height and narrows the column.
-+                for wrapper in rails.collapsed_wrappers {
-+                    cmds.push(EditorCommand::SetNodeLayoutProp {
-+                        node_id: NodeId::new(wrapper.to_string()),
-+               
-```
-
-**File**: `crates/op-orchestrator/src/geometry_sidebar_rail_tests.rs` (added, +91/-0)
-```diff
-@@ -0,0 +1,91 @@
-+use super::*;
-+use serde_json::json;
-+
-+fn rect(x: f64, y: f64, w: f64, h: f64) -> Rect {
-+    Rect { x, y, w, h }
-+}
-+
-+/// astra-new2 w3 rep-1: Sidebar(260) > section wrapper(fill) > rail(112,
-+/// right border) > nav items.
-+fn shell(rail_stroke: bool, rail_h: f64) -> (Value, HashMap<String, Rect>) {
-+    let mut rail = json!({"type":"frame","id":"rail","name":"影院导航轨","width":112,
-+        "height":"fill_container","layout":"vertical","children":[
-+            {"type":"text","id":"item","content":"总览"}]});
-+    if rail_stroke {
-+        rail["stroke"] =
-+            json!({"thickness":{"right":1},"fill":[{"type":"solid","color":"#3A2A30"}]});
-+    }
-+    let root = json!({"type":"frame","id":"root","layout":"horizontal","children":[
-+        {"type":"frame","id":"sb","name":"Sidebar","width":260,"height":"fill_container",
-+         "layout":"vertical","fill":[{"type":"solid","color":"#160B10"}],"children":[
-+            {"type":"frame","id":"wrap","name":"影院侧边导航","width":"fill_container",
-+             "height":"fill_container","layout":"vertical","children":[rail]}]},
-+        {"type":"frame","id":"main","name":"Main Content","width":"fill_container"}]});
-+    let rects = HashMap::from([
-+        ("root".to_string(), rect(0.0, 0.0, 1440.0, 900.0)),
-+        ("sb".to_string(), rect(0.0, 0.0, 260.0, 900.0)),
-+        ("wrap".to_string(), rect(0.0, 0.0, 260.0, 900.0)),
-+        ("rail".to_string(), rect(0.0, 0.0, 112.0, rail_h)),
-+        ("item".to_string(), rect(16.0, 80.0, 80.0, 20.0)),
-+        ("main".to_string(), rect(260.0, 0.0, 1180.0, 900.0)),
-+    ]);
-+    (root, rects)
-+}
-+
-+fn fixes(root: &Value, rects: &HashMap<String, Rect>) -> Vec<String> {
-+    let mut cmds = Vec::new();
-+    collect_sidebar_rail_fixes(root, rects, &mut cmds);
-+    cmds.iter()
-+        .map(|cmd| match cmd {
-+            EditorCommand::UpdateNode { node_id, width, .. } => {
-+                format!("{} width {}", node_id.as_str(), width.unwrap())
-+            }
-+            EditorCommand::SetNodeLayoutProp {
-+                node_id,
-+                property,
-+                value: LayoutPropValue::Keyword(k),
-+            } => format!("{} {property} {k}", node_id.as_str()),
-+            other => panic!("unexpected {other:?}"),
-+        })
-+        .collect()
-+}
-+
-+#[test]
-+fn the_scaffold_column_shrinks_to_the_rail_the_model_drew() {
-+    let (root, rects) = shell(true, 900.0);
-+    assert_eq!(fixes(&root, &rects), ["sb width 112"]);
-+}
-+
-+#[test]
-+fn unpainted_short_or_full_width_content_keeps_the_column() {
-+    // Text-only navigation: whitespace beside the labels is the design.
-+    let (root, rects) = shell(false, 900.0);
-+    assert!(fixes(&root, &rects).is_empty());
-+    // A rail authored shorter than the column is a card, not the edge.
-+    let (mut root, rects) = shell(true, 300.0);
-+    root["children"][0]["children"][0]["children"][0]["height"] = json!(300);
-+    assert!(fixes(&root, &rects).is_empty());
-+    // A rail that nearly fills the column leaves nothing to reclaim.
-+    let (mut root, mut rects) = shell(true, 900.0);
-+    root["children"][0]["children"][0]["children"][0]["width"] = json!(230);
-+    rects.get_mut("rail").unwrap().w = 230.0;
-+    assert!(fixes(&root, &rects).is_empty());
-+    // A painted card beside the rail means the column holds more than the rail.
-+    let (mut root, mut rects) = shell(true, 900.0);
-+    root["children"][0]["children"][0]["children"]
-+        .as_array_mut()
-+        .unwrap()
-+        .push(json!({"type":"frame","id":"promo","width":120,
-+            "fill":[{"type":"solid","color":"#2A1A20"}]}));
-+    rects.insert("promo".to_string(), rect(120.0, 600.0, 120.0, 100.0));
-+    assert!(fixes(&root, &rects).is_empty());
-+}
-+
-+/// astra-new2 w3 rep-2: the rail asked to fill the column but its wrapper
-+/// hugged, so it collapsed to 495px; the wrapper stretches first.
-+#[test]
-+fn a_collapsed_full_height_rail_first_gets_its_wrapper_stretched() {
-+    let (mut root, rects) = shell(true, 495.0);
-+    root["children"][0]["children"][0]["height"] = json!("fit_content");
-+    assert_eq!(fixes(&root, &rects), ["wrap height fill_container"]);
-+}
-```
-
-**File**: `crates/op-orchestrator/src/geometry_validation.rs` (modified, +4/-0)
-```diff
-@@ -112,6 +112,8 @@ mod geometry_pinned_composer;
- mod geometry_row_fixes;
- #[path = "geometry_scale_ops.rs"]
- mod geometry_scale_ops;
-+#[path = "geometry_sidebar_rail.rs"]
-+mod geometry_sidebar_rail;
- #[path = "geometry_spill_diagnostics.rs"]
- mod geometry_spill_diagnostics;
- #[path = "geometry_starved_column.rs"]
-@@ -387,6 +389,8 @@ pub fn geometry_validate_and_fix_for_form(
-             // BEFORE the jam gap: a calendar week that cannot seat its
-             // identical cells gets the shared width and a narrower gap.
-             geometry_grid_row_fit::collect_grid_row_fit_fixes(&v, &rects, &mut cmds);
-+            // A scaffold sidebar wider than the rail drawn inside it.
-+            geometry_sidebar_rail::collect_sidebar_rail_fixes(&v, &rects, &mut cmds);
-             collect_row_gap_fixes(&v, &rects, &mut cmds);
-             collect_card_row_height_fixes(&v, &rects, &mut cmds, false);
-             // BEFORE the inside-out overfull repair: a rigid row starved by
+-  local api tag
++  local api tag prerelease=0
+   if [ "${OP_PRERELEASE:-}" = "1" ] || [ "${OP_PRERELEASE:-}" = "true" ]; then
+     api="https://api.github.com/repos/${OWNER}/${REPO}/releases"
++    prerelease=1
+   else
+     api="https://api.github.com/repos/${OWNER}/${REPO}/releases/latest"
+   fi
+-  tag="$(curl -fsSL "$api" | grep -o '"tag_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -n1 | sed 's/.*"\(v\{0,1\}[^"]*\)"$/\1/')"
++  tag="$(release_tag "$api")"
++  if [ -z "$tag" ] && [ "$prerelease" -eq 0 ]; then
++    # /releases/latest is a 404 while every published tag is still a pre-release, which is the
++    # case for the whole pre-1.0 line. Fall back to the newest release instead of failing the
++    # documented default install command; OP_VERSION still pins an exact tag.
++    tag="$(release_tag "https://api.github.com/repos/${OWNER}/${REPO}/releases")"
++    if [ -n "$tag" ]; then
++      echo "note: no stable release is published yet; installing the newest pre-release ${tag#v}" >&2
++      echo "      set OP_VERSION=X.Y.Z to pin a version" >&2
++    fi
++  fi
+   if [ -z "$tag" ]; then
+     echo "error: could not resolve the latest release tag from GitHub" >&2
+     echo "       set OP_VERSION explicitly, e.g. OP_VERSION=X.Y.Z $0" >&2
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #264** (2026-10-29): fix(install): fall back to the newest release when no stable release exists (@PerryLink)
 - **PR #262** (2026-10-27): chore(nix): update release manifest to v0.8.5 (@Kayshen-X)
 - **PR #252** (2026-10-08): fix(web): isolate managed editor config and repair native CI (@finiking)
 - **PR #251** (closed): feat(mcp): show agent cursor presence for client canvas writes (@gnoviawan)
 - **PR #248** (closed): feat(agent): add packaged browser snapshot capture tool (@caniko)
 - **PR #244** (closed): docs: sync README.zh.md with README.md (@PerryLink)
-- **PR #243** (2026-09-14): fix(design-lint): guard the transparent-alpha test against a non-ascii fill (@kevin9327)
 
 ---
 
@@ -2565,28 +1910,45 @@ Claude-Session: 87a7da3f-5d16-4c4a-9f25-2e6873c43ac2
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. web): isolate managed editor config and repair native CI (#252)
+## X. install): fall back to the newest release when no stable release exists
 
 **RULE**:
-When implementing operations in `crates/op-acp/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ZSeven-W/openpencil. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/install-op.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ZSeven-W/openpencil. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a84c0b5e`: web): isolate managed editor config and repair native CI (#252). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `68d01235`: install): fall back to the newest release when no stable release exists. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/op-acp/Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/install-op.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-rustls = { version = "0.23.45", optional = true, default-features = false, features = [
+release_tag() {
+  curl -fsSL "$1" | grep -o '"tag_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -n1 | sed 's/.*"\(v\{0,1\}[^"]*\)"$/\1/'
+}
+
+  local api tag prerelease=0
+    prerelease=1
+  tag="$(release_tag "$api")"
+  if [ -z "$tag" ] && [ "$prerelease" -eq 0 ]; then
+    # /releases/latest is a 404 while every published tag is still a pre-release, which is the
+    # case for the whole pre-1.0 line. Fall back to the newest release instead of failing the
+    # documented default install command; OP_VERSION still pins an exact tag.
+    tag="$(release_tag "https://api.github.com/repos/${OWNER}/${REPO}/releases")"
+    if [ -n "$tag" ]; then
+      echo "note: no stable release is published yet; installing the newest pre-release ${tag#v}" >&2
+      echo "      set OP_VERSION=X.Y.Z to pin a version" >&2
+    fi
+  fi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-rustls = { version = "0.23", optional = true, default-features = false, features = [
+  local api tag
+  tag="$(curl -fsSL "$api" | grep -o '"tag_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -n1 | sed 's/.*"\(v\{0,1\}[^"]*\)"$/\1/')"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a84c0b5e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `68d01235` are properly handled with clean fallback behavior.
