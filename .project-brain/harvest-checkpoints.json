@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T03:12:35.875Z",
+  "last_updated": "2026-10-31T03:19:21.917Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -16026,14 +16026,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-huggingfacebio-carbon-x",
-      "content_hash": "2adf8afa66af96ffdff7da6be4182395d2f5403dd9591590fec963063430c4ab",
-      "verified_at": "2026-10-28T02:41:14.340Z",
+      "content_hash": "e24193fb256dd74cf977f5282a8f0122f9e660fb92033392f9ce7e258f42315e",
+      "verified_at": "2026-10-31T03:19:21.916Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T02:41:14.340Z"
+      "last_updated": "2026-10-31T03:19:21.916Z"
     },
     "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF": {
       "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",

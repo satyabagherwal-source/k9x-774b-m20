@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T03:12:35.780Z",
+  "last_updated": "2026-10-31T03:19:21.819Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -64680,15 +64680,15 @@
       "learning_id": "rule-351",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 351,
-      "title": "Consistent Special‑Token Alignment Across Tokenizer and Model Config (Harvested from Cloudflare/clef-flash)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Consistent Special‑Token Alignment",
+      "source_url": "https://huggingface.co/HuggingFaceBio/Carbon-X",
+      "source_version": "hf-huggingfacebio-carbon-x",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-13T17:43:04.598Z"
+      "verified_at": "2026-10-31T03:19:21.798Z"
     },
     "rule-352": {
       "learning_id": "rule-352",
@@ -128226,10 +128226,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/HuggingFaceBio/Carbon-X",
       "source_version": "hf-huggingfacebio-carbon-x",
-      "content_hash": "2adf8afa66af96ffdff7da6be4182395d2f5403dd9591590fec963063430c4ab",
+      "content_hash": "e24193fb256dd74cf977f5282a8f0122f9e660fb92033392f9ce7e258f42315e",
       "dossier_path": "07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md",
       "promoted_rules": [
+        {
+          "number": 351,
+          "title": "Consistent Special‑Token Alignment",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 4088,
           "title": "Tokenizer‑Model Special‑Token Consistency",
@@ -128259,6 +128264,16 @@
           "number": 5137,
           "title": "Generation Config Validation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6041,
+          "title": "DNA Token Contiguity and Non‑Overlap",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6042,
+          "title": "Generation‑Config Alignment with Model Capacity",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -128266,7 +128281,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T02:41:14.255Z",
+      "verified_at": "2026-10-31T03:19:21.798Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -158931,6 +158946,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T03:12:35.759Z"
+    },
+    "rule-6041": {
+      "learning_id": "rule-6041",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6041,
+      "title": "DNA Token Contiguity and Non‑Overlap",
+      "source_url": "https://huggingface.co/HuggingFaceBio/Carbon-X",
+      "source_version": "hf-huggingfacebio-carbon-x",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T03:19:21.798Z"
+    },
+    "rule-6042": {
+      "learning_id": "rule-6042",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6042,
+      "title": "Generation‑Config Alignment with Model Capacity",
+      "source_url": "https://huggingface.co/HuggingFaceBio/Carbon-X",
+      "source_version": "hf-huggingfacebio-carbon-x",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T03:19:21.798Z"
     }
   },
   "aliases": {

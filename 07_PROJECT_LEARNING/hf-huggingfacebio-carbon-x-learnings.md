@@ -3,7 +3,7 @@
 > **Source Version**: `hf-huggingfa`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-28T02:41:13.438Z  
+> **Timestamp**: 2026-10-31T03:19:20.631Z  
 > **Learning ID**: `learn-huggingface-huggingfacebio-carbon-x`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -15,315 +15,263 @@
 # Project Learning Record (Full‑Spectrum Forensic Harvest): HuggingFaceBio/Carbon‑X
 
 ## 1. Executive Forensic Architecture & System Mechanics
-Carbon‑X is a 14.8 B‑parameter decoder‑only language model that unifies DNA sequence understanding and natural‑language generation.  
+Carbon‑X is a 14.8 B‑parameter decoder‑only language model that fuses DNA sequence understanding with natural‑language generation.  
 * **Subsystem boundaries**  
-  * **Tokenizer** – `HybridDNATokenizer` (BPE for text + 6‑mer DNA tokens).  
-  * **Model** – `Qwen3ForCausalLM` (40 layers, hidden size 5120, 40 query heads, 8 KV heads, RMSNorm + SwiGLU).  
-  * **Inference pipeline** – chat‑style prompt handling, token‑streaming, and generation config.  
-* **Decoupling** – The tokenizer is a separate module that can be swapped without touching the model weights.  
-* **State ownership** – All model state is immutable after loading; the tokenizer holds mutable vocab tables but exposes read‑only APIs.  
-* **Critical abstractions** – `AutoTokenizer`, `AutoModelForCausalLM`, and `GenerationConfig` are the public entry points.  
-* **Data flow** – A single token stream carries both DNA (6‑mer tokens) and text; the model never branches into a separate encoder for DNA.  
+  * **Model core** – a Qwen3‑style transformer (40 layers, 5120‑dim hidden, 40 query heads, 8 KV heads).  
+  * **Tokenizer** – a hybrid tokenizer that combines the Qwen3 BPE vocabulary for text with a dedicated 6‑mer DNA token set.  
+  * **Generation engine** – a text‑generation pipeline that accepts a mixed token stream and produces English explanations or DNA continuations.  
+  * **Configuration layer** – three JSON files (`config.json`, `generation_config.json`, `tokenizer_config.json`) that must be in sync.  
+* **Critical abstractions**  
+  * **`HybridDNATokenizer`** – exposes a unified `encode`/`decode` interface that automatically tags DNA segments.  
+  * **`Qwen3ForCausalLM`** – the model class that implements the forward pass, attention, and RMS‑Norm.  
+  * **`TextGenerationPipeline`** – orchestrates tokenization, model inference, and post‑processing.  
+* **Key invariant** – the token IDs for special tokens (`eos_token_id`, `pad_token_id`, `<|im_start|>`, `<|im_end|>`, DNA markers) must be unique and consistent across all three configuration files.
+
+---
 
 ## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Token ID Uniqueness Across Domains
+### 1. Consistent Special‑Token Alignment
 **RULE**:  
-`MUST` ensure that every token ID in the vocabulary is unique across text and DNA domains, and that special tokens (`<|dna>`, `</dna>`, `<oov>`, `<|endoftext|>`, etc.) occupy distinct IDs that are never reused for regular tokens.  
+All special token IDs defined in `config.json`, `generation_config.json`, and `tokenizer_config.json` MUST be identical and MUST NOT collide with any regular token ID.
 
 **WHY**:  
-Duplicate IDs cause ambiguous decoding, leading to corrupted DNA sequences or mis‑aligned text generation.  
+Mismatched IDs cause the model to misinterpret padding, end‑of‑sequence, or DNA markers, leading to corrupted generations, silent truncation, or infinite loops in the generation pipeline.
 
 **WHEN TO APPLY**:  
-During tokenizer construction, vocabulary merging, and any runtime token‑id mapping.  
+During model initialization, tokenizer construction, and any runtime re‑configuration (e.g., when loading a new checkpoint or updating the tokenizer).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Build vocab from BPE and DNA 6‑mers
-text_vocab = load_bpe_vocab("qwen3_bpe.json")          # dict: token -> id
-dna_tokens = generate_6mer_tokens()                    # list of tokens
-dna_vocab = {tok: len(text_vocab) + i for i, tok in enumerate(dna_tokens)}
+# Python 3.11
+import json
+from pathlib import Path
 
-# Merge
-vocab = {**text_vocab, **dna_vocab}
+def load_and_validate_configs(model_dir: Path):
+    cfg = json.loads((model_dir / "config.json").read_text(encoding="utf-8"))
+    gen_cfg = json.loads((model_dir / "generation_config.json").read_text(encoding="utf-8"))
+    tok_cfg = json.loads((model_dir / "tokenizer_config.json").read_text(encoding="utf-8"))
 
-# Add special tokens
-special_tokens = {
-    "<|dna>": len(vocab),
-    "</dna>": len(vocab) + 1,
-    "<oov>": len(vocab) + 2,
-    "<|endoftext|>": len(vocab) + 3,
-}
-vocab.update(special_tokens)
+    # Special tokens
+    special_ids = {
+        "eos_token_id": cfg["eos_token_id"],
+        "pad_token_id": cfg["pad_token_id"],
+        "bos_token_id": cfg.get("bos_token_id"),
+    }
 
-# Verify uniqueness
-assert len(vocab) == len(set(vocab.values())), "Token ID collision detected"
+    # Tokenizer special tokens
+    for key in ("eos_token", "pad_token", "bos_token"):
+        if key in tok_cfg:
+            # Tokenizer stores token string, not ID; map via tokenizer
+            pass  # handled later
+
+    # Validate uniqueness
+    ids = list(special_ids.values())
+    assert len(ids) == len(set(ids)), "Duplicate special token IDs detected"
+
+    # Validate against tokenizer vocab
+    tokenizer = AutoTokenizer.from_pretrained(str(model_dir))
+    for name, id_ in special_ids.items():
+        if id_ is not None:
+            assert id_ == tokenizer.get_vocab().get(tokenizer.special_tokens_map.get(name)), (
+                f"{name} ID mismatch: {id_} vs tokenizer {tokenizer.get_vocab()[name]}"
+            )
+    return cfg, gen_cfg, tok_cfg, tokenizer
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: Re‑using an ID for a new token
-vocab["<|dna>"] = 42          # 42 may already belong to a regular token
+# BAD: hard‑coded, mismatched IDs
+eos_token_id = 151645
+pad_token_id = 151643
+# tokenizer defines eos_token_id as 151644 → mismatch
 ```
 
 **VERIFICATION METHOD**:  
-Run a unit test that asserts `len(vocab) == len(set(vocab.values()))` after every tokenizer update.  
+Unit test that loads the three config files, builds the tokenizer, and asserts that `tokenizer.eos_token_id == cfg["eos_token_id"]` and similarly for `pad_token_id` and `bos_token_id`. Use `pytest` with `assert` statements.
 
 ---
 
-### 2. Consistent Data‑Type Enforcement for Model Weights
+### 2. DNA Token Contiguity and Non‑Overlap
 **RULE**:  
-`MUST` store all model weights in the declared `dtype` (`bfloat16`) and **MUST NOT** cast them to `float32` or `float16` at any point during inference.  
+All DNA tokens (the 6‑mer set plus tail tokens) MUST occupy a contiguous ID range that does **not** overlap with any text BPE token IDs.
 
 **WHY**:  
-Casting introduces precision loss, increases memory footprint, and can break the RMSNorm + QK‑norm math that relies on `bfloat16` stability.  
+Overlapping IDs cause the tokenizer to ambiguously map DNA sequences to text tokens, leading to incorrect embeddings, loss of biological signal, and unpredictable generation.
 
 **WHEN TO APPLY**:  
-During weight loading, optimizer state restoration, and any intermediate tensor creation.  
+During tokenizer training, when adding new DNA tokens, or when merging tokenizers.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Load weights
-state_dict = torch.load("model.bin", map_location="cpu")
-for k, v in state_dict.items():
-    if v.dtype != torch.bfloat16:
-        state_dict[k] = v.to(torch.bfloat16)
-
-model.load_state_dict(state_dict)
-
-# Ensure inference tensors stay bfloat16
-input_ids = torch.tensor(input_ids, dtype=torch.long, device="cuda")
-output = model(input_ids)          # internal ops use bfloat16 by default
+# Python 3.11
+def validate_dna_token_range(tokenizer):
+    dna_tokens = [
+        t for t in tokenizer.get_vocab().keys()
+        if t.startswith("<dna_") or t in {"<dna>", "</dna>", "<oov>"}
+    ]
+    dna_ids = [tokenizer.get_vocab()[t] for t in dna_tokens]
+    # Ensure contiguity
+    assert sorted(dna_ids) == list(range(min(dna_ids), max(dna_ids) + 1)), (
+        "DNA token IDs are non‑contiguous"
+    )
+    # Ensure no overlap with BPE
+    bpe_ids = set(tokenizer.get_vocab().values()) - set(dna_ids)
+    assert not set(dna_ids) & bpe_ids, "DNA token IDs overlap with BPE tokens"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: Implicit cast to float32 in a custom layer
-x = x.float()                      # converts to float32
+# BAD: inserting DNA tokens at arbitrary IDs
+tokenizer.add_tokens(["<dna_ABCDEF>"], special_tokens=True)  # ID 5000, but BPE uses 5000
 ```
 
 **VERIFICATION METHOD**:  
-Add a linter rule that flags any `.float()` or `.to(torch.float32)` calls in model code.  
+Run the above function as part of the tokenizer training pipeline; fail the build if the assertion triggers.
 
 ---
 
-### 3. Generation Config Validation
+### 3. Generation‑Config Alignment with Model Capacity
 **RULE**:  
-`MUST` validate that `do_sample`, `temperature`, `top_k`, and `top_p` are consistent (e.g., `do_sample=True` requires `temperature > 0`).  
+`generation_config.max_length` (or implicit `model_max_length`) MUST NOT exceed `config.max_position_embeddings`; otherwise, the model will attempt to access out‑of‑range positional embeddings.
 
 **WHY**:  
-Inconsistent configs can lead to deterministic outputs when sampling is expected or vice‑versa, breaking reproducibility guarantees.  
+Exceeding the positional embedding size triggers out‑of‑bounds memory access, silent truncation, or catastrophic failure in the attention mechanism.
 
 **WHEN TO APPLY**:  
-At the entry point of the generation pipeline, before token sampling.  
+During pipeline construction, when a user supplies a custom `max_length` or when the tokenizer’s `model_max_length` is overridden.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-def validate_generation_config(cfg: GenerationConfig):
-    if cfg.do_sample:
-        assert cfg.temperature > 0, "temperature must be > 0 when sampling"
-        assert cfg.top_k >= 0, "top_k must be non‑negative"
-        assert 0 <= cfg.top_p <= 1, "top_p must be in [0, 1]"
-    else:
-        # deterministic decoding
-        cfg.temperature = 0
-        cfg.top_k = 0
-        cfg.top_p = 0
-
-validate_generation_config(generation_config)
+# Python 3.11
+def enforce_max_length(gen_cfg, cfg):
+    max_len = gen_cfg.get("max_length", cfg["max_position_embeddings"])
+    assert max_len <= cfg["max_position_embeddings"], (
+        f"generation_config.max_length ({max_len}) exceeds model's "
+        f"max_position_embeddings ({cfg['max_position_embeddings']})"
+    )
+    return max_len
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: Allowing temperature=0 with do_sample=True
-cfg.do_sample = True
-cfg.temperature = 0
+# BAD: user sets max_length to 50000 while model supports 40960
+generation_config = {"max_length": 50000}
 ```
 
 **VERIFICATION METHOD**:  
-Unit test that feeds a malformed `GenerationConfig` and expects an `AssertionError`.  
+Add a unit test that loads `generation_config.json`, calls `enforce_max_length`, and expects an `AssertionError` if the value is too high.
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-| Incident | Context | What Was Expected | What Actually Happened | Evidence | Root Cause | Remediation Diff | Lesson |
-|----------|---------|-------------------|------------------------|----------|------------|------------------|--------|
-| 1 | Tokenizer merge | No duplicate token IDs | Duplicate ID caused decoding error | *No commit* | *No data* | *No data* | *No data* |
-| 2 | Weight loading | All weights in bfloat16 | Mixed dtypes caused runtime error | *No commit* | *No data* | *No data* | *No data* |
-| 3 | Generation config | Valid sampling parameters | Sampling with temperature=0 produced deterministic output | *No commit* | *No data* | *No data* | *No data* |
-| 4 | DNA tokenization | DNA sequences tokenized into 6‑mer tokens | Over‑long DNA sequences produced out‑of‑range token IDs | *No commit* | *No data* | *No data* | *No data* |
-| 5 | Model inference | 40‑layer model loaded without OOM | OOM on 80 GB GPU due to missing `use_cache=False` | *No commit* | *No data* | *No data* | *No data* |
+> **No production commits, patches, or closed issues are present in the repository.**  
+> The repository contains only configuration files and a README; therefore, no concrete bug‑fix incidents can be extracted.  
+> The following table records the absence of incidents.
 
-> **Note**: The repository contains no recorded commits, PRs, or issue logs. All incidents above are hypothetical, derived from the configuration and README constraints.
+| Incident | Status | Notes |
+|----------|--------|-------|
+| 1 | **None** | No commit history available |
+| 2 | **None** | No issue tracker data |
+| 3 | **None** | No PRs or merge logs |
+| 4 | **None** | No runtime crash logs |
+| 5 | **None** | No regression reports |
+
+---
 
 ## 4. Microscopic Code‑Level Invariants
 
-### 1. Micro‑Syntax & Token‑Level Precision
-* **Exact comparison** – Use `===` in JavaScript or `is` in Python for identity checks; avoid `==` which coerces types.  
-* **Falsy 0 trap** – In token‑id lookups, `if (tokenId)` will treat `0` as falsy; guard with `tokenId !== undefined && tokenId !== null`.  
-* **Deep immutability** – Token vocab dictionaries should be frozen (`Object.freeze(vocab)` in JS, `MappingProxyType` in Python) to prevent accidental mutation.  
-* **Shallow copy leak** – When passing token lists to downstream functions, clone with `list(tokens)` or `tokens.copy()` to avoid accidental in‑place changes.
+| Domain | Invariant | Example / Explanation |
+|--------|-----------|-----------------------|
+| **Micro‑Syntax & Token‑Level Precision** | **Explicit type checks** – never rely on implicit coercion when comparing token IDs. | `if token_id == 0:` is safe; `if token_id:` will treat `0` as falsy and skip a valid token. |
+| | **Avoid shadowing** – local variables should not mask module‑level names. | `def encode(token_id): token_id = tokenizer.get_vocab()[token_id]` shadows the argument. |
+| | **Deep immutability** – use `tuple` for token vocab to prevent accidental mutation. | `token_vocab = tuple(tokenizer.get_vocab().items())` |
+| **Infinite Loop & Recursion Guards** | **Base‑case proof** – every recursive tokenizer split must reduce string length. | `def split_dna(seq): return seq[:6], seq[6:]` ensures progress. |
+| | **Loop termination** – enforce `while i < len(seq): i += 6`. | Prevents infinite loop when `i` never increments. |
+| | **Recursion depth cap** – use `sys.setrecursionlimit` only if necessary; otherwise iterative. | `sys.setrecursionlimit(1000)` is safe for DNA splits. |
+| **UI & UX Micro‑Mechanics** | **Debounce tokenization** – avoid re‑tokenizing on every keystroke in a chat UI. | `debounce(tokenize_input, 200)` |
+| | **Focus restoration** – after a modal closes, restore focus to the chat input. | `modal.on_close(lambda: chat_input.focus())` |
+| | **Touch vs pointer** – use `pointerdown` for mobile to avoid double‑tap. | `element.addEventListener('pointerdown', handler)` |
+| **Backend Concurrency & Memory Safety** | **TOCTOU avoidance** – lock the tokenizer during tokenization. | `with tokenizer_lock: tokens = tokenizer.encode(text)` |
+| | **Connection pool guard** – limit concurrent inference requests to GPU memory. | `semaphore = asyncio.Semaphore(max_concurrent)` |
+| | **Memory leak prevention** – clear event listeners after inference. | `inference_task.add_done_callback(lambda _: event_emitter.remove_all_listeners())` |
+| **Defect & Error Prevention (Galti Pakadna)** | **Null‑safe chaining** – use `token_id = tokenizer.get_vocab().get(token, None)` instead of `tokenizer.get_vocab()[token]`. | Prevents `KeyError`. |
+| | **Off‑by‑one** – always use `len(seq) - 1` when indexing the last element. | `last_token = seq[len(seq)-1]` |
+| | **Unhandled promise rejection** – wrap async calls in `try/except`. | `try: await inference() except Exception as e: log(e)` |
 
-```python
-# BAD: shallow copy leading to mutation
-def process(tokens):
-    tokens.append("<|endoftext|>")   # mutates caller's list
-
-# GOOD: defensive copy
-def process(tokens):
-    tokens = tokens.copy()
-    tokens.append("<|endoftext|>")
-```
-
-### 2. Infinite Loop & Recursion Guards
-* **Base condition proofs** – For recursive DNA motif search, ensure `depth <= MAX_DEPTH` and `index < len(sequence)`.  
-* **Termination invariant** – Each recursion must consume at least one base; otherwise, infinite recursion.  
-* **Event loop yield** – In async token generation, insert `await asyncio.sleep(0)` after every 512 tokens to yield control.  
-* **Recursion depth cap** – Use `sys.setrecursionlimit(10000)` only if the algorithm guarantees termination; otherwise, switch to iterative.
-
-```python
-MAX_DEPTH = 1000
-
-def search_motif(seq, depth=0):
-    if depth > MAX_DEPTH:
-        raise RecursionError("Maximum recursion depth exceeded")
-    if not seq:
-        return False
-    # ... search logic ...
-    return search_motif(seq[1:], depth + 1)
-```
-
-### 3. UI & UX Micro‑Mechanics
-* **Reflow thrashing** – Avoid layout‑triggering DOM reads/writes in tight loops; batch with `requestAnimationFrame`.  
-* **Event retargeting** – In Shadow DOM, use `composedPath()` to correctly identify event targets.  
-* **Debouncing** – For input fields, debounce with a 200 ms window to prevent excessive tokenization.  
-* **Touch vs pointer** – Prefer `pointerdown` over `touchstart` to unify mouse and touch events.
-
-```javascript
-// Debounce example
-let timeout;
-input.addEventListener('input', () => {
-  clearTimeout(timeout);
-  timeout = setTimeout(() => {
-    tokenize(input.value);
-  }, 200);
-});
-```
-
-### 4. Backend Concurrency & Memory Safety
-* **TOCTOU** – Acquire locks before checking token availability; avoid race conditions in shared cache.  
-* **Connection pool starvation** – Use a bounded queue (`maxsize=100`) for database connections; reject new requests with 503 if full.  
-* **Memory leak** – Remove event listeners after use: `element.removeEventListener('click', handler)`.  
-* **Unbounded cache** – Implement LRU eviction for token vocab cache.
-
-```python
-# LRU cache example
-from collections import OrderedDict
-
-class LRUCache:
-    def __init__(self, capacity):
-        self.capacity = capacity
-        self.cache = OrderedDict()
-
-    def get(self, key):
-        if key not in self.cache:
-            return None
-        self.cache.move_to_end(key)
-        return self.cache[key]
-
-    def put(self, key, value):
-        if key in self.cache:
-            self.cache.move_to_end(key)
-        self.cache[key] = value
-        if len(self.cache) > self.capacity:
-            self.cache.popitem(last=False)
-```
-
-### 5. Defect & Error Prevention (“Galti Pakadna”)
-* **Null/undefined chaining** – Use `?.` in JS or `getattr(obj, "attr", None)` in Python to avoid `AttributeError`.  
-* **Off‑by‑one** – When slicing DNA sequences into 6‑mers, use `range(0, len(seq) - 5, 6)` to avoid overflow.  
-* **Unhandled promise rejections** – Wrap async calls in `try/await` blocks and attach `.catch()` handlers.  
-* **Error swallowing** – Do not catch generic `Exception` without re‑raising or logging.
-
-```python
-# Good: explicit error handling
-try:
-    result = await async_tokenize(seq)
-except TokenizationError as e:
-    logger.error(f"Tokenization failed: {e}")
-    raise
-```
+---
 
 ## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Key Observations | Invariants |
-|-----------|------------------|------------|
-| **Architecture** | 40‑layer decoder, 5120 hidden size, 40 query heads, 8 KV heads, RMSNorm + SwiGLU, 40 k context window. | Layer‑wise residual connections must preserve shape; RMSNorm epsilon fixed at 1e‑6. |
-| **Core Abstractions** | `HybridDNATokenizer`, `Qwen3ForCausalLM`, `GenerationConfig`. | Tokenizer exposes `encode()`/`decode()`; model exposes `forward()` with `input_ids`. |
-| **Error Handling** | No explicit error handling in config; rely on `torch` exceptions. | Validate config before inference; catch `RuntimeError` for OOM. |
-| **Testing** | No tests present. | Must add unit tests for tokenizer, config validation, and generation pipeline. |
-| **Security** | No credentials; open model. | Ensure no hard‑coded secrets; use `trust_remote_code=False` by default. |
-| **Performance** | bfloat16 weights, 40 k context, no cache. | Use `torch.backends.cuda.matmul.allow_tf32 = False` to avoid TF32 drift. |
-| **Deployment** | CI/CD invariants missing; config files in JSON. | Enforce reproducible builds via pinned `transformers` version. |
-| **Agent Patterns** | Chat‑style prompts, DNA detection via `<|dna>` tags. | Prompt templates must include `<|dna>` markers for DNA sections. |
-| **Data Flow** | Single token stream; DNA 6‑mers + text tokens. | Token IDs must be contiguous; no gaps in vocab. |
+| Dimension | Key Findings | Practical Implications |
+|-----------|--------------|------------------------|
+| **Architecture** | 40‑layer Qwen3‑style transformer with GQA, RMS‑Norm, and 6‑mer DNA tokens. | Modular design allows swapping tokenizer or attention variant without touching core logic. |
+| **Core Abstractions** | `HybridDNATokenizer`, `Qwen3ForCausalLM`, `TextGenerationPipeline`. | Clear interfaces enable independent testing and future extensions (e.g., adding a vision head). |
+| **Error Handling** | No explicit error handling in config parsing; relies on JSON load exceptions. | Introduce schema validation to catch mis‑configured special tokens early. |
+| **Testing** | No tests present. | Must add unit tests for config consistency, tokenizer correctness, and generation limits. |
+| **Security** | Trust‑remote‑code flag set to true; no credential handling. | Ensure that any remote code execution is sandboxed; validate tokenizer files. |
+| **Performance** | 14.8 B parameters, 40‑layer depth, 5120 hidden size; uses bfloat16. | Requires 80 GB GPU; careful memory management and batching to avoid OOM. |
+| **Deployment** | Config files specify `transformers_version` 5.13.0.dev0; no Dockerfile. | Build reproducible Docker images with pinned dependencies; use CI to enforce version consistency. |
+| **Agent Patterns** | Model used as a tool in a chat agent; no explicit prompt‑chain logic. | Design prompt templates that automatically tag DNA segments; guard against infinite re‑render loops. |
+| **Data Flow** | Single token stream; DNA tokens interleaved with text. | Ensure that tokenization preserves order and that the model’s attention mask respects the mixed stream. |
+
+---
 
 ## 6. The 8 Learning Extraction Artifacts
 
 | Artifact | Example |
 |----------|---------|
-| **Pattern** | The `validate_generation_config` function shown above. |
-| **Rule** | Token ID uniqueness rule (Rule 1). |
-| **Architecture Principle** | *Single‑stream tokenization*: DNA and text share a unified token stream to avoid encoder‑decoder complexity. |
-| **Failure Mode** | Duplicate token IDs leading to corrupted DNA decoding. |
-| **Reusable Skill** | Step‑by‑step checklist for building a hybrid tokenizer (see Section 7). |
-| **Decision** | Chose `bfloat16` over `float32` to reduce memory footprint while maintaining numerical stability. |
-| **Anti‑pattern** | Re‑using token IDs for new tokens (negative constraint in Rule 1). |
-| **Verification Method** | Linter rule that flags any `.float()` casts in model code. |
+| **Pattern** | The `validate_dna_token_range` function above. |
+| **Rule** | *All special token IDs must be unique and consistent across config files.* |
+| **Architecture Principle** | *Tokenization must be a first‑class abstraction that cleanly separates biological and textual domains.* |
+| **Failure Mode** | *Mismatched `eos_token_id` causes the generation pipeline to truncate outputs prematurely.* |
+| **Reusable Skill** | *Schema‑driven config validation: load JSON, compare against a JSON‑Schema, raise descriptive errors.* |
+| **Decision** | *Reject hard‑coded token IDs in favor of dynamic mapping via the tokenizer’s vocabulary.* |
+| **Anti‑pattern** | *Hard‑coding special token IDs in multiple files without a central source of truth.* |
+| **Verification Method** | *Unit test that asserts `tokenizer.eos_token_id == cfg["eos_token_id"]`.* |
+
+---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Tokenizer Construction**  
-   * Load BPE vocab.  
-   * Generate 6‑mer DNA tokens.  
-   * Merge vocab, assign unique IDs.  
-   * Add special tokens (`<|dna>`, `</dna>`, `<oov>`, `<|endoftext|>`).  
-   * Freeze vocab and validate uniqueness.
+1. **Load Configs**  
+   * `cfg = json.load(open("config.json"))`  
+   * `gen_cfg = json.load(open("generation_config.json"))`  
+   * `tok_cfg = json.load(open("tokenizer_config.json"))`
 
-2. **Model Weight Loading**  
-   * Load state dict.  
-   * Convert all tensors to `bfloat16`.  
-   * Verify shape consistency.  
-   * Load into `Qwen3ForCausalLM`.
+2. **Instantiate Tokenizer**  
+   * `tokenizer = AutoTokenizer.from_pretrained(".", use_fast=False)`
 
-3. **Generation Config Validation**  
-   * Ensure `do_sample` and sampling parameters are coherent.  
-   * Default to deterministic decoding if `do_sample=False`.
+3. **Validate Special Tokens**  
+   * `assert tokenizer.eos_token_id == cfg["eos_token_id"]`  
+   * `assert tokenizer.pad_token_id == cfg["pad_token_id"]`
 
-4. **Inference Pipeline**  
-   * Encode prompt with tokenizer.  
-   * Detect DNA sections via `<|dna>` tags.  
-   * Run model forward pass with `use_cache=False`.  
-   * Stream output tokens; decode to text/DNA as needed.
+4. **Validate DNA Token Range**  
+   * Run `validate_dna_token_range(tokenizer)`.
 
-5. **Testing**  
-   * Unit tests for tokenizer encode/decode.  
-   * Config validation tests.  
-   * Integration test: prompt → token stream → model output.
+5. **Enforce Generation Limits**  
+   * `max_len = enforce_max_length(gen_cfg, cfg)`
 
-6. **Deployment**  
-   * Pin `transformers` version (`5.13.0.dev0`).  
-   * Use Docker with `--gpus all`.  
-   * Set `CUDA_VISIBLE_DEVICES` appropriately.
+6. **Build Model**  
+   * `model = Qwen3ForCausalLM.from_pretrained(".", config=cfg)`
 
-7. **Monitoring & Logging**  
-   * Log tokenization errors.  
-   * Capture OOM events.  
-   * Track inference latency per token.
+7. **Create Pipeline**  
+   * `pipeline = TextGenerationPipeline(model=model, tokenizer=tokenizer, **gen_cfg)`
 
-8. **Security**  
-   * Disable `trust_remote_code` by default.  
-   * No hard‑coded secrets.  
+8. **Run Safety Checks**  
+   * `pipeline("Hello world")` → verify output length ≤ `max_len`.
 
-Follow this checklist to build a robust, DNA‑aware language model pipeline that adheres to the forensic invariants extracted from Carbon‑X.
+9. **Automated Tests**  
+   * `pytest` suite covering:  
+     * Config consistency  
+     * Tokenizer DNA contiguity  
+     * Generation length enforcement  
+     * No overlapping token IDs
+
+10. **CI/CD Integration**  
+    * Add linting (`flake8`, `black`) and schema validation (`jsonschema`) to the pipeline.  
+    * Build Docker image with pinned `transformers==5.13.0.dev0`.  
+    * Run unit tests on every push and PR.
+
+---

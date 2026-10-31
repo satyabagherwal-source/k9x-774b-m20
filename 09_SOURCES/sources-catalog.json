@@ -10665,8 +10665,8 @@
     "sourceUrl": "https://huggingface.co/HuggingFaceBio/Carbon-X",
     "sourceVersion": "hf-huggingfacebio-carbon-x",
     "license": "Open-Source",
-    "contentHash": "2adf8afa66af96ffdff7da6be4182395d2f5403dd9591590fec963063430c4ab",
-    "lastHarvestedAt": "2026-10-28T02:41:14.331Z",
+    "contentHash": "e24193fb256dd74cf977f5282a8f0122f9e660fb92033392f9ce7e258f42315e",
+    "lastHarvestedAt": "2026-10-31T03:19:21.907Z",
     "learningId": "learn-huggingface-huggingfacebio-carbon-x"
   },
   "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf": {

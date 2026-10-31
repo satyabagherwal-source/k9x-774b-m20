@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T03:12:35.870Z",
-  "total_cycles_completed": 6417,
-  "total_learnings_persisted": 6417,
-  "total_rules_promoted": 6018,
+  "last_updated": "2026-10-31T03:19:21.912Z",
+  "total_cycles_completed": 6418,
+  "total_learnings_persisted": 6418,
+  "total_rules_promoted": 6021,
   "history": [
-    {
-      "timestamp": "2026-10-30T16:44:33.518Z",
-      "repository": "restatedev/restate",
-      "learningId": "learn-github-restatedev-restate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T16:51:23.177Z",
       "repository": "jhspetersson/fselect",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-31T03:12:35.870Z",
       "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
       "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T03:19:21.912Z",
+      "repository": "HuggingFaceBio/Carbon-X",
+      "learningId": "learn-huggingface-huggingfacebio-carbon-x",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
