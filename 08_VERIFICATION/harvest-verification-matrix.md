@@ -6420,3 +6420,7 @@
 | `CYCLE-20261031-GUGA` | `2026-10-31T02:07:29.578Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6006` | Yes (`2ffdb17f...`) |
 | `CYCLE-20261031-GX7B` | `2026-10-31T02:07:33.143Z` | `Qwen/Qwen3-14B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4620, Rule 6007, Rule 6008` | Yes (`6c2bfb78...`) |
 | `CYCLE-20261031-GYYB` | `2026-10-31T02:07:35.411Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6009` | Yes (`de12ab2a...`) |
+| `CYCLE-20261031-PQV5` | `2026-10-31T02:14:24.833Z` | `callstack/react-native-paper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6010` | Yes (`f5cc305a...`) |
+| `CYCLE-20261031-PRMW` | `2026-10-31T02:14:25.832Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6011, Rule 1028` | Yes (`12d22fd0...`) |
+| `CYCLE-20261031-PTFD` | `2026-10-31T02:14:28.153Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6012` | Yes (`f81c8626...`) |
+| `CYCLE-20261031-PXR0` | `2026-10-31T02:14:33.756Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6013` | Yes (`8d44c0a2...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `da3239c5`  
+> **Source Version**: `4ab32131`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T06:36:31.707Z  
+> **Timestamp**: 2026-10-31T02:14:27.488Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T06:36:30.610Z  
+> **Harvest Timestamp**: 2026-10-31T02:14:27.230Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29157 stars
+- **Stars / Engagement**: 29159 stars
 
 ---
 
@@ -1062,290 +1062,122 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7b15e26a` (2026-10-29)
-**Commit Message**: api: Add `mode` field to TraceContextPropagationConfig in mcp.proto (#48249)
+### Incident Patch 1: `1f19faee` (2026-10-30)
+**Commit Message**: test/load_stats: Fix use-after-free in respondToHealthCheck (#48867)
 
-<!--
-!!!ATTENTION!!!
+FakeStream::encodeHeaders() posts a callback capturing the stream to the
+upstream connection thread and returns. respondToHealthCheck() is called
+back to back, and each call's waitForNewStream() replaces
+health_check_request_, deleting the previous FakeStream on the main
+thread while its posted callback may still be pending. TSAN caught this
+as a heap-use-after-free in EmptyLocalityAfterHealthCheckFailure.
 
-If you are fixing **any** crash or **any** potential security issue,
-**do not
-open a pull request**.
+Wait for the connection's posted callbacks to drain before returning.
 
-Instead, please
-[open a GitHub Security
-Advisory](https://github.com/envoyproxy/envoy/security/advisories/new)
-(preferred). Alternatively, you may email
-[REDACTED_EMAIL].
+Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
 
-Thank you in advance for helping to keep Envoy secure.
-
-!!!ATTENTION!!!
-
-For an explanation of how to fill out the fields, please see the
-relevant section
-in
-[PULL_REQUESTS.md](https://github.com/envoyproxy/envoy/blob/main/PULL_REQUESTS.md)
-
-!!!ATTENTION!!!
-
-Please check the [use of generative AI
-policy](https://github.com/envoyproxy/envoy/blob/main/CONTRIBUTING.md?plain=1#L41).
-
-You may use generative AI only if you fully understand the code. You
-need to disclose
-this usage in the PR description to ensure transparency.
--->
-
-Commit Message:
-Additional Description:
-
-This is the first PR in a chain, with the high-level goal of getting
-McpFilter to reparent the active span based on the request body's trace
-context.
-
-For reference, here is the full PR chain:
-
-1. #48249
-1. #48250
-1. #48449
-1. #48448
-1. #48516
-1. #48038
-
-
-**File**: `api/envoy/extensions/filters/http/mcp/v3/mcp.proto` (modified, +21/-0)
+**File**: `test/integration/load_stats_integration_test.cc` (modified, +5/-0)
 ```diff
-@@ -74,6 +74,27 @@ message Mcp {
- 
-   message TraceContextPropagationConfig {
-     option (xds.annotations.v3.message_status).work_in_progress = true;
-+
-+    enum TraceContextPropagationMode {
-+      // Copy the request body's trace context to headers without modification.
-+      COPY = 0;
-+
-+      // Copy the request body's trace context to headers without modification.
-+      // Also reparents the active span based on the body's traceparent. In this
-+      // mode, upstream spans will not descend from the active span; the subtree
-+      // of spans will be a sibling of the active span.
-+      COPY_AND_REPARENT_SPAN = 1;
-+
-+      // Rewrite the request body's trace context after reparenting the active
-+      // span based on the body's trace context. In this mode, upstream spans will
-+      // be descend from the active span.
-+      REWRITE_AND_REPARENT_SPAN = 2;
-+    }
-+
-+    // Controls how the request body's trace context is propagated.
-+    //
-+    // [#not-implemented-hide:]
-+    TraceContextPropagationMode mode = 1;
+@@ -195,6 +195,11 @@ class LoadStatsIntegrationTest : public Grpc::GrpcClientIntegrationParamTest,
+     EXPECT_EQ("/healthcheck", health_check_request_->headers().getPathValue());
+     health_check_request_->encodeHeaders(
+         Http::TestResponseHeaderMapImpl{{":status", std::to_string(response_code)}}, true);
++    // encodeHeaders() only posts to the upstream connection thread. Wait for that to run before
++    // returning, as the next call replaces health_check_request_ and the posted callback would
++    // otherwise use the deleted stream.
++    result = connection->waitForNoPost();
++    RELEASE_ASSERT(result, result.message());
    }
  
-   message BaggagePropagationConfig {
-```
-
-**File**: `tools/spelling/spelling_dictionary.txt` (modified, +3/-0)
-```diff
-@@ -1848,3 +1848,6 @@ cpaths
- SynchronousFeedbackResourceMonitor
- bernoulli
- vendored
-+reparent
-+reparents
-+reparenting
+   void mergeLoadStats(envoy::service::load_stats::v3::LoadStatsRequest& loadstats_request,
 ```
 
 ---
 
-### Incident Patch 2: `751fb919` (2026-10-29)
-**Commit Message**: Fix dynamic module tests on Windows (#48850)
+### Incident Patch 2: `aef8ab7f` (2026-10-30)
+**Commit Message**: Exclude fuzz targets from Windows build (#48851)
 
-Resolve dynamic module tests failures on Windows. The problem with these
-tests is that on Windows dynamic module file can not be overwritten or
-deleted while it is loaded in the process. These test changes modify
-tests to address this specific behavior.
+Windows clang toolchain is not configured with fuzz dependencies.
 
 Risk Level: low
 Testing: unit tests
 Docs Changes: no
 Release Notes: no
-Platform Specific Features: windows only
+Platform Specific Features: Windows only
 
 Signed-off-by: Yan Avlasov <[REDACTED_EMAIL]>
 
-**File**: `test/extensions/dynamic_modules/dynamic_modules_test.cc` (modified, +16/-2)
+**File**: `bazel/envoy_test.bzl` (modified, +2/-2)
 ```diff
-@@ -477,16 +477,24 @@ TEST(NewDynamicModuleFromBytes, RepeatedLoadReusesDlopenHandle) {
-       std::filesystem::temp_directory_path() / fmt::format("envoy_dynamic_module_{}.so", sha256);
-   std::filesystem::remove(temp_path);
+@@ -148,7 +148,7 @@ def envoy_cc_fuzz_test(
+             Label("//test/fuzz:fuzz_runner_lib"),
+             _TEST_VERSION_LINKSTAMP,
+         ],
+-        tags = tags,
++        tags = tags + ["skip_on_windows"],
+         **kwargs
+     )
  
-+#ifdef WIN32
-+  // Windows cannot delete a loaded DLL, so let the module unload once both handles are released
-+  // instead of pinning it for the rest of the process.
-+  constexpr bool do_not_close = false;
-+#else
-+  constexpr bool do_not_close = true;
-+#endif
+@@ -179,7 +179,7 @@ def envoy_cc_fuzz_test(
+             ],
+         }) + deprecate_repository("envoy_cc_fuzz_test", repository),
+         size = size,
+-        tags = ["fuzz_target"] + tags,
++        tags = ["fuzz_target"] + tags + ["skip_on_windows"],
+     )
+ 
+     fuzzing_decoration(
+```
+
+**File**: `bazelrc.windows` (modified, +3/-0)
+```diff
+@@ -3,6 +3,9 @@
+ #############################################################################
+ 
+ 
++build:windows --build_tag_filters=-skip_on_windows
++build:windows --test_tag_filters=-skip_on_windows
 +
-   // First load writes and loads the module.
-   absl::StatusOr<DynamicModulePtr> module1 =
--      newDynamicModuleFromBytes(module_bytes, sha256, true, false);
-+      newDynamicModuleFromBytes(module_bytes, sha256, do_not_close, false);
-   ASSERT_OK(module1);
-   ASSERT_TRUE(std::filesystem::exists(temp_path));
- 
-   // Second load with the same sha256 — writes again but the RTLD_NOLOAD check in
-   // newDynamicModule returns the existing handle, so the init function is not called twice.
-   absl::StatusOr<DynamicModulePtr> module2 =
--      newDynamicModuleFromBytes(module_bytes, sha256, true, false);
-+      newDynamicModuleFromBytes(module_bytes, sha256, do_not_close, false);
-   ASSERT_OK(module2);
- 
-   // Cleanup.
-@@ -611,12 +619,18 @@ TEST_F(NewDynamicModuleByConfigTest, RemoteCacheHitLoads) {
-   std::filesystem::create_directories(cached.parent_path());
-   std::filesystem::copy_file(module_path, cached,
-                              std::filesystem::copy_options::overwrite_existing);
-+  // The copy keeps the read-only attribute of the Bazel output on Windows, which would prevent
-+  // removing or overwriting the cached file later.
-+  std::filesystem::permissions(cached, std::filesystem::perms::owner_write,
-+                               std::filesystem::perm_options::add);
- 
-   auto result = newDynamicModuleByConfig(makeRemoteConfig(sha), "test_module", context_);
-   ASSERT_OK(result);
-   EXPECT_NE(result->loaded, nullptr);
-   EXPECT_EQ(result->async, nullptr);
- 
-+  // Unload the module first, since Windows cannot delete a loaded DLL.
-+  result->loaded.reset();
-   std::filesystem::remove(cached);
- }
- 
+ build:windows --extra_execution_platforms=//bazel/platforms:x64_windows-clang-cl
+ build:windows --extra_toolchains=@local_config_cc//:cc-toolchain-x64_windows-clang-cl
+ build:windows --extra_toolchains=@rules_foreign_cc//toolchains:preinstalled_autoconf_toolchain
 ```
 
 ---
 
-### Incident Patch 3: `4b0e4ac6` (2026-10-29)
-**Commit Message**: quic: fix goaway_sent stat and shouldShedLoad evaluation order in  CreateIncomingStream (#48485)
+### Incident Patch 3: `3e4e2174` (2026-10-30)
+**Commit Message**: Exclude buffer_fuzz_lib from Windows build (#48855)
 
-Commit Message: quic: fix goaway_sent stat and shouldShedLoad evaluation
-order in CreateIncomingStream
-Additional Description: When
-`envoy.load_shed_points.http3_server_go_away_on_dispatch` triggers in
-`EnvoyQuicServerSession::CreateIncomingStream`:
-1. `SendHttp3GoAway()` is called directly on the QUIC session without
-incrementing `codec_stats_->goaway_sent_`, causing `http3.goaway_sent`
-to
-   remain 0 during overload GOAWAY shedding.
-2. `should_send_go_away_on_dispatch_->shouldShedLoad()` is evaluated
-before
-`!h3_go_away_sent_`. Because `LoadShedPointImpl::shouldShedLoad()`
-increments
-`shed_load_counter_` on every true evaluation, subsequent streams on a
-session that already sent `GOAWAY` repeatedly increment
-`shed_load_count`
-   even though no additional `GOAWAY` is sent.
+This library has Linux specific code that can not be complied on
+Windows.
+
 Risk Level: low
-Testing: updated unit and integration test
-Docs Changes:
-Release Notes:
-Platform Specific Features:
-[Optional Runtime guard:]
-[Optional Fixes #Issue]
-[Optional Fixes commit #PR or SHA]
-[Optional Deprecated:]
-[Optional [API
-Considerations](https://github.com/envoyproxy/envoy/blob/main/api/review_check
+Testing: unit tests
+Docs Changes: no
+Release Notes: no
+Platform Specific Features: Windows only
 
-**File**: `source/common/quic/envoy_quic_server_session.cc` (modified, +10/-9)
-```diff
-@@ -117,25 +117,26 @@ quic::QuicSpdyStream* EnvoyQuicServerSession::CreateIncomingStream(quic::QuicStr
-   if (!ShouldCreateIncomingStream(id)) {
-     return nullptr;
-   }
-+  if (!codec_stats_.has_value() || !http3_options_.has_value()) {
-+    ENVOY_BUG(false,
-+              fmt::format(
-+                  "Quic session {} attempts to create stream {} before HCM filter is initialized.",
-+                  this->id(), id));
-+    return nullptr;
-+  }
-   if (Runtime::runtimeFeatureEnabled("envoy.reloadable_features.http3_fix_goaway_loadshed_point")) {
-     if (should_send_go_away_and_close_on_dispatch_ != nullptr &&
-         should_send_go_away_and_close_on_dispatch_->shouldShedLoad()) {
-       connection()->CloseConnection(quic::QUIC_PEER_GOING_AWAY, "Server overloaded",
-                                     quic::ConnectionCloseBehavior::SEND_CONNECTION_CLOSE_PACKET);
-       return nullptr;
--    } else if (should_send_go_away_on_dispatch_ != nullptr &&
--               should_send_go_away_on_dispatch_->shouldShedLoad() && !h3_go_away_sent_) {
-+    } else if (should_send_go_away_on_dispatch_ != nullptr && !h3_go_away_sent_ &&
-+               should_send_go_away_on_dispatch_->shouldShedLoad()) {
-       SendHttp3GoAway(quic::QUIC_PEER_GOING_AWAY, "Server overloaded");
-       h3_go_away_sent_ = true;
-+      codec_stats_->goaway_sent_.inc();
-     }
-   }
--  if (!codec_stats_.has_value() || !http3_options_.has_value()) {
--    ENVOY_BUG(false,
--              fmt::format(
--                  "Quic session {} attempts to create stream {} before HCM filter is initialized.",
--                  this->id(), id));
--    return nullptr;
--  }
-   auto stream = new EnvoyQuicServerStream(id, this, quic::BIDIRECTIONAL, codec_stats_.value(),
-                                           http3_options_.value(), headers_with_underscores_action_);
-   ActivateStream(absl::WrapUnique(stream));
-```
+Signed-off-by: Yan Avlasov <[REDACTED_EMAIL]>
 
-**File**: `test/common/quic/envoy_quic_server_session_test.cc` (modified, +4/-1)
+**File**: `test/common/buffer/BUILD` (modified, +1/-0)
 ```diff
-@@ -1001,17 +1001,20 @@ TEST_F(EnvoyQuicServerSessionTest, CreateIncomingStreamGoAwayOnDispatch) {
-   setupRequestDecoderMock(request_decoder);
-   EXPECT_CALL(request_decoder, accessLogHandlers()).Times(2);
- 
--  EXPECT_CALL(go_away_lsp, shouldShedLoad()).WillRepeatedly(Return(true));
-+  EXPECT_CALL(go_away_lsp, shouldShedLoad()).WillOnce(Return(true));
-   EXPECT_CALL(debug_visitor, OnGoAwayFrameSent(_));
-+  EXPECT_EQ(0U, stats_.goaway_sent_.value());
- 
-   auto* stream1 = dynamic_cast<EnvoyQuicServerStream*>(
-       createNewStreamWithId(4u, request_decoder, stream_callbacks1));
-   ASSERT_NE(nullptr, stream1);
-+  EXPECT_EQ(1U, stats_.goaway_sent_.value());
- 
-   // Subsequent stream creation should not send a duplicate GOAWAY frame.
-   auto* stream2 = dynamic_cast<EnvoyQuicServerStream*>(
-       createNewStreamWithId(8u, request_decoder, stream_callbacks2));
-   ASSERT_NE(nullptr, stream2);
-+  EXPECT_EQ(1U, stats_.goaway_sent_.value());
- 
-   EXPECT_CALL(stream_callbacks1, onResetStream(Http::StreamResetReason::LocalReset, _));
-   stream1->resetStream(Http::StreamResetReason::LocalReset);
-```
-
-**File**: `test/integration/overload_integration_test.cc` (modified, +3/-0)
-```diff
-@@ -1850,6 +1850,9 @@ TEST_P(LoadShedPointIntegrationTest, Http3ServerDispatchSendsGoAwayCompletingPen
-   // so the second request should also complete.
-   EXPECT_TRUE(second_request_decoder->waitForEndStream());
-   EXPECT_TRUE(second_request_decoder->complete());
-+  test_server_->waitForCounter("http3.goaway_sent", Eq(1));
-+  test_server_->waitForCounter(
-+      "overload.envoy.load_shed_points.http3_server_go_away_on_dispatch.shed_load_count", Eq(1));
- 
-   codec_client_->close();
-   ASSERT_TRUE(codec_client_->waitForDisconnect());
+@@ -32,6 +32,7 @@ envoy_cc_test_library(
+     srcs = ["buffer_fuzz.cc"],
+     hdrs = ["buffer_fuzz.h"],
+     rbe_pool = "linux_x64_small",
++    tags = ["skip_on_windows"],
+     deps = [
+         ":buffer_fuzz_proto_cc_proto",
+         "//source/common/buffer:buffer_lib",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #48853** (2026-10-29): dynamic_modules: add Deref to EnvoyBuffer for ergonomic byte access (@codefromthecrypt)
-- **PR #48850** (2026-10-29): Fix dynamic module tests on Windows (@yanavlasov)
-- **PR #48847** (2026-10-29): deps: Bump `envoy_toolshed` -> 0.5.11.envoy (@dependency-envoy[bot])
-- **PR #48846** (2026-10-29): repo: Sync version histories (@publish-envoy[bot])
-- **PR #48845** (closed): [v1.38] repo: Sync version histories (@publish-envoy[bot])
-- **PR #48844** (2026-10-29): deps: Regenerate bazel lockfiles (@dependency-envoy[bot])
+- **PR #48880** (2026-10-30): test: Use `linux_x64_small` RBE pool for heavy GCC compiles (@phlax)
+- **PR #48878** (2026-10-30): Replace shell file with portable test code (@yanavlasov)
+- **PR #48876** (2026-10-30): deps: Bump `bazel-registry` -> 3f7d9c0 (+envoy_toolshed) (@dependency-envoy[bot])
+- **PR #48871** (2026-10-30): deps: Bump `bazel-registry` -> 3e4b684 (+envoy_toolshed) (@dependency-envoy[bot])
+- **PR #48869** (2026-10-30): ci: Use hermetic llvm-strip for image binaries (@phlax)
+- **PR #48868** (2026-10-30): deps: Bump `envoy_toolshed` -> 0.5.12.envoy (@dependency-envoy[bot])
 
 ---
 
@@ -1365,41 +1197,25 @@ Considerations](https://github.com/envoyproxy/envoy/blob/main/api/review_check
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. api: Add `mode` field to TraceContextPropagationConfig in mcp.proto (#48249)
+## X. test/load_stats: Fix use-after-free in respondToHealthCheck (#48867)
 
 **RULE**:
-When implementing operations in `api/envoy/extensions/filters/http/mcp/v3/mcp.proto`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `test/integration/load_stats_integration_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7b15e26a`: api: Add `mode` field to TraceContextPropagationConfig in mcp.proto (#48249). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1f19faee`: test/load_stats: Fix use-after-free in respondToHealthCheck (#48867). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/envoy/extensions/filters/http/mcp/v3/mcp.proto`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/integration/load_stats_integration_test.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-
-    enum TraceContextPropagationMode {
-      // Copy the request body's trace context to headers without modification.
-      COPY = 0;
-
-      // Copy the request body's trace context to headers without modification.
-      // Also reparents the active span based on the body's traceparent. In this
-      // mode, upstream spans will not descend from the active span; the subtree
-      // of spans will be a sibling of the active span.
-      COPY_AND_REPARENT_SPAN = 1;
-
-      // Rewrite the request body's trace context after reparenting the active
-      // span based on the body's trace context. In this mode, upstream spans will
-      // be descend from the active span.
-      REWRITE_AND_REPARENT_SPAN = 2;
-    }
-
-    // Controls how the request body's trace context is propagated.
-    //
-    // [#not-implemented-hide:]
-    TraceContextPropagationMode mode = 1;
+    // encodeHeaders() only posts to the upstream connection thread. Wait for that to run before
+    // returning, as the next call replaces health_check_request_ and the posted callback would
+    // otherwise use the deleted stream.
+    result = connection->waitForNoPost();
+    RELEASE_ASSERT(result, result.message());
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1409,4 +1225,4 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7b15e26a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1f19faee` are properly handled with clean fallback behavior.

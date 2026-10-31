@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T02:07:35.337Z",
+  "last_updated": "2026-10-31T02:14:33.682Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5799,8 +5799,8 @@
       "slug": "callstack-react-native-paper",
       "platform": "github",
       "source_url": "https://github.com/callstack/react-native-paper",
-      "source_version": "eb4fcbeb",
-      "content_hash": "64a95f95e6198df956f4fa0fd9946899ce7293b0b6ec155beaae3a5ebebf8381",
+      "source_version": "4dbf7d60",
+      "content_hash": "f5cc305acb0d41e1f6f5a1721f6f726f657808bcbcc6bb18ad9779e3436440c7",
       "dossier_path": "07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
       "promoted_rules": [
@@ -5813,6 +5813,11 @@
           "number": 3895,
           "title": "automate example app publishing to app stores (#5118)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6010,
+          "title": "docs: fix broken default theme links and typos in guides (#5141)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5820,7 +5825,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T11:05:34.213Z",
+      "verified_at": "2026-10-31T02:14:24.737Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11661,8 +11666,8 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "da3239c5",
-      "content_hash": "173f90f732d266dd50b088ac79e84454a5e7fdc946229a26edc007927251cb2f",
+      "source_version": "4ab32131",
+      "content_hash": "f81c862610e0d0c99fe4204350713945d7d315977a10a70ccb685649aff222e8",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
@@ -11710,6 +11715,11 @@
           "number": 5632,
           "title": "api: Add `mode` field to TraceContextPropagationConfig in mcp.proto (#48249)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6012,
+          "title": "test/load_stats: Fix use-after-free in respondToHealthCheck (#48867)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11717,7 +11727,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T06:36:32.157Z",
+      "verified_at": "2026-10-31T02:14:28.056Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58170,8 +58180,8 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "98d21e92",
-      "content_hash": "81fe04ed78cfcb2ab5de870a981014baf15994ec9d09f21088b9ea9f7c1ba4d2",
+      "source_version": "41cf0fa6",
+      "content_hash": "8d44c0a20aa209ab5ace2a818e7caab05c37b6c1683081a846220f242cf19893",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
@@ -58229,6 +58239,11 @@
           "number": 5620,
           "title": "Add BlockStoreVolume tablet type to Hive UI (#57503)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6013,
+          "title": "YQ-5796 fix big message topic processing (#57672)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58236,7 +58251,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T05:54:02.350Z",
+      "verified_at": "2026-10-31T02:14:33.662Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -83018,15 +83033,15 @@
       "learning_id": "rule-1028",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1028,
-      "title": "Quantization Variant Separation (Harvested from Comfy-Org/Qwen-Image-2.1)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Quantization Variant Separation",
+      "source_url": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
+      "source_version": "hf-comfy-org-z-image-turbo",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.816Z"
+      "verified_at": "2026-10-31T02:14:25.727Z"
     },
     "rule-1029": {
       "learning_id": "rule-1029",
@@ -122926,10 +122941,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
       "source_version": "hf-comfy-org-z-image-turbo",
-      "content_hash": "72959981cec0b965bda1d5cb1207f5e065128ff8cfad3a8e04e407f78825b1c0",
+      "content_hash": "12d22fd02425a58d77a4eac0be717542c73417295c75557edfadc712f0b68194",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md",
       "promoted_rules": [
+        {
+          "number": 1028,
+          "title": "Quantization Variant Separation",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 3754,
           "title": "Heterogeneous Hardware Artifact Partitioning",
@@ -122949,6 +122969,11 @@
           "number": 4833,
           "title": "LoRA Distillation Patch Isolation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6011,
+          "title": "Model Artifact Naming as API Contract",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -122956,7 +122981,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T14:10:49.216Z",
+      "verified_at": "2026-10-31T02:14:25.727Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -158337,6 +158362,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T02:07:35.318Z"
+    },
+    "rule-6010": {
+      "learning_id": "rule-6010",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6010,
+      "title": "docs: fix broken default theme links and typos in guides (#5141)",
+      "source_url": "https://github.com/callstack/react-native-paper",
+      "source_version": "4dbf7d60",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:14:24.737Z"
+    },
+    "rule-6011": {
+      "learning_id": "rule-6011",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6011,
+      "title": "Model Artifact Naming as API Contract",
+      "source_url": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
+      "source_version": "hf-comfy-org-z-image-turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:14:25.727Z"
+    },
+    "rule-6012": {
+      "learning_id": "rule-6012",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6012,
+      "title": "test/load_stats: Fix use-after-free in respondToHealthCheck (#48867)",
+      "source_url": "https://github.com/envoyproxy/envoy",
+      "source_version": "4ab32131",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:14:28.056Z"
+    },
+    "rule-6013": {
+      "learning_id": "rule-6013",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6013,
+      "title": "YQ-5796 fix big message topic processing (#57672)",
+      "source_url": "https://github.com/ydb-platform/ydb",
+      "source_version": "41cf0fa6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:14:33.662Z"
     }
   },
   "aliases": {

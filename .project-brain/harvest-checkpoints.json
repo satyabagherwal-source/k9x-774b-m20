@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T02:07:35.424Z",
+  "last_updated": "2026-10-31T02:14:33.770Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4671,14 +4671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-react-native-paper",
-      "content_hash": "64a95f95e6198df956f4fa0fd9946899ce7293b0b6ec155beaae3a5ebebf8381",
-      "verified_at": "2026-10-23T11:05:34.290Z",
+      "content_hash": "f5cc305acb0d41e1f6f5a1721f6f726f657808bcbcc6bb18ad9779e3436440c7",
+      "verified_at": "2026-10-31T02:14:24.846Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T11:05:34.290Z"
+      "last_updated": "2026-10-31T02:14:24.846Z"
     },
     "tensorchord/pgvecto.rs": {
       "repository": "tensorchord/pgvecto.rs",
@@ -8256,14 +8256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ydb-platform-ydb",
-      "content_hash": "81fe04ed78cfcb2ab5de870a981014baf15994ec9d09f21088b9ea9f7c1ba4d2",
-      "verified_at": "2026-10-30T05:54:02.459Z",
+      "content_hash": "8d44c0a20aa209ab5ace2a818e7caab05c37b6c1683081a846220f242cf19893",
+      "verified_at": "2026-10-31T02:14:33.770Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T05:54:02.459Z"
+      "last_updated": "2026-10-31T02:14:33.770Z"
     },
     "arco-design/arco-design-vue": {
       "repository": "arco-design/arco-design-vue",
@@ -9501,14 +9501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-envoyproxy-envoy",
-      "content_hash": "173f90f732d266dd50b088ac79e84454a5e7fdc946229a26edc007927251cb2f",
-      "verified_at": "2026-10-30T06:36:32.245Z",
+      "content_hash": "f81c862610e0d0c99fe4204350713945d7d315977a10a70ccb685649aff222e8",
+      "verified_at": "2026-10-31T02:14:28.168Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T06:36:32.245Z"
+      "last_updated": "2026-10-31T02:14:28.168Z"
     },
     "tursodatabase/turso": {
       "repository": "tursodatabase/turso",
@@ -15845,15 +15845,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-comfy-org-z_image_turbo",
-      "content_hash": "cc565d381162b397ceabb1363ea86b3867795eaa747d0c63e41285f88e01c90b",
-      "verified_at": "2026-10-31T00:20:39.189Z",
+      "learning_id": "learn-huggingface-comfy-org-z-image-turbo",
+      "content_hash": "12d22fd02425a58d77a4eac0be717542c73417295c75557edfadc712f0b68194",
+      "verified_at": "2026-10-31T02:14:25.848Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T00:20:39.189Z"
+      "last_updated": "2026-10-31T02:14:25.848Z"
     },
     "unsloth/flint-GGUF": {
       "repository": "unsloth/flint-GGUF",

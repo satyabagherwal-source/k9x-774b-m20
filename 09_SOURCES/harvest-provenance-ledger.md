@@ -6429,3 +6429,7 @@ Every entry in this ledger must capture:
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `af87eca0` | Multi-dimensional audit evidence | 2026-10-31T02:07:29.582Z |
 | `learn-huggingface-qwen-qwen3-14b` | `https://huggingface.co/Qwen/Qwen3-14B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-31T02:07:33.146Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `f2d74650` | Multi-dimensional audit evidence | 2026-10-31T02:07:35.415Z |
+| `learn-github-callstack-react-native-paper` | `https://github.com/callstack/react-native-paper` | `4dbf7d60` | Multi-dimensional audit evidence | 2026-10-31T02:14:24.837Z |
+| `learn-huggingface-comfy-org-z-image-turbo` | `https://huggingface.co/Comfy-Org/Z-Image-Turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-31T02:14:25.835Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `4ab32131` | Multi-dimensional audit evidence | 2026-10-31T02:14:28.157Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `41cf0fa6` | Multi-dimensional audit evidence | 2026-10-31T02:14:33.761Z |

@@ -3033,10 +3033,10 @@
     "repository": "callstack/react-native-paper",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/react-native-paper",
-    "sourceVersion": "eb4fcbeb",
+    "sourceVersion": "4dbf7d60",
     "license": "MIT",
-    "contentHash": "64a95f95e6198df956f4fa0fd9946899ce7293b0b6ec155beaae3a5ebebf8381",
-    "lastHarvestedAt": "2026-10-23T11:05:34.278Z",
+    "contentHash": "f5cc305acb0d41e1f6f5a1721f6f726f657808bcbcc6bb18ad9779e3436440c7",
+    "lastHarvestedAt": "2026-10-31T02:14:24.837Z",
     "learningId": "learn-github-callstack-react-native-paper"
   },
   "tensorchord-pgvecto.rs": {
@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "98d21e92",
+    "sourceVersion": "41cf0fa6",
     "license": "Apache-2.0",
-    "contentHash": "81fe04ed78cfcb2ab5de870a981014baf15994ec9d09f21088b9ea9f7c1ba4d2",
-    "lastHarvestedAt": "2026-10-30T05:54:02.447Z",
+    "contentHash": "8d44c0a20aa209ab5ace2a818e7caab05c37b6c1683081a846220f242cf19893",
+    "lastHarvestedAt": "2026-10-31T02:14:33.761Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {
@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "da3239c5",
+    "sourceVersion": "4ab32131",
     "license": "Apache-2.0",
-    "contentHash": "173f90f732d266dd50b088ac79e84454a5e7fdc946229a26edc007927251cb2f",
-    "lastHarvestedAt": "2026-10-30T06:36:32.238Z",
+    "contentHash": "f81c862610e0d0c99fe4204350713945d7d315977a10a70ccb685649aff222e8",
+    "lastHarvestedAt": "2026-10-31T02:14:28.157Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {
@@ -10545,8 +10545,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
     "sourceVersion": "hf-comfy-org-z-image-turbo",
     "license": "Open-Source",
-    "contentHash": "72959981cec0b965bda1d5cb1207f5e065128ff8cfad3a8e04e407f78825b1c0",
-    "lastHarvestedAt": "2026-10-27T14:10:49.326Z",
+    "contentHash": "12d22fd02425a58d77a4eac0be717542c73417295c75557edfadc712f0b68194",
+    "lastHarvestedAt": "2026-10-31T02:14:25.835Z",
     "learningId": "learn-huggingface-comfy-org-z-image-turbo"
   },
   "hf-unsloth-flint-gguf": {

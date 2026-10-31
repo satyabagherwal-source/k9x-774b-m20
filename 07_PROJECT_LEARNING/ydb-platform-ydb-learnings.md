@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source**: github ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
-> **Source Version**: `98d21e92`  
+> **Source Version**: `41cf0fa6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T05:54:01.833Z  
+> **Timestamp**: 2026-10-31T02:14:33.118Z  
 > **Learning ID**: `learn-github-ydb-platform-ydb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T05:54:00.772Z  
+> **Harvest Timestamp**: 2026-10-31T02:14:32.942Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YDB is an open source Distributed SQL Database that combines high availability and scalability with strong consistency and ACID transactions
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4781 stars
+- **Stars / Engagement**: 4782 stars
 
 ---
 
@@ -2067,498 +2067,628 @@ impl Remappable for noncontiguous::NFA {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8b28bd0d` (2026-10-29)
-**Commit Message**: Add BlockStoreVolume tablet type to Hive UI (#57503)
+### Incident Patch 1: `95446e4d` (2026-10-30)
+**Commit Message**: YQ-5796 fix big message topic processing (#57672)
 
-**File**: `ydb/core/mind/hive/monitoring.cpp` (modified, +1/-0)
+**File**: `ydb/core/kqp/federated_query/kqp_federated_query_helpers.cpp` (modified, +2/-0)
 ```diff
-@@ -1438,6 +1438,7 @@ class TTxMonEvent_Settings : public TTransactionBase<THive>, public TLoggedMonTr
-              TTabletTypes::BlobDepot,
-              TTabletTypes::ColumnShard,
-              TTabletTypes::FileStore,
-+             TTabletTypes::BlockStoreVolume,
-         }) {
-             const TVector<i64>& allowedMetrics = Self->GetTabletTypeAllowedMetricIds(tabletType);
-             out << "<tr>"
+@@ -187,10 +187,12 @@ std::shared_ptr<NYql::IYdbExternalMetadataClientCache> TYdbExternalResources::Ge
+ 
+ std::unique_ptr<NYdb::TDriver> MakeYdbDriver(NKikimr::TDeferredActorLogBackend::TSharedAtomicActorSystemPtr actorSystemPtr,
+     const NKikimrConfig::TStreamingQueriesConfig::TExternalTopicsSettings& config) {
++    constexpr ui64 maxMessageSize = 136314880;   //  logbroker default grpc max message size
+     NYdb::TDriverConfig cfg;
+     cfg.SetLog(std::make_unique<NKikimr::TDeferredActorLogBackend>(actorSystemPtr, NKikimrServices::EServiceKikimr::YDB_SDK));
+     cfg.SetDiscoveryMode(NYdb::EDiscoveryMode::Async);
+     cfg.SetMaxQueuedRequests(std::numeric_limits<i64>::max());
++    cfg.SetMaxMessageSize(maxMessageSize);
+ 
+     auto driver = std::make_unique<NYdb::TDriver>(cfg);
+ 
 ```
 
----
-
-### Incident Patch 2: `c09fe3cf` (2026-10-29)
-**Commit Message**: Fix tests (#57547)
-
-**File**: `ydb/core/tx/replication/controller/schema_change_ut.cpp` (modified, +30/-15)
+**File**: `ydb/core/kqp/ut/federated_query/common/common.cpp` (modified, +6/-0)
 ```diff
-@@ -2574,32 +2574,47 @@ Y_UNIT_TEST_SUITE(StreamRetry) {
-         const auto run = runtime.GrabEdgeEvent<TEvService::TEvRunWorker>(env.GetSender());
-         const auto worker = TWorkerId::Parse(run->Get()->Record.GetWorker());
-         AttachWorkers(env, info.ControllerId, {worker});
-+
-+        // Fail the current PAUSE operation, preserving its alterer's identity.
-+        // A worker error after its normal stop would be an obsolete report.
-+        bool destinationFailed = false;
-+        auto observer = runtime.AddObserver([&](IEventHandle::TPtr& ev) {
-+            if (destinationFailed || !ev->HasEvent()) {
-+                return;
-+            }
-+            const auto* result = dynamic_cast<TEvPrivate::TEvAlterDstResult*>(ev->GetBase());
-+            if (!result) {
-+                return;
-+            }
-+
-+            UNIT_ASSERT(result->IsSuccess());
-+            UNIT_ASSERT_VALUES_EQUAL(result->ReplicationId, worker.ReplicationId());
-+            UNIT_ASSERT_VALUES_EQUAL(result->TargetId, worker.TargetId());
-+            ev.Reset(new IEventHandle(
-+                ev->GetRecipientRewrite(),
-+                ev->Sender,
-+                new TEvPrivate::TEvAlterDstResult(
-+                    result->ReplicationId,
-+                    result->TargetId,
-+                    NKikimrScheme::StatusSchemeError,
-+                    "destination alter failed"),
-+                0,
-+                ev->Cookie));
-+            destinationFailed = true;
-+        });
-         UNIT_ASSERT(alter("STATE = \"PAUSED\"").IsSuccess());
-         SendWorkerStopped(env, info.ControllerId, worker);
--        runtime.WaitFor(
--            "ordinary PAUSE",
--            [&] {
--                return DescribeReplication(env, info)->Get()->Record.GetState().HasPaused();
--            },
--            TDuration::Seconds(30));
--        // A late failed writer report is a destination error, even though this
--        // replication originally bootstrapped with INITIAL_SCAN=false.
--        auto error = MakeHolder<TEvService::TEvWorkerStatus>(
--            worker,
--            NKikimrReplication::TEvWorkerStatus::STATUS_STOPPED,
--            NKikimrReplication::TEvWorkerStatus::REASON_ERROR,
--            "writer failed");
--        env.SendAsync(info.ControllerId, std::move(error));
-         runtime.WaitFor(
-             "destination error",
-             [&] {
-                 return DescribeReplication(env, info)->Get()->Record.GetState().HasError();
-             },
-             TDuration::Seconds(30));
-+        UNIT_ASSERT(destinationFailed);
-         const auto assertError = [&] {
-             const auto state = DescribeReplication(env, info)->Get()->Record.GetState();
-             UNIT_ASSERT_C(state.HasError(), state.DebugString());
--            UNIT_ASSERT_C(state.DebugString().Contains("writer failed"), state.DebugString());
-+            UNIT_ASSERT_C(state.DebugString().Contains("destination alter failed"), state.DebugString());
-             AssertDestinationMode(
-                 env,
-                 "/Root/replica1",
-```
-
-**File**: `ydb/core/viewer/tests/canondata/result.json` (modified, +3/-0)
-```diff
-@@ -4,6 +4,9 @@
-             "status": "SUCCESS"
-         },
-         "describe_result": {
-+            "availability_period": {
-+                "unlimited": {}
-+            },
-             "connection_params": {
-                 "connection_string": "text",
-                 "database": "/Root/dedicated_db",
-```
-
-**File**: `yql/essentials/sql/v1/translation/ut/sql_parsing_only_ut.cpp` (modified, +5/-5)
-```diff
-@@ -5901,8 +5901,8 @@ Y_UNIT_TEST(CreateAsyncReplicationParseSecretPathsCorrect) {
- Y_UNIT_TEST(CreateAsyncReplicationAvailabilityPeriod) {
-     for (const auto& value : {"'UNLIMITED'", "'unlimited'", "Interval('PT0.000001S')", "Interval('PT10.001S')"}) {
-         const auto res = SqlToYql(TStringBuilder()
--            << "USE plato; CREATE ASYNC REPLICATION MyReplication FOR table1 AS table2 "
--            << "WITH (AVAILABILITY_PERIOD = " << value << ");");
-+                                  << "USE plato; CREATE ASYNC REPLICATION MyReplication FOR table1 AS table2 "
-+                                  << "WITH (AVAILABILITY_PERIOD = " << value << ");");
-         UNIT_ASSERT_C(res.IsOk(), Err2Str(res));
-         TVerifyLineFunc verifyLine = [](const TString& word, const TString& line) {
-             if (word == "Write") {
-@@ -5918,15 +5918,15 @@ Y_UNIT_TEST(CreateAsyncReplicationAvailabilityPeriod) {
- Y_UNIT_TEST(CreateAsyncReplicationInvalidAvailabilityPeriod) {
-     for (const auto& value : {"'FOREVER'", "1", "TRUE", "NULL"}) {
-         const auto res = SqlToYql(TStringBuilder()
--            << "USE plato; CREATE ASYNC REPLICATION MyReplication FOR table1 AS table2 "
--            << "WITH (AVAILABILITY_PERIOD = " << value << ");");
-+                                  << "USE plato; CREATE ASYNC REPLICATION MyReplication FOR table1 AS table2 "
-+                                  << "WITH (AVAILABILITY_PERIOD = " << value << ");");
-         UNIT_ASSERT(!res.IsOk());
+@@ -123,9 +123,11 @@ std::shared_ptr<TKikimrRunner> MakeKikimrRunner(bool initializeHttpGateway, NYql
+         httpGateway = MakeHttpGateway(queryServiceConfig.GetHttpGateway(), settings.CountersRoot);
      }
- }
  
- Y_UNIT_TEST(CreateAsyncReplicationDuplicateAvailabilityPeriod) {
-     const auto res = SqlToYql("USE plato; CREATE ASYNC REPLICATION MyReplication FOR table1 AS table2 "
--        "WITH (AVAILABILITY_PERIOD = 'UNLIMITED', availability_period = Interval('PT1S'));");
-+                              "WITH (AVAILABILITY_PERIOD = 'UNLIMITED', availability_period = Interval('PT1S'));");
-     UNIT_ASSERT(!res.IsOk());
-     UNIT_ASSERT_STRING_CONTAINS(Err2Str(res), "Duplicate replication setting");
- }
++    constexpr ui64 maxMessageSize = 136314880;   // logbroker default grpc max message size
+     NYdb::TDriverConfig cfg;
+     cfg.SetDiscoveryMode(NYdb::EDiscoveryMode::Async);
+     cfg.SetMaxQueuedRequests(std::numeric_limits<i64>::max());
++    cfg.SetMaxMessageSize(maxMessageSize);
+     auto driver = std::make_shared<NYdb::TDriver>(cfg);
+ 
+     const auto& s3Config = queryServiceConfig.GetS3();
+@@ -162,6 +164,10 @@ std::shared_ptr<TKikimrRunner> MakeKikimrRunner(bool initializeHttpGateway, NYql
+         .SetUseRealThreads(options.UseRealThreads)
+         .SetInitFederatedQuerySetupFactory(options.InternalInitFederatedQuerySetupFactory);
+ 
++    if (appConfig->GetGRpcConfig().HasMaxMessageSize()) {
++        settings.SetGrpcServerOptions(NYdbGrpc::TServerOptions().SetMaxMessageSize(appConfig->GetGRpcConfig().GetMaxMessageSize()));
++    }
++
+     settings.EnableScriptExecutionBackgroundChecks = options.EnableScriptExecutionBackgroundChecks;
+     federatedQuerySetupFactory->SetScriptExecutionSettings({
+         .EnableBackgroundLeaseChecks = options.EnableScriptExecutionBackgroundChecks,
+```
+
+**File**: `ydb/core/kqp/ut/federated_query/datastreams/datastreams_ut.cpp` (modified, +82/-0)
+```diff
+@@ -2549,6 +2549,88 @@ Y_UNIT_TEST_SUITE(KqpFederatedQueryDatastreams) {
+         UNIT_ASSERT_GT(evTableReads.load(), 0u);
+         UNIT_ASSERT_VALUES_EQUAL(evTableReadsWithLocks.load(), 0u);
+     }
++
++    Y_UNIT_TEST_TWIN_F(ReadLargeTopicMessage, Compressed, TStreamingTestFixture) {
++        constexpr ui64 maxMessageSize = 136314880;
++        constexpr ui64 partitionWriteSpeed = 50 * 1024 * 1024;
++        constexpr size_t inputMessageSize = Compressed ? 200000000 : 130000000;
++        constexpr size_t outputMessageSize = Compressed ? 70000000 : inputMessageSize;
++
++        auto& config = SetupAppConfig();
++        config.MutableGRpcConfig()->SetMaxMessageSize(maxMessageSize);
++        config.MutablePQConfig()->SetMaxMessageSizeBytes(maxMessageSize);
++
++        constexpr char inputTopicName[] = "largeMessageInputTopic";
++        constexpr char outputTopicName[] = "largeMessageOutputTopic";
++        constexpr char sourceName[] = "largeMessageSource";
++        const auto inputTopicSettings = NTopic::TCreateTopicSettings()
++                                            .PartitioningSettings(1, 1)
++                                            .PartitionWriteSpeedBytesPerSecond(partitionWriteSpeed)
++                                            .PartitionWriteBurstBytes(partitionWriteSpeed);
++        CreateTopic(inputTopicName, inputTopicSettings, /* local */ true);
++        const auto outputTopicSettings = NTopic::TCreateTopicSettings()
++                                             .PartitioningSettings(1, 1)
++                                             .PartitionWriteSpeedBytesPerSecond(partitionWriteSpeed)
++                                             .PartitionWriteBurstBytes(partitionWriteSpeed);
++        CreateTopic(outputTopicName, outputTopicSettings, /* local */ true);
++        Y_DEFER {
++            DropTopic(inputTopicName, /* local */ true);
++            DropTopic(outputTopicName, /* local */ true);
++        };
++
++        ExecQuery(fmt::format(R"sql(
++            CREATE EXTERNAL DATA SOURCE `{source}` WITH (
++                SOURCE_TYPE = "Ydb",
++                LOCATION = "{location}",
++                DATABASE_NAME = "{database}",
++                AUTH_METHOD = "NONE"
++            );
++        )sql", "source"_a = sourceName, "location"_a = GetKikimrRunner()->GetEndpoint(), "database"_a = TEST_DATABASE));
++
++        const auto outputExpression = Compressed ? fmt::format("SUBSTRING(Data, 0, {})", outputMessageSize) : "Data";
++        const auto operation = ExecScript(fmt::format(R"sql(
++            INSERT INTO `{source}`.`{output_topic}`
++            SELECT {output_expression} AS Data
++            FROM `{source}`.`{input_topic}` WITH (
++                STREAMING = "TRUE",
++                FORMAT = "raw",
++                SCHEMA = (Data String NOT NULL)
++            )
++            LIMIT 1;
++        )sql", "source"_a = sourceName, "input_topic"_a = inputTopicName, "output_topic"_a = outputTopicName,
++            "output_expression"_a = outputExpression));
++
++        NYdb::TDriver topicDriver(
++            NYdb::TDriverConfig().SetEndpoint(GetKikimrRunner()->GetEndpoint()).SetDatabase(TEST_DATABASE).SetMaxMessageSize(maxMessageSize));
++        NYdb::NTopic::TTopicClient topicClient(topicDriver);
++
++        const std::string inputMessage(inputMessageSize, 'x');
++        const auto counters = MakeIntrusive<NYdb::NTopic::TWriterCounters>(MakeIntrusive<::NMonitoring::TDynamicCounters>());
++        auto writeSession =
++            topicClient.CreateSimpleBlockingWriteSession(NYdb::NTopic::TWriteSessionSettings()
++                                                             .Path(inputTopicName)
++                                                             .PartitionId(0)
++                                                             .Counters(counters)
++                                                             .Codec(Compressed ? NYdb::NTopic::ECodec::GZIP : NYdb::NTopic::ECodec::RAW));
++        UNIT_ASSERT(writeSession->Write(NYdb::NTopic::TWriteMessage(inputMessage), nullptr, TDuration::Seconds(30)));
++        UNIT_ASSERT(writeSession->Close(TDuration::Seconds(30)));
++        EnsureTopicEndOffset(inputTopicName, 1, topicClient);
++
++        if constexpr (Compressed) {
++            UNIT_ASSERT_VALUES_EQUAL(counters->BytesWritten->Val(), inputMessageSize);
++            UNIT_ASSERT_GT(counters->BytesWrittenCompressed->Val(), 0);
++            UNIT_ASSERT_LT(counters->BytesWrittenCompressed->Val(), static_cast<i64>(maxMessageSize));
++        }
++
++        // Avoid logging the full expected payload while polling; compare the data after reading.
++        const auto messages =
++            ReadTopicMessages(outputTopicName, { "" }, topicClient, TInstant::Zero(), /* sort */ false, /* checkResult */ false);
++        UNIT_ASSERT_VALUES_EQUAL(messages.size(), 1);
++        UNIT_ASSERT_VALUES_EQUAL(messages.front().first.size(), outputMessageSize);
++        UNIT_ASSERT_C(inputMessage.compare(0, outputMessageSize, messages.fr
+```
+
+**File**: `ydb/tests/fq/streaming/conftest.py` (modified, +5/-1)
+```diff
+@@ -12,8 +12,12 @@
+ def kikimr(request):
+     param = getattr(request, "param", {})
+     set_test_env(request)
++    config = get_ydb_config(request)
++    if max_message_size := param.get("max_message_size"):
++        config.yaml_config["grpc_config"]["max_message_size"] = max_message_size
++        config.yaml_config["pqconfig"]["max_message_size_bytes"] = max_message_size
+     kikimr = Kikimr(
+-        get_ydb_config(request),
++        config,
+         enable_discovery=param.get("enable_discovery", True),
+         tenant_database="/Root/my_tenant",
+     )
+```
+
+**File**: `ydb/tests/fq/streaming/test_streaming.py` (modified, +68/-0)
+```diff
+@@ -3466,3 +3466,71 @@ def retry_count() -> int:
+                 # The fixture is shared: stopping processes does not immediately remove them
+                 # from KQP placement snapshots. Wait before the next case creates a query.
+                 kikimr.wait_kqp_node_count(original_node_count)
++
++    @pytest.mark.parametrize("kikimr", [{"max_message_size": 136314880}], indirect=True)
++    @pytest.mark.parametrize("local_topics", [True, False], ids=["local", "external"])
++    def test_read_large_topic_message(
++        self: StreamingTestBase,
++        kikimr: Kikimr,
++        entity_name: Callable[[str], str],
++        local_topics: bool,
++    ) -> None:
++        max_message_size = 136314880
++        partition_write_speed = 50 * 1024 * 1024
++        timeout = plain_or_under_sanitizer(60, 300)
++        source_name = entity_name("large_topic_message")
++        self.init_topics(source_name, endpoint=kikimr.endpoint)
++        input_name = f"`{self.input_topic}`"
++        output_name = f"`{self.output_topic}`"
++        if not local_topics:
++            # Use the same cluster through gRPC to exercise the C++ SDK driver limits.
++            self.create_source(kikimr, source_name, endpoint=kikimr.endpoint)
++            input_name = f"`{source_name}`.{input_name}"
++            output_name = f"`{source_name}`.{output_name}"
++
++        driver_config = ydb.DriverConfig(
++            endpoint=kikimr.endpoint.endpoint,
++            database=kikimr.get_database_name(),
++            auth_token="root@builtin",
++            channel_options=[
++                ("grpc.max_receive_message_length", max_message_size),
++                ("grpc.max_send_message_length", max_message_size),
++            ],
++        )
++        with ydb.Driver(driver_config) as driver:
++            driver.wait(timeout=10, fail_fast=True)
++            topic_client = driver.topic_client
++            for topic in (self.input_topic, self.output_topic):
++                topic_client.alter_topic(
++                    topic,
++                    set_partition_write_speed_bytes_per_second=partition_write_speed,
++                    set_partition_write_burst_bytes=partition_write_speed,
++                )
++
++            future = kikimr.ydb_client.query_async(
++                f"""
++                    INSERT INTO {output_name}
++                    SELECT Data FROM {input_name} WITH (
++                        STREAMING = "TRUE",
++                        FORMAT = "raw",
++                        SCHEMA = (Data String NOT NULL)
++                    )
++                    LIMIT 1;
++                """,
++                timeout=timeout,
++            )
++            data = b"x" * 130000000
++            writer = topic_client.writer(self.input_topic, codec=ydb.TopicCodec.RAW)
++            try:
++                writer.write_with_ack(data, timeout=timeout)
++            finally:
++                writer.close(flush=False, timeout=timeout)
++
++            with topic_client.reader(self.output_topic, consumer=self.consumer_name) as reader:
++                message = reader.receive_message(timeout=timeout)
++                assert len(message.data) == len(data)
++                # Keep assertion diagnostics from printing the entire 130 MB payload.
++                contents_match = message.data == data
++                assert contents_match, "Large topic message contents differ"
++                reader.commit_with_ack(message, timeout=timeout)
++            future.result(timeout=timeout)
 ```
 
 ---
 
-### Incident Patch 3: `2002856e` (2026-10-29)
-**Commit Message**: ci: merge ya build and test actions (#57505)
+### Incident Patch 2: `58bb50a9` (2026-10-30)
+**Commit Message**: Fix: area_override сравнивать с текущим TESTOWNERS, не со stale Owner: (#57662)
 
-**File**: `.github/actions/build_and_test_ya/action.yml` (modified, +876/-24)
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+**File**: `.github/scripts/analytics/export_issues_to_ydb.py` (modified, +95/-137)
 ```diff
-@@ -112,7 +112,9 @@ runs:
-         # Output the folder_prefix for use in subsequent steps
-         echo "folder_prefix=${FOLDER_PREFIX}" >> $GITHUB_ENV
+@@ -13,7 +13,7 @@
  
-+    # Finalizers below must not run if this setup fails (the nested action was skipped).
-     - name: Prepare s3cmd
-+      id: prepare_s3cmd
-       uses: ./.github/actions/s3cmd
-       with:
-         s3_bucket: ${{ fromJSON( inputs.vars ).AWS_BUCKET }}
-@@ -122,28 +124,878 @@ runs:
-         folder_prefix: ${{ env.folder_prefix }}
-         build_preset: ${{ inputs.build_preset }}
+ ORG_NAME = 'ydb-platform'
+ REPO_NAME = 'ydb'
+-PROJECT_ID = None #'45'  # Optional: set to None to skip project data
++PROJECT_ID = '45'
+ ISSUES_PAGE_SIZE = 50  # smaller pages → smaller GraphQL payloads (avoids truncated JSON)
  
--    - name: Run build and tests
-+    - name: comment-build-start
-+      if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target'
-+      shell: bash
-+      env:
-+        BUILD_PRESET: ${{ inputs.build_preset }}
-+        GITHUB_TOKEN: ${{ github.token }}
-+      run: |
-+        jobs_url="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs"
-+        # tricky: we are searching job with name that contains build_preset
-+        check_url=$(curl --retry 5 --retry-all-errors --retry-delay 10 --fail --show-error -s -H "Authorization: Bearer ${{github.token}}" -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "$jobs_url" | jq --arg n "$BUILD_PRESET" -r '.jobs[] | select(.name | contains($n)) | .html_url')
+ 
+@@ -353,146 +353,104 @@ def fetch_repository_issues(org_name: str = ORG_NAME, repo_name: str = REPO_NAME
+     return issues
+ 
+ def get_project_fields_for_issues(org_name: str, project_id: str, issue_numbers: List[int]) -> Dict[int, Dict[str, Any]]:
+-    """Get project fields for specific issues from GitHub project"""
++    """Fetch Status/Owner/… from org project cards for the given issues."""
+     if not project_id:
+         return {}
+-    
+-    print(f"Fetching project fields for {len(issue_numbers)} issues from project {project_id}...")
 +
-+        platform_name="$(echo "$(uname -s)-$(uname -p)" | tr '[:upper:]' '[:lower:]')-$BUILD_PRESET"
-+        echo "Pre-commit [check]($check_url) **$platform_name** for $(git rev-parse HEAD) has started." | .github/scripts/tests/comment-pr.py --rewrite
++    numbers = sorted({int(n) for n in issue_numbers if n is not None})
++    if not numbers:
++        return {}
 +
-+        curl --retry 5 --retry-all-errors --retry-delay 10 --fail --show-error -L -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{github.token}}" -H "X-GitHub-Api-Version: 2022-11-28" \
-+          https://api.github.com/repos/${{github.repository}}/statuses/${{github.event.pull_request.head.sha}} \
-+          -d '{"state":"pending","description":"The check has been started","context":"build_${{inputs.build_preset}}"}'
++    print(f"Fetching project fields for {len(numbers)} issues from project {project_id}...")
+     start_time = time.time()
+-    
+-    project_fields = {}
+-    has_next_page = True
+-    end_cursor = "null"
+-    
+-    project_issues_query = """
+-    {
+-      organization(login: "%s") {
+-        projectV2(number: %s) {
+-          id
+-          title
+-          url
+-          items(first: 1000, after: %s) {
+-            nodes {
+-              id
+-              content {
+-                ... on Issue {
+-                  number
+-                }
+-              }
+-              fieldValues(first: 20) {
+-                nodes {
+-                  ... on ProjectV2ItemFieldSingleSelectValue {
+-                    field {
+-                      ... on ProjectV2SingleSelectField {
+-                        id
+-                        name
+-                      }
+-                    }
+-                    name
+-                    id
+-                    updatedAt
+-                  }
+-                  ... on ProjectV2ItemFieldTextValue {
+-                    field {
+-                      ... on ProjectV2Field {
+-                        id
+-                        name
+-                      }
+-                    }
+-                    text
+-                    id
+-                    updatedAt
+-                    creator {
+-                      login
+-                    }
+-                  }
+-                  ... on ProjectV2ItemFieldMilestoneValue {
+-                    field {
+-                      ... on ProjectV2Field {
+-                        id
+-                        name
+-                      }
+-                    }
+-                    milestone {
+-                      id
+-                      title
+-                    }
+-                  }
+-                  ... on ProjectV2ItemFieldDateValue {
+-                    field {
+-                      ... on ProjectV2Field {
+-                        id
+-                        name
+-                      }
+-                    }
+-                    date
+-                    updatedAt
+-                  }
+-                  ... on ProjectV2ItemFieldNumberValue {
+-                    field {
+-                      ... on ProjectV2Field {
+-                        id
+-                        name
+-                      }
+-                    }
+-                    number
+-                    updatedAt
+-                  }
+-                }
+-              }
+-            }
+-            pageInfo {
+-              hasNextPage
+-              endCursor
+-            }
+-          }
+-        }
+-      }
+-    }
+-    """
+-    
+-    issue_numbers_set = set(issue_numbers)
+-    
+-    while has_next_page:
+-        query = project_issues_query % (org_name, project_id, end_cursor)
++    project_fields: Dict[int, Dict[str, Any]] = {}
++    target_project_number = int(project_id)
++    chunk_size = 50
 +
-+        if [[ "${{inputs.run_tests}}" == "true" ]]; then
-+          curl --retry 5 --retry-all-errors --retry-delay 10 --fail --show-error -L -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{github.token}}" -H "X-GitHub-Api-Version: 2022-11-28" \
-+            https://api.github.com/repos/${{github.repository}}/statuses/${{github.event.pull_request.head.sha}} \
-+            -d '{"state":"pending","description":"The check has been started","context":"test_${{inputs.build_preset}}"}'
-+        fi
-+
-+    - name: Resolve analytics job name
-+      shell: bash
-+      env:
-+        WORKFLOW_NAME: ${{ github.workflow }}
-+        BUILD_PRESET: ${{ inputs.build_preset }}
-+        EVENT_NAME: ${{ github.event_name }}
-+        GITHUB_NUMERIC_JOB_ID: ${{ job.check_run_id }}
-+        GITHUB_TOKEN: ${{ github.token }}
-+      run: |
-+        ANALYTICS_JOB_NAME=$(python3 .github/scripts/analytics/resolve_ci_job_name.py "$WORKFLOW_NAME" "$BUILD_PRESET" "$EVENT_NAME")
-+        echo "ANALYTICS_JOB_NAME=$ANALYTICS_JOB_NAME" >> "$GITHUB_ENV"
-+        echo "PR_NUMBER=${{ github.event.number || inputs.pull_number }}" >> "$GITHUB_ENV"
-+        if [ -n "$GITHUB_NUMERIC_JOB_ID" ]; then
-+          echo "GITHUB_NUMERIC_JOB_ID=$GITHUB_NUMERIC_JOB_ID" >> "$GITHUB_ENV"
-+          job_name=$(curl --retry 5 --retry-all-errors --retry-delay 10 --fail -sS \
-+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-+            -H "Accept: application/vnd.github+json" \
-+            -H "X-GitHub-Api-Version: 2022-11-28" \
-+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/jobs/${GITHUB_NUMERIC_JOB_ID}" \
-+            | jq -r '.name // empty' || true)
-+          if [ -n "$job_name" ]; then
-+            echo "GITHUB_JOB_NAME=$job_name" >> "$GITHUB_ENV"
-+          fi
-+        else
-+          echo "job.check_run_id is empty; analytics rows of this job will be dropped" >&2
-+        fi
-+
-+    - name: Init
-+      id: init
-+      shell: bash
-+      run: |
-+        set -x
-+
-+        echo "$(pwd)/ydb/ci/scripts" >> $GITHUB_PATH
-+
-+        export TMP_DIR=$(pwd)/tmp
-+        rm -rf $TMP_DIR
-+        mkdir -p $TMP_DIR
-+        echo "TMP_DIR=$TMP_DIR" >> $GITHUB_ENV
-+
-+        # The whole dir will be uploaded to s3 with public (=wild internet) ACL
-+        export PUBLIC_DIR=$TMP_DIR/results
-+        echo "PUBLIC_DIR=$PUBLIC_DIR" >> $GITHUB_ENV
-+        export PUBLIC_DIR_URL=$S3_URL_PREFIX
-+        echo "PUBLIC_DIR_URL=$PUBLIC_DIR_URL" >> $GITHUB_ENV
-+        mkdir -p $PUBLIC_DIR
-+
-+        echo "LAST_BUILD_RESULTS_REPORT=$PUBLIC_DIR/last_report.json" >> $GITHUB_ENV
-+        echo "SUMMARY_LINKS=$PUBLIC_DIR/summary_links.txt" >> $GITHUB_ENV
-+        echo "BUILD_PRESET=${{ inputs.build_preset }}" >> $GITHUB_ENV
-+        ANALYTICS_FILE=$TMP_DIR/analytics.jsonl
-+        export ANALYTICS_FILE
-+        echo "ANALYTICS_FILE=$ANALYTICS_FILE" >> $GITHUB_ENV
-+        mkdir -p "$(dirname "$ANALYTICS_FILE")"
-+    
++    for i in range(0, len(numbers), chunk_size):
++        chunk = numbers[i : i + chunk_size]
++        subqueries = []
++        for n in chunk:
++            subqueries.append(
++                f"""
++                n{n}: issue(number: {n}) {{
++                  projectItems(first: 40) {{
++                    nodes {{
++                      project {{ number }}
++                      fieldValues(first: 20) {{
++                        nodes {{
++                          ... on ProjectV2ItemFieldSingleSelectValue {{
++                            field {{
++                              ... on ProjectV2SingleSelectField {{
++                                name
++                              }}
++                            }}
++                            name
++                          }}
++                          ... on ProjectV2ItemFieldTextValue {{
++                            field {{
++                              ... on ProjectV2Field {{
++                                name
++                              }}
++                            }}
++                            text
++                          }}
++                          ... on ProjectV2ItemFieldNumberValue {{
++      
 ```
 
-**File**: `.github/actions/test_ya/action.yml` (removed, +0/-965)
+**File**: `.github/scripts/analytics/github_issue_mapping.py` (modified, +100/-38)
 ```diff
-@@ -1,965 +0,0 @@
--name: Run build and tests (ya make)
--description: Run test targets listed in repository root ya.make (to be created previously)
--inputs:
--  build_target:
--    required: true
--  build_preset:
--    required: true
--    default: "relwithdebinfo"
--    description: "relwithdebinfo, release-asan, release-tsan"
--  test_type:
--    required: false
--    type: string
--    default: ""
--    description: "run only specific test types (or all by default)"
--  test_size:
--    required: false
--    default: "small,medium,large"
--    description: "small or small-medium or all"
--  test_threads:
--    required: false
--    default: "64"
--    description: "Test threads count"
--  link_threads:
--    required: false
--    default: "2"
--    description: "link threads count"
--  additional_ya_make_args:
--    type: string
--    default: ""
--  increment:
--    type: boolean
--    required: true
--    description: If true, compares build graphs between the current and previous commits to find a list of test suites to run. Otherwise, runs all tests.
--  put_build_results_to_cache:
--    required: false
--    default: "true"
--  bazel_remote_uri:
--    required: false
--    description: "bazel-remote endpoint"
--  bazel_remote_username:
--    required: false
--    description: "bazel-remote username"
--  bazel_remote_password:
--    required: false
--    description: "bazel-remote password"
--  run_tests:
--    type: boolean
--    default: true
--    description: "run tests"
--  test_retry_count:
--    type: string
--    default: ""
--    description: "how many times to retry failed tests"
--  custom_branch_name:
--    description: "Custom branch name required when workflow branch != checkout branch"
--    type: string
--    required: false
--  add_vcs_info:
--    type: boolean
--    default: false
--    description: "add ya make vars with git info"
--  telegram_ydbot_token:
--    type: string
--    required: false
--    description: "Telegram bot token"
--  telegram_alert_logins:
--    type: string
--    required: false
--    description: "Telegram alert logins"
--  telegram_alert_chat:
--    type: string
--    required: false
--    description: "Telegram alert chat"
--  collect_coredumps:
--    type: boolean
--    default: true
--    description: "Collect coredumps to a 100G loop volume at /coredumps (for ya test recovery)"
--  pull_number:
--    type: string
--    required: false
--    description: "Pull request number (for workflow_call events)"
+@@ -6,20 +6,19 @@
+ 
+ area_override logic
+ -------------------
+-Each muted-test issue has a default owner (from TESTOWNERS via the ``Owner:`` line in the
+-issue body).  A human can add an ``area/...`` label (e.g. ``area/blobstorage``).  If the
+-team behind that area (via ``area_to_owner_mapping``) **differs** from the default owner,
+-we store the **area path string** in ``area_override``. ``tests_monitor.py`` reads this table
+-(plus ``area_to_owner_mapping``) and fills ``effective_area`` / ``effective_owner_team`` on each
+-row; downstream marts use those columns.
++A human can add an ``area/...`` label on a mute issue. If that area's team (via
++``area_to_owner_mapping``) differs from the test's current TESTOWNERS owner (first
++``;;`` token; fallback: ``Owner:`` in the issue body), we store the area path in
++``area_override``. ``tests_monitor.py`` uses it for ``effective_area`` /
++``effective_owner_team``.
+ 
+ Edge cases:
+   * No ``area`` in issue ``info`` → area_override = NULL
+   * Closed **NOT_PLANNED** / **DUPLICATE** → area_override = NULL (issues excluded from mapping query)
+   * Closed **COMPLETED** with ``manual-fast-unmute`` label → override can apply (fast-track window)
+   * Closed **COMPLETED** without that label: override cleared **only** when **project Status** is
+     ``Unmuted`` (do not infer from closer — avoids clearing during the gap before fast-unmute label).
+-  * Area resolves to the same team as the default owner → area_override = NULL
++  * Area resolves to the same team as the TESTOWNERS / body baseline → area_override = NULL
+   * Area not found in mapping → area_override = NULL
+   * Labels change → we always see the *current* ``info`` snapshot
+ 
+@@ -57,6 +56,7 @@
+     DEFAULT_BUILD_TYPE,
+     issue_label_names_lower,
+     scan_to_utc_date,
++    team_slug_from_monitor_owner,
+ )
+ 
+ 
+@@ -305,7 +305,18 @@ def _resolve_area_to_team(area_label: str, area_to_owner: dict) -> str:
+     return best_team
+ 
+ 
+-def resolve_area_override(
++def _first_owner_team_slug(owners) -> str:
++    """First ``;;`` TESTOWNERS token as lowercase team slug (same as tests_monitor.compute_owner)."""
++    if not owners:
++        return ""
++    raw = str(owners)
++    if ";;" in raw:
++        parts = raw.split(";;", 1)
++        raw = parts[0] if "TEAM" in parts[0] else parts[1]
++    return team_slug_from_monitor_owner(raw)
++
++
++def prepare_issue_area_override(
+     body: str,
+     info_raw,
+     area_to_owner: dict,
+@@ -314,18 +325,7 @@ def resolve_area_override(
+     labels_raw=None,
+     project_status=None,
+ ):
+-    """If GitHub ``area/...`` implies a different team than ``Owner:``, return that area path.
 -
--outputs:
--  success:
--    value: ${{ steps.build.outputs.status }}
--    description: "build success"
+-    **Closed issues**
 -
--runs:
--  using: "composite"
--  steps:
--    - name: comment-build-start
--      if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target'
--      shell: bash
--      env:
--        BUILD_PRESET: ${{ inputs.build_preset }}
--        GITHUB_TOKEN: ${{ github.token }}
--      run: |
--        jobs_url="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs"
--        # tricky: we are searching job with name that contains build_preset
--        check_url=$(curl --retry 5 --retry-all-errors --retry-delay 10 --fail --show-error -s -H "Authorization: Bearer ${{github.token}}" -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "$jobs_url" | jq --arg n "$BUILD_PRESET" -r '.jobs[] | select(.name | contains($n)) | .html_url')
+-    * ``NOT_PLANNED`` / ``DUPLICATE``: no override.
+-    * ``COMPLETED`` (or empty ``state_reason`` on **CLOSED**) + label ``manual-fast-unmute``: override stays (fast-track active).
+-    * ``COMPLETED`` (or empty ``state_reason``) without that label: override cleared **only** when **project Status** is ``Unmuted``.
 -
--        platform_name="$(echo "$(uname -s)-$(uname -p)" | tr '[:upper:]' '[:lower:]')-$BUILD_PRESET"
--        echo "Pre-commit [check]($check_url) **$platform_name** for $(git rev-parse HEAD) has started." | .github/scripts/tests/comment-pr.py --rewrite
+-    Open issues: unchanged area logic.
 -
--        curl --retry 5 --retry-all-errors --retry-delay 10 --fail --show-error -L -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{github.token}}" -H "X-GitHub-Api-Version: 2022-11-28" \
--          https://api.github.com/repos/${{github.repository}}/statuses/${{github.event.pull_request.head.sha}} \
--          -d '{"state":"pending","description":"The check has been started","context":"build_${{inputs.build_preset}}"}'
+-    Stored value matches issue info (e.g. ``area/blobstorage``), not the resolved team slug.
+-    """
++    """Issue-level area context, or None if override cannot apply."""
+     st = (issue_state or "").strip().upper()
+     sr = (state_reason or "").strip().upper()
+     labels_lo = issue_label_names_lower(labels_raw)
+@@ -352,12 +352,66 @@ def resolve_area_override(
+     if not resolved_team:
+         return None
+ 
+-    default_owner = _extract_default_owner(body)
++    return {
++        "area_label": area_label,
++        "resolved_team": resolved_team.lower(),
++        "body_owner": _extract_default_owner(body),
++    }
+ 
+-    if resolved_team.lower() == default_owner.lower():
++
++def area_override_for_baseline(issue_area_ctx, baseline_owner_team=None):
++    """area path if baseline team differs from issue area team, else None."""
++    if not issue_area_ctx:
++        return None
++    baseline = _first_owner_team_slug(baseline_owner_team)
++    if not baseline:
++        baseline = (issue_area_ctx.get("body_owner") or "").lower()
++    if issue_area_ctx["resolved_team"] == (baseline or "").lower():
+         return None
++    return issue_area_ctx["area_label"]
+ 
+-    return area_label
++
++def resolve_area_override(
++    body: str,
++    info_raw,
++    area_to_owner: dict,
++    issue_state=None,
++    state_reason=None,
++    labels_raw=None,
++    project_status=None,
++    baseline_owner_team=None,
++):
++    """Return area path when ``area/...`` team differs from TESTOWNERS / body Owner baseline."""
++    ctx = prepare_issue_area_override(
++        body,
++        info_raw,
++        area_to_owner,
++        issue_state=issue_state,
++        state_reason=state_reason,
++        labels_raw=labels_raw,
++        project_status=project_status,
++    )
++    return area_override_for_baseline(ctx, baseline_owner_team=baseline_owner_team)
++
++
++def get_testowners_by_full_name(ydb_wrapper) -> dict:
++    """``full_name`` → raw ``owners`` string from analytics testo
+```
+
+---
+
+### Incident Patch 3: `9b28f15c` (2026-10-30)
+**Commit Message**: [HashJoin] Fix MapJoin benchmark dictionary and output (#57684)
+
+**File**: `ydb/library/yql/dq/comp_nodes/ut/join_perf/construct_join_graph.cpp` (modified, +10/-42)
+```diff
+@@ -39,26 +39,6 @@ TRuntimeNode BuildBlockJoin(TDqProgramBuilder& pgmBuilder, EJoinKind joinKind, T
+                                        leftKeyColumns, leftKeyDrops, rightKeyColumns, rightKeyDrops, joinReturnType);
+ }
+ 
+-struct TRenames {
+-    TVector<const ui32> Left;
+-    TVector<const ui32> Right;
+-};
 -
--        if [[ "${{inputs.run_tests}}" == "true" ]]; then
--          curl --retry 5 --retry-all-errors --retry-delay 10 --fail --show-error -L -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{github.token}}" -H "X-GitHub-Api-Version: 2022-11-28" \
--            https://api.github.com/repos/${{github.repository}}/statuses/${{github.event.pull_request.head.sha}} \
--            -d '{"state":"pending","description":"The check has been started","context":"test_${{inputs.build_preset}}"}'
--        fi
+-TRenames MakeScalarMapJoinRenames(int leftSize, int rightDictValueSize) {
+-    TRenames ret{};
+-    // ScalarMapJoin leftRenames rename list items, rightRenames rename dict
+-    // value items(dict value items are all right items without join key  )
+-    for (int index = 0; index < leftSize; ++index) {
+-        ret.Left.push_back(index);
+-        ret.Left.push_back(index);
+-    }
+-    for (int index = 0; index < rightDictValueSize; ++index) {
+-        ret.Right.push_back(index);
+-        ret.Right.push_back(index + leftSize);
+-    }
+-    return ret;
+-}
 -
--    - name: Resolve analytics job name
--      shell: bash
--      env:
--        WORKFLOW_NAME: ${{ github.workflow }}
--        BUILD_PRESET: ${{ inputs.build_preset }}
--        EVENT_NAME: ${{ github.event_name }}
--        GITHUB_NUMERIC_JOB_ID: ${{ job.check_run_id }}
--        GITHUB_TOKEN: ${{ github.token }}
--      run: |
--        ANALYTICS_JOB_NAME=$(python3 .github/scripts/analytics/resolve_ci_job_name.py "$WORKFLOW_
-```
-
-**File**: `.github/config/runners_footprints.yml` (modified, +1/-1)
-```diff
-@@ -78,5 +78,5 @@ dashboard:
-   mem_min_chunk_gb: 24.0
-   cpu_saturation_pct: 90.0
-   near_budget_factor: 1.10
--  # Matches ya make cgroup MemoryMax in test_ya action (95% of MemTotal).
-+  # Matches ya make cgroup MemoryMax in build_and_test_ya action (95% of MemTotal).
-   ya_make_mem_fraction: 0.95
-```
-
-**File**: `.github/scripts/graph_compare.py` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@ def main(ya_make_command: str, graph_path: str, context_path: str, base_commit:
+ // regular arrow column:
+ //
+ // [... ... ... ... ...]
+@@ -319,8 +299,9 @@ THolder<IComputationGraph> ConstructJoinGraphStream(EJoinKind joinKind, ETestedJ
+         }
+         case NKikimr::NMiniKQL::ETestedJoinAlgo::kScalarMap: {
+             const auto& rightKeyColumns = descr.RightSource.KeyColumnIndexes;
+-            TRuntimeNode rightDict = pb.ToSortedDict(
+-                args.Right, true,
++            const bool withRightSide = !LeftSemiOrOnly(joinKind);
++            TRuntimeNode rightDict = pb.ToHashedDict(
++                args.Right, withRightSide,
+                 [&](TRuntimeNode tuple) {
+                     if (rightKeyColumns.size() == 1) {
+                         return pb.Nth(tuple, rightKeyColumns.front());
+@@ -333,16 +314,11 @@ THolder<IComputationGraph> ConstructJoinGraphStream(EJoinKind joinKind, ETestedJ
+                     return pb.NewTuple(keyTupleElements);
+                 },
+                 [&](TRuntimeNode tuple) {
+-                    auto types = AS_TYPE(TTupleType, tuple.GetStaticType())->GetElements();
+-                    TVector<TRuntimeNode> valueTupleElements;
+-                    for (ui32 idx = 0; idx < std::ssize(types); ++idx) {
+-                        if (std::find(rightKeyColumns.begin(), rightKeyColumns.end(), idx) ==
+-                            rightKeyColumns.end()) {
+-                            valueTupleElements.push_back(pb.Nth(tuple, idx));
+-                        }
++                    if (!withRightSide) {
++                        return pb.NewVoid();
+                     }
+-                    return pb.NewTuple(valueTupleElements);
+-                });
++                    return tuple;
++                }, true);
  
-     workdir = os.getenv('workdir')
-     if not workdir:
--        # Prefer job TMP_DIR (cleaned after test_ya) over system /tmp.
-+        # Prefer job TMP_DIR (cleaned after build_and_test_ya) over system /tmp.
-         parent = os.getenv('TMP_DIR')
-         if parent:
-             workdir = tempfile.mkdtemp(prefix='graph_compare_', dir=parent)
-```
-
-**File**: `.github/scripts/utils/analytics/README.md` (modified, +1/-1)
-```diff
-@@ -20,7 +20,7 @@
- ```mermaid
- flowchart LR
-   subgraph inJob [Внутри job]
--    bash["test_ya: analytics start / analytics end"] --> cli["ci_metrics.py"]
-+    bash["build_and_test_ya: analytics start / analytics end"] --> cli["ci_metrics.py"]
-     evlog["ya_evlog_phases.py"] --> cli
-     cli --> jsonl[("JSONL на диске раннера")]
-     jsonl -->|"flush / send"| ydb
-```
-
-**File**: `.github/scripts/utils/analytics/github_actions/README.md` (modified, +6/-6)
-```diff
-@@ -19,7 +19,7 @@ GitHub API, сколько шли job и step.
- **Номер job в GitHub** (колонка `github_job_id`, например `456`). Это
- `${{ job.check_run_id }}` — GitHub отдаёт его в самом job. Нужен, чтобы
- сджойнить фазу со строкой job, которую выгрузка пишет как `span_id = job-456`.
--В `test_ya` это число копируется в `$GITHUB_NUMERIC_JOB_ID`. В своём workflow
-+В `build_and_test_ya` это число копируется в `$GITHUB_NUMERIC_JOB_ID`. В своём workflow
- выставьте то же: `GITHUB_NUMERIC_JOB_ID: ${{ job.check_run_id }}`.
+             TRuntimeNode source = pb.ExpandMap(pb.ToFlow(args.Left, {}), [&pb](TRuntimeNode item) -> TRuntimeNode::TList {
+                 TRuntimeNode::TList values;
+@@ -352,17 +328,9 @@ THolder<IComputationGraph> ConstructJoinGraphStream(EJoinKind joinKind, ETestedJ
+                 return values;
+             });
  
- **Номер попытки workflow** (колонка `run_attempt`). GitHub кладёт его сам в
-@@ -29,7 +29,7 @@ GitHub API, сколько шли job и step.
- Нет любого из двух — строка не попадёт в таблицу, уйдёт в файл
- `$ANALYTICS_FILE.skipped` рядом с JSONL. Сборка не упадёт.
- 
--JSONL не кладите в каталог, который `test_ya` выкладывает на публичный S3
-+JSONL не кладите в каталог, который `build_and_test_ya` выкладывает на публичный S3
- (`PUBLIC_DIR`) — иначе файл с метриками уедет в интернет.
- 
- ### Своё измерение в workflow
-@@ -92,7 +92,7 @@ WHERE run_id = 123 AND name = "compile";
- | `github_job_id` | `$GITHUB_NUMERIC_JOB_ID` | `456` |
- | `run_attempt` | `$GITHUB_RUN_ATTEMPT` | `1` |
- | `workflow` | `$GITHUB_WORKFLOW` | `PR-check` |
--| `job_name` | `$GITHUB_JOB_NAME` (`job.name` из GitHub API в `test_ya`), иначе `$GITHUB_JOB` | `Build and test relwithdebinfo` |
-+| `job_name` | `$GITHUB_JOB_NAME` (`job.name` из GitHub API в `build_and_test_ya`), иначе `$GITHUB_JOB` | `Build and test relwithdebinfo` |
- | `event_name` | `$GITHUB_EVENT_NAME` | `pull_request` |
- | `branch` | `$BRANCH_NAME` / `$GITHUB_BASE_REF` / event | `main` |
- | `commit` | `$ORIGINAL_HEAD` / `$GITHUB_SHA` | `abc…` |
-@@ -107,7 +107,7 @@ WHERE run_id = 123 AND name = "compile";
- Строки живут год. У выгрузки из GitHub API `span_id` не случайный, а
- `job-{id}`, `queue-{id}`, `step-{id}-{N}` — по нему фазу джойнят с job.
- 
--### Новая фаза в `test_ya`
-+### Новая фаза в `build_and_test_ya`
- 
- 1. Имя в `YA_PHASE_NAMES` в [`taxonomy.py`](taxonomy.py).
- 2. Строка в таблице фаз ниже (тот же `name`).
-@@ -142,7 +142,7 @@ analytics end my_new_phase --rc "$RC"
- - Шаг завершается по любой причине, в том числе из‑за `set -e` — закрыть
-   незакрытые `start` с тем exit code, с которым вышел скрипт, и залить.
- 
--Это уже стоит в `test_ya`. В свой workflow скопируйте тот же каркас, если
-+Это уже стоит в `build_and_test_ya`. В свой workflow скопируйте тот же каркас, если
- там тоже `set -e`.
- 
- ```bash
-@@ -160,7 +160,7 @@ trap 'rc=$?; trap - EXIT; analytics send --rc "$rc"; exit $rc' EXIT
- | `github_job` | `job` | выгрузка | сколько job выполнялся, от `started_at` до `completed_at` |
- | `github_job` | `queue` | выгрузка | сколько job ждал раннера; `labels.queued_ms` то же число |
- | `github_step` | имя шага | выгрузка | сколько шёл шаг GitHub Actions |
--| `ya_phase` | см. ниже | `test_ya` | фазы внутри job |
-+| `ya_phase` | см. ниже | `build_and_test_ya` | фазы внутри job |
- 
- | `name` | Что измеряет |
- | --- | --- |
-```
-
-**File**: `.github/scripts/utils/analytics/github_actions/analytics.sh` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--# Sourced by test_ya steps. Must not fail the caller.
-+# Sourced by build_and_test_ya steps. Must not fail the caller.
- ANALYTICS_PY="${ANALYTICS_PY:-.github/scripts/utils/analytics/github_actions/ci_metrics.py}"
- 
- analytics() {
-```
-
-**File**: `.github/scripts/utils/analytics/github_actions/taxonomy.py` (modified, +1/-1)
-```diff
-@@ -9,7 +9,7 @@
- # github_step names are the GitHub step names, so they cannot be enumerated.
- DYNAMIC_NAME_SOURCES = ("github_step",)
- 
--# Written inside a job by test_ya.
-+# Written inside a job by build_and_test_ya.
- YA_PHASE_SOURCE = "ya_phase"
- YA_PHASE_NAMES = (
-     "init",
+-            TRenames scalarMapRenames = MakeScalarMapJoinRenames(std::ssize(descr.LeftSource.ColumnTypes),
+-                                                                 std::ssize(descr.RightSource.ColumnTypes) -
+-                                                                     descr.RightSource.KeyColumnIndexes.size());
+-            TRuntimeNode mapJoinSomething =
+-                pb.MapJoinCore(source, rightDict, joinKind, descr.LeftSource.KeyColumnIndexes, scalarMapRenames.Left,
+-                               scalarMapRenames.Right, pb.NewFlowType(pb.NewTupleType(resultTypesArr)));
+-
+-            return ToWideStream(
+-                pb, pb.Collect(pb.NarrowMap(mapJoinSomething, [&pb](TRuntimeNode::TList items) -> TRuntimeNode {
+-                    return pb.NewTuple(items);
+-                })));
++            return pb.FromFlow(pb.MapJoinCore(source, rightDict, joinKind, descr.LeftSource.KeyColumnIndexes,
++                                              renames.Left, renames.Right,
++                                              pb.NewFlowType(multiResultType)));
+         }
+         case ETestedJoinAlgo::kBlockMap: {
+             TVector<ui32> kEmptyColumnDrops;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #57570** (2026-10-30): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #57569** (2026-10-30): Update muted_ya (release-asan) in main (@ydbot)
-- **PR #57566** (2026-10-30): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
-- **PR #57565** (2026-10-30): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
-- **PR #57564** (2026-10-30): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
-- **PR #57563** (2026-10-30): Sync branches 261030-0054: rightlib to main (@ydbot)
+- **PR #57725** (2026-10-31): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
+- **PR #57724** (2026-10-31): Update muted_ya (release-asan) in main (@ydbot)
+- **PR #57723** (2026-10-31): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #57722** (2026-10-31): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
+- **PR #57721** (2026-10-31): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
+- **PR #57719** (2026-10-30): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
 
 ---
 
@@ -2578,21 +2708,22 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add BlockStoreVolume tablet type to Hive UI (#57503)
+## X. YQ-5796 fix big message topic processing (#57672)
 
 **RULE**:
-When implementing operations in `ydb/core/mind/hive/monitoring.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/core/kqp/federated_query/kqp_federated_query_helpers.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8b28bd0d`: Add BlockStoreVolume tablet type to Hive UI (#57503). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `95446e4d`: YQ-5796 fix big message topic processing (#57672). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/mind/hive/monitoring.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/kqp/federated_query/kqp_federated_query_helpers.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-             TTabletTypes::BlockStoreVolume,
+    constexpr ui64 maxMessageSize = 136314880;   //  logbroker default grpc max message size
+    cfg.SetMaxMessageSize(maxMessageSize);
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2602,4 +2733,4 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8b28bd0d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `95446e4d` are properly handled with clean fallback behavior.

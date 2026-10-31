@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T02:07:35.420Z",
-  "total_cycles_completed": 6397,
-  "total_learnings_persisted": 6397,
-  "total_rules_promoted": 5985,
+  "last_updated": "2026-10-31T02:14:33.766Z",
+  "total_cycles_completed": 6401,
+  "total_learnings_persisted": 6401,
+  "total_rules_promoted": 5990,
   "history": [
-    {
-      "timestamp": "2026-10-30T15:15:00.314Z",
-      "repository": "StikDebug/StikDebug",
-      "learningId": "learn-github-stikdebug-stikdebug",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T15:15:06.711Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T15:22:10.560Z",
-      "repository": "SeaQL/sea-orm",
-      "learningId": "learn-github-seaql-sea-orm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T15:25:41.615Z",
-      "repository": "superhighfives/pika",
-      "learningId": "learn-github-superhighfives-pika",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T15:37:05.037Z",
       "repository": "urllib3/urllib3",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-31T02:07:35.420Z",
       "repository": "GreptimeTeam/greptimedb",
       "learningId": "learn-github-greptimeteam-greptimedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T02:14:24.842Z",
+      "repository": "callstack/react-native-paper",
+      "learningId": "learn-github-callstack-react-native-paper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T02:14:25.844Z",
+      "repository": "Comfy-Org/Z-Image-Turbo",
+      "learningId": "learn-huggingface-comfy-org-z-image-turbo",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T02:14:28.164Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T02:14:33.766Z",
+      "repository": "ydb-platform/ydb",
+      "learningId": "learn-github-ydb-platform-ydb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

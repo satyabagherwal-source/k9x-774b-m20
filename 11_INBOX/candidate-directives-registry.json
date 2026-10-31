@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T02:00:27.251Z",
+  "last_updated": "2026-10-31T02:14:25.842Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3456,6 +3456,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-feathersjs-feathers"
+    },
+    {
+      "id": "CD-PRN6",
+      "directive_title": "Distillation Patch Mandatory Coupling",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Comfy-Org/Z-Image-Turbo",
+      "source_commit": "hf-comfy-org",
+      "date_staged": "2026-10-31",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-comfy-org-z-image-turbo"
     }
   ]
 }

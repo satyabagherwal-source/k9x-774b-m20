@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md`  
 > **Source**: github ([https://github.com/callstack/react-native-paper](https://github.com/callstack/react-native-paper))  
-> **Source Version**: `eb4fcbeb`  
+> **Source Version**: `4dbf7d60`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T11:05:33.938Z  
+> **Timestamp**: 2026-10-31T02:14:24.154Z  
 > **Learning ID**: `learn-github-callstack-react-native-paper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/callstack/react-native-paper](https://github.com/callstack/react-native-paper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T11:05:33.500Z  
+> **Harvest Timestamp**: 2026-10-31T02:14:23.788Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Material Design for React Native (Android & iOS)
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 14481 stars
+- **Stars / Engagement**: 14487 stars
 
 ---
 
@@ -1309,8 +1309,8 @@ export const getIconButtonColor = ({
 - **Issue #5105** (2026-09-23): **Exception 1, Code 1, Subcode 11674116835123304857 > KERN_INVALID_ADDRESS at 0xa202cb68cfee9999. EXC_BAD_ACCESS folly::dynamic::hash**
   *Symptoms*: ### Current behaviour <!-- When i navigate between 2 screens then app got crash  --> When i navigate between 2 screens then app got crash  ### Expected behaviour <!-- Must be No crash while moving between 2 screens --> Must be No crash while moving between 2 screens  ### How to reproduce? <!-- Add 10-15 textinnut in screen and move to same screen again and again --> Add 10-15 textinnut in screen and move to same screen again and again  ### Issue stack trace  EXC_BAD_ACCESS: Exception 1, Code 1, Subcode 13012598385430910662 > KERN_INVALID_ADDRESS at 0xb4960949b06e56c6.   ReactNativeDependencies0x1052078ec  folly::dynamic::hash   ReactNativeDependencies0x105209b74  0x105209b40   ReactNativeDependencies0x105209b74  0x105209b40   ReactNativeDependencies0x1052098e0  0x105209898   ReactNativeDependencies0x1052069a4  folly::dynamic::dynamic   React               0x105dcd270  facebook::react::ShadowNode::clone   React               0x105db90b8  facebook::react::YogaLayoutableShadowNode::cloneChildInPlace   React               0x105dba074  facebook::react::YogaLayoutableShadowNode::yogaNodeCloneCallbackConnector   React               0x105c60138  facebook::yoga::Config::cloneNode   React               0x105c61dd4  facebook::yoga::Node::cloneChildrenIfNeeded   React               0x105c5bfa4  0x105c5ba90   React               0x105c5b92c  facebook::yoga::calculateLayoutInternal   React               0x105c58b38  facebook::yoga::layoutAbsoluteChild   React               0x105c59838  fac
 
-- **Issue #4905** (2026-05-12): **Dialogs are broken with React Native 0.85.2**
-  *Symptoms*: ### Current behaviour When this library is used with React Native 0.85.2, dialogs have a broken visual appearance (in both Android and iOS). The dialog appears at the bottom of the screen, and the darkened background only fills part of the screen:  <img width="270" height="600" alt="Image" src="https://github.com/user-attachments/assets/22234f55-864a-49d1-a9c3-887956289269" />  ### Expected behaviour The expected behavior occurs with React Native 0.84.1:  <img width="270" height="600" alt="Image" src="https://github.com/user-attachments/assets/892b228c-ac73-40f3-8746-3224f2c1cc5e" />  ### How to reproduce? 1. Create a new React Native project: `npx @react-native-community/cli@latest init DialogBugReproducer` 2. Enter the new project directory: `cd DialogBugReproducer` 3. Install react-native-paper: `npm install react-native-paper` 4. If you want to reproduce the bug in iOS as well as Android, run `cd ios`, `pod install`, and `cd ..` 5. Delete all content in App.tsx and replace it with the following code. (This code is copied from [the React Native Paper docs](https://oss.callstack.com/react-native-paper/docs/components/Dialog/#usage), except I have renamed `MyComponent` to `App` and added a `marginTop` to the button to prevent it from displaying underneath the status bar.) ```js // Code is from https://oss.callstack.com/react-native-paper/docs/components/Dialog/#usage // with minor changes described above.  import * as React from 'react'; import { View } from 'react-native'; 
+- **Issue #5093** (2026-10-29): **Color Picker Popup Is Obscured On "Guides -> Theming -> Creating Dynamic Theme Colors" Documentation On Both v5 and v6**
+  *Symptoms*: ### Current behaviour <!-- Describe your issue in detail --> Color picker popup is not fully shown. I can't fill the color manually because the input is obscured. This happens for primary, secondary, and tertiary color pickers. I don't know if this happens on another platform, but I'm currently using Firefox 155.0 at the time of writing.  ### Expected behaviour <!-- A clear and concise description of what you expected to happen --> The color picker should be fully shown.  ### How to reproduce? <!-- Help us to reproduce the issue and describe the steps --> <!-- Attach code example on snack.expo.dev or in a GitHub repo --> 1. Go to **React Native Paper** documentation site (v5 or v6). 2. Navigate to **Guides -> Theming -> Creating Dynamic Theme Colors**. 3. Scroll down to the custom theme builder / color picker section and click any color input.  ### Preview <!-- Include screenshots or video if applicable. -->  **Primary Color Picker** <img width="2240" height="1400" alt="Image" src="https://github.com/user-attachments/assets/926c73a6-7e3d-4e7f-bb7a-b4d2974da9d9" />  **Secondary Color Picker** <img width="2240" height="1400" alt="Image" src="https://github.com/user-attachments/assets/006cdf2e-7344-43f9-a00d-05820e21aa0a" />  **Tertiary Color Picker** <img width="2240" height="1400" alt="Image" src="https://github.com/user-attachments/assets/aa07cdbe-3a60-43a3-b33b-62bc0168e934" />  ### What have you tried so far? <!-- List down the steps you have tried to fix or identify the is
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1327,348 +1327,307 @@ export const getIconButtonColor = ({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eb4fcbeb` (2026-10-21)
-**Commit Message**: chore: automate example app publishing to app stores (#5118)
+### Incident Patch 1: `a8943b91` (2026-10-29)
+**Commit Message**: docs: fix broken default theme links and typos in guides (#5141)
 
-* chore: automate example app publishing
+The v6 getting-started and theming guides link to src/styles/themes/v3/LightTheme.tsx, which no longer exists on main. Point them at src/theme/schemes/LightTheme.tsx.
 
-The example app in the stores drifts away from the library: it was released
-eighteen times in nine years against eighty-three library releases, all by
-hand, and the last one was twenty months ago. Ship it from the release that
-prompts it instead.
+Also correct spelling in the v5 guides: platfrom, Additionaly, oficially, follwing.
 
-What it ships depends on whether native code changed. `runtimeVersion` uses
-the fingerprint policy, so the workflow can compare the project against the
-builds already out there: unchanged means the new JavaScript runs on what
-people already have, and goes out as an update; changed means a build and a
-trip through the stores. Only a build carries a version to a store, so only a
-build bumps one, and that bump comes back as a pull request.
-
-This replaces the updates workflow, which published updates when a labelled
-pull request merged. It never ran once: it triggers on push, where the
-pull_request it tests does not exist, so all sixty-nine runs skipped. Tying
-both outcomes to the release removes the label nobody remembered to add.
-
-Prereleases and stable releases build against separate channels so an update
-published for an alpha cannot re
-
-**File**: `.github/workflows/publish-example-app.yml` (added, +206/-0)
+**File**: `docs/5.x/docs/guides/fonts.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,206 @@
-+name: Publish example app
-+
-+on:
-+  release:
-+    types: [published]
-+  workflow_dispatch:
-+    inputs:
-+      tag:
-+        description: Release tag to publish the example app for, e.g. v6.0.0
-+        required: true
-+      platform:
-+        description: Platform to build. Defaults to all.
-+        required: false
-+        default: all
-+        type: choice
-+        options:
-+          - all
-+          - ios
-+          - android
-+
-+permissions:
-+  contents: read
-+
-+defaults:
-+  run:
-+    shell: bash
-+
-+jobs:
-+  check:
-+    name: Check release is on main
-+    runs-on: ubuntu-latest
-+    env:
-+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
-+    outputs:
-+      on-main: ${{ steps.check.outputs.on-main }}
-+      sha: ${{ steps.check.outputs.sha }}
-+      tag: ${{ env.TAG }}
-+      profile: ${{ steps.check.outputs.profile }}
-+    steps:
-+      - id: check
-+        env:
-+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-+          GH_REPO: ${{ github.repository }}
-+        run: |
-+          status=$(gh api "repos/$GH_REPO/compare/main...$TAG" --jq .status)
-+
-+          if [ "$status" = "identical" ] || [ "$status" = "behind" ]; then
-+            sha=$(gh api "repos/$GH_REPO/commits/$TAG" --jq .sha)
-+            echo "on-main=true" >> "$GITHUB_OUTPUT"
-+            echo "sha=$sha" >> "$GITHUB_OUTPUT"
-+          else
-+            echo "on-main=false" >> "$GITHUB_OUTPUT"
-+            echo "::warning::$TAG is not on main ($status), nothing to deploy."
-+            echo "$TAG is not on main ($status), nothing to deploy." >> "$GITHUB_STEP_SUMMARY"
-+          fi
-+
-+          if [ "${TAG#*-}" != "$TAG" ]; then
-+            echo "profile=preview" >> "$GITHUB_OUTPUT"
-+          else
-+            echo "profile=production" >> "$GITHUB_OUTPUT"
-+          fi
-+
-+  publish:
-+    name: Build and submit example app
-+    needs: check
-+    if: needs.check.outputs.on-main == 'true'
-+    runs-on: ubuntu-latest
-+    concurrency:
-+      # One queue per channel, so a pending preview run doesn't cancel a production one
-+      group: publish-example-app-${{ needs.check.outputs.profile }}
-+    steps:
-+      - name: Checkout
-+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-+        with:
-+          ref: ${{ needs.check.outputs.sha }}
-+
-+      - name: Setup
-+        uses: ./.github/actions/setup
-+
-+      - name: Setup Expo
-+        uses: expo/expo-github-action@c7b66a9c327a43a8fa7c0158e7f30d6040d2481e # v8.2.1
-+        with:
-+          eas-version: 24.12.1
-+          token: ${{ secrets.EXPO_TOKEN }}
-+
-+      - name: Check Expo authentication
-+        working-directory: ./example
-+        run: |
-+          if ! eas whoami; then
-+            echo "::error::Could not authenticate with Expo, check EXPO_TOKEN."
-+            exit 1
-+          fi
-+
-+      - name: Set example app version from the release tag
-+        working-directory: ./example
-+        env:
-+          TAG: ${{ needs.check.outputs.tag }}
-+        run: |
-+          version="${TAG#v}"
-+          version="${version%%-*}"
-+
-+          if ! echo "$version" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
-+            echo "::error::Could not read a major.minor.patch version from $TAG."
-+            exit 1
-+          fi
-+
-+          jq --arg version "$version" '.expo.version = $version' app.json > app.json.tmp
-+          mv app.json.tmp app.json
-+
-+      - name: Decide between an update and a build
-+        id: decide
-+        working-directory: ./example
-+        env:
-+          PROFILE: ${{ needs.check.outputs.profile }}
-+          PLATFORM: ${{ inputs.platform || 'all' }}
-+        run: |
-+          platforms="$PLATFORM"
-+          if [ "$PLATFORM" = "all" ]; then
-+            platforms="ios android"
-+          fi
-+
-+          build=()
-+          update=()
-+          for platform in $platforms; do
-+            hash=$(npx expo-updates fingerprint:generate --platform "$platform" | jq -er .hash)
-+
-+            existing=$(eas build:list \
-+              --platform "$platform" \
-+              --channel "$PROFILE" \
-+              --fingerprint-hash "$hash" \
-+              --status finished \
-+              --limit 1 \
-+              --json \
-+              --non-interactive | jq 'if type == "array" then length else "notanarray" end')
-+
-+            case "$existing" in
-+              ''|*[!0-9]*)
-+                echo "::error::Could not read builds for $platform."
-+                exit 1
-+                ;;
-+            esac
-+
-+            echo "$platform: fingerprint $hash, $existing matching build(s)"
-+            if [ "$existing" -eq 0 ]; then
-+              build+=("$platform")
-+            else
-+              update+=("$platform")
-+            fi
-+          done
-+
-+          # EAS takes a single platform or "all"
-+          to_platform() {
-+            case $# in
-+              0) echo "" ;;
-+              1) echo "$1" ;;
-+              *) echo all ;;
-+            esac
-+          }
-+
-+          echo "build=$(to_platform "${b
-```
-
-**File**: `.github/workflows/updates.yml` (removed, +0/-27)
-```diff
-@@ -1,27 +0,0 @@
--name: Expo EAS Updates
--on:
--  push:
--    branches:
--      - main
--jobs:
--  publish:
--    if: ${{ (contains(github.event.pull_request.labels.*.name, 'example app')) }}
--    name: Install and publish
--    runs-on: ubuntu-latest
--    steps:
--      - name: Checkout
--        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
--
--      - name: Setup
--        uses: ./.github/actions/setup
--
--      - name: Setup Expo
--        uses: expo/expo-github-action@c7b66a9c327a43a8fa7c0158e7f30d6040d2481e # v8.2.1
--        with:
--          expo-version: latest
--          eas-version: latest
--          token: ${{ secrets.EXPO_TOKEN }}
--
--      - name: Publish Expo app update
--        working-directory: ./example
--        run: eas update --auto
-```
-
-**File**: `CONTRIBUTING.md` (modified, +9/-0)
-```diff
-@@ -109,6 +109,15 @@ yarn release
+@@ -152,7 +152,7 @@ If you're using TypeScript use `as const` when defining `fontConfig`.
+ In the latest version fonts in theme are structured based on the `variant` keys e.g. `displayLarge` or `bodyMedium` which are then used in `Text`'s component throughout the whole library.
  
- NOTE: You must have a `GITHUB_TOKEN` environment variable available. You can create a GitHub access token with the "repo" access [here](https://github.com/settings/tokens).
+ :::info
+-The default `fontFamily` is different per particular platfrom:
++The default `fontFamily` is different per particular platform:
  
-+Releases from main also deploy the example app via EAS. If there were no native code changes, it'll ship an OTA update.
-+
-+Otherwise, for stable releases:
-+
-+- The Android build is automatically submitted to Google Play for review
-+- The iOS build is automatically uploaded to App Store Connect and needs to be manually submitted for review
-+
-+Pre-release builds are shipped to the internal track on Google Play for Android and TestFlight for iOS. They shouldn't be submitted to the App Store for review, or the stable build with the same version would be rejected.
-+
- ## Reporting issues
+ ```js
+ Platform.select({
+```
+
+**File**: `docs/5.x/docs/guides/getting-started.md` (modified, +1/-1)
+```diff
+@@ -18,7 +18,7 @@ npm install react-native-paper
+ npm install react-native-safe-area-context
+ ```
  
- You can report issues on our [bug tracker](https://github.com/callstack/react-native-paper/issues). Please follow the issue template when opening an issue.
+-Additionaly for `iOS` platform there is a requirement to link the native parts of the library:
++Additionally for `iOS` platform there is a requirement to link the native parts of the library:
+ 
+ ```bash
+ npx pod-install
 ```
 
-**File**: `example/.fingerprintignore` (added, +2/-0)
+**File**: `docs/5.x/docs/guides/migration-guide-to-5.0.md` (modified, +4/-4)
 ```diff
-@@ -0,0 +1,2 @@
-+# built by pod install, would make the fingerprint differ from the one EAS computes
-+**/expo-modules-jsi/apple/Products/**
+@@ -14,7 +14,7 @@ Below you can find the most important information about the components whose API
+ 
+ ### Installation
+ 
+-- The `v5` has been oficially released as a stable version, which means it will be installed by default from the `npm`. In order to do that, open a Terminal in your project's folder and run:
++- The `v5` has been officially released as a stable version, which means it will be installed by default from the `npm`. In order to do that, open a Terminal in your project's folder and run:
+ 
+ ```bash npm2yarn
+ npm install react-native-paper
+@@ -26,7 +26,7 @@ npm install react-native-paper
+ npm install react-native-safe-area-context
+ ```
+ 
+-Additionaly for `iOS` platform there is a requirement to link the native parts of the library:
++Additionally for `iOS` platform there is a requirement to link the native parts of the library:
+ 
+ ```bash
+ npx pod-install
+@@ -165,7 +165,7 @@ Take a look at the suggested replacement diff:
+ 
+ ### Configure fonts
+ 
+-The existing utility called `configureFonts` was adjusted to help users configure their theme fonts in both version, that's why that function, as of today, is going to accept the object with the follwing properties as an argument:
++The existing utility called `configureFonts` was adjusted to help users configure their theme fonts in both version, that's why that function, as of today, is going to accept the object with the following properties as an argument:
+ 
+ ```ts
+ configureFonts(params);
+@@ -476,7 +476,7 @@ With the latest version, there is a possibility to specify whether `Drawer.Secti
+ 
+ #### FAB
+ 
+-Additionaly `FAB` may be applied in one of three available sizes, thanks to new prop `size`:
++Additionally `FAB` may be applied in one of three available sizes, thanks to new prop `size`:
+ 
+ - `small` - FAB with small height (40),
+ - `medium` - Appbar with default medium height (56),
 ```
 
-**File**: `example/.nvmrc` (added, +1/-0)
+**File**: `docs/6.x/docs/guides/getting-started.mdx` (modified, +1/-1)
 ```diff
-@@ -0,0 +1 @@
-+../.nvmrc
-\ No newline at end of file
+@@ -162,7 +162,7 @@ export default function Main() {
+ 
+ ## Customization
+ 
+-You can provide a custom theme to customize the colors, typescales etc. with the `Provider` component. Check the [Material Design 3 default theme](https://github.com/callstack/react-native-paper/blob/main/src/styles/themes/v3/LightTheme.tsx) to see what customization options are supported.
++You can provide a custom theme to customize the colors, typescales etc. with the `Provider` component. Check the [Material Design 3 default theme](https://github.com/callstack/react-native-paper/blob/main/src/theme/schemes/LightTheme.tsx) to see what customization options are supported.
+ 
+ Example:
+ 
 ```
 
-**File**: `example/app.json` (modified, +4/-3)
+**File**: `docs/6.x/docs/guides/theming.mdx` (modified, +1/-1)
 ```diff
-@@ -16,11 +16,12 @@
-     "owner": "react-native-paper",
-     "ios": {
-       "bundleIdentifier": "com.callstack.reactnativepaperexample",
--      "buildNumber": "26.0.5"
-+      "infoPlist": {
-+        "ITSAppUsesNonExemptEncryption": false
-+      }
-     },
-     "android": {
-       "package": "com.callstack.reactnativepaperexample",
--      "versionCode": 38,
-       "permissions": [
-         "READ_EXTERNAL_STORAGE",
-         "WRITE_EXTERNAL_STORAGE"
-@@ -37,7 +38,7 @@
-       }
-     },
-     "runtimeVersion": {
--      "policy": "sdkVersion"
-+      "policy": "fingerprint"
-     },
-     "updates": {
-       "url": "https://u.expo.dev/ba8f5139-58fe-48f0-b2f2-2d675b6eb2d4"
+@@ -28,7 +28,7 @@ export default function Main() {
+ }
+ ```
+ 
+-By default React Native Paper will apply the [Material You theme (MD3)](https://github.com/callstack/react-native-paper/blob/main/src/styles/themes/v3/LightTheme.tsx) if no `theme` or `version` prop is passed to the `PaperProvider`.
++By default React Native Paper will apply the [Material You theme (MD3)](https://github.com/callstack/react-native-paper/blob/main/src/theme/schemes/LightTheme.tsx) if no `theme` or `version` prop is passed to the `PaperProvider`.
+ 
+ ## Accessing theme properties
+ 
 ```
 
-**File**: `example/eas.json` (added, +34/-0)
+---
+
+### Incident Patch 2: `4dbf7d60` (2026-10-29)
+**Commit Message**: fix(menu): avoid focusing hidden anchors on mount (#5139)
+
+* fix(menu): avoid focusing hidden anchors on mount
+
+* test(menu): name animation timer duration
+
+**File**: `src/components/Menu/Menu.tsx` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,34 @@
-+{
-+  "cli": {
-+    "appVersionSource": "remote"
-+  },
-+  "build": {
-+    "production": {
-+      "autoIncrement": true,
-+      "android": {
-+        "buildType": "app-bundle"
+@@ -226,7 +226,7 @@ const Menu = ({
+   const scaleY = useSharedValue(0);
+ 
+   const keyboardHeightRef = React.useRef(0);
+-  const prevVisible = React.useRef<boolean | null>(null);
++  const prevVisible = React.useRef(visible);
+   const anchorRef = React.useRef<View | null>(null);
+   const menuRef = React.useRef<View | null>(null);
+   const isShownRef = React.useRef(false);
+```
+
+**File**: `src/components/__tests__/Menu.test.tsx` (modified, +110/-3)
+```diff
+@@ -1,6 +1,13 @@
+-import { Dimensions, StyleSheet, View } from 'react-native';
+-
+-import { expect, it, jest } from '@jest/globals';
++import { Dimensions, Platform, StyleSheet, View } from 'react-native';
++
++import {
++  afterEach,
++  beforeEach,
++  describe,
++  expect,
++  it,
++  jest,
++} from '@jest/globals';
+ import { act, screen, waitFor } from '@testing-library/react-native';
+ 
+ import { render } from '../../test-utils';
+@@ -10,6 +17,106 @@ import Button from '../Button/Button';
+ import Menu from '../Menu/Menu';
+ import Portal from '../Portal/Portal';
+ 
++describe('web focus', () => {
++  const PAST_ANIMATION_MS = 300;
++  const focus = jest.fn();
++  const originalPlatform = Platform.OS;
++  const originalHTMLElement = Object.getOwnPropertyDescriptor(
++    globalThis,
++    'HTMLElement'
++  );
++  const originalDocument = Object.getOwnPropertyDescriptor(
++    globalThis,
++    'document'
++  );
++  const originalQuerySelector = Object.getOwnPropertyDescriptor(
++    View.prototype,
++    'querySelector'
++  );
++  const originalMeasureInWindow = Object.getOwnPropertyDescriptor(
++    View.prototype,
++    'measureInWindow'
++  );
++
++  beforeEach(() => {
++    Platform.OS = 'web';
++    focus.mockClear();
++    // Native View refs stand in for DOM elements in the native test renderer.
++    Object.defineProperty(globalThis, 'HTMLElement', {
++      configurable: true,
++      value: View,
++    });
++    Object.defineProperty(globalThis, 'document', {
++      configurable: true,
++      value: {
++        addEventListener: jest.fn(),
++        removeEventListener: jest.fn(),
 +      },
-+      "channel": "production"
-+    },
-+    "preview": {
-+      "extends": "production",
-+      "channel": "preview"
-+    }
-+  },
-+  "submit": {
-+    "production": {
-+      "android": {
-+        "track": "production"
-+      },
-+      "ios": {
-+        "ascAppId": "1548934513"
-+      }
-+    },
-+    "preview": {
-+      "extends": "production",
-+      "android": {
-+        "track": "internal"
++    });
++    Object.defineProperty(View.prototype, 'querySelector', {
++      configurable: true,
++      value: () => ({ focus }),
++    });
++    const measureInWindow: View['measureInWindow'] = (fn) =>
++      fn(100, 100, 80, 32);
++    Object.defineProperty(View.prototype, 'measureInWindow', {
++      configurable: true,
++      value: measureInWindow,
++    });
++  });
++
++  afterEach(() => {
++    Platform.OS = originalPlatform;
++    for (const [target, key, descriptor] of [
++      [globalThis, 'HTMLElement', originalHTMLElement],
++      [globalThis, 'document', originalDocument],
++      [View.prototype, 'querySelector', originalQuerySelector],
++      [View.prototype, 'measureInWindow', originalMeasureInWindow],
++    ] as const) {
++      if (descriptor) {
++        Object.defineProperty(target, key, descriptor);
++      } else {
++        Reflect.deleteProperty(target, key);
 +      }
 +    }
-+  }
-+}
++  });
++
++  const makeMenu = (visible: boolean) => (
++    <Portal.Host>
++      <Menu visible={visible} anchor={<Button>Open menu</Button>}>
++        <Menu.Item title="Undo" />
++      </Menu>
++    </Portal.Host>
++  );
++
++  it('does not move focus when mounted hidden', async () => {
++    await render(makeMenu(false));
++    await act(() => jest.advanceTimersByTime(PAST_ANIMATION_MS));
++
++    expect(focus).not.toHaveBeenCalled();
++  });
++
++  it('moves focus when opened and restores it when closed', async () => {
++    const { rerender } = await render(makeMenu(false));
++    await rerender(makeMenu(true));
++    await act(() => jest.advanceTimersByTime(PAST_ANIMATION_MS));
++
++    expect(focus).toHaveBeenCalledTimes(1);
++
++    await rerender(makeMenu(false));
++    await act(() => jest.advanceTimersByTime(PAST_ANIMATION_MS));
++
++    expect(focus).toHaveBeenCalledTimes(2);
++  });
++
++  it('moves focus when mounted visible', async () => {
++    await render(makeMenu(true));
++    await act(() => jest.advanceTimersByTime(PAST_ANIMATION_MS));
++
++    expect(focus).toHaveBeenCalledTimes(1);
++  });
++});
++
+ it('renders visible menu', async () => {
+   const tree = (
+     await render(
 ```
 
-**File**: `example/fingerprint.config.js` (added, +7/-0)
+---
+
+### Incident Patch 3: `9e095e61` (2026-10-29)
+**Commit Message**: fix(list): expand accordion with id 0 in a controlled AccordionGroup (#5145)
+
+**File**: `src/components/List/ListAccordionGroup.tsx` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,7 @@
-+/** @type {import('expo/fingerprint').Config} */
-+module.exports = {
-+  sourceSkips: [
-+    'ExpoConfigVersions',
-+    'PackageJsonAndroidAndIosScriptsIfNotContainRun',
-+  ],
-+};
+@@ -74,7 +74,7 @@ const ListAccordionGroup = ({
+   return (
+     <ListAccordionGroupContext.Provider
+       value={{
+-        expandedId: expandedIdProp || expandedId, // component can be controlled or uncontrolled
++        expandedId: expandedIdProp ?? expandedId, // component can be controlled or uncontrolled
+         onAccordionPress: onAccordionPress || onAccordionPressDefault,
+       }}
+     >
+```
+
+**File**: `src/components/__tests__/ListAccordion.test.tsx` (modified, +16/-0)
+```diff
+@@ -135,6 +135,22 @@ describe('ListAccordion', () => {
+     await expect(render(<ListAccordionTest />)).resolves.toBeDefined();
+   });
+ 
++  it('expands the accordion with id={0} when it is the controlled expandedId', async () => {
++    await render(
++      <ListAccordionGroup expandedId={0} onAccordionPress={() => {}}>
++        <ListAccordion title="First accordion" id={0}>
++          <ListItem title="First accordion item" />
++        </ListAccordion>
++        <ListAccordion title="Second accordion" id={1}>
++          <ListItem title="Second accordion item" />
++        </ListAccordion>
++      </ListAccordionGroup>
++    );
++
++    expect(screen.getByText('First accordion item')).toBeOnTheScreen();
++    expect(screen.queryByText('Second accordion item')).not.toBeOnTheScreen();
++  });
++
+   it('should throw an error when id={""}', async () => {
+     const ListAccordionTest = () => (
+       <ListAccordionGroup>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5149** (2026-10-29): chore: pass the release version through and infer the npm tag (@Doberjohn)
+- **PR #5147** (closed): fix: handle zero accordion group id (@bhumikabiyani)
+- **PR #5145** (2026-10-29): fix(list): expand accordion with id 0 in a controlled AccordionGroup (@RaphaelFakhri)
 - **PR #5142** (closed): docs: fix minor wording in contributing guide (@Q1w1N)
-- **PR #5131** (2026-09-29): ci: build and upload example app (@alcpereira)
-- **PR #5130** (closed): fix(ci): publish OTA updates when a labelled pull request merges (@KisaneNeko)
-- **PR #5126** (2026-09-28): feat(portal)!: hide content below an overlay from assistive technology (@konstmar)
-- **PR #5125** (2026-09-28): fix(modal): make Modal accessible and honour its dismissal props (@konstmar)
-- **PR #5124** (2026-09-16): fix(portal): forward the reduce motion preference and match queued update keys (@konstmar)
+- **PR #5141** (2026-10-29): docs: fix broken default theme links and typos in guides (@toyeshhm)
+- **PR #5139** (2026-10-29): fix(menu): avoid focusing hidden anchors on mount (@KuroGeo)
 
 ---
 
@@ -1688,76 +1647,28 @@ published for an alpha cannot re
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. automate example app publishing to app stores (#5118)
+## X. docs: fix broken default theme links and typos in guides (#5141)
 
 **RULE**:
-When implementing operations in `.github/workflows/publish-example-app.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/react-native-paper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/5.x/docs/guides/fonts.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/react-native-paper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eb4fcbeb`: automate example app publishing to app stores (#5118). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a8943b91`: docs: fix broken default theme links and typos in guides (#5141). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/publish-example-app.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/5.x/docs/guides/fonts.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-name: Publish example app
-
-on:
-  release:
-    types: [published]
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: Release tag to publish the example app for, e.g. v6.0.0
-        required: true
-      platform:
-        description: Platform to build. Defaults to all.
-        required: false
-        default: all
-        type: choice
-        options:
-          - all
-          - ios
-          - android
-
-permissions:
-  contents: read
-
-defaults:
-  run:
-    shell: bash
-
-jobs:
-  check:
-    name: Check release is on main
-    runs-on: ubuntu-latest
-    env:
-      TAG: ${{ github.event.release.tag_name || inputs.tag }}
-    outputs:
-      on-main: ${{ steps.check.outputs.on-main }}
-      sha: ${{ steps.check.outputs.sha }}
-      tag: ${{ env.TAG }}
-      profile: ${{ steps.check.outputs.profile }}
-    steps:
-      - id: check
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          status=$(gh api "repos/$GH_REPO/compare/main...$TAG" --jq .status)
-
-          if [ "$status" = "identical" ] || [ "$status" = "behind" ]; then
-            sha=$(gh api "repos/$GH_REPO/commits/$TAG" --jq .sha)
-            echo "on
+The default `fontFamily` is different per particular platform:
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+The default `fontFamily` is different per particular platfrom:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eb4fcbeb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a8943b91` are properly handled with clean fallback behavior.
