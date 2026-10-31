@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T10:07:26.539Z",
-  "total_verified_learnings": 1181,
+  "last_updated": "2026-10-31T10:20:16.502Z",
+  "total_verified_learnings": 1182,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -30397,7 +30397,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
-      "content_hash": "be16c01a1943ed1a16c46dc7752bca5b0b5a3424bb7dba155e5f3fecb6d81570",
+      "content_hash": "468c73a5974a235844fa993a459e29779cafcdd7d343a6e80d3fae76c0b998de",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "promoted_rules": [
@@ -30595,6 +30595,21 @@
           "number": 5211,
           "title": "Layer‑Type Uniqueness in Vision Encoder",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6164,
+          "title": "Dual-State Hybrid Cache Invariant for Linear/Full-Attention Topologies",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6165,
+          "title": "Multi-EOS Demuxing and Reasoner Delimiter Token Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6166,
+          "title": "Interleaved M-RoPE Section Split Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -30615,7 +30630,7 @@
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv46fo61",
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4jpnc5"
       ],
-      "verified_at": "2026-10-28T06:42:07.461Z",
+      "verified_at": "2026-10-31T10:20:16.483Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -161292,6 +161307,95 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T10:07:26.520Z"
+    },
+    "learn-github-vercel-labs-agent-desktop": {
+      "learning_id": "learn-github-vercel-labs-agent-desktop",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "vercel-labs/agent-desktop",
+      "repository": "vercel-labs/agent-desktop",
+      "slug": "vercel-labs-agent-desktop",
+      "platform": "github",
+      "source_url": "https://github.com/vercel-labs/agent-desktop",
+      "source_version": "893a4140",
+      "content_hash": "5f1874c46599a5f2a559999d74f691f58ff9b3513c9d08eb0a2ca794aef24288",
+      "dossier_path": "07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 6163,
+          "title": "windows): stop commands crashing at exit (#342)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-31T10:18:21.973Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-6163": {
+      "learning_id": "rule-6163",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6163,
+      "title": "windows): stop commands crashing at exit (#342)",
+      "source_url": "https://github.com/vercel-labs/agent-desktop",
+      "source_version": "893a4140",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T10:18:21.973Z"
+    },
+    "rule-6164": {
+      "learning_id": "rule-6164",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6164,
+      "title": "Dual-State Hybrid Cache Invariant for Linear/Full-Attention Topologies",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T10:20:16.483Z"
+    },
+    "rule-6165": {
+      "learning_id": "rule-6165",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6165,
+      "title": "Multi-EOS Demuxing and Reasoner Delimiter Token Guard",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T10:20:16.483Z"
+    },
+    "rule-6166": {
+      "learning_id": "rule-6166",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6166,
+      "title": "Interleaved M-RoPE Section Split Boundary Invariant",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T10:20:16.483Z"
     }
   },
   "aliases": {

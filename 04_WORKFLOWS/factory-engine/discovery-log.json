@@ -19939,5 +19939,20 @@
     "downloads": 9084568,
     "qualityScore": 11820,
     "discoveredAt": "2026-10-31T08:42:50.717Z"
+  },
+  {
+    "name": "agent-desktop",
+    "fullName": "vercel-labs/agent-desktop",
+    "url": "https://github.com/vercel-labs/agent-desktop",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "Agent Desktop gives any agent reliable computer use on the desktop. Built with Rust, it sees any app's real UI structure through OS accessibility trees and operates it — refs stay stable and actions stay safe to retry, instead of guessing from pixels.",
+    "stars": 3005,
+    "forks": 197,
+    "openIssues": 29,
+    "language": "Rust",
+    "qualityScore": 1870,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-31T10:15:55.619Z"
   }
 ]

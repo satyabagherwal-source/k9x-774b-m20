@@ -6537,3 +6537,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-comfy-org-qwen-image-2-1` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-31T10:00:41.096Z |
 | `learn-huggingface-akhilaaa3-jev-omni` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-10-31T10:07:22.038Z |
 | `learn-github-react-metro` | `https://github.com/react/metro` | `fcced577` | Multi-dimensional audit evidence | 2026-10-31T10:07:26.620Z |
+| `learn-github-vercel-labs-agent-desktop` | `https://github.com/vercel-labs/agent-desktop` | `893a4140` | Multi-dimensional audit evidence | 2026-10-31T10:18:22.075Z |
+| `learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-31T10:20:16.585Z |

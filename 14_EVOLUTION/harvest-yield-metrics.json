@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T10:07:26.626Z",
-  "total_cycles_completed": 6505,
-  "total_learnings_persisted": 6505,
-  "total_rules_promoted": 6155,
+  "last_updated": "2026-10-31T10:20:16.590Z",
+  "total_cycles_completed": 6507,
+  "total_learnings_persisted": 6507,
+  "total_rules_promoted": 6159,
   "history": [
-    {
-      "timestamp": "2026-10-30T21:55:42.033Z",
-      "repository": "tw93/Pake",
-      "learningId": "learn-github-tw93-pake",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T21:55:49.006Z",
-      "repository": "faker-js/faker",
-      "learningId": "learn-github-faker-js-faker",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T21:55:55.270Z",
       "repository": "electron/electron",
@@ -1403,6 +1389,20 @@
       "repository": "react/metro",
       "learningId": "learn-github-react-metro",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T10:18:22.080Z",
+      "repository": "vercel-labs/agent-desktop",
+      "learningId": "learn-github-vercel-labs-agent-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T10:20:16.590Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

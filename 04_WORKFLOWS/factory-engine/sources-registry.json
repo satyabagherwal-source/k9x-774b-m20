@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T10:07:32.929Z",
-    "lastVerified": "2026-10-31T10:07:32.929Z",
+    "lastChecked": "2026-10-31T10:20:19.147Z",
+    "lastVerified": "2026-10-31T10:20:19.147Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -429,8 +429,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T09:47:07.344Z",
-    "lastVerified": "2026-10-31T09:47:07.344Z",
+    "lastChecked": "2026-10-31T10:18:27.828Z",
+    "lastVerified": "2026-10-31T10:18:27.828Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -506,8 +506,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T05:14:17.187Z",
-    "lastVerified": "2026-10-31T05:14:17.187Z",
+    "lastChecked": "2026-10-31T10:18:22.980Z",
+    "lastVerified": "2026-10-31T10:18:22.980Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -2340,12 +2340,12 @@
     "revisionIdentifier": "e8618dbc"
   },
   "databendlabs-databend": {
-    "name": "databendlabs/databend",
+    "name": "databend",
     "officialUrl": "https://github.com/databendlabs/databend",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T17:06:07.297Z",
-    "lastVerified": "2026-10-30T17:06:07.297Z",
+    "lastChecked": "2026-10-31T10:18:25.620Z",
+    "lastVerified": "2026-10-31T10:18:25.620Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-databendlabs-databend",
@@ -2354,7 +2354,8 @@
     "recentFixesCount": 11,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1bb45751"
   },
   "tach-org-tach": {
     "name": "tach",
@@ -2575,12 +2576,12 @@
     "officialUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T06:41:59.521Z",
-    "lastVerified": "2026-10-28T06:41:59.521Z",
+    "lastChecked": "2026-10-31T10:18:15.448Z",
+    "lastVerified": "2026-10-31T10:18:15.448Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-    "contentHash": "be16c01a1943ed1a16c46dc7752bca5b0b5a3424bb7dba155e5f3fecb6d81570",
+    "contentHash": "468c73a5974a235844fa993a459e29779cafcdd7d343a6e80d3fae76c0b998de",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -3553,12 +3554,12 @@
     "lastVerified": "2026-10-31T05:29:25.913Z"
   },
   "peerdb-io-peerdb": {
-    "name": "PeerDB-io/peerdb",
+    "name": "peerdb",
     "officialUrl": "https://github.com/PeerDB-io/peerdb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T18:07:06.831Z",
-    "lastVerified": "2026-10-30T18:07:06.831Z",
+    "lastChecked": "2026-10-31T10:18:20.491Z",
+    "lastVerified": "2026-10-31T10:18:20.491Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-peerdb-io-peerdb",
@@ -3567,7 +3568,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c78633d8"
   },
   "featureform-featureform": {
     "name": "featureform",
@@ -5061,9 +5063,9 @@
   "thecodingmachine-react-native-boilerplate": {
     "name": "react-native-boilerplate",
     "officialUrl": "https://github.com/thecodingmachine/react-native-boilerplate",
-    "lastChecked": "2026-10-28T15:03:20.966Z",
+    "lastChecked": "2026-10-31T10:18:17.842Z",
     "revisionIdentifier": "1a8b1d5b",
-    "lastVerified": "2026-10-28T15:03:20.966Z"
+    "lastVerified": "2026-10-31T10:18:17.842Z"
   },
   "infracost-infracost": {
     "name": "infracost",
@@ -12318,6 +12320,23 @@
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vercel-labs-agent-desktop": {
+    "name": "vercel-labs/agent-desktop",
+    "officialUrl": "https://github.com/vercel-labs/agent-desktop",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-31T10:18:20.730Z",
+    "lastVerified": "2026-10-31T10:18:20.730Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-vercel-labs-agent-desktop",
+    "contentHash": "5f1874c46599a5f2a559999d74f691f58ff9b3513c9d08eb0a2ca794aef24288",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 10,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

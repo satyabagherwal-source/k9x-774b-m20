@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T10:07:26.630Z",
+  "last_updated": "2026-10-31T10:20:16.594Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -605,14 +605,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-      "content_hash": "be16c01a1943ed1a16c46dc7752bca5b0b5a3424bb7dba155e5f3fecb6d81570",
-      "verified_at": "2026-10-28T06:42:07.513Z",
+      "content_hash": "468c73a5974a235844fa993a459e29779cafcdd7d343a6e80d3fae76c0b998de",
+      "verified_at": "2026-10-31T10:20:16.593Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T06:42:07.513Z"
+      "last_updated": "2026-10-31T10:20:16.593Z"
     },
     "inclusionAI/Ming-Image-0.1-Design": {
       "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -17504,6 +17504,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-31T08:50:26.361Z"
+    },
+    "vercel-labs/agent-desktop": {
+      "repository": "vercel-labs/agent-desktop",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-vercel-labs-agent-desktop",
+      "content_hash": "5f1874c46599a5f2a559999d74f691f58ff9b3513c9d08eb0a2ca794aef24288",
+      "verified_at": "2026-10-31T10:18:22.083Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-31T10:18:22.083Z"
     }
   },
   "repos": {

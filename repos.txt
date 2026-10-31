@@ -4742,3 +4742,7 @@ https://github.com/krishhgg/Insomnia
 # --- Automatically Discovered by AI Scout Engine [2026-10-31T08:44:58.520Z] ---
 # [HUGGINGFACE-AI-MODELS] Comfy-Org/Wan-2.2 (11820 score) - Verified Hugging Face Model: Comfy-Org/Wan-2.2 (982 likes, 9084568 downloads)
 https://huggingface.co/Comfy-Org/Wan-2.2
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-31T10:18:07.274Z] ---
+# [HIGH-PERF-SYSTEMS] vercel-labs/agent-desktop (1870 score) - Agent Desktop gives any agent reliable computer use on the desktop. Built with R
+https://github.com/vercel-labs/agent-desktop

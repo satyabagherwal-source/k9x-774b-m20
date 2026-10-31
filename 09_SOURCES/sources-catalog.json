@@ -495,8 +495,8 @@
     "sourceUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
     "sourceVersion": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
     "license": "Open-Source",
-    "contentHash": "be16c01a1943ed1a16c46dc7752bca5b0b5a3424bb7dba155e5f3fecb6d81570",
-    "lastHarvestedAt": "2026-10-28T06:42:07.507Z",
+    "contentHash": "468c73a5974a235844fa993a459e29779cafcdd7d343a6e80d3fae76c0b998de",
+    "lastHarvestedAt": "2026-10-31T10:20:16.585Z",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b"
   },
   "hf-inclusionai-ming-image-0.1-design": {
@@ -11628,5 +11628,15 @@
     "contentHash": "9ae1f009a4fa8a9f64b6ad564596319cb2bb055d507bd312834868f5c0303c10",
     "lastHarvestedAt": "2026-10-31T08:50:26.352Z",
     "learningId": "learn-huggingface-comfy-org-wan-2-2"
+  },
+  "vercel-labs-agent-desktop": {
+    "repository": "vercel-labs/agent-desktop",
+    "platform": "github",
+    "sourceUrl": "https://github.com/vercel-labs/agent-desktop",
+    "sourceVersion": "893a4140",
+    "license": "Apache-2.0",
+    "contentHash": "5f1874c46599a5f2a559999d74f691f58ff9b3513c9d08eb0a2ca794aef24288",
+    "lastHarvestedAt": "2026-10-31T10:18:22.075Z",
+    "learningId": "learn-github-vercel-labs-agent-desktop"
   }
 }
