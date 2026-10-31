@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T00:27:42.441Z",
-    "lastVerified": "2026-10-31T00:27:42.441Z",
+    "lastChecked": "2026-10-31T00:34:29.616Z",
+    "lastVerified": "2026-10-31T00:34:29.616Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -423,8 +423,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T23:58:45.475Z",
-    "lastVerified": "2026-10-30T23:58:45.475Z",
+    "lastChecked": "2026-10-31T00:34:29.605Z",
+    "lastVerified": "2026-10-31T00:34:29.605Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1011,14 +1011,14 @@
     "officialUrl": "https://github.com/mattermost/mattermost",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T04:03:46.206Z",
-    "lastVerified": "2026-10-28T04:03:46.206Z",
+    "lastChecked": "2026-10-31T00:34:24.452Z",
+    "lastVerified": "2026-10-31T00:34:24.452Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mattermost-mattermost",
-    "contentHash": "00790357f4ab07e951990a96b13e06e3ec032aeedc81dabdc168b19c48d43f72",
+    "contentHash": "6b9c6a45f67b261e61ebfc779e756fea84dda3699f4b51a33f6976692b7d0791",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1681,14 +1681,14 @@
     "officialUrl": "https://github.com/FalkorDB/FalkorDB",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T11:47:31.915Z",
-    "lastVerified": "2026-10-29T11:47:31.915Z",
+    "lastChecked": "2026-10-31T00:34:18.665Z",
+    "lastVerified": "2026-10-31T00:34:18.665Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-falkordb-falkordb",
-    "contentHash": "10e5cf306ef1822cf55468af5601ce482f28b8a925ab76f7a703df32aff81466",
+    "contentHash": "abf570fb366f7f333e6146573fdf38b9362dea63113fb5897b272323391379d6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 13,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2231,12 +2231,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "aleo-labs-protocol-snarkos": {
-    "name": "aleo-labs-protocol/snarkOS",
+    "name": "snarkOS",
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T20:47:38.497Z",
-    "lastVerified": "2026-10-30T20:47:38.497Z",
+    "lastChecked": "2026-10-31T00:34:24.641Z",
+    "lastVerified": "2026-10-31T00:34:24.641Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -2245,7 +2245,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e8618dbc"
   },
   "databendlabs-databend": {
     "name": "databendlabs/databend",
@@ -5217,9 +5218,9 @@
   "cockroachdb-cockroach": {
     "name": "cockroach",
     "officialUrl": "https://github.com/cockroachdb/cockroach",
-    "lastChecked": "2026-10-30T04:15:27.363Z",
+    "lastChecked": "2026-10-31T00:34:27.476Z",
     "revisionIdentifier": "d30c905f",
-    "lastVerified": "2026-10-30T04:15:27.363Z"
+    "lastVerified": "2026-10-31T00:34:27.476Z"
   },
   "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
     "name": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -6031,9 +6032,9 @@
   "cycloidio-terracognita": {
     "name": "terracognita",
     "officialUrl": "https://github.com/cycloidio/terracognita",
-    "lastChecked": "2026-10-30T05:01:16.538Z",
+    "lastChecked": "2026-10-31T00:34:22.158Z",
     "revisionIdentifier": "802bd4b5",
-    "lastVerified": "2026-10-30T05:01:16.538Z"
+    "lastVerified": "2026-10-31T00:34:22.158Z"
   },
   "netflix-dynomite": {
     "name": "dynomite",
@@ -11619,6 +11620,23 @@
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
     "contentHash": "e13a29cfccb3f5f2ce825c0244e87be499ad04d9471b25e002d96a8969b783f1",
     "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-mistralai-timestral-209m": {
+    "name": "mistralai/Timestral-209M",
+    "officialUrl": "https://huggingface.co/mistralai/Timestral-209M",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-31T00:34:17.188Z",
+    "lastVerified": "2026-10-31T00:34:17.188Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-mistralai-timestral-209m",
+    "contentHash": "2efb02a4e5e71a1b03178e18fb48328c70c31bf499ddacbef8ddef71afdd03da",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

@@ -2333,10 +2333,10 @@
     "repository": "mattermost/mattermost",
     "platform": "github",
     "sourceUrl": "https://github.com/mattermost/mattermost",
-    "sourceVersion": "7709b2f9",
+    "sourceVersion": "f619e1e3",
     "license": "NOASSERTION",
-    "contentHash": "00790357f4ab07e951990a96b13e06e3ec032aeedc81dabdc168b19c48d43f72",
-    "lastHarvestedAt": "2026-10-28T04:03:46.696Z",
+    "contentHash": "6b9c6a45f67b261e61ebfc779e756fea84dda3699f4b51a33f6976692b7d0791",
+    "lastHarvestedAt": "2026-10-31T00:34:25.408Z",
     "learningId": "learn-github-mattermost-mattermost"
   },
   "chaos-mesh-chaos-mesh": {
@@ -2893,10 +2893,10 @@
     "repository": "FalkorDB/FalkorDB",
     "platform": "github",
     "sourceUrl": "https://github.com/FalkorDB/FalkorDB",
-    "sourceVersion": "1c0e6c8d",
+    "sourceVersion": "155a246f",
     "license": "NOASSERTION",
-    "contentHash": "10e5cf306ef1822cf55468af5601ce482f28b8a925ab76f7a703df32aff81466",
-    "lastHarvestedAt": "2026-10-29T11:52:34.694Z",
+    "contentHash": "abf570fb366f7f333e6146573fdf38b9362dea63113fb5897b272323391379d6",
+    "lastHarvestedAt": "2026-10-31T00:34:19.569Z",
     "learningId": "learn-github-falkordb-falkordb"
   },
   "feathersjs-feathers": {
@@ -8455,8 +8455,8 @@
     "sourceUrl": "https://huggingface.co/mistralai/Timestral-209M",
     "sourceVersion": "hf-mistralai-timestral-209m",
     "license": "Open-Source",
-    "contentHash": "c9ce21dbd64de9fb87ed63d3434fa4a08abf4077b40925f28e29e4dabdaf4dc4",
-    "lastHarvestedAt": "2026-10-26T05:11:29.725Z",
+    "contentHash": "2efb02a4e5e71a1b03178e18fb48328c70c31bf499ddacbef8ddef71afdd03da",
+    "lastHarvestedAt": "2026-10-31T00:34:27.002Z",
     "learningId": "learn-huggingface-mistralai-timestral-209m"
   },
   "software-mansion-react-native-screens": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T00:27:31.967Z",
+  "last_updated": "2026-10-31T00:34:26.914Z",
   "total_verified_learnings": 1179,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12510,8 +12510,8 @@
       "slug": "falkordb-falkordb",
       "platform": "github",
       "source_url": "https://github.com/FalkorDB/FalkorDB",
-      "source_version": "1c0e6c8d",
-      "content_hash": "10e5cf306ef1822cf55468af5601ce482f28b8a925ab76f7a703df32aff81466",
+      "source_version": "155a246f",
+      "content_hash": "abf570fb366f7f333e6146573fdf38b9362dea63113fb5897b272323391379d6",
       "dossier_path": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "promoted_rules": [
@@ -12554,6 +12554,11 @@
           "number": 5499,
           "title": "index): a column's build state, and indexer batches that fill it (#2351)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5958,
+          "title": "map WCC / labelPropagation ids back to node ids under nodeLabels (#3029) (#3032)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12561,7 +12566,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T11:52:34.594Z",
+      "verified_at": "2026-10-31T00:34:19.471Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37321,8 +37326,8 @@
       "slug": "mattermost-mattermost",
       "platform": "github",
       "source_url": "https://github.com/mattermost/mattermost",
-      "source_version": "7709b2f9",
-      "content_hash": "00790357f4ab07e951990a96b13e06e3ec032aeedc81dabdc168b19c48d43f72",
+      "source_version": "f619e1e3",
+      "content_hash": "6b9c6a45f67b261e61ebfc779e756fea84dda3699f4b51a33f6976692b7d0791",
       "dossier_path": "07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
       "promoted_rules": [
@@ -37360,6 +37365,11 @@
           "number": 5167,
           "title": "Migrate product Buttons from shared to compass-ui (#38903)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5959,
+          "title": "[MM-71476] Fix timeout when deleting the last reply in a thread on large Posts t",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37367,7 +37377,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T04:03:46.603Z",
+      "verified_at": "2026-10-31T00:34:25.308Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -106864,7 +106874,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mistralai/Timestral-209M",
       "source_version": "hf-mistralai-timestral-209m",
-      "content_hash": "c9ce21dbd64de9fb87ed63d3434fa4a08abf4077b40925f28e29e4dabdaf4dc4",
+      "content_hash": "2efb02a4e5e71a1b03178e18fb48328c70c31bf499ddacbef8ddef71afdd03da",
       "dossier_path": "07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md",
       "promoted_rules": [
@@ -106912,6 +106922,21 @@
           "number": 4561,
           "title": "Non-Crossing Quantile Monotonicity Enforcement via Incremental Positive Projections",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5960,
+          "title": "Dual-Attention Block Scheduling for Multivariate Time Series",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5961,
+          "title": "Probabilistic Output via Quantile Regression",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5962,
+          "title": "Patch-Based Context Management for Long Time Series",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -106919,7 +106944,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T05:11:29.652Z",
+      "verified_at": "2026-10-31T00:34:26.895Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -157315,6 +157340,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T00:20:40.774Z"
+    },
+    "rule-5958": {
+      "learning_id": "rule-5958",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5958,
+      "title": "map WCC / labelPropagation ids back to node ids under nodeLabels (#3029) (#3032)",
+      "source_url": "https://github.com/FalkorDB/FalkorDB",
+      "source_version": "155a246f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:34:19.471Z"
+    },
+    "rule-5959": {
+      "learning_id": "rule-5959",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5959,
+      "title": "[MM-71476] Fix timeout when deleting the last reply in a thread on large Posts t",
+      "source_url": "https://github.com/mattermost/mattermost",
+      "source_version": "f619e1e3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:34:25.308Z"
+    },
+    "rule-5960": {
+      "learning_id": "rule-5960",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5960,
+      "title": "Dual-Attention Block Scheduling for Multivariate Time Series",
+      "source_url": "https://huggingface.co/mistralai/Timestral-209M",
+      "source_version": "hf-mistralai-timestral-209m",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:34:26.895Z"
+    },
+    "rule-5961": {
+      "learning_id": "rule-5961",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5961,
+      "title": "Probabilistic Output via Quantile Regression",
+      "source_url": "https://huggingface.co/mistralai/Timestral-209M",
+      "source_version": "hf-mistralai-timestral-209m",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:34:26.895Z"
+    },
+    "rule-5962": {
+      "learning_id": "rule-5962",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5962,
+      "title": "Patch-Based Context Management for Long Time Series",
+      "source_url": "https://huggingface.co/mistralai/Timestral-209M",
+      "source_version": "hf-mistralai-timestral-209m",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T00:34:26.895Z"
     }
   },
   "aliases": {

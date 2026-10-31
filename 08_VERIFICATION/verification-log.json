@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-5EAB",
-    "timestamp": "2026-10-28T18:27:21.107Z",
-    "repository": "domcyrus/rustnet",
-    "learningId": "learn-github-domcyrus-rustnet",
-    "contentHash": "f096caddbfc7477e2d9aa897f0513ee73332afd256ad63c1fc1e0501e39d0b88",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-5LX1",
-    "timestamp": "2026-10-28T18:27:30.997Z",
-    "repository": "linkerd/linkerd2",
-    "learningId": "learn-github-linkerd-linkerd2",
-    "contentHash": "adbb74356b08bc97236b23d418cd0b787e9072a7d60ac35a51a8ced3a332f942",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-EMK4",
-    "timestamp": "2026-10-28T18:34:31.732Z",
-    "repository": "BAAI/bge-large-en-v1.5",
-    "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
-    "contentHash": "3d16d06e5aa4e19c094c04b50083061b66d46079089c9e470ca7921682c2da7e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-ENIJ",
     "timestamp": "2026-10-28T18:34:32.971Z",
     "repository": "topgrade-rs/topgrade",
@@ -7492,6 +7447,51 @@
     "contentHash": "e13a29cfccb3f5f2ce825c0244e87be499ad04d9471b25e002d96a8969b783f1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-5166",
+    "timestamp": "2026-10-31T00:34:19.566Z",
+    "repository": "FalkorDB/FalkorDB",
+    "learningId": "learn-github-falkordb-falkordb",
+    "contentHash": "abf570fb366f7f333e6146573fdf38b9362dea63113fb5897b272323391379d6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-55OC",
+    "timestamp": "2026-10-31T00:34:25.404Z",
+    "repository": "mattermost/mattermost",
+    "learningId": "learn-github-mattermost-mattermost",
+    "contentHash": "6b9c6a45f67b261e61ebfc779e756fea84dda3699f4b51a33f6976692b7d0791",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-56WI",
+    "timestamp": "2026-10-31T00:34:26.994Z",
+    "repository": "mistralai/Timestral-209M",
+    "learningId": "learn-huggingface-mistralai-timestral-209m",
+    "contentHash": "2efb02a4e5e71a1b03178e18fb48328c70c31bf499ddacbef8ddef71afdd03da",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

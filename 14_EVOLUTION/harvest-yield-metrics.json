@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T00:27:32.087Z",
-  "total_cycles_completed": 6352,
-  "total_learnings_persisted": 6352,
-  "total_rules_promoted": 5930,
+  "last_updated": "2026-10-31T00:34:27.007Z",
+  "total_cycles_completed": 6355,
+  "total_learnings_persisted": 6355,
+  "total_rules_promoted": 5935,
   "history": [
-    {
-      "timestamp": "2026-10-30T10:32:10.265Z",
-      "repository": "webrecorder/browsertrix-crawler",
-      "learningId": "learn-github-webrecorder-browsertrix-crawler",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T10:40:53.292Z",
-      "repository": "ArchiveBox/ArchiveBox",
-      "learningId": "learn-github-archivebox-archivebox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T10:40:58.785Z",
-      "repository": "smallstep/cli",
-      "learningId": "learn-github-smallstep-cli",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T10:41:00.873Z",
       "repository": "meilisearch/meilisearch",
@@ -1403,6 +1382,27 @@
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
       "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T00:34:19.575Z",
+      "repository": "FalkorDB/FalkorDB",
+      "learningId": "learn-github-falkordb-falkordb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T00:34:25.413Z",
+      "repository": "mattermost/mattermost",
+      "learningId": "learn-github-mattermost-mattermost",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T00:34:27.007Z",
+      "repository": "mistralai/Timestral-209M",
+      "learningId": "learn-huggingface-mistralai-timestral-209m",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
