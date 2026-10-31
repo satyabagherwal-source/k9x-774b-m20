@@ -655,8 +655,8 @@
     "sourceUrl": "https://huggingface.co/canberkkkkkk/ema-lightning",
     "sourceVersion": "hf-canberkkkkkk-ema-lightning",
     "license": "Open-Source",
-    "contentHash": "2ff5e1043683e9eb168ee210d0a3cea8c0f1a16e6c6cf81f797755a2076337df",
-    "lastHarvestedAt": "2026-10-28T19:38:54.930Z",
+    "contentHash": "4790bcaa173fafcf803ab13360e0b6c782066220e15ea55141054f9b4be3f530",
+    "lastHarvestedAt": "2026-10-31T20:59:43.792Z",
     "learningId": "learn-huggingface-canberkkkkkk-ema-lightning"
   },
   "hf-google-embeddinggemma-2": {
@@ -3183,10 +3183,10 @@
     "repository": "fallow-rs/fallow",
     "platform": "github",
     "sourceUrl": "https://github.com/fallow-rs/fallow",
-    "sourceVersion": "2d4aed8d",
+    "sourceVersion": "500709f1",
     "license": "MIT",
-    "contentHash": "6a5d9a731e8c13f47800f7da86679f47ee3a97a089e419fa8a73c3ee28c15c58",
-    "lastHarvestedAt": "2026-10-31T01:21:22.322Z",
+    "contentHash": "42f73f8efccbada13aa2a33fc16776c03a6dd1d06db359632528084a29ae1994",
+    "lastHarvestedAt": "2026-10-31T20:59:36.836Z",
     "learningId": "learn-github-fallow-rs-fallow"
   },
   "expo-create-react-native-app": {
@@ -7333,10 +7333,10 @@
     "repository": "loft-sh/vcluster",
     "platform": "github",
     "sourceUrl": "https://github.com/loft-sh/vcluster",
-    "sourceVersion": "6997470d",
+    "sourceVersion": "8bd47ad6",
     "license": "Apache-2.0",
-    "contentHash": "c845654da018150dd41f26d6746d25b315be9f9134acc0a9d4cc1020e0dfd91d",
-    "lastHarvestedAt": "2026-10-28T21:56:40.212Z",
+    "contentHash": "47c759ee676dd72fa78e630c8f9d7b52ab48db24d1f75a1f3b909e9f7bc3e6e7",
+    "lastHarvestedAt": "2026-10-31T20:59:40.851Z",
     "learningId": "learn-github-loft-sh-vcluster"
   },
   "arkivanov-decompose": {
@@ -8063,10 +8063,10 @@
     "repository": "jacklandrin/OnlySwitch",
     "platform": "github",
     "sourceUrl": "https://github.com/jacklandrin/OnlySwitch",
-    "sourceVersion": "d1bce595",
+    "sourceVersion": "1daf9e74",
     "license": "MIT",
-    "contentHash": "e74a4444dfed54730990f795e6e3edc1197c9ef3fe1fc45b9868c7843143098a",
-    "lastHarvestedAt": "2026-10-29T02:03:29.414Z",
+    "contentHash": "249941a30d96b3210d7cdac1fd7c171623f89eea02ae15af87094587c5615074",
+    "lastHarvestedAt": "2026-10-31T20:59:38.511Z",
     "learningId": "learn-github-jacklandrin-onlyswitch"
   },
   "alin23-lunar": {

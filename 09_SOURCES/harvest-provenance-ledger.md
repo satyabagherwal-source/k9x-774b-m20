@@ -6724,3 +6724,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-embeddinggemma-2` | `https://huggingface.co/google/embeddinggemma-2` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-31T20:53:08.844Z |
 | `learn-github-unhappychoice-gitlogue` | `https://github.com/unhappychoice/gitlogue` | `e4933f27` | Multi-dimensional audit evidence | 2026-10-31T20:53:10.134Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `52529f0c` | Multi-dimensional audit evidence | 2026-10-31T20:53:23.898Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `500709f1` | Multi-dimensional audit evidence | 2026-10-31T20:59:36.836Z |
+| `learn-github-jacklandrin-onlyswitch` | `https://github.com/jacklandrin/OnlySwitch` | `1daf9e74` | Multi-dimensional audit evidence | 2026-10-31T20:59:38.511Z |
+| `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `8bd47ad6` | Multi-dimensional audit evidence | 2026-10-31T20:59:40.851Z |
+| `learn-huggingface-canberkkkkkk-ema-lightning` | `https://huggingface.co/canberkkkkkk/ema-lightning` | `hf-canberk` | Multi-dimensional audit evidence | 2026-10-31T20:59:43.792Z |

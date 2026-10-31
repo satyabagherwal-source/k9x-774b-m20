@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T20:53:23.845Z",
+  "last_updated": "2026-10-31T20:59:43.743Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12813,8 +12813,8 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "2d4aed8d",
-      "content_hash": "6a5d9a731e8c13f47800f7da86679f47ee3a97a089e419fa8a73c3ee28c15c58",
+      "source_version": "500709f1",
+      "content_hash": "42f73f8efccbada13aa2a33fc16776c03a6dd1d06db359632528084a29ae1994",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "promoted_rules": [
@@ -12872,6 +12872,11 @@
           "number": 5984,
           "title": "audit): remove the lock file of a reclaimed audit cache on Unix (#4021)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6316,
+          "title": "cloud): time limit on keychain calls and locked credentials file changes (#4042)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12879,7 +12884,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T01:21:22.259Z",
+      "verified_at": "2026-10-31T20:59:36.774Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -20312,7 +20317,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/canberkkkkkk/ema-lightning",
       "source_version": "hf-canberkkkkkk-ema-lightning",
-      "content_hash": "2ff5e1043683e9eb168ee210d0a3cea8c0f1a16e6c6cf81f797755a2076337df",
+      "content_hash": "4790bcaa173fafcf803ab13360e0b6c782066220e15ea55141054f9b4be3f530",
       "dossier_path": "07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md",
       "promoted_rules": [
@@ -20340,6 +20345,21 @@
           "number": 2273,
           "title": "Multi-Threaded Model Concurrency via Non-Blocking Request Batching (Playhead Pattern)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6319,
+          "title": "The Playhead Batching Invariant for Real-Time Neural Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6320,
+          "title": "The Latent Rate Decoupling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6321,
+          "title": "The Streaming Chunk Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -20360,7 +20380,7 @@
         "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv485u82",
         "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv4lfa5g"
       ],
-      "verified_at": "2026-10-28T19:38:54.829Z",
+      "verified_at": "2026-10-31T20:59:43.731Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33078,8 +33098,8 @@
       "slug": "jacklandrin-onlyswitch",
       "platform": "github",
       "source_url": "https://github.com/jacklandrin/OnlySwitch",
-      "source_version": "d1bce595",
-      "content_hash": "e74a4444dfed54730990f795e6e3edc1197c9ef3fe1fc45b9868c7843143098a",
+      "source_version": "1daf9e74",
+      "content_hash": "249941a30d96b3210d7cdac1fd7c171623f89eea02ae15af87094587c5615074",
       "dossier_path": "07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md",
       "promoted_rules": [
@@ -33102,6 +33122,11 @@
           "number": 5489,
           "title": "Czech empty switch subtitles",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6317,
+          "title": "Bump build numbers and refresh remote string catalog",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33109,7 +33134,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T02:03:29.319Z",
+      "verified_at": "2026-10-31T20:59:38.442Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37280,8 +37305,8 @@
       "slug": "loft-sh-vcluster",
       "platform": "github",
       "source_url": "https://github.com/loft-sh/vcluster",
-      "source_version": "6997470d",
-      "content_hash": "c845654da018150dd41f26d6746d25b315be9f9134acc0a9d4cc1020e0dfd91d",
+      "source_version": "8bd47ad6",
+      "content_hash": "47c759ee676dd72fa78e630c8f9d7b52ab48db24d1f75a1f3b909e9f7bc3e6e7",
       "dossier_path": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "promoted_rules": [
@@ -37324,6 +37349,11 @@
           "number": 5416,
           "title": "deps): bump the default kubernetes and etcd images to patched releases",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6318,
+          "title": "coredns): add a default case to the node address switch for the exhaustive linte",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37331,7 +37361,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T21:56:40.144Z",
+      "verified_at": "2026-10-31T20:59:40.785Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -164336,6 +164366,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T20:53:23.833Z"
+    },
+    "rule-6316": {
+      "learning_id": "rule-6316",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6316,
+      "title": "cloud): time limit on keychain calls and locked credentials file changes (#4042)",
+      "source_url": "https://github.com/fallow-rs/fallow",
+      "source_version": "500709f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T20:59:36.774Z"
+    },
+    "rule-6317": {
+      "learning_id": "rule-6317",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6317,
+      "title": "Bump build numbers and refresh remote string catalog",
+      "source_url": "https://github.com/jacklandrin/OnlySwitch",
+      "source_version": "1daf9e74",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T20:59:38.442Z"
+    },
+    "rule-6318": {
+      "learning_id": "rule-6318",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6318,
+      "title": "coredns): add a default case to the node address switch for the exhaustive linte",
+      "source_url": "https://github.com/loft-sh/vcluster",
+      "source_version": "8bd47ad6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T20:59:40.786Z"
+    },
+    "rule-6319": {
+      "learning_id": "rule-6319",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6319,
+      "title": "The Playhead Batching Invariant for Real-Time Neural Inference",
+      "source_url": "https://huggingface.co/canberkkkkkk/ema-lightning",
+      "source_version": "hf-canberkkkkkk-ema-lightning",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T20:59:43.731Z"
+    },
+    "rule-6320": {
+      "learning_id": "rule-6320",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6320,
+      "title": "The Latent Rate Decoupling Invariant",
+      "source_url": "https://huggingface.co/canberkkkkkk/ema-lightning",
+      "source_version": "hf-canberkkkkkk-ema-lightning",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T20:59:43.731Z"
+    },
+    "rule-6321": {
+      "learning_id": "rule-6321",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6321,
+      "title": "The Streaming Chunk Boundary Invariant",
+      "source_url": "https://huggingface.co/canberkkkkkk/ema-lightning",
+      "source_version": "hf-canberkkkkkk-ema-lightning",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T20:59:43.731Z"
     }
   },
   "aliases": {

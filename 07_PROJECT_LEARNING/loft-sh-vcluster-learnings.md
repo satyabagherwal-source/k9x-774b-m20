@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md`  
 > **Source**: github ([https://github.com/loft-sh/vcluster](https://github.com/loft-sh/vcluster))  
-> **Source Version**: `6997470d`  
+> **Source Version**: `8bd47ad6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T21:56:39.774Z  
+> **Timestamp**: 2026-10-31T20:59:40.396Z  
 > **Learning ID**: `learn-github-loft-sh-vcluster`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/loft-sh/vcluster](https://github.com/loft-sh/vcluster))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T21:56:38.926Z  
+> **Harvest Timestamp**: 2026-10-31T20:59:40.391Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: vCluster creates tenant clusters: fully isolated environments delivered as managed Kubernetes, or as the foundation for Slurm, Ray, Run:ai and inference clusters. Each gets its own API server, CRDs and RBAC, and runs on an existing cluster or standalone on bare metal. CNCF Certified Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11368 stars
+- **Stars / Engagement**: 11370 stars
 
 ---
 
@@ -439,16 +439,25 @@ func (r *NodeHostsReconciler) compileNodeHosts(ctx context.Context) (string, err
 		return "", err
 	}
 	for _, node := range nodes.Items {
-		var nodeAddress string
+		// a dual-stack node reports one InternalIP per IP family; write a hosts
+		// line for each so both A and AAAA lookups of the node hostname resolve
+		var nodeAddresses []string
 		nodeHostname := node.Name
 		for _, address := range node.Status.Addresses {
-			if address.Type == corev1.NodeInternalIP {
-				nodeAddress = address.Address
-			} else if address.Type == corev1.NodeHostName {
+			switch address.Type {
+			case corev1.NodeInternalIP:
+				if address.Address != "" {
+					nodeAddresses = append(nodeAddresses, address.Address)
+				}
+			case corev1.NodeHostName:
 				nodeHostname = address.Address
+			default:
+				// external IPs and DNS names are not written to NodeHosts
 			}
 		}
-		nodehosts = append(nodehosts, fmt.Sprintf("%s %s", nodeAddress, nodeHostname))
+		for _, nodeAddress := range nodeAddresses {
+			nodehosts = append(nodehosts, fmt.Sprintf("%s %s", nodeAddress, nodeHostname))
+		}
 	}
 	sort.Strings(nodehosts)
 	return strings.Join(nodehosts, "\n"), nil
@@ -1465,147 +1474,179 @@ func ResumeVCluster(ctx context.Context, kubeClient *kubernetes.Clientset, name,
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ee4c52de` (2026-10-28)
-**Commit Message**: fix(deps): bump the default kubernetes and etcd images to patched releases
+### Incident Patch 1: `8bd47ad6` (2026-10-31)
+**Commit Message**: fix(coredns): add a default case to the node address switch for the exhaustive linter
 
-The Kubernetes images move to the upstream patch releases built with Go
-1.26.10, which rejects certificate chains through the compromised eMudhra
-intermediate CAs (CVE-2026-111943). Our rebuilds also sit on alpine 3.24.3
-with brotli 1.2.1-r0, closing CVE-2026-111497.
+Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
+Monorepo-Commit: c1506a89bcb35a2fd6c6c06ff659c6cf42fc561a
 
-etcd moves to 3.6.16-0 on every entry. Upstream pins 3.6.5, 3.6.6 and 3.6.8
-for these patch releases and all three are still built with Go 1.24, so
-matching the pin would leave etcd exposed.
-
-1.33 and older are upstream EOL and are left untouched.
-
-Monorepo-Commit: 7b7f081e7248e6d7320e7cf4040dfe3d14509a99
-
-**File**: `chart/tests/statefulset_test.yaml` (modified, +3/-3)
+**File**: `pkg/controllers/coredns/nodehosts.go` (modified, +2/-0)
 ```diff
-@@ -520,7 +520,7 @@ tests:
-     asserts:
-       - equal:
-           path: spec.template.spec.initContainers[0].image
--          value: ghcr.io/loft-sh/kubernetes:v1.36.5
-+          value: ghcr.io/loft-sh/kubernetes:v1.36.6
- 
-   - it: k8s override image tag
-     set:
-@@ -589,7 +589,7 @@ tests:
-     asserts:
-     - equal:
-         path: spec.template.spec.initContainers[0].image
--        value: ghcr.io/loft-sh/kubernetes:v1.36.5
-+        value: ghcr.io/loft-sh/kubernetes:v1.36.6
- 
-   - it: k8s version not set, default tag images used for apiServer and controllerManager (virtual scheduler enabled, deprecated)
-     chart:
-@@ -605,7 +605,7 @@ tests:
-     asserts:
-       - equal:
-           path: spec.template.spec.initContainers[0].image
--          value: ghcr.io/loft-sh/kubernetes:v1.36.5
-+          value: ghcr.io/loft-sh/kubernetes:v1.36.6
- 
-   - it: k8s version sets image tag for apiServer and controllerManager (virtual scheduler enabled)
-     set:
+@@ -88,6 +88,8 @@ func (r *NodeHostsReconciler) compileNodeHosts(ctx context.Context) (string, err
+ 				}
+ 			case corev1.NodeHostName:
+ 				nodeHostname = address.Address
++			default:
++				// external IPs and DNS names are not written to NodeHosts
+ 			}
+ 		}
+ 		for _, nodeAddress := range nodeAddresses {
 ```
 
-**File**: `chart/values.yaml` (modified, +2/-2)
+---
+
+### Incident Patch 2: `bdc44d0f` (2026-10-31)
+**Commit Message**: fix(coredns): write a nodehosts line for every node internal ip
+
+compileNodeHosts kept only the last InternalIP of each node, so a node
+registered with a dual-stack --node-ip mapped its hostname to one address
+family only and the CoreDNS hosts plugin answered A (or AAAA) queries for it
+with an empty NOERROR. Write one hosts line per non-empty InternalIP and skip
+nodes that have no InternalIP yet.
+
+Closes ENGCP-1880
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Monorepo-Commit: 216dc32fd0476b1a16bebab2d199cc4c4256c4a8
+
+**File**: `pkg/controllers/coredns/nodehosts.go` (modified, +12/-5)
 ```diff
-@@ -322,7 +322,7 @@ controlPlane:
-         # Repository is the repository of the container image, e.g. my-repo/my-image
-         repository: "loft-sh/kubernetes"
-         # Tag is the tag of the container image, and is the default version.
--        tag: "v1.36.5"
-+        tag: "v1.36.6"
-       # APIServer holds configuration specific to starting the api server.
-       apiServer:
-         enabled: true
-@@ -440,7 +440,7 @@ controlPlane:
-             # Repository is the repository of the container image, e.g. my-repo/my-image
-             repository: "etcd"
-             # Tag is the tag of the container image, and is the default version.
--            tag: "3.6.8-0"
-+            tag: "3.6.16-0"
-           # ImagePullPolicy is the pull policy for the external etcd image
-           imagePullPolicy: ""
-           # ExtraArgs are appended to the etcd command.
+@@ -76,16 +76,23 @@ func (r *NodeHostsReconciler) compileNodeHosts(ctx context.Context) (string, err
+ 		return "", err
+ 	}
+ 	for _, node := range nodes.Items {
+-		var nodeAddress string
++		// a dual-stack node reports one InternalIP per IP family; write a hosts
++		// line for each so both A and AAAA lookups of the node hostname resolve
++		var nodeAddresses []string
+ 		nodeHostname := node.Name
+ 		for _, address := range node.Status.Addresses {
+-			if address.Type == corev1.NodeInternalIP {
+-				nodeAddress = address.Address
+-			} else if address.Type == corev1.NodeHostName {
++			switch address.Type {
++			case corev1.NodeInternalIP:
++				if address.Address != "" {
++					nodeAddresses = append(nodeAddresses, address.Address)
++				}
++			case corev1.NodeHostName:
+ 				nodeHostname = address.Address
+ 			}
+ 		}
+-		nodehosts = append(nodehosts, fmt.Sprintf("%s %s", nodeAddress, nodeHostname))
++		for _, nodeAddress := range nodeAddresses {
++			nodehosts = append(nodehosts, fmt.Sprintf("%s %s", nodeAddress, nodeHostname))
++		}
+ 	}
+ 	sort.Strings(nodehosts)
+ 	return strings.Join(nodehosts, "\n"), nil
 ```
 
-**File**: `config/default_extra_values.go` (modified, +6/-6)
+**File**: `pkg/controllers/coredns/nodehosts_test.go` (added, +93/-0)
 ```diff
-@@ -17,9 +17,9 @@ const (
- 
- // K8SVersionMap holds the supported k8s api servers
- var K8SVersionMap = map[string]string{
--	"1.36": "ghcr.io/loft-sh/kubernetes:v1.36.5",
--	"1.35": "ghcr.io/loft-sh/kubernetes:v1.35.9",
--	"1.34": "ghcr.io/loft-sh/kubernetes:v1.34.12",
-+	"1.36": "ghcr.io/loft-sh/kubernetes:v1.36.6",
-+	"1.35": "ghcr.io/loft-sh/kubernetes:v1.35.10",
-+	"1.34": "ghcr.io/loft-sh/kubernetes:v1.34.13",
- 	"1.33": "ghcr.io/loft-sh/kubernetes:v1.33.4",
- 	"1.32": "ghcr.io/loft-sh/kubernetes:v1.32.1",
- 	"1.31": "ghcr.io/loft-sh/kubernetes:v1.31.1",
-@@ -28,9 +28,9 @@ var K8SVersionMap = map[string]string{
- 
- // K8SEtcdVersionMap holds the supported etcd
- var K8SEtcdVersionMap = map[string]string{
--	"1.36": "registry.k8s.io/etcd:3.6.8-0",
--	"1.35": "registry.k8s.io/etcd:3.6.7-0",
--	"1.34": "registry.k8s.io/etcd:3.6.4-0",
-+	"1.36": "registry.k8s.io/etcd:3.6.16-0",
-+	"1.35": "registry.k8s.io/etcd:3.6.16-0",
-+	"1.34": "registry.k8s.io/etcd:3.6.16-0",
- 	"1.33": "registry.k8s.io/etcd:3.5.21-0",
- 	"1.32": "registry.k8s.io/etcd:3.5.21-0",
- 	"1.31": "registry.k8s.io/etcd:3.5.15-0",
-```
-
-**File**: `config/values.yaml` (modified, +2/-2)
-```diff
-@@ -142,7 +142,7 @@ controlPlane:
-       image:
-         registry: ghcr.io
-         repository: "loft-sh/kubernetes"
--        tag: "v1.36.5"
-+        tag: "v1.36.6"
-       apiServer:
-         enabled: true
-         command: []
-@@ -202,7 +202,7 @@ controlPlane:
-           image:
-             registry: "registry.k8s.io"
-             repository: "etcd"
--            tag: "3.6.8-0"
-+            tag: "3.6.16-0"
-           imagePullPolicy: ""
-           extraArgs: []
-           env: []
-```
-
-**File**: `devspace.yaml` (modified, +1/-1)
-```diff
-@@ -32,7 +32,7 @@ deployments:
-           distro:
-             k8s:
-               image:
--                tag: v1.36.5
-+                tag: v1.36.6
-           statefulSet:
-             image:
-               registry: ""
+@@ -0,0 +1,93 @@
++package coredns
++
++import (
++	"context"
++	"testing"
++
++	"github.com/loft-sh/vcluster/pkg/util/loghelper"
++	"gotest.tools/v3/assert"
++	corev1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime"
++	"sigs.k8s.io/controller-runtime/pkg/client"
++	"sigs.k8s.io/controller-runtime/pkg/client/fake"
++)
++
++func testNode(name string, addresses ...corev1.NodeAddress) *corev1.Node {
++	return &corev1.Node{
++		ObjectMeta: metav1.ObjectMeta{Name: name},
++		Status:     corev1.NodeStatus{Addresses: addresses},
++	}
++}
++
++func internalIP(ip string) corev1.NodeAddress {
++	return corev1.NodeAddress{Type: corev1.NodeInternalIP, Address: ip}
++}
++
++func hostname(name string) corev1.NodeAddress {
++	return corev1.NodeAddress{Type: corev1.NodeHostName, Address: name}
++}
++
++func TestCompileNodeHosts(t *testing.T) {
++	tests := []struct {
++		name     string
++		nodes    []*corev1.Node
++		expected string
++	}{
++		{
++			name:     "single-stack node",
++			nodes:    []*corev1.Node{testNode("node-a", internalIP("10.0.0.1"), hostname("node-a"))},
++			expected: "10.0.0.1 node-a",
++		},
++		{
++			name: "dual-stack node gets one line per family",
++			nodes: []*corev1.Node{
++				testNode("node-a", internalIP("172.25.10.26"), internalIP("fd20:14d:70d:1014::1a"), hostname("node-a")),
++			},
++			expected: "172.25.10.26 node-a\nfd20:14d:70d:1014::1a node-a",
++		},
++		{
++			name: "dual-stack node with IPv6 listed first",
++			nodes: []*corev1.Node{
++				testNode("node-a", internalIP("fd20:14d:70d:1014::1a"), internalIP("172.25.10.26"), hostname("node-a")),
++			},
++			expected: "172.25.10.26 node-a\nfd20:14d:70d:1014::1a node-a",
++		},
++		{
++			name:     "hostname address overrides node name",
++			nodes:    []*corev1.Node{testNode("node-a", internalIP("10.0.0.1"), hostname("host-a"))},
++			expected: "10.0.0.1 host-a",
++		},
++		{
++			name: "node without an InternalIP is skipped",
++			nodes: []*corev1.Node{
++				testNode("node-a", hostname("node-a")),
++				testNode("node-b", internalIP("10.0.0.2"), hostname("node-b")),
++			},
++			expected: "10.0.0.2 node-b",
++		},
++		{
++			name:     "no nodes",
++			expected: "",
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			scheme := runtime.NewScheme()
++			assert.NilError(t, corev1.AddToScheme(scheme))
++			objects := make([]client.Object, 0, len(tt.nodes))
++			for _, node := range tt.nodes {
++				objects = append(objects, node)
++			}
++			r := &NodeHostsReconciler{
++				Client: fake.NewClientBuilder().WithScheme(scheme).WithObjects(objects...).Build(),
++				Log:    loghelper.New("test"),
++			}
++
++			nodehosts, err := r.compileNodeHosts(context.Background())
++			assert.NilError(t, err)
++			assert.Equal(t, nodehosts, tt.expected)
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4256** (2026-10-28): [v0.37] chore: bump minimum platform version to v4.12.5 (@deniseschannon)
+- **PR #4255** (2026-10-28): [v0.34] chore: bump minimum platform version to v4.9.7 (@deniseschannon)
+- **PR #4254** (2026-10-28): [v0.35] chore: bump minimum platform version to v4.10.9 (@deniseschannon)
+- **PR #4253** (2026-10-28): [v0.36] chore: bump minimum platform version to v4.11.4 (@deniseschannon)
 - **PR #4252** (2026-10-28): chore(config): drop kubernetes minors below 1.35 from the image maps (backport v0.36 oss) (@loft-bot)
 - **PR #4251** (2026-10-28): chore(config): drop kubernetes minors below 1.35 from the image maps (backport v0.34 oss) (@loft-bot)
-- **PR #4250** (2026-10-28): chore(config): drop kubernetes minors below 1.35 from the image maps (backport v0.35 oss) (@loft-bot)
-- **PR #4248** (2026-10-28): fix(deps): bump the default kubernetes and etcd images to patched releases (backport v0.35 oss) (@loft-bot)
-- **PR #4247** (2026-10-28): fix(deps): bump the default kubernetes and etcd images to patched releases (backport v0.36 oss) (@loft-bot)
-- **PR #4246** (2026-10-28): fix(deps): bump the default kubernetes and etcd images to patched releases (backport v0.34 oss) (@loft-bot)
 
 ---
 
@@ -1625,32 +1666,29 @@ Monorepo-Commit: 7b7f081e7248e6d7320e7cf4040dfe3d14509a99
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump the default kubernetes and etcd images to patched releases
+## X. coredns): add a default case to the node address switch for the exhaustive linte
 
 **RULE**:
-When implementing operations in `chart/tests/statefulset_test.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/controllers/coredns/nodehosts.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ee4c52de`: deps): bump the default kubernetes and etcd images to patched releases. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8bd47ad6`: coredns): add a default case to the node address switch for the exhaustive linter. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `chart/tests/statefulset_test.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/controllers/coredns/nodehosts.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          value: ghcr.io/loft-sh/kubernetes:v1.36.6
-        value: ghcr.io/loft-sh/kubernetes:v1.36.6
-          value: ghcr.io/loft-sh/kubernetes:v1.36.6
+			default:
+				// external IPs and DNS names are not written to NodeHosts
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-          value: ghcr.io/loft-sh/kubernetes:v1.36.5
-        value: ghcr.io/loft-sh/kubernetes:v1.36.5
-          value: ghcr.io/loft-sh/kubernetes:v1.36.5
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ee4c52de` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8bd47ad6` are properly handled with clean fallback behavior.
