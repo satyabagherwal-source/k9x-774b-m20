@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source**: github ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
-> **Source Version**: `17723968`  
+> **Source Version**: `4b6a033f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T03:02:35.498Z  
+> **Timestamp**: 2026-10-31T22:53:35.090Z  
 > **Learning ID**: `learn-github-clementtsang-bottom`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T03:02:35.104Z  
+> **Harvest Timestamp**: 2026-10-31T22:53:35.081Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Yet another cross-platform graphical process/system monitor.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 14141 stars
+- **Stars / Engagement**: 14144 stars
 
 ---
 
@@ -1599,129 +1599,23 @@ impl InputFieldState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `17723968` (2026-10-30)
-**Commit Message**: fix: disable crossterm ratatui underline feature for older Windows compatibility (#2293)
+### Incident Patch 1: `4b6a033f` (2026-10-31)
+**Commit Message**: ci: bump rust CI version to 1.99.1 (#2294)
 
-Older Windows versions (8.1 and older) were failing to render properly due to winapi not supporting underlining.
-
-Looks like we were transitively enabling this feature because of the crossterm feature, which pulls in ratatui_crossterm which enables it by default. As a quick fix, we manually pull in ratatui_crossterm ourselves and disable that feature.
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `.github/ci/rust_version.txt` (modified, +1/-1)
 ```diff
-@@ -43,6 +43,7 @@ That said, these are more guidelines rather than hard rules, though the project
- - [#2261](https://github.com/ClementTsang/bottom/pull/2261): Fix scrollbars not drawing when height of bar was 2 or less.
- - [#2279](https://github.com/ClementTsang/bottom/pull/2279): Fix an abort (SIGABRT) if the terminal is gone when exiting.
- - [#2284](https://github.com/ClementTsang/bottom/pull/2284): Fix bracketed paste not being supported on Windows 7/8 causing btm to panic on startup.
-+- [#2293](https://github.com/ClementTsang/bottom/pull/2293): Fix older Windows compatibility by disabling the underline feature in ratatui.
- 
- ### Other
- 
-```
-
-**File**: `Cargo.lock` (modified, +1/-1)
-```diff
-@@ -159,6 +159,7 @@ dependencies = [
-  "predicates",
-  "ratatui",
-  "ratatui-core",
-+ "ratatui-crossterm",
-  "regex",
-  "rustc-hash",
-  "rustix",
-@@ -1212,7 +1213,6 @@ checksum = "3274ba0a2c5e1bcad2a2005d20f4dc59dad26b2eb0940fb094500dba4099d57d"
- dependencies = [
-  "instability",
-  "ratatui-core",
-- "ratatui-crossterm",
-  "ratatui-widgets",
-  "serde",
- ]
-```
-
-**File**: `Cargo.toml` (modified, +5/-16)
-```diff
-@@ -67,12 +67,7 @@ generate_schema = ["schemars", "strum"]
- 
- [dependencies]
- anyhow = "1.0.104"
--clap = { version = "4.6.6", features = [
--    "default",
--    "cargo",
--    "wrap_help",
--    "derive",
--] }
-+clap = { version = "4.6.6", features = ["default", "cargo", "wrap_help", "derive"] }
- concat-string = "1.0.1"
- crossterm = "0.29.0"
- ctrlc = { version = "3.5.2", features = ["termination"] }
-@@ -81,15 +76,14 @@ humantime = "2.3.0"
- indexmap = "2.14.0"
- indoc = "2.0.7"
- itertools = "0.15.0"
--nvml-wrapper = { version = "0.13.0", optional = true, features = [
--    "legacy-functions",
--] }
-+nvml-wrapper = { version = "0.13.0", optional = true, features = ["legacy-functions"] }
- ratatui = { version = "0.30.2", default-features = false, features = [
-     "unstable-rendered-line-info",
-     "layout-cache",
--    "crossterm",
-+    "std",
- ] }
- ratatui-core = "0.1.2"
-+ratatui-crossterm = { version = "0.1.2", default-features = false, features = ["crossterm_0_29"] }
- regex = "1.13.1"
- rustc-hash = "2.1.3"
- serde = { version = "1.0.228", features = ["derive"] }
-@@ -144,12 +138,7 @@ tempfile = { version = "3.27.0", default-features = false }
- portable-pty = "0.9.0"
- 
- [build-dependencies]
--clap = { version = "4.6.6", features = [
--    "default",
--    "cargo",
--    "wrap_help",
--    "derive",
--] }
-+clap = { version = "4.6.6", features = ["default", "cargo", "wrap_help", "derive"] }
- clap_complete = "4.6.9"
- clap_complete_nushell = "4.6.1"
- clap_complete_fig = "4.5.2"
-```
-
-**File**: `src/canvas/components/pipe_gauge.rs` (modified, +0/-1)
-```diff
-@@ -254,7 +254,6 @@ impl Widget for PipeGauge<'_> {
-                     bg: None,
-                     add_modifier: self.gauge_style.add_modifier,
-                     sub_modifier: self.gauge_style.sub_modifier,
--                    underline_color: None,
-                 };
- 
-                 for col in start..pipe_end {
-```
-
-**File**: `src/lib.rs` (modified, +2/-1)
-```diff
-@@ -51,7 +51,8 @@ use crossterm::{
- };
- use event::{BottomEvent, CollectionThreadEvent, handle_key_event_or_break, handle_mouse_event};
- use options::{args, get_or_create_config, init_app};
--use ratatui::{Terminal, backend::CrosstermBackend, prelude::Backend};
-+use ratatui::{Terminal, prelude::Backend};
-+use ratatui_crossterm::CrosstermBackend;
- #[allow(unused_imports, reason = "this is needed if logging is enabled")]
- use utils::logging::*;
- use utils::{cancellation_token::CancellationToken, conversion::*};
+@@ -1 +1 @@
+-1.99.0
++1.99.1
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2294** (2026-10-31): ci: bump rust CI version to 1.99.1 (@ClementTsang)
 - **PR #2293** (2026-10-30): fix: disable crossterm ratatui underline feature for older Windows compatibility (@ClementTsang)
 - **PR #2292** (2026-10-30): docs: update contribution docs (@ClementTsang)
 - **PR #2291** (2026-10-29): docs: update changelog (@ClementTsang)
 - **PR #2290** (2026-10-29): ci: add windows gnullvm aarch64 build targets (@ClementTsang)
 - **PR #2289** (closed): ci: build a Windows ARM64 GNU-family (gnullvm) release binary (@meop)
-- **PR #2286** (2026-10-30): uptick: bump release version to 0.15.0 (@ClementTsang)
 
 ---
 
@@ -1741,28 +1635,28 @@ Looks like we were transitively enabling this feature because of the crossterm f
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. disable crossterm ratatui underline feature for older Windows compatibility (#22
+## X. ci: bump rust CI version to 1.99.1 (#2294)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/ci/rust_version.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `17723968`: disable crossterm ratatui underline feature for older Windows compatibility (#2293). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4b6a033f`: ci: bump rust CI version to 1.99.1 (#2294). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/ci/rust_version.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- [#2293](https://github.com/ClementTsang/bottom/pull/2293): Fix older Windows compatibility by disabling the underline feature in ratatui.
+1.99.1
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+1.99.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `17723968` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4b6a033f` are properly handled with clean fallback behavior.

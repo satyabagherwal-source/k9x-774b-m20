@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T22:46:44.920Z",
+  "last_updated": "2026-10-31T22:53:44.261Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1850,14 +1850,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-microsoft-frognano-4b-2609",
-      "content_hash": "d037d9df82d28ba9f605eb28267580f8b8f34b211eadb5baccd1f53f97985c32",
-      "verified_at": "2026-10-28T21:11:14.840Z",
+      "content_hash": "b8bef25fcbb91c25a0ea68e3528fa908992cd488b54d09d432119e003e4a7f82",
+      "verified_at": "2026-10-31T22:53:35.329Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T21:11:14.840Z"
+      "last_updated": "2026-10-31T22:53:35.329Z"
     },
     "FrancisRing/Prism": {
       "repository": "FrancisRing/Prism",
@@ -4341,14 +4341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karmada-io-karmada",
-      "content_hash": "cc0d646c50759bd381f44512a94f84b3013e71f86fbd1f83591c2571755cfaeb",
-      "verified_at": "2026-10-31T07:30:30.861Z",
+      "content_hash": "3cfc3a4656bdc3a3cc4e28e58fb2ef273d53729221ba4deed08bf0fd2377b7e5",
+      "verified_at": "2026-10-31T22:53:44.260Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T07:30:30.861Z"
+      "last_updated": "2026-10-31T22:53:44.260Z"
     },
     "milvus-io/bootcamp": {
       "repository": "milvus-io/bootcamp",
@@ -5961,14 +5961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clementtsang-bottom",
-      "content_hash": "c20e35831101aa5d2b71bdac9734a7f0e66763ec37b2bebc516be4c6eaca4951",
-      "verified_at": "2026-10-31T03:02:36.150Z",
+      "content_hash": "02a92cd9495b4743fcf4fcc14ddc87e3fdbb45310081dbc714d20ef2dd4a571c",
+      "verified_at": "2026-10-31T22:53:35.835Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T03:02:36.150Z"
+      "last_updated": "2026-10-31T22:53:35.835Z"
     },
     "jhen0409/react-native-debugger": {
       "repository": "jhen0409/react-native-debugger",

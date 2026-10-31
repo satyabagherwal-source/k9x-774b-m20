@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T22:46:56.355Z",
-    "lastVerified": "2026-10-31T22:46:56.355Z",
+    "lastChecked": "2026-10-31T22:53:46.806Z",
+    "lastVerified": "2026-10-31T22:53:46.806Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -348,9 +348,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T22:23:54.971Z",
+    "lastChecked": "2026-10-31T22:53:46.611Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T22:23:54.971Z"
+    "lastVerified": "2026-10-31T22:53:46.611Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -700,9 +700,9 @@
   "qdrant-qdrant": {
     "name": "qdrant",
     "officialUrl": "https://github.com/qdrant/qdrant",
-    "lastChecked": "2026-10-31T06:24:52.835Z",
+    "lastChecked": "2026-10-31T22:53:44.176Z",
     "revisionIdentifier": "222b2e44",
-    "lastVerified": "2026-10-31T06:24:52.835Z"
+    "lastVerified": "2026-10-31T22:53:44.176Z"
   },
   "hf-black-forest-labs-flux.1-dev": {
     "name": "black-forest-labs/FLUX.1-dev",
@@ -1410,9 +1410,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-10-31T18:52:37.233Z",
+    "lastChecked": "2026-10-31T22:53:41.532Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-10-31T18:52:37.233Z"
+    "lastVerified": "2026-10-31T22:53:41.532Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -2806,13 +2806,13 @@
     "officialUrl": "https://github.com/karmada-io/karmada",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T07:27:58.593Z",
-    "lastVerified": "2026-10-31T07:27:58.593Z",
+    "lastChecked": "2026-10-31T22:53:43.519Z",
+    "lastVerified": "2026-10-31T22:53:43.519Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-karmada-io-karmada",
-    "contentHash": "cc0d646c50759bd381f44512a94f84b3013e71f86fbd1f83591c2571755cfaeb",
-    "promotedRulesCount": 3,
+    "contentHash": "3cfc3a4656bdc3a3cc4e28e58fb2ef273d53729221ba4deed08bf0fd2377b7e5",
+    "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -3063,14 +3063,14 @@
     "officialUrl": "https://github.com/ClementTsang/bottom",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T03:02:35.104Z",
-    "lastVerified": "2026-10-31T03:02:35.104Z",
+    "lastChecked": "2026-10-31T22:53:35.081Z",
+    "lastVerified": "2026-10-31T22:53:35.081Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clementtsang-bottom",
-    "contentHash": "c20e35831101aa5d2b71bdac9734a7f0e66763ec37b2bebc516be4c6eaca4951",
+    "contentHash": "02a92cd9495b4743fcf4fcc14ddc87e3fdbb45310081dbc714d20ef2dd4a571c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7837,12 +7837,12 @@
     "officialUrl": "https://huggingface.co/microsoft/FrogNano-4B-2609",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T21:11:13.747Z",
-    "lastVerified": "2026-10-28T21:11:13.747Z",
+    "lastChecked": "2026-10-31T22:53:34.276Z",
+    "lastVerified": "2026-10-31T22:53:34.276Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
-    "contentHash": "d037d9df82d28ba9f605eb28267580f8b8f34b211eadb5baccd1f53f97985c32",
+    "contentHash": "b8bef25fcbb91c25a0ea68e3528fa908992cd488b54d09d432119e003e4a7f82",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9160,9 +9160,9 @@
   "nsh07-tomato": {
     "name": "Tomato",
     "officialUrl": "https://github.com/nsh07/Tomato",
-    "lastChecked": "2026-10-29T16:48:09.578Z",
+    "lastChecked": "2026-10-31T22:53:36.607Z",
     "revisionIdentifier": "98fa69ed",
-    "lastVerified": "2026-10-29T16:48:09.578Z"
+    "lastVerified": "2026-10-31T22:53:36.607Z"
   },
   "jakeschincariol-arena-skill": {
     "name": "Jakeschincariol/arena-skill",

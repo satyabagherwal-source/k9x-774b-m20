@@ -825,8 +825,8 @@
     "sourceUrl": "https://huggingface.co/microsoft/FrogNano-4B-2609",
     "sourceVersion": "hf-microsoft-frognano-4b-2609",
     "license": "Open-Source",
-    "contentHash": "d037d9df82d28ba9f605eb28267580f8b8f34b211eadb5baccd1f53f97985c32",
-    "lastHarvestedAt": "2026-10-28T21:11:14.824Z",
+    "contentHash": "b8bef25fcbb91c25a0ea68e3528fa908992cd488b54d09d432119e003e4a7f82",
+    "lastHarvestedAt": "2026-10-31T22:53:35.319Z",
     "learningId": "learn-huggingface-microsoft-frognano-4b-2609"
   },
   "hf-hexgrad-kokoro-82m": {
@@ -2803,10 +2803,10 @@
     "repository": "karmada-io/karmada",
     "platform": "github",
     "sourceUrl": "https://github.com/karmada-io/karmada",
-    "sourceVersion": "873bc5b1",
+    "sourceVersion": "653afb21",
     "license": "Apache-2.0",
-    "contentHash": "cc0d646c50759bd381f44512a94f84b3013e71f86fbd1f83591c2571755cfaeb",
-    "lastHarvestedAt": "2026-10-31T07:30:30.853Z",
+    "contentHash": "3cfc3a4656bdc3a3cc4e28e58fb2ef273d53729221ba4deed08bf0fd2377b7e5",
+    "lastHarvestedAt": "2026-10-31T22:53:44.252Z",
     "learningId": "learn-github-karmada-io-karmada"
   },
   "milvus-io-bootcamp": {
@@ -3893,10 +3893,10 @@
     "repository": "ClementTsang/bottom",
     "platform": "github",
     "sourceUrl": "https://github.com/ClementTsang/bottom",
-    "sourceVersion": "17723968",
+    "sourceVersion": "4b6a033f",
     "license": "MIT",
-    "contentHash": "c20e35831101aa5d2b71bdac9734a7f0e66763ec37b2bebc516be4c6eaca4951",
-    "lastHarvestedAt": "2026-10-31T03:02:36.143Z",
+    "contentHash": "02a92cd9495b4743fcf4fcc14ddc87e3fdbb45310081dbc714d20ef2dd4a571c",
+    "lastHarvestedAt": "2026-10-31T22:53:35.826Z",
     "learningId": "learn-github-clementtsang-bottom"
   },
   "jhen0409-react-native-debugger": {

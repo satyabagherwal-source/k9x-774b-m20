@@ -6742,3 +6742,6 @@
 | `CYCLE-20261031-HOQK` | `2026-10-31T22:39:51.932Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md` | Yes (`d4204799...`) |
 | `CYCLE-20261031-HWHZ` | `2026-10-31T22:40:01.991Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6352` | Yes (`2912bb75...`) |
 | `CYCLE-20261031-QJDS` | `2026-10-31T22:46:44.896Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | Yes (`9dcca3e4...`) |
+| `CYCLE-20261031-ZC24` | `2026-10-31T22:53:35.308Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`b8bef25f...`) |
+| `CYCLE-20261031-ZCGE` | `2026-10-31T22:53:35.822Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6353` | Yes (`02a92cd9...`) |
+| `CYCLE-20261031-ZIYG` | `2026-10-31T22:53:44.248Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6354` | Yes (`3cfc3a46...`) |
