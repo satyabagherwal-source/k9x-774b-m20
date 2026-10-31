@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261029-GH0D",
-    "timestamp": "2026-10-29T12:19:43.261Z",
-    "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
-    "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
-    "contentHash": "7eee584774bb7ea48f050275e3d282ce7ec65ca9ec48bf238fc979bec4bb25ae",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261029-GK8R",
     "timestamp": "2026-10-29T12:19:47.451Z",
     "repository": "trufflesecurity/trufflehog",
@@ -7492,6 +7477,21 @@
     "contentHash": "ab63cf9e4f862e4d1b40853e8a5a716fc7cbbb67ebfada12ea1c6da24c2f3b07",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-L4CN",
+    "timestamp": "2026-10-31T11:02:41.735Z",
+    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
+    "contentHash": "9b79e6cf26fdc8f1540cfba97ae7c9f2501577beeaf296cf9ada1b26f3ff937a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

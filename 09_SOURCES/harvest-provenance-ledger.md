@@ -6548,3 +6548,4 @@ Every entry in this ledger must capture:
 | `learn-github-dosco-graphjin` | `https://github.com/dosco/graphjin` | `6f14910d` | Multi-dimensional audit evidence | 2026-10-31T10:40:29.323Z |
 | `learn-huggingface-unsloth-qwen-image-2-1-gguf` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-31T10:47:12.240Z |
 | `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `9daa0a72` | Multi-dimensional audit evidence | 2026-10-31T10:47:13.898Z |
+| `learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-31T11:02:41.738Z |

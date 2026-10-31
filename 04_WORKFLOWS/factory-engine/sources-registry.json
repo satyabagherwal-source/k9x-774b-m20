@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T10:47:23.424Z",
-    "lastVerified": "2026-10-31T10:47:23.424Z",
+    "lastChecked": "2026-10-31T11:02:44.293Z",
+    "lastVerified": "2026-10-31T11:02:44.293Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -145,8 +145,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T10:27:14.389Z",
-    "lastVerified": "2026-10-31T10:27:14.389Z",
+    "lastChecked": "2026-10-31T10:58:52.334Z",
+    "lastVerified": "2026-10-31T10:58:52.334Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -951,8 +951,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T05:52:30.366Z",
-    "lastVerified": "2026-10-31T05:52:30.366Z",
+    "lastChecked": "2026-10-31T10:58:47.370Z",
+    "lastVerified": "2026-10-31T10:58:47.370Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -2670,12 +2670,12 @@
     "lastVerified": "2026-10-31T06:52:25.670Z"
   },
   "crate-crate": {
-    "name": "crate/crate",
+    "name": "crate",
     "officialUrl": "https://github.com/crate/crate",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-10-30T18:00:10.909Z",
-    "lastVerified": "2026-10-30T18:00:10.909Z",
+    "lastChecked": "2026-10-31T10:58:50.069Z",
+    "lastVerified": "2026-10-31T10:58:50.069Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crate-crate",
@@ -2684,7 +2684,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "fa1943a8"
   },
   "1jehuang-jcode": {
     "name": "1jehuang/jcode",
@@ -2895,12 +2896,12 @@
     "officialUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T08:25:21.121Z",
-    "lastVerified": "2026-10-28T08:25:21.121Z",
+    "lastChecked": "2026-10-31T10:58:39.946Z",
+    "lastVerified": "2026-10-31T10:58:39.946Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-    "contentHash": "8506fdd0db8733908485b14c3aec4127f0fe6db5c3360a377897596a23e5af02",
+    "contentHash": "9b79e6cf26fdc8f1540cfba97ae7c9f2501577beeaf296cf9ada1b26f3ff937a",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -3809,9 +3810,9 @@
   "go-dev-frame-sponge": {
     "name": "sponge",
     "officialUrl": "https://github.com/go-dev-frame/sponge",
-    "lastChecked": "2026-10-30T18:58:29.221Z",
+    "lastChecked": "2026-10-31T10:58:44.777Z",
     "revisionIdentifier": "beef9eec",
-    "lastVerified": "2026-10-30T18:58:29.221Z"
+    "lastVerified": "2026-10-31T10:58:44.777Z"
   },
   "parthsarthi03-raptor": {
     "name": "raptor",
@@ -5372,9 +5373,9 @@
   "learnapollo-learnapollo": {
     "name": "learnapollo",
     "officialUrl": "https://github.com/learnapollo/learnapollo",
-    "lastChecked": "2026-10-28T15:36:33.194Z",
+    "lastChecked": "2026-10-31T10:58:42.304Z",
     "revisionIdentifier": "dea1677e",
-    "lastVerified": "2026-10-28T15:36:33.194Z"
+    "lastVerified": "2026-10-31T10:58:42.304Z"
   },
   "orange-cyberdefense-goad": {
     "name": "GOAD",
@@ -5800,8 +5801,8 @@
     "officialUrl": "https://github.com/kubearmor/KubeArmor",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T12:58:20.108Z",
-    "lastVerified": "2026-10-30T12:58:20.108Z",
+    "lastChecked": "2026-10-31T10:58:37.437Z",
+    "lastVerified": "2026-10-31T10:58:37.437Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubearmor-kubearmor",
