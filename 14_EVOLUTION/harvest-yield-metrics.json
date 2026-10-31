@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T22:05:19.810Z",
-  "total_cycles_completed": 6710,
-  "total_learnings_persisted": 6710,
-  "total_rules_promoted": 6350,
+  "last_updated": "2026-10-31T22:12:05.744Z",
+  "total_cycles_completed": 6712,
+  "total_learnings_persisted": 6712,
+  "total_rules_promoted": 6351,
   "history": [
-    {
-      "timestamp": "2026-10-31T10:33:57.407Z",
-      "repository": "fabio-rovai/open-ontologies",
-      "learningId": "learn-github-fabio-rovai-open-ontologies",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T10:40:20.309Z",
-      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-      "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T10:40:28.609Z",
       "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
@@ -1403,6 +1389,20 @@
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:12:05.072Z",
+      "repository": "Qwen/Qwen3-4B",
+      "learningId": "learn-huggingface-qwen-qwen3-4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:12:05.744Z",
+      "repository": "1jehuang/jcode",
+      "learningId": "learn-github-1jehuang-jcode",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

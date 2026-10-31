@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T22:05:19.722Z",
+  "last_updated": "2026-10-31T22:12:05.657Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -107,8 +107,8 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "33e27ca4",
-      "content_hash": "23857cc10e82df05040b4b60da192074fcd29a33df4874e150ca0941befdfeb7",
+      "source_version": "f74bb39c",
+      "content_hash": "44e913835d63a9ed77933da973b99320f3916e975093a4f0ee7b4a054de623bb",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
@@ -196,6 +196,11 @@
           "number": 6014,
           "title": "voice): Make `ioctl` compatible with musl",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6346,
+          "title": "tui): keep resume search work off the input thread",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -203,7 +208,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T02:21:19.911Z",
+      "verified_at": "2026-10-31T22:12:05.637Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28382,7 +28387,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-4B",
       "source_version": "hf-qwen-qwen3-4b",
-      "content_hash": "3549507ba0c96fb4706760486f5a4eb0a92bb86cca0d39e7af9e92b1871c4ca1",
+      "content_hash": "afa55b32a4acac42bfe5958befbae7679dae64ab59ade9a6a40ff39cd92e80f8",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md",
       "promoted_rules": [
@@ -28419,7 +28424,7 @@
         "learn-huggingface-hf-qwen-qwen3-4b-mv3xiori",
         "learn-huggingface-hf-qwen-qwen3-4b-mv4c8j52"
       ],
-      "verified_at": "2026-10-28T20:44:20.480Z",
+      "verified_at": "2026-10-31T22:12:04.942Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -164911,6 +164916,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T22:05:19.702Z"
+    },
+    "rule-6346": {
+      "learning_id": "rule-6346",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6346,
+      "title": "tui): keep resume search work off the input thread",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "f74bb39c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T22:12:05.637Z"
     }
   },
   "aliases": {

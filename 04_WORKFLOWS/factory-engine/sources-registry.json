@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T22:05:22.351Z",
-    "lastVerified": "2026-10-31T22:05:22.351Z",
+    "lastChecked": "2026-10-31T22:12:16.458Z",
+    "lastVerified": "2026-10-31T22:12:16.458Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -248,8 +248,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T21:37:43.385Z",
-    "lastVerified": "2026-10-31T21:37:43.385Z",
+    "lastChecked": "2026-10-31T22:12:16.447Z",
+    "lastVerified": "2026-10-31T22:12:16.447Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -341,9 +341,9 @@
   "pathwaycom-llm-app": {
     "name": "llm-app",
     "officialUrl": "https://github.com/pathwaycom/llm-app",
-    "lastChecked": "2026-10-31T05:36:10.109Z",
+    "lastChecked": "2026-10-31T22:12:13.812Z",
     "revisionIdentifier": "e2a7a09b",
-    "lastVerified": "2026-10-31T05:36:10.109Z"
+    "lastVerified": "2026-10-31T22:12:13.812Z"
   },
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
@@ -953,8 +953,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T18:08:46.571Z",
-    "lastVerified": "2026-10-31T18:08:46.571Z",
+    "lastChecked": "2026-10-31T22:12:11.344Z",
+    "lastVerified": "2026-10-31T22:12:11.344Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -2483,12 +2483,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "authzed-spicedb": {
-    "name": "authzed/spicedb",
+    "name": "spicedb",
     "officialUrl": "https://github.com/authzed/spicedb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T06:32:08.243Z",
-    "lastVerified": "2026-10-31T06:32:08.243Z",
+    "lastChecked": "2026-10-31T22:12:08.958Z",
+    "lastVerified": "2026-10-31T22:12:08.958Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-authzed-spicedb",
@@ -2497,7 +2497,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a87308b0"
   },
   "volcengine-minecontext": {
     "name": "MineContext",
@@ -2699,14 +2700,14 @@
     "officialUrl": "https://github.com/1jehuang/jcode",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T02:21:16.696Z",
-    "lastVerified": "2026-10-31T02:21:16.696Z",
+    "lastChecked": "2026-10-31T22:12:05.025Z",
+    "lastVerified": "2026-10-31T22:12:05.025Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-1jehuang-jcode",
-    "contentHash": "23857cc10e82df05040b4b60da192074fcd29a33df4874e150ca0941befdfeb7",
+    "contentHash": "44e913835d63a9ed77933da973b99320f3916e975093a4f0ee7b4a054de623bb",
     "promotedRulesCount": 1,
-    "recentFixesCount": 16,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7682,12 +7683,12 @@
     "officialUrl": "https://huggingface.co/Qwen/Qwen3-4B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T20:44:19.272Z",
-    "lastVerified": "2026-10-28T20:44:19.272Z",
+    "lastChecked": "2026-10-31T22:12:04.010Z",
+    "lastVerified": "2026-10-31T22:12:04.010Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen3-4b",
-    "contentHash": "3549507ba0c96fb4706760486f5a4eb0a92bb86cca0d39e7af9e92b1871c4ca1",
+    "contentHash": "afa55b32a4acac42bfe5958befbae7679dae64ab59ade9a6a40ff39cd92e80f8",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9034,9 +9035,9 @@
   "mohamedrejeb-calf": {
     "name": "Calf",
     "officialUrl": "https://github.com/MohamedRejeb/Calf",
-    "lastChecked": "2026-10-29T12:13:20.476Z",
+    "lastChecked": "2026-10-31T22:12:06.399Z",
     "revisionIdentifier": "af388bd3",
-    "lastVerified": "2026-10-29T12:13:20.476Z"
+    "lastVerified": "2026-10-31T22:12:06.399Z"
   },
   "anonymousaak-seo-skills": {
     "name": "seo-skills",

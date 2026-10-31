@@ -1035,8 +1035,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-4B",
     "sourceVersion": "hf-qwen-qwen3-4b",
     "license": "Open-Source",
-    "contentHash": "3549507ba0c96fb4706760486f5a4eb0a92bb86cca0d39e7af9e92b1871c4ca1",
-    "lastHarvestedAt": "2026-10-28T20:44:20.566Z",
+    "contentHash": "afa55b32a4acac42bfe5958befbae7679dae64ab59ade9a6a40ff39cd92e80f8",
+    "lastHarvestedAt": "2026-10-31T22:12:05.066Z",
     "learningId": "learn-huggingface-qwen-qwen3-4b"
   },
   "hf-fermionresearch-phonon-2": {
@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "33e27ca4",
+    "sourceVersion": "f74bb39c",
     "license": "MIT",
-    "contentHash": "23857cc10e82df05040b4b60da192074fcd29a33df4874e150ca0941befdfeb7",
-    "lastHarvestedAt": "2026-10-31T02:21:20.014Z",
+    "contentHash": "44e913835d63a9ed77933da973b99320f3916e975093a4f0ee7b4a054de623bb",
+    "lastHarvestedAt": "2026-10-31T22:12:05.739Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T22:05:19.814Z",
+  "last_updated": "2026-10-31T22:12:05.748Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1355,14 +1355,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-4b",
-      "content_hash": "3549507ba0c96fb4706760486f5a4eb0a92bb86cca0d39e7af9e92b1871c4ca1",
-      "verified_at": "2026-10-28T20:44:20.580Z",
+      "content_hash": "afa55b32a4acac42bfe5958befbae7679dae64ab59ade9a6a40ff39cd92e80f8",
+      "verified_at": "2026-10-31T22:12:05.076Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T20:44:20.580Z"
+      "last_updated": "2026-10-31T22:12:05.076Z"
     },
     "FermionResearch/Phonon-2": {
       "repository": "FermionResearch/Phonon-2",
@@ -5541,14 +5541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-1jehuang-jcode",
-      "content_hash": "23857cc10e82df05040b4b60da192074fcd29a33df4874e150ca0941befdfeb7",
-      "verified_at": "2026-10-31T02:21:20.024Z",
+      "content_hash": "44e913835d63a9ed77933da973b99320f3916e975093a4f0ee7b4a054de623bb",
+      "verified_at": "2026-10-31T22:12:05.747Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T02:21:20.024Z"
+      "last_updated": "2026-10-31T22:12:05.747Z"
     },
     "wix/Detox": {
       "repository": "wix/Detox",

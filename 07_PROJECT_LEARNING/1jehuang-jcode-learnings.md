@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source**: github ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
-> **Source Version**: `33e27ca4`  
+> **Source Version**: `f74bb39c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T02:21:19.322Z  
+> **Timestamp**: 2026-10-31T22:12:05.036Z  
 > **Learning ID**: `learn-github-1jehuang-jcode`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T02:21:16.696Z  
+> **Harvest Timestamp**: 2026-10-31T22:12:05.025Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High performance coding agent harness written in Rust, built for heavy multi-agent dev workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 21339 stars
+- **Stars / Engagement**: 21371 stars
 
 ---
 
@@ -55,6 +55,7 @@ mod model_usage_tests;
 mod prompting;
 mod provider;
 mod response_recovery;
+mod runtime_recovery;
 mod status;
 mod streaming;
 #[cfg(test)]
@@ -307,8 +308,7 @@ fn log_agent_provider_stream_lifecycle(
     phase: &str,
     api_start: Instant,
     fields: Vec<(&str, String)>,
-) {
-    let mut owned =
+)
 ```
 
 ### Core Architecture Module: `crates/jcode-app-core/src/agent/compaction.rs`
@@ -2484,172 +2484,396 @@ impl Agent {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f13edbba` (2026-10-19)
-**Commit Message**: fix(voice): Make `ioctl` compatible with musl
+### Incident Patch 1: `acebecf0` (2026-10-31)
+**Commit Message**: fix(tui): keep resume search work off the input thread
 
-Before this change, bulding the jcode-voice crate was failing with:
-
-```
-error[E0308]: mismatched types
-    --> crates/jcode-voice/src/global/hotkey.rs:73:45
-     |
-  73 |     if unsafe { libc::ioctl(fd.as_raw_fd(), req, value as *mut T) } < 0 {
-     |                 -----------                 ^^^ expected `i32`, found `u64`
-     |                 |
-     |                 arguments to this function are incorrect
-```
-
-Different libc implementations use different integer types for the `op`
-parameter. glibc uses `u64`/`unsigned long int`[0], musl uses
-`i32`/`int`[1]. Linux kernel uses `u32`/`unsigned int` when handling
-`ioctl` internally.[2]
-
-To make the code compatible with both glibc and musl in the least
-intrusive way, that does not require explicit type conversions or
-guarding with `cfg`, call `ioctl` using `libc::syscall`, that accepts
-variadic arguments of any type, instead of `libc::ioctl`.
-
-All values produced by the `request` function, despite being
-`libc::c_ulong`, fit into `u32`, so there is no room for any overflow
-issues.
-
-[0] https://elixir.bootlin.com/glibc/glibc-2.41.9000/source/misc/sys/ioctl.h#L42
-[1] https://elixir.bo
-
-**File**: `crates/jcode-voice/src/global/hotkey.rs` (modified, +1/-1)
+**File**: `crates/jcode-tui/src/tui/session_picker/filter.rs` (modified, +11/-7)
 ```diff
-@@ -70,7 +70,7 @@ fn request(write: bool, nr: u8, size: usize) -> libc::c_ulong {
+@@ -50,17 +50,20 @@ impl SessionPicker {
+             return self.all_session_refs();
+         }
+ 
+-        // Fuzzy matches are not monotonic: adding a character can increase the
+-        // error budget or turn a short literal query into a typo-tolerant one.
+-        // Reconsider every session rather than narrowing the previous results.
++        // Keep literal matches immediate. Expensive typo-tolerant matching is
++        // debounced in the worker alongside transcript search, not performed
++        // on every keypress. Reconsider all sessions for new worker results.
+         let candidates = self.all_session_refs();
+-        let fuzzy = jcode_fuzzy::PreparedTokenQuery::new(&normalized);
++        let tokens = loading::search_query_tokens(&normalized);
+ 
+         let matches = candidates
+             .into_iter()
+             .filter(|session_ref| {
+                 self.session_by_ref(*session_ref).is_some_and(|session| {
+-                    fuzzy.matches_search_text(&session.search_index)
++                    (!self.transcript_search.defers_metadata()
++                        && tokens
++                            .iter()
++                            .all(|token| session.search_index.contains(token)))
+                         || self.transcript_search.contains(&session.id)
+                 })
+             })
+@@ -121,8 +124,9 @@ impl SessionPicker {
+         if !self.search_query.trim().is_empty() {
+             filtered.sort_by_cached_key(|session_ref| {
+                 !self.session_by_ref(*session_ref).is_some_and(|session| {
+-                    Self::session_matches_search(session, &self.search_query)
+-                        || self.transcript_search.contains(&session.id)
++                    (!self.transcript_search.defers_metadata()
++                        && Self::session_matches_search(session, &self.search_query))
++                        || self.transcript_search.contains_literal(&session.id)
+                 })
+             });
+         }
+```
+
+**File**: `crates/jcode-tui/src/tui/session_picker/transcript_search.rs` (modified, +118/-19)
+```diff
+@@ -1,4 +1,5 @@
+-//! Cancellable full-transcript search. Never reads transcript files on the UI thread.
++//! Debounced fuzzy and full-transcript search. Only cheap literal metadata
++//! matching runs on the UI thread, never fuzzy DP or transcript file reads.
+ use super::loading::search_query_tokens;
+ use super::{ResumeTarget, SessionInfo};
+ use serde::de::{DeserializeSeed, IgnoredAny, MapAccess, SeqAccess, Visitor};
+@@ -13,10 +14,12 @@ use std::sync::{
+ use std::time::{Duration, Instant};
+ 
+ const DEBOUNCE: Duration = Duration::from_millis(150);
++const IMMEDIATE_METADATA_BYTES: usize = 1024 * 1024;
+ 
+ struct Candidate {
+     id: String,
+     paths: Vec<PathBuf>,
++    search_index: String,
+     missing_tokens: Vec<String>,
  }
- fn ioctl<T>(fd: &File, req: libc::c_ulong, value: &mut T) -> io::Result<()> {
-     // SAFETY: each caller supplies the exact UAPI layout and request size.
--    if unsafe { libc::ioctl(fd.as_raw_fd(), req, value as *mut T) } < 0 {
-+    if unsafe { libc::syscall(libc::SYS_ioctl, fd.as_raw_fd(), req, value as *mut T) } < 0 {
-         Err(io::Error::last_os_error())
-     } else {
-         Ok(())
-```
-
----
-
-### Incident Patch 2: `9f2316c8` (2026-10-30)
-**Commit Message**: Run SSH wire regressions outside nested Tokio runtimes
-
-**File**: `crates/jcode-tui/src/tui/app/remote/input_dispatch.rs` (modified, +4/-4)
-```diff
-@@ -660,11 +660,11 @@ mod ssh_slash_tests {
-         ) {
+ 
+@@ -25,9 +28,11 @@ pub(super) struct TranscriptSearch {
+     query: String,
+     candidates: Vec<Candidate>,
+     started_at: Option<Instant>,
+-    receiver: Option<mpsc::Receiver<String>>,
++    receiver: Option<mpsc::Receiver<(String, bool)>>,
+     cancel: Arc<AtomicBool>,
+     matches: HashSet<String>,
++    literal_matches: HashSet<String>,
++    defer_metadata: bool,
+ }
+ 
+ impl Drop for TranscriptSearch {
+@@ -51,26 +56,30 @@ impl TranscriptSearch {
              return;
          }
-+        let mut app = app_mod::tests::create_test_app();
-+        app.is_remote = true;
-         let runtime = tokio::runtime::Runtime::new().unwrap();
-         runtime.block_on(async {
-             use tokio::io::AsyncBufReadExt;
--            let mut app = app_mod::tests::create_test_app();
--            app.is_remote = true;
-             let mut remote = RemoteConnection::dummy();
-             remote.mark_history_loaded();
-             let mut peer = tokio::io::BufReader::new(remote.take_dummy_peer().unwrap());
-@@ -733,10 +733,10 @@ mod ssh_slash_tests {
-         ) {
-             return;
-         }
-+        let mut app = app_mod::tests::create_test_app();
-+        app.is_remote = true;
-         let runtime = tokio::runtime::Runtime::new().unwrap();
-         runtime.block_on(async {
--            let mut app = app_mod::tests::create_test_app();
--            app.is_remote = true;
-             let mut remote = RemoteConnection::dummy();
-             // No history makes normal remote prompts queue without a wire
-             // send, providing a direct distinction from rejected commands.
-```
-
----
-
-### Incident Patch 3: `fb616e2b` (2026-10-30)
-**Commit Message**: Preserve OpenAI overload diagnostics across retries and finish pending fixes
-
-**File**: `crates/jcode-provider-openai-runtime/src/openai_tests/overload_retry.rs` (modified, +26/-5)
-```diff
-@@ -1,5 +1,5 @@
- // Exercise real Provider::complete retries, not a reconstructed diagnostic chain.
--async fn overload_public_retry_case(recover: bool) {
-+async fn overload_public_retry_case(recover: bool, partial: bool) {
-     use tokio::io::{AsyncReadExt, AsyncWriteExt};
-     let _lock = jcode_base::storage::lock_test_env();
-     let _ = rustls::crypto::aws_lc_rs::default_provider().install_default();
-@@ -41,8 +41,13 @@ async fn overload_public_retry_case(recover: bool) {
-             assert!(data.starts_with(b"POST /v1/responses "));
-             attempts += 1;
-             if attempts == 1 {
--                let body = r#"{"error":{"type":"service_unavailable_error","code":"server_is_overloaded","message":"Our servers are currently overloaded. Please try again later."}}"#;
--                tcp.write_all(format!("HTTP/1.1 503 Service Unavailable\r\nContent-Type: application/json\r\nContent-Length: {}\r\nRetry-After: 0\r\nConnection: close\r\n\r\n{body}", body.len()).as_bytes()).await.unwrap();
-+                if partial {
-+                    let body = "data: {\"type\":\"response.output_text.delta\",\"delta\":\"discard me\"}\n\ndata: {\"type\":\"error\",\"error\":{\"type\":\"service_unavailable_error\",\"code\":\"server_is_overloaded\",\"message\":\"Our servers are currently overloaded.\"}}\n\n";
-+                    tcp.write_all(format!("HTTP/1.1 200 OK\r\nContent-Type: text/event-stream\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}", body.len()).as_bytes()).await.unwrap();
-+                } else {
-+                    let body = r#"{"error":{"type":"service_unavailable_error","code":"server_is_overloaded","message":"Our servers are currently overloaded. Please try again later."}}"#;
-+                    tcp.write_all(format!("HTTP/1.1 503 Service Unavailable\r\nContent-Type: application/json\r\nContent-Length: {}\r\nRetry-After: 0\r\nConnection: close\r\n\r\n{body}", body.len()).as_bytes()).await.unwrap();
-+                }
-             } else if recover {
-                 let body = "data: {\"type\":\"response.output_text.delta\",\"delta\":\"recovered\"}\n\ndata: {\"type\":\"response.completed\",\"response\":{\"status\":\"completed\"}}\n\n";
-                 tcp.write_all(format!("HTTP/1.1 200 OK\r\nContent-Type: text/event-stream\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}", body.len()).as_bytes()).await.unwrap();
-@@ -70,16 +75,27 @@ async fn overload_public_retry_case(recover: bool) {
-         let mut notices = 0;
-         let mut errors = Vec::new();
-         let mut text = String::new();
-+        let mut rolled_back = false;
-         while let Some(event) = stream.next().await {
-             match event {
-                 Ok(StreamEvent::StatusDetail { detail })
-                     if detail.starts_with("OpenAI reported server overload") =>
-                 {
-                     assert!(errors.is_empty(), "notice must precede terminal failure");
-                     assert!(detail.contains("server_is_overloaded"));
-+                    if partial {
-+                        assert!(
-+                            rolled_back,
-+                            "durable notice must not fence partial output before rollback"
-+                        );
-+                    }
-                     notices += 1;
-                 }
-                 Ok(StreamEvent::TextDelta(delta)) => text.push_str(&delta),
-+                Ok(StreamEvent::RetryRollback { .. }) => {
-+                    rolled_back = true;
-+                    text.clear();
-+                }
-                 Err(error) => errors.push(error.to_string()),
-                 _ => {}
+         let tokens = search_query_tokens(query);
++        let sessions: Vec<_> = sessions.collect();
++        self.defer_metadata = sessions
++            .iter()
++            .map(|session| session.search_index.len())
++            .sum::<usize>()
++            > IMMEDIATE_METADATA_BYTES;
+         for session in sessions {
+             let missing_tokens: Vec<_> = tokens
+                 .iter()
+                 .filter(|token| {
+-                    !jcode_fuzzy::PreparedTokenQuery::new(token)
+-                        .matches_search_text(&session.search_index)
++                    self.defer_metadata || !session.search_index.contains(token.as_str())
+                 })
+                 .cloned()
+                 .collect();
+             if missing_tokens.is_empty() {
+                 continue;
              }
-@@ -103,10 +119,15 @@ async fn overload_public_retry_case(recover: bool) {
+             let paths = transcript_paths(session);
+-            if !paths.is_empty() {
+-                self.candidates.push(Candidate {
+-                    id: session.id.clone(),
+-                    paths,
+-                    missing_tokens,
+-                });
+-            }
++            self.candidates.push(Candidate {
++                id: session.id.clone(),
++                paths,
++                search_index: session.search_index.clone(),
++                missing_tokens,
++            });
+         }
+         if !self.candidates.is_empty() {
+             self.started_at = Some(Instant::now());
+@@ -81,6 +90,14 @@ impl TranscriptSearch {
+         self.matches.contains(id)
+     }
  
- #[tokio::test]
- async fn overload_public_retry_retains_report_before_later_timeout() {
--    overload_public_retry_case(false).await;
-+    overload_public_retry_case(false, false).await;
++    pub(super) fn contains_literal(&self, id: &str) -> bool {
++        self.literal_matches.contains(id)
++    }
++
++    pub(super) fn defers_metadata(&self) -> bool {
++        self.defer_metadata
++    }
++
+     pub(super) fn pending(&self) -> bool {
+         self.started_at.is_some() || self.receiver.is_some()
+     }
+@@ -98,14 +115,73 @@ impl TranscriptSearch {
+             match std::thread::Builder::new()
+                 .name("jcode-transcript-search".into())
+                 .spawn(move || {
+-                    for candidate in candidates {
++                    // Finish the in-memory fuzzy pass before opening any large
++                    // transcripts. Neither DP matching nor disk scans belong
++                    // on the keystroke/render thread.
++                    let mut fuzzy_candidates = Vec::new();
++                    for mut candidate in candidates {
+                         if cancel.load(Ordering::Relaxed) {
+-                            break;
++                            return;
++                        }
++                        candidate
++                            .missing_tokens
++                            .retain(|token| !candidate.search_index.contains(token.as_str()));
++                        if candidate.missing_tokens.is_empty() {
++                            if sender.send((candidate.id, true)).is_err() {
++                                return;
++                            }
++                            continue;
+                         }
+-                        if paths_match(&candidate.paths, &candidate.missing_tokens, &cancel)
+-                            && sender.send(candidate.id).is_err()
++                        fuzzy_candidates.push(candidate);
++                    }
++                    let mut transcripts = Vec::new();
++                    for mut candidate in fuzzy_candidates {
++                        if cancel.load(Ordering::Relaxed) {
++                            return;
++                        }
++                        let mut fuzzy_missing = candidate.missing_tokens.clone();
++                        fuzzy_missing.retain(|token| {
++                            !jcode_fuzzy::PreparedTokenQuery::new(token)
++                                .matches_search_text(&can
+```
+
+**File**: `crates/jcode-tui/src/tui/session_picker/transcript_search_tests.rs` (modified, +105/-0)
+```diff
+@@ -1,5 +1,6 @@
+ use super::super::{SessionPicker, SessionSource, SessionStatus};
+ use super::*;
++use crossterm::event::{KeyCode, KeyModifiers};
+ 
+ fn external_session(id: &str, path: &Path) -> SessionInfo {
+     let now = chrono::Utc::now();
+@@ -185,6 +186,110 @@ fn typing_debounces_disk_work_and_metadata_search_stays_immediate() {
+     assert!(!picker.transcript_search.pending());
  }
  
- #[tokio::test]
- async fn overload_public_retry_notice_survives_successful_recovery() {
--    overload_public_retry_case(true).await;
-+    overload_public_retry_case(true, false).await;
++#[test]
++fn fuzzy_metadata_matching_is_debounced_and_never_runs_on_keystroke() {
++    let temp = tempfile::tempdir().unwrap();
++    let mut session = external_session("one", &temp.path().join("absent.jsonl"));
++    session.search_index = "config deploy".into();
++    let mut picker = SessionPicker::new(vec![session]);
++    picker.search_query = "conifg".into();
++    picker.rebuild_items();
++    assert!(picker.visible_sessions.is_empty());
++    assert!(picker.transcript_search.receiver.is_none());
++    assert_eq!(picker.transcript_search.candidates.len(), 1);
++    assert_eq!(
++        picker.transcript_search.candidates[0].missing_tokens,
++        ["conifg"]
++    );
++    wait_for_search(&mut picker);
++    assert_eq!(picker.selected_session().unwrap().id, "one");
++    assert!(!picker.transcript_search.contains_literal("one"));
 +}
 +
-+#[tokio::test]
-+async fn overload_public_retry_rolls_back_partial_output_before_notice() {
-+    overload_public_retry_case(true, true).await;
++#[test]
++#[ignore = "manual typing latency benchmark, prints old synchronous matching versus key handling"]
++fn benchmark_resume_search_keystroke_latency() {
++    let temp = tempfile::tempdir().unwrap();
++    let sessions: Vec<_> = (0..100)
++        .map(|i| {
++            let mut session =
++                external_session(&format!("bench-{i}"), &temp.path().join("absent.jsonl"));
++            session.search_index =
++                "deployment performance synchronization throughput ".repeat(1400);
++            session
++        })
++        .collect();
++    let baseline = Instant::now();
++    let tokens = search_query_tokens("modal cli");
++    let fuzzy = jcode_fuzzy::PreparedTokenQuery::new("modal cli");
++    for session in &sessions {
++        for token in &tokens {
++            std::hint::black_box(
++                jcode_fuzzy::PreparedTokenQuery::new(token)
++                    .matches_search_text(&session.search_index),
++            );
++        }
++        std::hint::black_box(fuzzy.matches_search_text(&session.search_index));
++    }
++    let baseline = baseline.elapsed();
++    let mut picker = SessionPicker::new(sessions);
++    picker.search_active = true;
++    picker.search_query = "modal cl".into();
++    let start = Instant::now();
++    picker
++        .handle_search_key(KeyCode::Char('i'), KeyModifiers::NONE)
++        .unwrap();
++    let elapsed = start.elapsed();
++    assert_eq!(picker.search_query, "modal cli");
++    assert!(picker.transcript_search.receiver.is_none());
++    eprintln!(
++        "100 sessions x 64 KiB: old synchronous matching {baseline:?}, new full key handler {elapsed:?}"
++    );
++}
++
++#[test]
++fn large_history_defers_even_literal_metadata_matching() {
++    let temp = tempfile::tempdir().unwrap();
++    let mut session = external_session("large", &temp.path().join("absent.jsonl"));
++    session.search_index = format!("{} modal cli", "x".repeat(IMMEDIATE_METADATA_BYTES + 1));
++    let mut picker = SessionPicker::new(vec![session]);
++    picker.search_query = "modal cli".into();
++    picker.rebuild_items();
++    assert!(picker.transcript_search.defers_metadata());
++    assert!(picker.visible_sessions.is_empty());
++    assert_eq!(
++        picker.transcript_search.candidates[0].missing_tokens,
++        ["modal", "cli"]
++    );
++    wait_for_search(&mut picker);
++    assert_eq!(picker.selected_session().unwrap().id, "large");
++    assert!(picker.transcript_search.contains_literal("large"));
++}
++
++#[test]
++fn literal_transcript_hit_outranks_newer_fuzzy_metadata_hit() {
++    let temp = tempfile::tempdir().unwrap();
++    let path = temp.path().join("transcript.jsonl");
++    std::fs::write(
++        &path,
++        r#"{"text":"optimizing muse kernels with modal cli"}"#,
++    )
++    .unwrap();
++    let exact = external_session("kernels", &path);
++    let mut fuzzy = external_session("unrelated", &temp.path().join("absent.jsonl"));
++    fuzzy.search_index = "model cli".into();
++    fuzzy.last_message_time = exact.last_message_time + chrono::Duration::seconds(10);
++    let mut picker = SessionPicker::new(vec![fuzzy, exact]);
++    picker.search_query = "modal cli".into();
++    picker.rebuild_items();
++    wait_for_search(&mut picker);
++    assert_eq!(picker.visible_sessions.len(), 2);
++    let first = picker.session_by_ref(picker.visible_sessions[0]).unwrap();
++    assert_eq!(first.id, "kernels");
++    assert!(picker.transcript_search.contains_literal("kernels"));
++    assert!(!picker.transcript_search.contains_literal("unrelated"));
++}
++
+ #[test]
+ fn session_refresh_restarts_search_for_new_transcript_paths() {
+     let temp = tempfile::tempdir().unwrap();
+```
+
+**File**: `crates/jcode-tui/src/tui/session_picker_tests.rs` (modified, +12/-0)
+```diff
+@@ -1116,12 +1116,23 @@ fn resume_search_recovers_matches_as_typo_query_grows() {
+         picker.search_query = query.into();
+         picker.rebuild_items();
+     }
++    wait_for_picker_search(&mut picker);
+     assert_eq!(picker.visible_sessions.len(), 1);
+     picker.search_query = "deply conifg".into();
+     picker.rebuild_items();
++    wait_for_picker_search(&mut picker);
+     assert_eq!(picker.visible_sessions.len(), 1);
  }
+ 
++fn wait_for_picker_search(picker: &mut SessionPicker) {
++    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
++    while picker.transcript_search.pending() {
++        assert!(std::time::Instant::now() < deadline, "search timed out");
++        picker.poll_transcript_search();
++        std::thread::sleep(std::time::Duration::from_millis(1));
++    }
++}
++
+ #[test]
+ fn resume_search_ranks_literal_matches_before_newer_typo_matches() {
+     let mut exact = make_session("literal", "literal", false, SessionStatus::Closed);
+@@ -1132,6 +1143,7 @@ fn resume_search_ranks_literal_matches_before_newer_typo_matches() {
+     let mut picker = SessionPicker::new(vec![typo, exact]);
+     picker.search_query = "config".into();
+     picker.rebuild_items();
++    wait_for_picker_search(&mut picker);
+     assert_eq!(picker.visible_sessions.len(), 2);
+     assert_eq!(
+         picker
+```
+
+**File**: `docs/benchmarks/resume-search-input-2026-10-30.md` (added, +47/-0)
+```diff
+@@ -0,0 +1,47 @@
++# Resume search input latency, October 30, 2026
++
++## Change
++
++Fuzzy metadata matching previously ran twice on the input thread for each search
++edit: once to choose transcript candidates and again to filter visible sessions.
++Transcript file reads were asynchronous, but this matching was not. Large literal
++index scans also contributed measurable input latency.
++
++The picker now performs fuzzy matching in its cancellable, 150 ms debounced
++worker. Literal metadata matching remains immediate only when the total search
++index is at most 1 MiB. Larger indexes use the worker for literal matching too.
++Literal background hits retain a separate ranking tier above fuzzy hits. All
++literal transcript scans finish before fuzzy transcript fallback scans begin.
++Native JSONL journals are searched before their snapshot fallback.
++
++## Measurements
++
++Hosted Rust manual benchmark, 100 sessions with approximately 64 KiB indexes and
++a nonmatching `modal cli` query:
++
++- Equivalent old synchronous matching work: 188.49 ms.
++- New complete search key handler: 1.61 ms.
++- Command: `justrust test -p jcode-tui --lib benchmark_resume_search_keystroke_latency -- --ignored --nocapture`.
++- Hosted run: `20261030-232109807-2794365`.
++
++Local real-terminal smoke test against the actual session store, using isolated
++120-column by 40-row PTYs and typing `modal cli` one character at a time:
++
++| Binary | Key to next terminal write, milliseconds |
++| --- | --- |
++| Baseline `238464fe0` | 46.58, 39.34, 44.91, 144.63, 333.90, 151.51, 329.88, 335.63, 323.24 |
++| Candidate | 9.96, 7.35, 7.52, 8.18, 8.46, 0.78, 7.38, 5.83, 5.77 |
++
++The PTY timings measure the next terminal write, not a parsed query-specific
++frame. Background redraws can affect this proxy. Neither test selected a session
++or changed the shared daemon. These are single-run observations, not percentile
++claims.
++
++## Correctness
++
++`justrust test -p jcode-tui --lib session_picker -- --nocapture` passed 163 tests
++(10 ignored), hosted run `20261030-232058378-2795113`. Coverage includes deferred
++fuzzy matching, deferred literal matching for large indexes, query cancellation,
++metadata plus transcript token matching, progressive preview-scroll preservation,
++and an exact `modal cli` transcript hit ranking ahead of newer `model cli`
++fuzzy metadata.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2025** (closed): Add interactive /config settings wizard to the TUI (@remedialchaos)
 - **PR #2011** (closed): fix(patch): apply unified hunks to CRLF files (@jaeminbird)
 - **PR #2001** (closed): Never auto-background the ask_user chooser (@alecuba16)
 - **PR #1975** (closed): fix(tui): update the existing tmux config (@aphelion31)
 - **PR #1967** (closed): feat: per-session env for tool-spawned processes (@johnnyfish)
 - **PR #1965** (closed): chore(ci): refresh ratchet budgets for post-v0.99.1 growth (@ianalitis)
-- **PR #1963** (closed): style(tui): apply rustfmt to master fmt drift so the Format guardrail stops failing every PR (@ianalitis)
 
 ---
 
@@ -2669,28 +2893,44 @@ issues.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. voice): Make `ioctl` compatible with musl
+## X. tui): keep resume search work off the input thread
 
 **RULE**:
-When implementing operations in `crates/jcode-voice/src/global/hotkey.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/jcode-tui/src/tui/session_picker/filter.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f13edbba`: voice): Make `ioctl` compatible with musl. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `acebecf0`: tui): keep resume search work off the input thread. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-voice/src/global/hotkey.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-tui/src/tui/session_picker/filter.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    if unsafe { libc::syscall(libc::SYS_ioctl, fd.as_raw_fd(), req, value as *mut T) } < 0 {
+        // Keep literal matches immediate. Expensive typo-tolerant matching is
+        // debounced in the worker alongside transcript search, not performed
+        // on every keypress. Reconsider all sessions for new worker results.
+        let tokens = loading::search_query_tokens(&normalized);
+                    (!self.transcript_search.defers_metadata()
+                        && tokens
+                            .iter()
+                            .all(|token| session.search_index.contains(token)))
+                    (!self.transcript_search.defers_metadata()
+                        && Self::session_matches_search(session, &self.search_query))
+                        || self.transcript_search.contains_literal(&session.id)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    if unsafe { libc::ioctl(fd.as_raw_fd(), req, value as *mut T) } < 0 {
+        // Fuzzy matches are not monotonic: adding a character can increase the
+        // error budget or turn a short literal query into a typo-tolerant one.
+        // Reconsider every session rather than narrowing the previous results.
+        let fuzzy = jcode_fuzzy::PreparedTokenQuery::new(&normalized);
+                    fuzzy.matches_search_text(&session.search_index)
+                    Self::session_matches_search(session, &self.search_query)
+                        || self.transcript_search.contains(&session.id)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f13edbba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `acebecf0` are properly handled with clean fallback behavior.
