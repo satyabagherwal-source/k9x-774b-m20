@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/onejs-one-learnings.md`  
 > **Source**: github ([https://github.com/onejs/one](https://github.com/onejs/one))  
-> **Source Version**: `c5d938eb`  
+> **Source Version**: `834340ac`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T18:34:37.756Z  
+> **Timestamp**: 2026-10-31T13:47:17.702Z  
 > **Learning ID**: `learn-github-onejs-one`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/onejs-one-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/onejs/one](https://github.com/onejs/one))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T18:34:37.751Z  
+> **Harvest Timestamp**: 2026-10-31T13:47:17.693Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ❶ One lets you target React web and React Native with a single Vite plugin. Everything you need to build great websites and apps with unified routing.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4626 stars
+- **Stars / Engagement**: 4633 stars
 
 ---
 
@@ -1883,328 +1883,377 @@ class OneBackgroundWorker(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b7fc0440` (2026-10-28)
-**Commit Message**: fix(one): omit native loader twins when native:false
+### Incident Patch 1: `ec85f3ee` (2026-10-31)
+**Commit Message**: fix(deps): pin follow-redirects, joi and node-forge past their high advisories (#1078)
 
-Builds with one({native:false}) run as a pure web framework, so buildPage
-skips the two per-loader .native.js twins only native clients read. Default
-and native-enabled builds are unchanged; stale twins are still pruned by the
-existing incremental cleanup.
+The stable release's security audit step fails on GHSA-mrwp-f3q8-3g9p (follow-redirects), GHSA-4528-x5fx-h6hg (joi) and the node-forge TLS/X.509 advisories; the root resolutions pin the vulnerable versions.
 
-Validation: new buildPage.test.ts (ordinary + redirect loaders, web bytes
-identical, twins omitted iff skipped); existing workerPool.test.ts and
-cleanUrl.test.ts green; /tmp worker probe through real dist pool incl. real
-runSecurityScan parity; oxlint changed files clean; tsc --noEmit clean.
+Validation: bun install; bun run audit exit 0
 
-Team-Machine-Session: r151079
-
-**File**: `apps/onestack.dev/data/docs/configuration.mdx` (modified, +1/-1)
+**File**: `bun.lock` (modified, +6/-6)
 ```diff
-@@ -246,7 +246,7 @@ export default {
+@@ -1546,19 +1546,19 @@
+     "fast-xml-builder": "1.1.7",
+     "fast-xml-parser": "5.9.0",
+     "fastify": "5.12.5",
+-    "follow-redirects": "1.16.1",
++    "follow-redirects": "1.16.2",
+     "form-data": "4.0.6",
+     "got": "11.8.5",
+     "hono": "4.13.11",
+     "image-size": "2.0.3",
+     "ip-address": "10.7.1",
+-    "joi": "17.13.8",
++    "joi": "17.13.9",
+     "js-yaml": "4.3.2",
+     "launch-editor": "2.14.2",
+     "lodash": "4.18.1",
+     "minimatch": "3.1.5",
+     "nanoid": "3.3.18",
+-    "node-forge": "1.4.0",
++    "node-forge": "1.4.2",
+     "picomatch": "^4.0.4",
+     "piscina": "4.9.4",
+     "postcss": "8.5.23",
+@@ -3831,7 +3831,7 @@
  
- The native object allows you to configure your native apps.
+     "flow-parser": ["flow-parser@0.336.0", "", { "dependencies": { "flow-estree": "0.336.0" } }, "sha512-O8QvQf/B3rBF+eagcc9/WMAjfJoaKckdgSd8PT/qvMIIe4ZjVKrSqV5SDnRFAKY0VrE8r5C4ADYgvYhmwkWADA=="],
  
--Pass `false` to completely disable native (iOS/Android) support. When disabled, One will not register the `ios`/`android` Vite environments, skip the Metro / React Native dev server plugins, and skip the rolldown native bundle pipeline — useful when you want to use One purely as a web framework.
-+Pass `false` to completely disable native (iOS/Android) support. When disabled, One will not register the `ios`/`android` Vite environments, skip the Metro / React Native dev server plugins, and skip the rolldown native bundle pipeline — useful when you want to use One purely as a web framework. The static build also omits the per-loader `.native.js` twins, which only native clients read; web loaders, routes, and preloaded assets are unchanged.
+-    "follow-redirects": ["follow-redirects@1.16.1", "", { "peerDependencies": { "debug": "*" }, "optionalPeers": ["debug"] }, "sha512-FNvFGzoMLWmE6Yj9spb/zjd7yiNCHiAW9/Tg9CXrQ8wuu32HtlJOwWO11OJafl5FfY3DxTdQ0vj42zU1kvv5jg=="],
++    "follow-redirects": ["follow-redirects@1.16.2", "", { "peerDependencies": { "debug": "*" }, "optionalPeers": ["debug"] }, "sha512-/kVP2U8z596Ia0gwFrwyIeo74ta5aVmSeU1FfAUMAmcEP5EP7zydmag3SLiN64NaRKef3lxsq7i/g7ltJQDGow=="],
  
- ```tsx fileName=vite.config.ts
- export default {
+     "fontverter": ["fontverter@2.0.0", "", { "dependencies": { "wawoff2": "^2.0.0", "woff2sfnt-sfnt2woff": "^1.0.0" } }, "sha512-DFVX5hvXuhi1Jven1tbpebYTCT9XYnvx6/Z+HFUPb7ZRMCW+pj2clU9VMhoTPgWKPhAs7JJDSk3CW1jNUvKCZQ=="],
+ 
+@@ -4159,7 +4159,7 @@
+ 
+     "jju": ["jju@1.4.0", "", {}, "sha512-8wb9Yw966OSxApiCt0K3yNJL8pnNeIv+OEq2YMidz4FKP6nonSRoOXc80iXY4JaN2FC11B9qsNmDsm+ZOfMROA=="],
+ 
+-    "joi": ["joi@17.13.8", "", { "dependencies": { "@hapi/hoek": "^9.3.0", "@hapi/topo": "^5.1.0", "@sideway/address": "^4.1.5", "@sideway/formula": "^3.0.1", "@sideway/pinpoint": "^2.0.0" } }, "sha512-iPKOGmiRw1jxf/JOPwxmCcUQAOdF359mdzYiP2DJ+TMX0YK2zjK3D+zYOaGjpumWxOFF/l2xVWjRVK5bGSLdEw=="],
++    "joi": ["joi@17.13.9", "", { "dependencies": { "@hapi/hoek": "^9.3.0", "@hapi/topo": "^5.1.0", "@sideway/address": "^4.1.5", "@sideway/formula": "^3.0.1", "@sideway/pinpoint": "^2.0.0" } }, "sha512-llFCT2rVtfwgBCaIqxtjim+iHqrgss4ONiGSYiiGH9jnjWq90ppSRffqmqKvwpa8W+YfILyQV6XyGcegXX2T4g=="],
+ 
+     "js-tokens": ["js-tokens@4.0.0", "", {}, "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ=="],
+ 
+@@ -4511,7 +4511,7 @@
+ 
+     "node-fetch": ["node-fetch@2.7.0", "", { "dependencies": { "whatwg-url": "^5.0.0" }, "peerDependencies": { "encoding": "^0.1.0" }, "optionalPeers": ["encoding"] }, "sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A=="],
+ 
+-    "node-forge": ["node-forge@1.4.0", "", {}, "sha512-LarFH0+6VfriEhqMMcLX2F7SwSXeWwnEAJEsYm5QKWchiVYVvJyV9v7UDvUv+w5HO23ZpQTXDv/GxdDdMyOuoQ=="],
++    "node-forge": ["node-forge@1.4.2", "", {}, "sha512-rRtAR5XLJ8gCKd9du4qrKAsgCG1ObGP4gLeNJMa4vYSeq4bmBMOJk5IHkrviBV0q7uoAJlVd8HEQYQSVUb4FGQ=="],
+ 
+     "node-int64": ["node-int64@0.4.0", "", {}, "sha512-O5lz91xSOeoXP6DulyHfllpq+Eg00MWitZIbtPfoSEvqIHdl5gfcY6hYzDWnj0qD5tz52PI08u9qUvSVeUBeHw=="],
+ 
 ```
 
-**File**: `packages/one/src/cli/build.ts` (modified, +8/-1)
+**File**: `package.json` (modified, +3/-3)
 ```diff
-@@ -548,6 +548,11 @@ export async function build(args: {
-   // concurrency limiter for parallel page builds
-   const limit = pLimit(buildConcurrency)
- 
-+  // native:false runs One as a pure web framework: no native bundle exists to
-+  // read the per-loader .native.js twins, so buildPage omits them. default and
-+  // native-enabled builds keep writing both twins.
-+  const skipNativeLoaders = oneOptions.native === false
-+
-   // initialize worker pool if enabled (default: true)
-   const useWorkers = shouldUseWorkers(oneOptions)
-   const workerPool = useWorkers ? getWorkerPool(buildConcurrency) : null
-@@ -1081,6 +1086,7 @@ export async function build(args: {
-             deferredPreloads,
-             useAfterLCP,
-             useAfterLCPAggressive,
-+            skipNativeLoaders,
-           })
-           .then((built) => ({ built, path }))
-       }
-@@ -1110,7 +1116,8 @@ export async function build(args: {
-             criticalPreloads,
-             deferredPreloads,
-             useAfterLCP,
--            useAfterLCPAggressive
-+            useAfterLCPAggressive,
-+            skipNativeLoaders
-           )
-         })
- 
+@@ -108,7 +108,7 @@
+     "image-size": "2.0.3",
+     "minimatch": "3.1.5",
+     "brace-expansion": "5.0.12",
+-    "node-forge": "1.4.0",
++    "node-forge": "1.4.2",
+     "picomatch": "^4.0.4",
+     "piscina": "4.9.4",
+     "shell-quote": "1.11.0",
+@@ -140,13 +140,13 @@
+     "@typescript/typescript-win32-x64": "7.0.2",
+     "@cloudflare/vite-plugin": "1.41.0",
+     "ws": "8.21.0",
+-    "follow-redirects": "1.16.1",
++    "follow-redirects": "1.16.2",
+     "form-data": "4.0.6",
+     "qs": "6.15.2",
+     "ajv": "8.20.0",
+     "ip-address": "10.7.1",
+     "postcss": "8.5.23",
+-    "joi": "17.13.8",
++    "joi": "17.13.9",
+     "launch-editor": "2.14.2",
+     "uuid": "11.1.1",
+     "js-yaml": "4.3.2",
 ```
 
-**File**: `packages/one/src/cli/buildPage.test.ts` (added, +152/-0)
+---
+
+### Incident Patch 2: `5a76a11a` (2026-10-31)
+**Commit Message**: fix(utils): dev manifest carries native usage descriptions (#1077)
+
+* fix(utils): the dev manifest carries the native usage descriptions the built app has
+
+expoClientFromNativeApp left imagePicker, photoLibrary and the other native fields out of ios.infoPlist, so a live preview with no Info.plist could not read NSPhotoLibraryUsageDescription and PhotoLibrary requests threw the manifest error. prebuild and the manifest now share iosUsageDescriptions.
+
+Validation: vitest run src/nativeAppManifest.test.ts in packages/utils (24 passed); prebuildWithoutExpo.test.ts not run (worktree lacks sharp)
+
+* chore(utils): regenerate committed types
+
+Validation: bun run build in packages/utils and packages/vxrn; only nativeAppManifest.d.ts changed
+
+**File**: `packages/utils/src/nativeAppManifest.test.ts` (modified, +15/-0)
 ```diff
-@@ -0,0 +1,152 @@
-+import { mkdtemp, readFile, rm } from 'node:fs/promises'
-+import { tmpdir } from 'node:os'
-+import { join } from 'node:path'
-+import { afterEach, expect, it } from 'vitest'
-+import {
-+  LOADER_JS_POSTFIX,
-+  NATIVE_LOADER_JS_POSTFIX_UNCACHED,
-+} from '../constants'
-+import { buildPage } from './buildPage'
+@@ -355,6 +355,21 @@ describe('native.app manifest', () => {
+     ).toBe('dark')
+   })
+ 
++  // a preview has no Info.plist, so the manifest carries the purpose strings
++  // prebuild stamps for the native fields.
++  test('the dev manifest carries the usage descriptions the built app has', () => {
++    const client = expoClientFromNativeApp({
++      ...app,
++      imagePicker: { camera: 'Take photos.' },
++      photoLibrary: { readWrite: 'Pick photos.', addOnly: 'Save photos.' },
++    })
++    expect(client.ios?.infoPlist).toMatchObject({
++      NSCameraUsageDescription: 'Take photos.',
++      NSPhotoLibraryUsageDescription: 'Pick photos.',
++      NSPhotoLibraryAddUsageDescription: 'Save photos.',
++    })
++  })
 +
-+let root: string | undefined
-+
-+afterEach(async () => {
-+  if (root) await rm(root, { recursive: true, force: true })
-+})
-+
-+async function fixture() {
-+  root = await mkdtemp(join(tmpdir(), 'one-build-page-'))
-+  const serverEntry = join(root, 'entry.mjs')
-+  const { writeFile, mkdir } = await import('node:fs/promises')
-+  await writeFile(
-+    serverEntry,
-+    `export default {
-+      options: { routes: {
-+        '/app/probe.tsx': async () => ({
-+          loader: ({ params }) => ({ slug: params.slug }),
-+        }),
-+        '/app/gated.tsx': async () => ({
-+          loader: () => { throw Response.redirect('http://example.com/login', 302) },
-+        }),
-+      } },
-+      render: async ({ loaderData }) => '<html><head></head><body>' + JSON.stringify(loaderData) + '</body></html>'
-+    }`
-+  )
-+  return serverEntry
+   test('the dev manifest carries both native launch background images', () => {
+     const client = expoClientFromNativeApp({
+       ...app,
+```
+
+**File**: `packages/utils/src/nativeAppManifest.ts` (modified, +54/-1)
+```diff
+@@ -767,6 +767,57 @@ export function validateNativeApp(
+   return manifest
+ }
+ 
++// the purpose strings the native fields stamp into the ios Info.plist, shared by
++// prebuild and the manifest so a built app and its dev preview state the same keys.
++export function iosUsageDescriptions(app: NativeAppManifest): Map<string, string> {
++  const usage = new Map<string, string>()
++  if (app.imagePicker?.camera !== undefined) {
++    usage.set('NSCameraUsageDescription', app.imagePicker.camera)
++  }
++  if (app.imagePicker?.microphone !== undefined) {
++    usage.set('NSMicrophoneUsageDescription', app.imagePicker.microphone)
++  }
++  if (app.photoLibrary !== undefined) {
++    if (app.photoLibrary.addOnly !== undefined) {
++      usage.set('NSPhotoLibraryAddUsageDescription', app.photoLibrary.addOnly)
++    }
++    if (app.photoLibrary.readWrite !== undefined) {
++      usage.set('NSPhotoLibraryUsageDescription', app.photoLibrary.readWrite)
++    }
++  }
++  if (app.contacts !== undefined) {
++    usage.set('NSContactsUsageDescription', app.contacts.usage)
++  }
++  if (app.calendar !== undefined) {
++    if (app.calendar.usage !== undefined) {
++      usage.set('NSCalendarsFullAccessUsageDescription', app.calendar.usage)
++    }
++    if (app.calendar.remindersUsage !== undefined) {
++      usage.set('NSRemindersFullAccessUsageDescription', app.calendar.remindersUsage)
++    }
++  }
++  if (app.location !== undefined) {
++    usage.set('NSLocationWhenInUseUsageDescription', app.location.whenInUse)
++    if (app.location.alwaysAndWhenInUse !== undefined) {
++      usage.set('NSLocationAlwaysAndWhenInUseUsageDescription', app.location.alwaysAndWhenInUse)
++    }
++  }
++  if (app.pedometer !== undefined) {
++    usage.set('NSMotionUsageDescription', app.pedometer.usage)
++  }
++  if (app.ios?.faceIdUsageDescription !== undefined) {
++    usage.set('NSFaceIDUsageDescription', app.ios.faceIdUsageDescription)
++  }
++  if (app.speech !== undefined) {
++    usage.set('NSSpeechRecognitionUsageDescription', app.speech.recognition)
++    usage.set('NSMicrophoneUsageDescription', app.speech.microphone)
++  }
++  if (app.audio?.microphone !== undefined) {
++    usage.set('NSMicrophoneUsageDescription', app.audio.microphone)
++  }
++  return usage
 +}
 +
-+async function buildRoute(
-+  serverEntry: string,
-+  out: string,
-+  route: { path: string; file: string; params: any },
-+  skipNativeLoaders?: boolean
-+) {
-+  const clientDir = join(out, 'client')
-+  const staticDir = join(out, 'static')
-+  const { mkdir } = await import('node:fs/promises')
-+  await mkdir(join(clientDir, 'assets'), { recursive: true })
-+  await mkdir(staticDir, { recursive: true })
-+  const built = await buildPage(
-+    serverEntry,
-+    'app',
-+    route.path,
-+    '/probe.tsx',
-+    route.params,
-+    { type: 'ssg', file: route.file, layouts: [], middlewares: [] } as any,
-+    { file: 'assets/probe.js' },
-+    staticDir,
-+    clientDir,
-+    {},
-+    'server/probe.js',
-+    [],
-+    [],
-+    [],
-+    [],
-+    undefined,
-+    undefined,
-+    undefined,
-+    undefined,
-+    undefined,
-+    skipNativeLoaders
-+  )
-+  return { built, clientDir, staticDir }
+ // the expo config shape the dev server's manifest carries (`extra.expoClient`)
+ // for an app that declares native.app and no expo: clients that read an app's
+ // name, scheme or splash from the manifest read a one app the same way.
+@@ -802,7 +853,9 @@ export function expoClientFromNativeApp(app: NativeAppManifest) {
+       associatedDomains: app.ios.associatedDomains,
+       usesAppleSignIn: app.ios.usesAppleSignIn,
+       googleServicesFile: app.ios.googleServicesFile,
+-      infoPlist: app.ios.infoPlist,
++      // a live preview has no Info.plist, so the purpose strings the built
++      // app carries ride in the manifest's infoPlist
++      infoPlist: { ...app.ios.infoPlist, ...Object.fromEntries(iosUsageDescriptions(app)) },
+       entitlements: app.ios.entitlements,
+     },
+     android: app.android && {
+```
+
+**File**: `packages/utils/types/nativeAppManifest.d.ts` (modified, +4/-1)
+```diff
+@@ -148,6 +148,7 @@ export interface NativeAppManifest {
+     };
+ }
+ export declare function validateNativeApp(manifest: NativeAppManifest, platform?: 'ios' | 'android' | string): NativeAppManifest;
++export declare function iosUsageDescriptions(app: NativeAppManifest): Map<string, string>;
+ export declare function expoClientFromNativeApp(app: NativeAppManifest): {
+     name: string;
+     slug: string;
+@@ -178,7 +179,9 @@ export declare function expoClientFromNativeApp(app: NativeAppManifest): {
+         associatedDomains: string[] | undefined;
+         usesAppleSignIn: boolean | undefined;
+         googleServicesFile: string | undefined;
+-        infoPlist: Record<string, PlistValue> | undefined;
++        infoPlist: {
++            [x: string]: PlistValue;
++        };
+         entitlements: Record<string, PlistValue> | undefined;
+     } | undefined;
+     android: {
+```
+
+**File**: `packages/vxrn/src/exports/prebuildWithoutExpo.ts` (modified, +2/-48)
+```diff
+@@ -6,6 +6,7 @@ import { pathToFileURL } from 'node:url'
+ import {
+   androidIconSuffix,
+   appIconPreviewResources,
++  iosUsageDescriptions,
+   validateNativeApp,
+   type NativeAppIcon,
+   type NativeAppManifest,
+@@ -2769,54 +2770,7 @@ ${schemes.map((scheme) => `            <data android:scheme="${scheme}" />`).joi
+     if (platform === 'ios' && relativePath.endsWith('/Info.plist')) {
+       // schemes, usesNonExemptEncryption, and fileSharing stamp above in one
+       // anchored block; only the usage descriptions stamp here.
+-      const usage = new Map<string, string>()
+-      if (app.imagePicker?.camera !== undefined) {
+-        usage.set('NSCameraUsageDescription', app.imagePicker.camera)
+-      }
+-      if (app.imagePicker?.microphone !== undefined) {
+-        usage.set('NSMicrophoneUsageDescription', app.imagePicker.microphone)
+-      }
+-      if (app.photoLibrary !== undefined) {
+-        if (app.photoLibrary.addOnly !== undefined) {
+-          usage.set('NSPhotoLibraryAddUsageDescription', app.photoLibrary.addOnly)
+-        }
+-        if (app.photoLibrary.readWrite !== undefined) {
+-          usage.set('NSPhotoLibraryUsageDescription', app.photoLibrary.readWrite)
+-        }
+-      }
+-      if (app.contacts !== undefined) {
+-        usage.set('NSContactsUsageDescription', app.contacts.usage)
+-      }
+-      if (app.calendar !== undefined) {
+-        if (app.calendar.usage !== undefined) {
+-          usage.set('NSCalendarsFullAccessUsageDescription', app.calendar.usage)
+-        }
+-        if (app.calendar.remindersUsage !== undefined) {
+-          usage.set('NSRemindersFullAccessUsageDescription', app.calendar.remindersUsage)
+-        }
+-      }
+-      if (app.location !== undefined) {
+-        usage.set('NSLocationWhenInUseUsageDescription', app.location.whenInUse)
+-        if (app.location.alwaysAndWhenInUse !== undefined) {
+-          usage.set(
+-            'NSLocationAlwaysAndWhenInUseUsageDescription',
+-            app.location.alwaysAndWhenInUse
+-          )
+-        }
+-      }
+-      if (app.pedometer !== undefined) {
+-        usage.set('NSMotionUsageDescription', app.pedometer.usage)
+-      }
+-      if (app.ios?.faceIdUsageDescription !== undefined) {
+-        usage.set('NSFaceIDUsageDescription', app.ios.faceIdUsageDescription)
+-      }
+-      if (app.speech !== undefined) {
+-        usage.set('NSSpeechRecognitionUsageDescription', app.speech.recognition)
+-        usage.set('NSMicrophoneUsageDescription', app.speech.microphone)
+-      }
+-      if (app.audio?.microphone !== undefined) {
+-        usage.set('NSMicrophoneUsageDescription', app.audio.microphone)
+-      }
++      const usage = iosUsageDescriptions(app)
+       const additions: [string, string][] = []
+       for (const [key, text] of usage) {
+         const existing = new RegExp(`(<key>${key}</key>\\s*<string>)[^<]*(</string>)`)
+```
+
+---
+
+### Incident Patch 3: `788e3d9d` (2026-10-29)
+**Commit Message**: perf(one): release unused native memory after dev dependency optimization (#1071)
+
+* perf(one): release native prebundle memory in the development CLI
+
+Initialize Rolldown with direct allocations and immediate purging before the CLI loads Vite. Restore the original environment before user config or child processes run, since Bun uses a separate allocator.
+
+Validation: paired Mac cold One RSS 3209 to 1990 MiB with the same generated output and optimizer completing; runtime environment restoration and Bun child startup passed. Native tracking measured 39 MiB live Rust allocations with 3.1 GiB RSS; forced native collection did not reduce it.
+
+* chore(one): include the development allocator initializer declaration
+
+Validation: bun release --into Contrast built all 16 selected tasks and installed 17 packages successfully; source and launcher format checks passed.
+
+* fix(one): initialize the native binding used by Vite
+
+Validation: installed-package cold dev probe maps one Rolldown native binding; MIMALLOC_VERBOSE reports purge_delay=0 and disallow_arena_alloc=1, with the original environment restored. bun release --into Contrast built and installed the changed source.
+
+**File**: `packages/one/run.mjs` (modified, +5/-1)
+```diff
+@@ -1,3 +1,7 @@
+ #!/usr/bin/env node
+ 
+-import './dist/esm/cli.mjs'
++if (process.argv[2] === 'dev') {
++  const { initializeDevAllocator } = await import('./dist/esm/cli-dev-memory.mjs')
++  await initializeDevAllocator()
 +}
++await import('./dist/esm/cli.mjs')
+```
+
+**File**: `packages/one/src/cli-dev-memory.ts` (added, +24/-0)
+```diff
+@@ -0,0 +1,24 @@
++import { createRequire } from 'node:module'
++import { pathToFileURL } from 'node:url'
 +
-+function nativeTwins(clientDir: string, loaderPath: string) {
-+  const cached = join(clientDir, loaderPath.replace(/\.js$/, '.native.js'))
-+  const uncached = join(
-+    clientDir,
-+    loaderPath.replace(LOADER_JS_POSTFIX, NATIVE_LOADER_JS_POSTFIX_UNCACHED)
-+  )
-+  return { cached, uncached }
-+}
++// rolldown's allocator otherwise keeps large arenas resident after prebundling.
++// initialize its binding with direct allocations, then restore the environment
++// before user config and child commands run (bun has its own allocator).
++export async function initializeDevAllocator() {
++  const options = {
++    MIMALLOC_DISALLOW_ARENA_ALLOC: '1',
++    MIMALLOC_PURGE_DELAY: '0',
++  }
++  const previous = new Map(Object.keys(options).map((key) => [key, process.env[key]]))
++  for (const [key, value] of Object.entries(options)) process.env[key] ??= value
 +
-+async function exists(path: string) {
 +  try {
-+    await readFile(path)
-+    return true
-+  } catch {
-+    return false
++    const requireFromVite = createRequire(import.meta.resolve('vite'))
++    await import(pathToFileURL(requireFromVite.resolve('rolldown')).href)
++  } finally {
++    for (const [key, value] of previous) {
++      if (value === undefined) delete process.env[key]
++      else process.env[key] = value
++    }
 +  }
 +}
-+
-+it('omits native loader twins when skipped, keeping web output identical', async () => {
-+  const serverEntry = await fixture()
-+  for (const route of [
-+    { path: '/probe', file: './probe.tsx', params: { slug: 'probe' } },
-+    { path: '/gated', file: './gated.tsx', params: {} },
-+  ]) {
-+    const enabled = await buildRoute(serverEntry, join(root!, 'enabled', route.path), route)
-+    const skipped = await buildRoute(
-+      serverEntry,
-+      join(root!, 'skipped', route.path),
-+      route,
-+      true
-+    )
-+
-+    // web loader and html are byte-identical either way
-+    const [enabledLoader, skippedLoader] = await Promise.all([
-+      readFile(join(enabled.clientDir, enabled.built.loaderPath), 'utf8'),
-+      readFile(join(skipped.clientDir, skipped.built.loaderPath), 'utf8'),
-+    ])
-+    expect(skippedLoader, route.path).toBe(enabledLoader)
-+    const [enabledHtml, skippedHtml] = await Promise.all([
-+      readFile(join(enabled.staticDir, `${route.path.slice(1)}.html`), 'utf8'),
-+      readFile(join(skipped.staticDir, `${route.path.slice(1)}.html`), 'utf8'),
-+    ])
-+    expect(skippedHtml, route.path).toBe(enabledHtml)
-+
-+    // native twins exist by default, absent when skipped
-+    const enabledTwins = nativeTwins(enabled.clientDir, enabled.built.loaderPath)
-+    expect(await exists(enabledTwins.cached), `${route.path} cached`).toBe(true)
-+    expect(await exists(enabledTwins.uncached), `${route.path} uncached`).toBe(true)
-+    const skippedTwins = nativeTwins(skipped.clientDir, skipped.built.loaderPath)
-+    expect(await exists(skippedTwins.cached), `${route.path} cached`).toBe(false)
-+    expect(await exists(skippedTwins.uncached), `${route.path} uncached`).toBe(false)
-+  }
-+
-+  // the redirect loader still carries its signal on the web file
-+  const skipped = await buildRoute(
-+    serverEntry,
-+    join(root!, 'redirect'),
-+    { path: '/gated', file: './gated.tsx', params: {} },
-+    true
-+  )
-+  const webLoader = await readFile(
-+    join(skipped.clientDir, skipped.built.loaderPath),
-+    'utf8'
-+  )
-+  expect(webLoader).toContain('__oneRedirect')
-+})
-+
-+it('writes native loader twins by default', async () => {
-+  const serverEntry = await fixture()
-+  const { built, clientDir } = await buildRoute(
-+    serverEntry,
-+    join(root!, 'default'),
-+    { path: '/probe', file: './probe.tsx', params: { slug: 'probe' } }
-+  )
-+  const twins = nativeTwins(clientDir, built.loaderPath)
-+  expect(await exists(twins.cached)).toBe(true)
-+  expect(await exi
 ```
 
-**File**: `packages/one/src/cli/buildPage.ts` (modified, +14/-9)
+**File**: `packages/one/types/cli-dev-memory.d.ts` (added, +2/-0)
 ```diff
-@@ -63,7 +63,8 @@ export async function buildPage(
-   criticalPreloads?: string[],
-   deferredPreloads?: string[],
-   useAfterLCP?: boolean,
--  useAfterLCPAggressive?: boolean
-+  useAfterLCPAggressive?: boolean,
-+  skipNativeLoaders?: boolean
- ): Promise<One.RouteBuildInfo> {
-   let t0 = performance.now()
- 
-@@ -275,10 +276,12 @@ prefetchCSS()
-             loaderPartialPath,
-             `export function loader(){return ${redirectData}}`
-           )
--          // native-friendly CJS version
--          const nativeCjs = `exports.loader = function(){return ${redirectData}}`
--          await outputFile(loaderPartialPath.replace(/\.js$/, '.native.js'), nativeCjs)
--          await outputFile(uncachedNativePath, nativeCjs)
-+          if (!skipNativeLoaders) {
-+            // native-friendly CJS version
-+            const nativeCjs = `exports.loader = function(){return ${redirectData}}`
-+            await outputFile(loaderPartialPath.replace(/\.js$/, '.native.js'), nativeCjs)
-+            await outputFile(uncachedNativePath, nativeCjs)
-+          }
-           loaderPath = getLoaderPath(path)
-           loaderData = {}
-         } else {
-@@ -289,10 +292,12 @@ prefetchCSS()
-           // stub of its own to replace)
-           const data = JSON.stringify(loaderData)
-           await outputFile(loaderPartialPath, `export function loader(){return ${data}}`)
--          // native-friendly CJS version
--          const nativeCjs = `exports.loader = function(){return ${data}}`
--          await outputFile(loaderPartialPath.replace(/\.js$/, '.native.js'), nativeCjs)
--          await outputFile(uncachedNativePath, nativeCjs)
-+          if (!skipNativeLoaders) {
-+            // native-friendly CJS version
-+            const nativeCjs = `exports.loader = function(){return ${data}}`
-+            await outputFile(loaderPartialPath.replace(/\.js$/, '.native.js'), nativeCjs)
-+            await outputFile(uncachedNativePath, nativeCjs)
-+          }
-           loaderPath = getLoaderPath(path)
-         }
-       }
-```
-
-**File**: `packages/one/src/cli/buildPageWorker.ts` (modified, +2/-1)
-```diff
-@@ -86,7 +86,8 @@ parentPort.on('message', async (msg: any) => {
-           msg.args.criticalPreloads,
-           msg.args.deferredPreloads,
-           msg.args.useAfterLCP,
--          msg.args.useAfterLCPAggressive
-+          msg.args.useAfterLCPAggressive,
-+          msg.args.skipNativeLoaders
-         )
-       })
-       // loader data is already in the artifacts and is discarded by the parent.
-```
-
-**File**: `packages/one/src/cli/workerPool.ts` (modified, +1/-0)
-```diff
-@@ -127,6 +127,7 @@ export class BuildWorkerPool {
-     deferredPreloads?: string[]
-     useAfterLCP?: boolean
-     useAfterLCPAggressive?: boolean
-+    skipNativeLoaders?: boolean
-   }): Promise<any> {
-     if (this._terminated) {
-       throw new Error('Worker pool has been terminated')
-```
-
-**File**: `packages/one/types/cli/buildPage.d.ts` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
- import type { One, RouteInfo } from '../vite/types';
- export declare function printBuildTimings(): void;
--export declare function buildPage(serverEntry: string, routerRoot: string, path: string, relativeId: string, params: any, foundRoute: RouteInfo<string>, clientManifestEntry: any, staticDir: string, clientDir: string, builtMiddlewares: Record<string, string>, serverJsPath: string, preloads: string[], allCSS: string[], layoutCSS: string[], routePreloads: string[], allCSSContents?: string[], criticalPreloads?: string[], deferredPreloads?: string[], useAfterLCP?: boolean, useAfterLCPAggressive?: boolean): Promise<One.RouteBuildInfo>;
-+export declare function buildPage(serverEntry: string, routerRoot: string, path: string, relativeId: string, params: any, foundRoute: RouteInfo<string>, clientManifestEntry: any, staticDir: string, clientDir: string, builtMiddlewares: Record<string, string>, serverJsPath: string, preloads: string[], allCSS: string[], layoutCSS: string[], routePreloads: string[], allCSSContents?: string[], criticalPreloads?: string[], deferredPreloads?: string[], useAfterLCP?: boolean, useAfterLCPAggressive?: boolean, skipNativeLoaders?: boolean): Promise<One.RouteBuildInfo>;
- //# sourceMappingURL=buildPage.d.ts.map
+@@ -0,0 +1,2 @@
++export declare function initializeDevAllocator(): Promise<void>;
++//# sourceMappingURL=cli-dev-memory.d.ts.map
 \ No newline at end of file
 ```
 
-**File**: `packages/one/types/cli/workerPool.d.ts` (modified, +1/-0)
-```diff
-@@ -36,6 +36,7 @@ export declare class BuildWorkerPool {
-         deferredPreloads?: string[];
-         useAfterLCP?: boolean;
-         useAfterLCPAggressive?: boolean;
-+        skipNativeLoaders?: boolean;
-     }): Promise<any>;
-     terminate(): Promise<void>;
- }
-```
-
 #### Recent Merged Pull Requests:
-- **PR #1068** (2026-10-28): Skip native loader files in web-only builds (@natew)
-- **PR #1067** (2026-10-28): Add audio ownership and paused loading (@natew)
-- **PR #1064** (2026-10-27): fix(vxrn): distinguish bundle and bytecode preparation in traces (@natew)
-- **PR #1063** (2026-10-27): Document native macOS and Linux apps (@natew)
-- **PR #1062** (2026-10-27): docs: remove data stack recommendations (@natew)
-- **PR #1061** (2026-10-27): fix: stop retired location callbacks and clarify native HMR traces (@natew)
+- **PR #1081** (2026-10-31): fix(vxrn): map reanimated src deep imports to lib/module on web (@natew)
+- **PR #1079** (closed): fix(deps): raise follow-redirects, joi and node-forge past their advisories (@natew)
+- **PR #1078** (2026-10-31): fix(deps): pin follow-redirects, joi and node-forge past high advisories (@natew)
+- **PR #1077** (2026-10-31): fix(utils): dev manifest carries native usage descriptions (@natew)
+- **PR #1076** (2026-10-30): feat(ios): Tab navigationStack and DefaultToolbarItem for the Duo shell (minor) (@natew)
+- **PR #1075** (2026-10-30): chore(deps): upgrade Tamagui consumers to published 3.1.9 (@natew)
 
 ---
 
@@ -2224,28 +2273,38 @@ Team-Machine-Session: r151079
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. one): omit native loader twins when native:false
+## X. deps): pin follow-redirects, joi and node-forge past their high advisories (#107
 
 **RULE**:
-When implementing operations in `apps/onestack.dev/data/docs/configuration.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in onejs/one. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bun.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in onejs/one. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b7fc0440`: one): omit native loader twins when native:false. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ec85f3ee`: deps): pin follow-redirects, joi and node-forge past their high advisories (#1078). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/onestack.dev/data/docs/configuration.mdx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `bun.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-Pass `false` to completely disable native (iOS/Android) support. When disabled, One will not register the `ios`/`android` Vite environments, skip the Metro / React Native dev server plugins, and skip the rolldown native bundle pipeline — useful when you want to use One purely as a web framework. The static build also omits the per-loader `.native.js` twins, which only native clients read; web loaders, routes, and preloaded assets are unchanged.
+    "follow-redirects": "1.16.2",
+    "joi": "17.13.9",
+    "node-forge": "1.4.2",
+    "follow-redirects": ["follow-redirects@1.16.2", "", { "peerDependencies": { "debug": "*" }, "optionalPeers": ["debug"] }, "sha512-/kVP2U8z596Ia0gwFrwyIeo74ta5aVmSeU1FfAUMAmcEP5EP7zydmag3SLiN64NaRKef3lxsq7i/g7ltJQDGow=="],
+    "joi": ["joi@17.13.9", "", { "dependencies": { "@hapi/hoek": "^9.3.0", "@hapi/topo": "^5.1.0", "@sideway/address": "^4.1.5", "@sideway/formula": "^3.0.1", "@sideway/pinpoint": "^2.0.0" } }, "sha512-llFCT2rVtfwgBCaIqxtjim+iHqrgss4ONiGSYiiGH9jnjWq90ppSRffqmqKvwpa8W+YfILyQV6XyGcegXX2T4g=="],
+    "node-forge": ["node-forge@1.4.2", "", {}, "sha512-rRtAR5XLJ8gCKd9du4qrKAsgCG1ObGP4gLeNJMa4vYSeq4bmBMOJk5IHkrviBV0q7uoAJlVd8HEQYQSVUb4FGQ=="],
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-Pass `false` to completely disable native (iOS/Android) support. When disabled, One will not register the `ios`/`android` Vite environments, skip the Metro / React Native dev server plugins, and skip the rolldown native bundle pipeline — useful when you want to use One purely as a web framework.
+    "follow-redirects": "1.16.1",
+    "joi": "17.13.8",
+    "node-forge": "1.4.0",
+    "follow-redirects": ["follow-redirects@1.16.1", "", { "peerDependencies": { "debug": "*" }, "optionalPeers": ["debug"] }, "sha512-FNvFGzoMLWmE6Yj9spb/zjd7yiNCHiAW9/Tg9CXrQ8wuu32HtlJOwWO11OJafl5FfY3DxTdQ0vj42zU1kvv5jg=="],
+    "joi": ["joi@17.13.8", "", { "dependencies": { "@hapi/hoek": "^9.3.0", "@hapi/topo": "^5.1.0", "@sideway/address": "^4.1.5", "@sideway/formula": "^3.0.1", "@sideway/pinpoint": "^2.0.0" } }, "sha512-iPKOGmiRw1jxf/JOPwxmCcUQAOdF359mdzYiP2DJ+TMX0YK2zjK3D+zYOaGjpumWxOFF/l2xVWjRVK5bGSLdEw=="],
+    "node-forge": ["node-forge@1.4.0", "", {}, "sha512-LarFH0+6VfriEhqMMcLX2F7SwSXeWwnEAJEsYm5QKWchiVYVvJyV9v7UDvUv+w5HO23ZpQTXDv/GxdDdMyOuoQ=="],
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b7fc0440` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ec85f3ee` are properly handled with clean fallback behavior.

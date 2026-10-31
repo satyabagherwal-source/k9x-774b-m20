@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source**: github ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
-> **Source Version**: `9eb81f37`  
+> **Source Version**: `7822c1b1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T21:30:06.237Z  
+> **Timestamp**: 2026-10-31T13:47:24.667Z  
 > **Learning ID**: `learn-github-pixeltable-pixeltable`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T21:30:05.659Z  
+> **Harvest Timestamp**: 2026-10-31T13:47:24.661Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -377,6 +377,9 @@ def create_table_version_md(
         col.tbl_handle = tbl_handle
         col.id = next(column_ids)
         col.schema_version_add = 0
+        # do this before column_version_md(), which requires a valid value expression
+        if col.is_computed:
+            col.check_value_expr()
 
     # resolve ColumnRefByName's to ColumnRefs in computed columns
     subst = exprs.ExprDict[exprs.Expr](
@@ -398,8 +401,6 @@ def create_table_version_md(
         value_expr = col.value_expr
         if value_expr is not None:
             col.set_value_expr(value_expr.substitute(subst))
-        if col.is_computed:
-            col.check_value_expr()
         col_md, col_schema_md = col.to_md(pos)
         column_md[col.id] = col_md
         schema_col_md[col.id] = col_schema_md
@@ -506,10 +507,7 @@ def create_table_version_md(
     )
 
     schema_version_md = schema.SchemaVersionMd(
-        tbl_id=tbl_id_str,
-        schema_version=0,
-        preceding_schema_version=None,
-  
+        
 ```
 
 ### Core Architecture Module: `pixeltable/functions/util.py`
@@ -1302,14 +1300,7 @@ def load_app_module(file: str, *, subject: str) -> ModuleType:
             _evict_project_modules()
             # a file written after this process started is invisible to a finder that cached its directory
             importlib.invalidate_caches()
-            registered = set(registry.module_fns)
-            try:
-                return importlib.import_module(name)
-            except BaseException:
-                # a module that raises partway through leaves the udfs it already defined registered, and
-                # Python drops it from sys.modules, so _evict_project_modules() cannot reach them again
-                registry.deregister_functions(set(registry.module_fns) - registered)
-                raise
+            return registry.import_module(name)
     except ProhibitedWriteError as e:
         raise excs.RequestError(
             excs.ErrorCode.UNSUPPORTED_OPERATION, _prohibited_write_msg(str(path), subject, e)
@@ -1450,7 +1441,17 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
         if resolved is None:
             errors.append(f'{fn_path}: cannot be resolved to a known module')
             continue
-        file = getattr(resolved, 
+        file = getattr(resolved, '__file__', None)
+        if file is None or not Path(file).resolve().is_relative_to(project_root):
+            continue  # an installed module
+        top_level = fn_path.split('.', maxsplit=1)[0]
+        if _first_on_path(top_level) is None:
+            errors.append(f'{fn_path}: {top_level!r} is not on sys.path')
+    return errors
+
+
+def udf_source_files(bases: list[model.TableModelMeta]) -> set[str]:
+    """The local
 ```
 
 
@@ -1480,550 +1481,544 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e1436803` (2026-10-30)
-**Commit Message**: Fix Windows flake in test_udf_module_import_error (stale import cache) (#1877)
+### Incident Patch 1: `323a5c71` (2026-10-30)
+**Commit Message**: Fix eight bugs found by the skill evals (#1852)
 
-## Root cause
+- `pxt schema update` no longer crashes with `'dict' object has no
+attribute 'substitute'` on a view model with an iterator that takes
+`**kwargs`, such as `pxtf.json.list_iterator(code=...)`.
+- A `@pxt.query` column can now read a column added in the same
+`update_all()`. Before, its backfill failed an internal assert. A query
+that reads a nonexistent column fails at schema update with an
+`INVALID_SCHEMA` error.
+- `pxt.get_table()` inside a UDF raises an `UNSUPPORTED_OPERATION` error
+that points to `@pxt.query`, instead of failing a bare assert.
+- A UDF module that raises partway through its import no longer leaves
+its UDFs registered when a table loads it. Before, every later load
+failed with `A UDF with that name already exists` until a daemon
+restart. Loading the app file already handled this.
+- A UDF, UDA or iterator that modifies a constant dict, list, array or
+image argument no longer changes that value for later rows:
+  - non-built-in functions get a deep copy per call;
+- the built-in provider UDFs (OpenAI, Anthropic, DeepSeek, Groq and
+others) copy `model_kwargs` before writing to it.
+- A UDA called as a window function now re
 
-`tests/test_function.py::TestFunction::test_udf_module_import_error`
-fails intermittently on Windows with `ModuleNotFoundError: No module
-named 'stored_udf_mod'` at `import stored_udf_mod`. Latest: the `slim,
-windows-2025, 3.11` check on #1875 ([run
-40968948856](https://github.com/pixeltable/pixeltable/actions/runs/40968948856/job/123780614890)),
-a PR that doesn't touch this code.
-
-- `monkeypatch.syspath_prepend(tmp_path)` calls
-`importlib.invalidate_caches()`. `Function.from_dict()` then imports
-`broken_udf_mod`, so the `FileFinder` for `tmp_path` caches the
-directory listing together with the directory's mtime.
-- The test then writes `stored_udf_mod.py` and imports it without
-invalidating again. `FileFinder.find_spec()` rescans only when the
-directory's mtime differs from the cached value.
-- NTFS timestamps come from a system clock that ticks every ~15.6 ms.
-The two writes are a few ms apart, so the directory mtime often doesn't
-change. The cached listing stays stale and the import fails. Linux and
-macOS timestamps are fine-grained enough that this rarely or never
-happens there.
-
-## Cha
-
-**File**: `tests/test_function.py` (modified, +4/-3)
+**File**: `AGENTS.md` (modified, +2/-0)
 ```diff
-@@ -1791,6 +1791,10 @@ def test_udf_module_import_error(self, tmp_path: Path, monkeypatch: pytest.Monke
-         # that path is stripped so the message stays safe to show remote callers.
-         (tmp_path / 'broken_helper.py').write_text('')
-         (tmp_path / 'broken_udf_mod.py').write_text('from broken_helper import missing_name\n')
-+        # written before syspath_prepend() and its cache refresh: on Windows, imports can miss a module written later
-+        (tmp_path / 'stored_udf_mod.py').write_text(
-+            'import pixeltable as pxt\n\n@pxt.udf\ndef f(s: str) -> str:\n    return s\n'
+@@ -48,6 +48,8 @@ of longer guides; Codex and Claude do not automatically apply Copilot's path-spe
+   Ordinary Python checks remain valid outside the DSL.
+ - UDF annotations determine column types. Non-nullable parameters short-circuit null arguments to null;
+   nullable parameters let the UDF handle null. Review schema semantics even if mypy passes.
++- Built-in UDFs and aggregates (anything under `pixeltable.`) must not modify their arguments: unlike
++  user functions, they receive a constant argument's shared value rather than a copy.
+ - Application files declare `TableModel` tables and `FastAPIRouter` routes; indexes belong in `__indexes__`.
+   Tests, notebooks and REPLs may use `pxt.create_table()` and incremental schema APIs.
+ - Model columns are non-nullable by default (`pxt.String`); nullable columns use `pxt.String | None`.
+```
+
+**File**: `pixeltable/_query_base.py` (modified, +36/-1)
+```diff
+@@ -8,9 +8,10 @@
+ 
+ import builtins
+ import copy
++import dataclasses
+ import itertools
+ from abc import ABC
+-from typing import Any, Self, Sequence, cast, overload
++from typing import Any, Callable, Self, Sequence, cast, overload
+ from uuid import UUID
+ 
+ import pandas as pd
+@@ -295,6 +296,34 @@ def _replace_select_list(self, new_exprs: list[exprs.Expr]) -> Self:
+             sample_clause=copy.deepcopy(self.sample_clause),
+         )
+ 
++    @classmethod
++    def _from_query(
++        cls, source: QueryBase, *, from_clause: FromClause, substitution_fn: Callable[[exprs.Expr], exprs.Expr]
++    ) -> Self:
++        # join predicates belong to from_clause
++        assert len(source._from_clause.join_clauses) == 0
++        return cls(
++            from_clause=from_clause,
++            select_list=None
++            if source.select_list is None
++            else [(substitution_fn(e), n) for e, n in source.select_list],
++            where_clause=None if source.where_clause is None else substitution_fn(source.where_clause),
++            group_by_clause=None
++            if source.group_by_clause is None
++            else [substitution_fn(e) for e in source.group_by_clause],
++            grouping_tbl_key=source.grouping_tbl_key,
++            order_by_clause=None
++            if source.order_by_clause is None
++            else [(substitution_fn(e), asc) for e, asc in source.order_by_clause],
++            limit=None if source.limit_val is None else substitution_fn(source.limit_val),
++            offset=None if source.offset_val is None else substitution_fn(source.offset_val),
++            sample_clause=None
++            if source.sample_clause is None
++            else dataclasses.replace(
++                source.sample_clause, stratify_exprs=[substitution_fn(e) for e in source.sample_clause.stratify_exprs]
++            ),
 +        )
-         monkeypatch.syspath_prepend(str(tmp_path))
-         d = {
-             '_classpath': 'pixeltable.func.callable_function.CallableFunction',
-@@ -1811,9 +1815,6 @@ def test_udf_module_import_error(self, tmp_path: Path, monkeypatch: pytest.Monke
-         assert str(tmp_path) not in validation_error.protocol_error_msg()
- 
-         # the same cause on the user-visible path: a stored UDF whose module breaks warns on get_table
--        (tmp_path / 'stored_udf_mod.py').write_text(
--            'import pixeltable as pxt\n\n@pxt.udf\ndef f(s: str) -> str:\n    return s\n'
--        )
-         import stored_udf_mod  # type: ignore[import-not-found]
- 
-         t = pxt.create_table('test', {'s': pxt.String})
-```
-
----
-
-### Incident Patch 2: `57eea71a` (2026-10-29)
-**Commit Message**: PXT-1716: Keep standard++ under ubuntu-large's memory (cap xdist workers, name the top processes) (#1859)
-
-<!-- CURSOR_AGENT_PR_BODY_BEGIN -->
-Follow-on to #1730, which stopped DETR from taking a 35 GB spike; this
-is a different consumer on the same host-OOM path.
-
-## Root cause
-
-Scheduled run
-[40434334671](https://github.com/pixeltable/pixeltable/actions/runs/40434334671)
-(`main` @ 08d65e1b), job [`standard++, ubuntu-large,
-3.11`](https://github.com/pixeltable/pixeltable/actions/runs/40434334671/job/121959403206):
-no test failed; at 79% the runner was killed (`The runner has received a
-shutdown signal`). Same job died in
-[40542799212](https://github.com/pixeltable/pixeltable/actions/runs/40542799212)
-(`The operation was canceled`).
-
-The logger from #1730 on the ~64 GB host:
-
-```
-01:50:05 used=2027MB available=62268MB
-01:58:36 used=42084MB available=22212MB largest=5718,5019,4436MB
-01:59:37 used=50000MB available=14296MB
-02:00:07 used=54056MB available=10240MB
-02:00:37 used=57074MB available=7222MB largest=7300,6711,6651MB
-02:00:52 used=60392MB available=3903MB largest=9903,9688,5040MB
-02:01:03 runner shutdown
-```
-
-`-n logical` started 16 xdist workers (`gw0`-`gw15`). Memory climbe
-
-**File**: `.github/workflows/pytest.yml` (modified, +3/-2)
-```diff
-@@ -243,12 +243,13 @@ jobs:
-         # (including tests with the 'remote_api' marker that are not also marked 'expensive') will run on all matrix
-         # configurations.
-         # --basetemp pins pytest's temp root dir so that the Archive step below works on all platforms
--        # -n logical: one worker per vCPU (with psutil, -n auto counts physical cores: 2 on windows-2025)
-+        # -n comes from the matrix
-         run: |
-           echo 'Running tests with options: ${{ matrix.pytest-options }}'
-+          echo 'xdist workers             : ${{ matrix.xdist-workers }}'
-           echo 'Extra pre-test command    : ${{ matrix.pre-test-cmd }}'
-           ${{ matrix.pre-test-cmd }}
--          pytest -v --strict-markers -n logical --dist loadgroup --basetemp="$RUNNER_TEMP/pxt-pytest" ${{ matrix.pytest-options }} $PYTEST_COVERAGE_OPTS
-+          pytest -v --strict-markers -n ${{ matrix.xdist-workers }} --dist loadgroup --basetemp="$RUNNER_TEMP/pxt-pytest" ${{ matrix.pytest-options }} $PYTEST_COVERAGE_OPTS
-       - name: Run the OpenTelemetry instrumentation tests
-         # The opentelemetry-instrumentation-pixeltable package is a separate distribution; the core suite does not
-         # collect its tests (testpaths in pyproject.toml). It is tested here against a minimal install + otel extra.
-```
-
-**File**: `scripts/log-memory.sh` (modified, +5/-2)
-```diff
-@@ -8,7 +8,10 @@ parent="$PPID"
- 
- while kill -0 "$parent" 2>/dev/null; do
-     mem=$(free -m | awk '/^Mem:/ {printf "used=%dMB available=%dMB", $3, $7}')
--    largest=$(ps -eo rss= --sort=-rss | head -3 | awk '{printf "%s%dMB", (NR > 1 ? "," : ""), $1 / 1024}')
--    echo "[memory $(date -u +%H:%M:%S)] $mem largest_processes=$largest"
-+    top=$(ps -eo pid=,rss=,args= --sort=-rss | awk 'NR <= 5 {
-+        pid = $1; rss_mb = int($2 / 1024); $1 = $2 = ""; sub(/^ +/, "")
-+        printf "%spid=%s rss=%dMB %s", (NR > 1 ? "; " : ""), pid, rss_mb, substr($0, 1, 80)
-+    }')
-+    echo "[memory $(date -u +%H:%M:%S)] $mem largest=[${top}]"
-     sleep "$interval"
- done
-```
-
-**File**: `tool/ci_tool.py` (modified, +5/-1)
-```diff
-@@ -71,6 +71,8 @@
- # The GitHub event names that pytest.yml is triggered on
- TRIGGERS = ('pull_request', 'merge_group', 'schedule', 'workflow_dispatch')
- 
-+DEFAULT_XDIST_WORKERS = 'logical'  # one worker per vCPU; -n auto would be 2 on windows-2025 (physical cores)
 +
+     def referenced_tbl_ids(self) -> set[UUID]:
+         """Returns the IDs of all tables referenced by this query.
  
- class MatrixConfig(NamedTuple):
-     display_name_prefix: str
-@@ -79,6 +81,7 @@ class MatrixConfig(NamedTuple):
-     python_version: str
-     uv_options: str = ''
-     pytest_options: str = DEFAULT_PYTEST
-+    xdist_workers: str = DEFAULT_XDIST_WORKERS
-     pre_test_cmd: str = ''  # Extra bash command to be run just before tests
- 
-     @property
-@@ -94,6 +97,7 @@ def matrix_entry(self) -> dict[str, str]:
-             'python-version': self.python_version,
-             'uv-options': self.uv_options,
-             'pytest-options': self.pytest_options,
-+            'xdist-workers': self.xdist_workers,
-             'pre-test-cmd': self.pre_test_cmd,
-         }
- 
-@@ -142,7 +146,7 @@ def build_configs(trigger: str, force_all: bool, has_aws_credentials: bool) -> l
-                     'ubuntu-large',
-                     '3.11',
-                     pytest_options=VERY_EXPENSIVE_PYTEST,
--                    # this configuration's runner has been shutting down mid-run; log memory to see whether it runs out
-+                    xdist_workers='8',  # -n logical OOMs ubuntu-large; standard+ omits very_expensive tests
-                     pre_test_cmd='./scripts/log-memory.sh 15 &',
-                 )
+@@ -430,6 +459,7 @@ def select(self, *items: Any, **named_items: Any) -> Self:
+             expr = exprs.Expr.from_object(raw_expr)
+             if expr is None:
+                 raise excs.RequestError(excs.ErrorCode.INVALID_EXPRESSION, f'Invalid expression: {raw_expr}')
++            expr.check_method_refs()
+             if expr.col_type.is_invalid_type() and not (isinstance(expr, exprs.Literal) and expr.val is None):
+                 raise excs.RequestError(excs.ErrorCode.UNSUPPORTED_OPERATION, f'Invalid type: {raw_expr}')
+             if len(self._from_clause.tbls) == 1 and self._from_clause.is_local:
+@@ -507,6 +537,7 @@ def where(self, pred: exprs.Expr) -> Self:
+             raise excs.RequestError(
+                 excs.ErrorCode.INVALID_EXPRESSION, f'where() expects a Pixeltable expression; got: {pred}'
              )
-```
-
----
-
-### Incident Patch 3: `736d9763` (2026-10-29)
-**Commit Message**: Fix video_splitter clips, DeepSeek endpoint, @pxt.query over views, OpenAI image inputs (#1851)
-
-- PXT-1601: video_splitter(mode='accurate') could write clips that start
-without a keyframe, and extract_frame() couldn't read them. Clips now
-start on a keyframe. The segmenting tests now include a generated 30fps
-video.
-- PXT-1522: the DeepSeek docs and examples used the retired model
-deepseek-v4-flash. They now use deepseek-flash and show how to turn off
-thinking mode. The endpoint can now be changed with the
-deepseek.base_url config option (DEEPSEEK_BASE_URL).
-- PXT-1519: a @pxt.query over a view couldn't use the view's embedding
-index, because similarity() looked for the index in the base table. A
-stored query now loads its tables' metadata when it is deserialized, so
-it also works in a new session. Tests cover queries over base and view
-columns, insert and update propagation into views, and the TableModel
-equivalent.
-- PXT-1515: openai.chat_completions() failed with an empty error when
-given an image URL, such as t.img.fileurl. Image URLs now work.
-- PXT-1476: an image_url content part of the form {'url': t.img} failed
-with "Object of type JpegImageFile is not JSON serializable". 
-
-**File**: `docs/release/howto/providers/working-with-deepseek.ipynb` (modified, +4/-2)
-```diff
-@@ -117,7 +117,9 @@
-    "source": [
-     "## Messages\n",
-     "\n",
--    "Create a Table: In Pixeltable, create a table with columns to represent your input data and the columns where you want to store the results from Deepseek."
-+    "Create a Table: In Pixeltable, create a table with columns to represent your input data and the columns where you want to store the results from Deepseek.\n",
-+    "\n",
-+    "`deepseek-flash` runs in thinking mode by default and generates reasoning before its answer. To disable thinking, pass `model_kwargs={'extra_body': {'thinking': {'type': 'disabled'}}}` to `chat_completions()`."
-    ]
-   },
-   {
-@@ -160,7 +162,7 @@
-     "msgs = [{'role': 'user', 'content': t.input}]\n",
-     "t.add_computed_column(\n",
-     "    output=deepseek.chat_completions(\n",
--    "        messages=msgs, model='deepseek-v4-flash'\n",
-+    "        messages=msgs, model='deepseek-flash'\n",
-     "    )\n",
-     ")"
-    ]
-```
-
-**File**: `docs/release/platform/configuration.mdx` (modified, +1/-0)
-```diff
-@@ -107,6 +107,7 @@ The OTLP auth headers are a secret and do not go in the entry: set `OTEL_EXPORTE
- | AZURE_STORAGE_ACCOUNT_KEY | [azure]<br/>storage_account_key | (string) Azure Storage account key for use with Azure Blob Storage |
- | BEDROCK_API_KEY | [bedrock]<br/>api_key | (string) API key to use for AWS Bedrock services |
- | DEEPSEEK_API_KEY | [deepseek]<br/>api_key | (string) API key to use for Deepseek services |
-+| DEEPSEEK_BASE_URL | [deepseek]<br/>base_url | (string, optional) Base URL to use for Deepseek services |
- | FAL_API_KEY | [fal]<br/>api_key | (string) API key to use for fal.ai services |
- | FIREWORKS_API_KEY | [fireworks]<br/>api_key | (string) API key to use for Fireworks AI services |
- | GEMINI_API_KEY | [gemini]<br/>api_key | (string) API key for Google AI Studio (not used for Vertex AI) |
-```
-
-**File**: `pixeltable/config.py` (modified, +5/-1)
-```diff
-@@ -994,7 +994,11 @@ def describe_setting(self, section: str, key: str) -> str:
-         'rate_limits': 'Per-model rate limits for Bedrock API requests',
-     },
-     'bfl': {'api_key': 'Black Forest Labs (BFL) API key', 'rate_limit': 'Rate limit for BFL API requests'},
--    'deepseek': {'api_key': 'Deepseek API key', 'rate_limit': 'Rate limit for Deepseek API requests'},
-+    'deepseek': {
-+        'api_key': 'Deepseek API key',
-+        'base_url': 'Deepseek API base URL',
-+        'rate_limit': 'Rate limit for Deepseek API requests',
-+    },
-     'fal': {'api_key': 'fal.ai API key', 'rate_limit': 'Rate limit for fal.ai API requests'},
-     'fireworks': {'api_key': 'Fireworks API key', 'rate_limit': 'Rate limit for Fireworks API requests'},
-     'gemini': {
-```
-
-**File**: `pixeltable/exec/expr_eval/schedulers.py` (modified, +18/-15)
-```diff
-@@ -7,7 +7,7 @@
- import math
- import sys
- import time
--from typing import Collection
-+from typing import Any, Collection
- 
- from pixeltable import env, exceptions as excs, func, telemetry, telemetry_schemas
- from pixeltable.config import Config
-@@ -145,16 +145,15 @@ def _resources(self) -> Collection[str]:
-             return list(self.pool_info.resource_limits.keys())
- 
-     def _get_request_resources(self, request: FnCallArgs) -> dict[str, int]:
--        estimator = request.fn_call.fn._resource_estimator
-+        fn = request.fn_call.fn
-+        estimator = fn._resource_estimator
-         param_names = [
-             p.name for p in inspect.signature(estimator, eval_str=True).parameters.values() if p.name != '_param_types'
-         ]
--        if len(param_names) == 0:
--            result = estimator()
--        else:
--            extra = set(param_names) - set(request.fn_call.fn.signature.parameters.keys())
-+        kwargs: dict[str, Any] = {}
-+        if len(param_names) > 0:
-+            extra = set(param_names) - set(fn.signature.parameters.keys())
-             if extra:
--                fn = request.fn_call.fn
++        pred.check_method_refs()
+         if not pred.col_type.is_bool_type():
+             raise excs.RequestError(
+                 excs.ErrorCode.UNSUPPORTED_OPERATION,
+@@ -533,6 +564,7 @@ def _create_join_predicate(
+         if isinstance(on, exprs.ColumnRef):
+             on = [on]
+         elif isinstance(on, exprs.Expr):
++            on.check_method_refs()
+             if not on.is_bound_by(joined_tbls):
                  raise excs.RequestError(
-                     excs.ErrorCode.INVALID_CONFIGURATION,
-                     f'resource_estimator for {fn.self_path or fn} has parameters '
-@@ -166,17 +165,21 @@ def _get_request_resources(self, request: FnCallArgs) -> dict[str, int]:
-             # distinguish overloads that share the same Python types (e.g., str for Document vs Video).
-             has_param_types = '_param_types' in inspect.signature(estimator, eval_str=True).parameters
-             if not request.is_batched:
--                if has_param_types:
--                    param_types = {name: p.col_type for name, p in request.fn_call.fn.signature.parameters.items()}
--                    per_row_kwargs[0]['_param_types'] = param_types
--                result = estimator(**per_row_kwargs[0])
-+                kwargs = per_row_kwargs[0]
-             else:
-                 columnar_kwargs = {k: [d[k] for d in per_row_kwargs] for k in per_row_kwargs[0]}
-                 constant_kwargs, batched_kwargs = request.pxt_fn.create_batch_kwargs(columnar_kwargs)
--                if has_param_types:
--                    param_types = {name: p.col_type for name, p in request.fn_call.fn.signature.parameters.items()}
--                    constant_kwargs['_param_types'] = param_types
--                result = estimator(**constant_kwargs, **batched_kwargs)
-+                kwargs = {**constant_kwargs, **batched_kwargs}
-+            if has_param_types:
-+                kwargs['_param_types'] = {name: p.col_type for name, p in fn.signature.parameters.items()}
-+        try:
-+            result = estimator(**kwargs)
-+        except Exception:
-+            _logger.warning(
-+                f'resource estimator for {fn.display_name} failed; estimating 1 request and no other resources',
-+                exc_info=True,
-+            )
-+            result = {'requests': 1}
-         # Filter to resources known to the pool to avoid KeyError in _resource_delay(), this is done
-         # because some providers do not report resources so rate limiting can only be done off of config
-         known = self._resources
+                     excs.ErrorCode.UNSUPPORTED_OPERATION,
+@@ -773,6 +805,7 @@ def group_by(self, *grouping_items: exprs.Expr | catalog.Table) -> Self:
+                 break
+             if not isinstance(item, exprs.Expr):
+                 raise excs.RequestError(excs.ErrorCode.INVALID_EXPRESSION, f'Invalid expression in group_by(): {item}')
++            item.check_method_refs()
+         if grouping_tbl_key is None:
+             # no Table item was found, so every item passed the Expr check above
+             group_by_clause = cast('list[exprs.Expr]', list(grouping_items))
+@@ -853,6 +886,7 @@ def order_by(self, *expr_list: exprs.Expr, asc: bool = True) -> Self:
+         for e in expr_list:
+             if not isinstance(e, exprs.Expr):
+                 raise excs.RequestError(excs.ErrorCode.INVALID_EXPRESSION, f'Invalid expression in order_by(): {e}')
++            e.check_method_refs()
+         order_by_clause = self.order_by_clause if self.order_by_clause is not None else []
+         order_by_clause.extend((e.copy(), asc) for e in expr_list)
+         return type(self)(
+@@ -1025,6 +1059,7 @@ def sample(
+             for expr in stratify_by:
+                 if expr is None or not isinstance(expr, exprs.Expr):
+                     raise excs.RequestError(excs.ErrorCode.INVALID_EXPRESSION, f'Invalid expression: {expr}')
++                expr.check_method_refs()
+                 if not expr.col_type.is_scalar_type():
+                     raise excs.RequestError(
+                         excs.ErrorCode.INVALID_ARGUMENT,
 ```
 
-**File**: `pixeltable/functions/anthropic.py` (modified, +7/-4)
+**File**: `pixeltable/catalog/catalog.py` (modified, +9/-3)
 ```diff
-@@ -260,10 +260,13 @@ def _(model: str) -> str:
- def _(messages: list[dict[str, str]], max_tokens: int) -> dict[str, int]:
-     input_len = 0
-     for message in messages:
--        if 'role' in message:
--            input_len += len(message['role'])
--        if 'content' in message:
--            input_len += len(message['content'])
-+        try:
-+            if 'role' in message:
-+                input_len += len(message['role'])
-+            if 'content' in message:
-+                input_len += len(message['content'])
-+        except Exception:
-+            pass  # best effort: skip what can't be read
-     return {'requests': 1, 'input_tokens': int(input_len / 4), 'output_tokens': max_tokens}
+@@ -140,7 +140,12 @@ def loop(*args: Any, **kwargs: Any) -> T:
+                 try:
+                     # in order for retry to work, we need to make sure that there aren't any prior db updates
+                     # that are part of an ongoing transaction
+-                    assert not get_runtime().in_xact
++                    if get_runtime().in_xact:
++                        raise excs.RequestError(
++                            excs.ErrorCode.UNSUPPORTED_OPERATION,
++                            'Catalog functions such as pxt.get_table() cannot run while a query or update executes, '
++                            'for example inside a UDF. Use a @pxt.query UDF to query another table.',
++                        )
+                     with (
+                         cat._allow_tbl_md_read(),
+                         cat.begin_xact(
+@@ -1897,7 +1902,8 @@ def update_from_model(self, change_sets: list[TableSchemaChangeSet]) -> None:
+         If the table does not exist, raises NotFoundError. If the model is incompatible with the existing table,
+         raises RequestError.
  
+-        Requires that change_sets is ordered topologically, ie, base tables precede their views.
++        Requires that change_sets is ordered topologically: base tables precede their views, and a queried table
++        precedes the tables that query it.
  
+         The change sets are applied in three passes:
+ 
+@@ -1943,7 +1949,7 @@ def update_fn() -> None:
+ 
+             # Record the metadata per table in forward order (base tables first), so a view's new column can
+             # reference a base's new column: the view's resolution sees the base's already-mutated columns through
+-            # tvp.columns().
++            # tvp.columns(). A query in a new column can likewise reference a queried table's new column.
+             updated_tbl_ids = {tvp.tbl_id for tvp, _, _ in tbl_info}
+             applied_tbl_ids: set[UUID] = set()
+             # TableVersions that need to be validated: the changed tables and their mutable views. Schema changes are
 ```
 
-**File**: `pixeltable/functions/deepseek.py` (modified, +18/-4)
+**File**: `pixeltable/catalog/column.py` (modified, +4/-6)
 ```diff
-@@ -18,13 +18,13 @@
+@@ -242,16 +242,13 @@ def create(cls, name: str, spec: ts.ColumnType | TypeForm | ColumnSpec | exprs.E
+         elif isinstance(spec, dict):
+             stored = spec.get('stored', True)
+             cls._validate_column_spec(name, spec)
+-            value_expr = spec.get('value')
+-            if value_expr is not None and isinstance(value_expr, exprs.Expr):
++            if spec.get('value') is not None:
++                value_expr = exprs.Expr.from_object(spec['value'])
++                assert value_expr is not None, type(spec['value'])
+                 # create copy so we can modify it
+                 value_expr = value_expr.copy()
+                 value_expr.bind_rel_paths()
+                 sa_col_type = value_expr.col_type.to_sa_type() if stored else None
+-            elif value_expr is not None and stored:
+-                expr = exprs.Expr.from_object(value_expr)
+-                assert expr is not None, type(value_expr)
+-                sa_col_type = expr.col_type.to_sa_type()
+             if 'type' in spec:
+                 col_type = ts.ColumnType.normalize_type(spec['type'], allow_builtin_types=False)
+                 sa_col_type = col_type.to_sa_type() if stored else None
+@@ -513,6 +510,7 @@ def set_value_expr(self, value_expr: exprs.Expr) -> None:
  
- 
- @env.register_client('deepseek', credential_param='api_key')
--def _(api_key: str) -> 'openai.AsyncOpenAI':
-+def _(api_key: str, base_url: str = 'https://api.deepseek.com') -> 'openai.AsyncOpenAI':
-     import httpx2
-     import openai
- 
-     return openai.AsyncOpenAI(
-         api_key=api_key,
--        base_url='https://api.deepseek.com',
-+        base_url=base_url,
-         http_client=httpx2.AsyncClient(limits=httpx2.Limits(max_keepalive_connections=100, max_connections=500)),
-     )
- 
-@@ -50,6 +50,10 @@ async def chat_completions(
- 
-     Deepseek uses the OpenAI SDK, so you will need to install the `openai` package to use this UDF.
- 
-+    Thinking mode is on by default: the model generates reasoning before the answer and returns it in
-+    `choices[0].message.reasoning_content`. To turn thinking off, pass
-+    `model_kwargs={'extra_body': {'thinking': {'type': 'disabled'}}}`.
-+
-     Request throttling:
-     Applies the rate limit set in the config (section `deepseek`, key `rate_limit`). If no rate
-     limit is configured, uses a default of 600 RPM.
-@@ -70,15 +74,25 @@ async def chat_completions(
-         A dictionary containing the response and other metadata.
- 
-     Examples:
--        Add a computed column that applies the model `deepseek-v4-flash` to an existing Pixeltable column `tbl.prompt`
-+        Add a computed column that applies the model `deepseek-flash` to an existing Pixeltable column `tbl.prompt`
-         of the table `tbl`:
- 
-         >>> messages = [
-         ...     {'role': 'system', 'content': 'You are a helpful assistant.'},
-         ...     {'role': 'user', 'content': tbl.prompt},
-         ... ]
-         >>> tbl.add_computed_column(
--        ...     response=chat_completions(messages, model='deepseek-v4-flash')
-+        ...     response=chat_completions(messages, model='deepseek-flash')
-+        ... )
-+
-+        The same, with thinking disabled:
-+
-+        >>> tbl.add_computed_column(
-+        ...     response=chat_completions(
-+        ...         messages,
-+        ...         model='deepseek-flash',
-+        ...         model_kwargs={'extra_body': {'thinking': {'type': 'disabled'}}},
-+        ...     )
-         ... )
-     """
-     if model_kwargs is None:
+     def check_value_expr(self) -> None:
+         assert self._value_expr is not None
++        self._value_expr.check_method_refs(f'Column {self.name!r}: ')
+         self._value_expr.validate_storable(f'Computed column {self.name!r}')
+         for e in self._value_expr.subexprs(expr_class=exprs.ColumnPropertyRef, traverse_matches=False):
+             if e.is_cellmd_prop():
 ```
 
-**File**: `pixeltable/functions/nebius.py` (modified, +5/-16)
+**File**: `pixeltable/catalog/model/base.py` (modified, +4/-1)
 ```diff
-@@ -6,20 +6,19 @@
- setting the `NEBIUS_API_KEY` environment variable or `nebius.api_key` in the Pixeltable config file.
- """
+@@ -160,8 +160,11 @@ def _update_all(catalog_dir: str = '', *, allow_destructive: bool = False) -> di
+             )
  
--import copy
- import json
- from typing import TYPE_CHECKING, Any
+         # Apply column/index changes to existing tables. New tables are handled by _create_all() below.
++        # update_from_model() needs each queried table ahead of the tables that query it.
+         update_diffs = [
+-            (name, d) for name, d in diffs.items() if d.resolution in ('update_additive', 'update_destructive')
++            (name, diffs[name])
++            for name, _ in _creation_order(registered_models)
++            if diffs[name].resolution in ('update_additive', 'update_destructive')
+         ]
  
- import numpy as np
--import PIL.Image
- 
- import pixeltable as pxt
- import pixeltable.type_system as ts
- from pixeltable import env, exceptions as excs
- from pixeltable.func import Batch
- from pixeltable.runtime import get_runtime
- from pixeltable.utils.code import local_public_names
--from pixeltable.utils.image import to_base64
-+
-+from .openai import _encode_chat_images
+         pending_creates = {name for name, d in diffs.items() if d.resolution == 'create'}
+```
+
+**File**: `pixeltable/catalog/model/definition.py` (modified, +10/-26)
+```diff
+@@ -47,6 +47,8 @@
+ from .resolution import prepare_model
  
  if TYPE_CHECKING:
-     import openai
-@@ -103,6 +102,8 @@ async def chat_completions(
-         >>> tbl.add_computed_column(
-         ...     response=chat_completions(messages, model='openbmb/MiniCPM-V-4_5')
-         ... )
++    from pixeltable._query_base import QueryBase
 +
-+        The `'image_url'` field also accepts the API's `{'url': ...}` form, such as `{'url': tbl.image}`.
+     from .query import ModelQuery
+ 
+ # the model each defined path was synthesized for, keyed by its synthesized table id; a query over a model
+@@ -452,36 +454,18 @@ def apply_decl_order(self) -> None:
+ 
+ 
+ def bind_query_templates(e: exprs.Expr, catalog_dir: str | None) -> exprs.Expr:
+-    """Rebind QueryTemplateFunction calls of ModelQuery instances to the equivalent Query of the bound model.
++    """Replace each ModelQuery template in e's QueryTemplateFunction calls with ModelQuery.bind_unresolved(catalog_dir).
+ 
+-    With `catalog_dir=None`, each Query is over its model's defined shape rather than over a table.
++    With `catalog_dir=None`, the replacement is ModelQuery.to_defined_query().
      """
-     env.Env.get().require_package('openai')
+     from .query import ModelQuery
  
-@@ -126,19 +127,7 @@ async def chat_completions(
-             model_kwargs['extra_body'] = {}
-         model_kwargs['extra_body']['parallel_tool_calls'] = False
+-    subst: exprs.ExprDict[exprs.Expr] = exprs.ExprDict()
+-    for fn_call in e.subexprs(exprs.FunctionCall):
+-        fn = fn_call.fn
+-        if not isinstance(fn, func.QueryTemplateFunction) or not isinstance(fn.template_query, ModelQuery):
+-            continue
+-        assert fn_call.group_by_start_idx == fn_call.group_by_stop_idx  # a query udf takes no window clause
+-        rebound = func.QueryTemplateFunction(
+-            fn.template_query.to_defined_query() if catalog_dir is None else fn.template_query.bind(catalog_dir),
+-            list(fn.signature.parameters.values()),
+-            path=fn.self_path,
+-            name=fn.self_name,
+-            comment=fn.comment(),
+-        )
+-        # we need to substitute the FunctionCall itself, not just the Function instance
+-        subst[fn_call] = rebound(*fn_call.args, **fn_call.kwargs)
+-    if len(subst) == 0:
+-        return e
+-    result = e.substitute(subst)
+-    # substitute() returns a replacement without descending into it, so a call nested in another one is missed
+-    assert not any(
+-        isinstance(c.fn, func.QueryTemplateFunction) and isinstance(c.fn.template_query, ModelQuery)
+-        for c in result.subexprs(exprs.FunctionCall)
+-    )
+-    return result
++    def bound_query(template_query: QueryBase) -> pxt.Query | None:
++        if not isinstance(template_query, ModelQuery):
++            return None
++        return template_query.to_defined_query() if catalog_dir is None else template_query.bind_unresolved(catalog_dir)
++
++    return func.substitute_template_queries(e, bound_query)
  
--    # Serialize any images in `messages`
--    messages = copy.deepcopy(messages)
--    for message in messages:
--        content = message.get('content')
--        if isinstance(content, list):
--            for part in content:
--                if (
--                    isinstance(part, dict)
--                    and part.get('type') == 'image_url'
--                    and isinstance(part.get('image_url'), PIL.Image.Image)
--                ):
--                    b64_encoded_image = to_base64(part['image_url'], format='png')
--                    part['image_url'] = {'url': f'data:image/png;base64,{b64_encoded_image}'}
-+    messages = _encode_chat_images(messages)
  
-     result = await _nebius_client().chat.completions.with_raw_response.create(
-         messages=messages, model=model, **model_kwargs
+ class TableModelMeta(type):
 ```
 
-**File**: `pixeltable/functions/openai.py` (modified, +49/-29)
+**File**: `pixeltable/catalog/model/query.py` (modified, +8/-23)
 ```diff
-@@ -505,26 +505,53 @@ def _token_count_for_image(image: PIL.Image.Image) -> int:
+@@ -2,7 +2,6 @@
+ 
+ from __future__ import annotations
+ 
+-import dataclasses
+ from typing import Any, Self
+ 
+ import pixeltable as pxt
+@@ -12,6 +11,7 @@
+ from pixeltable.query_clauses import FromClause
+ 
+ from .definition import MODEL_BY_DEFINED_TBL_ID, TableModelMeta, bind_query_templates
++from .resolution import resolve_query_columns
+ 
+ 
+ class ModelQuery(QueryBase):
+@@ -102,15 +102,16 @@ def to_defined_query(self) -> pxt.Query:
+         return self._substituted(defined_path, subst, None)
+ 
+     def bind(self, catalog_dir: str) -> pxt.Query:
+-        """The equivalent query over the table this query's model resolves to under catalog_dir."""
++        """The equivalent Query over the table of this query's model under catalog_dir."""
++        return resolve_query_columns(self.bind_unresolved(catalog_dir))
++
++    def bind_unresolved(self, catalog_dir: str) -> pxt.Query:
++        """The Query over the table of this query's model under catalog_dir, with each ColumnRefByName left in place."""
+         # _resolve_tbl() rather than _bind(): binding the model here would fix its columns to the schema the
+         # table has now, and update_all() may still be about to migrate it.
+         tbl = self.model_cls._resolve_tbl(catalog.Path.dir_prefix(catalog_dir), if_not_exists='error')
+         assert tbl is not None
+-        subst: exprs.ExprDict[exprs.Expr] = exprs.ExprDict()
+-        for col_name in tbl.columns():
+-            subst[ColumnRefByName(col_name)] = getattr(tbl, col_name)
+-        return self._substituted(tbl._tbl_path, subst, catalog_dir)
++        return self._substituted(tbl._tbl_path, exprs.ExprDict(), catalog_dir)
+ 
+     def _substituted(
+         self, path: catalog.TablePath, subst: exprs.ExprDict[exprs.Expr], catalog_dir: str | None
+@@ -141,23 +142,7 @@ def _substituted(
+         def rebound(e: exprs.Expr) -> exprs.Expr:
+             return bind_query_templates(e.copy().substitute(subst), catalog_dir)
+ 
+-        return pxt.Query(
+-            from_clause=FromClause(tbls=[path]),
+-            select_list=None if self.select_list is None else [(rebound(e), n) for e, n in self.select_list],
+-            where_clause=None if self.where_clause is None else rebound(self.where_clause),
+-            group_by_clause=None if self.group_by_clause is None else [rebound(e) for e in self.group_by_clause],
+-            grouping_tbl_key=self.grouping_tbl_key,
+-            order_by_clause=None
+-            if self.order_by_clause is None
+-            else [(rebound(e), asc) for e, asc in self.order_by_clause],
+-            limit=None if self.limit_val is None else rebound(self.limit_val),
+-            offset=None if self.offset_val is None else rebound(self.offset_val),
+-            sample_clause=None
+-            if self.sample_clause is None
+-            else dataclasses.replace(
+-                self.sample_clause, stratify_exprs=[rebound(e) for e in self.sample_clause.stratify_exprs]
+-            ),
+-        )
++        return pxt.Query._from_query(self, from_clause=FromClause(tbls=[path]), substitution_fn=rebound)
+ 
+     def join(self, *args: Any, **kwargs: Any) -> Self:
+         raise excs.RequestError(
+```
+
+**File**: `pixeltable/catalog/model/resolution.py` (modified, +77/-7)
+```diff
+@@ -5,16 +5,16 @@
+ from typing import TYPE_CHECKING, Literal, Mapping, NamedTuple, TypedDict
+ from uuid import UUID
+ 
++import pixeltable as pxt
+ from pixeltable import catalog, exceptions as excs, exprs, func, index
+ from pixeltable.types import ColumnSpec
+ 
+ from ..globals import MediaValidation, fold_mapping_keys
+ from ..table_version_handle import TableVersionHandle
+ 
+ if TYPE_CHECKING:
+-    import pixeltable as pxt
++    from pixeltable._query_base import QueryBase
+ 
+-if TYPE_CHECKING:
+     from .definition import IndexDefinition
+ 
+ 
+@@ -67,7 +67,9 @@ def prepare_model(
+         )
+         subst_args = [arg.substitute(base_tbl_subst_dict) for arg in iterator.args]
+         subst_kwargs = {k: v.substitute(base_tbl_subst_dict) for k, v in iterator.kwargs.items()}
+-        subst_bound_args = {k: v.substitute(base_tbl_subst_dict) for k, v in iterator.bound_args.items()}
++        # a **kwargs parameter binds to a dict of Exprs, not to an Expr;
++        # this mirrors GeneratingFunctionCall.from_dict()
++        subst_bound_args = iterator.it.bind_to_signature(subst_args, subst_kwargs)
+         iterator = func.GeneratingFunctionCall(
+             iterator.it, subst_args, subst_kwargs, subst_bound_args, iterator.outputs, iterator.validation_error
+         )
+@@ -118,7 +120,8 @@ def prepare_model(
+     for name, spec in columns.items():
+         subst_spec = spec.copy()
+         if 'value' in subst_spec:
+-            subst_spec['value'] = subst_spec['value'].substitute(subst_dict)
++            subst_spec['value'] = resolve_query_calls(subst_spec['value'].substitute(subst_dict))
++            _check_query_columns(subst_spec['value'], name, display_name)
+             # whatever is still a ColumnRefByName has to name a column of this table that precedes this one, so that
+             # it has a value by the time this column is computed
+             unresolved = [
+@@ -235,7 +238,10 @@ class ModelUpdates(NamedTuple):
+ def resolve_model_value_expr(
+     tbl_path: catalog.TablePath, value_expr: exprs.Expr, origin: Literal['base_query', 'model_body']
+ ) -> exprs.Expr:
+-    """Replace model column names with catalog column references visible at the declaration site."""
++    """Replace model column names with catalog column references visible at the declaration site.
++
++    A ColumnRefByName in the template query of a QueryTemplateFunction call becomes a ColumnRef to that query's table.
++    """
+     reference_path = tbl_path.base if origin == 'base_query' else tbl_path
+     assert reference_path is not None
+ 
+@@ -249,7 +255,7 @@ def resolve_model_value_expr(
+             )
+             for col in reference_path.columns()
+         )
+-        return value_expr.substitute(subst)
++        return resolve_query_calls(value_expr.substitute(subst))
+ 
+     assert isinstance(reference_path, catalog.TableMdPath)
+ 
+@@ -266,7 +272,69 @@ def column_ref(col_md: catalog.ColumnVersionMd) -> exprs.ColumnRef:
+         for col_md in reference_path.column_md()
+         if col_md.name is not None
      )
- 
- 
-+def _image_data_url(img: PIL.Image.Image) -> str:
-+    return f'data:image/png;base64,{to_base64(img, format="png")}'
+-    return value_expr.substitute(subst)
++    return resolve_query_calls(value_expr.substitute(subst))
 +
 +
-+def _encode_chat_images(messages: list) -> list:
-+    messages = copy.deepcopy(messages)
-+    for message in messages:
-+        content = message.get('content') if isinstance(message, dict) else None
-+        if not isinstance(content, list):
-+            continue
-+        for part in content:
-+            if not isinstance(part, dict) or part.get('type') != 'image_url':
-+                continue
-+            image_url = part.get('image_url')
-+            if isinstance(image_url, PIL.Image.Image):
-+                part['image_url'] = {'url': _image_data_url(image_url)}
-+            elif isinstance(image_url, dict) and isinstance(image_url.get('url'), PIL.Image.Image):
-+                image_url['url'] = _image_data_url(image_url['url'])
-+    return messages
++def resolve_query_calls(value_expr: exprs.Expr) -> exprs.Expr:
++    """Apply resolve_query_columns() to the template queries of value_expr's QueryTemplateFunction calls."""
++
++    def resolved_query(template_query: QueryBase) -> pxt.Query | None:
++        if not isinstance(template_query, pxt.Query) or not _is_unresolved(template_query):
++            return None
++        return resolve_query_columns(template_query)
++
++    return func.substitute_template_queries(value_expr, resolved_query)
 +
 +
- def _messages_resource_estimate(
-     messages: list, max_completion_tokens: int, text_type: str, image_type: str
- ) -> dict[str, int]:
-     num_tokens = 0.0
-     for message in messages:
-         num_tokens += 4  # every message follows <im_start>{role/name}\n{content}<im_end>\n
--        for key, value in message.items():
--            if isinstance(value, str):
--                num_tokens += len(value) / 4
--            elif isinstance(value, list):
--                for part in value:
--                    if isinstance(part, dict):
--                        if part.get('type') == text_type:
--                            assert isinstance(part.get('text'), str)
--                            num_tokens += len(part['text']) / 4
--                        elif part.get('type') == image_type:
--                            assert isinstance(part.get('image_url'), PIL.Image.Image)
--                            num_tokens += _token_count_for_image(part['image_url'])
--            if key == 'name':  # if there's a name, the role is omitted
--                num_tokens -= 1  # role is always required and always 1 token
-+        try:
-+            for key, value in message.items():
-+                if isinstance(value, str):
-+                    num_tokens += len(value) / 4
-+                elif isinstance(value, list):
-+                    for part in value:
-+                        if isinstance(part, dict):
-+                            if part.get('type') == text_type and isinstance(part.get('text'), str):
-+                                num_tokens += len(part['text']) / 4
-+                            elif part.get('type') == image_type:
-+                                image = part.get('image_url')
-+                                if isinstance(image, dict):
-+                                    image = image.get('url')
-+                                # an image URL counts 0 tokens: the image size is unknown without fetching it
-+                                if isinstance(image, PIL.Image.Image):
-+                                    num_tokens += _token_count_for_image(image)
-+                if key == 'name':  # if there's a name, the role is omitted
-+                    num_tokens -= 1  # role is always required and always 1 token
-+        except Exception:
-+            pass  # best effort: skip what can't be read
- 
-     num_tokens += 2  # every reply is primed with <im_start>assistant
-     return {'requests': 1, 'tokens': int(num_tokens) + max_completion_tokens}
-@@ -590,6 +617,9 @@ async def chat_completions(
-         ... tbl.add_computed_column(
-         ...     response=chat_completions(messages, model='gpt-4o-mini')
-         ... )
++def resolve_query_columns(query: pxt.Query) -> pxt.Query:
++    """Replace each ColumnRefByName in query's clauses with a ColumnRef to the column of that name in query's table.
 +
-+        The `'image_url'` field also accepts the API's `{'url': ...}` form. Its `'url'` can be an image or a URL
-+        string, such as `tbl.image.fileurl`; OpenAI fetches a URL itself, so it has to be publicly accessible.
-     """
-     if model_kwargs is None:
-         model_kwargs = {}
-@@ -609,19 +639,7 @@ async def chat_completions(
-     if tool_choice is not None and not tool_choice['parallel_tool_calls']:
-         model_kwargs['parallel_tool_calls'] = False
- 
--    # Serialize any images in `messages`
--    messages = copy.deepcopy(messages)
--    for message in messages:
--        content = message.get('content')
--        if isinstance(content, list):
--            for part in content:
--                if (
--                    isinstance(part, dict)
--                    and part.get('type') == 'image_url'
--                    and isinstance(part.get('image_url'), PIL.Image.Image)
--                ):
--                    b64_encoded_image = to_base64(part['image_url'], format='png')
--                    part['image_url'] = {'url': f'data:image/png;base64,{b64_encoded_image}'}
-+    messages = _encode_chat_images(messages)
- 
-     # make sure the pool info exists prior to making the request
-     resource_pool = _rate_limits_pool(model)
-@@ -675,8 +693,7 @@ def _serialize_input_images(input: list) -> list:
-           
++    For a local table, this first clears the cached column metadata of the query's table path.
++    """
++    tbl_path = query._from_clause._first_tbl
++    if query._from_clause.is_local:
++        # the TableVersionPath's cached ColumnVersionMds don't include columns added to its TableVersion after caching
++        query._first_tbl.clear_cached_md()
++    subst = exprs.ExprDict[exprs.Expr](
++        (exprs.ColumnRefByName(col_md.name), exprs.ColumnRef(col_md, tbl_path.is_validate_on_read(col_md)))
++        for col_md in tbl_path.column_md()
++        if col_md.name is not None
++    )
++    return pxt.Query._from_query(
++        query, from_clause=query._from_clause, substitution_fn=lambda e: resolve_query_calls(e.copy().substitute(subst))
++    )
++
++
++def _is_unresolved(query: pxt.Query) -> bool:
++    """Returns True if it contains ColumnRefByName instances."""
++    return exprs.Expr.list_contains(
++        query._component_exprs(),
++        filter=lambda e: isinstance(e, exprs.ColumnRefByName)
++        or (
++            isinstance(e, exprs.FunctionCall)
++            and isinstance(e.fn, func.QueryTemplateFunction)
++            and isinstance(e.fn.template_query, pxt.Query)
++     
+```
+
+---
+
+### Incident Patch 2: `67cbca8e` (2026-10-30)
+**Commit Message**: Build the dashboard SPA for the nightly's from_main install (#1847)
+
+Fixes the two failures in the `from_main` dispatch of the nightly ([run
+40119990499](https://github.com/pixeltable/pixeltable/actions/runs/40119990499)).
+Every test leg failed the same two tests, both with `HTTP Error 404: Not
+Found` on `GET /` from the `pxt` daemon:
+
+-
+`tests/pixeltable_cli/test_smoke.py::TestDashboard::test_spa_static_files`
+-
+`tests/pixeltable_cli/test_smoke.py::TestDashboardCommand::test_prints_url`
+
+### Cause
+
+Since #1727, `from_main` installs
+`git+https://github.com/pixeltable/pixeltable@<sha>`. The dashboard SPA
+lives in `pixeltable_cli/server/static/`, which is gitignored and
+produced only by `npm run build` in `dashboard/`. A build from a fresh
+clone has no SPA, so `_serve_static()` finds no `index.html` and returns
+404.
+
+Release-mode nightlies pass these tests because the PyPI wheel has the
+SPA: `make release` depends on `make install`, which builds it, and
+hatchling's `artifacts` setting puts it in the wheel. PR CI passes them
+because `pytest.yml` has a "Build dashboard SPA" step. The recent
+dispatched nightlies (Oct 9, 15, 23) all ran in release mode, so this
+run was the first `from_ma
+
+**File**: `.github/workflows/nightly.yml` (modified, +11/-4)
+```diff
+@@ -118,14 +118,19 @@ jobs:
+       - name: Install tools and libraries
+         # cmake is needed for certain CI environments where it is not preinstalled.
+         run: ./scripts/retry.sh 3 30 conda install -y -c conda-forge 'cmake>=3.22' libiconv 'ffmpeg==6.1.1=gpl*'
+-      - name: Delete source tree
+-        run: rm -rf pixeltable pixeltable_cli  # Ensure we use installed packages for testing, not local source tree
++      - name: Build dashboard SPA
++        # The release wheel bundles the SPA, whose build output is gitignored; tests/pixeltable_cli/test_smoke.py
++        # requests it from the daemon of the installed package
++        if: ${{ inputs.from_main }}
++        run: |
++          ./scripts/retry.sh 3 30 conda install -y -c conda-forge nodejs
++          cd dashboard && npm install --silent && npm run build
+       - name: Install dependencies
+         run: |
+-          # Pin pixeltable to the checkout: the commit itself for main, else the latest version tag at or before it
++          # Pin pixeltable to the checkout: the source tree for main, else the latest version tag at or before it
+           # (the release tag can sit past its version tag)
+           if [[ '${{ inputs.from_main }}' == 'true' ]]; then
+-            PXT="git+https://github.com/pixeltable/pixeltable@$(git rev-parse HEAD)"
++            PXT='.'
+           else
+             PXT="pixeltable==$(git describe --tags --abbrev=0 --match 'v[0-9]*' | sed 's/^v//')"
+           fi
+@@ -134,6 +139,8 @@ jobs:
+           ./scripts/retry.sh 3 60 python -m pip install "$PXT" ${{ matrix.package-configs }}
+           # PXT-1714: lift this pin when pytest-benchmark supports pytest 9.2.
+           python -m pip install filelock 'pytest>=9.0.3,<9.2' pytest-xdist pytest-rerunfailures pytest-benchmark
++      - name: Delete source tree
++        run: rm -rf pixeltable pixeltable_cli  # Ensure we use installed packages for testing, not local source tree
+       - name: Install spaCy model
+         if: ${{ contains(matrix.package-configs, 'spacy') }}
+         run: python -m spacy download en_core_web_sm
+```
+
+**File**: `tests/test_video.py` (modified, +2/-0)
+```diff
+@@ -275,6 +275,8 @@ def test_frame_iterator_seek(self, db_root: DatabaseRoot) -> None:
+         Loads the first 20 frames of a video with various fps and num_frames settings, then queries for frames at
+         specific positions and checks that the output is pixel-identical.
+         """
++        if platform.system() == 'Windows' and db_root.id == 'proxy':
++            pytest.skip('PXT-1715: dropping a video table with an open media file hangs the proxy daemon on Windows')
+         # It's important to run this test for all videos and for many kwargs combinations, since there are so many
+         # edge cases when working with video data.
+         p = db_root.make_catalog_path
 ```
 
 #### Recent Merged Pull Requests:
@@ -2031,8 +2026,8 @@ with "Object of type JpegImageFile is not JSON serializable".
 - **PR #1877** (2026-10-30): Fix Windows flake in test_udf_module_import_error (stale import cache) (@aaron-siegel)
 - **PR #1876** (2026-10-30): Remove leftover replica references from the dashboard and the API index (@sergey-mkhitaryan)
 - **PR #1875** (2026-10-30): Expire pooled proxy daemon connections before the daemon's keep-alive closes them (@aaron-siegel)
+- **PR #1873** (2026-10-30): docs: install Pixeltable with -U everywhere, warn on Python below 3.11 (@pierrebrunelle)
 - **PR #1872** (closed): PXT-1724: Generate Gemini Omni video through the Interactions API (@pierrebrunelle)
-- **PR #1870** (2026-10-30): Cap standard+ at -n 8 to stay within the test Postgres server's connections (@aaron-siegel)
 
 ---
 
@@ -2052,33 +2047,29 @@ with "Object of type JpegImageFile is not JSON serializable".
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Windows flake in test_udf_module_import_error (stale import cache) (#1877)
+## X. eight bugs found by the skill evals (#1852)
 
 **RULE**:
-When implementing operations in `tests/test_function.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e1436803`: Windows flake in test_udf_module_import_error (stale import cache) (#1877). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `323a5c71`: eight bugs found by the skill evals (#1852). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/test_function.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-        # written before syspath_prepend() and its cache refresh: on Windows, imports can miss a module written later
-        (tmp_path / 'stored_udf_mod.py').write_text(
-            'import pixeltable as pxt\n\n@pxt.udf\ndef f(s: str) -> str:\n    return s\n'
-        )
+- Built-in UDFs and aggregates (anything under `pixeltable.`) must not modify their arguments: unlike
+  user functions, they receive a constant argument's shared value rather than a copy.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-        (tmp_path / 'stored_udf_mod.py').write_text(
-            'import pixeltable as pxt\n\n@pxt.udf\ndef f(s: str) -> str:\n    return s\n'
-        )
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e1436803` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `323a5c71` are properly handled with clean fallback behavior.

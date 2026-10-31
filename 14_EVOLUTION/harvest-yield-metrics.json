@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T13:40:35.352Z",
-  "total_cycles_completed": 6563,
-  "total_learnings_persisted": 6563,
-  "total_rules_promoted": 6208,
+  "last_updated": "2026-10-31T13:47:25.262Z",
+  "total_cycles_completed": 6566,
+  "total_learnings_persisted": 6566,
+  "total_rules_promoted": 6210,
   "history": [
-    {
-      "timestamp": "2026-10-31T01:04:47.346Z",
-      "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
-      "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T01:04:48.598Z",
-      "repository": "metalbear-co/mirrord",
-      "learningId": "learn-github-metalbear-co-mirrord",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T01:04:52.851Z",
-      "repository": "karakeep-app/karakeep",
-      "learningId": "learn-github-karakeep-app-karakeep",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T01:04:56.281Z",
       "repository": "argoproj/argo-workflows",
@@ -1403,6 +1382,27 @@
       "repository": "hexgrad/Kokoro-82M",
       "learningId": "learn-huggingface-hexgrad-kokoro-82m",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T13:47:17.820Z",
+      "repository": "meta-llama/Meta-Llama-3-8B",
+      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T13:47:18.311Z",
+      "repository": "onejs/one",
+      "learningId": "learn-github-onejs-one",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T13:47:25.262Z",
+      "repository": "pixeltable/pixeltable",
+      "learningId": "learn-github-pixeltable-pixeltable",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

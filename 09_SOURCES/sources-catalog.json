@@ -815,8 +815,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
     "sourceVersion": "hf-meta-llama-meta-llama-3-8b",
     "license": "Open-Source",
-    "contentHash": "0cdfa3036d59c148ecf33ad8b5678472f25c37eac41d807b8c7356f005d326fa",
-    "lastHarvestedAt": "2026-10-28T13:23:22.794Z",
+    "contentHash": "d8324353668a6c6968859aae01b4ec0baada4db0c3ba2234070aededcd1ecee0",
+    "lastHarvestedAt": "2026-10-31T13:47:17.814Z",
     "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b"
   },
   "hf-microsoft-frognano-4b-2609": {
@@ -3713,10 +3713,10 @@
     "repository": "pixeltable/pixeltable",
     "platform": "github",
     "sourceUrl": "https://github.com/pixeltable/pixeltable",
-    "sourceVersion": "9eb81f37",
+    "sourceVersion": "7822c1b1",
     "license": "Apache-2.0",
-    "contentHash": "d647357ff6de7cc6ad45db06383bcf2f5544c6c0c0a181b58d93b95ccb8683c6",
-    "lastHarvestedAt": "2026-10-30T21:30:06.839Z",
+    "contentHash": "864ffa72f40a269d175c8c13645c0994b4857a076a2df2ba2dcc25ce71474c57",
+    "lastHarvestedAt": "2026-10-31T13:47:25.258Z",
     "learningId": "learn-github-pixeltable-pixeltable"
   },
   "honojs-hono": {
@@ -6923,10 +6923,10 @@
     "repository": "onejs/one",
     "platform": "github",
     "sourceUrl": "https://github.com/onejs/one",
-    "sourceVersion": "c5d938eb",
+    "sourceVersion": "834340ac",
     "license": "NOASSERTION",
-    "contentHash": "5fd9f56bca52a40a558c90682132588135a7ce152f4c5d59845e011d972b6d04",
-    "lastHarvestedAt": "2026-10-28T18:34:38.282Z",
+    "contentHash": "3ff050bab7f13b9223bb8ef83952d9ff366dd9786b6c7787098d04b7bf40b816",
+    "lastHarvestedAt": "2026-10-31T13:47:18.306Z",
     "learningId": "learn-github-onejs-one"
   },
   "influxdata-influxdb": {

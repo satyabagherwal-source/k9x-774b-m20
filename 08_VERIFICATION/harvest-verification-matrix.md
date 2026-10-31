@@ -6586,3 +6586,6 @@
 | `CYCLE-20261031-QYT3` | `2026-10-31T13:27:12.567Z` | `kotest/kotest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6209` | Yes (`355ba433...`) |
 | `CYCLE-20261031-ZUBF` | `2026-10-31T13:34:06.651Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6210, Rule 6211` | Yes (`86cafee2...`) |
 | `CYCLE-20261031-868A` | `2026-10-31T13:40:35.338Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`1cf75a7c...`) |
+| `CYCLE-20261031-GSRW` | `2026-10-31T13:47:17.804Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | Yes (`d8324353...`) |
+| `CYCLE-20261031-GT5R` | `2026-10-31T13:47:18.303Z` | `onejs/one` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6212` | Yes (`3ff050ba...`) |
+| `CYCLE-20261031-GYIV` | `2026-10-31T13:47:25.255Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6213` | Yes (`864ffa72...`) |

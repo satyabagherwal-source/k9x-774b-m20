@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-EBLV",
-    "timestamp": "2026-10-30T00:25:52.963Z",
-    "repository": "slatedb/slatedb",
-    "learningId": "learn-github-slatedb-slatedb",
-    "contentHash": "bc0d324cf66cfaed05c7c7ea2361896e7e69497ab23d9e83cb1b4658211c8a74",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-FUYI",
-    "timestamp": "2026-10-30T00:27:04.698Z",
-    "repository": "o2sh/onefetch",
-    "learningId": "learn-github-o2sh-onefetch",
-    "contentHash": "f088eb011c97f5e93b2fb05d7b4c54bbedd4a28af5ac183a3417b4358f0faf92",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-NRVV",
-    "timestamp": "2026-10-30T00:33:13.963Z",
-    "repository": "GitoxideLabs/gitoxide",
-    "learningId": "learn-github-gitoxidelabs-gitoxide",
-    "contentHash": "07236104327b0ee6b04a34e358835c73b48864a2eb6dd0c3e9e3f9d9081c337f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-WKJO",
     "timestamp": "2026-10-30T00:40:04.356Z",
     "repository": "gocd/gocd",
@@ -7492,6 +7447,51 @@
     "contentHash": "1cf75a7c29124a812adf25683b2825004c00c5eb408ec83f9f02dd0575c3c6e9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-GSRW",
+    "timestamp": "2026-10-31T13:47:17.804Z",
+    "repository": "meta-llama/Meta-Llama-3-8B",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+    "contentHash": "d8324353668a6c6968859aae01b4ec0baada4db0c3ba2234070aededcd1ecee0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-GT5R",
+    "timestamp": "2026-10-31T13:47:18.303Z",
+    "repository": "onejs/one",
+    "learningId": "learn-github-onejs-one",
+    "contentHash": "3ff050bab7f13b9223bb8ef83952d9ff366dd9786b6c7787098d04b7bf40b816",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-GYIV",
+    "timestamp": "2026-10-31T13:47:25.255Z",
+    "repository": "pixeltable/pixeltable",
+    "learningId": "learn-github-pixeltable-pixeltable",
+    "contentHash": "864ffa72f40a269d175c8c13645c0994b4857a076a2df2ba2dcc25ce71474c57",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

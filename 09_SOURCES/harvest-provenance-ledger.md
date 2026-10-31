@@ -6595,3 +6595,6 @@ Every entry in this ledger must capture:
 | `learn-github-kotest-kotest` | `https://github.com/kotest/kotest` | `0397e47b` | Multi-dimensional audit evidence | 2026-10-31T13:27:12.570Z |
 | `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-10-31T13:34:06.654Z |
 | `learn-huggingface-hexgrad-kokoro-82m` | `https://huggingface.co/hexgrad/Kokoro-82M` | `hf-hexgrad` | Multi-dimensional audit evidence | 2026-10-31T13:40:35.347Z |
+| `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-31T13:47:17.814Z |
+| `learn-github-onejs-one` | `https://github.com/onejs/one` | `834340ac` | Multi-dimensional audit evidence | 2026-10-31T13:47:18.306Z |
+| `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `7822c1b1` | Multi-dimensional audit evidence | 2026-10-31T13:47:25.258Z |

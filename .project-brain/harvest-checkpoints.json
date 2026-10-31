@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T13:40:35.356Z",
+  "last_updated": "2026-10-31T13:47:25.266Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1055,14 +1055,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-meta-llama-3-8b",
-      "content_hash": "0cdfa3036d59c148ecf33ad8b5678472f25c37eac41d807b8c7356f005d326fa",
-      "verified_at": "2026-10-28T13:23:22.805Z",
+      "content_hash": "d8324353668a6c6968859aae01b4ec0baada4db0c3ba2234070aededcd1ecee0",
+      "verified_at": "2026-10-31T13:47:17.823Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T13:23:22.805Z"
+      "last_updated": "2026-10-31T13:47:17.823Z"
     },
     "hexgrad/Kokoro-82M": {
       "repository": "hexgrad/Kokoro-82M",
@@ -5691,14 +5691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pixeltable-pixeltable",
-      "content_hash": "d647357ff6de7cc6ad45db06383bcf2f5544c6c0c0a181b58d93b95ccb8683c6",
-      "verified_at": "2026-10-30T21:30:06.848Z",
+      "content_hash": "864ffa72f40a269d175c8c13645c0994b4857a076a2df2ba2dcc25ce71474c57",
+      "verified_at": "2026-10-31T13:47:25.265Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T21:30:06.848Z"
+      "last_updated": "2026-10-31T13:47:25.265Z"
     },
     "honojs/hono": {
       "repository": "honojs/hono",
@@ -10446,14 +10446,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-onejs-one",
-      "content_hash": "5fd9f56bca52a40a558c90682132588135a7ce152f4c5d59845e011d972b6d04",
-      "verified_at": "2026-10-28T18:34:38.289Z",
+      "content_hash": "3ff050bab7f13b9223bb8ef83952d9ff366dd9786b6c7787098d04b7bf40b816",
+      "verified_at": "2026-10-31T13:47:18.314Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T18:34:38.289Z"
+      "last_updated": "2026-10-31T13:47:18.314Z"
     },
     "influxdata/influxdb": {
       "repository": "influxdata/influxdb",
