@@ -6484,3 +6484,5 @@
 | `CYCLE-20261031-IEU2` | `2026-10-31T05:52:39.578Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6094` | Yes (`efac298a...`) |
 | `CYCLE-20261031-YW7F` | `2026-10-31T06:05:28.587Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6095, Rule 6096, Rule 6097` | Yes (`4284288e...`) |
 | `CYCLE-20261031-1USA` | `2026-10-31T06:07:46.714Z` | `BuilderIO/builder` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6098, Rule 6099` | Yes (`5e2d33c0...`) |
+| `CYCLE-20261031-EYRB` | `2026-10-31T06:17:58.391Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6100` | Yes (`1370939e...`) |
+| `CYCLE-20261031-F7GM` | `2026-10-31T06:18:09.670Z` | `moonshotai/Kimi-K3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6101, Rule 6102` | Yes (`23931a2e...`) |

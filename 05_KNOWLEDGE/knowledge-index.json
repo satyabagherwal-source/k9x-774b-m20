@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T06:07:46.633Z",
+  "last_updated": "2026-10-31T06:18:09.593Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -26016,7 +26016,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/moonshotai/Kimi-K3",
       "source_version": "hf-moonshotai-kimi-k3",
-      "content_hash": "aa11c3f204342bdfac6b19d2ceff984af961f4088f58bfd99a2bfc4bbcb34045",
+      "content_hash": "23931a2ed9aa1dbdd886758a812a079b2630402773ab4ff1e1740d149e2bb511",
       "dossier_path": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md",
       "promoted_rules": [
@@ -26049,6 +26049,16 @@
           "number": 4211,
           "title": "Multimodal Token Interleaving Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6101,
+          "title": "Hybrid Attention Layer Partitioning Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6102,
+          "title": "Stable LatentMoE Routing Normalization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -26069,7 +26079,7 @@
         "learn-huggingface-hf-moonshotai-kimi-k3-mv4438bt",
         "learn-huggingface-hf-moonshotai-kimi-k3-mv4hc41y"
       ],
-      "verified_at": "2026-10-28T03:56:16.052Z",
+      "verified_at": "2026-10-31T06:18:09.573Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35135,8 +35145,8 @@
       "slug": "kucherenko-jscpd",
       "platform": "github",
       "source_url": "https://github.com/kucherenko/jscpd",
-      "source_version": "5655cdfc",
-      "content_hash": "ee5cbb8f9cf9a2eb3fe93619f3a7dc1e76b76c27fca564d6949cb0170c438c65",
+      "source_version": "0b519608",
+      "content_hash": "1370939e032bb4ba70ee8090ab021c10292eb60ddf96a0c24e38a54856d288c2",
       "dossier_path": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "promoted_rules": [
@@ -35199,6 +35209,11 @@
           "number": 5623,
           "title": "Merge pull request #1267 from kucherenko/dependabot/cargo/rust/ruff-939b3aa493",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6100,
+          "title": "ci(nix): build the flake on Linux and macOS",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35206,7 +35221,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T06:16:32.972Z",
+      "verified_at": "2026-10-31T06:17:58.295Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -160062,6 +160077,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T06:07:46.612Z"
+    },
+    "rule-6100": {
+      "learning_id": "rule-6100",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6100,
+      "title": "ci(nix): build the flake on Linux and macOS",
+      "source_url": "https://github.com/kucherenko/jscpd",
+      "source_version": "0b519608",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T06:17:58.295Z"
+    },
+    "rule-6101": {
+      "learning_id": "rule-6101",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6101,
+      "title": "Hybrid Attention Layer Partitioning Invariant",
+      "source_url": "https://huggingface.co/moonshotai/Kimi-K3",
+      "source_version": "hf-moonshotai-kimi-k3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T06:18:09.573Z"
+    },
+    "rule-6102": {
+      "learning_id": "rule-6102",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6102,
+      "title": "Stable LatentMoE Routing Normalization Invariant",
+      "source_url": "https://huggingface.co/moonshotai/Kimi-K3",
+      "source_version": "hf-moonshotai-kimi-k3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T06:18:09.573Z"
     }
   },
   "aliases": {

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-32L8",
-    "timestamp": "2026-10-28T23:05:28.796Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "5959ad535b2130fc182fb2e5f6cd6ea7b50b5effca8860d43d5bde04612ab38f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-KBU6",
-    "timestamp": "2026-10-28T23:18:53.934Z",
-    "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
-    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-    "contentHash": "8136ffdf55dfd718e9c115dc22a222c38113eeeb8b0d2a943820fc52ef5e11a7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-KFB8",
     "timestamp": "2026-10-28T23:18:58.436Z",
     "repository": "lancedb/lancedb",
@@ -7490,6 +7460,36 @@
     "repository": "BuilderIO/builder",
     "learningId": "learn-github-builderio-builder",
     "contentHash": "5e2d33c0223c5f458eb1b9dc70bf000b9a07db39ad57d6c47106b1f14e1dc83f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-EYRB",
+    "timestamp": "2026-10-31T06:17:58.391Z",
+    "repository": "kucherenko/jscpd",
+    "learningId": "learn-github-kucherenko-jscpd",
+    "contentHash": "1370939e032bb4ba70ee8090ab021c10292eb60ddf96a0c24e38a54856d288c2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-F7GM",
+    "timestamp": "2026-10-31T06:18:09.670Z",
+    "repository": "moonshotai/Kimi-K3",
+    "learningId": "learn-huggingface-moonshotai-kimi-k3",
+    "contentHash": "23931a2ed9aa1dbdd886758a812a079b2630402773ab4ff1e1740d149e2bb511",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {

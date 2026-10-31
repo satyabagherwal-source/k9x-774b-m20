@@ -6493,3 +6493,5 @@ Every entry in this ledger must capture:
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `32e53bb3` | Multi-dimensional audit evidence | 2026-10-31T05:52:39.581Z |
 | `learn-huggingface-deepseek-ai-deepseek-r1` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-31T06:05:28.591Z |
 | `learn-github-builderio-builder` | `https://github.com/BuilderIO/builder` | `46dd7bae` | Multi-dimensional audit evidence | 2026-10-31T06:07:46.717Z |
+| `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `0b519608` | Multi-dimensional audit evidence | 2026-10-31T06:17:58.395Z |
+| `learn-huggingface-moonshotai-kimi-k3` | `https://huggingface.co/moonshotai/Kimi-K3` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-10-31T06:18:09.674Z |

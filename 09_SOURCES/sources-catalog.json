@@ -275,8 +275,8 @@
     "sourceUrl": "https://huggingface.co/moonshotai/Kimi-K3",
     "sourceVersion": "hf-moonshotai-kimi-k3",
     "license": "Open-Source",
-    "contentHash": "aa11c3f204342bdfac6b19d2ceff984af961f4088f58bfd99a2bfc4bbcb34045",
-    "lastHarvestedAt": "2026-10-28T03:56:16.152Z",
+    "contentHash": "23931a2ed9aa1dbdd886758a812a079b2630402773ab4ff1e1740d149e2bb511",
+    "lastHarvestedAt": "2026-10-31T06:18:09.674Z",
     "learningId": "learn-huggingface-moonshotai-kimi-k3"
   },
   "hf-stabilityai-stable-diffusion-xl-base-1.0": {
@@ -4983,10 +4983,10 @@
     "repository": "kucherenko/jscpd",
     "platform": "github",
     "sourceUrl": "https://github.com/kucherenko/jscpd",
-    "sourceVersion": "5655cdfc",
+    "sourceVersion": "0b519608",
     "license": "MIT",
-    "contentHash": "ee5cbb8f9cf9a2eb3fe93619f3a7dc1e76b76c27fca564d6949cb0170c438c65",
-    "lastHarvestedAt": "2026-10-30T06:16:33.038Z",
+    "contentHash": "1370939e032bb4ba70ee8090ab021c10292eb60ddf96a0c24e38a54856d288c2",
+    "lastHarvestedAt": "2026-10-31T06:17:58.395Z",
     "learningId": "learn-github-kucherenko-jscpd"
   },
   "akveo-kittentricks": {

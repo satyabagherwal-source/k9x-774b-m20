@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T06:07:46.723Z",
-  "total_cycles_completed": 6461,
-  "total_learnings_persisted": 6461,
-  "total_rules_promoted": 6085,
+  "last_updated": "2026-10-31T06:18:09.679Z",
+  "total_cycles_completed": 6463,
+  "total_learnings_persisted": 6463,
+  "total_rules_promoted": 6088,
   "history": [
-    {
-      "timestamp": "2026-10-30T19:54:17.053Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T19:54:18.238Z",
-      "repository": "neuron-core/neuron-ai",
-      "learningId": "learn-github-neuron-core-neuron-ai",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T19:58:26.663Z",
       "repository": "biomejs/biome",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-31T06:07:46.723Z",
       "repository": "BuilderIO/builder",
       "learningId": "learn-github-builderio-builder",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T06:17:58.401Z",
+      "repository": "kucherenko/jscpd",
+      "learningId": "learn-github-kucherenko-jscpd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T06:18:09.679Z",
+      "repository": "moonshotai/Kimi-K3",
+      "learningId": "learn-huggingface-moonshotai-kimi-k3",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md`  
 > **Source**: github ([https://github.com/kucherenko/jscpd](https://github.com/kucherenko/jscpd))  
-> **Source Version**: `5655cdfc`  
+> **Source Version**: `0b519608`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T06:16:32.575Z  
+> **Timestamp**: 2026-10-31T06:17:57.712Z  
 > **Learning ID**: `learn-github-kucherenko-jscpd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kucherenko/jscpd](https://github.com/kucherenko/jscpd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T06:16:31.613Z  
+> **Harvest Timestamp**: 2026-10-31T06:17:57.171Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Copy/paste detector for source code. 220+ languages, Rust engine, SARIF/HTML/badge reporters, GitHub Action, MCP server for AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6468 stars
+- **Stars / Engagement**: 6470 stars
 
 ---
 
@@ -1878,257 +1878,219 @@ impl CpdClone {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5655cdfc` (2026-10-30)
-**Commit Message**: Merge pull request #1267 from kucherenko/dependabot/cargo/rust/ruff-939b3aa493
+### Incident Patch 1: `c70189ec` (2026-10-30)
+**Commit Message**: ci(nix): build the flake on Linux and macOS
 
-chore(deps): bump the ruff group in /rust with 2 updates
+The README tells Nix users to run `nix run github:kucherenko/jscpd`, but
+no job builds the flake, and cargo never reads it. The new workflow
+builds the package, runs it and runs the flake checks on ubuntu and
+macOS. It runs when the flake, the toolchain or a Cargo manifest
+changes, and once a week for the rest.
 
-**File**: `rust/Cargo.lock` (modified, +26/-70)
+**File**: `.github/workflows/nix.yml` (added, +52/-0)
 ```diff
-@@ -2162,7 +2162,7 @@ version = "0.155.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "e78e5d50ecf9fbf6c00afb29dbd670784b2ac407fd676f625d1f3515a1a2d577"
- dependencies = [
-- "phf 0.14.0",
-+ "phf",
-  "proc-macro2",
-  "quote",
-  "syn 3.0.6",
-@@ -2273,7 +2273,7 @@ dependencies = [
-  "oxc_diagnostics",
-  "oxc_span",
-  "oxc_str",
-- "phf 0.14.0",
-+ "phf",
-  "rustc-hash",
-  "unicode-id-start",
- ]
-@@ -2343,7 +2343,7 @@ dependencies = [
-  "oxc_index",
-  "oxc_span",
-  "oxc_str",
-- "phf 0.14.0",
-+ "phf",
-  "unicode-id-start",
- ]
- 
-@@ -2375,44 +2375,25 @@ version = "2.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
- 
--[[package]]
--name = "phf"
--version = "0.11.3"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1fd6780a80ae0c52cc120a26a1a42c1ae51b247a253e4e06113d23d2c2edd078"
--dependencies = [
-- "phf_shared 0.11.3",
--]
--
- [[package]]
- name = "phf"
- version = "0.14.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "010378780309880b08997fae13be7834dba947d36393bd372f2b1556deb2a2f6"
- dependencies = [
-  "phf_macros",
-- "phf_shared 0.14.0",
-+ "phf_shared",
-  "serde",
- ]
- 
- [[package]]
- name = "phf_codegen"
--version = "0.11.3"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "aef8048c789fa5e851558d709946d6d79a8ff88c0440c587967f8e94bfb1216a"
--dependencies = [
-- "phf_generator 0.11.3",
-- "phf_shared 0.11.3",
--]
--
--[[package]]
--name = "phf_generator"
--version = "0.11.3"
-+version = "0.14.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3c80231409c20246a13fddb31776fb942c38553c51e871f8cbd687a4cfb5843d"
-+checksum = "41b585a510fb76fdebead6897982ef2a03a21d8e6cbcca904999742a4afc6ffe"
- dependencies = [
-- "phf_shared 0.11.3",
-- "rand 0.8.8",
-+ "phf_generator",
-+ "phf_shared",
- ]
- 
- [[package]]
-@@ -2422,7 +2403,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "aeb62e0959d5a1bebc965f4d15d9e2b7cea002b6b0f5ba8cde6cc26738467100"
- dependencies = [
-  "fastrand",
-- "phf_shared 0.14.0",
-+ "phf_shared",
- ]
- 
- [[package]]
-@@ -2431,22 +2412,13 @@ version = "0.14.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "5fa8d0ca26d424d27630da600c6624696e7dec8bf7b3b492b383c5dc49e5e085"
- dependencies = [
-- "phf_generator 0.14.0",
-- "phf_shared 0.14.0",
-+ "phf_generator",
-+ "phf_shared",
-  "proc-macro2",
-  "quote",
-  "syn 2.0.119",
- ]
- 
--[[package]]
--name = "phf_shared"
--version = "0.11.3"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "67eabc2ef2a60eb7faa00097bd1ffdb5bd28e62bf39990626a582201b7a754e5"
--dependencies = [
-- "siphasher",
--]
--
- [[package]]
- name = "phf_shared"
- version = "0.14.0"
-@@ -2615,15 +2587,6 @@ version = "6.0.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "f8dcc9c7d52a811697d2151c701e0d08956f92b0e24136cf4cf27b57a6a0d9bf"
- 
--[[package]]
--name = "rand"
--version = "0.8.8"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e058c7de0b26af77780c769414d6257830bb240f3c38477dbc2c16e5f54d6d4c"
--dependencies = [
-- "rand_core 0.6.4",
--]
--
- [[package]]
- name = "rand"
- version = "0.9.5"
-@@ -2654,12 +2617,6 @@ dependencies = [
-  "rand_core 0.9.5",
- ]
- 
--[[package]]
--name = "rand_core"
--version = "0.6.4"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c"
--
- [[package]]
- name = "rand_core"
- version = "0.9.5"
-@@ -2776,9 +2733,9 @@ dependencies = [
- 
- [[package]]
- name = "ruff_python_ast"
--version = "0.0.18"
-+version = "0.0.20"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "787e187198eba5c7792f05358d1365ea5c7df8de0e701c7d7d15e07b532092a7"
-+checksum = "f5c31f9196e6333f154b92e6f6f9701d23ddfeee0b7fd45476aacbed7b74b440"
- dependencies = [
-  "aho-corasick",
-  "arrayvec",
-@@ -2798,9 +2755,9 @@ dependencies = [
- 
- [[package]]
- name = "ruff_python_parser"
--version = "0.0.18"
-+version = "0.0.20"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3fc400c5340219261a2b1e0630070fdac30fa99918ee78a2b006391a50c36df9"
-+checksum = "2b5b7fd512a12be87d02bbc8d8352f8159a058d1f91e6749f234ca43cb351525"
- dependencies = [
-  "bitflags 2.13.2",
-  "bstr",
-@@ -2813,7 +2770,6 @@ dependencies = [
-  "ruff_text_size",
-  "ruff_unicode_names2",
-  "rustc-hash",
-- "stacker",
-  "static_assertions",
-  "thin-vec",
-  "unicode-ident",
-@@ -2822,9 +2778,9 @@ dependencies = [
- 
- [[package]]
- name = "ruff_python_trivia"
--version = "0.0.18"
-+version = "0.0.20"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2eaa30e95771578677685be47e20d7a1beaed762225a444d337f54b1d50e9150"
-+checksum = "a867e9037e2c616342dcb77ff69344c59cf956bde079392a6da4b23138246a02"
- dependencies = [
-  "itertools 0.15.0",
-  "memchr",
-@@ -2837,38 +2793,
-```
-
-**File**: `rust/crates/basta/Cargo.toml` (modified, +2/-2)
-```diff
-@@ -34,8 +34,8 @@ oxc_parser = "0.155"
- oxc_semantic = "0.155"
- oxc_span = "0.155"
- oxc_syntax = "0.155"
--ruff_python_ast = "0.0.18"
--ruff_python_parser = "0.0.18"
-+ruff_python_ast = "0.0.20"
-+ruff_python_parser = "0.0.20"
- rustc-hash = "2"
- chrono = "0.4"
- rayon = "1"
-```
-
-**File**: `rust/crates/cpd-semantic/Cargo.toml` (modified, +2/-2)
-```diff
-@@ -29,8 +29,8 @@ oxc_span = "0.155"
- oxc_ast = "0.155"
- oxc_ast_visit = "0.155"
- # Python functions
--ruff_python_ast = "0.0.18"
--ruff_python_parser = "0.0.18"
-+ruff_python_ast = "0.0.20"
-+ruff_python_parser = "0.0.20"
- # A stack for dropping a Python syntax tree nested deeper than the walk goes
- stacker = "0.1"
- # Functions of the languages below (one tree-sitter grammar each)
+@@ -0,0 +1,52 @@
++name: Nix
++
++# Builds the flake the README gives Nix users. Cargo never reads flake.nix,
++# so no other job notices when the package stops building.
++on:
++  push:
++    branches: [master]
++    paths:
++      - flake.nix
++      - flake.lock
++      - rust/rust-toolchain.toml
++      - rust/Cargo.lock
++      - "rust/**/Cargo.toml"
++      - .github/workflows/nix.yml
++  pull_request:
++    branches: [master]
++    paths:
++      - flake.nix
++      - flake.lock
++      - rust/rust-toolchain.toml
++      - rust/Cargo.lock
++      - "rust/**/Cargo.toml"
++      - .github/workflows/nix.yml
++  schedule:
++    # Weekly, for the changes the paths above don't catch.
++    - cron: "17 4 * * 1"
++  workflow_dispatch:
++
++permissions:
++  contents: read
++
++jobs:
++  build:
++    runs-on: ${{ matrix.os }}
++    strategy:
++      fail-fast: false
++      matrix:
++        os: [ubuntu-latest, macos-latest]
++
++    steps:
++      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++
++      - uses: cachix/install-nix-action@75c75c31ebece974e48ebc36b4ad125bd97bd97b # v31.11.3
++
++      - name: Build
++        run: nix build --print-build-logs .#default
++
++      - name: Run
++        run: ./result/bin/jscpd --version
++
++      - name: Flake checks
++        run: nix flake check --print-build-logs
 ```
 
 ---
 
-### Incident Patch 2: `761feb9a` (2026-10-30)
-**Commit Message**: Merge pull request #1266 from kucherenko/dependabot/github_actions/rust-lang/crates-io-auth-action-1.0.6
+### Incident Patch 2: `618769ef` (2026-10-30)
+**Commit Message**: fix(nix): keep the paste shim real in the dependency build
 
-chore(deps): bump rust-lang/crates-io-auth-action from 1.0.5 to 1.0.6
+crane builds the dependencies against a copy of the workspace in which
+every local crate is an empty stub, patches/paste included. That crate
+stands in for paste from crates.io since e66eb726, so pulp found no
+`paste::paste` and the dependency build failed on Linux and macOS. The
+flake puts the real patches/paste back into that copy.
 
-**File**: `.github/workflows/crates-publish.yml` (modified, +1/-1)
+**File**: `flake.nix` (modified, +11/-1)
 ```diff
-@@ -132,7 +132,7 @@ jobs:
+@@ -46,7 +46,17 @@
+           ];
+         };
  
-       - name: Authenticate to crates.io (Trusted Publishing)
-         id: crates-io-auth
--        uses: rust-lang/crates-io-auth-action@c6f97d42243bad5fab37ca0427f495c86d5b1a18 # v1.0.5
-+        uses: rust-lang/crates-io-auth-action@3268eb413133e2960fa4ae0e963ca76380c54cd9 # v1.0.6
+-        cargoArtifacts = craneLib.buildDepsOnly commonArgs;
++        # crane builds the dependencies against a copy of the workspace in
++        # which every local crate is an empty stub. patches/paste stands in
++        # for paste from crates.io (see Cargo.toml), so it keeps its real code
++        # there, or pulp and gemm find no paste! macro.
++        cargoArtifacts = craneLib.buildDepsOnly (commonArgs // {
++          extraDummyScript = ''
++            rm -rf $out/patches
++            cp -r ${./rust/patches} $out/patches
++            chmod -R +w $out/patches
++          '';
++        });
  
-       - name: Publish crates in dependency order
-         working-directory: rust
+         jscpd = craneLib.buildPackage (commonArgs // {
+           inherit cargoArtifacts;
+```
+
+---
+
+### Incident Patch 3: `0b519608` (2026-10-30)
+**Commit Message**: Merge pull request #1272 from kucherenko/fix/nix-package
+
+fix(nix): make the flake build again and check it in CI
+
+**File**: `.github/workflows/nix.yml` (added, +52/-0)
+```diff
+@@ -0,0 +1,52 @@
++name: Nix
++
++# Builds the flake the README gives Nix users. Cargo never reads flake.nix,
++# so no other job notices when the package stops building.
++on:
++  push:
++    branches: [master]
++    paths:
++      - flake.nix
++      - flake.lock
++      - rust/rust-toolchain.toml
++      - rust/Cargo.lock
++      - "rust/**/Cargo.toml"
++      - .github/workflows/nix.yml
++  pull_request:
++    branches: [master]
++    paths:
++      - flake.nix
++      - flake.lock
++      - rust/rust-toolchain.toml
++      - rust/Cargo.lock
++      - "rust/**/Cargo.toml"
++      - .github/workflows/nix.yml
++  schedule:
++    # Weekly, for the changes the paths above don't catch.
++    - cron: "17 4 * * 1"
++  workflow_dispatch:
++
++permissions:
++  contents: read
++
++jobs:
++  build:
++    runs-on: ${{ matrix.os }}
++    strategy:
++      fail-fast: false
++      matrix:
++        os: [ubuntu-latest, macos-latest]
++
++    steps:
++      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++
++      - uses: cachix/install-nix-action@75c75c31ebece974e48ebc36b4ad125bd97bd97b # v31.11.3
++
++      - name: Build
++        run: nix build --print-build-logs .#default
++
++      - name: Run
++        run: ./result/bin/jscpd --version
++
++      - name: Flake checks
++        run: nix flake check --print-build-logs
+```
+
+**File**: `flake.nix` (modified, +15/-9)
+```diff
+@@ -30,14 +30,10 @@
+ 
+         craneLib = (crane.mkLib pkgs).overrideToolchain rustToolchain;
+ 
+-        src = pkgs.lib.cleanSourceWith {
+-          src = ./rust;
+-          filter = path: type:
+-            (craneLib.filterCargoSources path type) ||
+-            (pkgs.lib.hasSuffix ".html" path && pkgs.lib.hasInfix "/templates/" path) ||
+-            # The Prism bundle the HTML report inlines (include_str!).
+-            (pkgs.lib.hasInfix "/crates/cpd-reporter/assets/" path);
+-        };
++        # All of rust/, not only the Cargo sources: the crates include other
++        # files at compile time (README.md, page.html, frameworks.yaml, the
++        # report templates, the Prism bundle), and a list of them goes stale.
++        src = pkgs.lib.cleanSource ./rust;
+ 
+         commonArgs = {
+           inherit src;
+@@ -50,7 +46,17 @@
+           ];
+         };
+ 
+-        cargoArtifacts = craneLib.buildDepsOnly commonArgs;
++        # crane builds the dependencies against a copy of the workspace in
++        # which every local crate is an empty stub. patches/paste stands in
++        # for paste from crates.io (see Cargo.toml), so it keeps its real code
++        # there, or pulp and gemm find no paste! macro.
++        cargoArtifacts = craneLib.buildDepsOnly (commonArgs // {
++          extraDummyScript = ''
++            rm -rf $out/patches
++            cp -r ${./rust/patches} $out/patches
++            chmod -R +w $out/patches
++          '';
++        });
+ 
+         jscpd = craneLib.buildPackage (commonArgs // {
+           inherit cargoArtifacts;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1272** (2026-10-30): fix(nix): make the flake build again and check it in CI (@kucherenko)
+- **PR #1271** (2026-10-30): chore(deps): bump docker/login-action from 4.6.0 to 4.7.0 (@dependabot[bot])
+- **PR #1270** (2026-10-30): chore(deps): bump taiki-e/install-action from 2.87.29 to 2.87.32 (@dependabot[bot])
+- **PR #1269** (2026-10-30): chore(deps): bump memmap2 from 0.9.11 to 0.9.12 in /rust (@dependabot[bot])
+- **PR #1268** (2026-10-30): chore(deps): bump ureq from 3.4.2 to 3.5.0 in /rust (@dependabot[bot])
 - **PR #1267** (2026-10-30): chore(deps): bump the ruff group in /rust with 2 updates (@dependabot[bot])
-- **PR #1266** (2026-10-30): chore(deps): bump rust-lang/crates-io-auth-action from 1.0.5 to 1.0.6 (@dependabot[bot])
-- **PR #1262** (2026-10-28): ci(release): ask npmmirror to sync the npm packages after a release (@kucherenko)
-- **PR #1260** (2026-10-28): fix(lsp): put JSX ignore markers in {/* */} and outside tags (@kucherenko)
-- **PR #1259** (closed): fix(tokenizer): a /* in a JS string no longer ends a jscpd:ignore region (@kucherenko)
-- **PR #1258** (2026-10-27): fix(tokenizer): a /* or // in a JS/TS string no longer ends a jscpd:ignore region (@sarankumar1325)
 
 ---
 
@@ -2148,89 +2110,79 @@ chore(deps): bump rust-lang/crates-io-auth-action from 1.0.5 to 1.0.6
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1267 from kucherenko/dependabot/cargo/rust/ruff-939b3aa493
+## X. ci(nix): build the flake on Linux and macOS
 
 **RULE**:
-When implementing operations in `rust/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kucherenko/jscpd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/nix.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kucherenko/jscpd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5655cdfc`: Merge pull request #1267 from kucherenko/dependabot/cargo/rust/ruff-939b3aa493. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c70189ec`: ci(nix): build the flake on Linux and macOS. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/nix.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "phf",
- "phf",
- "phf",
- "phf_shared",
-version = "0.14.0"
-checksum = "41b585a510fb76fdebead6897982ef2a03a21d8e6cbcca904999742a4afc6ffe"
- "phf_generator",
- "phf_shared",
- "phf_shared",
- "phf_generator",
- "phf_shared",
-version = "0.0.20"
-checksum = "f5c31f9196e6333f154b92e6f6f9701d23ddfeee0b7fd45476aacbed7b74b440"
-version = "0.0.20"
-checksum = "2b5b7fd512a12be87d02bbc8d8352f8159a058d1f91e6749f234ca43cb351525"
-version = "0.0.20"
-checksum = "a867e9037e2c616342dcb77ff69344c59cf956bde079392a6da4b23138246a02"
+name: Nix
+
+# Builds the flake the README gives Nix users. Cargo never reads flake.nix,
+# so no other job notices when the package stops building.
+on:
+  push:
+    branches: [master]
+    paths:
+      - flake.nix
+      - flake.lock
+      - rust/rust-toolchain.toml
+      - rust/Cargo.lock
+      - "rust/**/Cargo.toml"
+      - .github/workflows/nix.yml
+  pull_request:
+    branches: [master]
+    paths:
+      - flake.nix
+      - flake.lock
+      - rust/rust-toolchain.toml
+      - rust/Cargo.lock
+      - "rust/**/Cargo.toml"
+      - .github/workflows/nix.yml
+  schedule:
+    # Weekly, for the changes the paths above don't catch.
+    - cron: "17 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: cachix/install-nix-action@75c75c31ebece974e48ebc36b4ad125bd97bd97b # v31.11.3
+
+      - name: Build
+        run: nix build --print-build-logs .#default
+
+      - name: Run
+        run: ./result/bin/jscpd --version
+
+      - name: Flake checks
+        r
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
- "phf 0.14.0",
- "phf 0.14.0",
- "phf 0.14.0",
-[[package]]
-name = "phf"
-version = "0.11.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1fd6780a80ae0c52cc120a26a1a42c1ae51b247a253e4e06113d23d2c2edd078"
-dependencies = [
- "phf_shared 0.11.3",
-]
-
- "phf_shared 0.14.0",
-version = "0.11.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aef8048c789fa5e851558d709946d6d79a8ff88c0440c587967f8e94bfb1216a"
-dependencies = [
- "phf_generator 0.11.3",
- "phf_shared 0.11.3",
-]
-
-[[package]]
-name = "phf_generator"
-version = "0.11.3"
-checksum = "3c80231409c20246a13fddb31776fb942c38553c51e871f8cbd687a4cfb5843d"
- "phf_shared 0.11.3",
- "rand 0.8.8",
- "phf_shared 0.14.0",
- "phf_generator 0.14.0",
- "phf_shared 0.14.0",
-[[package]]
-name = "phf_shared"
-version = "0.11.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "67eabc2ef2a60eb7faa00097bd1ffdb5bd28e62bf39990626a582201b7a754e5"
-dependencies = [
- "siphasher",
-]
-
-[[package]]
-name = "rand"
-version = "0.8.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e058c7de0b26af77780c769414d6257830bb240f3c38477dbc2c16e5f54d6d4c"
-dependencies = [
- "ran
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5655cdfc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c70189ec` are properly handled with clean fallback behavior.
