@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T17:22:55.557Z",
+  "last_updated": "2026-10-31T17:30:14.111Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -28973,10 +28973,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
       "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
-      "content_hash": "a5331c4f8ade384adb85e6f908581cb37c75b1c7a89859ef1a5f6d3554c1f6f6",
+      "content_hash": "e5d00afc0b0fe73e299a14f51572613b21eb79dfa2ba9c17e175b859ca3c1907",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md",
       "promoted_rules": [
+        {
+          "number": 498,
+          "title": "Tokenizer-Model Alignment Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 858,
           "title": "The Attention-Masked Mean Pooling Invariant",
@@ -28993,8 +28998,18 @@
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
+          "number": 996,
+          "title": "Masked Mean Pooling Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 5341,
           "title": "The L2 Normalization Post-Processing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6265,
+          "title": "L2 Normalization for Cosine Similarity Consistency",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -29015,7 +29030,7 @@
         "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv3y996e",
         "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv4czt14"
       ],
-      "verified_at": "2026-10-28T16:19:27.385Z",
+      "verified_at": "2026-10-31T17:30:14.082Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -76620,14 +76635,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 498,
       "title": "Tokenizer-Model Alignment Invariant",
-      "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
-      "source_version": "hf-baai-bge-large-en-v1.5",
+      "source_url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
+      "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T23:20:33.182Z"
+      "verified_at": "2026-10-31T17:30:14.082Z"
     },
     "rule-499": {
       "learning_id": "rule-499",
@@ -83591,15 +83606,15 @@
       "learning_id": "rule-996",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 996,
-      "title": "Masked Mean Pooling Invariant for Variable-Length Sequences",
-      "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
-      "source_version": "hf-sentence-transformers-all-minilm-l6-v2",
+      "title": "Masked Mean Pooling Invariant",
+      "source_url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
+      "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-31T05:14:21.756Z"
+      "verified_at": "2026-10-31T17:30:14.082Z"
     },
     "rule-997": {
       "learning_id": "rule-997",
@@ -163347,6 +163362,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T17:22:55.530Z"
+    },
+    "rule-6265": {
+      "learning_id": "rule-6265",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6265,
+      "title": "L2 Normalization for Cosine Similarity Consistency",
+      "source_url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
+      "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T17:30:14.082Z"
     }
   },
   "aliases": {

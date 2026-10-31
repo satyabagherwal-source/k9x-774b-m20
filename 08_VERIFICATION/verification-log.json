@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-71SO",
-    "timestamp": "2026-10-30T07:48:07.512Z",
-    "repository": "salvo-rs/salvo",
-    "learningId": "learn-github-salvo-rs-salvo",
-    "contentHash": "171f3d5494bb1f9cad4b62b98d3ca2808b5047df856dcd1b183b6fc454332102",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-RIEO",
     "timestamp": "2026-10-30T08:04:02.160Z",
     "repository": "Pika-Labs/Pika-H3-Flex",
@@ -7492,6 +7477,21 @@
     "contentHash": "236ecbd4b744c789c90ab0c39d1b1cf49092afaef30465b312e93672f0916595",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-FI2E",
+    "timestamp": "2026-10-31T17:30:14.198Z",
+    "repository": "sentence-transformers/all-mpnet-base-v2",
+    "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
+    "contentHash": "e5d00afc0b0fe73e299a14f51572613b21eb79dfa2ba9c17e175b859ca3c1907",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

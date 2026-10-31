@@ -6662,3 +6662,4 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `229950e6` | Multi-dimensional audit evidence | 2026-10-31T17:14:24.998Z |
 | `learn-huggingface-openai-clip-vit-base-patch32` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-31T17:22:54.794Z |
 | `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `ea99cfaf` | Multi-dimensional audit evidence | 2026-10-31T17:22:55.635Z |
+| `learn-huggingface-sentence-transformers-all-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/all-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-31T17:30:14.202Z |

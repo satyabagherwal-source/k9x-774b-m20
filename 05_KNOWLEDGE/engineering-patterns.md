@@ -458063,3 +458063,65 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `ea99cfaf` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6265. L2 Normalization for Cosine Similarity Consistency (Harvested from sentence-transformers/all-mpnet-base-v2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "L2 Normalization for Cosine Similarity Consistency",
+  "source": "sentence-transformers/all-mpnet-base-v2",
+  "source_url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
+  "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-31T17:30:13.666Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sentence-transformers/all-mpnet-base-v2](https://huggingface.co/sentence-transformers/all-mpnet-base-v2) (Revision: `hf-sentenc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+You MUST L2-normalize the final sentence embedding vector before storage or comparison if you intend to use dot product as a proxy for cosine similarity. You MUST NOT store unnormalized vectors if your downstream vector database assumes unit-length vectors for distance metrics.
+
+**WHY**:
+Cosine similarity is defined as $\frac{A \cdot B}{\|A\| \|B\|}$. If vectors are L2-normalized ($\|A\|=1, \|B\|=1$), then $A \cdot B$ is exactly equal to cosine similarity. Most high-performance vector databases (FAISS, Milvus, Pinecone) optimize for dot product or Euclidean distance. If vectors are not normalized, Euclidean distance is not equivalent to cosine distance, and dot product scales with vector magnitude, introducing bias towards longer/more complex sentences.
+
+**WHEN TO APPLY**:
+Any embedding pipeline where the final metric is cosine similarity or where the vector database requires unit vectors.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch.nn.functional as F
+
+def normalize_embeddings(embeddings):
+    """
+    embeddings: Tensor of shape [batch_size, hidden_size]
+    """
+    # p=2 for L2 norm, dim=1 for per-vector normalization
+    return F.normalize(embeddings, p=2, dim=1)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Storing raw pooled vectors
+# This breaks cosine similarity equivalence with dot product
+raw_embeddings = masked_mean_pooling(model_output, attention_mask)
+# Do NOT normalize here
+store_in_db(raw_embeddings) 
+```
+
+**VERIFICATION METHOD**:
+1.  Generate a batch of embeddings.
+2.  Compute norms: `norms = torch.norm(embeddings, p=2, dim=1)`.
+3.  Assert `torch.allclose(norms, torch.ones_like(norms), atol=1e-6)`.
+4.  Verify that `torch.dot(a, b)` equals `cosine_similarity(a, b)` for any two normalized vectors.

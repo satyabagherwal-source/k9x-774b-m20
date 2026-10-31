@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T17:22:55.640Z",
-  "total_cycles_completed": 6630,
-  "total_learnings_persisted": 6630,
-  "total_rules_promoted": 6263,
+  "last_updated": "2026-10-31T17:30:14.207Z",
+  "total_cycles_completed": 6631,
+  "total_learnings_persisted": 6631,
+  "total_rules_promoted": 6266,
   "history": [
-    {
-      "timestamp": "2026-10-31T03:59:04.220Z",
-      "repository": "FastVideo/FastH3-Omni-Comfy",
-      "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T03:59:09.038Z",
       "repository": "dragonflydb/dragonfly",
@@ -1403,6 +1396,13 @@
       "repository": "google/tcmalloc",
       "learningId": "learn-github-google-tcmalloc",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T17:30:14.207Z",
+      "repository": "sentence-transformers/all-mpnet-base-v2",
+      "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
