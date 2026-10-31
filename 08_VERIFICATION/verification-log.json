@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-5QOJ",
-    "timestamp": "2026-10-30T15:15:00.307Z",
-    "repository": "StikDebug/StikDebug",
-    "learningId": "learn-github-stikdebug-stikdebug",
-    "contentHash": "10a954c64d7dd3a69ad0985fe0738805ad0869b6f9b8974b32281f7c3959586a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-5VM8",
     "timestamp": "2026-10-30T15:15:06.704Z",
     "repository": "cilium/cilium",
@@ -7492,6 +7477,21 @@
     "contentHash": "b8a64a97f588d005aca83d18a6ad7ea62af9f52762848b4fa3b7ecadeed5ec85",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-MRDL",
+    "timestamp": "2026-10-31T21:19:49.785Z",
+    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+    "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+    "contentHash": "b38ffe943ffdb3ee84daba3bde75f4a1ecc5b9af5e0bd4001ed7a070d195f949",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
