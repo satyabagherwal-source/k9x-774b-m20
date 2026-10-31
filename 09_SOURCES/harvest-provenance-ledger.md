@@ -6721,3 +6721,6 @@ Every entry in this ledger must capture:
 | `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `c4bb0e3d` | Multi-dimensional audit evidence | 2026-10-31T20:46:38.518Z |
 | `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `4c77c2f7` | Multi-dimensional audit evidence | 2026-10-31T20:46:44.111Z |
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `8dca43ed` | Multi-dimensional audit evidence | 2026-10-31T20:46:49.386Z |
+| `learn-huggingface-google-embeddinggemma-2` | `https://huggingface.co/google/embeddinggemma-2` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-31T20:53:08.844Z |
+| `learn-github-unhappychoice-gitlogue` | `https://github.com/unhappychoice/gitlogue` | `e4933f27` | Multi-dimensional audit evidence | 2026-10-31T20:53:10.134Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `52529f0c` | Multi-dimensional audit evidence | 2026-10-31T20:53:23.898Z |

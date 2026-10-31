@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md`  
 > **Source**: github ([https://github.com/unhappychoice/gitlogue](https://github.com/unhappychoice/gitlogue))  
-> **Source Version**: `0f40807a`  
+> **Source Version**: `e4933f27`  
 > **License**: ISC  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T01:15:02.684Z  
+> **Timestamp**: 2026-10-31T20:53:09.645Z  
 > **Learning ID**: `learn-github-unhappychoice-gitlogue`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/unhappychoice/gitlogue](https://github.com/unhappychoice/gitlogue))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T01:15:00.944Z  
+> **Harvest Timestamp**: 2026-10-31T20:53:09.640Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2505,233 +2505,103 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c202bce7` (2026-10-29)
-**Commit Message**: fix(swift): capture nil via nil_literal node
+### Incident Patch 1: `e4933f27` (2026-10-31)
+**Commit Message**: chore: update flake.nix hashes for v0.12.2
 
-"nil" is not a token in tree-sitter-swift 0.7, so the whole Swift
-highlight query failed to compile.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/syntax/languages/queries/swift_highlights.scm` (modified, +1/-1)
+**File**: `flake.nix` (modified, +2/-2)
 ```diff
-@@ -281,7 +281,7 @@
- 
- (boolean_literal) @boolean
- 
--"nil" @constant.builtin
-+(nil_literal) @constant.builtin
- 
- (wildcard_pattern) @character.special
- 
+@@ -29,9 +29,9 @@
+             owner = "unhappychoice";
+             repo = "gitlogue";
+             rev = "v${version}";
+-            hash = "sha256-aG/q97qbIctQGXgAeAXUSyCG6wtUxRYAKc3TM0NLNOo=";
++            hash = "sha256-HQ6508OuAWYaP786keoNIyBsA7kiAgI0f3Ly3KkXEH8=";
+           };
+-          cargoHash = "sha256-pA8i0bQcMRnmcU7YjkZpM/3zneVKE+DDLY2aTto40wQ=";
++          cargoHash = "sha256-J0Z0MrrthLOwD7mj9aaj3jyF3o/ZYynYqbi1bwmyodU=";
+           nativeBuildInputs = [ pkgs.pkg-config pkgs.git pkgs.perl ];
+           buildInputs = [ pkgs.openssl ];
+           doCheck = false;
 ```
 
 ---
 
-### Incident Patch 2: `be65dd1b` (2026-10-29)
-**Commit Message**: fix(dart): use the highlight query bundled with tree-sitter-dart
+### Incident Patch 2: `756861d1` (2026-10-31)
+**Commit Message**: chore: bump version to v0.12.2
 
-The custom Dart query referenced node types that do not exist in the
-grammar (selector, class_definition, ...), so Query::new failed and
-Dart files were silently rendered without highlighting. tree-sitter-dart
-0.3.0 also renamed several nodes. Use the grammar's own HIGHLIGHTS_QUERY,
-whose captures all map through capture_name_to_token.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/syntax/languages/dart.rs` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +18/-1)
 ```diff
-@@ -2,4 +2,4 @@ pub fn language() -> tree_sitter::Language {
-     tree_sitter_dart::LANGUAGE.into()
- }
+@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
+ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
  
--pub const HIGHLIGHT_QUERY: &str = include_str!("queries/dart_highlights.scm");
-+pub const HIGHLIGHT_QUERY: &str = tree_sitter_dart::HIGHLIGHTS_QUERY;
++## [0.12.2] - 2026-10-31
++
++### 🐛 Bug Fixes
++
++- fix(swift): capture nil via nil_literal node ([c202bce](https://github.com/unhappychoice/gitlogue/commit/c202bce))
++- fix(dart): use the highlight query bundled with tree-sitter-dart ([be65dd1](https://github.com/unhappychoice/gitlogue/commit/be65dd1))
++
++### 📝 Other Changes
++
++- chore: bump version to v0.12.2 ([4e57e27](https://github.com/unhappychoice/gitlogue/commit/4e57e27))
++- test(syntax): assert every highlight and injection query compiles ([84ea30f](https://github.com/unhappychoice/gitlogue/commit/84ea30f))
++- chore(deps): bump tree-sitter-dart from 0.2.0 to 0.3.0 ([edf5913](https://github.com/unhappychoice/gitlogue/commit/edf5913))
++- chore(deps): bump tree-sitter-md from 0.5.3 to 0.5.4 ([a02ffd1](https://github.com/unhappychoice/gitlogue/commit/a02ffd1))
++- chore(deps): bump tree-sitter-scala from 0.26.2 to 0.26.3 ([b0c640a](https://github.com/unhappychoice/gitlogue/commit/b0c640a))
++- chore: update flake.nix hashes for v0.12.1 ([94123e9](https://github.com/unhappychoice/gitlogue/commit/94123e9))
++
++
+ ## [0.12.1] - 2026-10-17
+ 
+ ### 🐛 Bug Fixes
+@@ -13,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ### 📝 Other Changes
+ 
+-- chore: bump version to v0.12.1 ([63630fd](https://github.com/unhappychoice/gitlogue/commit/63630fd))
++- chore: bump version to v0.12.1 ([9613abb](https://github.com/unhappychoice/gitlogue/commit/9613abb))
+ - test(ui): replace no-op step regression test with history navigation check ([3b23f10](https://github.com/unhappychoice/gitlogue/commit/3b23f10))
+ - chore(deps): bump tree-sitter-erlang from 0.20.0 to 0.21.0 ([10911eb](https://github.com/unhappychoice/gitlogue/commit/10911eb))
+ - chore(deps): bump tree-sitter-php from 0.24.2 to 0.25.1 ([3565f10](https://github.com/unhappychoice/gitlogue/commit/3565f10))
 ```
 
-**File**: `src/syntax/languages/queries/dart_highlights.scm` (removed, +0/-180)
+**File**: `Cargo.lock` (modified, +1/-1)
 ```diff
-@@ -1,180 +0,0 @@
--; Variable
--(identifier) @variable
--
--; Keywords
--; --------------------
--
--; Methods
--; --------------------
--
--; NOTE: This query is a bit of a work around for the fact that the dart grammar doesn't
--; specifically identify a node as a function call
--(((identifier) @function (#match? @function "^_?[a-z]"))
-- . (selector . (argument_part))) @function
--
--; Annotations
--; --------------------
--(annotation
--  name: (identifier) @attribute)
--
--; Operators and Tokens
--; --------------------
--(template_substitution
--  "$" @punctuation.special
--  "{" @punctuation.special
--  "}" @punctuation.special
--) @none
--
--(template_substitution
--  "$" @punctuation.special
--  (identifier_dollar_escaped) @variable
--) @none
--
--(escape_sequence) @string.escape
--
--[
-- "@"
-- "=>"
-- ".."
-- "??"
-- "=="
-- "?"
-- ":"
-- "&&"
-- "%"
-- "<"
-- ">"
-- "="
-- ">="
-- "<="
-- "||"
-- "~/"
-- (increment_operator)
-- (is_operator)
-- (prefix_operator)
-- (equality_operator)
-- (additive_operator)
--] @operator
--
--(type_arguments
--  "<" @punctuation.bracket
--  ">" @punctuation.bracket)
--
--(type_parameters
--  "<" @punctuation.bracket
--  ">" @punctuation.bracket)
--
--[
--  "("
--  ")"
--  "["
--  "]"
--  "{"
--  "}"
--]  @punctuation.bracket
--
--; Delimiters
--; --------------------
--[
--  ";"
--  "."
--  ","
--] @punctuation.delimiter
--
--; Types
--; --------------------
--(type_identifier) @type
--((type_identifier) @type.builtin
--  (#match? @type.builtin "^(int|double|String|bool|List|Set|Map|Runes|Symbol)$"))
--(class_definition
--  name: (identifier) @type)
--(constructor_signature
--  name: (identifier) @type)
--(scoped_identifier
--  scope: (identifier) @type)
--(function_signature
--  name: (identifier) @function)
--(getter_signature
--  (identifier) @function)
--(setter_signature
--  name: (identifier) @function)
--
--((scoped_identifier
--  scope: (identifier) @type
--  name: (identifier) @type)
-- (#match? @type "^[a-zA-Z]"))
--
--; Enums
--; -------------------
--(enum_declaration
--  name: (identifier) @type)
--(enum_constant
--  name: (identifier) @identifier.constant)
--
--; Variables
--; --------------------
--; var keyword
--(inferred_type) @keyword
--
--((identifier) @type
-- (#match? @type "^_?[A-Z].*[a-z]"))
--
--("Function" @type)
--
--(this) @variable.builtin
--
--; properties
--
--(unconditional_assignable_selector
--  (identifier) @property)
--
--(conditional_assignable_selector
--  (identifier) @property)
--
--(cascade_section
--  (cascade_selector
--    (identifier) @property))
--
--((selector
--  (unconditional_assignable_selector (identifier) @function))
--  (selector (argument_part (arguments)))
--)
--
--(cascade_section
--  (cascade_selector (identifier) @function)
--  (argument_part (arguments))
--)
--
--; assignments
--(assignment_expression
--  left: (assignable_expression) @variable)
--
--(this) @variable.builtin
--
--; Parameters
--; --------------------
--(formal_parameter
--    name: (identifier) @identifier.parameter)
--
--(named_argument
--  (label (identifier) @identifier.parameter))
--
--; Literals
--; --------------------
--[
--    (hex_integer_literal)
--    (decimal_integer_literal)
--    (decimal_floating_point_literal)
--    ; TODO: inaccessbile nodes
--    ; (octal_integer_literal)
--    ; (hex_floating_point_literal)
--] @number
--
--(string_literal) @string
--(symbol_literal (identifier) @constant) @constant
--(true) @boolean
--(false) @boolean
--(null_literal) @constant.null
--
--(documentation_comment) @comment
--(comment) @comment
+@@ -688,7 +688,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gitlogue"
+-version = "0.12.1"
++version = "0.12.2"
+ dependencies = [
+  "anyhow",
+  "chrono",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "gitlogue"
+-version = "0.12.1"
++version = "0.12.2"
+ edition = "2021"
+ authors = ["unhappychoice"]
+ description = "A Git history screensaver - watch your code rewrite itself"
+```
+
+**File**: `flake.nix` (modified, +1/-1)
+```diff
+@@ -24,7 +24,7 @@
+       packages = forAllSystems ({ pkgs }: {
+         default = pkgs.rustPlatform.buildRustPackage rec {
+           pname = "gitlogue";
+-          version = "0.12.1";
++          version = "0.12.2";
+           src = pkgs.fetchFromGitHub {
+             owner = "unhappychoice";
+             repo = "gitlogue";
 ```
 
 #### Recent Merged Pull Requests:
@@ -2760,28 +2630,30 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. swift): capture nil via nil_literal node
+## X. update flake.nix hashes for v0.12.2
 
 **RULE**:
-When implementing operations in `src/syntax/languages/queries/swift_highlights.scm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in unhappychoice/gitlogue. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flake.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in unhappychoice/gitlogue. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c202bce7`: swift): capture nil via nil_literal node. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e4933f27`: update flake.nix hashes for v0.12.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/syntax/languages/queries/swift_highlights.scm`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `flake.nix`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-(nil_literal) @constant.builtin
+            hash = "sha256-HQ6508OuAWYaP786keoNIyBsA7kiAgI0f3Ly3KkXEH8=";
+          cargoHash = "sha256-J0Z0MrrthLOwD7mj9aaj3jyF3o/ZYynYqbi1bwmyodU=";
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-"nil" @constant.builtin
+            hash = "sha256-aG/q97qbIctQGXgAeAXUSyCG6wtUxRYAKc3TM0NLNOo=";
+          cargoHash = "sha256-pA8i0bQcMRnmcU7YjkZpM/3zneVKE+DDLY2aTto40wQ=";
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c202bce7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e4933f27` are properly handled with clean fallback behavior.

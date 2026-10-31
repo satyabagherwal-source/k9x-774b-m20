@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-OJBM",
-    "timestamp": "2026-10-30T14:33:38.002Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "d503df5d134a9528f91e562a0b414d009c2a9152f1e48768175e0dfad5c86f03",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-X8FS",
-    "timestamp": "2026-10-30T14:40:23.800Z",
-    "repository": "sindresorhus/got",
-    "learningId": "learn-github-sindresorhus-got",
-    "contentHash": "39526ced461bba660f920c5bc9670d41064f61b752b0c6db8eb65a5615952204",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-XBJ1",
-    "timestamp": "2026-10-30T14:40:27.805Z",
-    "repository": "nats-io/nats.go",
-    "learningId": "learn-github-nats-io-nats-go",
-    "contentHash": "b52db522f916953d9f707d51f2022d72eae99ade5049e692bc6ad4a755871d5a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-XDK1",
     "timestamp": "2026-10-30T14:40:30.433Z",
     "repository": "zama-ai/tfhe-rs",
@@ -7490,6 +7445,51 @@
     "repository": "rustls/rustls",
     "learningId": "learn-github-rustls-rustls",
     "contentHash": "1c31cb7861569a3690fd1673be117cf16af43bde3a5e0540ef3296bcd3b2475b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-OG2R",
+    "timestamp": "2026-10-31T20:53:08.835Z",
+    "repository": "google/embeddinggemma-2",
+    "learningId": "learn-huggingface-google-embeddinggemma-2",
+    "contentHash": "8045f9f70ced9eda0f04b7e64e6d107b783511b836a97513bce7b31e9fa0eb1b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-OH2R",
+    "timestamp": "2026-10-31T20:53:10.131Z",
+    "repository": "unhappychoice/gitlogue",
+    "learningId": "learn-github-unhappychoice-gitlogue",
+    "contentHash": "787394e8fb8a7d1c10387c8585009ea9c7d6adc397d28657792304fbd68c4dc4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-ORP4",
+    "timestamp": "2026-10-31T20:53:23.896Z",
+    "repository": "ClickHouse/ClickHouse",
+    "learningId": "learn-github-clickhouse-clickhouse",
+    "contentHash": "8cbcaea0bdca4fa9318be0c3fac67afdb904d025b4d9ed42613c14d650500617",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

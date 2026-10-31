@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T20:46:49.392Z",
-  "total_cycles_completed": 6689,
-  "total_learnings_persisted": 6689,
-  "total_rules_promoted": 6317,
+  "last_updated": "2026-10-31T20:53:23.902Z",
+  "total_cycles_completed": 6692,
+  "total_learnings_persisted": 6692,
+  "total_rules_promoted": 6319,
   "history": [
-    {
-      "timestamp": "2026-10-31T08:50:26.358Z",
-      "repository": "Comfy-Org/Wan-2.2",
-      "learningId": "learn-huggingface-comfy-org-wan-2-2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T08:54:54.747Z",
-      "repository": "apple/LensVLM-9B",
-      "learningId": "learn-huggingface-apple-lensvlm-9b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T09:22:45.320Z",
-      "repository": "fastino/GLiNER2.5-Decide",
-      "learningId": "learn-huggingface-fastino-gliner2-5-decide",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T09:29:36.473Z",
       "repository": "ZSeven-W/openpencil",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-31T20:46:49.392Z",
       "repository": "rustls/rustls",
       "learningId": "learn-github-rustls-rustls",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:53:08.848Z",
+      "repository": "google/embeddinggemma-2",
+      "learningId": "learn-huggingface-google-embeddinggemma-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:53:10.138Z",
+      "repository": "unhappychoice/gitlogue",
+      "learningId": "learn-github-unhappychoice-gitlogue",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:53:23.902Z",
+      "repository": "ClickHouse/ClickHouse",
+      "learningId": "learn-github-clickhouse-clickhouse",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

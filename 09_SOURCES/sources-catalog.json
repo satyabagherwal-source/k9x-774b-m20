@@ -665,8 +665,8 @@
     "sourceUrl": "https://huggingface.co/google/embeddinggemma-2",
     "sourceVersion": "hf-google-embeddinggemma-2",
     "license": "Open-Source",
-    "contentHash": "5326aa75d022e2dd201273f40eacb947b02a0053bd2b45de6b5de6fddc2036ee",
-    "lastHarvestedAt": "2026-10-28T19:31:55.526Z",
+    "contentHash": "8045f9f70ced9eda0f04b7e64e6d107b783511b836a97513bce7b31e9fa0eb1b",
+    "lastHarvestedAt": "2026-10-31T20:53:08.844Z",
     "learningId": "learn-huggingface-google-embeddinggemma-2"
   },
   "hf-unsloth-embeddinggemma-2-gguf": {
@@ -3073,10 +3073,10 @@
     "repository": "unhappychoice/gitlogue",
     "platform": "github",
     "sourceUrl": "https://github.com/unhappychoice/gitlogue",
-    "sourceVersion": "0f40807a",
+    "sourceVersion": "e4933f27",
     "license": "ISC",
-    "contentHash": "7179fdba23339e93abac406a757262f6b8f59e42110d8700e473d19f2da7da9b",
-    "lastHarvestedAt": "2026-10-31T01:15:03.383Z",
+    "contentHash": "787394e8fb8a7d1c10387c8585009ea9c7d6adc397d28657792304fbd68c4dc4",
+    "lastHarvestedAt": "2026-10-31T20:53:10.134Z",
     "learningId": "learn-github-unhappychoice-gitlogue"
   },
   "faridsafi-react-native-gifted-chat": {
@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "6983f5a1",
+    "sourceVersion": "52529f0c",
     "license": "Apache-2.0",
-    "contentHash": "b87c2ec518266e186800f30378f9c7f2801e2cabbae4231681f0321a985eda42",
-    "lastHarvestedAt": "2026-10-31T04:16:06.437Z",
+    "contentHash": "8cbcaea0bdca4fa9318be0c3fac67afdb904d025b4d9ed42613c14d650500617",
+    "lastHarvestedAt": "2026-10-31T20:53:23.898Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {

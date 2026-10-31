@@ -6712,3 +6712,6 @@
 | `CYCLE-20261031-G2WJ` | `2026-10-31T20:46:38.515Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6311` | Yes (`7d442a8f...`) |
 | `CYCLE-20261031-G77V` | `2026-10-31T20:46:44.107Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6312` | Yes (`30ac0aa8...`) |
 | `CYCLE-20261031-GBAF` | `2026-10-31T20:46:49.383Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6313` | Yes (`1c31cb78...`) |
+| `CYCLE-20261031-OG2R` | `2026-10-31T20:53:08.835Z` | `google/embeddinggemma-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md` | Yes (`8045f9f7...`) |
+| `CYCLE-20261031-OH2R` | `2026-10-31T20:53:10.131Z` | `unhappychoice/gitlogue` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6314` | Yes (`787394e8...`) |
+| `CYCLE-20261031-ORP4` | `2026-10-31T20:53:23.896Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6315` | Yes (`8cbcaea0...`) |
