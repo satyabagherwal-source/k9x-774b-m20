@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-HBYD",
-    "timestamp": "2026-10-30T19:35:57.637Z",
-    "repository": "zama-ai/tfhe-rs",
-    "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "1ae424e8c203d5f170ec97d6bc148551fa6641638c846a5cf41b37f22d45abf4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-PZW0",
-    "timestamp": "2026-10-30T19:42:41.904Z",
-    "repository": "preactjs/preact",
-    "learningId": "learn-github-preactjs-preact",
-    "contentHash": "81a3c7ce43f7dd03c41e64764871fec1018fce6d1f60a53a2d609d5d04e40696",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-Q1S5",
     "timestamp": "2026-10-30T19:42:44.357Z",
     "repository": "KeyboardKit/KeyboardKit",
@@ -7492,6 +7462,36 @@
     "contentHash": "19cc97c72da98ab24881835b846e7d1049931411335996cabec6b8f786a2dd3d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261101-XZKU",
+    "timestamp": "2026-11-01T01:40:30.174Z",
+    "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+    "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
+    "contentHash": "0c3242062bb6544936efc2b098a66f06017d149a26d46f6d6b18f61fb1485614",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261101-XZVY",
+    "timestamp": "2026-11-01T01:40:30.574Z",
+    "repository": "argoproj/argo-events",
+    "learningId": "learn-github-argoproj-argo-events",
+    "contentHash": "37a32afa459a09952e339d50e110d4601fe1589feba4700a69f0d28b4fa016f8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

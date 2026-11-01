@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-01T01:33:36.824Z",
+  "last_updated": "2026-11-01T01:40:30.510Z",
   "total_verified_learnings": 1186,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3191,8 +3191,8 @@
       "slug": "argoproj-argo-events",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-events",
-      "source_version": "d00d3409",
-      "content_hash": "02544d22d9c3a9e01ddf2dd6b9c8610c2fe87b43710fbd3a0f74ba5687c41ce0",
+      "source_version": "7265166e",
+      "content_hash": "37a32afa459a09952e339d50e110d4601fe1589feba4700a69f0d28b4fa016f8",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
       "promoted_rules": [
@@ -3205,6 +3205,11 @@
           "number": 4265,
           "title": "deps): bump google.golang.org/api from 0.303.0 to 0.306.0 (#4236)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6396,
+          "title": "deps): bump cloud.google.com/go/iam from 1.14.0 to 1.15.0 (#4245)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3212,7 +3217,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T11:31:45.473Z",
+      "verified_at": "2026-11-01T01:40:30.493Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -69986,16 +69991,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
       "source_version": "hf-nvidia-qwen3.8-flash-next-fp4-local",
-      "content_hash": "a3b384d813eba24c1ed5c2d2fae3059716c729d794a5985419c9f90ea2ea2dd0",
+      "content_hash": "0c3242062bb6544936efc2b098a66f06017d149a26d46f6d6b18f61fb1485614",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 6393,
+          "title": "Hybrid Attention Layer Type Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6394,
+          "title": "NVFP4 Scale Factor Format Compatibility Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6395,
+          "title": "PLE Offload Memory Budget Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T00:16:02.065Z",
+      "verified_at": "2026-11-01T01:40:30.080Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -165819,6 +165840,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-01T01:16:36.411Z"
+    },
+    "rule-6393": {
+      "learning_id": "rule-6393",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6393,
+      "title": "Hybrid Attention Layer Type Consistency Invariant",
+      "source_url": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
+      "source_version": "hf-nvidia-qwen3.8-flash-next-fp4-local",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T01:40:30.080Z"
+    },
+    "rule-6394": {
+      "learning_id": "rule-6394",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6394,
+      "title": "NVFP4 Scale Factor Format Compatibility Guard",
+      "source_url": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
+      "source_version": "hf-nvidia-qwen3.8-flash-next-fp4-local",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T01:40:30.080Z"
+    },
+    "rule-6395": {
+      "learning_id": "rule-6395",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6395,
+      "title": "PLE Offload Memory Budget Invariant",
+      "source_url": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
+      "source_version": "hf-nvidia-qwen3.8-flash-next-fp4-local",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T01:40:30.080Z"
+    },
+    "rule-6396": {
+      "learning_id": "rule-6396",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6396,
+      "title": "deps): bump cloud.google.com/go/iam from 1.14.0 to 1.15.0 (#4245)",
+      "source_url": "https://github.com/argoproj/argo-events",
+      "source_version": "7265166e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T01:40:30.493Z"
     }
   },
   "aliases": {

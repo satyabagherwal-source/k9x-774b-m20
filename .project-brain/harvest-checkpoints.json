@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-01T01:33:36.932Z",
+  "last_updated": "2026-11-01T01:40:30.585Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2631,14 +2631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-      "content_hash": "a3b384d813eba24c1ed5c2d2fae3059716c729d794a5985419c9f90ea2ea2dd0",
-      "verified_at": "2026-10-29T00:16:02.179Z",
+      "content_hash": "0c3242062bb6544936efc2b098a66f06017d149a26d46f6d6b18f61fb1485614",
+      "verified_at": "2026-11-01T01:40:30.185Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T00:16:02.179Z"
+      "last_updated": "2026-11-01T01:40:30.185Z"
     },
     "OpenMOSS-Team/MOSS-Image-Base": {
       "repository": "OpenMOSS-Team/MOSS-Image-Base",
@@ -6066,14 +6066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-argoproj-argo-events",
-      "content_hash": "02544d22d9c3a9e01ddf2dd6b9c8610c2fe87b43710fbd3a0f74ba5687c41ce0",
-      "verified_at": "2026-10-25T11:31:45.552Z",
+      "content_hash": "37a32afa459a09952e339d50e110d4601fe1589feba4700a69f0d28b4fa016f8",
+      "verified_at": "2026-11-01T01:40:30.584Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T11:31:45.552Z"
+      "last_updated": "2026-11-01T01:40:30.584Z"
     },
     "HelixDB/helix-db": {
       "repository": "HelixDB/helix-db",

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-01T01:33:36.927Z",
-  "total_cycles_completed": 6756,
-  "total_learnings_persisted": 6756,
-  "total_rules_promoted": 6401,
+  "last_updated": "2026-11-01T01:40:30.581Z",
+  "total_cycles_completed": 6758,
+  "total_learnings_persisted": 6758,
+  "total_rules_promoted": 6405,
   "history": [
-    {
-      "timestamp": "2026-10-31T13:14:06.218Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T13:20:51.660Z",
-      "repository": "Comfy-Org/MiniMax-H3",
-      "learningId": "learn-huggingface-comfy-org-minimax-h3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T13:20:59.408Z",
       "repository": "saltstack/salt",
@@ -1403,6 +1389,20 @@
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
       "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T01:40:30.182Z",
+      "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+      "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T01:40:30.581Z",
+      "repository": "argoproj/argo-events",
+      "learningId": "learn-github-argoproj-argo-events",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
