@@ -49,4 +49,8 @@ keys.txt
 # Local Runtime Cache
 .project-brain/cache/
 
+# Vault Backup Local Storage & Remote Cache
+.project-brain/backups/
+.project-brain/vault-remote-cache/
+
 
