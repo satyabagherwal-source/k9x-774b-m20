@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-01T00:42:44.153Z",
-    "lastVerified": "2026-11-01T00:42:44.153Z",
+    "lastChecked": "2026-11-01T00:49:45.293Z",
+    "lastVerified": "2026-11-01T00:49:45.293Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -245,22 +245,21 @@
     "revisionIdentifier": "3a8f3f35"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-01T00:17:30.307Z",
-    "lastVerified": "2026-11-01T00:17:30.307Z",
+    "lastChecked": "2026-11-01T00:49:42.013Z",
+    "lastVerified": "2026-11-01T00:49:42.013Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "fbb9e0bb1b2cebcaff796cf055bb25c5c3519935798f7f14af531453b87ceefb",
+    "contentHash": "d7d943faefebf55ae167241b032943089c1e8132948e70fe8eb37e9e592da436",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "1a886517"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -326,8 +325,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-31T21:08:08.276Z",
-    "lastVerified": "2026-10-31T21:08:08.276Z",
+    "lastChecked": "2026-11-01T00:49:33.204Z",
+    "lastVerified": "2026-11-01T00:49:33.204Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -2020,9 +2019,9 @@
   "zilliztech-claude-context": {
     "name": "claude-context",
     "officialUrl": "https://github.com/zilliztech/claude-context",
-    "lastChecked": "2026-10-31T09:47:04.846Z",
+    "lastChecked": "2026-11-01T00:49:35.551Z",
     "revisionIdentifier": "6fc318b4",
-    "lastVerified": "2026-10-31T09:47:04.846Z"
+    "lastVerified": "2026-11-01T00:49:35.551Z"
   },
   "unhappychoice-gitlogue": {
     "name": "unhappychoice/gitlogue",
@@ -8488,13 +8487,13 @@
     "officialUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T23:18:42.023Z",
-    "lastVerified": "2026-10-28T23:18:42.023Z",
+    "lastChecked": "2026-11-01T00:49:25.843Z",
+    "lastVerified": "2026-11-01T00:49:25.843Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-    "contentHash": "8136ffdf55dfd718e9c115dc22a222c38113eeeb8b0d2a943820fc52ef5e11a7",
-    "promotedRulesCount": 2,
+    "contentHash": "821d459aa5ba4aef31d118f87d029ca13ff124c12de66a9de443804bb3eb1423",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -8917,12 +8916,12 @@
     "lastVerified": "2026-10-31T21:19:49.220Z"
   },
   "fabio-rovai-open-ontologies": {
-    "name": "fabio-rovai/open-ontologies",
+    "name": "open-ontologies",
     "officialUrl": "https://github.com/fabio-rovai/open-ontologies",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T10:33:56.795Z",
-    "lastVerified": "2026-10-31T10:33:56.795Z",
+    "lastChecked": "2026-11-01T00:49:30.563Z",
+    "lastVerified": "2026-11-01T00:49:30.563Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fabio-rovai-open-ontologies",
@@ -8931,7 +8930,8 @@
     "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "cefe5997"
   },
   "serpapi-google-search-results-nodejs": {
     "name": "google-search-results-nodejs",
@@ -9468,9 +9468,9 @@
   "exyte-popupview": {
     "name": "PopupView",
     "officialUrl": "https://github.com/exyte/PopupView",
-    "lastChecked": "2026-10-30T00:18:52.086Z",
+    "lastChecked": "2026-11-01T00:49:28.113Z",
     "revisionIdentifier": "99695337",
-    "lastVerified": "2026-10-30T00:18:52.086Z"
+    "lastVerified": "2026-11-01T00:49:28.113Z"
   },
   "indexcraft-ai-seo-audit-agent": {
     "name": "ai-seo-audit-agent",
@@ -12529,6 +12529,23 @@
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "dagoste-squadra": {
+    "name": "dagoSte/squadra",
+    "officialUrl": "https://github.com/dagoSte/squadra",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-01T00:49:22.625Z",
+    "lastVerified": "2026-11-01T00:49:22.625Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-dagoste-squadra",
+    "contentHash": "2ca3f652960752c0063604313f89d4b180cfb02ff53deae9ec5e1e8784c5f400",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 8,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

@@ -1525,8 +1525,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
     "sourceVersion": "hf-liquidai-lfm2.5-24b-a2b-gguf",
     "license": "Open-Source",
-    "contentHash": "8136ffdf55dfd718e9c115dc22a222c38113eeeb8b0d2a943820fc52ef5e11a7",
-    "lastHarvestedAt": "2026-10-28T23:18:53.937Z",
+    "contentHash": "821d459aa5ba4aef31d118f87d029ca13ff124c12de66a9de443804bb3eb1423",
+    "lastHarvestedAt": "2026-11-01T00:49:26.128Z",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf"
   },
   "amplifthq-openmeld": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "1a886517",
+    "sourceVersion": "cc94be6a",
     "license": "NOASSERTION",
-    "contentHash": "fbb9e0bb1b2cebcaff796cf055bb25c5c3519935798f7f14af531453b87ceefb",
-    "lastHarvestedAt": "2026-10-31T23:50:00.976Z",
+    "contentHash": "d7d943faefebf55ae167241b032943089c1e8132948e70fe8eb37e9e592da436",
+    "lastHarvestedAt": "2026-11-01T00:49:42.733Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -11668,5 +11668,15 @@
     "contentHash": "6b781a5ce917580059699d28808cc7c38a043ad98ac090b08c538fddf2dca82b",
     "lastHarvestedAt": "2026-10-31T16:08:35.133Z",
     "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b"
+  },
+  "dagoste-squadra": {
+    "repository": "dagoSte/squadra",
+    "platform": "github",
+    "sourceUrl": "https://github.com/dagoSte/squadra",
+    "sourceVersion": "a13d8580",
+    "license": "MIT",
+    "contentHash": "2ca3f652960752c0063604313f89d4b180cfb02ff53deae9ec5e1e8784c5f400",
+    "lastHarvestedAt": "2026-11-01T00:49:24.401Z",
+    "learningId": "learn-github-dagoste-squadra"
   }
 }

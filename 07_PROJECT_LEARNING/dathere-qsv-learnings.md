@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `1a886517`  
+> **Source Version**: `cc94be6a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T23:50:00.182Z  
+> **Timestamp**: 2026-11-01T00:49:42.021Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T23:50:00.174Z  
+> **Harvest Timestamp**: 2026-11-01T00:49:42.013Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3817 stars
+- **Stars / Engagement**: 3818 stars
 
 ---
 
@@ -2203,433 +2203,427 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1a886517` (2026-10-31)
-**Commit Message**: feat(profile): compute DCAT-US v3 properties from stats, with an inferred tier (#4967)
+### Incident Patch 1: `cc94be6a` (2026-11-01)
+**Commit Message**: feat(profile): --locate names the places a dataset covers (GeoNames, US Census) (#4968)
 
-* feat(profile): compute DCAT-US v3 properties from stats, with an inferred tier
+* feat(profile): --locate names the places a dataset covers (GeoNames, US Census)
 
-The default DCAT-US v3 projection now derives properties that are tedious
-to author by hand from the stats/frequency profile already runs, plus a
-Polars-SQL pass over the input (new src/cmd/profile/derive.rs, profile
-5.0.0):
+`qsv profile --locate <geonames|census|both>` turns the DCAT-US v3
+bounding box into named Locations. The densest coordinate cells (up to
+40, row-weighted, excluding out-of-range and (0, 0) rows) are looked up
+once, before projection, with `qsv geocode` child processes, so its
+caches, rate limiting, retries and URL overrides apply. The templates
+only read the resulting `located` context key via `with_located`.
 
-- temporalResolution: a regular series' step (PT15M, P1D, P1M), else
-  the recording precision (P1D/PT1M/PT1S)
-- accrualPeriodicity: ISO 19115 code only for a regular calendar series
-  (>=90% of gaps one exact step)
-- spatial bbox excluding out-of-range and (0,0) rows; Distribution
-  spatialResolutionInMeters from coordinate decimal precision
-- language: ISO 639-1 via describegpt's chunk-agreement detector
-- hasQualityMeasurement (DQV, ldqd dimensions): completeness; with
-  --validate, duplicate rows and RFC 4180/UTF-8 validity
-- with --validate: Distribution conformsTo RFC 4180 + characterEncoding
-- Distribution modified from HTTP Last-Modified for URL inputs
-- CSVW tableSchema constraints (required, min/max, lengths, enumeration
-  regex, primaryKey)
+- geonames: the bbox Location gets the finest label 80% of the sampled
+  rows share (nearest place with its GeoNames identifier, else admin1,
+  else country).
+- census: each state, and each county holding at least 5% of the
+  sampled rows (max 10), becomes a Location keyed by Census GEOID. A
+  file with no coordinates but a state column resolves its states from
+  that column's frequency (viz builds).
+- Every mode adds the centroid. A failed lookup is noted; the bbox
+  stays. Census lookups that fail after retries are reported as a
+  failure, not as "no US state".
 
-New FieldDecl `fallback:` / `review_note:
+run_qsv_cmd now places the input last for 
 
-**File**: `CHANGELOG.md` (modified, +15/-0)
+**File**: `CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ## [Unreleased]
- 
- ### Added
-+- **`profile` (DCAT-US v3) computes properties that are tedious to write by hand**, deterministically, from the stats and frequency it already runs plus a SQL pass over the file. New MiniJinja helpers (`src/cmd/profile/derive.rs`) feed `resources/profiles/dcat-us-v3.yaml` (profile 5.0.0): ([#4967](https://github.com/dathere/qsv/pull/4967))
-+  - `temporalResolution`, as an exact xsd:duration. A regular series reports its step (`PT15M`, `P1D`, and calendar steps such as `P1M` instead of a day count that varies from 28 to 31). Irregular data, such as event timestamps, reports the precision its values are recorded at (`P1D`, `PT1M`, `PT1S`). The smallest gap between two events is a sampling accident, not a resolution.
-+  - `accrualPeriodicity`: an ISO 19115 code (`daily`, `weekly`, `monthly`, ...) only when the dates form a regular calendar series, where 90% or more of the gaps are the same exact step. Event timestamps, such as 311 requests, describe no update schedule and get none.
-+  - `spatial`: the bounding box now excludes out-of-range coordinates and (0, 0) "null island" placeholder rows, noting how many it dropped. Distribution `spatialResolutionInMeters` is now the finest separation the coordinates' decimal precision can express. The DP+ helper it replaces as the default measures the bbox diagonal, which is the area's extent.
-+  - `language`: the ISO 639-1 language of the text values, using describegpt's chunk-agreement detector. Free-text columns are sampled from the file, and a sample made of a few repeated values is declined.
-+  - `hasQualityMeasurement` (DQV, the v3 replacement for `dataQuality`): percentage of non-empty cells and all-empty and partly-empty column counts. With `--validate`, duplicate rows and CSV structure / UTF-8 validity are added too. The duplicate-row count hashes every row (about +223 MB peak memory on a 1M-row, 149 MB file), so it never runs on the default path. Dimension IRIs come from the W3C `ldqd` vocabulary and are configurable in the profile.
-+  - With `--validate`, the Distribution's `characterEncoding` (`["UTF-8"]`), asserted only after `qsv validate` passes. No RFC 4180 `conformsTo` is claimed, because `qsv validate` is deliberately lenient (LF line endings, any delimiter).
-+  - Distribution `modified` from the server's `Last-Modified` header for URL inputs.
-+  - CSVW `csvw:tableSchema` columns carry constraints: `required`, numeric/date `minimum`/`maximum`, string `minLength`/`maxLength` for ASCII columns, an enumeration regex for small categorical columns, and a table `primaryKey` (a column whose distinct count equals the row count).
-+- `profile`: an **inferred tier** for profile fields. A field's new `fallback:` template supplies a value only when nothing was supplied, forced or spec-derived. Discovered publisher metadata replaces an inferred value, where a measured value still wins over discovery. A new `projection_provenance` output block lists each inferred value as `inferred`, or `replaced` once discovery or an override superseded it. A field's `review_note:` adds a Recommended warning while the inferred value stands. ([#4967](https://github.com/dathere/qsv/pull/4967))
-+- `profile`: when no description is supplied, DCAT-US v3 gets a factual one generated from the statistics (row and column counts, time span, columns). It ends with a describegpt-style disclosure: "WARNING: Description generated automatically by qsv profile from summary statistics; not reviewed by a person. Verify before using!" A Recommended review warning keeps the missing human-authored description visible. For URL inputs with no identifier, the source URL is used as an inferred `identifier`. ([#4967](https://github.com/dathere/qsv/pull/4967))
+@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   - CSVW `csvw:tableSchema` columns carry constraints: `required`, numeric/date `minimum`/`maximum`, string `minLength`/`maxLength` for ASCII columns, an enumeration regex for small categorical columns, and a table `primaryKey` (a column whose distinct count equals the row count).
+ - `profile`: an **inferred tier** for profile fields. A field's new `fallback:` template supplies a value only when nothing was supplied, forced or spec-derived. Discovered publisher metadata replaces an inferred value, where a measured value still wins over discovery. A new `projection_provenance` output block lists each inferred value as `inferred`, or `replaced` once discovery or an override superseded it. A field's `review_note:` adds a Recommended warning while the inferred value stands. ([#4967](https://github.com/dathere/qsv/pull/4967))
+ - `profile`: when no description is supplied, DCAT-US v3 gets a factual one generated from the statistics (row and column counts, time span, columns). It ends with a describegpt-style disclosure: "WARNING: Description generated automatically by qsv profile from summary statistics; not reviewed by a person. Verify before using!" A Recommended review warning keeps the missing human-authored description visible. For URL inputs with no identifier, the source URL is used as an inferred `identifier`. ([#4967](https://github.com/dathere/qsv/pull/4967))
++- **`profile --locate <geonames|census|both>` names the places a dataset covers** in its DCAT-US v3 `spatial` Locations. The densest coordinate cells (up to 40, after dropping out-of-range and (0, 0) rows) are looked up with `qsv geocode`, so its caches, rate limiting, retries and URL overrides apply. Results are weighted by how many rows each cell holds, so a few outlying points cannot outvote the core of the data.
++  - `geonames` (offline index): the bounding-box Location is labelled with the finest level that 80% of the sampled rows share. That is the nearest place (with its `https://sws.geonames.org/<id>/` identifier), else the admin1 region, else the country. A dataset split between two places is labelled by what they have in common, never by one of them.
++  - `census` (US Census Geocoder: keyless, cached): each state, and each county holding at least 5% of the sampled rows (up to 10), is added as a Location keyed by its Census GEOID. A file without coordinates but with a state column (USPS code, FIPS code or name) gets its states from that column instead, in builds with `viz`.
++  - Every mode also adds the coordinates' centroid. A lookup that cannot run (offline, a Census outage) is noted in `projection_warnings` and the bounding box is kept. Without `--locate`, the output is unchanged. ([#4968](https://github.com/dathere/qsv/pull/4968))
  - `viz smart`: a Data Schematic embedded in an iframe now reports its own height to the embedding page (`postMessage({qsvVizHeight: <px>}, "*")`), so a host such as CKAN can size the iframe to its content without injecting a script. It reports only when framed, on load, on resize (including the data viewer drawer opening and closing, so the iframe grows and shrinks), and when its content reflows. The data viewer now accepts the embedding page's `qsvVizViewport` answer only from that page. The gallery generator injects only its scroll-forwarding script into these pages. ([#4949](https://github.com/dathere/qsv/pull/4949))
- - Gallery: the WPRDC 2-1-1 and Boston 311 Data Schematics can now be made **Live Data Schematics**. Each gallery entry has a "Make it a Live Data Schematic" how-to: download the page and the exact data it was rendered from, register it with qsv-clientd, and open it from disk, approving the pairing in a shell or from the qsv-clientd tray app's menu. The two data files too large to commit (`wpa_211_requests.csv`, `boston311-2025.tsv.gz`) are attached to the 27.0.1 release. The WPRDC figure is now rendered from t
+ - Gallery: the WPRDC 2-1-1 and Boston 311 Data Schematics can now be made **Live Data Schematics**. Each gallery entry has a "Make it a Live Data Schematic" how-to: download the page and the exact data it was rendered from, register it with qsv-clientd, and open it from disk, approving the pairing in a shell or from the qsv-clientd tray app's menu. The two data files too large to commit (`wpa_211_requests.csv`, `boston311-2025.tsv.gz`) are attached to the 27.0.1 release. The WPRDC figure is now rendered from the portal's own 13-column file instead of a reshaped 7-column extract, so Fetch latest returns data of the same shape; every number in its description is unchanged. ([#4952](https://github.com/dathere/qsv/pull/4952))
+ - **`scripts/benchmarks.sh` 10.1.0 benchmarks `geocode geoclient` against real NYC addresses** ([#4964](https://github.com/dathere/qsv/pull/4964)). The input is a committed 100,000-row sample of NYC Open Data's AddressPoint dataset, 20,000 distinct addresses per borough.
 ```
 
-**File**: `_typos.toml` (modified, +2/-0)
+**File**: `docs/help/profile.md` (modified, +1/-0)
 ```diff
-@@ -39,6 +39,8 @@ lits          = "lits"
- "sav"         = "sav"
- "missings"    = "missings"
- "emial"       = "emial"
-+# ISO 639-3 code for Thai, mapped to 639-1 "th" in profile language detection
-+"tha"         = "tha"
- 
- [files]
- extend-exclude = [
-```
-
-**File**: `docs/help/profile.md` (modified, +16/-1)
-```diff
-@@ -38,6 +38,21 @@ evaluates the spec's `formula` / `suggestion_formula` templates against that
- context. Jinja2 helpers and filters are a native Rust port of DP+'s
- `jinja2_helpers.py`, built on `minijinja`.
- 
-+For DCAT-US v3 the projection also COMPUTES properties that are tedious to
-+author by hand, from the same statistics: temporal coverage and resolution
-+(an exact xsd:duration: a regular series' step, else recording precision),
-+spatial bounding box (excluding out-of-range and (0, 0) placeholder
-+coordinates) and resolution, an update schedule (only for
-+a regular calendar series), the content language, DQV quality measurements
-+(completeness, plus duplicate rows and CSV/UTF-8 validity with `--validate`),
-+and a CSVW table schema with per-column constraints (required, ranges,
-+lengths, enumerations, primary key). Values
-+that are generated or detected rather than measured - a description, the
-+language, the schedule - form an "inferred" tier that the publisher's own
-+metadata replaces; `projection_provenance` lists them. A generated
-+description carries a disclosure and a review warning, so it never passes
-+for a human-authored one.
-+
- When the input is a URL whose response carries DCAT markup (HTTP
- `Link: rel=describedBy`), qsv discovers the publisher's stated metadata and
- merges it as a base layer beneath the inferred projection.
-@@ -154,7 +169,7 @@ qsv profile --help
+@@ -166,6 +166,7 @@ qsv profile --help
+ | &nbsp;`‑‑no‑projection`&nbsp; | flag | Skip the metadata projection block (dcat/croissant/ geoconnex, depending on the active profile). |  |
+ | &nbsp;`‑‑no‑ckan`&nbsp; | flag | Skip the CKAN-shape block. |  |
+ | &nbsp;`‑‑croissant‑frequency`&nbsp; | flag | Embed per-column value-frequency distributions in the metadata projection. The croissant profile renders them as inline cr:RecordSets (one `<col>-frequency` RecordSet of {value, count, percentage} rows per column), per the spec's "distribution of values is a statistic on the field" guidance. Off by default (keeps the projection compact); the raw counts always remain in the top-level `frequency` block regardless. Other bundled profiles ignore this flag. |  |
++| &nbsp;`‑‑locate`&nbsp; | string | Name the places the data covers, as DCAT-US v3 `spatial` Locations, by looking up the densest coordinate cells (up to 40, row-weighted) with `qsv geocode`. <mode> is one of: geonames - label the bounding box with the place, admin1 or country that 80% of the sampled rows share (offline Geonames index). census   - add each US state, and each county holding at least 5% of the sampled rows, keyed by Census GEOID (US Census Geocoder: online, keyless, cached). Without coordinates, a state column (USPS, FIPS or name) is used instead. both     - geonames and census. Also adds the coordinates' centroid. A lookup that cannot run is noted in projection_warnings; the bounding box is kept. Default: off. |  |
  | &nbsp;`‑‑dcat‑legacy‑license`&nbsp; | flag | Also emit `license` on the Dataset, alongside the Distribution-level copy. Both are valid DCAT-US v3 (the Dataset-level property was added upstream), but the migration guide directs publishers to put license on each Distribution, so that is what qsv emits by default. Default: off. |  |
  | &nbsp;`‑‑no‑dcat‑discovery`&nbsp; | flag | Skip DCAT-markup discovery on URL inputs. Discovery sniffs HTTP Link: rel=describedBy (and, in future, sibling .metadata.json / JSON-LD <script> blocks) to use the publisher's stated metadata as a base layer. |  |
  | &nbsp;`‑‑dcat‑discovery‑timeout`&nbsp; | integer | Per-request timeout for DCAT-markup discovery probes. Default: 5. |  |
--| &nbsp;`‑‑validate`&nbsp; | flag | Validate the emitted projection block against the active profile's declared validators. For dcat-us-v3 that's the vendored GSA JSON Schema bundle (see resources/dcat-us-v3/); for dcat-ap-v3 / geoconnex it's pyshacl over the bundled SHACL shapes; for croissant it's mlcroissant. Catches missing mandatory fields, cardinality issues, and shape violations. Violations append to projection_warnings by default. |  |
-+| &nbsp;`‑‑validate`&nbsp; | flag | Validate the emitted projection block against the active profile's declared validators. For dcat-us-v3 that's the vendored GSA JSON Schema bundle (see resources/dcat-us-v3/); for dcat-ap-v3 / geoconnex it's pyshacl over the bundled SHACL shapes; for croissant it's mlcroissant. Catches missing mandatory fields, cardinality issues, and shape violations. Violations append to projection_warnings by default. Also runs `qsv validate` over the input (CSV structure + UTF-8), so a passing file is declared UTF-8 encoded and its syntactic validity is recorded as a quality measurement. |  |
- | &nbsp;`‑‑strict`&nbsp; | flag | With --validate, fail the command on Required-severity schema violations, or on non-Info external-validator findings, instead of just warning. Severity comes from the DCAT-US v3 schema's own requirementLevel annotations, so a missing mandatory property aborts while a recommended-field advisory does not. |  |
- | &nbsp;`‑‑allow‑external‑validator`&nbsp; | flag | Opt in to spawning the validator binary declared by `validation.external` when the profile was loaded from an arbitrary YAML file. Bundled profiles (dcat-us-v3, dcat-ap-v3, croissant, geoconnex) always run their declared external validators because the profile content is vetted at qsv release time. Without this flag, file-loaded profiles emit a Recommended-severity warning instead of running the binary, so an untrusted YAML can't silently execute arbitrary commands. Default: off. |  |
- | &nbsp;`‑‑catalog`&nbsp; | flag | Wrap the emitted DCAT-US v3 Dataset inside a Catalog envelope (Catalog{dataset:[...]}). Useful for federation harvesters (data.gov, CKAN ingest) that expect Catalog-shaped top-level metadata. Default: off (Dataset-only, backwards-compatible). |  |
 ```
 
-**File**: `resources/profiles/README.md` (modified, +31/-0)
+**File**: `resources/profiles/README.md` (modified, +5/-1)
 ```diff
-@@ -49,6 +49,37 @@ Every entry under `dataset.fields[]`, `distribution.fields[]`, and
- | `emit_when` | Optional guard template; field skipped when this renders falsy/empty. |
- | `default` | Literal fallback when the main template renders empty (suppresses the warning). |
- | `for_each_column` | Croissant-style expansion: emit one entry per stats column. |
-+| `fallback` | Inferred-tier template, rendered only when `emit_when` is falsy or `template` renders empty. A value from here is listed in `projection_provenance`, and discovered publisher metadata **replaces** it (a `template` value wins over discovery). Use for judgement calls such as a generated description or a detected language, not for facts measured from the file. A failing fallback is reported at Info severity, never Required. |
-+| `review_note` | Message added to `projection_warnings` (Recommended) while a `fallback` value stands, e.g. "replace this generated description before publishing". Dropped once discovery or an override replaces the value. |
-+
-+### Inferred tier and precedence
-+
-+For a field with both `template` and `fallback`, the final value comes
-+from the first of: a forced `--initial-context` value, a
-+`dataset_info` override, the `template` (supplied CKAN/spec values),
-+discovered publisher DCAT, the `fallback`.
-+
-+### Stats-derived helpers
-+
-+Besides the DP+ ports in `formula_helpers.rs`, templates can call these
-+qsv-native helpers (`src/cmd/profile/derive.rs`). Each returns
-+undefined, not an error, when its inputs are absent, so guard with
-+`is defined` or `| default("")`.
-+
-+| Helper | Returns |
-+|---|---|
-+| `xsd_temporal_resolution(field?)` | Temporal resolution of a date/datetime column as an exact xsd:duration: the step of a regular series (`PT15M`, `P1D`, `P1M`, `P1Y`), otherwise the precision values are recorded at (`P1D`, `PT1M`, `PT1S`). Defaults to the first detected date, then datetime, column. |
-+| `confident_accrual_periodicity(field?)` | ISO 19115 frequency code, only when ≥90% of gaps are one exact calendar step (whole days at the same time, or whole months on the same day). |
-+| `coordinate_resolution_in_meters(dpp, stats)` | Finest separation the lat/lon decimal precision resolves, in metres (3 significant figures). |
-+| `robust_bbox(dpp, stats)` | `[Location]` with a WKT `bbox`, excluding out-of-range and (0, 0) coordinates (Info note with the count dropped). |
-+| `quality_measurements(stats, dpp, dims, rfc4180)` | DQV `QualityMeasurement` array; `dims` maps `completeness` / `conciseness` / `syntacticValidity` to dimension IRIs. |
-+| `build_csvw_schema_rich(stats, dppf, headers, rows)` | CSVW table schema in file order, with per-column constraints (string lengths only for ASCII columns: qsv counts bytes, CSVW characters) and a `primaryKey` (a column whose cardinality equals `rows`). |
-+| `detect_data_language(stats, dppf)` | ISO 639-1 code of the text values (needs the `whatlang` feature). |
-+
-+The projection context also exposes `dppf` (per-column frequency),
-+`headers` (column names in file order — template maps iterate
-+key-sorted), `rfc4180` (`{valid}` when `--validate` ran `qsv
-+validate`, else null; lenient, so not proof of strict RFC 4180) and `http_last_modified` (URL inputs).
+@@ -75,11 +75,15 @@ undefined, not an error, when its inputs are absent, so guard with
+ | `quality_measurements(stats, dpp, dims, rfc4180)` | DQV `QualityMeasurement` array; `dims` maps `completeness` / `conciseness` / `syntacticValidity` to dimension IRIs. |
+ | `build_csvw_schema_rich(stats, dppf, headers, rows)` | CSVW table schema in file order, with per-column constraints (string lengths only for ASCII columns: qsv counts bytes, CSVW characters) and a `primaryKey` (a column whose cardinality equals `rows`). |
+ | `detect_data_language(stats, dppf)` | ISO 639-1 code of the text values (needs the `whatlang` feature). |
++| `with_located(base, located)` | `base` (a `[Location]`, e.g. from `robust_bbox`) with the `--locate` results folded in: `located.primary` keys merge into the first Location (keys it already has win), `located.regions` follow it, and `located.notes` become Info warnings. With `located` null, `base` is returned unchanged. |
+ 
+ The projection context also exposes `dppf` (per-column frequency),
+ `headers` (column names in file order — template maps iterate
+ key-sorted), `rfc4180` (`{valid}` when `--validate` ran `qsv
+-validate`, else null; lenient, so not proof of strict RFC 4180) and `http_last_modified` (URL inputs).
++validate`, else null; lenient, so not proof of strict RFC 4180), `http_last_modified` (URL inputs)
++and `located` (`--locate`, else null): `{primary, regions, notes}`, where `primary` holds the
++centroid and any GeoNames `prefLabel` / `identifier` / `inScheme` for the bbox Location, and
++`regions` the US Census state and county Locations.
  
  ## Catalog envelope
  
 ```
 
-**File**: `resources/profiles/dcat-us-v3.yaml` (modified, +81/-4)
+**File**: `resources/profiles/dcat-us-v3.yaml` (modified, +8/-8)
 ```diff
-@@ -15,7 +15,7 @@
- # re-run the golden parity tests. CI hard-fails on drift.
- 
- name: dcat-us-v3
--version: 4.0.0
-+version: 5.0.0
- about: DCAT-US v3 metadata projection (resources.data.gov)
- about_url: https://resources.data.gov/resources/dcat-us3/
- 
-@@ -128,6 +128,22 @@ vocabularies:
-     DateTime:      "dateTime"
-     NULL:          "string"
- 
-+  # Data-quality dimension IRIs for hasQualityMeasurement, from the W3C
-+  # DQV "Linked Data Quality Dimensions" vocabulary
-+  # (https://www.w3.org/2016/05/ldqd). Swap these to report against a
-+  # different quality framework; a dimension mapped to "" is omitted.
-+  quality_dimensions:
-+    completeness:      "http://www.w3.org/2016/05/ldqd#completeness"
-+    conciseness:       "http://www.w3.org/2016/05/ldqd#conciseness"
-+    syntacticValidity: "http://www.w3.org/2016/05/ldqd#syntacticValidity"
-+
-+  # Disclosures appended to text qsv generates, in the style of
-+  # describegpt's "WARNING: ... Verify before using!" attribution.
-+  # Reword or localize freely, but keep one: a generated description
-+  # must never pass for a human-authored one.
-+  disclosures:
-+    stats_description: "WARNING: Description generated automatically by qsv profile from summary statistics; not reviewed by a person. Verify before using!"
-+
- # =========================================================================
- # CKAN → DCAT pointer mappings (force-override + warning-filter use only)
- # =========================================================================
-@@ -223,13 +239,38 @@ dataset:
-       template: '{{ pkg.title | default(source_label | basename | file_stem) | default("dataset") }}'
-       required_level: required
- 
-+    # Mandatory. When nobody supplied one, qsv writes a factual,
-+    # deterministic summary from the stats (inferred tier: a
-+    # publisher's discovered description replaces it) — carrying a
-+    # disclosure, and a review note in projection_warnings so --strict
-+    # users still see that a human-authored description is missing.
-     - path: "description"
-       template: '{{ pkg.notes | default("") }}'
-       emit_when: '{{ (pkg.notes | default("")) != "" }}'
-+      fallback: |
-+        {%- set cols = headers | default(stats | list) -%}
-+        {%- set rows = dpp.RECORD_COUNT | default(0) -%}
-+        {%- set tfields = (dpp.DATE_FIELDS | default([])) + (dpp.DATETIME_FIELDS | default([])) -%}
-+        {%- if cols | length > 0 -%}
-+        Tabular data (CSV) with {{ rows }} {{ "row" if rows == 1 else "rows" }} and {{ cols | length }} {{ "column" if cols | length == 1 else "columns" }}
-+        {%- if tfields | length > 0 -%}
-+        {%- set tf = tfields | first -%}
-+        {%- set ts = stats[tf].stats -%}
-+        {%- if ts.min and ts.max %}, with `{{ tf }}` values from {{ ts.min[:10] }} to {{ ts.max[:10] }}{% endif -%}
-+        {%- endif -%}
-+        . Columns: {{ cols[:8] | join(", ") }}{% if cols | length > 8 %}, and {{ cols | length - 8 }} more{% endif %}.
-+
-+        {{ lookup("disclosures", "stats_description") }}
-+        {%- endif -%}
-+      review_note: "description was generated by qsv from summary statistics; replace it with a human-authored description before publishing"
- 
-+    # Mandatory. For URL inputs with no supplied identifier, the source
-+    # URL is a stable, unique-enough default (inferred tier).
-     - path: "identifier"
-       template: '{{ pkg.name | default("") }}'
-       emit_when: '{{ (pkg.name | default("")) != "" }}'
-+      fallback: '{{ (res.url | default("")) | only_if_absolute_iri }}'
-+      review_note: "identifier defaulted to the source URL; supply the dataset's own identifier if it has one"
- 
-     - path: "issued"
-       template: '{{ pkg.metadata_created | default("") | dcat_us_date }}'
-@@ -306,14 +347,14 @@ dataset:
+@@ -344,17 +344,17 @@ dataset:
+     # UNDEFINED renders the string "null" via `| tojson` and
+     # coerce_json_or_string keeps it as a literal string, leaving a
+     # malformed `"spatial": "null"` in the output (Roborev #2490).
++    #
++    # with_located folds in the opt-in --locate results (`located`, null
++    # otherwise): the bbox Location gains a GeoNames prefLabel/identifier
++    # and the centroid, and US Census state/county Locations follow it.
      - path: "spatial"
        template: |
          {%- set wkt = pkg.dpp_suggestions.spatial_extent.value | default("") -%}
--        {%- set bbox = bbox_from_dpps(dpp, stats) -%}
-+        {%- set bbox = robust_bbox(dpp, stats) -%}
-         {%- if wkt != "" -%}
-         [{
-           "@type": "Location",
-           "geometry": {{ wkt | tojson }}
-         }]
-         {%- elif bbox -%}{{ bbox | tojson }}{%- endif -%}
--      emit_when: '{{ (pkg.dpp_suggestions.spatial_extent.value | default("")) != "" or bbox_from_dpps(dpp, stats) is defined }}'
-+      emit_when: '{{ (pkg.dpp_suggestions.spatial_extent.value | default("")) != "" or robust_bbox(dpp, stats) is defined }}'
+-        {%- set bbox = robust_bbox(dpp, stats) -%}
+-        {%- if wkt != "" -%}
+-        [{
+-          "@type": "Location",
+-          "geometry": {{ wkt | tojson }}
+-        }]
+-        {%- elif bbox -%}{{ bbox | tojson }}{%- endif -%}
+-      emit_when: '{{ (pkg.dpp_suggestions.spatial_extent.value | default("")) != "" or robust_bbox(dpp, stats) is defined }}'
++        {%- set base = [{"@type": "Location", "geometry": wkt}] if wkt != "" else robust_bbox(dpp, stats) -%}
++        {%- set sp = with_located(base, located) -%}
++        {%- if sp -%}{{ sp | tojson }}{%- endif -%}
++      emit_when: '{{ with_located([{"@type": "Location", "geometry": pkg.dpp_suggestions.spatial_extent.value}] if (pkg.dpp_suggestions.spatial_extent.value | default("")) != "" else robust_bbox(dpp, stats), located) is defined }}'
  
      - path: "temporal"
        template: |
-@@ -353,9 +394,13 @@ dataset:
-            "title":      "DCAT-US 3.0",
-            "identifier": "https://resources.data.gov/dcat-us/3.0.0" }]
- 
-+    # Inferred tier: the natural language of the text values, detected
-+    # with describegpt's chunk-agreement gate (absent on builds without
-+    # the `whatlang` feature, and for data with too little text).
-     - path: "language"
-       template: '{{ lookup("iso_639_1", pkg.language | default("")) }}'
-       emit_when: '{{ (pkg.language | default("")) 
 ```
 
-**File**: `src/cmd/describegpt.rs` (modified, +1/-1)
+**File**: `src/cmd/profile.rs` (modified, +34/-0)
 ```diff
-@@ -1423,7 +1423,7 @@ fn split_into_chunks(text: &str, k: usize) -> Option<Vec<String>> {
- ///
- /// Returns (English name, ISO 639-3 code, confidence).
- #[cfg(feature = "whatlang")]
--fn detect_language_in_text(
-+pub(crate) fn detect_language_in_text(
-     text: &str,
-     min_confidence: Option<f64>,
- ) -> Option<(String, String, f64)> {
-```
-
-**File**: `src/cmd/profile.rs` (modified, +274/-46)
-```diff
-@@ -26,6 +26,21 @@ evaluates the spec's `formula` / `suggestion_formula` templates against that
- context. Jinja2 helpers and filters are a native Rust port of DP+'s
- `jinja2_helpers.py`, built on `minijinja`.
- 
-+For DCAT-US v3 the projection also COMPUTES properties that are tedious to
-+author by hand, from the same statistics: temporal coverage and resolution
-+(an exact xsd:duration: a regular series' step, else recording precision),
-+spatial bounding box (excluding out-of-range and (0, 0) placeholder
-+coordinates) and resolution, an update schedule (only for
-+a regular calendar series), the content language, DQV quality measurements
-+(completeness, plus duplicate rows and CSV/UTF-8 validity with `--validate`),
-+and a CSVW table schema with per-column constraints (required, ranges,
-+lengths, enumerations, primary key). Values
-+that are generated or detected rather than measured - a description, the
-+language, the schedule - form an "inferred" tier that the publisher's own
-+metadata replaces; `projection_provenance` lists them. A generated
-+description carries a disclosure and a review warning, so it never passes
-+for a human-authored one.
-+
- When the input is a URL whose response carries DCAT markup (HTTP
- `Link: rel=describedBy`), qsv discovers the publisher's stated metadata and
- merges it as a base layer beneath the inferred projection.
-@@ -145,7 +160,11 @@ profile options:
-                               mlcroissant. Catches missing mandatory fields,
-                               cardinality issues, and shape violations.
-                               Violations append to projection_warnings by
--                              default.
-+                              default. Also runs `qsv validate` over the
-+                              input (CSV structure + UTF-8), so a passing
-+                              file is declared UTF-8 encoded and its
-+                              syntactic validity is recorded as a
-+                              quality measurement.
-     --strict                  With --validate, fail the command on
-                               Required-severity schema violations, or on
-                               non-Info external-validator findings,
-@@ -212,13 +231,14 @@ Common options:
- use std::path::Path;
- 
- use serde::Deserialize;
--use serde_json::{Value, json};
-+use serde_json::{Map, Value, json};
- 
--use crate::{CliError, CliResult, util};
-+use crate::{CliError, CliResult, config::Config, util};
- 
- mod context;
- mod dcat_discover;
- mod dcat_validate;
-+mod derive;
- mod discovery_merge;
+@@ -137,6 +137,25 @@ profile options:
+                               projection compact); the raw counts always remain
+                               in the top-level `frequency` block regardless.
+                               Other bundled profiles ignore this flag.
++    --locate <mode>           Name the places the data covers, as DCAT-US v3
++                              `spatial` Locations, by looking up the densest
++                              coordinate cells (up to 40, row-weighted) with
++                              `qsv geocode`. <mode> is one of:
++                                geonames - label the bounding box with the
++                                           place, admin1 or country that 80%
++                                           of the sampled rows share (offline
++                                           Geonames index).
++                                census   - add each US state, and each county
++                                           holding at least 5% of the sampled
++                                           rows, keyed by Census GEOID (US
++                                           Census Geocoder: online, keyless,
++                                           cached). Without coordinates, a
++                                           state column (USPS, FIPS or name)
++                                           is used instead.
++                                both     - geonames and census.
++                              Also adds the coordinates' centroid. A lookup
++                              that cannot run is noted in projection_warnings;
++                              the bounding box is kept. Default: off.
+     --dcat-legacy-license     Also emit `license` on the Dataset, alongside
+                               the Distribution-level copy. Both are valid
+                               DCAT-US v3 (the Dataset-level property was
+@@ -243,6 +262,7 @@ mod discovery_merge;
  mod external_validate;
  mod formula_engine;
-@@ -265,17 +285,24 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-     // stdin): "stdin" for piped input, the original path/URL otherwise.
-     // `original_url` is preserved separately so the DCAT projection can
-     // use it as `dcat:downloadURL` and to derive a title fallback.
--    let (input_path, original_url, display_input, from_stdin, _kept_temp) =
-+    let (input_path, original_url, display_input, from_stdin, _kept_temp, http_last_modified) =
-         match args.arg_input.as_deref() {
-             Some("-") | None => {
-                 let temp = stdin_to_tempfile()?;
-                 let local = temp.path().to_string_lossy().to_string();
--                (local, None, "stdin".to_string(), true, Some(temp))
-+                (local, None, "stdin".to_string(), true, Some(temp), None)
-             },
-             Some(p) => {
--                let (local, url, kept) = resolve_input(p)?;
--                let display = url.clone().unwrap_or_else(|| p.to_string());
--                (local, url, display, false, kept)
-+                let resolved = resolve_input(p)?;
-+                let display = resolved.url.clone().unwrap_or_else(|| p.to_string());
-+                (
-+                    resolved.local,
-+                    resolved.url,
-+                    display,
-+                    false,
-+                    resolved.kept,
-+                    resolved.last_modified,
-+                )
-             },
-         };
+ mod formula_helpers;
++mod locate;
+ mod profile_spec;
+ mod projection;
+ mod spec;
+@@ -264,6 +284,7 @@ struct Args {
+     flag_profile:                  Option<String>,
+     flag_no_ckan:                  bool,
+     flag_croissant_frequency:      bool,
++    flag_locate:                   Option<String>,
+     flag_force:                    bool,
+     flag_jobs:                     Option<usize>,
+     flag_output:                   Option<String>,
+@@ -337,6 +358,12 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+     let profile = profile_spec::load(profile_arg)?;
  
-@@ -319,24 +346,31 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-         memcheck:        args.flag_memcheck,
-         initial_context: args.flag_initial_context.as_deref(),
-         profile:         &profile,
-+        check_rfc4180:   args.flag_validate && !args.flag_no_projection,
-     };
-     let analysis = context::build(&ctx_args, spec_opt.as_ref())?;
- 
-+    // One SQL backend for both the spec's formulas and the projection
-+    // templates, honoring the same CSV parsing options as the stats /
-+    // frequency passes so SQL-backed helpers see the same columns.
-+    // The delimiter resolves exactly as stats' does (--delimiter, then
-+    // the file extension / QSV_DEFAULT_DELIMITER), so a `.tsv` input is
-+    // not read as one comma-less column. --no-headers maps to
-+    // has_header=false.
-+    let resolved_delimiter = Config::new(Some(&input_path))
-+        .delimiter(args.flag_delimiter)
-+        .get_delimiter(
+     // --- 2. run stats + frequency, build analysis context -----------------
++    let locate_mode = args
++        .flag_locate
++        .as_deref()
++        .map(locate::LocateMode::parse)
++        .transpose()?;
++
+     let ctx_args = context::ContextArgs {
+         input_path:      &input_path,
+         no_headers:      args.flag_no_headers,
+@@ -587,6 +614,12 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+         if args.flag_croissant_frequency {
+             frequency = dppf.clone();
+         }
++        // --locate: the place lookups run once, here, as `qsv geocode`
++        // child processes; templates only read the result.
++        let located = match locate_mode {
++            Some(mode) => locate::locate(mode, &sql_backend, &dpp, &dppf, &headers),
++            None => Value::Null,
++        };
+         let projection_ctx = json!({
+             "pkg":                package,
+             "res":                resource,
+@@ -601,6 +634,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+             "dpp":                dpp,
+             "rfc4180":            rfc4180,
+             "http_last_modified": http_last_modified,
++            "located":            located,
+             "source_label":       display_input,
+             "local_path":         input_path,
+             "legacy_license":     args.flag_dcat_legacy_license,
 ```
 
-**File**: `src/cmd/profile/context.rs` (modified, +39/-1)
+**File**: `src/cmd/profile/derive.rs` (modified, +49/-0)
 ```diff
-@@ -43,6 +43,11 @@ pub struct ContextArgs<'a> {
-     /// construction stays decoupled from the orchestrator's profile
-     /// load.
-     pub profile:         &'a super::profile_spec::ProfileSpec,
-+    /// Run `qsv validate` (RFC 4180 + UTF-8) so the projection can
-+    /// assert `conformsTo` / `characterEncoding`. Set from `--validate`:
-+    /// a profile that was not asked to validate never pays for the
-+    /// extra full-file scan (§5.8).
-+    pub check_rfc4180:   bool,
+@@ -94,6 +94,7 @@ pub fn register(env: &mut Environment) {
+     env.add_function("build_csvw_schema_rich", build_csvw_schema_rich);
+     env.add_function("detect_data_language", detect_data_language);
+     env.add_function("robust_bbox", robust_bbox);
++    env.add_function("with_located", with_located);
  }
  
- /// Result of the analysis pass — the JSON context plus the column headers we
-@@ -220,13 +225,46 @@ pub fn build(args: &ContextArgs, _spec: Option<&Spec>) -> CliResult<AnalysisCont
-             .insert("name".to_string(), Value::String(name.to_string()));
+ // ---------------------------------------------------------------------
+@@ -257,6 +258,9 @@ fn filtered_bounds(lat: &str, lon: &str) -> Option<(f64, f64, f64, f64)> {
      }
+     let key = format!("robust_bbox\u{1f}{lat}\u{1f}{lon}");
+     let hit = memo_sql(&key, |backend| {
++        // as text, so integer-looking leading rows don't type the column
++        // as integer and fail the scan at the first decimal
++        let backend = backend.clone().with_all_strings();
+         let la = format!(r#"TRY_CAST("{lat}" AS DOUBLE)"#);
+         let lo = format!(r#"TRY_CAST("{lon}" AS DOUBLE)"#);
+         let keep = format!(
+@@ -293,6 +297,51 @@ fn filtered_bounds(lat: &str, lon: &str) -> Option<(f64, f64, f64, f64)> {
+     Some((f("min_lon")?, f("max_lon")?, f("min_lat")?, f("max_lat")?))
+ }
  
--    // --- 7. assemble ------------------------------------------------------
-+    // --- 7. RFC 4180 + UTF-8 conformance (with --validate) ---------------
-+    // `qsv validate` with no schema checks the file is well-formed CSV
-+    // (consistent field counts, quoting) and valid UTF-8. The projection
-+    // derives `conformsTo`, `characterEncoding` and a syntactic-validity
-+    // quality measurement from the result, so they are only asserted
-+    // when actually checked; without --validate `rfc4180` is null and
-+    // they are omitted. Any failure — invalid data or a validator that
-+    // could not run — reads as `valid: false` rather than aborting.
-+    let rfc4180 = if args.check_rfc4180 {
-+        let mut validate_owned: Vec<String> = Vec::new();
-+        append_csv_flags(
-+            &mut validate_owned,
-+            args,
-+            FreqOrCount {
-+                jobs:     false,
-+                force:    false,
-+                memcheck: false,
-+            },
-+        );
-+        let validate_args: Vec<&str> = validate_owned.iter().map(String::as_str).collect();
-+        let valid = util::run_qsv_cmd(
-+            "validate",
-+            &validate_args,
-+            args.input_path,
-+            "qsv profile: ran `validate` (RFC 4180 / UTF-8)",
-+        )
-+        .is_ok();
-+        json!({ "valid": valid })
-+    } else {
-+        Value::Null
-+    };
++/// `with_located(base, located)` — the `spatial` Location array with the
++/// `--locate` results folded in: `located.primary` (prefLabel,
++/// identifier, gazetteer, centroid) merges into the first Location —
++/// the bbox, whose label it is — and `located.regions` (Census states
++/// and counties) follow it. Keys the base Location already has win.
++/// Without `--locate` (`located` null) the base passes through
++/// unchanged; with no base, the regions alone are returned.
++fn with_located(base: Value, located: Value) -> Value {
++    let located = to_json(&located);
++    let base_json = to_json(&base);
++    if !located.is_object() {
++        return base;
++    }
++    for note in located
++        .get("notes")
++        .and_then(Json::as_array)
++        .into_iter()
++        .flatten()
++        .filter_map(Json::as_str)
++    {
++        push_note(note.to_string());
++    }
++    let mut out: Vec<Json> = base_json.as_array().cloned().unwrap_or_default();
++    if let (Some(first), Some(primary)) = (
++        out.first_mut().and_then(Json::as_object_mut),
++        located.get("primary").and_then(Json::as_object),
++    ) {
++        for (k, v) in primary {
++            first.entry(k.clone()).or_insert_with(|| v.clone());
++        }
++    }
++    out.extend(
++        located
++            .get("regions")
++            .and_then(Json::as_array)
++            .into_iter()
++            .flatten()
++            .cloned(),
++    );
++    if out.is_empty() {
++        return Value::UNDEFINED;
++    }
++    Value::from(Serde(Json::Array(out)))
++}
 +
-+    // --- 8. assemble ------------------------------------------------------
-     let context = json!({
-         "package":  package,
-         "resource": resource,
-         "dpps":     dpps,
-         "dppf":     dppf,
-         "dpp":      dpp,
-+        "rfc4180":  rfc4180,
-     });
+ // ---------------------------------------------------------------------
+ // temporal
+ // ---------------------------------------------------------------------
+```
+
+**File**: `src/cmd/profile/locate.rs` (added, +754/-0)
+```diff
+@@ -0,0 +1,754 @@
++//! `--locate`: name the places a dataset covers, for the DCAT-US v3
++//! `spatial` Locations.
++//!
++//! The bounding box says WHERE the coordinates are; it does not say
++//! "Boston" or "Suffolk County". With `--locate`, qsv samples the
++//! densest coordinate cells (row-weighted, deterministic) and looks them
++//! up with `qsv geocode`:
++//!
++//!   * `geonames` — the offline Geonames index (`geocode reverse`). The finest level that at least
++//!     [`AGREEMENT`] of the sampled rows share — nearest place, then admin1, then country — labels
++//!     the bbox Location (`prefLabel`, plus a `GeoNames` `identifier` for a place or country).
++//!   * `census` — the keyless US Census Geocoder (`geocode census --reverse`). Each state, and each
++//!     county holding at least [`REGION_MIN_SHARE`] of the sampled rows, becomes a Location keyed
++//!     by its Census GEOID.
++//!
++//! The lookups run once, before projection, as `qsv geocode` child
++//! processes — so they share its caches, rate limiting, retries and
++//! the `QSV_CENSUS_GEOCODER_URL` / `QSV_GEOCODE_INDEX_FILENAME`
++//! overrides — and reach the templates as the plain-JSON `located`
++//! context key. A lookup that cannot run is noted, never fatal: the
++//! projection keeps its bbox.
++//!
++//! A file without coordinates but with a state column (USPS code, FIPS
++//! or name; header mentioning "state") gets its state Locations from
++//! the column's frequency instead, in builds with the `viz` feature.
++
++use std::{collections::HashMap, io::Write as _};
++
++use serde_json::{Value, json};
++
++use super::sql_backend::SqlBackend;
++use crate::{CliResult, util};
++
++/// How many coordinate cells are looked up. Census single-record
++/// lookups run at 5/s, so this bounds a cold `census` run to ~8s.
++const SAMPLE_CELLS: usize = 40;
++/// Share of the sampled rows a Geonames label must cover.
++const AGREEMENT: f64 = 0.8;
++/// Share of the sampled rows a Census state or county must hold.
++const REGION_MIN_SHARE: f64 = 0.05;
++/// At most this many county Locations.
++const MAX_COUNTIES: usize = 10;
++
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub(super) enum LocateMode {
++    Geonames,
++    Census,
++    Both,
++}
++
++impl LocateMode {
++    pub(super) fn parse(s: &str) -> CliResult<Self> {
++        match s.trim().to_ascii_lowercase().as_str() {
++            "geonames" => Ok(Self::Geonames),
++            "census" => Ok(Self::Census),
++            "both" => Ok(Self::Both),
++            other => fail_incorrectusage_clierror!(
++                "--locate must be geonames, census or both, not {other:?}."
++            ),
++        }
++    }
++
++    const fn geonames(self) -> bool {
++        matches!(self, Self::Geonames | Self::Both)
++    }
++
++    const fn census(self) -> bool {
++        matches!(self, Self::Census | Self::Both)
++    }
++}
++
++/// One sampled coordinate cell: its rounded point and how many rows
++/// fall in it.
++#[derive(Clone, Debug, PartialEq)]
++struct Cell {
++    lat:  f64,
++    lon:  f64,
++    rows: f64,
++}
++
++/// The `located` context value: `primary` keys merged into the bbox
++/// Location, `regions` appended after it, and `notes` for
++/// `projection_warnings`. `Value::Null` when there is nothing to add.
++pub(super) fn locate(
++    mode: LocateMode,
++    backend: &SqlBackend,
++    dpp: &Value,
++    dppf: &Value,
++    headers: &[String],
++) -> Value {
++    let mut notes: Vec<String> = Vec::new();
++    let mut primary = serde_json::Map::new();
++    let mut regions: Vec<Value> = Vec::new();
++
++    let lat = dpp
++        .get("LAT_FIELD")
++        .and_then(Value::as_str)
++        .filter(|s| !s.is_empty());
++    let lon = dpp
++        .get("LON_FIELD")
++        .and_then(Value::as_str)
++        .filter(|s| !s.is_empty());
++    if let (Some(lat), Some(lon)) = (lat, lon) {
++        match sample_cells(backend, lat, lon) {
++            Some((cells, kept, centroid)) if !cells.is_empty() => {
++                primary.insert("centroid".to_string(), centroid);
++                let sampled: f64 = cells.iter().map(|c| c.rows).sum();
++                let coverage = 100.0 * sampled / kept;
++                if mode.geonames() {
++                    match spawn_lookup(&cells, &geonames_args()) {
++                        Ok(rows) => {
++                            if let Some(label) = geonames_label(&cells, &rows) {
++                                primary.extend(label);
++                            } else {
++                                notes.push(format!(
++                                    "--locate geonames: no place, admin1 or country is shared by \
++                                     {:.0}% of the sampled rows, so the bounding box is not \
++                                     labelled",
++                                    AGREEMENT * 100.0
++                                ));
++                            }
++                        },
++                        Err(e) => notes.push(format!("--locate geonames: lookup failed ({e})")),
++             
+```
+
+**File**: `src/cmd/viz_census.rs` (modified, +17/-0)
+```diff
+@@ -670,6 +670,23 @@ pub fn state_geoid_for_name(raw: &str) -> Option<&'static str> {
+         })
+ }
  
-     Ok(AnalysisContext {
++/// The name of the state, DC or territory (island areas included) whose 2-digit GEOID is `geoid`,
++/// e.g. "25" → "Massachusetts".
++#[must_use]
++pub fn state_name_for_geoid(geoid: &str) -> Option<&'static str> {
++    USPS_STATE_FIPS
++        .iter()
++        .find(|(_, fips, _)| *fips == geoid)
++        .map(|(.., name)| *name)
++        .or(match geoid {
++            "60" => Some("American Samoa"),
++            "66" => Some("Guam"),
++            "69" => Some("Northern Mariana Islands"),
++            "78" => Some("U.S. Virgin Islands"),
++            _ => None,
++        })
++}
++
+ /// Is `values` a column of STATE codes and nothing else a finer layer could claim?
+ ///
+ /// True when at least half of the non-empty values are state codes ([`is_state_code`]) AND no
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4968** (2026-11-01): feat(profile): --locate names the places a dataset covers (GeoNames, US Census) (@jqnatividad)
 - **PR #4967** (2026-10-31): feat(profile): compute DCAT-US v3 properties from stats, with an inferred tier (@jqnatividad)
 - **PR #4966** (2026-10-31): fix(geocode): cache-info reports real entry counts and oldest/newest timestamps (@jqnatividad)
 - **PR #4965** (2026-10-31): test(frequency): match the "Other (N)" overflow label in property tests (@jqnatividad)
 - **PR #4964** (2026-10-31): bench: add geoclient benchmarks, uncached and cached (@jqnatividad)
 - **PR #4963** (2026-10-30): deps: bump datasketches from 0.5 to 0.6 (@jqnatividad)
-- **PR #4962** (2026-10-30): build(deps): bump anthropics/claude-code-action from 1.0.263 to 1.0.264 (@dependabot[bot])
 
 ---
 
@@ -2649,13 +2643,13 @@ New FieldDecl `fallback:` / `review_note:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. profile): compute DCAT-US v3 properties from stats, with an inferred tier (#4967
+## X. profile): --locate names the places a dataset covers (GeoNames, US Census) (#496
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1a886517`: profile): compute DCAT-US v3 properties from stats, with an inferred tier (#4967). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cc94be6a`: profile): --locate names the places a dataset covers (GeoNames, US Census) (#4968). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2663,10 +2657,10 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`profile` (DCAT-US v3) computes properties that are tedious to write by hand**, deterministically, from the stats and frequency it already runs plus a SQL pass over the file. New MiniJinja helpers (`src/cmd/profile/derive.rs`) feed `resources/profiles/dcat-us-v3.yaml` (profile 5.0.0): ([#4967](https://github.com/dathere/qsv/pull/4967))
-  - `temporalResolution`, as an exact xsd:duration. A regular series reports its step (`PT15M`, `P1D`, and calendar steps such as `P1M` instead of a day count that varies from 28 to 31). Irregular data, such as event timestamps, reports the precision its values are recorded at (`P1D`, `PT1M`, `PT1S`). The smallest gap between two events is a sampling accident, not a resolution.
-  - `accrualPeriodicity`: an ISO 19115 code (`daily`, `weekly`, `monthly`, ...) only when the dates form a regular calendar series, where 90% or more of the gaps are the same exact step. Event timestamps, such as 311 requests, describe no update schedule and get none.
-  - `spatial`: the bounding box now excludes out-of-range coordinates and (0, 0) "null island" placeholder rows, noting how many it dropped. Distribution `spatialResolutionInMeters` is now the finest separati
+- **`profile --locate <geonames|census|both>` names the places a dataset covers** in its DCAT-US v3 `spatial` Locations. The densest coordinate cells (up to 40, after dropping out-of-range and (0, 0) rows) are looked up with `qsv geocode`, so its caches, rate limiting, retries and URL overrides apply. Results are weighted by how many rows each cell holds, so a few outlying points cannot outvote the core of the data.
+  - `geonames` (offline index): the bounding-box Location is labelled with the finest level that 80% of the sampled rows share. That is the nearest place (with its `https://sws.geonames.org/<id>/` identifier), else the admin1 region, else the country. A dataset split between two places is labelled by what they have in common, never by one of them.
+  - `census` (US Census Geocoder: keyless, cached): each state, and each county holding at least 5% of the sampled rows (up to 10), is added as a Location keyed by its Census GEOID. A file without coordinates but with a state column (USPS code, FIPS code or name) gets its states from that column instead, in builds with `viz`.
+  - Every mode also adds the coordinates' centroid. A lookup that cannot run (offline, a Census outage
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2676,4 +2670,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1a886517` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cc94be6a` are properly handled with clean fallback behavior.

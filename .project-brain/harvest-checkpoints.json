@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-01T00:42:32.676Z",
+  "last_updated": "2026-11-01T00:49:42.743Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2361,14 +2361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-      "content_hash": "8136ffdf55dfd718e9c115dc22a222c38113eeeb8b0d2a943820fc52ef5e11a7",
-      "verified_at": "2026-10-28T23:18:53.945Z",
+      "content_hash": "821d459aa5ba4aef31d118f87d029ca13ff124c12de66a9de443804bb3eb1423",
+      "verified_at": "2026-11-01T00:49:26.138Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T23:18:53.945Z"
+      "last_updated": "2026-11-01T00:49:26.138Z"
     },
     "amplifthq/openmeld": {
       "repository": "amplifthq/openmeld",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "fbb9e0bb1b2cebcaff796cf055bb25c5c3519935798f7f14af531453b87ceefb",
-      "verified_at": "2026-10-31T23:50:00.986Z",
+      "content_hash": "d7d943faefebf55ae167241b032943089c1e8132948e70fe8eb37e9e592da436",
+      "verified_at": "2026-11-01T00:49:42.742Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T23:50:00.986Z"
+      "last_updated": "2026-11-01T00:49:42.742Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -17564,6 +17564,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-31T16:08:35.143Z"
+    },
+    "dagoSte/squadra": {
+      "repository": "dagoSte/squadra",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-dagoste-squadra",
+      "content_hash": "2ca3f652960752c0063604313f89d4b180cfb02ff53deae9ec5e1e8784c5f400",
+      "verified_at": "2026-11-01T00:49:24.410Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-01T00:49:24.410Z"
     }
   },
   "repos": {

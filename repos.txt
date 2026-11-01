@@ -4758,3 +4758,7 @@ https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF
 # --- Automatically Discovered by AI Scout Engine [2026-10-31T16:03:27.759Z] ---
 # [HUGGINGFACE-AI-MODELS] Edge0/Audio8-TTS-Realistic-0.6b (3440 score) - Verified Hugging Face Model: Edge0/Audio8-TTS-Realistic-0.6b (144 likes, 2755 do
 https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-01T00:49:17.557Z] ---
+# [AI-AGENTS] dagoSte/squadra (854 score) - Coordinate Claude, Codex and Cursor windows with shared tasks, acknowledgements,
+https://github.com/dagoSte/squadra

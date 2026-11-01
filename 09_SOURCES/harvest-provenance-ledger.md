@@ -6779,3 +6779,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-11-01T00:36:14.959Z |
 | `learn-github-jellyfin-swiftfin` | `https://github.com/jellyfin/Swiftfin` | `8ac23970` | Multi-dimensional audit evidence | 2026-11-01T00:36:20.445Z |
 | `learn-huggingface-vllm-sr-d3` | `https://huggingface.co/vllm-sr/d3` | `hf-vllm-sr` | Multi-dimensional audit evidence | 2026-11-01T00:42:32.670Z |
+| `learn-github-dagoste-squadra` | `https://github.com/dagoSte/squadra` | `a13d8580` | Multi-dimensional audit evidence | 2026-11-01T00:49:24.401Z |
+| `learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-01T00:49:26.128Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `cc94be6a` | Multi-dimensional audit evidence | 2026-11-01T00:49:42.733Z |

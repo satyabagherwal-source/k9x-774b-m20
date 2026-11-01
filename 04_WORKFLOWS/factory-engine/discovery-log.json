@@ -19990,5 +19990,20 @@
     "downloads": 2755,
     "qualityScore": 3440,
     "discoveredAt": "2026-10-31T16:01:19.703Z"
+  },
+  {
+    "name": "squadra",
+    "fullName": "dagoSte/squadra",
+    "url": "https://github.com/dagoSte/squadra",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Coordinate Claude, Codex and Cursor windows with shared tasks, acknowledgements, prechecks, parallel tests, source-bound proofs and independent review. Built-in skills recall lessons, simplify code and forecast work. Track progress, decisions and evidence in a bilingual local dashboard, with MCP plugins. Browse skills and verified security audits.",
+    "stars": 1147,
+    "forks": 95,
+    "openIssues": 1,
+    "language": "Python",
+    "qualityScore": 854,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-01T00:45:34.692Z"
   }
 ]

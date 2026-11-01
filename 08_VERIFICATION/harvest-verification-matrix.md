@@ -6770,3 +6770,6 @@
 | `CYCLE-20261101-NCVB` | `2026-11-01T00:36:14.951Z` | `dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | Yes (`5bc1cd55...`) |
 | `CYCLE-20261101-NH3V` | `2026-11-01T00:36:20.443Z` | `jellyfin/Swiftfin` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md` | Yes (`0cd327c1...`) |
 | `CYCLE-20261101-VGBB` | `2026-11-01T00:42:32.663Z` | `vllm-sr/d3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md` | Yes (`92016b53...`) |
+| `CYCLE-20261101-4A0D` | `2026-11-01T00:49:24.397Z` | `dagoSte/squadra` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6383` | Yes (`2ca3f652...`) |
+| `CYCLE-20261101-4BC6` | `2026-11-01T00:49:26.118Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md` | Yes (`821d459a...`) |
+| `CYCLE-20261101-4O5L` | `2026-11-01T00:49:42.729Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6384` | Yes (`d7d943fa...`) |

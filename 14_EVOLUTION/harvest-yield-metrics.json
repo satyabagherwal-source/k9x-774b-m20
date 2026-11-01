@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-01T00:42:32.674Z",
-  "total_cycles_completed": 6747,
-  "total_learnings_persisted": 6747,
-  "total_rules_promoted": 6390,
+  "last_updated": "2026-11-01T00:49:42.739Z",
+  "total_cycles_completed": 6750,
+  "total_learnings_persisted": 6750,
+  "total_rules_promoted": 6392,
   "history": [
-    {
-      "timestamp": "2026-10-31T12:59:57.592Z",
-      "repository": "topgrade-rs/topgrade",
-      "learningId": "learn-github-topgrade-rs-topgrade",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T13:00:02.537Z",
-      "repository": "InsertKoinIO/koin",
-      "learningId": "learn-github-insertkoinio-koin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T13:00:10.293Z",
-      "repository": "doobidoo/mcp-memory-service",
-      "learningId": "learn-github-doobidoo-mcp-memory-service",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T13:06:42.247Z",
       "repository": "lysine-dev/okio",
@@ -1403,6 +1382,27 @@
       "repository": "vllm-sr/d3",
       "learningId": "learn-huggingface-vllm-sr-d3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:49:24.406Z",
+      "repository": "dagoSte/squadra",
+      "learningId": "learn-github-dagoste-squadra",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:49:26.134Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:49:42.739Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
