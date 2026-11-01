@@ -1745,8 +1745,8 @@
     "sourceUrl": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
     "sourceVersion": "hf-tencent-hy-memory-30b-a3b",
     "license": "Open-Source",
-    "contentHash": "6937b0354d6e23a8be8bea0ba797b13861c0a30fe2a6e65772975e7c466f0adf",
-    "lastHarvestedAt": "2026-10-29T01:17:47.323Z",
+    "contentHash": "861c20f098be6a620a22eb7816694c3a3fd9a77d1293e862903131ea83d069b5",
+    "lastHarvestedAt": "2026-11-01T02:22:44.560Z",
     "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b"
   },
   "addy0-com-free-open-technical-seo-crawler": {
@@ -5393,10 +5393,10 @@
     "repository": "grpc/grpc-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/grpc/grpc-rust",
-    "sourceVersion": "c49f0d09",
+    "sourceVersion": "53d5d706",
     "license": "MIT",
-    "contentHash": "87fa322a40d3cec3864a6a5df5b46d58429c4e5da0be79ec49296473652b736c",
-    "lastHarvestedAt": "2026-10-30T06:43:14.164Z",
+    "contentHash": "666756b71852ddeac113588b5f614ca7ff372afc2e8e9e322fa45998a64a620e",
+    "lastHarvestedAt": "2026-11-01T02:22:45.781Z",
     "learningId": "learn-github-grpc-grpc-rust"
   },
   "crazycodeboy-react-native-splash-screen": {
@@ -8533,10 +8533,10 @@
     "repository": "zoontek/react-native-bootsplash",
     "platform": "github",
     "sourceUrl": "https://github.com/zoontek/react-native-bootsplash",
-    "sourceVersion": "2ac6a06c",
+    "sourceVersion": "3dcb8e91",
     "license": "MIT",
-    "contentHash": "a1820d0cd75eb49766b3f980bc2c24c6cba4f1a9f59b7f38a26a7043aa97de66",
-    "lastHarvestedAt": "2026-10-19T18:02:59.289Z",
+    "contentHash": "c45fd3a64f60a07fb4c5d17ddc70efb876fb90fc27450089be40244ad2a5a70e",
+    "lastHarvestedAt": "2026-11-01T02:22:50.684Z",
     "learningId": "learn-github-zoontek-react-native-bootsplash"
   },
   "melbahja-seo": {

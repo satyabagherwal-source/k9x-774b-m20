@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-01T02:16:07.368Z",
-    "lastVerified": "2026-11-01T02:16:07.368Z",
+    "lastChecked": "2026-11-01T02:22:55.992Z",
+    "lastVerified": "2026-11-01T02:22:55.992Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -249,8 +249,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-01T01:54:10.064Z",
-    "lastVerified": "2026-11-01T01:54:10.064Z",
+    "lastChecked": "2026-11-01T02:22:55.983Z",
+    "lastVerified": "2026-11-01T02:22:55.983Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1415,9 +1415,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-10-31T22:53:41.532Z",
+    "lastChecked": "2026-11-01T02:22:51.009Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-10-31T22:53:41.532Z"
+    "lastVerified": "2026-11-01T02:22:51.009Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -2898,9 +2898,9 @@
   "zilliztech-attu": {
     "name": "attu",
     "officialUrl": "https://github.com/zilliztech/attu",
-    "lastChecked": "2026-10-31T11:26:08.940Z",
+    "lastChecked": "2026-11-01T02:22:53.502Z",
     "revisionIdentifier": "d51e1c78",
-    "lastVerified": "2026-10-31T11:26:08.940Z"
+    "lastVerified": "2026-11-01T02:22:53.502Z"
   },
   "asciinema-asciinema": {
     "name": "asciinema",
@@ -4347,9 +4347,9 @@
   "sealerio-sealer": {
     "name": "sealer",
     "officialUrl": "https://github.com/sealerio/sealer",
-    "lastChecked": "2026-10-31T12:08:55.153Z",
+    "lastChecked": "2026-11-01T02:22:48.508Z",
     "revisionIdentifier": "e426153a",
-    "lastVerified": "2026-10-31T12:08:55.153Z"
+    "lastVerified": "2026-11-01T02:22:48.508Z"
   },
   "helixdb-helix-db": {
     "name": "helix-db",
@@ -4634,22 +4634,21 @@
     "lastVerified": "2026-10-31T14:52:40.737Z"
   },
   "grpc-grpc-rust": {
-    "name": "grpc-rust",
+    "name": "grpc/grpc-rust",
     "officialUrl": "https://github.com/grpc/grpc-rust",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T06:45:11.302Z",
-    "lastVerified": "2026-10-31T06:45:11.302Z",
+    "lastChecked": "2026-11-01T02:22:45.332Z",
+    "lastVerified": "2026-11-01T02:22:45.332Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-grpc-grpc-rust",
-    "contentHash": "87fa322a40d3cec3864a6a5df5b46d58429c4e5da0be79ec49296473652b736c",
+    "contentHash": "666756b71852ddeac113588b5f614ca7ff372afc2e8e9e322fa45998a64a620e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c49f0d09"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-openai-gpt-oss-120b": {
     "name": "openai/gpt-oss-120b",
@@ -8792,12 +8791,12 @@
     "officialUrl": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-29T01:17:46.238Z",
-    "lastVerified": "2026-10-29T01:17:46.238Z",
+    "lastChecked": "2026-11-01T02:22:43.566Z",
+    "lastVerified": "2026-11-01T02:22:43.566Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
-    "contentHash": "6937b0354d6e23a8be8bea0ba797b13861c0a30fe2a6e65772975e7c466f0adf",
+    "contentHash": "861c20f098be6a620a22eb7816694c3a3fd9a77d1293e862903131ea83d069b5",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9703,11 +9702,21 @@
     "lastVerified": "2026-10-30T04:41:35.743Z"
   },
   "zoontek-react-native-bootsplash": {
-    "name": "react-native-bootsplash",
+    "name": "zoontek/react-native-bootsplash",
     "officialUrl": "https://github.com/zoontek/react-native-bootsplash",
-    "lastChecked": "2026-10-30T04:41:38.246Z",
-    "revisionIdentifier": "2ac6a06c",
-    "lastVerified": "2026-10-30T04:41:38.246Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-01T02:22:49.942Z",
+    "lastVerified": "2026-11-01T02:22:49.942Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-zoontek-react-native-bootsplash",
+    "contentHash": "c45fd3a64f60a07fb4c5d17ddc70efb876fb90fc27450089be40244ad2a5a70e",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "raghav453-multilipi-hreflang-generator": {
     "name": "multilipi-hreflang-generator",

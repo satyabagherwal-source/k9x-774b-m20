@@ -6800,3 +6800,6 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `dd302470` | Multi-dimensional audit evidence | 2026-11-01T02:07:49.036Z |
 | `learn-github-transact-rs-sqlx` | `https://github.com/transact-rs/sqlx` | `7908fe79` | Multi-dimensional audit evidence | 2026-11-01T02:15:55.337Z |
 | `learn-huggingface-datalab-to-indra-ocr` | `https://huggingface.co/datalab-to/indra-ocr` | `hf-datalab` | Multi-dimensional audit evidence | 2026-11-01T02:16:04.806Z |
+| `learn-huggingface-tencent-hy-memory-30b-a3b` | `https://huggingface.co/tencent/Hy-Memory-30B-A3B` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-01T02:22:44.560Z |
+| `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `53d5d706` | Multi-dimensional audit evidence | 2026-11-01T02:22:45.781Z |
+| `learn-github-zoontek-react-native-bootsplash` | `https://github.com/zoontek/react-native-bootsplash` | `3dcb8e91` | Multi-dimensional audit evidence | 2026-11-01T02:22:50.684Z |

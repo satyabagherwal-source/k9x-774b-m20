@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-J49X",
-    "timestamp": "2026-10-30T20:05:20.613Z",
-    "repository": "matrixorigin/matrixone",
-    "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "dc9eb7205aec62d31ec20750713ccabb8da844ee549c07afbd85bf7edc7c9f2c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-J4K1",
-    "timestamp": "2026-10-30T20:05:20.977Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "54ababb59a494807269abf25fbffecc3f044110386ddbc6709a33a5f1abd2ce0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-VQW1",
-    "timestamp": "2026-10-30T20:15:09.793Z",
-    "repository": "zed-industries/zed",
-    "learningId": "learn-github-zed-industries-zed",
-    "contentHash": "eb6f6465005a8f5895ada6e1edfe2e371a9461746f011d97c3a7a64d21647ff6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-VSBK",
     "timestamp": "2026-10-30T20:15:11.648Z",
     "repository": "cypress-io/cypress",
@@ -7492,6 +7447,51 @@
     "contentHash": "1617373b21e5dab951dd534cca85ce65699f4463157c84ead14a45f9dd7945ef",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261101-GB48",
+    "timestamp": "2026-11-01T02:22:44.552Z",
+    "repository": "tencent/Hy-Memory-30B-A3B",
+    "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
+    "contentHash": "861c20f098be6a620a22eb7816694c3a3fd9a77d1293e862903131ea83d069b5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261101-GC2A",
+    "timestamp": "2026-11-01T02:22:45.778Z",
+    "repository": "grpc/grpc-rust",
+    "learningId": "learn-github-grpc-grpc-rust",
+    "contentHash": "666756b71852ddeac113588b5f614ca7ff372afc2e8e9e322fa45998a64a620e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261101-GFUH",
+    "timestamp": "2026-11-01T02:22:50.681Z",
+    "repository": "zoontek/react-native-bootsplash",
+    "learningId": "learn-github-zoontek-react-native-bootsplash",
+    "contentHash": "c45fd3a64f60a07fb4c5d17ddc70efb876fb90fc27450089be40244ad2a5a70e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

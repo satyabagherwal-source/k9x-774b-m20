@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-01T02:16:04.722Z",
+  "last_updated": "2026-11-01T02:22:50.601Z",
   "total_verified_learnings": 1186,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16013,8 +16013,8 @@
       "slug": "grpc-grpc-rust",
       "platform": "github",
       "source_url": "https://github.com/grpc/grpc-rust",
-      "source_version": "c49f0d09",
-      "content_hash": "87fa322a40d3cec3864a6a5df5b46d58429c4e5da0be79ec49296473652b736c",
+      "source_version": "53d5d706",
+      "content_hash": "666756b71852ddeac113588b5f614ca7ff372afc2e8e9e322fa45998a64a620e",
       "dossier_path": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "promoted_rules": [
@@ -16087,6 +16087,11 @@
           "number": 5634,
           "title": "server): set a timer on HTTP/1 connections so hyper's header read timeout applie",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6108,
+          "title": "grpc/load_balancing: Add idle check in pick_first exit_idle() (#2977)",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16094,7 +16099,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T06:43:14.069Z",
+      "verified_at": "2026-11-01T02:22:45.675Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61005,8 +61010,8 @@
       "slug": "zoontek-react-native-bootsplash",
       "platform": "github",
       "source_url": "https://github.com/zoontek/react-native-bootsplash",
-      "source_version": "2ac6a06c",
-      "content_hash": "a1820d0cd75eb49766b3f980bc2c24c6cba4f1a9f59b7f38a26a7043aa97de66",
+      "source_version": "3dcb8e91",
+      "content_hash": "c45fd3a64f60a07fb4c5d17ddc70efb876fb90fc27450089be40244ad2a5a70e",
       "dossier_path": "07_PROJECT_LEARNING/zoontek-react-native-bootsplash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zoontek-react-native-bootsplash-learnings.md",
       "promoted_rules": [
@@ -61014,6 +61019,11 @@
           "number": 2718,
           "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 6404,
+          "title": "splash screen staying visible after warm start on Android 12+",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -61021,7 +61031,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:02:59.229Z",
+      "verified_at": "2026-11-01T02:22:50.574Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -70460,7 +70470,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
       "source_version": "hf-tencent-hy-memory-30b-a3b",
-      "content_hash": "6937b0354d6e23a8be8bea0ba797b13861c0a30fe2a6e65772975e7c466f0adf",
+      "content_hash": "861c20f098be6a620a22eb7816694c3a3fd9a77d1293e862903131ea83d069b5",
       "dossier_path": "07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md",
       "promoted_rules": [],
@@ -70469,7 +70479,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T01:17:47.222Z",
+      "verified_at": "2026-11-01T02:22:44.456Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -161687,15 +161697,15 @@
       "learning_id": "rule-6108",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 6108,
-      "title": "android): views of one url at different sizes download it once, also when one ge",
-      "source_url": "https://github.com/DylanVann/react-native-fast-image",
-      "source_version": "df42e80f",
+      "title": "grpc/load_balancing: Add idle check in pick_first exit_idle() (#2977)",
+      "source_url": "https://github.com/grpc/grpc-rust",
+      "source_version": "53d5d706",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-31T06:45:21.595Z"
+      "verified_at": "2026-11-01T02:22:45.675Z"
     },
     "rule-6109": {
       "learning_id": "rule-6109",
@@ -166029,6 +166039,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-01T02:16:04.701Z"
+    },
+    "rule-6404": {
+      "learning_id": "rule-6404",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6404,
+      "title": "splash screen staying visible after warm start on Android 12+",
+      "source_url": "https://github.com/zoontek/react-native-bootsplash",
+      "source_version": "3dcb8e91",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T02:22:50.574Z"
     }
   },
   "aliases": {
